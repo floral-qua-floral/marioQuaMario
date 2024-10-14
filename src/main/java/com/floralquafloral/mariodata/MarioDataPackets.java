@@ -1,5 +1,6 @@
 package com.floralquafloral.mariodata;
 
+import com.floralquafloral.MarioPackets;
 import com.floralquafloral.MarioQuaMario;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -8,20 +9,22 @@ import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 import static com.floralquafloral.mariodata.MarioDataManager.getMarioData;
 
 public class MarioDataPackets {
-	public void register() {
-
+	public static void registerCommon() {
+		SetEnabledS2CPayload.register();
 	}
-	public void registerClient() {
-
+	public static void registerClient() {
+		SetEnabledS2CPayload.registerReceiver();
 	}
 
-	public void setEnabled(PlayerEntity player, boolean enabled) {
-
+	public static void setMarioEnabled(ServerPlayerEntity player, boolean enabled) {
+		getMarioData(player).setEnabled(enabled);
+		MarioPackets.sendPacketToTrackers(player, true, new MarioDataPackets.SetEnabledS2CPayload(player, enabled));
 	}
 
 	public record SetEnabledS2CPayload(int player, boolean isMario) implements CustomPayload {
@@ -35,9 +38,8 @@ public class MarioDataPackets {
 			this(player.getId(), isMario);
 		}
 		public static void registerReceiver() {
-			ClientPlayNetworking.registerGlobalReceiver(ID, (payload, context) -> {
-				getMarioData(context, payload.player).setEnabled(payload.isMario);
-			});
+			ClientPlayNetworking.registerGlobalReceiver(ID, (payload, context) ->
+					getMarioData(context, payload.player).setEnabled(payload.isMario));
 		}
 
 		@Override public Id<? extends CustomPayload> getId() {

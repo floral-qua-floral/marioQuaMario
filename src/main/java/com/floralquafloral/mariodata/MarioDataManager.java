@@ -2,14 +2,10 @@ package com.floralquafloral.mariodata;
 
 import com.floralquafloral.MarioPackets;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.server.network.ServerPlayerEntity;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,16 +39,5 @@ public class MarioDataManager {
 		return getMarioData(MarioPackets.getPlayerFromInt(context, playerID));
 	}
 
-	private static void sendMarioUpdatePacket(ServerPlayerEntity mario, CustomPayload packet) {
-		Collection<ServerPlayerEntity> sendToPlayers = PlayerLookup.tracking(mario);
-		for(ServerPlayerEntity player : sendToPlayers)
-			ServerPlayNetworking.send(player, packet);
-		if(!sendToPlayers.contains(mario))
-			ServerPlayNetworking.send(mario, packet);
-	}
 
-	public static void setMarioEnabled(ServerPlayerEntity player, boolean enabled) {
-		getMarioData(player).setEnabled(enabled);
-		sendMarioUpdatePacket(player, new MarioDataPackets.SetEnabledS2CPayload(player, enabled));
-	}
 }
