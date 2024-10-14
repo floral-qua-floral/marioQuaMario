@@ -1,0 +1,44 @@
+{
+	"schemaVersion": 1,
+	"id": "qua_mario",
+	"version": "${version}",
+	"name": "Mario qua Mario",
+	"description": "This is an example description! Tell everyone what your mod is about!",
+	"authors": [
+		"Me!"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/qua_mario/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.floralquafloral.MarioQuaMario"
+		],
+		"client": [
+			"com.floralquafloral.MarioQuaMarioClient"
+		],
+		"fabric-datagen": [
+			"com.floralquafloral.MarioQuaMarioDataGenerator"
+		],
+
+		"modmenu": [
+			"com.floralquafloral.util.ModMenuIntegration"
+		]
+	},
+	"mixins": [
+		"qua_mario.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.16.7",
+		"minecraft": "~1.21",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
