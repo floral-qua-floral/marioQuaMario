@@ -15,6 +15,20 @@
 	"icon": "assets/qua_mario/icon.png",
 	"environment": "*",
 	"entrypoints": {
+		"mario-actions-misc": [
+			"com.floralquafloral.registries.action.baseactions.ActionDebug",
+			"com.floralquafloral.registries.action.baseactions.ActionDebugAlt"
+		],
+		"mario-actions-grounded": [
+			"com.floralquafloral.registries.action.baseactions.grounded.ActionBasic"
+		],
+		"mario-actions-airborne" : [
+
+		],
+		"mario-actions-aquatic": [
+
+		],
+
 		"main": [
 			"com.floralquafloral.MarioQuaMario"
 		],

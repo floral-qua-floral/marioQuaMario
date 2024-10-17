@@ -1,10 +1,12 @@
 package com.floralquafloral.mariodata;
 
 import com.floralquafloral.MarioPackets;
+import com.floralquafloral.mariodata.client.MarioClientData;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,14 +21,17 @@ public class MarioDataManager {
 	}
 
 	public static MarioData getMarioData(PlayerEntity mario) {
-		final Map<PlayerEntity, MarioData> RELEVANT_MAP = mario.getWorld().isClient ? CLIENT_PLAYERS_DATA : SERVER_PLAYERS_DATA;
+		boolean isClient = mario.getWorld().isClient;
+		final Map<PlayerEntity, MarioData> RELEVANT_MAP = isClient ? CLIENT_PLAYERS_DATA : SERVER_PLAYERS_DATA;
 		MarioData playerData = RELEVANT_MAP.get(mario);
 
 		if(playerData == null) {
 			if(mario.isMainPlayer() && mario instanceof ClientPlayerEntity marioClient)
 				playerData = new MarioClientData(marioClient);
-			else
+			else// if(isClient)
 				playerData = new MarioPlayerData(mario);
+//			else
+//				playerData = new MarioServerPlayerData((ServerPlayerEntity) mario);
 			RELEVANT_MAP.put(mario, playerData);
 		}
 
