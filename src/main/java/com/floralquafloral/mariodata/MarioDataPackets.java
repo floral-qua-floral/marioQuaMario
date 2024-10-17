@@ -41,8 +41,14 @@ public class MarioDataPackets {
 	}
 
 	public static void setMarioAction(ServerPlayerEntity mario, ParsedAction action) {
-		getMarioData(mario).setAction(action);
-		MarioPackets.sendPacketToTrackersExclusive(mario, new SetActionS2CPayload(mario, action, false));
+		MarioData data = getMarioData(mario);
+		boolean transitionLegality = data.getAction().transitionTo((MarioPlayerData) data, action) || !mario.getWorld().getGameRules().getBoolean(MarioQuaMario.REJECT_INVALID_ACTION_TRANSITIONS);
+		if(transitionLegality) {
+			data.setAction(action);
+			MarioPackets.sendPacketToTrackersExclusive(mario, new SetActionS2CPayload(mario, action, false));
+		}
+		else // Reject transition and forcefully set Mario back to the action we last had him on
+			forceSetMarioAction(mario, data.getAction());
 	}
 	public static void broadcastSetMarioAction(ParsedAction action) {
 		ClientPlayNetworking.send(new SetActionC2SPayload(action));

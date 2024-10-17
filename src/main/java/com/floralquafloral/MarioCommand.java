@@ -1,12 +1,14 @@
 package com.floralquafloral;
 
 import com.floralquafloral.mariodata.MarioDataPackets;
+import com.floralquafloral.registries.RegistryManager;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.tom.cpm.shared.template.args.BoolArg;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.command.argument.EntityArgumentType;
+import net.minecraft.command.argument.RegistryEntryReferenceArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -27,7 +29,15 @@ public class MarioCommand {
 						)
 					)
 				)
-
+				.then(literal("setAction")
+					.requires(source -> source.hasPermissionLevel(2))
+					.then(argument("action", RegistryEntryReferenceArgumentType.registryEntry(registryAccess, RegistryManager.ACTIONS_KEY))
+						.executes(context -> setAction(context, false))
+						.then(argument("target", EntityArgumentType.player())
+							.executes(context -> setAction(context, true))
+						)
+					)
+				)
 			)
 		);
 	}
@@ -48,10 +58,10 @@ public class MarioCommand {
 		));
 	}
 
-//	private static int setAction(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
-//		return sendFeedback(context, MarioDataPackets.setMarioEnabled(
-//				getPlayerFromCmd(context, playerArgumentGiven),
-//				BoolArgumentType.getBool(context, "enabled")
-//		));
-//	}
+	private static int setAction(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
+		return sendFeedback(context, MarioDataPackets.forceSetMarioAction(
+				getPlayerFromCmd(context, playerArgumentGiven),
+				RegistryEntryReferenceArgumentType.getRegistryEntry(context, "action", RegistryManager.ACTIONS_KEY).value()
+		));
+	}
 }

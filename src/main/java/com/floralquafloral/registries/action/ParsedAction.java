@@ -42,10 +42,15 @@ public class ParsedAction {
 		}
 	}
 
-	public void transitionTo(MarioPlayerData data, ParsedAction toAction) {
-		if(transitionTo(data, toAction, TransitionPhase.PRE_TICK)) return;
-		if(transitionTo(data, toAction, TransitionPhase.POST_TICK)) return;
-		transitionTo(data, toAction, TransitionPhase.POST_MOVE);
+	public boolean transitionTo(MarioPlayerData data, ParsedAction toAction) {
+		if(
+				transitionTo(data, toAction, TransitionPhase.PRE_TICK) ||
+				transitionTo(data, toAction, TransitionPhase.POST_TICK) ||
+				transitionTo(data, toAction, TransitionPhase.POST_MOVE)
+		) return true;
+
+		MarioQuaMario.LOGGER.warn("{} attempted an invalid action transition: {} -> {}", data.MARIO.getName().getString(), this.ID, toAction.ID);
+		return false;
 	}
 	private boolean transitionTo(MarioPlayerData data, ParsedAction toAction, TransitionPhase checkInPhase) {
 		for(ParsedTransition transition : this.TRANSITION_LISTS.get(checkInPhase)) {
