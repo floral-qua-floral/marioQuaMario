@@ -56,8 +56,7 @@ public abstract class EntityMixin {
 	private void preventStepSounds(BlockPos pos, BlockState state, CallbackInfo ci) {
 		if(((Entity) (Object) this) instanceof PlayerEntity player) {
 			MarioData data = MarioDataManager.getMarioData(player);
-			ActionDefinition.IsSlidingOption isSliding = data.getAction().isSliding(data);
-			if(isSliding != NOT_SLIDING && isSliding != NOT_SLIDING_SMOOTH)
+			if(!data.getAction().isSliding(data).doFootsteps())
 				ci.cancel();
 		}
 	}
