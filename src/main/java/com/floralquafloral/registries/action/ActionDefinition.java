@@ -31,12 +31,41 @@ public interface ActionDefinition extends MarioStateDefinition {
 		SLIP		// Player can enter the sneaking pose, but won't clip at ledges
 	}
 	enum IsSlidingOption {
-		SLIDING,					// No view bobbing or footsteps, with sliding sound & block particles
-		SLIDING_NO_PARTICLES,		// No view bobbing or footsteps, with sliding sound
-		WALL_SLIDING,				// No view bobbing or footsteps, with alternate sliding sound (no particles)
-		SLIDING_SILENT,				// No view bobbing or footsteps. Use this for airborne actions!
-		NOT_SLIDING_SMOOTH,			// Footsteps, but no view bobbing
-		NOT_SLIDING;				// Vanilla view bobbing & footstep sounds
+		SLIDING(false, false, true, true, false),				// No view bobbing or footsteps, with sliding sound & block particles
+		SLIDING_NO_PARTICLES(false, false, true, false, false),	// No view bobbing or footsteps, with sliding sound
+		WALL_SLIDING(false, false, false, false, true),			// No view bobbing or footsteps, with alternate sliding sound
+		SLIDING_SILENT(false, false, false, false, false),		// No view bobbing or footsteps. Use this for airborne actions!
+		NOT_SLIDING_SMOOTH(true, false, false, false, false),	// Footsteps, but no view bobbing
+		NOT_SLIDING(true, true, false, false, false);			// Vanilla view bobbing & footstep sounds
+
+		private final boolean DO_FOOTSTEPS;
+		private final boolean DO_VIEW_BOBBING;
+		private final boolean DO_SLIDE_SFX;
+		private final boolean DO_ALT_SLIDE_SFX;
+		private final boolean DO_SLIDE_PARTICLES;
+
+		IsSlidingOption(boolean doFootsteps, boolean doViewBobbing, boolean doSfx, boolean doParticles, boolean isWall) {
+			this.DO_FOOTSTEPS = doFootsteps;
+			this.DO_VIEW_BOBBING = doViewBobbing;
+			this.DO_SLIDE_SFX = doSfx;
+			this.DO_SLIDE_PARTICLES = doParticles;
+			this.DO_ALT_SLIDE_SFX = isWall;
+		}
+		public boolean doFootsteps() {
+			return this.DO_FOOTSTEPS;
+		}
+		public boolean doViewBobbing() {
+			return this.DO_VIEW_BOBBING;
+		}
+		public boolean doSlideSfx() {
+			return this.DO_SLIDE_SFX;
+		}
+		public boolean doWallSlideSfx() {
+			return this.DO_ALT_SLIDE_SFX;
+		}
+		public boolean doParticles() {
+			return this.DO_SLIDE_PARTICLES;
+		}
 	}
 
 	class ActionTransitionInjection {

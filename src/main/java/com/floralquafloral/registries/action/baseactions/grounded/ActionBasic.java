@@ -46,11 +46,6 @@ public class ActionBasic extends GroundedActionDefinition {
 							Input.getForwardInput(), Input.getStrafeInput(),
 							RUN_REDIRECTION.get(data)
 					);
-//					MarioClient.groundAccel(
-//							CharaStat.RUN_ACCEL, CharaStat.RUN_SPEED, 1.0,
-//							CharaStat.STRAFE_ACCEL, CharaStat.STRAFE_SPEED, 1.0,
-//							CharaStat.RUN_REDIRECTION
-//					);
 				}
 			}
 			else {
@@ -62,11 +57,6 @@ public class ActionBasic extends GroundedActionDefinition {
 							Input.getForwardInput(), Input.getStrafeInput(),
 							WALK_REDIRECTION.get(data)
 					);
-//					MarioClient.groundAccel(
-//							CharaStat.OVERWALK_ACCEL, CharaStat.WALK_SPEED, 1.0,
-//							CharaStat.STRAFE_ACCEL, CharaStat.STRAFE_SPEED, 1.0,
-//							CharaStat.WALK_REDIRECTION
-//					);
 				}
 				else if(data.getForwardVel() <= WALK_STANDSTILL_THRESHOLD.getAsThreshold(data)) {
 					// Walk accel from low velocity
@@ -76,11 +66,6 @@ public class ActionBasic extends GroundedActionDefinition {
 							Input.getForwardInput(), Input.getStrafeInput(),
 							WALK_REDIRECTION.get(data)
 					);
-//					MarioClient.groundAccel(
-//							CharaStat.WALK_STANDSTILL_ACCEL, CharaStat.WALK_SPEED, 1.0,
-//							CharaStat.STRAFE_ACCEL, CharaStat.STRAFE_SPEED, 1.0,
-//							CharaStat.WALK_REDIRECTION
-//					);
 				}
 				else {
 					// Walk accel
@@ -90,11 +75,6 @@ public class ActionBasic extends GroundedActionDefinition {
 							Input.getForwardInput(), Input.getStrafeInput(),
 							WALK_REDIRECTION.get(data)
 					);
-//					MarioClient.groundAccel(
-//							CharaStat.WALK_ACCEL, CharaStat.WALK_SPEED, 1.0,
-//							CharaStat.STRAFE_ACCEL, CharaStat.STRAFE_SPEED, 1.0,
-//							CharaStat.WALK_REDIRECTION
-//					);
 				}
 			}
 		}
@@ -107,11 +87,6 @@ public class ActionBasic extends GroundedActionDefinition {
 						Input.getForwardInput(), Input.getStrafeInput(),
 						BACKPEDAL_REDIRECTION.get(data)
 				);
-//				MarioClient.groundAccel(
-//						CharaStat.UNDERBACKPEDAL_ACCEL, CharaStat.BACKPEDAL_SPEED, 1.0,
-//						CharaStat.STRAFE_ACCEL, CharaStat.STRAFE_SPEED, 1.0,
-//						CharaStat.BACKPEDAL_REDIRECTION
-//				);
 			}
 			else if(data.getForwardVel() < BACKPEDAL_SPEED.getAsLimit(data)) {
 				// Over-backpedal
@@ -121,11 +96,6 @@ public class ActionBasic extends GroundedActionDefinition {
 						Input.getForwardInput(), Input.getStrafeInput(),
 						BACKPEDAL_REDIRECTION.get(data)
 				);
-//				MarioClient.groundAccel(
-//						CharaStat.OVERBACKPEDAL_ACCEL, CharaStat.BACKPEDAL_SPEED, 1.0,
-//						CharaStat.STRAFE_ACCEL, CharaStat.STRAFE_SPEED, 1.0,
-//						CharaStat.BACKPEDAL_REDIRECTION
-//				);
 			}
 			else {
 				// Backpedal Accel
@@ -135,11 +105,6 @@ public class ActionBasic extends GroundedActionDefinition {
 						Input.getForwardInput(), Input.getStrafeInput(),
 						BACKPEDAL_REDIRECTION.get(data)
 				);
-//				MarioClient.groundAccel(
-//						CharaStat.BACKPEDAL_ACCEL, CharaStat.BACKPEDAL_SPEED, 1.0,
-//						CharaStat.STRAFE_ACCEL, CharaStat.STRAFE_SPEED, 1.0,
-//						CharaStat.BACKPEDAL_REDIRECTION
-//				);
 			}
 		}
 		else {
@@ -149,11 +114,6 @@ public class ActionBasic extends GroundedActionDefinition {
 					STRAFE_ACCEL.get(data), STRAFE_SPEED.get(data),
 					0.0, 0.0, 0.0
 			);
-//			MarioClient.groundAccel(
-//					CharaStat.IDLE_DEACCEL, CharaStat.ZERO, 1.0,
-//					CharaStat.STRAFE_ACCEL, CharaStat.STRAFE_SPEED, 1.0,
-//					CharaStat.ZERO
-//			);
 		}
 	}
 
