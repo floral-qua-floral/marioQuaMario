@@ -1,12 +1,11 @@
 package com.floralquafloral.registries.action;
 
 import com.floralquafloral.MarioQuaMario;
+import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioDataPackets;
 import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.mariodata.client.MarioClientData;
 import com.floralquafloral.registries.RegistryManager;
-import com.floralquafloral.util.CPMIntegration;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
@@ -29,17 +28,18 @@ public class ParsedAction {
 		this.TRANSITION_LISTS = new EnumMap<>(TransitionPhase.class);
 	}
 
-	public void attemptTransitions(MarioClientData data, TransitionPhase phase) {
+	public boolean attemptTransitions(MarioClientData data, TransitionPhase phase) {
 		for(ParsedTransition transition : this.TRANSITION_LISTS.get(phase)) {
 			if(transition.EVALUATOR.shouldTransition(data)) {
 				// Send C2S packet to tell the server!
 
-				transition.EXECUTOR_CLIENT.execute(data, true);
+				if(transition.EXECUTOR_CLIENT != null) transition.EXECUTOR_CLIENT.execute(data, true);
 				MarioDataPackets.broadcastSetMarioAction(transition.TARGET_ACTION);
 				data.setAction(transition.TARGET_ACTION);
-				return;
+				return true;
 			}
 		}
+		return false;
 	}
 
 	public boolean transitionTo(MarioPlayerData data, ParsedAction toAction) {
@@ -49,7 +49,7 @@ public class ParsedAction {
 				transitionTo(data, toAction, TransitionPhase.POST_MOVE)
 		) return true;
 
-		MarioQuaMario.LOGGER.warn("{} attempted an invalid action transition: {} -> {}", data.MARIO.getName().getString(), this.ID, toAction.ID);
+		MarioQuaMario.LOGGER.warn("{} attempted an invalid action transition: {} -> {}", data.getMario().getName().getString(), this.ID, toAction.ID);
 		return false;
 	}
 	private boolean transitionTo(MarioPlayerData data, ParsedAction toAction, TransitionPhase checkInPhase) {
@@ -70,6 +70,13 @@ public class ParsedAction {
 	}
 	public void serverTick(MarioPlayerData data) {
 		this.DEFINITION.serverTick(data);
+	}
+
+	public ActionDefinition.SneakLegalityOption getSneakLegality(MarioData data) {
+		return this.DEFINITION.getSneakLegality(data);
+	}
+	public ActionDefinition.IsSlidingOption isSliding(MarioData data) {
+		return this.DEFINITION.isSliding(data);
 	}
 
 	public void populateTransitionLists(Map<Identifier, ArrayList<ActionDefinition.ActionTransitionDefinition>> injections) {
@@ -112,16 +119,18 @@ public class ParsedAction {
 
 		private ParsedTransition(ActionDefinition.ActionTransitionDefinition definition) {
 			TARGET_ACTION = RegistryManager.ACTIONS.get(definition.TARGET_IDENTIFIER);
+			if(TARGET_ACTION == null) MarioQuaMario.LOGGER.error("Transition target isn't registered?!?! {}", definition.TARGET_IDENTIFIER);
 			EVALUATOR = definition.EVALUATOR;
 			EXECUTOR_CLIENT = definition.EXECUTOR_CLIENT;
 			EXECUTOR_SERVER = definition.EXECUTOR_SERVER;
 		}
 
 		private void execute(MarioPlayerData data) {
-			if(data.MARIO.getWorld().isClient)
-				this.EXECUTOR_CLIENT.execute(data, false);
-			else
-				this.EXECUTOR_SERVER.execute(data);
+			if(data.getMario().getWorld().isClient) {
+				if (this.EXECUTOR_CLIENT != null)
+					this.EXECUTOR_CLIENT.execute(data, false);
+			}
+			else if (this.EXECUTOR_SERVER != null) this.EXECUTOR_SERVER.execute(data);
 		}
 	}
 }

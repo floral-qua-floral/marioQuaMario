@@ -15,6 +15,7 @@ import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.NotNull;
 
 import static com.floralquafloral.mariodata.MarioDataManager.getMarioData;
 
@@ -42,19 +43,19 @@ public class MarioDataPackets {
 
 	public static void setMarioAction(ServerPlayerEntity mario, ParsedAction action) {
 		MarioData data = getMarioData(mario);
-		boolean transitionLegality = data.getAction().transitionTo((MarioPlayerData) data, action) || !mario.getWorld().getGameRules().getBoolean(MarioQuaMario.REJECT_INVALID_ACTION_TRANSITIONS);
-		if(transitionLegality) {
-			data.setAction(action);
+		boolean foundTransition = data.getAction().transitionTo((MarioPlayerData) data, action);
+		if(foundTransition || !mario.getWorld().getGameRules().getBoolean(MarioQuaMario.REJECT_INVALID_ACTION_TRANSITIONS)) {
+			data.setActionTransitionless(action);
 			MarioPackets.sendPacketToTrackersExclusive(mario, new SetActionS2CPayload(mario, action, false));
 		}
 		else // Reject transition and forcefully set Mario back to the action we last had him on
 			forceSetMarioAction(mario, data.getAction());
 	}
-	public static void broadcastSetMarioAction(ParsedAction action) {
+	public static void broadcastSetMarioAction(@NotNull ParsedAction action) {
 		ClientPlayNetworking.send(new SetActionC2SPayload(action));
 	}
 	public static String forceSetMarioAction(ServerPlayerEntity mario, ParsedAction action) {
-		getMarioData(mario).setAction(action);
+		getMarioData(mario).setActionTransitionless(action);
 		MarioPackets.sendPacketToTrackers(mario, new SetActionS2CPayload(mario, action, true));
 
 		return("Set " + mario.getName().getString() + "'s Action has been set to " + action.ID);
@@ -113,19 +114,19 @@ public class MarioDataPackets {
 		}
 	}
 
-	public record SetActionC2SPayload(int newAction) implements CustomPayload {
+	private record SetActionC2SPayload(int newAction) implements CustomPayload {
 		public static final Id<SetActionC2SPayload> ID = new Id<>(Identifier.of(MarioQuaMario.MOD_ID, "set_action_c2s"));
 		public static final PacketCodec<RegistryByteBuf, SetActionC2SPayload> CODEC = PacketCodec.tuple(
 				PacketCodecs.INTEGER, SetActionC2SPayload::newAction,
 				SetActionC2SPayload::new
 		);
-		public SetActionC2SPayload(ParsedAction newAction) {
+		public SetActionC2SPayload(@NotNull ParsedAction newAction) {
 			this(RegistryManager.ACTIONS.getRawIdOrThrow(newAction));
+			MarioQuaMario.LOGGER.info("Made new SetActionC2S packet");
 		}
 		public static void registerReceiver() {
 			ServerPlayNetworking.registerGlobalReceiver(ID, (payload, context) ->
-				setMarioAction(context.player(), RegistryManager.ACTIONS.get(payload.newAction))
-			);
+					setMarioAction(context.player(), RegistryManager.ACTIONS.get(payload.newAction)));
 		}
 
 		@Override public Id<? extends CustomPayload> getId() {

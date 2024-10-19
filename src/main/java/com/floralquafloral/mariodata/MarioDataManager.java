@@ -2,6 +2,7 @@ package com.floralquafloral.mariodata;
 
 import com.floralquafloral.MarioPackets;
 import com.floralquafloral.mariodata.client.MarioClientData;
+import com.floralquafloral.mixin.PlayerEntityMixin;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -43,6 +44,7 @@ public class MarioDataManager {
 	public static MarioData getMarioData(ClientPlayNetworking.Context context, int playerID) {
 		return getMarioData(MarioPackets.getPlayerFromInt(context, playerID));
 	}
-
-
+	public static MarioData getMarioData(Object object) {
+		return getMarioData((PlayerEntity) object);
+	}
 }

@@ -24,18 +24,14 @@ public enum Input {
 		this.pressBuffer = 0;
 	}
 
-	public boolean isPressed() {
-		if (this.isPressedNoUnbuffer()) {
-			this.unbuffer();
-			return true;
-		}
-		return false;
-	}
-	public boolean isPressedNoUnbuffer() {
-		return this.pressBuffer > 0;
-	}
 	public boolean isHeld() {
 		return this.isHeld;
+	}
+	public boolean isPressed() {
+		return this.pressBuffer > 0;
+	}
+	public void unbuffer() {
+		this.pressBuffer = 0;
 	}
 
 	public static double getForwardInput() {
@@ -78,9 +74,5 @@ public enum Input {
 		else
 			this.pressBuffer--;
 		this.isHeld = isHeld;
-	}
-
-	private void unbuffer() {
-		this.pressBuffer = 0;
 	}
 }

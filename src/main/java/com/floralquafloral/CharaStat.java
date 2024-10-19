@@ -129,9 +129,7 @@ public enum CharaStat {
 	SWIM_BACKPEDAL_SPEED,
 
 	AQUATIC_GROUND_POUND_VELOCITY,
-	AQUATIC_GROUND_POUND_DRAG,
-
-	ZERO(0);
+	AQUATIC_GROUND_POUND_DRAG;
 
 	private final double DEFAULT_VALUE;
 	private final CharaStat PARENT_STAT;
@@ -153,13 +151,18 @@ public enum CharaStat {
 		return DEFAULT_VALUE;
 	}
 
-	public double getValue(MarioPlayerData data) {
-//		boolean useCharacterStats = data.MARIO.getWorld().getGameRules().getBoolean()
+	public double get(MarioData data) {
 		return this.getDefaultValue() * this.getMultiplier(data);
 	}
+	public double getAsThreshold(MarioData data) {
+		return this.get(data) * 0.99;
+	}
+	public double getAsLimit(MarioData data) {
+		return this.get(data) * 1.015;
+	}
 
-	public double getMultiplier(MarioPlayerData data) {
-		World marioWorld = data.MARIO.getWorld();
+	public double getMultiplier(MarioData data) {
+		World marioWorld = data.getMario().getWorld();
 		boolean useCharacterStats = marioWorld.isClient ? MarioQuaMarioClient.useCharacterStats : marioWorld.getGameRules().getBoolean(MarioQuaMario.USE_CHARACTER_STATS);
 		return (useCharacterStats ? 1.0 : 1.0) * 1.0;
 	}

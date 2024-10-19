@@ -44,12 +44,22 @@ public class RegistryManager {
 		}
 	}
 
+	/**
+	 * Because actions are so interdependent and feature a great deal of complexity that individual Action
+	 * implementations don't need to worry about, the definitions given by each entrypoint are parsed into a more
+	 * efficient structure (the ParsedAction) before being registered.
+	 * <p>
+	 * Transitions are then also parsed for greater efficiency, to minimize registry calls needed for Action
+	 * transitions (Transition definitions use the String ID of the target Action, while parsed transitions use a
+	 * reference to the target ParsedAction itself). This process relies on every Action having alreayd been parsed and
+	 * added to the registry, so it has to occur separately from Action registration.
+	 */
 	private static void registerActions() {
 		MarioQuaMario.LOGGER.info("Registering actions...");
 
 		Map<Identifier, ArrayList<ActionDefinition.ActionTransitionDefinition>> transitionInjections = new HashMap<>();
 
-		for(ActionDefinition definition : getEntrypoints("mario-actions-misc", ActionDefinition.class)) {
+		for(ActionDefinition definition : getEntrypoints("mario-actions-uncategorized", ActionDefinition.class)) {
 			parseAction(definition, transitionInjections);
 		}
 		for(GroundedActionDefinition definition : getEntrypoints("mario-actions-grounded", GroundedActionDefinition.class)) {

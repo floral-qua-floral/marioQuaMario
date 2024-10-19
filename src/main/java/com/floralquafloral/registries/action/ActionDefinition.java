@@ -1,5 +1,6 @@
 package com.floralquafloral.registries.action;
 
+import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.client.MarioClientData;
 import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.registries.MarioStateDefinition;
@@ -16,10 +17,27 @@ public interface ActionDefinition extends MarioStateDefinition {
 	void otherClientsTick(MarioPlayerData data);
 	void serverTick(MarioPlayerData data);
 
+	SneakLegalityOption getSneakLegality(MarioData data);
+	IsSlidingOption isSliding(MarioData data);
+
 	List<ActionTransitionDefinition> getPreTickTransitions();
 	List<ActionTransitionDefinition> getPostTickTransitions();
 	List<ActionTransitionDefinition> getPostMoveTransitions();
 	List<ActionTransitionInjection> getTransitionInjections();
+
+	enum SneakLegalityOption {
+		ALLOW,		// Player can enter the sneaking pose
+		PROHIBIT,	// Player cannot enter the sneaking pose
+		SLIP		// Player can enter the sneaking pose, but won't clip at ledges
+	}
+	enum IsSlidingOption {
+		SLIDING,					// No view bobbing or footsteps, with sliding sound & block particles
+		SLIDING_NO_PARTICLES,		// No view bobbing or footsteps, with sliding sound
+		WALL_SLIDING,				// No view bobbing or footsteps, with alternate sliding sound (no particles)
+		SLIDING_SILENT,				// No view bobbing or footsteps. Use this for airborne actions!
+		NOT_SLIDING_SMOOTH,			// Footsteps, but no view bobbing
+		NOT_SLIDING;				// Vanilla view bobbing & footstep sounds
+	}
 
 	class ActionTransitionInjection {
 		public final Identifier INJECT_BEFORE_TRANSITIONS_TO;

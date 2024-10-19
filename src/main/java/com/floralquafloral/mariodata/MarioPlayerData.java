@@ -1,16 +1,13 @@
 package com.floralquafloral.mariodata;
 
 import com.floralquafloral.MarioQuaMario;
-import com.floralquafloral.mariodata.client.MarioClientData;
 import com.floralquafloral.registries.RegistryManager;
+import com.floralquafloral.registries.action.ActionDefinition;
 import com.floralquafloral.registries.action.ParsedAction;
 import com.floralquafloral.util.CPMIntegration;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class MarioPlayerData implements MarioData {
 	private boolean enabled;
@@ -18,7 +15,10 @@ public class MarioPlayerData implements MarioData {
 	private String powerUp;
 	private String character;
 
-	public final PlayerEntity MARIO;
+	private final PlayerEntity MARIO;
+	@Override public PlayerEntity getMario() {
+		return this.MARIO;
+	}
 
 	public MarioPlayerData(PlayerEntity mario) {
 		this.MARIO = mario;
@@ -40,33 +40,69 @@ public class MarioPlayerData implements MarioData {
 		);
 	}
 
-	@Override public void setVelocities(double forward, double strafe, @Nullable Double vertical) {
-		double yawRad = Math.toRadians(MARIO.getYaw());
-		double negativeSineYaw = -Math.sin(yawRad);
-		double cosineYaw = Math.cos(yawRad);
+	private class MarioVelocities {
+		private double forward;
+		private double strafe;
+		private double vertical;
+		private double negativeSineYaw;
+		private double cosineYaw;
+		private boolean isGenerated;
+		private boolean isDirty;
 
-		forward = MathHelper.clamp(forward, -3.75, 2.1);
-		strafe = MathHelper.clamp(strafe, -1.9, 1.9);
-		if(vertical == null) vertical = MARIO.getVelocity().y;
+		private MarioVelocities ensure() {
+			if(this.isGenerated) return this;
+			this.isGenerated = true;
 
+			// Calculate forward and sideways vector components
+			double yawRad = Math.toRadians(MARIO.getYaw());
+			this.negativeSineYaw = -Math.sin(yawRad);
+			this.cosineYaw = Math.cos(yawRad);
 
-		MARIO.setVelocity(forward * negativeSineYaw + strafe * cosineYaw,
-				vertical, forward * cosineYaw + strafe * -negativeSineYaw);
+			// Calculate current forwards and sideways velocity
+			Vec3d currentVel = MARIO.getVelocity();
+			this.forward = currentVel.x * negativeSineYaw + currentVel.z * cosineYaw;
+			this.strafe = currentVel.x * cosineYaw + currentVel.z * -negativeSineYaw;
+			this.vertical = currentVel.y;
+
+			return this;
+		}
+		private MarioVelocities ensureDirty() {
+			this.isDirty = true;
+			return this.ensure();
+		}
+		private void apply() {
+			if(!this.isGenerated || !this.isDirty) return;
+			getMario().setVelocity(this.forward * this.negativeSineYaw + this.strafe * this.cosineYaw,
+					this.vertical, this.forward * this.cosineYaw + this.strafe * -this.negativeSineYaw);
+		}
 	}
-	@Override public void setVelocities(MarioVelocityContainer velocities) {
-		this.setVelocities(velocities.getForward(), velocities.getStrafe(), velocities.getVertical());
+
+	private final MarioVelocities VELOCITIES = new MarioVelocities();
+	@Override public double getForwardVel() {
+		return this.VELOCITIES.ensure().forward;
+	}
+	@Override public double getStrafeVel() {
+		return this.VELOCITIES.ensure().strafe;
+	}
+	@Override public double getYVel() {
+		return this.VELOCITIES.ensure().vertical;
+	}
+	@Override public void setForwardVel(double forward) {
+		VELOCITIES.ensureDirty().forward = forward;
+	}
+	@Override public void setStrafeVel(double strafe) {
+		this.VELOCITIES.ensureDirty().strafe = strafe;
+	}
+	@Override public void setYVel(double vertical) {
+		this.VELOCITIES.ensureDirty().vertical = vertical;
+	}
+	@Override public void applyModifiedVelocity() {
+		this.VELOCITIES.apply();
+		this.VELOCITIES.isDirty = false;
+		this.VELOCITIES.isGenerated = false;
 	}
 
-	private MarioVelocityContainer velocities;
-	@Override @NotNull public MarioVelocityContainer getVelocities() {
-		if(this.velocities == null) this.velocities = new ReadOnlyVelocities();
-		return this.velocities;
-	}
-	@Override public void clearCachedVelocities() {
-		this.velocities = null;
-	}
-
-	@Override public void tick() {
+	public void tick() {
 
 	}
 
@@ -79,18 +115,15 @@ public class MarioPlayerData implements MarioData {
 	@Override public ParsedAction getAction() {
 		return action;
 	}
+	@Override public boolean getSneakProhibited() {
+		return useMarioPhysics() && getAction().getSneakLegality(this) == ActionDefinition.SneakLegalityOption.PROHIBIT;
+	}
 	@Override public void setAction(ParsedAction action) {
 		getAction().transitionTo(this, action);
-		if(this.MARIO.getWorld().isClient) {
-			if(this.action.ANIMATION != null)
-				CPMIntegration.commonAPI.playAnimation(PlayerEntity.class, this.MARIO, this.action.ANIMATION, 0);
-			if(action.ANIMATION != null)
-				CPMIntegration.commonAPI.playAnimation(PlayerEntity.class, this.MARIO, action.ANIMATION, 1);
-		}
-		this.action = action;
+		this.setActionTransitionless(action);
 	}
 	@Override public void setActionTransitionless(ParsedAction action) {
-		if(this.MARIO.getWorld().isClient) {
+		if(!this.MARIO.getWorld().isClient) {
 			if(this.action.ANIMATION != null)
 				CPMIntegration.commonAPI.playAnimation(PlayerEntity.class, this.MARIO, this.action.ANIMATION, 0);
 			if(action.ANIMATION != null)
@@ -109,32 +142,5 @@ public class MarioPlayerData implements MarioData {
 	}
 	@Override public void setCharacter(String character) {
 		this.character = character;
-	}
-
-	private class ReadOnlyVelocities implements MarioVelocityContainer {
-		private final double FORWARD, STRAFE, VERTICAL;
-
-		public ReadOnlyVelocities() {
-			// Calculate forward and sideways vector components
-			double yawRad = Math.toRadians(MARIO.getYaw());
-			double negativeSineYaw = -Math.sin(yawRad);
-			double cosineYaw = Math.cos(yawRad);
-
-			// Calculate current forwards and sideways velocity
-			Vec3d currentVel = MARIO.getVelocity();
-			this.FORWARD = currentVel.x * negativeSineYaw + currentVel.z * cosineYaw;
-			this.STRAFE = currentVel.x * cosineYaw + currentVel.z * -negativeSineYaw;
-			this.VERTICAL = currentVel.y;
-		}
-
-		@Override public double getForward() {
-			return this.FORWARD;
-		}
-		@Override public double getStrafe() {
-			return this.STRAFE;
-		}
-		@Override public double getVertical() {
-			return this.VERTICAL;
-		}
 	}
 }
