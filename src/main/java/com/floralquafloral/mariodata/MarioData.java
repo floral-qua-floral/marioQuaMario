@@ -1,9 +1,9 @@
 package com.floralquafloral.mariodata;
 
 import com.floralquafloral.registries.action.ParsedAction;
+import com.floralquafloral.registries.character.ParsedCharacter;
+import com.floralquafloral.registries.powerup.ParsedPowerUp;
 import net.minecraft.entity.player.PlayerEntity;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public interface MarioData {
 	PlayerEntity getMario();
@@ -25,10 +25,10 @@ public interface MarioData {
 	void setEnabled(boolean enabled);
 	ParsedAction getAction();
 	boolean getSneakProhibited();
-	void setAction(ParsedAction action);
+	void setAction(ParsedAction action, long seed);
 	void setActionTransitionless(ParsedAction action);
-	String getPowerUp();
-	void setPowerUp(String powerUp);
-	String getCharacter();
-	void setCharacter(String character);
+	ParsedPowerUp getPowerUp();
+	void setPowerUp(ParsedPowerUp powerUp);
+	ParsedCharacter getCharacter();
+	void setCharacter(ParsedCharacter character);
 }

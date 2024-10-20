@@ -1,7 +1,6 @@
 package com.floralquafloral.registries.action.baseactions.grounded;
 
 import com.floralquafloral.MarioQuaMario;
-import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.mariodata.client.Input;
 import com.floralquafloral.mariodata.client.MarioClientData;
@@ -26,18 +25,24 @@ public class DuckSlide extends GroundedActionDefinition {
 
 	@Override
 	public void groundedSelfTick(MarioClientData data) {
-
+		applyDrag(data,
+				DUCK_SLIDE_DRAG.get(data),
+				DUCK_SLIDE_DRAG_MIN.get(data),
+				Input.getForwardInput(),
+				Input.getStrafeInput(),
+				DUCK_SLIDE_REDIRECTION.get(data)
+		);
 	}
 
 	@Override public void otherClientsTick(MarioPlayerData data) {}
 
 	@Override public void serverTick(MarioPlayerData data) {}
 
-	@Override public SneakLegalityOption getSneakLegality(MarioData data) {
-		return SneakLegalityOption.SLIP;
+	@Override public SneakLegalityRule getSneakLegalityRule() {
+		return SneakLegalityRule.SLIP;
 	}
-	@Override public IsSlidingOption isSliding(MarioData data) {
-		return IsSlidingOption.SLIDING;
+	@Override public SlidingStatus getConstantSlidingStatus() {
+		return SlidingStatus.SLIDING;
 	}
 
 	@Override

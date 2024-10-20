@@ -4,11 +4,15 @@ import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.client.MarioClientData;
 import com.floralquafloral.mariodata.MarioDataManager;
 import com.floralquafloral.registries.action.ActionDefinition;
+import com.floralquafloral.registries.character.ParsedCharacter;
+import com.floralquafloral.registries.powerup.ParsedPowerUp;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Vec3d;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -39,24 +43,33 @@ public abstract class PlayerEntityMixin {
 				return;
 			}
 
-			final float HEIGHT_FACTOR = (pose == EntityPose.CROUCHING) ? 0.6F : 1.0F;
-			EntityDimensions resultDimensions = cir.getReturnValue();
-
-			EntityDimensions modifiedDimensions = new EntityDimensions(
-					resultDimensions.width(),
-					resultDimensions.height() * HEIGHT_FACTOR,
-					resultDimensions.eyeHeight() * HEIGHT_FACTOR,
-					resultDimensions.attachments(), resultDimensions.fixed()
-			);
-
-			cir.setReturnValue(modifiedDimensions);
+			cir.setReturnValue(getModifiedDimensions(pose, cir, data));
 		}
+	}
+
+	@Unique
+	private static @NotNull EntityDimensions getModifiedDimensions(EntityPose pose, CallbackInfoReturnable<EntityDimensions> cir, MarioData data) {
+		ParsedPowerUp powerUp = data.getPowerUp();
+		ParsedCharacter character = data.getCharacter();
+
+		float widthFactor = powerUp.WIDTH_FACTOR;
+		float heightFactor = powerUp.HEIGHT_FACTOR;
+		if(pose == EntityPose.CROUCHING) heightFactor *= 0.6F;
+
+		EntityDimensions resultDimensions = cir.getReturnValue();
+
+		return new EntityDimensions(
+				resultDimensions.width() * widthFactor,
+				resultDimensions.height() * heightFactor,
+				resultDimensions.eyeHeight() * heightFactor,
+				resultDimensions.attachments(), resultDimensions.fixed()
+		);
 	}
 
 	@Inject(method = "clipAtLedge", at = @At("HEAD"), cancellable = true)
 	public void slideOffLedges(CallbackInfoReturnable<Boolean> cir) {
 		MarioData data = MarioDataManager.getMarioData(this);
-		if(data.useMarioPhysics() && data.getAction().getSneakLegality(data) == ActionDefinition.SneakLegalityOption.SLIP) {
+		if(data.useMarioPhysics() && data.getAction().SNEAK_LEGALITY.slipOffLedges()) {
 			cir.setReturnValue(false);
 		}
 	}

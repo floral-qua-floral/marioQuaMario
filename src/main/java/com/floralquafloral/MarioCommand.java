@@ -38,6 +38,24 @@ public class MarioCommand {
 						)
 					)
 				)
+				.then(literal("setPowerUp")
+					.requires(source -> source.hasPermissionLevel(2))
+					.then(argument("power", RegistryEntryReferenceArgumentType.registryEntry(registryAccess, RegistryManager.POWER_UPS_KEY))
+						.executes(context -> setPowerUp(context, false))
+						.then(argument("target", EntityArgumentType.player())
+							.executes(context -> setPowerUp(context, true))
+						)
+					)
+				)
+				.then(literal("setCharacter")
+					.requires(source -> source.hasPermissionLevel(2))
+					.then(argument("character", RegistryEntryReferenceArgumentType.registryEntry(registryAccess, RegistryManager.CHARACTERS_KEY))
+						.executes(context -> setCharacter(context, false))
+						.then(argument("target", EntityArgumentType.player())
+							.executes(context -> setCharacter(context, true))
+						)
+					)
+				)
 			)
 		);
 	}
@@ -62,6 +80,20 @@ public class MarioCommand {
 		return sendFeedback(context, MarioDataPackets.forceSetMarioAction(
 				getPlayerFromCmd(context, playerArgumentGiven),
 				RegistryEntryReferenceArgumentType.getRegistryEntry(context, "action", RegistryManager.ACTIONS_KEY).value()
+		));
+	}
+
+	private static int setPowerUp(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
+		return sendFeedback(context, MarioDataPackets.setMarioPowerUp(
+				getPlayerFromCmd(context, playerArgumentGiven),
+				RegistryEntryReferenceArgumentType.getRegistryEntry(context, "power", RegistryManager.POWER_UPS_KEY).value()
+		));
+	}
+
+	private static int setCharacter(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
+		return sendFeedback(context, MarioDataPackets.setMarioCharacter(
+				getPlayerFromCmd(context, playerArgumentGiven),
+				RegistryEntryReferenceArgumentType.getRegistryEntry(context, "character", RegistryManager.CHARACTERS_KEY).value()
 		));
 	}
 }

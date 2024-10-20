@@ -2,7 +2,6 @@ package com.floralquafloral.mixin;
 
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioDataManager;
-import com.floralquafloral.registries.action.ActionDefinition;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
@@ -13,8 +12,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import static com.floralquafloral.registries.action.ActionDefinition.IsSlidingOption.*;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin {
@@ -56,7 +53,7 @@ public abstract class EntityMixin {
 	private void preventStepSounds(BlockPos pos, BlockState state, CallbackInfo ci) {
 		if(((Entity) (Object) this) instanceof PlayerEntity player) {
 			MarioData data = MarioDataManager.getMarioData(player);
-			if(!data.getAction().isSliding(data).doFootsteps())
+			if(!data.getAction().SLIDING_STATUS.doFootsteps())
 				ci.cancel();
 		}
 	}

@@ -32,7 +32,7 @@ public class MarioClientData extends MarioPlayerData {
 	}
 
 	public int actionTimer = 0;
-	@Override public void setAction(ParsedAction action) {
+	@Override public void setAction(ParsedAction action, long seed) {
 		MarioQuaMario.LOGGER.info("MarioClientData setAction to " + action.ID);
 		if(action != getAction()) actionTimer = 0;
 		if(this.getAction().ANIMATION != null)

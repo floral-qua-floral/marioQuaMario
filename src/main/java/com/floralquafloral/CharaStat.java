@@ -26,7 +26,7 @@ public enum CharaStat {
 
 	DUCK_SLIDE_THRESHOLD(0.25),
 	DUCK_SLIDE_BOOST(-0.15),
-	DUCK_SLIDE_DRAG(0.03, ALL_FRICTIONS),
+	DUCK_SLIDE_DRAG(0.04333, ALL_FRICTIONS),
 	DUCK_SLIDE_DRAG_MIN(0.01, ALL_FRICTIONS),
 	DUCK_SLIDE_REDIRECTION(4),
 
@@ -164,7 +164,8 @@ public enum CharaStat {
 	public double getMultiplier(MarioData data) {
 		World marioWorld = data.getMario().getWorld();
 		boolean useCharacterStats = marioWorld.isClient ? MarioQuaMarioClient.useCharacterStats : marioWorld.getGameRules().getBoolean(MarioQuaMario.USE_CHARACTER_STATS);
-		return (useCharacterStats ? 1.0 : 1.0) * 1.0;
+		return (useCharacterStats ? data.getCharacter().STAT_FACTORS.getOrDefault(this, 1.0) : 1.0) *
+				data.getPowerUp().STAT_FACTORS.getOrDefault(this, 1.0);
 	}
 
 //	public double getValue(PlayerEntity player) {

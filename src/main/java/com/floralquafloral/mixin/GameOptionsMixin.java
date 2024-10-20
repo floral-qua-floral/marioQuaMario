@@ -15,7 +15,7 @@ public abstract class GameOptionsMixin {
 	@Inject(method = "getBobView", at = @At("HEAD"), cancellable = true)
 	public void preventViewBobbing(CallbackInfoReturnable<SimpleOption<Boolean>> cir) {
 		MarioClientData data = MarioClientData.getInstance();
-		if(data != null && !data.getAction().isSliding(data).doViewBobbing())
+		if(data != null && !data.getAction().SLIDING_STATUS.doViewBobbing())
 			cir.setReturnValue(MarioQuaMarioClient.ALWAYS_FALSE);
 	}
 }

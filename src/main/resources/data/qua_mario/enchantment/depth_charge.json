@@ -1,0 +1,21 @@
+{
+  "description": {
+    "translate": "enchantment.qua_mario.depth_charge"
+  },
+  "supported_items": "#minecraft:enchantable/leg_armor",
+  "primary_items": [],
+  "weight": 5,
+  "max_level": 4,
+  "min_cost": {
+    "base": 8,
+    "per_level_above_first": 7
+  },
+  "max_cost": {
+    "base": 23,
+    "per_level_above_first": 7
+  },
+  "anvil_cost": 2,
+  "slots": [
+    "feet"
+  ]
+}

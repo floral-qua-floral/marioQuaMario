@@ -51,6 +51,10 @@ public class MarioQuaMario implements ModInitializer {
 			GameRuleRegistry.register("qua_mario:marioOutgoingDamageMultiplier", GameRules.Category.PLAYER,
 					GameRuleFactory.createDoubleRule(1.0));
 
+	public static final GameRules.Key<GameRules.BooleanRule> REVERT_TO_SMALL =
+			GameRuleRegistry.register("qua_mario:alwaysRevertToSmall", GameRules.Category.PLAYER,
+					GameRuleFactory.createBooleanRule(false));
+
 	@Override
 	public void onInitialize() {
 		LOGGER.info("MarioQuaMario.java loaded on environment type " + FabricLoader.getInstance().getEnvironmentType());

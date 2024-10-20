@@ -1,7 +1,6 @@
 package com.floralquafloral.registries.action.baseactions;
 
 import com.floralquafloral.MarioQuaMario;
-import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.client.Input;
 import com.floralquafloral.mariodata.client.MarioClientData;
 import com.floralquafloral.mariodata.MarioPlayerData;
@@ -37,11 +36,11 @@ public class ActionDebug implements ActionDefinition {
 
 	}
 
-	@Override public SneakLegalityOption getSneakLegality(MarioData data) {
-		return SneakLegalityOption.PROHIBIT;
+	@Override public SneakLegalityRule getSneakLegalityRule() {
+		return SneakLegalityRule.PROHIBIT;
 	}
-	@Override public IsSlidingOption isSliding(MarioData data) {
-		return IsSlidingOption.SLIDING_SILENT;
+	@Override public SlidingStatus getConstantSlidingStatus() {
+		return SlidingStatus.SLIDING_SILENT;
 	}
 
 	@Override
@@ -52,10 +51,10 @@ public class ActionDebug implements ActionDefinition {
 						(data) -> { //evaluator
 							return data.getMario().isSprinting();
 						},
-						(data, isSelf) -> { //executor for self
+						(data, isSelf, seed) -> { //executor for self
 							MarioQuaMario.LOGGER.info("Debug action transition's evaluator for clients (isSelf: {})", isSelf);
 						},
-						(data) -> { //executor for the server
+						(data, seed) -> { //executor for the server
 							MarioQuaMario.LOGGER.info("Debug action transitions evaluator for server");
 							MarioQuaMario.LOGGER.info("Playing sound effect @ {}", data.getMario().getBlockPos());
 							data.getMario().getWorld().playSound(

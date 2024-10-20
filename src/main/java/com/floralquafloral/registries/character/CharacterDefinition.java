@@ -1,7 +1,7 @@
 package com.floralquafloral.registries.character;
 
-import com.floralquafloral.registries.StatChangingStateDefinition;
+import com.floralquafloral.registries.MarioMajorStateDefinition;
 
-public interface CharacterDefinition extends StatChangingStateDefinition {
-
+public interface CharacterDefinition extends MarioMajorStateDefinition {
+	
 }

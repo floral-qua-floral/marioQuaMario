@@ -27,12 +27,12 @@ public abstract class GroundedActionDefinition implements ActionDefinition {
 		public static final ActionTransitionDefinition DUCK_WADDLE = new ActionTransitionDefinition(
 				"qua_mario:duck_waddle",
 				(data) -> Input.DUCK.isHeld(),
-				(data, isSelf) -> {
+				(data, isSelf, seed) -> {
 					// Play duck voiceline
-					LOGGER.info("Ducking voiceline");
+					LOGGER.info("Ducking voiceline with seed {}", seed);
 				},
-				(data) -> {
-
+				(data, seed) -> {
+					LOGGER.info("Entering duck_waddle on server with seed {}", seed);
 				}
 		);
 	}
@@ -56,17 +56,40 @@ public abstract class GroundedActionDefinition implements ActionDefinition {
 				forwardAngleContribution, strafeAngleContribution, redirectDelta * slipFactor
 		);
 	}
-//	public void groundAccel(
-//			MarioClientData data,
-//			CharaStat forwardAccel, CharaStat forwardTarget, CharaStat strafeAccel, CharaStat strafeTarget,
-//			double forwardAngleContribution, double strafeAngleContribution, CharaStat redirectDelta
-//	) {
-//		groundAccel(data,
-//				forwardAccel.get(data), forwardTarget.get(data),
-//				strafeAccel.get(data), strafeTarget.get(data),
-//				forwardAngleContribution, strafeAngleContribution, redirectDelta.get(data)
-//		);
-//	}
+
+	public void applyDrag(
+			MarioClientData data,
+			double drag, double dragMin,
+			double forwardAngleContribution, double strafeAngleContribution,
+			double redirection
+	) {
+		boolean dragInverted = drag < 0;
+		double slipFactor = getSlipFactor(data);
+		dragMin *= slipFactor;
+		if(!dragInverted) drag *= slipFactor;
+
+
+		Vector2d deltaVelocities = new Vector2d(
+				-drag * data.getForwardVel(),
+				-drag * data.getStrafeVel()
+		);
+		double dragVelocitySquared = deltaVelocities.lengthSquared();
+		if(dragVelocitySquared != 0 && dragVelocitySquared < dragMin * dragMin)
+			deltaVelocities.normalize(dragMin);
+
+		if(dragInverted) {
+			data.setForwardStrafeVel(data.getForwardVel() + deltaVelocities.x, data.getStrafeVel() + deltaVelocities.y);
+		}
+		else {
+			data.approachAngleAndAccel(
+					deltaVelocities.x, 0,
+					deltaVelocities.y, 0,
+					forwardAngleContribution,
+					strafeAngleContribution,
+					redirection
+			);
+		}
+	}
 
 	public static double getSlipFactor(MarioData data) {
 		return Math.pow(0.6 / getFloorSlipperiness(data), 3);

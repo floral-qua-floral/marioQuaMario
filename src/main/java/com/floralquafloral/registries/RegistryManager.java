@@ -4,12 +4,18 @@ import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.registries.action.ActionDefinition;
 import com.floralquafloral.registries.action.GroundedActionDefinition;
 import com.floralquafloral.registries.action.ParsedAction;
+import com.floralquafloral.registries.character.CharacterDefinition;
+import com.floralquafloral.registries.character.ParsedCharacter;
+import com.floralquafloral.registries.powerup.ParsedPowerUp;
+import com.floralquafloral.registries.powerup.PowerUpDefinition;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
@@ -18,15 +24,51 @@ import java.util.List;
 import java.util.Map;
 
 public class RegistryManager {
+	public static void register() {
+		registerActions();
+		registerPowerUps();
+		registerCharacters();
+
+		registerSounds();
+	}
+
+	public static final SoundEvent JUMP_SFX = makeAndRegisterSound("sfx.jump");
+
+	public static final SoundEvent STOMP_SFX = makeAndRegisterSound("sfx.stomp");
+
+	public static final SoundEvent POWER_UP_SFX = makeAndRegisterSound("sfx.power_up_wii");
+
+	public static void registerSounds() {
+
+	}
+
+	private static SoundEvent makeAndRegisterSound(String id) {
+		Identifier identifier = Identifier.of(MarioQuaMario.MOD_ID, id);
+		SoundEvent event = SoundEvent.of(identifier);
+
+		Registry.register(Registries.SOUND_EVENT, identifier, event);
+
+		return event;
+	}
+
+	// STATE REGISTRIES:
 	public static final RegistryKey<Registry<ParsedAction>> ACTIONS_KEY = RegistryKey.ofRegistry(
 			Identifier.of(MarioQuaMario.MOD_ID, "actions"));
 	public static final Registry<ParsedAction> ACTIONS = FabricRegistryBuilder.createSimple(ACTIONS_KEY)
 			.attribute(RegistryAttribute.SYNCED)
 			.buildAndRegister();
 
-	public static void register() {
-		registerActions();
-	}
+	public static final RegistryKey<Registry<ParsedPowerUp>> POWER_UPS_KEY = RegistryKey.ofRegistry(
+			Identifier.of(MarioQuaMario.MOD_ID, "power_ups"));
+	public static final Registry<ParsedPowerUp> POWER_UPS = FabricRegistryBuilder.createSimple(POWER_UPS_KEY)
+			.attribute(RegistryAttribute.SYNCED)
+			.buildAndRegister();
+
+	public static final RegistryKey<Registry<ParsedCharacter>> CHARACTERS_KEY = RegistryKey.ofRegistry(
+			Identifier.of(MarioQuaMario.MOD_ID, "characters"));
+	public static final Registry<ParsedCharacter> CHARACTERS = FabricRegistryBuilder.createSimple(CHARACTERS_KEY)
+			.attribute(RegistryAttribute.SYNCED)
+			.buildAndRegister();
 
 	private static <T extends MarioStateDefinition> List<T> getEntrypoints(String key, Class<T> clazz) {
 		return FabricLoader.getInstance().getEntrypointContainers(key, clazz).stream().map(EntrypointContainer::getEntrypoint).toList();
@@ -73,10 +115,20 @@ public class RegistryManager {
 	}
 
 	private static void registerPowerUps() {
+		for(PowerUpDefinition definition : getEntrypoints("mario-power-ups", PowerUpDefinition.class)) {
+			MarioQuaMario.LOGGER.info("Registering power-up {}...", definition.getID());
 
+			ParsedPowerUp powerUp = new ParsedPowerUp(definition);
+			Registry.register(POWER_UPS, powerUp.ID, powerUp);
+		}
 	}
 
 	private static void registerCharacters() {
+		for(CharacterDefinition definition : getEntrypoints("mario-characters", CharacterDefinition.class)) {
+			MarioQuaMario.LOGGER.info("Registering character {}...", definition.getID());
 
+			ParsedCharacter character = new ParsedCharacter(definition);
+			Registry.register(CHARACTERS, character.ID, character);
+		}
 	}
 }

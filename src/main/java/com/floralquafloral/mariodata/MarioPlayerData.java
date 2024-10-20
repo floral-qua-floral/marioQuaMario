@@ -2,8 +2,9 @@ package com.floralquafloral.mariodata;
 
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.registries.RegistryManager;
-import com.floralquafloral.registries.action.ActionDefinition;
 import com.floralquafloral.registries.action.ParsedAction;
+import com.floralquafloral.registries.character.ParsedCharacter;
+import com.floralquafloral.registries.powerup.ParsedPowerUp;
 import com.floralquafloral.util.CPMIntegration;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
@@ -12,8 +13,8 @@ import net.minecraft.util.math.Vec3d;
 public class MarioPlayerData implements MarioData {
 	private boolean enabled;
 	private ParsedAction action;
-	private String powerUp;
-	private String character;
+	private ParsedPowerUp powerUp;
+	private ParsedCharacter character;
 
 	private final PlayerEntity MARIO;
 	@Override public PlayerEntity getMario() {
@@ -24,8 +25,8 @@ public class MarioPlayerData implements MarioData {
 		this.MARIO = mario;
 		this.setEnabled(true);
 		this.action = RegistryManager.ACTIONS.get(Identifier.of("qua_mario:basic"));
-		this.powerUp = "nil";
-		this.character = "nil";
+		this.powerUp = RegistryManager.POWER_UPS.get(Identifier.of("qua_mario:super"));
+		this.character = RegistryManager.CHARACTERS.get(Identifier.of("qua_mario:mario"));
 
 		MarioQuaMario.LOGGER.info("Initialized a MarioData: {}", this);
 	}
@@ -103,7 +104,16 @@ public class MarioPlayerData implements MarioData {
 	}
 
 	public void tick() {
-
+		if(this.getMario().getWorld().isClient) {
+			this.action.otherClientsTick(this);
+			this.powerUp.otherClientsTick(this);
+//			this.character.otherClientsTick(this);
+		}
+		else {
+			this.action.serverTick(this);
+			this.powerUp.serverTick(this);
+//			this.character.serverTick(this);
+		}
 	}
 
 	@Override public boolean isEnabled() {
@@ -116,10 +126,10 @@ public class MarioPlayerData implements MarioData {
 		return action;
 	}
 	@Override public boolean getSneakProhibited() {
-		return useMarioPhysics() && getAction().getSneakLegality(this) == ActionDefinition.SneakLegalityOption.PROHIBIT;
+		return useMarioPhysics() && getAction().SNEAK_LEGALITY.prohibitSneak();
 	}
-	@Override public void setAction(ParsedAction action) {
-		getAction().transitionTo(this, action);
+	@Override public void setAction(ParsedAction action, long seed) {
+		getAction().transitionTo(this, action, seed);
 		this.setActionTransitionless(action);
 	}
 	@Override public void setActionTransitionless(ParsedAction action) {
@@ -131,16 +141,20 @@ public class MarioPlayerData implements MarioData {
 		}
 		this.action = action;
 	}
-	@Override public String getPowerUp() {
+	@Override public ParsedPowerUp getPowerUp() {
 		return powerUp;
 	}
-	@Override public void setPowerUp(String powerUp) {
+	@Override public void setPowerUp(ParsedPowerUp powerUp) {
+		MarioQuaMario.LOGGER.info("Set Power-up to {}", powerUp.ID);
+		this.powerUp.losePower(this);
+		powerUp.acquirePower(this);
+		this.MARIO.setHealth(this.MARIO.getMaxHealth());
 		this.powerUp = powerUp;
 	}
-	@Override public String getCharacter() {
+	@Override public ParsedCharacter getCharacter() {
 		return character;
 	}
-	@Override public void setCharacter(String character) {
+	@Override public void setCharacter(ParsedCharacter character) {
 		this.character = character;
 	}
 }

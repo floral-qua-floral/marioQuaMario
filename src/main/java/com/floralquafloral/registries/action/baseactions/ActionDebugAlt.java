@@ -1,7 +1,6 @@
 package com.floralquafloral.registries.action.baseactions;
 
 import com.floralquafloral.MarioQuaMario;
-import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.mariodata.client.Input;
 import com.floralquafloral.mariodata.client.MarioClientData;
@@ -40,11 +39,11 @@ public class ActionDebugAlt implements ActionDefinition {
 
 	}
 
-	@Override public SneakLegalityOption getSneakLegality(MarioData data) {
-		return SneakLegalityOption.PROHIBIT;
+	@Override public SneakLegalityRule getSneakLegalityRule() {
+		return SneakLegalityRule.PROHIBIT;
 	}
-	@Override public IsSlidingOption isSliding(MarioData data) {
-		return IsSlidingOption.SLIDING_SILENT;
+	@Override public SlidingStatus getConstantSlidingStatus() {
+		return SlidingStatus.SLIDING_SILENT;
 	}
 
 	@Override
@@ -55,7 +54,7 @@ public class ActionDebugAlt implements ActionDefinition {
 						(data) -> { //evaluator
 							return !data.getMario().isSprinting();
 						},
-						(data, isSelf) -> { //executor for clients
+						(data, isSelf, seed) -> { //executor for clients
 							MarioQuaMario.LOGGER.info("DebugAlt action transition's evaluator for clients (isSelf: {})", isSelf);
 							if(isSelf) data.getMario().playSoundToPlayer(
 									SoundEvents.BLOCK_BEACON_POWER_SELECT,
@@ -64,7 +63,7 @@ public class ActionDebugAlt implements ActionDefinition {
 									1.0F
 							);
 						},
-						(data) -> { //executor for the server
+						(data, seed) -> { //executor for the server
 							MarioQuaMario.LOGGER.info("DebugAlt action transition's evaluator for server");
 						}
 				)

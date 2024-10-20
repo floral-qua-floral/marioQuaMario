@@ -31,6 +31,14 @@
 
 		],
 
+		"mario-power-ups": [
+			"com.floralquafloral.registries.powerup.basepowerups.SuperForm",
+			"com.floralquafloral.registries.powerup.basepowerups.SmallForm"
+		],
+		"mario-characters": [
+			"com.floralquafloral.registries.character.basecharacters.Mario"
+		],
+
 		"main": [
 			"com.floralquafloral.MarioQuaMario"
 		],
@@ -60,5 +68,7 @@
 	},
 	"suggests": {
 		"another-mod": "*"
-	}
+	},
+
+	"accessWidener" : "qua_mario.accesswidener"
 }
