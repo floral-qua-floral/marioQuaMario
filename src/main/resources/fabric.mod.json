@@ -15,14 +15,18 @@
 	"icon": "assets/qua_mario/icon.png",
 	"environment": "*",
 	"entrypoints": {
+		"mario-stomp-types": [
+			"com.floralquafloral.registries.stomp.basestomptypes.JumpStomp"
+		],
+
 		"mario-actions-uncategorized": [
-			"com.floralquafloral.registries.action.baseactions.ActionDebug",
-			"com.floralquafloral.registries.action.baseactions.ActionDebugAlt"
+			"com.floralquafloral.registries.states.action.baseactions.ActionDebug",
+			"com.floralquafloral.registries.states.action.baseactions.ActionDebugAlt"
 		],
 		"mario-actions-grounded": [
-			"com.floralquafloral.registries.action.baseactions.grounded.ActionBasic",
-			"com.floralquafloral.registries.action.baseactions.grounded.DuckWaddle",
-			"com.floralquafloral.registries.action.baseactions.grounded.DuckSlide"
+			"com.floralquafloral.registries.states.action.baseactions.grounded.ActionBasic",
+			"com.floralquafloral.registries.states.action.baseactions.grounded.DuckWaddle",
+			"com.floralquafloral.registries.states.action.baseactions.grounded.DuckSlide"
 		],
 		"mario-actions-airborne" : [
 
@@ -32,11 +36,11 @@
 		],
 
 		"mario-power-ups": [
-			"com.floralquafloral.registries.powerup.basepowerups.SuperForm",
-			"com.floralquafloral.registries.powerup.basepowerups.SmallForm"
+			"com.floralquafloral.registries.states.powerup.basepowerups.SuperForm",
+			"com.floralquafloral.registries.states.powerup.basepowerups.SmallForm"
 		],
 		"mario-characters": [
-			"com.floralquafloral.registries.character.basecharacters.Mario"
+			"com.floralquafloral.registries.states.character.basecharacters.Mario"
 		],
 
 		"main": [

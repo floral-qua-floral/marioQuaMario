@@ -1,13 +1,16 @@
 package com.floralquafloral.registries;
 
 import com.floralquafloral.MarioQuaMario;
-import com.floralquafloral.registries.action.ActionDefinition;
-import com.floralquafloral.registries.action.GroundedActionDefinition;
-import com.floralquafloral.registries.action.ParsedAction;
-import com.floralquafloral.registries.character.CharacterDefinition;
-import com.floralquafloral.registries.character.ParsedCharacter;
-import com.floralquafloral.registries.powerup.ParsedPowerUp;
-import com.floralquafloral.registries.powerup.PowerUpDefinition;
+import com.floralquafloral.registries.states.MarioStateDefinition;
+import com.floralquafloral.registries.states.action.ActionDefinition;
+import com.floralquafloral.registries.states.action.GroundedActionDefinition;
+import com.floralquafloral.registries.states.action.ParsedAction;
+import com.floralquafloral.registries.states.character.CharacterDefinition;
+import com.floralquafloral.registries.states.character.ParsedCharacter;
+import com.floralquafloral.registries.states.powerup.ParsedPowerUp;
+import com.floralquafloral.registries.states.powerup.PowerUpDefinition;
+import com.floralquafloral.registries.stomp.ParsedStomp;
+import com.floralquafloral.registries.stomp.StompDefinition;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.fabricmc.loader.api.FabricLoader;
@@ -25,11 +28,10 @@ import java.util.Map;
 
 public class RegistryManager {
 	public static void register() {
+		registerStomps();
 		registerActions();
 		registerPowerUps();
 		registerCharacters();
-
-		registerSounds();
 	}
 
 	public static final SoundEvent JUMP_SFX = makeAndRegisterSound("sfx.jump");
@@ -37,10 +39,6 @@ public class RegistryManager {
 	public static final SoundEvent STOMP_SFX = makeAndRegisterSound("sfx.stomp");
 
 	public static final SoundEvent POWER_UP_SFX = makeAndRegisterSound("sfx.power_up_wii");
-
-	public static void registerSounds() {
-
-	}
 
 	private static SoundEvent makeAndRegisterSound(String id) {
 		Identifier identifier = Identifier.of(MarioQuaMario.MOD_ID, id);
@@ -51,7 +49,12 @@ public class RegistryManager {
 		return event;
 	}
 
-	// STATE REGISTRIES:
+	public static final RegistryKey<Registry<ParsedStomp>> STOMP_TYPES_KEY = RegistryKey.ofRegistry(
+			Identifier.of(MarioQuaMario.MOD_ID, "stomp_types"));
+	public static final Registry<ParsedStomp> STOMP_TYPES = FabricRegistryBuilder.createSimple(STOMP_TYPES_KEY)
+			.attribute(RegistryAttribute.SYNCED)
+			.buildAndRegister();
+
 	public static final RegistryKey<Registry<ParsedAction>> ACTIONS_KEY = RegistryKey.ofRegistry(
 			Identifier.of(MarioQuaMario.MOD_ID, "actions"));
 	public static final Registry<ParsedAction> ACTIONS = FabricRegistryBuilder.createSimple(ACTIONS_KEY)
@@ -70,8 +73,17 @@ public class RegistryManager {
 			.attribute(RegistryAttribute.SYNCED)
 			.buildAndRegister();
 
-	private static <T extends MarioStateDefinition> List<T> getEntrypoints(String key, Class<T> clazz) {
+	private static <T> List<T> getEntrypoints(String key, Class<T> clazz) {
 		return FabricLoader.getInstance().getEntrypointContainers(key, clazz).stream().map(EntrypointContainer::getEntrypoint).toList();
+	}
+
+	private static void registerStomps() {
+		for(StompDefinition definition : getEntrypoints("mario-stomp-types", StompDefinition.class)) {
+			MarioQuaMario.LOGGER.info("Registering stomp type {}...", definition.getID());
+
+			ParsedStomp stompType = new ParsedStomp(definition);
+			Registry.register(STOMP_TYPES, stompType.ID, stompType);
+		}
 	}
 
 	private static void parseAction(ActionDefinition definition, Map<Identifier, ArrayList<ActionDefinition.ActionTransitionDefinition>> transitionInjections) {

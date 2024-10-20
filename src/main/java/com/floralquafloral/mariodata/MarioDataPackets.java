@@ -3,13 +3,14 @@ package com.floralquafloral.mariodata;
 import com.floralquafloral.MarioPackets;
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.registries.RegistryManager;
-import com.floralquafloral.registries.action.ParsedAction;
-import com.floralquafloral.registries.character.ParsedCharacter;
-import com.floralquafloral.registries.powerup.ParsedPowerUp;
+import com.floralquafloral.registries.states.action.ParsedAction;
+import com.floralquafloral.registries.states.character.ParsedCharacter;
+import com.floralquafloral.registries.states.powerup.ParsedPowerUp;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
@@ -32,12 +33,35 @@ public class MarioDataPackets {
 		// C2S
 		SetActionC2SPayload.register();
 		SetActionC2SPayload.registerReceiver();
+
+		// Listeners
+		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+			sendAllData(handler.player, handler.player);
+			ServerPlayNetworking.send(handler.player,
+					new MarioPackets.SyncUseCharacterStatsS2CPayload(
+							handler.player.getWorld().getGameRules().getBoolean(MarioQuaMario.USE_CHARACTER_STATS)));
+		});
+
+		EntityTrackingEvents.START_TRACKING.register((trackingTarget, tracker) -> {
+			if(trackingTarget instanceof PlayerEntity trackingPlayer) {
+				sendAllData(tracker, trackingPlayer);
+			}
+		});
 	}
 	public static void registerClient() {
 		SetEnabledS2CPayload.registerReceiver();
 		SetActionS2CPayload.registerReceiver();
 		SetPowerUpS2CPayload.registerReceiver();
 		SetCharacterS2CPayload.registerReceiver();
+	}
+
+	private static void sendAllData(ServerPlayerEntity toWho, PlayerEntity aboutWho) {
+		MarioData data = getMarioData(aboutWho);
+		// am I supposed to send one packet with all this data or is this fine????
+		ServerPlayNetworking.send(toWho, new SetEnabledS2CPayload(aboutWho, data.isEnabled()));
+		ServerPlayNetworking.send(toWho, new SetActionS2CPayload(aboutWho, data.getAction(), true, 0));
+		ServerPlayNetworking.send(toWho, new SetPowerUpS2CPayload(aboutWho, data.getPowerUp()));
+		ServerPlayNetworking.send(toWho, new SetCharacterS2CPayload(aboutWho, data.getCharacter()));
 	}
 
 	public static String setMarioEnabled(ServerPlayerEntity player, boolean enabled) {

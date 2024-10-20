@@ -1,6 +1,7 @@
 package com.floralquafloral;
 
 import com.floralquafloral.mariodata.MarioDataPackets;
+import com.floralquafloral.registries.stomp.StompHandler;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
@@ -20,6 +21,7 @@ public class MarioPackets {
 	public static void registerCommon() {
 		SyncUseCharacterStatsS2CPayload.register();
 		MarioDataPackets.registerCommon();
+		StompHandler.registerPackets();
 
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 			MarioQuaMario.LOGGER.info("");
@@ -28,6 +30,7 @@ public class MarioPackets {
 	public static void registerClient() {
 		SyncUseCharacterStatsS2CPayload.registerReceiver();
 		MarioDataPackets.registerClient();
+		StompHandler.registerPacketsClient();
 	}
 
 	public static PlayerEntity getPlayerFromInt(ClientPlayNetworking.Context context, int playerID) {

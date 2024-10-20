@@ -1,5 +1,6 @@
 package com.floralquafloral;
 
+import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioDataManager;
 import com.floralquafloral.registries.RegistryManager;
 import com.floralquafloral.util.ModConfig;
@@ -7,6 +8,7 @@ import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
 import net.fabricmc.fabric.api.gamerule.v1.rule.DoubleRule;
@@ -59,6 +61,7 @@ public class MarioQuaMario implements ModInitializer {
 	public void onInitialize() {
 		LOGGER.info("MarioQuaMario.java loaded on environment type " + FabricLoader.getInstance().getEnvironmentType());
 		MarioDataManager.wipePlayerData();
+		MarioDataManager.registerEventListeners();
 
 		RegistryManager.register();
 

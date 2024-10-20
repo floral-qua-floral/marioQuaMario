@@ -2,7 +2,6 @@ package com.floralquafloral.mixin;
 
 import com.floralquafloral.MarioQuaMarioClient;
 import com.floralquafloral.mariodata.client.MarioClientData;
-import com.floralquafloral.registries.action.ActionDefinition;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.SimpleOption;
 import org.spongepowered.asm.mixin.Mixin;

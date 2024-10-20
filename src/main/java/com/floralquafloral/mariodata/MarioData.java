@@ -1,8 +1,8 @@
 package com.floralquafloral.mariodata;
 
-import com.floralquafloral.registries.action.ParsedAction;
-import com.floralquafloral.registries.character.ParsedCharacter;
-import com.floralquafloral.registries.powerup.ParsedPowerUp;
+import com.floralquafloral.registries.states.action.ParsedAction;
+import com.floralquafloral.registries.states.character.ParsedCharacter;
+import com.floralquafloral.registries.states.powerup.ParsedPowerUp;
 import net.minecraft.entity.player.PlayerEntity;
 
 public interface MarioData {

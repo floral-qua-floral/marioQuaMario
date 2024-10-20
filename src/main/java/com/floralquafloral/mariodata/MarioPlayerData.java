@@ -2,9 +2,9 @@ package com.floralquafloral.mariodata;
 
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.registries.RegistryManager;
-import com.floralquafloral.registries.action.ParsedAction;
-import com.floralquafloral.registries.character.ParsedCharacter;
-import com.floralquafloral.registries.powerup.ParsedPowerUp;
+import com.floralquafloral.registries.states.action.ParsedAction;
+import com.floralquafloral.registries.states.character.ParsedCharacter;
+import com.floralquafloral.registries.states.powerup.ParsedPowerUp;
 import com.floralquafloral.util.CPMIntegration;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
@@ -86,7 +86,8 @@ public class MarioPlayerData implements MarioData {
 		return this.VELOCITIES.ensure().strafe;
 	}
 	@Override public double getYVel() {
-		return this.VELOCITIES.ensure().vertical;
+		if(this.VELOCITIES.isGenerated) return this.VELOCITIES.vertical;
+		else return this.MARIO.getVelocity().y;
 	}
 	@Override public void setForwardVel(double forward) {
 		VELOCITIES.ensureDirty().forward = forward;
@@ -95,7 +96,11 @@ public class MarioPlayerData implements MarioData {
 		this.VELOCITIES.ensureDirty().strafe = strafe;
 	}
 	@Override public void setYVel(double vertical) {
-		this.VELOCITIES.ensureDirty().vertical = vertical;
+		if(this.VELOCITIES.isGenerated) this.VELOCITIES.ensureDirty().vertical = vertical;
+		else {
+			Vec3d oldVel = this.MARIO.getVelocity();
+			this.MARIO.setVelocity(oldVel.x, vertical, oldVel.y);
+		}
 	}
 	@Override public void applyModifiedVelocity() {
 		this.VELOCITIES.apply();
@@ -107,12 +112,16 @@ public class MarioPlayerData implements MarioData {
 		if(this.getMario().getWorld().isClient) {
 			this.action.otherClientsTick(this);
 			this.powerUp.otherClientsTick(this);
-//			this.character.otherClientsTick(this);
+			this.character.otherClientsTick(this);
 		}
 		else {
 			this.action.serverTick(this);
 			this.powerUp.serverTick(this);
-//			this.character.serverTick(this);
+			this.character.serverTick(this);
+
+			if(this.action.STOMP != null) this.action.STOMP.attempt(this);
+
+			this.applyModifiedVelocity();
 		}
 	}
 
@@ -150,11 +159,13 @@ public class MarioPlayerData implements MarioData {
 		powerUp.acquirePower(this);
 		this.MARIO.setHealth(this.MARIO.getMaxHealth());
 		this.powerUp = powerUp;
+		this.MARIO.calculateDimensions();
 	}
 	@Override public ParsedCharacter getCharacter() {
 		return character;
 	}
 	@Override public void setCharacter(ParsedCharacter character) {
 		this.character = character;
+		this.MARIO.calculateDimensions();
 	}
 }

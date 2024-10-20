@@ -1,7 +1,7 @@
 package com.floralquafloral.mixin;
 
 import com.floralquafloral.mariodata.client.MarioClientData;
-import com.floralquafloral.registries.powerup.PowerUpDefinition;
+import com.floralquafloral.registries.states.powerup.PowerUpDefinition;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.gui.hud.InGameHud;

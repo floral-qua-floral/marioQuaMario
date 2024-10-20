@@ -2,16 +2,13 @@ package com.floralquafloral.mariodata.client;
 
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioPlayerData;
-import com.floralquafloral.registries.action.ParsedAction;
-import com.floralquafloral.registries.action.TransitionPhase;
+import com.floralquafloral.registries.states.action.ParsedAction;
+import com.floralquafloral.registries.states.action.TransitionPhase;
 import com.floralquafloral.util.CPMIntegration;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.MovementType;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2d;
 
 public class MarioClientData extends MarioPlayerData {
@@ -50,16 +47,11 @@ public class MarioClientData extends MarioPlayerData {
 	}
 
 	public boolean travel(Vec3d movementInput) {
-		tick();
 		Input.updateDirections(movementInput.z, movementInput.x);
 
 		getAction().attemptTransitions(this, TransitionPhase.PRE_TICK);
 		getAction().selfTick(this);
 		getAction().attemptTransitions(this, TransitionPhase.POST_TICK);
-
-//		MarioVelocityContainer cachedVelocities = getVelocities();
-//		this.clearCachedVelocities();
-//		setVelocities(cachedVelocities);
 
 		applyModifiedVelocity();
 		MARIO_CLIENT.move(MovementType.PLAYER, MARIO_CLIENT.getVelocity());

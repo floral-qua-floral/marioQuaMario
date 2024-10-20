@@ -1,7 +1,7 @@
 package com.floralquafloral;
 
 import com.floralquafloral.registries.RegistryManager;
-import com.floralquafloral.registries.character.ParsedCharacter;
+import com.floralquafloral.registries.states.character.ParsedCharacter;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.Registries;
