@@ -19,6 +19,8 @@ import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.GameRules;
 import org.slf4j.Logger;
@@ -82,9 +84,19 @@ public class MarioQuaMario implements ModInitializer {
 					if(revertTargetID != null) {
 						MarioDataPackets.setMarioPowerUp(player, RegistryManager.POWER_UPS.get(revertTargetID));
 
-						player.playSound(MarioSFX.REVERT);
+//						player.playSound(MarioSFX.REVERT, 1.0F, 1.0F);
+//						player.playSound(SoundEvents.BLOCK_BEACON_POWER_SELECT, 1.0F, 1.0F);
+						player.getWorld().playSound(
+								null,
+								player.getX(),
+								player.getY(),
+								player.getZ(),
+								MarioSFX.REVERT,
+								SoundCategory.PLAYERS,
+								0.6F,
+								1.0F
+						);
 
-						data.setYVel(0.5);
 						player.setHealth(player.getMaxHealth());
 						return false;
 					}

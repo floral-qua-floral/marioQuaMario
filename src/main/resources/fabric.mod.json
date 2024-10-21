@@ -25,6 +25,7 @@
 		],
 		"mario-actions-grounded": [
 			"com.floralquafloral.registries.states.action.baseactions.grounded.ActionBasic",
+			"com.floralquafloral.registries.states.action.baseactions.grounded.PRun",
 			"com.floralquafloral.registries.states.action.baseactions.grounded.DuckWaddle",
 			"com.floralquafloral.registries.states.action.baseactions.grounded.DuckSlide"
 		],

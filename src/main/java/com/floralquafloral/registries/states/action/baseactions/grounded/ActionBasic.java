@@ -1,5 +1,6 @@
 package com.floralquafloral.registries.states.action.baseactions.grounded;
 
+import com.floralquafloral.CharaStat;
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.mariodata.client.Input;
@@ -134,7 +135,16 @@ public class ActionBasic extends GroundedActionDefinition {
 	public List<ActionTransitionDefinition> getPreTickTransitions() {
 		return List.of(
 //				GroundedTransitions.FALL,
-				GroundedTransitions.DUCK_WADDLE
+				GroundedTransitions.DUCK_WADDLE,
+				new ActionTransitionDefinition("qua_mario:p_run",
+						(data) -> data.getForwardVel() >= RUN_SPEED.getAsThreshold(data),
+						(data, isSelf, seed) -> {
+							if(isSelf) data.setForwardVel(P_SPEED.get(data));
+						},
+						(data, seed) -> {
+
+						}
+				)
 		);
 	}
 

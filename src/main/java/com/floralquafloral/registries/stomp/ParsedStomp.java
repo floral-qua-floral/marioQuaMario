@@ -25,6 +25,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.RandomSeed;
+import net.minecraft.world.World;
 
 import java.util.List;
 
@@ -73,10 +74,11 @@ public class ParsedStomp {
 
 		target.damage(damageSource, damage);
 
-		this.DEFINITION.executeServer(data, target, harmless, seed);
+		this.DEFINITION.executeServer(target.getWorld(), data, target, harmless, seed);
 	}
-	public void executeClient(MarioPlayerData data, boolean isSelf, Entity target, boolean harmless, long seed) {
-		this.DEFINITION.executeClient(data, isSelf, target, harmless, seed);
+	public void executeClient(World world, MarioPlayerData data, boolean isSelf, Entity target, boolean harmless, long seed) {
+		this.DEFINITION.executeClient(world, data, isSelf, target, harmless, seed);
+		data.applyModifiedVelocity();
 	}
 
 	public void attempt(MarioData data, Vec3d movement) {

@@ -19,7 +19,7 @@ public abstract class MarioSFX {
 	public static final SoundEvent STOMP_HEAVY = makeStompSound("heavy");
 	public static final SoundEvent STOMP_YOSHI = makeStompSound("yoshi");
 
-	public static final SoundEvent DUCK = makeAndRegisterSound("");
+	public static final SoundEvent DUCK = makeAndRegisterSound("duck");
 
 	private static SoundEvent makeMovementSound(String name) {
 		return makeAndRegisterSound("sfx.movement." + name);
@@ -34,9 +34,10 @@ public abstract class MarioSFX {
 		return makeAndRegisterSound("sfx.action." + name);
 	}
 
-	private static SoundEvent makeAndRegisterSound(String id) {
-		Identifier identifier = Identifier.of(MarioQuaMario.MOD_ID, id);
+	private static SoundEvent makeAndRegisterSound(String path) {
+		Identifier identifier = Identifier.of(MarioQuaMario.MOD_ID, path);
 		SoundEvent event = SoundEvent.of(identifier);
+		MarioQuaMario.LOGGER.info("Register sound {} ({})", identifier, event);
 
 		Registry.register(Registries.SOUND_EVENT, identifier, event);
 

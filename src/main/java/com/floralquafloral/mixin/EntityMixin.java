@@ -1,5 +1,6 @@
 package com.floralquafloral.mixin;
 
+import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioDataManager;
 import com.floralquafloral.registries.states.action.ParsedAction;

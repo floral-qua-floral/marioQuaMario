@@ -67,7 +67,14 @@ public class StompHandler {
 					MarioQuaMario.LOGGER.error("Target: {}", target);
 					return;
 				}
-				stompType.executeClient((MarioPlayerData) getMarioData(mario), mario.isMainPlayer(), target, payload.harmless, payload.seed);
+				MarioQuaMario.LOGGER.info("receiver:"
+						+ "\ncontextPlayerWorld: " + context.player().getWorld()
+						+ "\nmarioWorld: " + mario.getWorld()
+						+ "\nareEqual: " + (context.player().getWorld() == mario.getWorld())
+						+ "\nareEqual2: " + (context.player().getWorld().equals(mario.getWorld()))
+						+ "\nmarioDataMarioWorld: " + getMarioData(mario).getMario().getWorld()
+				);
+				stompType.executeClient(context.player().getWorld(), (MarioPlayerData) getMarioData(mario), mario.isMainPlayer(), target, payload.harmless, payload.seed);
 			});
 		}
 

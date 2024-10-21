@@ -5,13 +5,20 @@ import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.registries.stomp.StompDefinition;
 import com.floralquafloral.registries.stomp.StompHandler;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.sound.PositionedSoundInstance;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MovementType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.random.Random;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -55,14 +62,27 @@ public class JumpStomp implements StompDefinition {
 	}
 
 	@Override
-	public void executeServer(MarioPlayerData data, Entity target, boolean harmless, long seed) {
+	public void executeServer(World world, MarioPlayerData data, Entity target, boolean harmless, long seed) {
 		executeCommon(data, target);
+//		world.playSound(
+//				null,
+//
+//		);
 	}
 
 	@Override
-	public void executeClient(MarioPlayerData data, boolean isSelf, Entity target, boolean harmless, long seed) {
+	public void executeClient(World world, MarioPlayerData data, boolean isSelf, Entity target, boolean harmless, long seed) {
 		executeCommon(data, target);
-		target.playSound(SoundEvents.BLOCK_BEACON_POWER_SELECT, 1.0F, 1.0F);
+//		world.playSound(
+//				target.getX(),
+//				target.getY(),
+//				target.getZ(),
+//				SoundEvents.ENTITY_SKELETON_DEATH,
+//				SoundCategory.PLAYERS,
+//				1.0F,
+//				1.0F,
+//				false
+//		);
 	}
 
 	private void executeCommon(MarioPlayerData data, Entity target) {
