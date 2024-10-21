@@ -2,12 +2,17 @@ package com.floralquafloral.mixin;
 
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioDataManager;
+import com.floralquafloral.registries.states.action.ParsedAction;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
+import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -45,6 +50,24 @@ public abstract class EntityMixin {
 			MarioData data = MarioDataManager.getMarioData(player);
 			if(!data.getAction().SLIDING_STATUS.doFootsteps())
 				ci.cancel();
+		}
+	}
+
+	@Unique
+	private static boolean shouldStompHook = true;
+
+	@Inject(method = "move", at = @At("HEAD"))
+	private void executeStompsOnServer(MovementType movementType, Vec3d movement, CallbackInfo ci) {
+		if((Entity) (Object) this instanceof ServerPlayerEntity player && shouldStompHook) {
+			MarioData data = MarioDataManager.getMarioData(player);
+			if(data.useMarioPhysics()) {
+				ParsedAction action = data.getAction();
+				if(action.STOMP != null) {
+					shouldStompHook = false;
+					action.STOMP.attempt(data, movement);
+					shouldStompHook = true;
+				}
+			}
 		}
 	}
 }

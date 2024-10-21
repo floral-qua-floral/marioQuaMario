@@ -30,7 +30,8 @@ public class ParsedAction extends ParsedMarioState {
 		this.ANIMATION = definition.getAnimationName();
 		this.SNEAK_LEGALITY = definition.getSneakLegalityRule();
 		this.SLIDING_STATUS = definition.getConstantSlidingStatus();
-		this.STOMP = RegistryManager.STOMP_TYPES.get(definition.getStompType());
+		Identifier stompID = definition.getStompType();
+		this.STOMP = stompID == null ? null : RegistryManager.STOMP_TYPES.get(stompID);
 
 		this.TRANSITION_LISTS = new EnumMap<>(TransitionPhase.class);
 	}

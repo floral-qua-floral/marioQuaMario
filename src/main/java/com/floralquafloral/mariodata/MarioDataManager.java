@@ -72,7 +72,8 @@ public class MarioDataManager {
 
 		ClientEntityEvents.ENTITY_LOAD.register((entity, world) -> {
 			if(entity instanceof ClientPlayerEntity clientPlayer) {
-				MarioClientData data = (MarioClientData) getMarioData(clientPlayer);
+				MarioClientData data = MarioClientData.getInstance();
+				if(data == null) return;
 				CLIENT_PLAYERS_DATA.remove(clientPlayer);
 				CLIENT_PLAYERS_DATA.remove(data.getMario());
 				data.setMario(clientPlayer);

@@ -19,9 +19,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.EntityTypeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.RandomSeed;
 
 import java.util.List;
@@ -77,47 +79,53 @@ public class ParsedStomp {
 		this.DEFINITION.executeClient(data, isSelf, target, harmless, seed);
 	}
 
-	public void attempt(MarioData data) {
+	public void attempt(MarioData data, Vec3d movement) {
 		ServerPlayerEntity mario = (ServerPlayerEntity) data.getMario();
-		double yVel = data.getYVel();
-		if(this.MUST_FALL_ON_TARGET && yVel > 0) return;
+		List<Entity> targets = mario.getWorld().getOtherEntities(mario, mario.getBoundingBox().stretch(movement));
 
-		List<Entity> targets = mario.getWorld().getOtherEntities(mario, mario.getBoundingBox());
-
-		boolean enteredStompAction = false;
 		long seed = RandomSeed.getSeed();
 		for(Entity target : targets) {
-
-			if(target.getType().isIn(StompHandler.UNSTOMPABLE_TAG)) continue;
-
-			if(this.MUST_FALL_ON_TARGET && target.getY() + target.getHeight() > mario.getY() - yVel) continue;
-
-			if(this.SHOULD_ATTEMPT_MOUNTING) {
-				if((target instanceof Saddleable saddleableTarget && saddleableTarget.isSaddled())
-						|| target instanceof VehicleEntity) {
-					if(mario.startRiding(target)) return;
-				}
-			}
-
-			if(!(target instanceof LivingEntity livingTarget && !livingTarget.isDead())) continue;
-			if(!this.DEFINITION.canStompTarget(data, target)) continue;
-			livingTarget.isDead();
-
-			boolean targetHurtsToStomp = target.getType().isIn(StompHandler.HURTS_TO_STOMP_TAG);
-			if(this.PAINFUL_STOMP_RESPONSE == StompDefinition.PainfulStompResponse.INJURY && targetHurtsToStomp) {
-				// Hurt Mario
-				mario.damage(makeDamageSource(mario.getServerWorld(), DamageTypes.THORNS, target), 2.8F);
-				return;
-			}
-
-
-
-			boolean harmless = targetHurtsToStomp && this.PAINFUL_STOMP_RESPONSE == StompDefinition.PainfulStompResponse.BOUNCE;
-			StompHandler.networkStomp(mario, target, this, harmless, seed);
-			executeServer((MarioPlayerData) data, target, true, seed);
-
-			return;
+			if(attemptOnTarget(mario, data, target, seed)) break;
 		}
+	}
+
+	private boolean attemptOnTarget(ServerPlayerEntity mario, MarioData data, Entity target, long seed) {
+		if(target.getType().isIn(StompHandler.UNSTOMPABLE_TAG)) return false;
+
+		if(this.MUST_FALL_ON_TARGET && target.getY() + target.getHeight() > mario.getY()) return false;
+
+		if(this.SHOULD_ATTEMPT_MOUNTING) {
+			if((target instanceof Saddleable saddleableTarget && saddleableTarget.isSaddled())
+					|| target instanceof VehicleEntity) {
+				if(mario.startRiding(target)) return false;
+			}
+		}
+
+		if(!(target instanceof LivingEntity livingTarget && !livingTarget.isDead())) return false;
+		if(!this.DEFINITION.canStompTarget(data, target)) return false;
+		livingTarget.isDead();
+
+		boolean targetHurtsToStomp = target.getType().isIn(StompHandler.HURTS_TO_STOMP_TAG);
+		MarioQuaMario.LOGGER.info("hurts:"
+				+ "\ntarget type: " + target.getType()
+				+ "\ntag: " + StompHandler.HURTS_TO_STOMP_TAG
+				+ "\ninTag: " + target.getType().isIn(StompHandler.HURTS_TO_STOMP_TAG)
+				+ "\ninVanillaTag: " + target.getType().isIn(EntityTypeTags.AQUATIC)
+				+ "\nresponse: " + this.PAINFUL_STOMP_RESPONSE
+		);
+		if(this.PAINFUL_STOMP_RESPONSE == StompDefinition.PainfulStompResponse.INJURY && targetHurtsToStomp) {
+			// Hurt Mario
+			mario.damage(makeDamageSource(mario.getServerWorld(), DamageTypes.THORNS, target), 2.8F);
+			return false;
+		}
+
+
+
+		boolean harmless = targetHurtsToStomp && this.PAINFUL_STOMP_RESPONSE == StompDefinition.PainfulStompResponse.BOUNCE;
+		StompHandler.networkStomp(mario, target, this, harmless, seed);
+		executeServer((MarioPlayerData) data, target, true, seed);
+
+		return true;
 	}
 
 	private static DamageSource makeDamageSource(ServerWorld world, RegistryKey<DamageType> key, Entity attacker) {

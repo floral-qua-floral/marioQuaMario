@@ -7,6 +7,7 @@ import com.floralquafloral.registries.states.character.ParsedCharacter;
 import com.floralquafloral.registries.states.powerup.ParsedPowerUp;
 import com.floralquafloral.util.CPMIntegration;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 
@@ -118,6 +119,7 @@ public class MarioPlayerData implements MarioData {
 		this.VELOCITIES.isGenerated = false;
 	}
 
+//	private double prevY;
 	public void tick() {
 		if(this.getMario().getWorld().isClient) {
 			this.action.otherClientsTick(this);
@@ -129,7 +131,8 @@ public class MarioPlayerData implements MarioData {
 			this.powerUp.serverTick(this);
 			this.character.serverTick(this);
 
-			if(this.action.STOMP != null) this.action.STOMP.attempt(this);
+//			if(this.action.STOMP != null) this.action.STOMP.attempt(this, prevY);
+//			prevY = getMario().getY();
 
 			this.applyModifiedVelocity();
 		}

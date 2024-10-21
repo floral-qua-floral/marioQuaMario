@@ -2,7 +2,7 @@ package com.floralquafloral.registries.states.powerup;
 
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.registries.states.ParsedMajorMarioState;
-import com.floralquafloral.registries.RegistryManager;
+import com.floralquafloral.util.MarioSFX;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +24,7 @@ public class ParsedPowerUp extends ParsedMajorMarioState {
 
 		this.VALUE = definition.getValue();
 		SoundEvent acquisitionSound = definition.getAcquisitionSound();
-		this.ACQUISITION_SOUND = acquisitionSound == null ? RegistryManager.POWER_UP_SFX : acquisitionSound;
+		this.ACQUISITION_SOUND = acquisitionSound == null ? MarioSFX.NORMAL_POWER : acquisitionSound;
 		this.REVERT_TARGET = definition.getRevertTarget();
 
 		this.HEART = definition.getHeart();

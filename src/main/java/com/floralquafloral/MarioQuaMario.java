@@ -2,14 +2,16 @@ package com.floralquafloral;
 
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioDataManager;
+import com.floralquafloral.mariodata.MarioDataPackets;
 import com.floralquafloral.registries.RegistryManager;
+import com.floralquafloral.registries.states.powerup.ParsedPowerUp;
 import com.floralquafloral.util.ModConfig;
+import com.floralquafloral.util.MarioSFX;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
 import net.fabricmc.fabric.api.gamerule.v1.rule.DoubleRule;
@@ -17,6 +19,7 @@ import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.GameRules;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,26 +67,30 @@ public class MarioQuaMario implements ModInitializer {
 		MarioDataManager.registerEventListeners();
 
 		RegistryManager.register();
+		MarioSFX.staticInitialize();
 
 		MarioPackets.registerCommon();
 
 		MarioCommand.registerMarioCommand();
 
-//		ServerLivingEntityEvents.ALLOW_DEATH.register((livingEntity, damageSource, damageAmount) -> {
-//			if(livingEntity instanceof ServerPlayerEntity player) {
-//				MarioData data = MarioDataManager.getMarioData(player);
-//				if(data.isEnabled()) {
-//					// Revert if possible
-//					boolean canRevert = player.isOnGround();
-//					if(canRevert) {
-//						player.playSound(RegistryManager.POWER_UP_SFX);
-//						data.setYVel(0.5);
-//						player.setHealth(20.0F);
-//						return false;
-//					}
-//				}
-//			}
-//			return true;
-//		});
+		ServerLivingEntityEvents.ALLOW_DEATH.register((livingEntity, damageSource, damageAmount) -> {
+			if(livingEntity instanceof ServerPlayerEntity player) {
+				MarioData data = MarioDataManager.getMarioData(player);
+				if(data.isEnabled()) {
+					// Revert if possible
+					Identifier revertTargetID = data.getPowerUp().REVERT_TARGET;
+					if(revertTargetID != null) {
+						MarioDataPackets.setMarioPowerUp(player, RegistryManager.POWER_UPS.get(revertTargetID));
+
+						player.playSound(MarioSFX.REVERT);
+
+						data.setYVel(0.5);
+						player.setHealth(player.getMaxHealth());
+						return false;
+					}
+				}
+			}
+			return true;
+		});
 	}
 }

@@ -1,7 +1,6 @@
 package com.floralquafloral.registries;
 
 import com.floralquafloral.MarioQuaMario;
-import com.floralquafloral.registries.states.MarioStateDefinition;
 import com.floralquafloral.registries.states.action.ActionDefinition;
 import com.floralquafloral.registries.states.action.GroundedActionDefinition;
 import com.floralquafloral.registries.states.action.ParsedAction;
@@ -15,12 +14,8 @@ import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
-import net.minecraft.entity.damage.DamageType;
-import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
@@ -34,21 +29,6 @@ public class RegistryManager {
 		registerActions();
 		registerPowerUps();
 		registerCharacters();
-	}
-
-	public static final SoundEvent JUMP_SFX = makeAndRegisterSound("sfx.jump");
-
-	public static final SoundEvent STOMP_SFX = makeAndRegisterSound("sfx.stomp");
-
-	public static final SoundEvent POWER_UP_SFX = makeAndRegisterSound("sfx.power_up_wii");
-
-	private static SoundEvent makeAndRegisterSound(String id) {
-		Identifier identifier = Identifier.of(MarioQuaMario.MOD_ID, id);
-		SoundEvent event = SoundEvent.of(identifier);
-
-		Registry.register(Registries.SOUND_EVENT, identifier, event);
-
-		return event;
 	}
 
 	public static final RegistryKey<Registry<ParsedStomp>> STOMP_TYPES_KEY = RegistryKey.ofRegistry(

@@ -120,7 +120,7 @@ public class MarioCommand {
 		Entity target = EntityArgumentType.getEntity(context, "goomba");
 		ParsedStomp stompType = RegistryEntryReferenceArgumentType.getRegistryEntry(context, "stomp", RegistryManager.STOMP_TYPES_KEY).value();
 
-		stomper.teleport((ServerWorld) target.getWorld(), target.getX(), target.getY(), target.getZ(), target.getPitch(), target.getYaw());
+		stomper.teleport((ServerWorld) target.getWorld(), target.getX(), target.getY() + target.getHeight(), target.getZ(), target.getPitch(), target.getYaw());
 		long seed = RandomSeed.getSeed();
 		StompHandler.networkStomp(stomper, target, stompType, false, seed);
 		stompType.executeServer((MarioPlayerData) MarioDataManager.getMarioData(stomper), target, false, seed);

@@ -1,68 +1,68 @@
 {
-  "sfx.power_up_wii": {
-    "subtitle": "subtitles.qua_mario.power_up_wii",
+  "sfx.movement.jump": {
+    "subtitle": "subtitles.qua_mario.movement.jump",
     "sounds": [
-      "qua_mario:sfx/power_up_wii"
+      "qua_mario:sfx/movement/jump"
     ]
   },
-  "sfx.revert_wii": {
-    "subtitle": "subtitles.qua_mario.revert_wii",
+  "sfx.movement.flip": {
+    "subtitle": "subtitles.qua_mario.movement.flip",
     "sounds": [
-      "qua_mario:sfx/revert_wii"
+      "qua_mario:sfx/movement/flip"
     ]
   },
-  "sfx.jump": {
-    "subtitle": "subtitles.qua_mario.jump",
+  "sfx.power_up.normal_power": {
+    "subtitle": "subtitles.qua_mario.power_up.normal_power",
     "sounds": [
-      "qua_mario:sfx/jump"
+      "qua_mario:sfx/power_up/normal_power"
     ]
   },
-  "sfx.stomp": {
-    "subtitle": "subtitles.qua_mario.stomp",
+  "sfx.power_up.revert": {
+    "subtitle": "subtitles.qua_mario.power_up.revert",
     "sounds": [
-      "qua_mario:sfx/stomp"
+      "qua_mario:sfx/power_up/revert"
     ]
   },
-  "sfx.stomp_spike": {
-    "subtitle": "subtitles.qua_mario.stomp_spike",
+  "sfx.stomp.stomp": {
+    "subtitle": "subtitles.qua_mario.stomp.stomp",
     "sounds": [
-      "qua_mario:sfx/stomp_spike"
+      "qua_mario:sfx/stomp/stomp"
     ]
   },
-  "sfx.stomp_spin": {
-    "subtitle": "subtitles.qua_mario.stomp_spin",
+  "sfx.stomp.pointy": {
+    "subtitle": "subtitles.qua_mario.stomp.pointy",
     "sounds": [
-      "qua_mario:sfx/stomp_spin"
+      "qua_mario:sfx/stomp/pointy"
     ]
   },
-  "sfx.stomp_yoshi": {
-    "subtitle": "subtitles.qua_mario.stomp_yoshi",
+  "sfx.stomp.spin": {
+    "subtitle": "subtitles.qua_mario.stomp.spin",
     "sounds": [
-      "qua_mario:sfx/stomp_yoshi"
+      "qua_mario:sfx/stomp/spin"
     ]
   },
-  "sfx.ground_pound_flip": {
-    "subtitle": "subtitles.qua_mario.ground_pound_flip",
+  "sfx.stomp.heavy": {
+    "subtitle": "subtitles.qua_mario.stomp.heavy",
     "sounds": [
-      "qua_mario:sfx/ground_pound_flip"
+      "qua_mario:sfx/stomp/heavy"
     ]
   },
-  "sfx.ground_pound_land": {
-    "subtitle": "subtitles.qua_mario.ground_pound_land",
+  "sfx.stomp.yoshi": {
+    "subtitle": "subtitles.qua_mario.stomp.yoshi",
     "sounds": [
-      "qua_mario:sfx/ground_pound_land"
+      "qua_mario:sfx/stomp/yoshi"
     ]
   },
-  "sfx.duck": {
-    "subtitle": "subtitles.qua_mario.duck",
+  "sfx.action.ground_pound_pre": {
+    "subtitle": "subtitles.qua_mario.action.ground_pound_pre",
     "sounds": [
-      "qua_mario:sfx/flip"
+      "qua_mario:sfx/action/ground_pound_pre"
     ]
   },
-  "sfx.flip": {
-    "subtitle": "subtitles.qua_mario.flip",
+  "sfx.action.ground_pound": {
+    "subtitle": "subtitles.qua_mario.action.ground_pound",
     "sounds": [
-      "qua_mario:sfx/flip"
+      "qua_mario:sfx/action/ground_pound"
     ]
   },
 

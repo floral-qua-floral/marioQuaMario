@@ -3,6 +3,7 @@ package com.floralquafloral.registries.states.action;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.client.Input;
 import com.floralquafloral.mariodata.client.MarioClientData;
+import com.floralquafloral.util.MarioSFX;
 import net.minecraft.util.math.BlockPos;
 import org.joml.Vector2d;
 
@@ -27,6 +28,7 @@ public abstract class GroundedActionDefinition implements ActionDefinition {
 				(data) -> Input.DUCK.isHeld(),
 				(data, isSelf, seed) -> {
 					// Play duck voiceline
+					data.getMario().playSound(MarioSFX.DUCK);
 					LOGGER.info("Ducking voiceline with seed {}", seed);
 				},
 				(data, seed) -> {
