@@ -1,4 +1,29 @@
 {
+	"fabric.mods.qua_mario": "Mario qua Mario",
+
+	"text.autoconfig.qua_mario.title": "Qua Mario Options",
+
+	"text.autoconfig.qua_mario.option.spinputType": "Spin Input Type",
+	"fabric.mods.qua_mario.spin": "Spin",
+
+	"text.autoconfig.qua_mario.option.sideflipAnimType": "Sideflip Camera Animation",
+	"text.autoconfig.qua_mario.option.backflipAnimType": "Backflip Camera Animation",
+	"text.autoconfig.qua_mario.option.tripleJumpAnimType": "Triple Jump Camera Animation",
+
+	"death.attack.marioStomp": "%s was stomped by %s",
+	"death.attack.marioStomp.item": "%s was stomped by %s using %s",
+	"death.attack.marioHipDrop": "%s was pounded flat by %s",
+	"death.attack.marioHipDrop.item": "%s was pounded flat by %s using %s",
+
+	"enchantment.qua_mario.pulverizing": "Pulverizing",
+	"enchantment.qua_mario.pulverizing.desc": "Increased damage from Stomps or Ground Pounds",
+	"enchantment.qua_mario.bounding": "Bounding",
+	"enchantment.qua_mario.bounding.desc": "Higher bounce after a Stomp",
+	"enchantment.qua_mario.depth_charge": "Depth Charge",
+	"enchantment.qua_mario.depth_charge.desc": "Ground Pounds retain their momentum for longer underwater",
+
+	"tag.item.qua_mario.enchantable.pulverizing": "Enchantable with Pulverizing",
+
 	"subtitles.qua_mario.power_up_wii": "Powering up",
 	"subtitles.qua_mario.revert_wii": "Powering down",
 	"subtitles.qua_mario.jump": "Jumping",

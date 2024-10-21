@@ -1,7 +1,11 @@
 package com.floralquafloral;
 
+import com.floralquafloral.mariodata.MarioDataManager;
 import com.floralquafloral.mariodata.MarioDataPackets;
+import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.registries.RegistryManager;
+import com.floralquafloral.registries.stomp.ParsedStomp;
+import com.floralquafloral.registries.stomp.StompHandler;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -9,9 +13,12 @@ import com.tom.cpm.shared.template.args.BoolArg;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.RegistryEntryReferenceArgumentType;
+import net.minecraft.entity.Entity;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.random.RandomSeed;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
@@ -56,6 +63,17 @@ public class MarioCommand {
 						)
 					)
 				)
+				.then(literal("executeStomp")
+					.requires(source -> source.hasPermissionLevel(2))
+					.then(argument("stomp", RegistryEntryReferenceArgumentType.registryEntry(registryAccess, RegistryManager.STOMP_TYPES_KEY))
+						.then(argument("goomba", EntityArgumentType.entity())
+							.executes(context -> executeStomp(context, false))
+							.then(argument("target", EntityArgumentType.player())
+								.executes(context -> executeStomp(context, true))
+							)
+						)
+					)
+				)
 			)
 		);
 	}
@@ -95,5 +113,18 @@ public class MarioCommand {
 				getPlayerFromCmd(context, playerArgumentGiven),
 				RegistryEntryReferenceArgumentType.getRegistryEntry(context, "character", RegistryManager.CHARACTERS_KEY).value()
 		));
+	}
+
+	private static int executeStomp(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
+		ServerPlayerEntity stomper = getPlayerFromCmd(context, playerArgumentGiven);
+		Entity target = EntityArgumentType.getEntity(context, "goomba");
+		ParsedStomp stompType = RegistryEntryReferenceArgumentType.getRegistryEntry(context, "stomp", RegistryManager.STOMP_TYPES_KEY).value();
+
+		stomper.teleport((ServerWorld) target.getWorld(), target.getX(), target.getY(), target.getZ(), target.getPitch(), target.getYaw());
+		long seed = RandomSeed.getSeed();
+		StompHandler.networkStomp(stomper, target, stompType, false, seed);
+		stompType.executeServer((MarioPlayerData) MarioDataManager.getMarioData(stomper), target, false, seed);
+
+		return sendFeedback(context, "Made " + stomper.getName().getString() + " perform a stomp of type " + stompType.ID + " on " + target.getName().getString());
 	}
 }

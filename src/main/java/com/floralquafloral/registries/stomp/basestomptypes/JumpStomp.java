@@ -36,7 +36,7 @@ public class JumpStomp implements StompDefinition {
 	}
 
 	@Override public @NotNull Identifier getDamageType() {
-		return Identifier.of(MarioQuaMario.MOD_ID, "basic");
+		return Identifier.of(MarioQuaMario.MOD_ID, "stomp");
 	}
 
 	@Override public @Nullable Identifier getPostStompAction() {
@@ -64,7 +64,8 @@ public class JumpStomp implements StompDefinition {
 	}
 
 	private void executeCommon(MarioPlayerData data, Entity target) {
-		data.getMario().move(MovementType.PISTON, new Vec3d(data.getMario().getX(), target.getY() + target.getHeight(), data.getMario().getZ()));
+		double deltaY = data.getMario().getY() - (target.getY() - target.getHeight());
+		data.getMario().move(MovementType.PISTON, new Vec3d(0, deltaY, 0));
 		data.setYVel(1.0);
 	}
 }

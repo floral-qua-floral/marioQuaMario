@@ -99,7 +99,7 @@ public class MarioPlayerData implements MarioData {
 		if(this.VELOCITIES.isGenerated) this.VELOCITIES.ensureDirty().vertical = vertical;
 		else {
 			Vec3d oldVel = this.MARIO.getVelocity();
-			this.MARIO.setVelocity(oldVel.x, vertical, oldVel.y);
+			this.MARIO.setVelocity(oldVel.x, vertical, oldVel.z);
 		}
 	}
 	@Override public void applyModifiedVelocity() {
