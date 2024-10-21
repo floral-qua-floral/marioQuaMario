@@ -1,10 +1,12 @@
 package com.floralquafloral.mixin;
 
+import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.client.MarioClientData;
 import com.floralquafloral.mariodata.MarioDataManager;
 import com.floralquafloral.registries.states.character.ParsedCharacter;
 import com.floralquafloral.registries.states.powerup.ParsedPowerUp;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.player.PlayerEntity;
@@ -21,6 +23,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class PlayerEntityMixin {
 	@Inject(method = "travel", at = @At("HEAD"), cancellable = true)
 	private void travelHook(Vec3d movementInput, CallbackInfo ci) {
+//		PlayerEntity player = (PlayerEntity) (Object) this;
+//		if(player.getWorld().isClient) MarioQuaMario.LOGGER.info("Travel mixin:"
+//				+ "\nPlayer: " + player
+//				+ "\nData: " + MarioDataManager.getMarioData(player)
+//				+ "\nDataM: " + MarioDataManager.getMarioData(player).getMario()
+//				+ "\nPhys: " + MarioDataManager.getMarioData(player).useMarioPhysics()
+//		);
 		if(MarioDataManager.getMarioData(this) instanceof MarioClientData marioClientData
 				&& marioClientData.useMarioPhysics() && marioClientData.travel(movementInput))
 					ci.cancel();

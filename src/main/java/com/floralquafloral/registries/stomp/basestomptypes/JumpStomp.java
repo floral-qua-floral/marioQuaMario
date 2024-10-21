@@ -9,6 +9,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.MovementType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
@@ -61,6 +62,7 @@ public class JumpStomp implements StompDefinition {
 	@Override
 	public void executeClient(MarioPlayerData data, boolean isSelf, Entity target, boolean harmless, long seed) {
 		executeCommon(data, target);
+		target.playSound(SoundEvents.BLOCK_BEACON_POWER_SELECT, 1.0F, 1.0F);
 	}
 
 	private void executeCommon(MarioPlayerData data, Entity target) {

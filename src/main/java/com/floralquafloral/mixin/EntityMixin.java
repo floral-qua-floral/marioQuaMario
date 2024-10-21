@@ -39,16 +39,6 @@ public abstract class EntityMixin {
 		}
 	}
 
-	@Inject(method = "getPose", at = @At("TAIL"), cancellable = true)
-	private void preventGettingSneakPose(CallbackInfoReturnable<EntityPose> cir) {
-		if((Entity) (Object) this instanceof PlayerEntity player && cir.getReturnValue() == EntityPose.CROUCHING) {
-			if(MarioDataManager.getMarioData(player).getSneakProhibited()) {
-				player.setPose(EntityPose.STANDING);
-				cir.setReturnValue(EntityPose.STANDING);
-			}
-		}
-	}
-
 	@Inject(method = "playStepSounds", at = @At("HEAD"), cancellable = true)
 	private void preventStepSounds(BlockPos pos, BlockState state, CallbackInfo ci) {
 		if(((Entity) (Object) this) instanceof PlayerEntity player) {

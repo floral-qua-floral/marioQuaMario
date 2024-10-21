@@ -55,7 +55,7 @@ public class MarioDataPackets {
 		SetCharacterS2CPayload.registerReceiver();
 	}
 
-	private static void sendAllData(ServerPlayerEntity toWho, PlayerEntity aboutWho) {
+	public static void sendAllData(ServerPlayerEntity toWho, PlayerEntity aboutWho) {
 		MarioData data = getMarioData(aboutWho);
 		// am I supposed to send one packet with all this data or is this fine????
 		ServerPlayNetworking.send(toWho, new SetEnabledS2CPayload(aboutWho, data.isEnabled()));

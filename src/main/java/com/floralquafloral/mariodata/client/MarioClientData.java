@@ -7,6 +7,7 @@ import com.floralquafloral.registries.states.action.TransitionPhase;
 import com.floralquafloral.util.CPMIntegration;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.MovementType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Vector2d;
@@ -17,14 +18,18 @@ public class MarioClientData extends MarioPlayerData {
 		return instance;
 	}
 
-	private final ClientPlayerEntity MARIO_CLIENT;
+	private ClientPlayerEntity marioClient;
 	@Override public ClientPlayerEntity getMario() {
-		return MARIO_CLIENT;
+		return marioClient;
+	}
+	@Override public void setMario(PlayerEntity mario) {
+		this.marioClient = (ClientPlayerEntity) mario;
+		super.setMario(mario);
 	}
 
 	public MarioClientData(ClientPlayerEntity mario) {
 		super(mario);
-		this.MARIO_CLIENT = mario;
+		this.marioClient = mario;
 		MarioClientData.instance = this;
 	}
 
@@ -54,11 +59,11 @@ public class MarioClientData extends MarioPlayerData {
 		getAction().attemptTransitions(this, TransitionPhase.POST_TICK);
 
 		applyModifiedVelocity();
-		MARIO_CLIENT.move(MovementType.PLAYER, MARIO_CLIENT.getVelocity());
+		marioClient.move(MovementType.PLAYER, marioClient.getVelocity());
 		if(getAction().attemptTransitions(this, TransitionPhase.POST_MOVE))
 			applyModifiedVelocity();
 
-		MARIO_CLIENT.updateLimbs(false);
+		marioClient.updateLimbs(false);
 		return true;
 	}
 

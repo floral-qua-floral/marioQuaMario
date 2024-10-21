@@ -16,28 +16,38 @@ public class MarioPlayerData implements MarioData {
 	private ParsedPowerUp powerUp;
 	private ParsedCharacter character;
 
-	private final PlayerEntity MARIO;
+	private PlayerEntity mario;
 	@Override public PlayerEntity getMario() {
-		return this.MARIO;
+		return this.mario;
 	}
+	public void setMario(PlayerEntity mario) { this.mario = mario; }
 
 	public MarioPlayerData(PlayerEntity mario) {
-		this.MARIO = mario;
-		this.setEnabled(true);
+		this.mario = mario;
+		this.enabled = true;
 		this.action = RegistryManager.ACTIONS.get(Identifier.of("qua_mario:basic"));
 		this.powerUp = RegistryManager.POWER_UPS.get(Identifier.of("qua_mario:super"));
 		this.character = RegistryManager.CHARACTERS.get(Identifier.of("qua_mario:mario"));
 
-		MarioQuaMario.LOGGER.info("Initialized a MarioData: {}", this);
+		MarioQuaMario.LOGGER.info("Initialized a MarioData: {}, for {}", this, mario);
+	}
+	public MarioPlayerData(PlayerEntity mario, MarioData oldData) {
+		this.mario = mario;
+		this.enabled = oldData.isEnabled();
+		this.action = oldData.getAction();
+		this.powerUp = oldData.getPowerUp();
+		this.character = oldData.getCharacter();
+
+		MarioQuaMario.LOGGER.info("Initialized a MarioData from old data: {}, for {}, from {}", this, mario, oldData);
 	}
 
 	@Override public boolean useMarioPhysics() {
 		return(
 				isEnabled()
-				&& !MARIO.getAbilities().flying
-				&& !MARIO.isFallFlying()
-				&& !MARIO.hasVehicle()
-				&& !MARIO.isClimbing()
+				&& !mario.getAbilities().flying
+				&& !mario.isFallFlying()
+				&& !mario.hasVehicle()
+				&& !mario.isClimbing()
 		);
 	}
 
@@ -55,12 +65,12 @@ public class MarioPlayerData implements MarioData {
 			this.isGenerated = true;
 
 			// Calculate forward and sideways vector components
-			double yawRad = Math.toRadians(MARIO.getYaw());
+			double yawRad = Math.toRadians(mario.getYaw());
 			this.negativeSineYaw = -Math.sin(yawRad);
 			this.cosineYaw = Math.cos(yawRad);
 
 			// Calculate current forwards and sideways velocity
-			Vec3d currentVel = MARIO.getVelocity();
+			Vec3d currentVel = mario.getVelocity();
 			this.forward = currentVel.x * negativeSineYaw + currentVel.z * cosineYaw;
 			this.strafe = currentVel.x * cosineYaw + currentVel.z * -negativeSineYaw;
 			this.vertical = currentVel.y;
@@ -87,7 +97,7 @@ public class MarioPlayerData implements MarioData {
 	}
 	@Override public double getYVel() {
 		if(this.VELOCITIES.isGenerated) return this.VELOCITIES.vertical;
-		else return this.MARIO.getVelocity().y;
+		else return this.mario.getVelocity().y;
 	}
 	@Override public void setForwardVel(double forward) {
 		VELOCITIES.ensureDirty().forward = forward;
@@ -98,8 +108,8 @@ public class MarioPlayerData implements MarioData {
 	@Override public void setYVel(double vertical) {
 		if(this.VELOCITIES.isGenerated) this.VELOCITIES.ensureDirty().vertical = vertical;
 		else {
-			Vec3d oldVel = this.MARIO.getVelocity();
-			this.MARIO.setVelocity(oldVel.x, vertical, oldVel.z);
+			Vec3d oldVel = this.mario.getVelocity();
+			this.mario.setVelocity(oldVel.x, vertical, oldVel.z);
 		}
 	}
 	@Override public void applyModifiedVelocity() {
@@ -142,11 +152,11 @@ public class MarioPlayerData implements MarioData {
 		this.setActionTransitionless(action);
 	}
 	@Override public void setActionTransitionless(ParsedAction action) {
-		if(!this.MARIO.getWorld().isClient) {
+		if(!this.mario.getWorld().isClient) {
 			if(this.action.ANIMATION != null)
-				CPMIntegration.commonAPI.playAnimation(PlayerEntity.class, this.MARIO, this.action.ANIMATION, 0);
+				CPMIntegration.commonAPI.playAnimation(PlayerEntity.class, this.mario, this.action.ANIMATION, 0);
 			if(action.ANIMATION != null)
-				CPMIntegration.commonAPI.playAnimation(PlayerEntity.class, this.MARIO, action.ANIMATION, 1);
+				CPMIntegration.commonAPI.playAnimation(PlayerEntity.class, this.mario, action.ANIMATION, 1);
 		}
 		this.action = action;
 	}
@@ -157,15 +167,15 @@ public class MarioPlayerData implements MarioData {
 		MarioQuaMario.LOGGER.info("Set Power-up to {}", powerUp.ID);
 		this.powerUp.losePower(this);
 		powerUp.acquirePower(this);
-		this.MARIO.setHealth(this.MARIO.getMaxHealth());
+		this.mario.setHealth(this.mario.getMaxHealth());
 		this.powerUp = powerUp;
-		this.MARIO.calculateDimensions();
+		this.mario.calculateDimensions();
 	}
 	@Override public ParsedCharacter getCharacter() {
 		return character;
 	}
 	@Override public void setCharacter(ParsedCharacter character) {
 		this.character = character;
-		this.MARIO.calculateDimensions();
+		this.mario.calculateDimensions();
 	}
 }

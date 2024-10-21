@@ -8,6 +8,7 @@ import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
@@ -60,7 +61,6 @@ public class MarioQuaMario implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		LOGGER.info("MarioQuaMario.java loaded on environment type " + FabricLoader.getInstance().getEnvironmentType());
-		MarioDataManager.wipePlayerData();
 		MarioDataManager.registerEventListeners();
 
 		RegistryManager.register();
@@ -68,5 +68,22 @@ public class MarioQuaMario implements ModInitializer {
 		MarioPackets.registerCommon();
 
 		MarioCommand.registerMarioCommand();
+
+//		ServerLivingEntityEvents.ALLOW_DEATH.register((livingEntity, damageSource, damageAmount) -> {
+//			if(livingEntity instanceof ServerPlayerEntity player) {
+//				MarioData data = MarioDataManager.getMarioData(player);
+//				if(data.isEnabled()) {
+//					// Revert if possible
+//					boolean canRevert = player.isOnGround();
+//					if(canRevert) {
+//						player.playSound(RegistryManager.POWER_UP_SFX);
+//						data.setYVel(0.5);
+//						player.setHealth(20.0F);
+//						return false;
+//					}
+//				}
+//			}
+//			return true;
+//		});
 	}
 }
