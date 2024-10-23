@@ -3,10 +3,6 @@ package com.floralquafloral.registries.stomp;
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioPlayerData;
-import com.floralquafloral.registries.RegistryManager;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import net.minecraft.component.type.ItemEnchantmentsComponent;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -14,18 +10,21 @@ import net.minecraft.entity.Saddleable;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.entity.damage.DamageTypes;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.vehicle.VehicleEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.EntityTypeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.RandomSeed;
-import net.minecraft.world.World;
 
 import java.util.List;
 
@@ -39,6 +38,7 @@ public class ParsedStomp {
 	private final boolean HITS_NONLIVING_ENTITIES;
 
 	private final RegistryKey<DamageType> DAMAGE_TYPE;
+	private final RegistryEntry<SoundEvent> SOUND_ENTRY;
 	private final Identifier POST_STOMP_ACTION;
 
 	public ParsedStomp(StompDefinition definition) {
@@ -51,10 +51,7 @@ public class ParsedStomp {
 		this.HITS_NONLIVING_ENTITIES = definition.canHitNonLiving();
 
 		this.DAMAGE_TYPE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, definition.getDamageType());
-		MarioQuaMario.LOGGER.info("Parsing:"
-				+ "\ndef damagetype: " + definition.getDamageType()
-				+ "\ndamagetype: " + this.DAMAGE_TYPE
-		);
+		this.SOUND_ENTRY = Registries.SOUND_EVENT.getEntry(definition.getSoundEvent());
 		this.POST_STOMP_ACTION = definition.getPostStompAction();
 	}
 
@@ -76,8 +73,21 @@ public class ParsedStomp {
 
 		this.DEFINITION.executeServer(target.getWorld(), data, target, harmless, seed);
 	}
-	public void executeClient(World world, MarioPlayerData data, boolean isSelf, Entity target, boolean harmless, long seed) {
-		this.DEFINITION.executeClient(world, data, isSelf, target, harmless, seed);
+	public void executeClient(PlayerEntity hearingPlayer, MarioPlayerData data, boolean isSelf, Entity target, boolean harmless, long seed) {
+		if(this.SOUND_ENTRY != null) {
+			target.getWorld().playSound(
+					hearingPlayer,
+					target.getX(),
+					target.getY(),
+					target.getZ(),
+					this.SOUND_ENTRY,
+					SoundCategory.PLAYERS,
+					1.0F,
+					1.0F,
+					seed
+			);
+		}
+		this.DEFINITION.executeClient(hearingPlayer.getWorld(), data, isSelf, target, harmless, seed);
 		data.applyModifiedVelocity();
 	}
 

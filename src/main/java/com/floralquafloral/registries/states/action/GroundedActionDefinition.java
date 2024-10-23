@@ -86,7 +86,7 @@ public abstract class GroundedActionDefinition implements ActionDefinition {
 					deltaVelocities.y, 0,
 					forwardAngleContribution,
 					strafeAngleContribution,
-					redirection
+					redirection * slipFactor
 			);
 		}
 	}

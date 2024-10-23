@@ -80,6 +80,7 @@ public class DuckSlide extends GroundedActionDefinition {
 									double threshold = DUCK_SLIDE_THRESHOLD.get(data);
 									return
 											Input.DUCK.isHeld()
+											&& data.getMario().isOnGround()
 											&& !data.getAction().ID.equals(getID())
 											&& Vector2d.lengthSquared(data.getForwardVel(), data.getStrafeVel()) > threshold * threshold;
 								}

@@ -139,7 +139,7 @@ public class ActionBasic extends GroundedActionDefinition {
 				new ActionTransitionDefinition("qua_mario:p_run",
 						(data) -> data.getForwardVel() >= RUN_SPEED.getAsThreshold(data),
 						(data, isSelf, seed) -> {
-							if(isSelf) data.setForwardVel(P_SPEED.get(data));
+							if(isSelf) data.setForwardVel(Math.max(P_SPEED.get(data), data.getForwardVel()));
 						},
 						(data, seed) -> {
 

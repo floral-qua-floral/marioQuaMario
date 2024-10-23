@@ -5,6 +5,7 @@ import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.registries.stomp.StompDefinition;
 import com.floralquafloral.registries.stomp.StompHandler;
+import com.floralquafloral.util.MarioSFX;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.sound.PositionedSoundInstance;
@@ -12,8 +13,10 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MovementType;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
@@ -46,6 +49,9 @@ public class JumpStomp implements StompDefinition {
 	@Override public @NotNull Identifier getDamageType() {
 		return Identifier.of(MarioQuaMario.MOD_ID, "stomp");
 	}
+	@Override public @Nullable SoundEvent getSoundEvent() {
+		return MarioSFX.STOMP;
+	}
 
 	@Override public @Nullable Identifier getPostStompAction() {
 		return null;
@@ -73,16 +79,8 @@ public class JumpStomp implements StompDefinition {
 	@Override
 	public void executeClient(World world, MarioPlayerData data, boolean isSelf, Entity target, boolean harmless, long seed) {
 		executeCommon(data, target);
-//		world.playSound(
-//				target.getX(),
-//				target.getY(),
-//				target.getZ(),
-//				SoundEvents.ENTITY_SKELETON_DEATH,
-//				SoundCategory.PLAYERS,
-//				1.0F,
-//				1.0F,
-//				false
-//		);
+
+//		world.playSoundFromEntity(null, target, Registries.SOUND_EVENT.getEntry(MarioSFX.STOMP), SoundCategory.PLAYERS, 1.0F, 1.0F, seed);
 	}
 
 	private void executeCommon(MarioPlayerData data, Entity target) {

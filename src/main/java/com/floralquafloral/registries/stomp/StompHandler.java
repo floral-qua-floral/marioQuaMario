@@ -74,7 +74,7 @@ public class StompHandler {
 						+ "\nareEqual2: " + (context.player().getWorld().equals(mario.getWorld()))
 						+ "\nmarioDataMarioWorld: " + getMarioData(mario).getMario().getWorld()
 				);
-				stompType.executeClient(context.player().getWorld(), (MarioPlayerData) getMarioData(mario), mario.isMainPlayer(), target, payload.harmless, payload.seed);
+				stompType.executeClient(context.player(), (MarioPlayerData) getMarioData(mario), mario.isMainPlayer(), target, payload.harmless, payload.seed);
 			});
 		}
 
