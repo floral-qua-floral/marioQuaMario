@@ -1,6 +1,6 @@
 package com.floralquafloral.registries.states.character.basecharacters;
 
-import com.floralquafloral.CharaStat;
+import com.floralquafloral.stats.BaseStats;
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.mariodata.client.MarioClientData;
@@ -12,7 +12,7 @@ import java.util.EnumMap;
 
 public class Mario implements CharacterDefinition {
 	@Override
-	public void populateStatFactors(EnumMap<CharaStat, Double> statFactorMap) {
+	public void populateStatFactors(EnumMap<BaseStats, Double> statFactorMap) {
 
 	}
 

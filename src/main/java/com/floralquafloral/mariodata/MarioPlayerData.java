@@ -6,10 +6,17 @@ import com.floralquafloral.registries.states.action.ParsedAction;
 import com.floralquafloral.registries.states.character.ParsedCharacter;
 import com.floralquafloral.registries.states.powerup.ParsedPowerUp;
 import com.floralquafloral.util.CPMIntegration;
+import com.floralquafloral.util.MarioSFX;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.sound.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.random.Random;
+import org.joml.Vector2d;
 
 public class MarioPlayerData implements MarioData {
 	private boolean enabled;
@@ -150,12 +157,91 @@ public class MarioPlayerData implements MarioData {
 	@Override public boolean getSneakProhibited() {
 		return useMarioPhysics() && getAction().SNEAK_LEGALITY.prohibitSneak();
 	}
+
+	private class SkidSoundInstance extends MovingSoundInstance {
+		private final PlayerEntity MARIO;
+		private final boolean IS_WALL;
+		private final SkidMaterial MATERIAL;
+		private int ticks;
+
+		protected SkidSoundInstance(boolean isWall, SkidMaterial material) {
+			super(isWall ? MarioSFX.SKID_WALL : MarioSFX.SKID_BLOCK, SoundCategory.PLAYERS, SoundInstance.createRandom());
+			this.MARIO = getMario();
+			this.IS_WALL = isWall;
+			this.MATERIAL = material;
+			this.updatePos();
+			this.repeat = true;
+			this.repeatDelay = 0;
+			this.volume = 1.0F;
+			this.ticks = 0;
+		}
+
+		private static SkidMaterial getFloorSkidMaterial(PlayerEntity mario) {
+
+			return SkidMaterial.BASIC;
+		}
+
+		private enum SkidMaterial {
+			BASIC(MarioSFX.SKID_BLOCK);
+
+			public final SoundEvent EVENT;
+			SkidMaterial(SoundEvent event) {
+				this.EVENT = event;
+			}
+		}
+
+		@Override public void tick() {
+			this.ticks++;
+			MarioQuaMario.LOGGER.info("Ticking sound!");
+			if(this.IS_WALL || this.MARIO.isOnGround()) {
+				SkidMaterial newMaterial = getFloorSkidMaterial(this.MARIO);
+				if(newMaterial != this.MATERIAL && !this.IS_WALL) {
+					MarioQuaMario.LOGGER.info("Switching skid sound effect!");
+					this.kill();
+//					SkidSoundInstance.create(this.DATA, false);
+				}
+				else this.updatePos();
+			}
+			else this.volume = 0.0F;
+		}
+
+		private void updatePos() {
+			this.x = this.MARIO.getX();
+			this.y = this.MARIO.getY();
+			this.z = this.MARIO.getZ();
+			MarioQuaMario.LOGGER.info("X: " + this.x);
+			if(this.IS_WALL) return;
+			float slidingSpeed = (float) this.MARIO.getVelocity().horizontalLengthSquared();
+			this.volume = Math.min(1.0F, ((float) ticks) / 3.0F) * Math.min(1.0F, 0.7F * slidingSpeed);
+			this.pitch = 1.0F + Math.min(0.15F, 0.5F * slidingSpeed);
+		}
+
+		@Override public boolean shouldAlwaysPlay() {
+			return true;
+		}
+
+		private void kill() {
+			skidSFX = null;
+			this.setDone();
+		}
+	}
+	private SkidSoundInstance skidSFX;
+
 	@Override public void setAction(ParsedAction action, long seed) {
 		getAction().transitionTo(this, action, seed);
 		this.setActionTransitionless(action);
 	}
 	@Override public void setActionTransitionless(ParsedAction action) {
-		if(!this.mario.getWorld().isClient) {
+		if(this.mario.getWorld().isClient) {
+			// Skid SFX
+			if(this.skidSFX != null) this.skidSFX.kill();
+			if(action.SLIDING_STATUS.doSlideSfx() || action.SLIDING_STATUS.doWallSlideSfx()) {
+				this.skidSFX = new SkidSoundInstance(action.SLIDING_STATUS.doWallSlideSfx(), SkidSoundInstance.getFloorSkidMaterial(getMario()));
+				MinecraftClient.getInstance().getSoundManager().play(this.skidSFX);
+				MarioQuaMario.LOGGER.info("SFX? " + this.skidSFX);
+			}
+		}
+		else {
 			if(this.action.ANIMATION != null)
 				CPMIntegration.commonAPI.playAnimation(PlayerEntity.class, this.mario, this.action.ANIMATION, 0);
 			if(action.ANIMATION != null)

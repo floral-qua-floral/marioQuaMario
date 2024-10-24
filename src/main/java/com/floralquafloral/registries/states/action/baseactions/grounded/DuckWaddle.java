@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.floralquafloral.CharaStat.*;
+import static com.floralquafloral.stats.BaseStats.*;
 
 public class DuckWaddle extends GroundedActionDefinition {
 	public static final ActionTransitionDefinition UNDUCK = new ActionTransitionDefinition(
@@ -30,10 +30,10 @@ public class DuckWaddle extends GroundedActionDefinition {
 	public void groundedSelfTick(MarioClientData data) {
 		boolean waddlingForward = data.getForwardVel() > 0;
 		groundAccel(data,
-				waddlingForward ? WADDLE_ACCEL.get(data) : WADDLE_BACKPEDAL_ACCEL.get(data),
-				waddlingForward ? WADDLE_SPEED.get(data) : WADDLE_BACKPEDAL_SPEED.get(data),
-				WADDLE_STRAFE_ACCEL.get(data), WADDLE_STRAFE_SPEED.get(data),
-				Input.getForwardInput(), Input.getStrafeInput(), WADDLE_REDIRECTION.get(data)
+				waddlingForward ? WADDLE_ACCEL.getValue(data) : WADDLE_BACKPEDAL_ACCEL.getValue(data),
+				waddlingForward ? WADDLE_SPEED.getValue(data) : WADDLE_BACKPEDAL_SPEED.getValue(data),
+				WADDLE_STRAFE_ACCEL.getValue(data), WADDLE_STRAFE_SPEED.getValue(data),
+				Input.getForwardInput(), Input.getStrafeInput(), WADDLE_REDIRECTION.getValue(data)
 		);
 	}
 

@@ -60,7 +60,7 @@ public class MarioDataPackets {
 		// am I supposed to send one packet with all this data or is this fine????
 		ServerPlayNetworking.send(toWho, new SetEnabledS2CPayload(aboutWho, data.isEnabled()));
 		ServerPlayNetworking.send(toWho, new SetActionS2CPayload(aboutWho, data.getAction(), true, 0));
-		ServerPlayNetworking.send(toWho, new SetPowerUpS2CPayload(aboutWho, data.getPowerUp()));
+		ServerPlayNetworking.send(toWho, new SetPowerUpS2CPayload(aboutWho, data.getPowerUp(), true));
 		ServerPlayNetworking.send(toWho, new SetCharacterS2CPayload(aboutWho, data.getCharacter()));
 	}
 
@@ -93,7 +93,7 @@ public class MarioDataPackets {
 
 	public static String setMarioPowerUp(ServerPlayerEntity mario, ParsedPowerUp powerUp) {
 		getMarioData(mario).setPowerUp(powerUp);
-		MarioPackets.sendPacketToTrackers(mario, new SetPowerUpS2CPayload(mario, powerUp));
+		MarioPackets.sendPacketToTrackers(mario, new SetPowerUpS2CPayload(mario, powerUp, false));
 
 		return(mario.getName().getString() + "'s Power-up has been set to " + powerUp.ID);
 	}
@@ -159,15 +159,16 @@ public class MarioDataPackets {
 		}
 	}
 
-	private record SetPowerUpS2CPayload(int player, int powerUp) implements CustomPayload {
+	private record SetPowerUpS2CPayload(int player, int powerUp, boolean transitionless) implements CustomPayload {
 		public static final Id<SetPowerUpS2CPayload> ID = new Id<>(Identifier.of(MarioQuaMario.MOD_ID, "set_power_up"));
 		public static final PacketCodec<RegistryByteBuf, SetPowerUpS2CPayload> CODEC = PacketCodec.tuple(
 				PacketCodecs.INTEGER, SetPowerUpS2CPayload::player,
 				PacketCodecs.INTEGER, SetPowerUpS2CPayload::powerUp,
+				PacketCodecs.BOOL, SetPowerUpS2CPayload::transitionless,
 				SetPowerUpS2CPayload::new
 		);
-		public SetPowerUpS2CPayload(PlayerEntity player, ParsedPowerUp powerUp) {
-			this(player.getId(), RegistryManager.POWER_UPS.getRawIdOrThrow(powerUp));
+		public SetPowerUpS2CPayload(PlayerEntity player, ParsedPowerUp powerUp, boolean transitionless) {
+			this(player.getId(), RegistryManager.POWER_UPS.getRawIdOrThrow(powerUp), transitionless);
 		}
 		public static void registerReceiver() {
 			ClientPlayNetworking.registerGlobalReceiver(ID, (payload, context) ->

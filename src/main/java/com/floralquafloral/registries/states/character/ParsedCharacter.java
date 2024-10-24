@@ -7,7 +7,7 @@ public class ParsedCharacter extends ParsedMajorMarioState {
 		super(definition);
 	}
 
-//	public double getStatFactor(CharaStat stat) {
+//	public double getStatFactor(BaseStats stat) {
 //
 //	}
 }

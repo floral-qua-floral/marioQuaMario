@@ -1,10 +1,11 @@
-package com.floralquafloral;
+package com.floralquafloral.stats;
 
+import com.floralquafloral.MarioQuaMario;
+import com.floralquafloral.MarioQuaMarioClient;
 import com.floralquafloral.mariodata.MarioData;
-import com.floralquafloral.mariodata.MarioPlayerData;
 import net.minecraft.world.World;
 
-public enum CharaStat {
+public enum BaseStats implements CharaStat {
 	ALL_JUMP_VELOCITIES,
 	ALL_GRAVITIES,
 	ALL_FRICTIONS,
@@ -132,17 +133,17 @@ public enum CharaStat {
 	AQUATIC_GROUND_POUND_DRAG;
 
 	private final double DEFAULT_VALUE;
-	private final CharaStat PARENT_STAT;
+	private final BaseStats PARENT_STAT;
 
-	CharaStat() {
+	BaseStats() {
 		this.DEFAULT_VALUE = 1.0;
 		this.PARENT_STAT = null;
 	}
-	CharaStat(double defaultValue) {
+	BaseStats(double defaultValue) {
 		this.DEFAULT_VALUE = defaultValue;
 		this.PARENT_STAT = null;
 	}
-	CharaStat(double defaultValue, CharaStat parentStat) {
+	BaseStats(double defaultValue, BaseStats parentStat) {
 		this.DEFAULT_VALUE = defaultValue;
 		this.PARENT_STAT = parentStat;
 	}
@@ -150,38 +151,10 @@ public enum CharaStat {
 	public double getDefaultValue() {
 		return DEFAULT_VALUE;
 	}
-
-	public double get(MarioData data) {
-		return this.getDefaultValue() * this.getMultiplier(data);
-	}
-	public double getAsThreshold(MarioData data) {
-		return this.get(data) * 0.99;
-	}
-	public double getAsLimit(MarioData data) {
-		return this.get(data) * 1.015;
-	}
-
 	public double getMultiplier(MarioData data) {
 		World marioWorld = data.getMario().getWorld();
 		boolean useCharacterStats = marioWorld.isClient ? MarioQuaMarioClient.useCharacterStats : marioWorld.getGameRules().getBoolean(MarioQuaMario.USE_CHARACTER_STATS);
 		return (useCharacterStats ? data.getCharacter().STAT_FACTORS.getOrDefault(this, 1.0) : 1.0) *
 				data.getPowerUp().STAT_FACTORS.getOrDefault(this, 1.0);
 	}
-
-//	public double getValue(PlayerEntity player) {
-//		if(ModMarioQuaMario.playerIsMarioClient(player)) return this.getValue();
-//		return this.getValue(ModMarioQuaMario.getUseCharacterStats(player), ModMarioQuaMario.getCharacter(player), ModMarioQuaMario.getPowerUp(player));
-//	}
-//
-//	public double getValue(boolean useCharacterStats, @NotNull MarioCharacter character, @NotNull PowerUp powerUp) {
-//		return(this.getDefaultValue() * this.getMultiplier(useCharacterStats, character, powerUp));
-//	}
-//
-//	public double getMultiplier(boolean useCharacterStats, @NotNull MarioCharacter character, @NotNull PowerUp powerUp) {
-//		return(
-//				(this.PARENT_STAT == null ? 1.0 : this.PARENT_STAT.getMultiplier(useCharacterStats, character, powerUp)) *
-//				(useCharacterStats ? character.getStatFactor(this) : 1) *
-//				(powerUp instanceof StatChangingPowerUp statChangingPowerUp ? statChangingPowerUp.getStatFactor(this) : 1.0)
-//		);
-//	}
 }

@@ -1,5 +1,6 @@
 package com.floralquafloral.registries.states.action;
 
+import com.floralquafloral.VoiceLine;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.client.Input;
 import com.floralquafloral.mariodata.client.MarioClientData;
@@ -29,6 +30,7 @@ public abstract class GroundedActionDefinition implements ActionDefinition {
 				(data, isSelf, seed) -> {
 					// Play duck voiceline
 					data.getMario().playSound(MarioSFX.DUCK);
+					VoiceLine.DUCK.play(data, seed);
 					LOGGER.info("Ducking voiceline with seed {}", seed);
 				},
 				(data, seed) -> {

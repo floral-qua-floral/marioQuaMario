@@ -22,6 +22,7 @@ public class MarioPackets {
 		SyncUseCharacterStatsS2CPayload.register();
 		MarioDataPackets.registerCommon();
 		StompHandler.registerPackets();
+		VoiceLine.registerPackets();
 
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 			MarioQuaMario.LOGGER.info("");
@@ -31,6 +32,7 @@ public class MarioPackets {
 		SyncUseCharacterStatsS2CPayload.registerReceiver();
 		MarioDataPackets.registerClient();
 		StompHandler.registerPacketsClient();
+		VoiceLine.registerPacketsClient();
 	}
 
 	public static PlayerEntity getPlayerFromInt(ClientPlayNetworking.Context context, int playerID) {

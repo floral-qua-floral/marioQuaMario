@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.floralquafloral.CharaStat.*;
+import static com.floralquafloral.stats.BaseStats.*;
 
 public class PRun extends GroundedActionDefinition {
 	@Override public @NotNull Identifier getID() {
@@ -25,11 +25,11 @@ public class PRun extends GroundedActionDefinition {
 	public void groundedSelfTick(MarioClientData data) {
 		boolean sprinting = data.getMario().isSprinting();
 		groundAccel(data,
-				sprinting ? OVERRUN_ACCEL.get(data) : OVERWALK_ACCEL.get(data),
-				sprinting ? P_SPEED.get(data) : WALK_SPEED.get(data),
-				STRAFE_ACCEL.get(data), STRAFE_SPEED.get(data),
+				sprinting ? OVERRUN_ACCEL.getValue(data) : OVERWALK_ACCEL.getValue(data),
+				sprinting ? P_SPEED.getValue(data) : WALK_SPEED.getValue(data),
+				STRAFE_ACCEL.getValue(data), STRAFE_SPEED.getValue(data),
 				Input.getForwardInput(), Input.getStrafeInput(),
-				P_SPEED_REDIRECTION.get(data)
+				P_SPEED_REDIRECTION.getValue(data)
 		);
 	}
 

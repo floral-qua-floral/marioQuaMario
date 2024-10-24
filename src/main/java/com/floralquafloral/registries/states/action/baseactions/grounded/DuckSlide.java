@@ -13,7 +13,7 @@ import org.joml.Vector2d;
 
 import java.util.List;
 
-import static com.floralquafloral.CharaStat.*;
+import static com.floralquafloral.stats.BaseStats.*;
 
 public class DuckSlide extends GroundedActionDefinition {
 	@Override public @NotNull Identifier getID() {
@@ -26,11 +26,11 @@ public class DuckSlide extends GroundedActionDefinition {
 	@Override
 	public void groundedSelfTick(MarioClientData data) {
 		applyDrag(data,
-				DUCK_SLIDE_DRAG.get(data),
-				DUCK_SLIDE_DRAG_MIN.get(data),
+				DUCK_SLIDE_DRAG.getValue(data),
+				DUCK_SLIDE_DRAG_MIN.getValue(data),
 				Input.getForwardInput(),
 				Input.getStrafeInput(),
-				DUCK_SLIDE_REDIRECTION.get(data)
+				DUCK_SLIDE_REDIRECTION.getValue(data)
 		);
 	}
 
@@ -77,7 +77,7 @@ public class DuckSlide extends GroundedActionDefinition {
 						new ActionTransitionDefinition(
 								"qua_mario:duck_slide",
 								(data) -> {
-									double threshold = DUCK_SLIDE_THRESHOLD.get(data);
+									double threshold = DUCK_SLIDE_THRESHOLD.getValue(data);
 									return
 											Input.DUCK.isHeld()
 											&& data.getMario().isOnGround()

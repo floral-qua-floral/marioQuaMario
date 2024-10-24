@@ -1,6 +1,6 @@
 package com.floralquafloral.registries.states.powerup.basepowerups;
 
-import com.floralquafloral.CharaStat;
+import com.floralquafloral.stats.BaseStats;
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioPlayerData;
@@ -40,7 +40,7 @@ public class SuperForm implements PowerUpDefinition {
 		return 1.0F;
 	}
 
-	@Override public void populateStatFactors(EnumMap<CharaStat, Double> statFactorMap) {
+	@Override public void populateStatFactors(EnumMap<BaseStats, Double> statFactorMap) {
 
 	}
 

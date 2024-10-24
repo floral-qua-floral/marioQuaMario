@@ -11,6 +11,36 @@
       "qua_mario:sfx/movement/flip"
     ]
   },
+  "sfx.movement.skid": {
+    "subtitle": "subtitles.qua_mario.movement.skid",
+    "sounds": [
+      "qua_mario:sfx/movement/skid"
+    ]
+  },
+  "sfx.movement.skid_ice": {
+    "subtitle": "subtitles.qua_mario.movement.skid_ice",
+    "sounds": [
+      "qua_mario:sfx/movement/skid_ice"
+    ]
+  },
+  "sfx.movement.skid_sand": {
+    "subtitle": "subtitles.qua_mario.movement.skid_sand",
+    "sounds": [
+      "qua_mario:sfx/movement/skid_sand"
+    ]
+  },
+  "sfx.movement.skid_snow": {
+    "subtitle": "subtitles.qua_mario.movement.skid_snow",
+    "sounds": [
+      "qua_mario:sfx/movement/skid_snow"
+    ]
+  },
+  "sfx.movement.skid_wall": {
+    "subtitle": "subtitles.qua_mario.movement.skid_wall",
+    "sounds": [
+      "qua_mario:sfx/movement/skid_wall"
+    ]
+  },
   "sfx.power_up.normal_power": {
     "subtitle": "subtitles.qua_mario.power_up.normal_power",
     "sounds": [
@@ -51,6 +81,18 @@
     "subtitle": "subtitles.qua_mario.stomp.yoshi",
     "sounds": [
       "qua_mario:sfx/stomp/yoshi"
+    ]
+  },
+  "sfx.action.duck": {
+    "subtitle": "subtitles.qua_mario.action.duck",
+    "sounds": [
+      "qua_mario:sfx/action/duck"
+    ]
+  },
+  "sfx.action.unduck": {
+    "subtitle": "subtitles.qua_mario.action.unduck",
+    "sounds": [
+      "qua_mario:sfx/action/unduck"
     ]
   },
   "sfx.action.ground_pound_pre": {

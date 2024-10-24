@@ -49,7 +49,7 @@ public enum Input {
 
 		JUMP.update(mario.input.jumping);
 
-		DUCK.update(mario.input.sneaking, mario.input.sneaking || mario.isInSneakingPose());
+		DUCK.update(mario.input.sneaking || mario.isInSneakingPose(), mario.input.sneaking);
 
 		SPIN.update(false);
 	}
