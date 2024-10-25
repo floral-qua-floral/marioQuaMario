@@ -2,6 +2,7 @@ package com.floralquafloral.registries;
 
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.registries.states.action.ActionDefinition;
+import com.floralquafloral.registries.states.action.AirborneActionDefinition;
 import com.floralquafloral.registries.states.action.GroundedActionDefinition;
 import com.floralquafloral.registries.states.action.ParsedAction;
 import com.floralquafloral.registries.states.character.CharacterDefinition;
@@ -99,6 +100,9 @@ public class RegistryManager {
 			parseAction(definition, transitionInjections);
 		}
 		for(GroundedActionDefinition definition : getEntrypoints("mario-actions-grounded", GroundedActionDefinition.class)) {
+			parseAction(definition, transitionInjections);
+		}
+		for(AirborneActionDefinition definition : getEntrypoints("mario-actions-airborne", AirborneActionDefinition.class)) {
 			parseAction(definition, transitionInjections);
 		}
 

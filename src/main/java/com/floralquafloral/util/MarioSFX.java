@@ -9,7 +9,7 @@ import net.minecraft.util.Identifier;
 public abstract class MarioSFX {
 	public static final SoundEvent JUMP = makeMovementSound("jump");
 	public static final SoundEvent FLIP = makeMovementSound("flip");
-	public static final SoundEvent SKID_BLOCK = makeMovementSound("skid_block");
+	public static final SoundEvent SKID_BLOCK = makeMovementSound("skid");
 	public static final SoundEvent SKID_ICE = makeMovementSound("skid_ice");
 	public static final SoundEvent SKID_SAND = makeMovementSound("skid_sand");
 	public static final SoundEvent SKID_SNOW = makeMovementSound("skid_snow");

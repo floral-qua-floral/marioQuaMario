@@ -11,7 +11,7 @@ import org.joml.Vector2d;
 import static com.floralquafloral.MarioQuaMario.LOGGER;
 
 public abstract class GroundedActionDefinition implements ActionDefinition {
-	protected abstract static class GroundedTransitions {
+	public abstract static class GroundedTransitions {
 		public static final ActionTransitionDefinition FALL = new ActionTransitionDefinition(
 				"qua_mario:fall",
 				(data) -> !data.getMario().isOnGround()
@@ -39,8 +39,9 @@ public abstract class GroundedActionDefinition implements ActionDefinition {
 		);
 	}
 
-	@Override public void selfTick(MarioClientData data) {
+	@Override public final void selfTick(MarioClientData data) {
 		data.setYVel(data.getYVel() - 0.05);
+		AirborneActionDefinition.jumpCapped = false;
 		this.groundedSelfTick(data);
 	}
 
