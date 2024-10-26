@@ -38,8 +38,9 @@ public class MarioQuaMario implements ModInitializer {
 	public static final GameRules.Key<GameRules.BooleanRule> USE_CHARACTER_STATS =
 			GameRuleRegistry.register("qua_mario:useCharacterStats", GameRules.Category.PLAYER,
 					GameRuleFactory.createBooleanRule(true, (server, booleanRule) -> {
+						MarioDataManager.useCharacterStats = booleanRule.get();
 						for(ServerPlayerEntity player : PlayerLookup.all(server)) {
-							ServerPlayNetworking.send(player, new MarioPackets.SyncUseCharacterStatsS2CPayload(true));
+							ServerPlayNetworking.send(player, new MarioPackets.SyncUseCharacterStatsS2CPayload(booleanRule.get()));
 						}
 					})
 			);

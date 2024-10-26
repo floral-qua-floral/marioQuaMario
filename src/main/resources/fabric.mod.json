@@ -41,7 +41,8 @@
 			"com.floralquafloral.registries.states.powerup.basepowerups.SmallForm"
 		],
 		"mario-characters": [
-			"com.floralquafloral.registries.states.character.basecharacters.Mario"
+			"com.floralquafloral.registries.states.character.basecharacters.Mario",
+			"com.floralquafloral.registries.states.character.basecharacters.Luigi"
 		],
 
 		"main": [

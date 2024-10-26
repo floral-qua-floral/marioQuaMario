@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.Set;
 
-public class Mario implements CharacterDefinition {
+public class Toadette implements CharacterDefinition {
 	@Override
 	public void populateStatModifiers(Map<Set<StatCategory>, Double> modifiers) {
 
@@ -29,7 +29,7 @@ public class Mario implements CharacterDefinition {
 
 	@Override
 	public @NotNull Identifier getID() {
-		return Identifier.of(MarioQuaMario.MOD_ID, "mario");
+		return Identifier.of(MarioQuaMario.MOD_ID, "toadette");
 	}
 
 	@Override

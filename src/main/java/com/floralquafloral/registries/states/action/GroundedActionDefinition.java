@@ -4,6 +4,7 @@ import com.floralquafloral.VoiceLine;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.client.Input;
 import com.floralquafloral.mariodata.client.MarioClientData;
+import com.floralquafloral.stats.CharaStat;
 import com.floralquafloral.util.MarioSFX;
 import net.minecraft.util.math.BlockPos;
 import org.joml.Vector2d;
@@ -11,6 +12,8 @@ import org.joml.Vector2d;
 import static com.floralquafloral.MarioQuaMario.LOGGER;
 
 public abstract class GroundedActionDefinition implements ActionDefinition {
+	public static final CharaStat ZERO = new CharaStat(0.0);
+
 	public abstract static class GroundedTransitions {
 		public static final ActionTransitionDefinition FALL = new ActionTransitionDefinition(
 				"qua_mario:fall",
@@ -49,36 +52,37 @@ public abstract class GroundedActionDefinition implements ActionDefinition {
 
 	public void groundAccel(
 			MarioClientData data,
-			double forwardAccel, double forwardTarget, double strafeAccel, double strafeTarget,
-			double forwardAngleContribution, double strafeAngleContribution, double redirectDelta
+			CharaStat forwardAccel, CharaStat forwardTarget, CharaStat strafeAccel, CharaStat strafeTarget,
+			double forwardAngleContribution, double strafeAngleContribution, CharaStat redirectDelta
 	) {
 		double slipFactor = getSlipFactor(data);
 		data.approachAngleAndAccel(
-				forwardAccel * slipFactor, forwardTarget * Input.getForwardInput(),
-				strafeAccel * slipFactor, strafeTarget * Input.getStrafeInput(),
-				forwardAngleContribution, strafeAngleContribution, redirectDelta * slipFactor
+				forwardAccel.get(data) * slipFactor, forwardTarget.get(data) * Input.getForwardInput(),
+				strafeAccel.get(data) * slipFactor, strafeTarget.get(data) * Input.getStrafeInput(),
+				forwardAngleContribution, strafeAngleContribution, redirectDelta.get(data) * slipFactor
 		);
 	}
 
 	public void applyDrag(
 			MarioClientData data,
-			double drag, double dragMin,
+			CharaStat drag, CharaStat dragMin,
 			double forwardAngleContribution, double strafeAngleContribution,
-			double redirection
+			CharaStat redirection
 	) {
-		boolean dragInverted = drag < 0;
+		double dragValue = drag.get(data);
+		boolean dragInverted = dragValue < 0;
 		double slipFactor = getSlipFactor(data);
-		dragMin *= slipFactor;
-		if(!dragInverted) drag *= slipFactor;
+		double dragMinValue = dragMin.get(data) * slipFactor;
+		if(!dragInverted) dragValue *= slipFactor;
 
 
 		Vector2d deltaVelocities = new Vector2d(
-				-drag * data.getForwardVel(),
-				-drag * data.getStrafeVel()
+				-dragValue * data.getForwardVel(),
+				-dragValue * data.getStrafeVel()
 		);
 		double dragVelocitySquared = deltaVelocities.lengthSquared();
-		if(dragVelocitySquared != 0 && dragVelocitySquared < dragMin * dragMin)
-			deltaVelocities.normalize(dragMin);
+		if(dragVelocitySquared != 0 && dragVelocitySquared < dragMinValue * dragMinValue)
+			deltaVelocities.normalize(dragMinValue);
 
 		if(dragInverted) {
 			data.setForwardStrafeVel(data.getForwardVel() + deltaVelocities.x, data.getStrafeVel() + deltaVelocities.y);
@@ -89,7 +93,7 @@ public abstract class GroundedActionDefinition implements ActionDefinition {
 					deltaVelocities.y, 0,
 					forwardAngleContribution,
 					strafeAngleContribution,
-					redirection * slipFactor
+					redirection.get(data) * slipFactor
 			);
 		}
 	}

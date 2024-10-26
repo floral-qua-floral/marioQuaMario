@@ -12,7 +12,6 @@ import org.apache.commons.compress.utils.Lists;
 import java.util.List;
 
 public class MarioQuaMarioClient implements ClientModInitializer {
-	public static boolean useCharacterStats = true;
 
 	public static final SimpleOption<Boolean> ALWAYS_FALSE = SimpleOption.ofBoolean("alwaysFalseOption", false);
 

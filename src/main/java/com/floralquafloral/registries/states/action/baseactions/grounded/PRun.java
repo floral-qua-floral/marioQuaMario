@@ -5,13 +5,14 @@ import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.mariodata.client.Input;
 import com.floralquafloral.mariodata.client.MarioClientData;
 import com.floralquafloral.registries.states.action.GroundedActionDefinition;
+import com.floralquafloral.stats.CharaStat;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.floralquafloral.stats.BaseStats.*;
+import static com.floralquafloral.stats.StatCategory.*;
 
 public class PRun extends GroundedActionDefinition {
 	@Override public @NotNull Identifier getID() {
@@ -21,15 +22,19 @@ public class PRun extends GroundedActionDefinition {
 		return "p-run";
 	}
 
+	public static final CharaStat P_ACCEL = new CharaStat(0.13, P_RUNNING, FORWARD, ACCELERATION);
+	public static final CharaStat P_SPEED = new CharaStat(0.665, P_RUNNING, FORWARD, SPEED);
+	public static final CharaStat P_REDIRECTION = new CharaStat(6.0, P_RUNNING, FORWARD, REDIRECTION);
+
 	@Override
 	public void groundedSelfTick(MarioClientData data) {
 		boolean sprinting = data.getMario().isSprinting();
 		groundAccel(data,
-				sprinting ? OVERRUN_ACCEL.getValue(data) : OVERWALK_ACCEL.getValue(data),
-				sprinting ? P_SPEED.getValue(data) : WALK_SPEED.getValue(data),
-				STRAFE_ACCEL.getValue(data), STRAFE_SPEED.getValue(data),
+				sprinting ? ActionBasic.OVERRUN_ACCEL : ActionBasic.OVERWALK_ACCEL,
+				sprinting ? P_SPEED : ActionBasic.WALK_SPEED,
+				ActionBasic.STRAFE_ACCEL, ActionBasic.STRAFE_SPEED,
 				Input.getForwardInput(), Input.getStrafeInput(),
-				P_SPEED_REDIRECTION.getValue(data)
+				P_REDIRECTION
 		);
 	}
 
@@ -53,7 +58,7 @@ public class PRun extends GroundedActionDefinition {
 //				GroundedTransitions.FALL,
 				GroundedTransitions.DUCK_WADDLE,
 				new ActionTransitionDefinition("qua_mario:basic",
-						(data) -> data.getForwardVel() < RUN_SPEED.getAsThreshold(data))
+						(data) -> data.getForwardVel() < ActionBasic.RUN_SPEED.getAsThreshold(data))
 		);
 	}
 

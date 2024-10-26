@@ -5,11 +5,12 @@ import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.mariodata.client.Input;
 import com.floralquafloral.mariodata.client.MarioClientData;
 import com.floralquafloral.registries.states.action.GroundedActionDefinition;
+import com.floralquafloral.stats.CharaStat;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.floralquafloral.stats.BaseStats.*;
+import static com.floralquafloral.stats.StatCategory.*;
 
 import java.util.List;
 
@@ -21,6 +22,30 @@ public class ActionBasic extends GroundedActionDefinition {
 		return null;
 	}
 
+	public static final CharaStat WALK_ACCEL = new CharaStat(0.045, WALKING, FORWARD, ACCELERATION);
+	public static final CharaStat WALK_STANDSTILL_ACCEL = new CharaStat(0.125, WALKING, FORWARD, ACCELERATION, FRICTION);
+	public static final CharaStat WALK_STANDSTILL_THRESHOLD = new CharaStat(0.12, WALKING, THRESHOLD);
+	public static final CharaStat WALK_SPEED = new CharaStat(0.275, WALKING, SPEED, FORWARD);
+	public static final CharaStat WALK_REDIRECTION = new CharaStat(0.0, WALKING, FORWARD, REDIRECTION);
+
+	public static final CharaStat OVERWALK_ACCEL = new CharaStat(0.028, WALKING, FORWARD, OVERSPEED_CORRECTION);
+
+	public static final CharaStat IDLE_DEACCEL = new CharaStat(0.075, WALKING, FRICTION);
+
+	public static final CharaStat BACKPEDAL_ACCEL = new CharaStat(0.055, WALKING, BACKWARD, ACCELERATION);
+	public static final CharaStat BACKPEDAL_SPEED = new CharaStat(0.225, WALKING, BACKWARD, SPEED);
+	public static final CharaStat BACKPEDAL_REDIRECTION = new CharaStat(0.0, WALKING, BACKWARD, REDIRECTION);
+	public static final CharaStat OVERBACKPEDAL_ACCEL = new CharaStat(0.04, WALKING, BACKWARD, OVERSPEED_CORRECTION);
+	public static final CharaStat UNDERBACKPEDAL_ACCEL = new CharaStat(0.055, WALKING, BACKWARD, ACCELERATION, FRICTION);
+
+	public static final CharaStat RUN_ACCEL = new CharaStat(0.0102, RUNNING, FORWARD, ACCELERATION);
+	public static final CharaStat RUN_SPEED = new CharaStat(0.575, RUNNING, FORWARD, SPEED);
+	public static final CharaStat RUN_REDIRECTION = new CharaStat(2.76, RUNNING, FORWARD, REDIRECTION);
+	public static final CharaStat OVERRUN_ACCEL = new CharaStat(0.0175, RUNNING, FORWARD, OVERSPEED_CORRECTION);
+
+	public static final CharaStat STRAFE_ACCEL = new CharaStat(0.065, WALKING, STRAFE, ACCELERATION);
+	public static final CharaStat STRAFE_SPEED = new CharaStat(0.275, WALKING, STRAFE, SPEED);
+
 	@Override
 	public void groundedSelfTick(MarioClientData data) {
 		if(Input.getForwardInput() > 0) {
@@ -31,19 +56,19 @@ public class ActionBasic extends GroundedActionDefinition {
 				if(data.getForwardVel() > RUN_SPEED.getAsLimit(data)) {
 					// Overrun
 					groundAccel(data,
-							OVERRUN_ACCEL.getValue(data), RUN_SPEED.getValue(data),
-							STRAFE_ACCEL.getValue(data), STRAFE_SPEED.getValue(data),
+							OVERRUN_ACCEL, RUN_SPEED,
+							STRAFE_ACCEL, STRAFE_SPEED,
 							Input.getForwardInput(), Input.getStrafeInput() * 0.8,
-							RUN_REDIRECTION.getValue(data)
+							RUN_REDIRECTION
 					);
 				}
 				else {
 					// Run Accel
 					groundAccel(data,
-							RUN_ACCEL.getValue(data), RUN_SPEED.getValue(data),
-							STRAFE_ACCEL.getValue(data), STRAFE_SPEED.getValue(data),
+							RUN_ACCEL, RUN_SPEED,
+							STRAFE_ACCEL, STRAFE_SPEED,
 							Input.getForwardInput(), Input.getStrafeInput(),
-							RUN_REDIRECTION.getValue(data)
+							RUN_REDIRECTION
 					);
 				}
 			}
@@ -51,28 +76,28 @@ public class ActionBasic extends GroundedActionDefinition {
 				if(data.getForwardVel() > WALK_SPEED.getAsLimit(data)) {
 					// Overwalk
 					groundAccel(data,
-							OVERWALK_ACCEL.getValue(data), WALK_SPEED.getValue(data),
-							STRAFE_ACCEL.getValue(data), STRAFE_SPEED.getValue(data),
+							OVERWALK_ACCEL, WALK_SPEED,
+							STRAFE_ACCEL, STRAFE_SPEED,
 							Input.getForwardInput(), Input.getStrafeInput(),
-							WALK_REDIRECTION.getValue(data)
+							WALK_REDIRECTION
 					);
 				}
 				else if(data.getForwardVel() <= WALK_STANDSTILL_THRESHOLD.getAsThreshold(data)) {
 					// Walk accel from low velocity
 					groundAccel(data,
-							WALK_STANDSTILL_ACCEL.getValue(data), WALK_SPEED.getValue(data),
-							STRAFE_ACCEL.getValue(data), STRAFE_SPEED.getValue(data),
+							WALK_STANDSTILL_ACCEL, WALK_SPEED,
+							STRAFE_ACCEL, STRAFE_SPEED,
 							Input.getForwardInput(), Input.getStrafeInput(),
-							WALK_REDIRECTION.getValue(data)
+							WALK_REDIRECTION
 					);
 				}
 				else {
 					// Walk accel
 					groundAccel(data,
-							WALK_ACCEL.getValue(data), WALK_SPEED.getValue(data),
-							STRAFE_ACCEL.getValue(data), STRAFE_SPEED.getValue(data),
+							WALK_ACCEL, WALK_SPEED,
+							STRAFE_ACCEL, STRAFE_SPEED,
 							Input.getForwardInput(), Input.getStrafeInput(),
-							WALK_REDIRECTION.getValue(data)
+							WALK_REDIRECTION
 					);
 				}
 			}
@@ -81,37 +106,37 @@ public class ActionBasic extends GroundedActionDefinition {
 			if(data.getForwardVel() > 0) {
 				// Under-backpedal
 				groundAccel(data,
-						UNDERBACKPEDAL_ACCEL.getValue(data), BACKPEDAL_SPEED.getValue(data),
-						STRAFE_ACCEL.getValue(data), STRAFE_SPEED.getValue(data),
+						UNDERBACKPEDAL_ACCEL, BACKPEDAL_SPEED,
+						STRAFE_ACCEL, STRAFE_SPEED,
 						Input.getForwardInput(), Input.getStrafeInput(),
-						BACKPEDAL_REDIRECTION.getValue(data)
+						BACKPEDAL_REDIRECTION
 				);
 			}
 			else if(data.getForwardVel() < BACKPEDAL_SPEED.getAsLimit(data)) {
 				// Over-backpedal
 				groundAccel(data,
-						OVERBACKPEDAL_ACCEL.getValue(data), BACKPEDAL_SPEED.getValue(data),
-						STRAFE_ACCEL.getValue(data), STRAFE_SPEED.getValue(data),
+						OVERBACKPEDAL_ACCEL, BACKPEDAL_SPEED,
+						STRAFE_ACCEL, STRAFE_SPEED,
 						Input.getForwardInput(), Input.getStrafeInput(),
-						BACKPEDAL_REDIRECTION.getValue(data)
+						BACKPEDAL_REDIRECTION
 				);
 			}
 			else {
 				// Backpedal Accel
 				groundAccel(data,
-						BACKPEDAL_ACCEL.getValue(data), BACKPEDAL_SPEED.getValue(data),
-						STRAFE_ACCEL.getValue(data), STRAFE_SPEED.getValue(data),
+						BACKPEDAL_ACCEL, BACKPEDAL_SPEED,
+						STRAFE_ACCEL, STRAFE_SPEED,
 						Input.getForwardInput(), Input.getStrafeInput(),
-						BACKPEDAL_REDIRECTION.getValue(data)
+						BACKPEDAL_REDIRECTION
 				);
 			}
 		}
 		else {
 			// Idle deaccel
 			groundAccel(data,
-					IDLE_DEACCEL.getValue(data), 0,
-					STRAFE_ACCEL.getValue(data), STRAFE_SPEED.getValue(data),
-					0.0, 0.0, 0.0
+					IDLE_DEACCEL, ZERO,
+					STRAFE_ACCEL, STRAFE_SPEED,
+					0.0, 0.0, ZERO
 			);
 		}
 	}
@@ -138,7 +163,7 @@ public class ActionBasic extends GroundedActionDefinition {
 				new ActionTransitionDefinition("qua_mario:p_run",
 						(data) -> data.getForwardVel() >= RUN_SPEED.getAsThreshold(data),
 						(data, isSelf, seed) -> {
-							if(isSelf) data.setForwardVel(Math.max(P_SPEED.getValue(data), data.getForwardVel()));
+							if(isSelf) data.setForwardVel(Math.max(PRun.P_SPEED.get(data), data.getForwardVel()));
 						},
 						(data, seed) -> {
 

@@ -1,5 +1,6 @@
 package com.floralquafloral;
 
+import com.floralquafloral.mariodata.MarioDataManager;
 import com.floralquafloral.mariodata.MarioDataPackets;
 import com.floralquafloral.registries.stomp.StompHandler;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -64,7 +65,7 @@ public class MarioPackets {
 		);
 		public static void registerReceiver() {
 			ClientPlayNetworking.registerGlobalReceiver(ID, (payload, context) ->
-					MarioQuaMarioClient.useCharacterStats = payload.useCharacterStats);
+					MarioDataManager.useCharacterStats = payload.useCharacterStats);
 		}
 
 		@Override public Id<? extends CustomPayload> getId() {

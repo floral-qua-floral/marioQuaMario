@@ -2,7 +2,7 @@ package com.floralquafloral.registries.states.action;
 
 import com.floralquafloral.mariodata.client.Input;
 import com.floralquafloral.mariodata.client.MarioClientData;
-import com.floralquafloral.stats.CharaStat;
+import com.floralquafloral.stats.OldCharaStat;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,20 +38,20 @@ public abstract class AirborneActionDefinition implements ActionDefinition {
 		);
 	}
 
-	private final @NotNull CharaStat GRAVITY = getGravity();
-	private final @NotNull CharaStat JUMP_GRAVITY = getJumpGravity();
-	private final @Nullable CharaStat JUMP_CAP = getJumpCap();
+	private final @NotNull OldCharaStat GRAVITY = getGravity();
+	private final @NotNull OldCharaStat JUMP_GRAVITY = getJumpGravity();
+	private final @Nullable OldCharaStat JUMP_CAP = getJumpCap();
 	//TODO: Make Grounded states use CharaStats as well!
 
-	protected abstract @NotNull CharaStat getGravity();
-	protected abstract @NotNull CharaStat getJumpGravity();
-	protected abstract @Nullable CharaStat getJumpCap();
+	protected abstract @NotNull OldCharaStat getGravity();
+	protected abstract @NotNull OldCharaStat getJumpGravity();
+	protected abstract @Nullable OldCharaStat getJumpCap();
 
 	@Override public final void selfTick(MarioClientData data) {
 		double yVel = data.getYVel();
 		boolean aboveJumpCap = JUMP_CAP != null && yVel > JUMP_CAP.getValue(data);
 
-		CharaStat useGravity = aboveJumpCap ? JUMP_GRAVITY : GRAVITY;
+		OldCharaStat useGravity = aboveJumpCap ? JUMP_GRAVITY : GRAVITY;
 		yVel += useGravity.getValue(data);
 		if(aboveJumpCap && !Input.JUMP.isHeld() && !jumpCapped) {
 			yVel = JUMP_CAP.getValue(data);

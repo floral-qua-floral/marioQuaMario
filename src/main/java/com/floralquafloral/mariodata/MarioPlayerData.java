@@ -5,6 +5,7 @@ import com.floralquafloral.registries.RegistryManager;
 import com.floralquafloral.registries.states.action.ParsedAction;
 import com.floralquafloral.registries.states.character.ParsedCharacter;
 import com.floralquafloral.registries.states.powerup.ParsedPowerUp;
+import com.floralquafloral.stats.CharaStat;
 import com.floralquafloral.util.CPMIntegration;
 import com.floralquafloral.util.MarioSFX;
 import net.minecraft.block.BlockState;
@@ -269,6 +270,7 @@ public class MarioPlayerData implements MarioData {
 		this.mario.setHealth(this.mario.getMaxHealth());
 		this.powerUp = powerUp;
 		this.mario.calculateDimensions();
+		CharaStat.invalidateCache();
 	}
 	@Override public ParsedCharacter getCharacter() {
 		return character;
@@ -276,5 +278,6 @@ public class MarioPlayerData implements MarioData {
 	@Override public void setCharacter(ParsedCharacter character) {
 		this.character = character;
 		this.mario.calculateDimensions();
+		CharaStat.invalidateCache();
 	}
 }

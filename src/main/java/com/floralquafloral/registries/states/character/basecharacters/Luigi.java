@@ -11,10 +11,24 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.Set;
 
-public class Mario implements CharacterDefinition {
+import static com.floralquafloral.stats.StatCategory.*;
+
+public class Luigi implements CharacterDefinition {
 	@Override
 	public void populateStatModifiers(Map<Set<StatCategory>, Double> modifiers) {
+		// Luigi walks and runs faster
+		modifiers.put(Set.of(FORWARD, WALKING, SPEED), 1.45);
+		modifiers.put(Set.of(FORWARD, RUNNING, SPEED), 1.2);
+		modifiers.put(Set.of(FORWARD, P_RUNNING, SPEED), 1.2);
+		modifiers.put(Set.of(FORWARD, RUNNING, ACCELERATION), 1.2);
 
+		// Luigi jumps higher
+		modifiers.put(Set.of(JUMPING_GRAVITY), 0.945);
+		modifiers.put(Set.of(JUMP_VELOCITY), 1.05);
+
+		// Luigi is slipperier
+		modifiers.put(Set.of(FRICTION), 0.4);
+		modifiers.put(Set.of(DRAG), 0.4);
 	}
 
 	@Override
@@ -29,7 +43,7 @@ public class Mario implements CharacterDefinition {
 
 	@Override
 	public @NotNull Identifier getID() {
-		return Identifier.of(MarioQuaMario.MOD_ID, "mario");
+		return Identifier.of(MarioQuaMario.MOD_ID, "luigi");
 	}
 
 	@Override

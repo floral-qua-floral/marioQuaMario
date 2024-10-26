@@ -5,20 +5,16 @@ import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.mariodata.client.Input;
 import com.floralquafloral.mariodata.client.MarioClientData;
 import com.floralquafloral.registries.states.action.GroundedActionDefinition;
+import com.floralquafloral.stats.CharaStat;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.floralquafloral.stats.BaseStats.*;
+import static com.floralquafloral.stats.StatCategory.*;
 
 public class DuckWaddle extends GroundedActionDefinition {
-	public static final ActionTransitionDefinition UNDUCK = new ActionTransitionDefinition(
-			"qua_mario:basic",
-			(data) -> !Input.DUCK.isHeld()
-	);
-
 	@Override public @NotNull Identifier getID() {
 		return Identifier.of(MarioQuaMario.MOD_ID, "duck_waddle");
 	}
@@ -26,14 +22,30 @@ public class DuckWaddle extends GroundedActionDefinition {
 		return "duck_waddle";
 	}
 
+	public static final ActionTransitionDefinition UNDUCK = new ActionTransitionDefinition(
+			"qua_mario:basic",
+			(data) -> !Input.DUCK.isHeld()
+	);
+
+	public static final CharaStat WADDLE_ACCEL = new CharaStat(0.06, DUCKING, FORWARD, ACCELERATION);
+	public static final CharaStat WADDLE_SPEED = new CharaStat(0.08, DUCKING, FORWARD, SPEED);
+
+	public static final CharaStat WADDLE_BACKPEDAL_ACCEL = new CharaStat(0.0725, DUCKING, BACKWARD, ACCELERATION);
+	public static final CharaStat WADDLE_BACKPEDAL_SPEED = new CharaStat(0.06, DUCKING, BACKWARD, SPEED);
+
+	public static final CharaStat WADDLE_STRAFE_ACCEL = new CharaStat(0.06, DUCKING, STRAFE, ACCELERATION);
+	public static final CharaStat WADDLE_STRAFE_SPEED = new CharaStat(0.06, DUCKING, STRAFE, SPEED);
+
+	public static final CharaStat WADDLE_REDIRECTION = new CharaStat(0.0, DUCKING, REDIRECTION);
+
 	@Override
 	public void groundedSelfTick(MarioClientData data) {
 		boolean waddlingForward = data.getForwardVel() > 0;
 		groundAccel(data,
-				waddlingForward ? WADDLE_ACCEL.getValue(data) : WADDLE_BACKPEDAL_ACCEL.getValue(data),
-				waddlingForward ? WADDLE_SPEED.getValue(data) : WADDLE_BACKPEDAL_SPEED.getValue(data),
-				WADDLE_STRAFE_ACCEL.getValue(data), WADDLE_STRAFE_SPEED.getValue(data),
-				Input.getForwardInput(), Input.getStrafeInput(), WADDLE_REDIRECTION.getValue(data)
+				waddlingForward ? WADDLE_ACCEL : WADDLE_BACKPEDAL_ACCEL,
+				waddlingForward ? WADDLE_SPEED : WADDLE_BACKPEDAL_SPEED,
+				WADDLE_STRAFE_ACCEL, WADDLE_STRAFE_SPEED,
+				Input.getForwardInput(), Input.getStrafeInput(), WADDLE_REDIRECTION
 		);
 	}
 

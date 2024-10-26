@@ -1,17 +1,18 @@
 package com.floralquafloral.registries.states.powerup.basepowerups;
 
-import com.floralquafloral.stats.BaseStats;
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.mariodata.client.MarioClientData;
 import com.floralquafloral.registries.states.powerup.PowerUpDefinition;
+import com.floralquafloral.stats.StatCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.EnumMap;
+import java.util.Map;
+import java.util.Set;
 
 public class SuperForm implements PowerUpDefinition {
 	@Override public @NotNull Identifier getID() {
@@ -40,7 +41,7 @@ public class SuperForm implements PowerUpDefinition {
 		return 1.0F;
 	}
 
-	@Override public void populateStatFactors(EnumMap<BaseStats, Double> statFactorMap) {
+	@Override public void populateStatModifiers(Map<Set<StatCategory>, Double> modifiers) {
 
 	}
 

@@ -25,9 +25,13 @@ import java.util.Set;
 public class MarioDataManager {
 	private static final Map<PlayerEntity, MarioData> SERVER_PLAYERS_DATA = new HashMap<>();
 	private static final Map<PlayerEntity, MarioData> CLIENT_PLAYERS_DATA = new HashMap<>();
+	public static boolean useCharacterStats = true;
 
 	public static void registerEventListeners() {
-		ServerLifecycleEvents.SERVER_STARTING.register((server) -> wipePlayerData());
+		ServerLifecycleEvents.SERVER_STARTED.register((server) -> {
+			useCharacterStats = server.getGameRules().getBoolean(MarioQuaMario.USE_CHARACTER_STATS);
+			wipePlayerData();
+		});
 
 		ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
 			MarioQuaMario.LOGGER.info("Player respawned!"

@@ -5,6 +5,7 @@ import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.mariodata.client.Input;
 import com.floralquafloral.mariodata.client.MarioClientData;
 import com.floralquafloral.registries.states.action.GroundedActionDefinition;
+import com.floralquafloral.stats.CharaStat;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +14,7 @@ import org.joml.Vector2d;
 
 import java.util.List;
 
-import static com.floralquafloral.stats.BaseStats.*;
+import static com.floralquafloral.stats.StatCategory.*;
 
 public class DuckSlide extends GroundedActionDefinition {
 	@Override public @NotNull Identifier getID() {
@@ -23,14 +24,21 @@ public class DuckSlide extends GroundedActionDefinition {
 		return "duck_waddle";
 	}
 
+	public static final CharaStat SLIDE_THRESHOLD = new CharaStat(0.25, DUCKING, THRESHOLD);
+	public static final CharaStat SLIDE_BOOST = new CharaStat(-0.15);
+
+	public static final CharaStat SLIDE_DRAG = new CharaStat(0.04333, DUCKING, DRAG);
+	public static final CharaStat SLIDE_DRAG_MIN = new CharaStat(0.01, DUCKING, DRAG);
+	public static final CharaStat SLIDE_REDIRECTION = new CharaStat(4.0, DUCKING, REDIRECTION);
+
 	@Override
 	public void groundedSelfTick(MarioClientData data) {
 		applyDrag(data,
-				DUCK_SLIDE_DRAG.getValue(data),
-				DUCK_SLIDE_DRAG_MIN.getValue(data),
+				SLIDE_DRAG,
+				SLIDE_DRAG_MIN,
 				Input.getForwardInput(),
 				Input.getStrafeInput(),
-				DUCK_SLIDE_REDIRECTION.getValue(data)
+				SLIDE_REDIRECTION
 		);
 	}
 
@@ -77,7 +85,7 @@ public class DuckSlide extends GroundedActionDefinition {
 						new ActionTransitionDefinition(
 								"qua_mario:duck_slide",
 								(data) -> {
-									double threshold = DUCK_SLIDE_THRESHOLD.getValue(data);
+									double threshold = SLIDE_THRESHOLD.get(data);
 									return
 											Input.DUCK.isHeld()
 											&& data.getMario().isOnGround()

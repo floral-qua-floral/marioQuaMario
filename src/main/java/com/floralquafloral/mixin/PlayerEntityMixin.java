@@ -1,19 +1,15 @@
 package com.floralquafloral.mixin;
 
-import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.client.MarioClientData;
 import com.floralquafloral.mariodata.MarioDataManager;
 import com.floralquafloral.registries.states.character.ParsedCharacter;
 import com.floralquafloral.registries.states.powerup.ParsedPowerUp;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Vec3d;
-import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -45,33 +41,28 @@ public abstract class PlayerEntityMixin {
 	private void getBaseDimensions(EntityPose pose, CallbackInfoReturnable<EntityDimensions> cir) {
 		MarioData data = MarioDataManager.getMarioData(this);
 		if(data.isEnabled()) {
-			// Returns the standing hitbox if being used by Mario on the client side while he can't sneak
+			// Returns the standing hitbox if being used by Mario while he can't sneak
 			if(data.getSneakProhibited() && pose == EntityPose.CROUCHING) {
 				cir.setReturnValue(data.getMario().getBaseDimensions(EntityPose.STANDING));
 				return;
 			}
 
-			cir.setReturnValue(getModifiedDimensions(pose, cir, data));
+			ParsedPowerUp powerUp = data.getPowerUp();
+			ParsedCharacter character = data.getCharacter();
+
+			float widthFactor = powerUp.WIDTH_FACTOR * character.WIDTH_FACTOR;
+			float heightFactor = powerUp.HEIGHT_FACTOR * character.HEIGHT_FACTOR;
+			if(pose == EntityPose.CROUCHING) heightFactor *= 0.6F;
+
+			EntityDimensions resultDimensions = cir.getReturnValue();
+
+			cir.setReturnValue(new EntityDimensions(
+					resultDimensions.width() * widthFactor,
+					resultDimensions.height() * heightFactor,
+					resultDimensions.eyeHeight() * heightFactor,
+					resultDimensions.attachments(), resultDimensions.fixed()
+			));
 		}
-	}
-
-	@Unique
-	private static @NotNull EntityDimensions getModifiedDimensions(EntityPose pose, CallbackInfoReturnable<EntityDimensions> cir, MarioData data) {
-		ParsedPowerUp powerUp = data.getPowerUp();
-		ParsedCharacter character = data.getCharacter();
-
-		float widthFactor = powerUp.WIDTH_FACTOR;
-		float heightFactor = powerUp.HEIGHT_FACTOR;
-		if(pose == EntityPose.CROUCHING) heightFactor *= 0.6F;
-
-		EntityDimensions resultDimensions = cir.getReturnValue();
-
-		return new EntityDimensions(
-				resultDimensions.width() * widthFactor,
-				resultDimensions.height() * heightFactor,
-				resultDimensions.eyeHeight() * heightFactor,
-				resultDimensions.attachments(), resultDimensions.fixed()
-		);
 	}
 
 	@Inject(method = "clipAtLedge", at = @At("HEAD"), cancellable = true)
