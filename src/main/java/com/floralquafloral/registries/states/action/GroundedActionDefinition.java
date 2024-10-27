@@ -4,11 +4,15 @@ import com.floralquafloral.VoiceLine;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.client.Input;
 import com.floralquafloral.mariodata.client.MarioClientData;
+import com.floralquafloral.registries.states.action.baseactions.airborne.Jump;
+import com.floralquafloral.registries.states.action.baseactions.grounded.PRun;
 import com.floralquafloral.stats.CharaStat;
 import com.floralquafloral.util.ClientSoundPlayer;
+import com.floralquafloral.util.JumpSoundPlayer;
 import com.floralquafloral.util.MarioSFX;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2d;
 
 import static com.floralquafloral.MarioQuaMario.LOGGER;
@@ -17,6 +21,19 @@ public abstract class GroundedActionDefinition implements ActionDefinition {
 	public static final CharaStat ZERO = new CharaStat(0.0);
 
 	public abstract static class GroundedTransitions {
+		public static void performJump(MarioData data, CharaStat velocityStat, @Nullable CharaStat addendStat,
+									   long seed, boolean playSound) {
+			if(data.getMario().isMainPlayer() || !data.getMario().getWorld().isClient) {
+				double jumpVel = velocityStat.get(data);
+				if(addendStat != null)
+					jumpVel += Math.max(0.0, data.getForwardVel() / PRun.P_SPEED.get(data)) * addendStat.get(data);
+
+				data.setYVel(jumpVel);
+			}
+
+			if(data.getMario().getWorld().isClient && playSound) JumpSoundPlayer.playJumpSfx(data, seed);
+		}
+
 		public static final ActionTransitionDefinition FALL = new ActionTransitionDefinition(
 				"qua_mario:fall",
 				(data) -> !data.getMario().isOnGround()
@@ -24,9 +41,9 @@ public abstract class GroundedActionDefinition implements ActionDefinition {
 
 		public static final ActionTransitionDefinition JUMP = new ActionTransitionDefinition(
 				"qua_mario:jump",
-				(data) -> Input.DUCK.isHeld()
-//					double threshold = DUCK_SLIDE_THRESHOLD.get(data);
-//					return Input.DUCK.isHeld() && Vector2d.lengthSquared(data.getForwardVel(), data.getStrafeVel()) > threshold * threshold;
+				(data) -> Input.JUMP.isPressed(),
+				(data, isSelf, seed) -> performJump(data, Jump.JUMP_VEL, Jump.JUMP_ADDEND, seed, true),
+				(data, seed) -> performJump(data, Jump.JUMP_VEL, Jump.JUMP_ADDEND, seed, false)
 		);
 
 		public static final ActionTransitionDefinition DUCK_WADDLE = new ActionTransitionDefinition(
@@ -34,7 +51,7 @@ public abstract class GroundedActionDefinition implements ActionDefinition {
 				(data) -> Input.DUCK.isHeld(),
 				(data, isSelf, seed) -> {
 					// Play duck voiceline
-					ClientSoundPlayer.playSound(MarioSFX.DUCK, data, seed);
+					ClientSoundPlayer.playSound(MarioSFX.DUCK, data, 0.5F, 1.0F, seed);
 					VoiceLine.DUCK.play(data, seed);
 				},
 				null
@@ -42,7 +59,7 @@ public abstract class GroundedActionDefinition implements ActionDefinition {
 	}
 
 	@Override public final void selfTick(MarioClientData data) {
-		data.setYVel(data.getYVel() - 0.05);
+		data.setYVel(data.getYVel() - 0.01);
 		AirborneActionDefinition.jumpCapped = false;
 		this.groundedSelfTick(data);
 	}

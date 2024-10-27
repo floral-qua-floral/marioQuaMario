@@ -26,6 +26,8 @@ public final class MarioSFX {
 
 	public static final SoundEvent DUCK = makeActionSound("duck");
 	public static final SoundEvent UNDUCK = makeActionSound("unduck");
+	public static final SoundEvent GROUND_POUND_PRE = makeActionSound("ground_pound_pre");
+	public static final SoundEvent GROUND_POUND = makeActionSound("ground_pound");
 
 	private static SoundEvent makeMovementSound(String name) {
 		return makeAndRegisterSound("sfx.movement." + name);

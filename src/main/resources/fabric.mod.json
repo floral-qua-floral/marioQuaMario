@@ -30,7 +30,8 @@
 			"com.floralquafloral.registries.states.action.baseactions.grounded.DuckSlide"
 		],
 		"mario-actions-airborne" : [
-
+			"com.floralquafloral.registries.states.action.baseactions.airborne.Fall",
+			"com.floralquafloral.registries.states.action.baseactions.airborne.Jump"
 		],
 		"mario-actions-aquatic": [
 

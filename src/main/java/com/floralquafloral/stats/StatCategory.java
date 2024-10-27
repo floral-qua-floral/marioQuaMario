@@ -24,6 +24,7 @@ public enum StatCategory {
 	FRICTION, // Mostly for Luigi?
 
 	JUMP_VELOCITY,
+	JUMP_CAP,
 
 	JUMPING_GRAVITY,
 	NORMAL_GRAVITY,
