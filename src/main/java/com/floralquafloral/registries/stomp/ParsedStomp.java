@@ -3,6 +3,7 @@ package com.floralquafloral.registries.stomp;
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioPlayerData;
+import com.floralquafloral.util.ClientSoundPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -38,7 +39,7 @@ public class ParsedStomp {
 	private final boolean HITS_NONLIVING_ENTITIES;
 
 	private final RegistryKey<DamageType> DAMAGE_TYPE;
-	private final RegistryEntry<SoundEvent> SOUND_ENTRY;
+	private final SoundEvent SOUND_EVENT;
 	private final Identifier POST_STOMP_ACTION;
 
 	public ParsedStomp(StompDefinition definition) {
@@ -51,7 +52,7 @@ public class ParsedStomp {
 		this.HITS_NONLIVING_ENTITIES = definition.canHitNonLiving();
 
 		this.DAMAGE_TYPE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, definition.getDamageType());
-		this.SOUND_ENTRY = Registries.SOUND_EVENT.getEntry(definition.getSoundEvent());
+		this.SOUND_EVENT = definition.getSoundEvent();
 		this.POST_STOMP_ACTION = definition.getPostStompAction();
 	}
 
@@ -71,23 +72,22 @@ public class ParsedStomp {
 
 		target.damage(damageSource, damage);
 
-		this.DEFINITION.executeServer(target.getWorld(), data, target, harmless, seed);
+		this.DEFINITION.executeServer(data, target, harmless, seed);
 	}
-	public void executeClient(PlayerEntity hearingPlayer, MarioPlayerData data, boolean isSelf, Entity target, boolean harmless, long seed) {
-		if(this.SOUND_ENTRY != null) {
-			target.getWorld().playSound(
-					hearingPlayer,
-					target.getX(),
-					target.getY(),
-					target.getZ(),
-					this.SOUND_ENTRY,
+	public void executeClient(MarioPlayerData data, boolean isSelf, Entity target, boolean harmless, long seed) {
+		if(this.SOUND_EVENT != null) {
+			ClientSoundPlayer.playSound(
+					this.SOUND_EVENT,
 					SoundCategory.PLAYERS,
+					data.getMario().getX(),
+					target.getY() + target.getHeight(),
+					data.getMario().getZ(),
 					1.0F,
 					1.0F,
 					seed
 			);
 		}
-		this.DEFINITION.executeClient(hearingPlayer.getWorld(), data, isSelf, target, harmless, seed);
+		this.DEFINITION.executeClient(data, isSelf, target, harmless, seed);
 		data.applyModifiedVelocity();
 	}
 

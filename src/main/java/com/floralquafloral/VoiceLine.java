@@ -3,6 +3,7 @@ package com.floralquafloral;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.registries.RegistryManager;
 import com.floralquafloral.registries.states.character.ParsedCharacter;
+import com.floralquafloral.util.ClientSoundPlayer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -68,25 +69,29 @@ public enum VoiceLine {
 		PlayerEntity mario = data.getMario();
 
 		if(mario.getWorld().isClient) {
-			PositionedSoundInstance prevVoiceSound = PLAYER_VOICE_LINES.get(mario);
-			SoundManager soundManager = MinecraftClient.getInstance().getSoundManager();
-			soundManager.stop(prevVoiceSound);
+			ClientSoundPlayer.SOUND_MANAGER.stop(PLAYER_VOICE_LINES.get(mario));
 
-			PositionedSoundInstance voiceSound = new PositionedSoundInstance(
+//			PositionedSoundInstance voiceSound = new PositionedSoundInstance(
+//					SOUND_EVENTS.get(data.getCharacter()),
+//					SoundCategory.VOICE,
+//					1.0F,
+//					1.0F,
+//					Random.create(seed),
+//					data.getMario().getX(),
+//					data.getMario().getY(),
+//					data.getMario().getZ()
+//			);
+//			ClientSoundPlayer.SOUND_MANAGER.play(voiceSound);
+			PLAYER_VOICE_LINES.put(mario, ClientSoundPlayer.playSound(
 					SOUND_EVENTS.get(data.getCharacter()),
 					SoundCategory.VOICE,
+					mario,
 					1.0F,
 					1.0F,
-					Random.create(seed),
-					data.getMario().getX(),
-					data.getMario().getY(),
-					data.getMario().getZ()
-			);
-			soundManager.play(voiceSound);
-			PLAYER_VOICE_LINES.put(mario, voiceSound);
+					seed
+			));
 		}
 		else {
-			MarioQuaMario.LOGGER.info("Send voiceline packet!!!");
 			MarioPackets.sendPacketToTrackers((ServerPlayerEntity) data.getMario(), new PlayVoiceLineS2CPayload(data.getMario(), this, seed));
 		}
 	}

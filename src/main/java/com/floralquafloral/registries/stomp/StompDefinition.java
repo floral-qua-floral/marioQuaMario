@@ -7,7 +7,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,8 +26,8 @@ public interface StompDefinition {
 
 	float calculateDamage(MarioData data, ServerPlayerEntity mario, ItemStack equipment, double equipmentArmor, double equipmentToughness, Entity target);
 
-	void executeServer(World world, MarioPlayerData data, Entity target, boolean harmless, long seed);
-	void executeClient(World world, MarioPlayerData data, boolean isSelf, Entity target, boolean harmless, long seed);
+	void executeServer(MarioPlayerData data, Entity target, boolean harmless, long seed);
+	void executeClient(MarioPlayerData data, boolean isSelf, Entity target, boolean harmless, long seed);
 
 	enum PainfulStompResponse {
 		INJURY,

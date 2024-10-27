@@ -6,7 +6,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
-public abstract class MarioSFX {
+public final class MarioSFX {
 	public static final SoundEvent JUMP = makeMovementSound("jump");
 	public static final SoundEvent FLIP = makeMovementSound("flip");
 	public static final SoundEvent SKID_BLOCK = makeMovementSound("skid");
@@ -24,7 +24,8 @@ public abstract class MarioSFX {
 	public static final SoundEvent STOMP_HEAVY = makeStompSound("heavy");
 	public static final SoundEvent STOMP_YOSHI = makeStompSound("yoshi");
 
-	public static final SoundEvent DUCK = makeAndRegisterSound("duck");
+	public static final SoundEvent DUCK = makeActionSound("duck");
+	public static final SoundEvent UNDUCK = makeActionSound("unduck");
 
 	private static SoundEvent makeMovementSound(String name) {
 		return makeAndRegisterSound("sfx.movement." + name);

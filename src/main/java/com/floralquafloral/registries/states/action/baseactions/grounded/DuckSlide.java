@@ -91,7 +91,9 @@ public class DuckSlide extends GroundedActionDefinition {
 											&& data.getMario().isOnGround()
 											&& !data.getAction().ID.equals(getID())
 											&& Vector2d.lengthSquared(data.getForwardVel(), data.getStrafeVel()) > threshold * threshold;
-								}
+								},
+								GroundedTransitions.DUCK_WADDLE.EXECUTOR_CLIENT,
+								GroundedTransitions.DUCK_WADDLE.EXECUTOR_SERVER
 						)
 				)
 		);

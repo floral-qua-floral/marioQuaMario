@@ -6,6 +6,9 @@ import com.floralquafloral.mariodata.client.Input;
 import com.floralquafloral.mariodata.client.MarioClientData;
 import com.floralquafloral.registries.states.action.GroundedActionDefinition;
 import com.floralquafloral.stats.CharaStat;
+import com.floralquafloral.util.ClientSoundPlayer;
+import com.floralquafloral.util.MarioSFX;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,7 +27,11 @@ public class DuckWaddle extends GroundedActionDefinition {
 
 	public static final ActionTransitionDefinition UNDUCK = new ActionTransitionDefinition(
 			"qua_mario:basic",
-			(data) -> !Input.DUCK.isHeld()
+			(data) -> !Input.DUCK.isHeld(),
+			(data, isSelf, seed) -> {
+				ClientSoundPlayer.playSound(MarioSFX.UNDUCK, data, seed);
+			},
+			null
 	);
 
 	public static final CharaStat WADDLE_ACCEL = new CharaStat(0.06, DUCKING, FORWARD, ACCELERATION);

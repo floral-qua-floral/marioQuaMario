@@ -41,7 +41,6 @@ public abstract class AirborneActionDefinition implements ActionDefinition {
 	private final @NotNull OldCharaStat GRAVITY = getGravity();
 	private final @NotNull OldCharaStat JUMP_GRAVITY = getJumpGravity();
 	private final @Nullable OldCharaStat JUMP_CAP = getJumpCap();
-	//TODO: Make Grounded states use CharaStats as well!
 
 	protected abstract @NotNull OldCharaStat getGravity();
 	protected abstract @NotNull OldCharaStat getJumpGravity();
