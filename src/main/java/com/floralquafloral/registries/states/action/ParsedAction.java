@@ -71,29 +71,39 @@ public class ParsedAction extends ParsedMarioState {
 		return false;
 	}
 
-	public void populateTransitionLists(Map<Identifier, ArrayList<ActionDefinition.ActionTransitionDefinition>> injections) {
+	public void populateTransitionLists(Map<Identifier, ArrayList<ActionDefinition.ActionTransitionInjection>> injections) {
 		MarioQuaMario.LOGGER.info("Parsing transitions out of {}...", this.ID);
 		ActionDefinition definition = (ActionDefinition) this.DEFINITION;
 		MarioQuaMario.LOGGER.info("PRE-TICK:-------");
-		this.TRANSITION_LISTS.put(TransitionPhase.PRE_TICK, parseTransitionDefinitions(definition.getPreTickTransitions(), injections));
+		this.TRANSITION_LISTS.put(TransitionPhase.PRE_TICK, this.parseTransitionDefinitions(definition.getPreTickTransitions(), injections));
 		MarioQuaMario.LOGGER.info("POST-TICK:------");
-		this.TRANSITION_LISTS.put(TransitionPhase.POST_TICK, parseTransitionDefinitions(definition.getPostTickTransitions(), injections));
+		this.TRANSITION_LISTS.put(TransitionPhase.POST_TICK, this.parseTransitionDefinitions(definition.getPostTickTransitions(), injections));
 		MarioQuaMario.LOGGER.info("POST-MOVE:------");
-		this.TRANSITION_LISTS.put(TransitionPhase.POST_MOVE, parseTransitionDefinitions(definition.getPostMoveTransitions(), injections));
+		this.TRANSITION_LISTS.put(TransitionPhase.POST_MOVE, this.parseTransitionDefinitions(definition.getPostMoveTransitions(), injections));
 	}
 
-	private static List<ParsedTransition> parseTransitionDefinitions(
+	private List<ParsedTransition> parseTransitionDefinitions(
 			List<ActionDefinition.ActionTransitionDefinition> definitions,
-			Map<Identifier, ArrayList<ActionDefinition.ActionTransitionDefinition>> injections
+			Map<Identifier, ArrayList<ActionDefinition.ActionTransitionInjection>> injections
 	) {
 		List<ParsedTransition> workingList = new ArrayList<>();
 		for(ActionDefinition.ActionTransitionDefinition definition : definitions) {
 			MarioQuaMario.LOGGER.info("Parsing transition to {}", definition.TARGET_IDENTIFIER);
 			if(injections.containsKey(definition.TARGET_IDENTIFIER)) {
-				MarioQuaMario.LOGGER.info("Injections found that should be inserted before this transition! Injecting:");
-				for(ActionDefinition.ActionTransitionDefinition injectTransition : injections.get(definition.TARGET_IDENTIFIER)) {
-					MarioQuaMario.LOGGER.info("Parsing & injecting transition to {}", injectTransition.TARGET_IDENTIFIER);
-					workingList.add(new ParsedTransition(injectTransition));
+				MarioQuaMario.LOGGER.info("Injections found that might be inserted before this transition! Checking:");
+				for(ActionDefinition.ActionTransitionInjection injection : injections.get(definition.TARGET_IDENTIFIER)) {
+					if(injection.ONLY_FOR_CATEGORY == ActionDefinition.ActionTransitionInjection.ActionCategory.ANY
+							|| this.DEFINITION instanceof GroundedActionDefinition && injection.ONLY_FOR_CATEGORY.IS_GROUNDED
+							|| this.DEFINITION instanceof AirborneActionDefinition && injection.ONLY_FOR_CATEGORY.IS_AIRBORNE
+//							|| this.DEFINITION instanceof AquaticActionDefinition && injection.ONLY_FOR_CATEGORY.IS_GROUNDED
+					) {
+						MarioQuaMario.LOGGER.info("Parsing & injecting transition to {}", injection.TRANSITION.TARGET_IDENTIFIER);
+						workingList.add(new ParsedTransition(injection.TRANSITION));
+					}
+					else {
+						MarioQuaMario.LOGGER.info("Injection to {} should only occur from actions in category {}. Skipping...",
+								injection.TRANSITION.TARGET_IDENTIFIER, injection.ONLY_FOR_CATEGORY);
+					}
 				}
 				MarioQuaMario.LOGGER.info("Finished injections, now parsing {} as planned", definition.TARGET_IDENTIFIER);
 			}

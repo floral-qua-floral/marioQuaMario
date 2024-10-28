@@ -33,6 +33,10 @@ public class DuckWaddle extends GroundedActionDefinition {
 			},
 			null
 	);
+	public static final ActionTransitionDefinition DUCK_FALL = new ActionTransitionDefinition(
+			"qua_mario:duck_fall",
+			GroundedTransitions.FALL.EVALUATOR
+	);
 
 	public static final CharaStat WADDLE_ACCEL = new CharaStat(0.06, DUCKING, FORWARD, ACCELERATION);
 	public static final CharaStat WADDLE_SPEED = new CharaStat(0.08, DUCKING, FORWARD, SPEED);
@@ -73,13 +77,15 @@ public class DuckWaddle extends GroundedActionDefinition {
 	@Override
 	public List<ActionTransitionDefinition> getPreTickTransitions() {
 		return List.of(
-				UNDUCK
+				DUCK_FALL
 		);
 	}
 
 	@Override
 	public List<ActionTransitionDefinition> getPostTickTransitions() {
-		return List.of();
+		return List.of(
+				UNDUCK
+		);
 	}
 
 	@Override

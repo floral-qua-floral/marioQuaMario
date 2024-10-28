@@ -16,7 +16,7 @@ public class Fall extends AirborneActionDefinition {
 		return Identifier.of(MarioQuaMario.MOD_ID, "fall");
 	}
 	@Override public @Nullable String getAnimationName() {
-		return "";
+		return null;
 	}
 
 	@Override public SneakLegalityRule getSneakLegalityRule() {

@@ -55,7 +55,7 @@ public class PRun extends GroundedActionDefinition {
 	@Override
 	public List<ActionTransitionDefinition> getPreTickTransitions() {
 		return List.of(
-//				GroundedTransitions.FALL,
+				GroundedTransitions.FALL,
 				GroundedTransitions.DUCK_WADDLE,
 				new ActionTransitionDefinition("qua_mario:basic",
 						(data) -> data.getForwardVel() < ActionBasic.RUN_SPEED.getAsThreshold(data))
@@ -64,7 +64,13 @@ public class PRun extends GroundedActionDefinition {
 
 	@Override
 	public List<ActionTransitionDefinition> getPostTickTransitions() {
-		return List.of();
+		return List.of(
+				new ActionTransitionDefinition("qua_mario:p_jump",
+						GroundedTransitions.JUMP.EVALUATOR,
+						GroundedTransitions.JUMP.EXECUTOR_CLIENT,
+						GroundedTransitions.JUMP.EXECUTOR_SERVER
+				)
+		);
 	}
 
 	@Override

@@ -69,7 +69,7 @@ public class RegistryManager {
 		}
 	}
 
-	private static void parseAction(ActionDefinition definition, Map<Identifier, ArrayList<ActionDefinition.ActionTransitionDefinition>> transitionInjections) {
+	private static void parseAction(ActionDefinition definition, Map<Identifier, ArrayList<ActionDefinition.ActionTransitionInjection>> transitionInjections) {
 		MarioQuaMario.LOGGER.info("Registering action {}...", definition.getID());
 
 		ParsedAction action = new ParsedAction(definition);
@@ -77,7 +77,7 @@ public class RegistryManager {
 
 		for(ActionDefinition.ActionTransitionInjection injection : definition.getTransitionInjections()) {
 			transitionInjections.putIfAbsent(injection.INJECT_BEFORE_TRANSITIONS_TO, new ArrayList<>());
-			transitionInjections.get(injection.INJECT_BEFORE_TRANSITIONS_TO).add(injection.TRANSITION);
+			transitionInjections.get(injection.INJECT_BEFORE_TRANSITIONS_TO).add(injection);
 		}
 	}
 
@@ -94,7 +94,7 @@ public class RegistryManager {
 	private static void registerActions() {
 		MarioQuaMario.LOGGER.info("Registering actions...");
 
-		Map<Identifier, ArrayList<ActionDefinition.ActionTransitionDefinition>> transitionInjections = new HashMap<>();
+		Map<Identifier, ArrayList<ActionDefinition.ActionTransitionInjection>> transitionInjections = new HashMap<>();
 
 		for(ActionDefinition definition : getEntrypoints("mario-actions-uncategorized", ActionDefinition.class)) {
 			parseAction(definition, transitionInjections);

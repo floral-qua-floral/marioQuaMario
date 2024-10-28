@@ -79,21 +79,33 @@ public class DuckSlide extends GroundedActionDefinition {
 
 	@Override
 	public List<ActionTransitionInjection> getTransitionInjections() {
+		final ActionTransitionDefinition.TransitionEvaluator SLIDE_EVALUATOR = (data) -> {
+			double threshold = SLIDE_THRESHOLD.get(data);
+			return
+					Input.DUCK.isHeld()
+							&& Vector2d.lengthSquared(data.getForwardVel(), data.getStrafeVel()) > threshold * threshold
+							&& !data.getAction().ID.equals(getID());
+		};
+
 		return List.of(
 				new ActionTransitionInjection(
 						"qua_mario:duck_waddle",
+						ActionTransitionInjection.ActionCategory.GROUNDED,
 						new ActionTransitionDefinition(
 								"qua_mario:duck_slide",
-								(data) -> {
-									double threshold = SLIDE_THRESHOLD.get(data);
-									return
-											Input.DUCK.isHeld()
-											&& data.getMario().isOnGround()
-											&& !data.getAction().ID.equals(getID())
-											&& Vector2d.lengthSquared(data.getForwardVel(), data.getStrafeVel()) > threshold * threshold;
-								},
+								SLIDE_EVALUATOR,
 								GroundedTransitions.DUCK_WADDLE.EXECUTOR_CLIENT,
 								GroundedTransitions.DUCK_WADDLE.EXECUTOR_SERVER
+						)
+				),
+				new ActionTransitionInjection(
+						"qua_mario:duck_waddle",
+						ActionTransitionInjection.ActionCategory.AIRBORNE,
+						new ActionTransitionDefinition(
+								"qua_mario:duck_slide",
+								SLIDE_EVALUATOR,
+								null,
+								null
 						)
 				)
 		);

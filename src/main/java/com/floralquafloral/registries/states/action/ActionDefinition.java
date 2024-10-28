@@ -78,14 +78,34 @@ public interface ActionDefinition extends MarioStateDefinition {
 
 	class ActionTransitionInjection {
 		public final Identifier INJECT_BEFORE_TRANSITIONS_TO;
+		public final ActionCategory ONLY_FOR_CATEGORY;
 		public final ActionTransitionDefinition TRANSITION;
 
 		public ActionTransitionInjection(
 				String injectBeforeTransitionsTo,
+				ActionCategory category,
 				ActionTransitionDefinition injectedTransition
 		) {
 			INJECT_BEFORE_TRANSITIONS_TO = Identifier.of(injectBeforeTransitionsTo);
+			ONLY_FOR_CATEGORY = category;
 			TRANSITION = injectedTransition;
+		}
+
+		public enum ActionCategory {
+			ANY(true, true, true),
+			GROUNDED(true, false, false),
+			AIRBORNE(false, true, false),
+			AQUATIC(false, false, true);
+
+			public final boolean IS_GROUNDED;
+			public final boolean IS_AIRBORNE;
+			public final boolean IS_AQUATIC;
+
+			ActionCategory(boolean grounded, boolean airborne, boolean aquatic) {
+				this.IS_GROUNDED = grounded;
+				this.IS_AIRBORNE = airborne;
+				this.IS_AQUATIC = aquatic;
+			}
 		}
 	}
 
