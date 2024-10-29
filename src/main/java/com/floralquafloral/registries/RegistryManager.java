@@ -76,8 +76,8 @@ public class RegistryManager {
 		Registry.register(ACTIONS, action.ID, action);
 
 		for(ActionDefinition.ActionTransitionInjection injection : definition.getTransitionInjections()) {
-			transitionInjections.putIfAbsent(injection.INJECT_BEFORE_TRANSITIONS_TO, new ArrayList<>());
-			transitionInjections.get(injection.INJECT_BEFORE_TRANSITIONS_TO).add(injection);
+			transitionInjections.putIfAbsent(injection.INJECT_NEAR_TRANSITIONS_TO, new ArrayList<>());
+			transitionInjections.get(injection.INJECT_NEAR_TRANSITIONS_TO).add(injection);
 		}
 	}
 

@@ -32,7 +32,9 @@
 		"mario-actions-airborne" : [
 			"com.floralquafloral.registries.states.action.baseactions.airborne.Fall",
 			"com.floralquafloral.registries.states.action.baseactions.airborne.Jump",
-			"com.floralquafloral.registries.states.action.baseactions.airborne.PJump"
+			"com.floralquafloral.registries.states.action.baseactions.airborne.PJump",
+			"com.floralquafloral.registries.states.action.baseactions.airborne.DuckFall",
+			"com.floralquafloral.registries.states.action.baseactions.airborne.DuckJump"
 		],
 		"mario-actions-aquatic": [
 

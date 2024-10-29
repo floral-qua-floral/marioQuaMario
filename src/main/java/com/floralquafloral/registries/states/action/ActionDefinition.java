@@ -77,18 +77,26 @@ public interface ActionDefinition extends MarioStateDefinition {
 	}
 
 	class ActionTransitionInjection {
-		public final Identifier INJECT_BEFORE_TRANSITIONS_TO;
+		public final Identifier INJECT_NEAR_TRANSITIONS_TO;
+		public final boolean INJECT_BEFORE_TARGET;
 		public final ActionCategory ONLY_FOR_CATEGORY;
 		public final ActionTransitionDefinition TRANSITION;
 
 		public ActionTransitionInjection(
-				String injectBeforeTransitionsTo,
+				InjectionPlacement placement,
+				String injectNearTransitionsTo,
 				ActionCategory category,
 				ActionTransitionDefinition injectedTransition
 		) {
-			INJECT_BEFORE_TRANSITIONS_TO = Identifier.of(injectBeforeTransitionsTo);
+			INJECT_NEAR_TRANSITIONS_TO = Identifier.of(injectNearTransitionsTo);
+			INJECT_BEFORE_TARGET = placement == InjectionPlacement.BEFORE;
 			ONLY_FOR_CATEGORY = category;
 			TRANSITION = injectedTransition;
+		}
+
+		public enum InjectionPlacement {
+			BEFORE,
+			AFTER
 		}
 
 		public enum ActionCategory {
