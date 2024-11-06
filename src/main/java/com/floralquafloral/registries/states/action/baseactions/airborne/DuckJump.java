@@ -2,8 +2,11 @@ package com.floralquafloral.registries.states.action.baseactions.airborne;
 
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.registries.states.action.baseactions.grounded.DuckWaddle;
+import com.floralquafloral.stats.CharaStat;
+import com.floralquafloral.stats.StatCategory;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -12,15 +15,19 @@ public class DuckJump extends Jump {
 		return Identifier.of(MarioQuaMario.MOD_ID, "duck_jump");
 	}
 
+	public static final CharaStat CAP = new CharaStat(0.14, StatCategory.JUMP_CAP);
+
+	@Override protected @Nullable CharaStat getJumpCap() {
+		return CAP;
+	}
+
 	@Override public SneakLegalityRule getSneakLegalityRule() {
 		return SneakLegalityRule.ALLOW;
 	}
 
 	@Override public List<ActionTransitionDefinition> getPreTickTransitions() {
 		return List.of(
-				new ActionTransitionDefinition("qua_mario:duck_waddle",
-						AerialTransitions.BASIC_LANDING.EVALUATOR
-				)
+				AerialTransitions.DUCKING_LANDING
 		);
 	}
 

@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 public interface MarioStateDefinition {
 	@NotNull Identifier getID();
 
-	void selfTick(MarioClientData data);
-	void otherClientsTick(MarioPlayerData data);
+	void clientTick(MarioPlayerData data, boolean isSelf);
 	void serverTick(MarioPlayerData data);
 }

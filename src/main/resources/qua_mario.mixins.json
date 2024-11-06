@@ -3,6 +3,7 @@
   "package": "com.floralquafloral.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "DamageSourceMixin",
     "EntityMixin",
     "JumpMixin",
     "PlayerEntityMixin"

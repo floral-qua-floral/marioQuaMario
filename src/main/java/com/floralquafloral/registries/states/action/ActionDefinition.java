@@ -3,6 +3,8 @@ package com.floralquafloral.registries.states.action;
 import com.floralquafloral.mariodata.client.MarioClientData;
 import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.registries.states.MarioStateDefinition;
+import com.floralquafloral.stats.CharaStat;
+import com.floralquafloral.stats.StatCategory;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,6 +16,27 @@ public interface ActionDefinition extends MarioStateDefinition {
 	SneakLegalityRule getSneakLegalityRule();
 	SlidingStatus getConstantSlidingStatus();
 	@Nullable Identifier getStompType();
+
+	void travelHook(MarioClientData data);
+
+//	class GravityProfile {
+//		public final @NotNull CharaStat GRAVITATIONAL_ACCELERATION;
+//		public final @NotNull CharaStat TERMINAL_VELOCITY;
+//		public final @NotNull CharaStat JUMPING_GRAVITATIONAL_ACCELERATION;
+//
+//		public GravityProfile(double gravitationalAccel, double terminalVelocity) {
+//			this.GRAVITATIONAL_ACCELERATION = new CharaStat(gravitationalAccel, StatCategory.NORMAL_GRAVITY);
+//			this.TERMINAL_VELOCITY = new CharaStat(terminalVelocity, StatCategory.TERMINAL_VELOCITY);
+//
+//			this.JUMPING_GRAVITATIONAL_ACCELERATION = this.GRAVITATIONAL_ACCELERATION;
+//		}
+//
+//		public GravityProfile(double gravitationalAccel, double terminalVelocity, double jumpingGravityAccel) {
+//			this.GRAVITATIONAL_ACCELERATION = new CharaStat(gravitationalAccel, StatCategory.NORMAL_GRAVITY);
+//			this.TERMINAL_VELOCITY = new CharaStat(terminalVelocity, StatCategory.TERMINAL_VELOCITY);
+//			this.JUMPING_GRAVITATIONAL_ACCELERATION = new CharaStat(jumpingGravityAccel, StatCategory.JUMPING_GRAVITY);
+//		}
+//	}
 
 	List<ActionTransitionDefinition> getPreTickTransitions();
 	List<ActionTransitionDefinition> getPostTickTransitions();
@@ -39,25 +62,28 @@ public interface ActionDefinition extends MarioStateDefinition {
 		}
 	}
 	enum SlidingStatus {
-		SLIDING(false, false, true, true, false),				// No view bobbing or footsteps, with sliding sound & block particles
-		SLIDING_NO_PARTICLES(false, false, true, false, false),	// No view bobbing or footsteps, with sliding sound
-		WALL_SLIDING(false, false, false, false, true),			// No view bobbing or footsteps, with alternate sliding sound
-		SLIDING_SILENT(false, false, false, false, false),		// No view bobbing or footsteps.
-		NOT_SLIDING_SMOOTH(true, false, false, false, false),	// Footsteps, but no view bobbing
-		NOT_SLIDING(true, true, false, false, false);			// Vanilla view bobbing & footstep sounds
+		SLIDING(false, false, true, true, false, true),					// No view bobbing or footsteps, with sliding sound & block particles
+		SKIDDING(false, false, true, true, false, false),				// Same as SLIDING, but the sound doesn't fade with reduced speed
+		SLIDING_NO_PARTICLES(false, false, true, false, false, true),	// No view bobbing or footsteps, with sliding sound
+		WALL_SLIDING(false, false, false, false, true, true),			// No view bobbing or footsteps, with alternate sliding sound
+		SLIDING_SILENT(false, false, false, false, false, true),		// No view bobbing or footsteps.
+		NOT_SLIDING_SMOOTH(true, false, false, false, false, true),		// Footsteps, but no view bobbing
+		NOT_SLIDING(true, true, false, false, false, true);				// Vanilla view bobbing & footstep sounds
 
-		private final boolean DO_FOOTSTEPS;
-		private final boolean DO_VIEW_BOBBING;
-		private final boolean DO_SLIDE_SFX;
-		private final boolean DO_ALT_SLIDE_SFX;
-		private final boolean DO_SLIDE_PARTICLES;
+		public final boolean DO_FOOTSTEPS;
+		public final boolean DO_VIEW_BOBBING;
+		public final boolean DO_SLIDE_SFX;
+		public final boolean DO_ALT_SLIDE_SFX;
+		public final boolean DO_SLIDE_PARTICLES;
+		public final boolean DO_FADING;
 
-		SlidingStatus(boolean doFootsteps, boolean doViewBobbing, boolean doSfx, boolean doParticles, boolean isWall) {
+		SlidingStatus(boolean doFootsteps, boolean doViewBobbing, boolean doSfx, boolean doParticles, boolean isWall, boolean speedScaling) {
 			this.DO_FOOTSTEPS = doFootsteps;
 			this.DO_VIEW_BOBBING = doViewBobbing;
 			this.DO_SLIDE_SFX = doSfx;
 			this.DO_SLIDE_PARTICLES = doParticles;
 			this.DO_ALT_SLIDE_SFX = isWall;
+			this.DO_FADING = speedScaling;
 		}
 		public boolean doFootsteps() {
 			return this.DO_FOOTSTEPS;
@@ -73,6 +99,9 @@ public interface ActionDefinition extends MarioStateDefinition {
 		}
 		public boolean doParticles() {
 			return this.DO_SLIDE_PARTICLES;
+		}
+		public boolean doSpeedScaling() {
+			return this.DO_FADING;
 		}
 	}
 

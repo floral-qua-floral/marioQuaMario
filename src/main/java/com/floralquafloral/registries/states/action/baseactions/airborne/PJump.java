@@ -4,6 +4,7 @@ import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.mariodata.client.MarioClientData;
 import com.floralquafloral.registries.states.action.AirborneActionDefinition;
+import com.floralquafloral.registries.states.action.baseactions.grounded.ActionBasic;
 import com.floralquafloral.stats.CharaStat;
 import com.floralquafloral.stats.StatCategory;
 import net.minecraft.util.Identifier;
@@ -18,5 +19,18 @@ public class PJump extends Jump {
 	}
 	@Override public @Nullable String getAnimationName() {
 		return "p-jump";
+	}
+
+	@Override
+	public List<ActionTransitionDefinition> getPreTickTransitions() {
+		return List.of(
+				new ActionTransitionDefinition(
+						"qua_mario:basic",
+						(data) -> data.getMario().isOnGround() && data.getForwardVel() >= ActionBasic.RUN_SPEED.getAsThreshold(data),
+						AerialTransitions.DOUBLE_JUMPABLE_LANDING.EXECUTOR_CLIENT,
+						AerialTransitions.DOUBLE_JUMPABLE_LANDING.EXECUTOR_SERVER
+				),
+				AerialTransitions.DOUBLE_JUMPABLE_LANDING
+		);
 	}
 }

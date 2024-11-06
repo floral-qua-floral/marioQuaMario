@@ -76,10 +76,7 @@ public class JumpSoundPlayer {
 		public static final PacketCodec<RegistryByteBuf, FadeJumpSoundC2SPayload> CODEC = PacketCodec.unit(new FadeJumpSoundC2SPayload());
 		public static void registerReceiver() {
 			ServerPlayNetworking.registerGlobalReceiver(ID, (payload, context) ->
-					{
-						MarioPackets.sendPacketToTrackersExclusive(context.player(), new FadeJumpSoundS2CPayload(context.player()));
-						MarioQuaMario.LOGGER.info("Received C2S packet to fade the jump sound!");
-					}
+					MarioPackets.sendPacketToTrackersExclusive(context.player(), new FadeJumpSoundS2CPayload(context.player()))
 			);
 		}
 

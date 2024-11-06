@@ -23,9 +23,7 @@ public class DuckFall extends Fall {
 
 	@Override public List<ActionTransitionDefinition> getPreTickTransitions() {
 		return List.of(
-				new ActionTransitionDefinition("qua_mario:duck_waddle",
-						AerialTransitions.BASIC_LANDING.EVALUATOR
-				)
+				AerialTransitions.DUCKING_LANDING
 		);
 	}
 

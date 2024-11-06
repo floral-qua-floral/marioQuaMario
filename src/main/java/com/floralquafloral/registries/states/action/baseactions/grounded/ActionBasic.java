@@ -9,6 +9,7 @@ import com.floralquafloral.stats.CharaStat;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector2d;
 
 import static com.floralquafloral.stats.StatCategory.*;
 
@@ -47,10 +48,12 @@ public class ActionBasic extends GroundedActionDefinition {
 	public static final CharaStat STRAFE_SPEED = new CharaStat(0.275, WALKING, STRAFE, SPEED);
 
 	@Override
-	public void groundedSelfTick(MarioClientData data) {
+	public void groundedTravel(MarioClientData data) {
 		if(Input.getForwardInput() > 0) {
+			double walkThreshold = WALK_SPEED.getAsThreshold(data);
 			boolean isRunning = data.getMario().isSprinting()
-					&& data.getForwardVel() > WALK_SPEED.getAsThreshold(data);
+					&& data.getForwardVel() > WALK_STANDSTILL_THRESHOLD.get(data)
+					&& Vector2d.lengthSquared(data.getForwardVel(), data.getStrafeVel()) > walkThreshold * walkThreshold;
 
 			if(isRunning) {
 				if(data.getForwardVel() > RUN_SPEED.getAsLimit(data)) {
@@ -141,7 +144,7 @@ public class ActionBasic extends GroundedActionDefinition {
 		}
 	}
 
-	@Override public void otherClientsTick(MarioPlayerData data) {}
+	@Override public void clientTick(MarioPlayerData data, boolean isSelf) {}
 
 	@Override public void serverTick(MarioPlayerData data) {}
 
@@ -152,7 +155,7 @@ public class ActionBasic extends GroundedActionDefinition {
 		return SlidingStatus.NOT_SLIDING;
 	}
 	@Override public @Nullable Identifier getStompType() {
-		return Identifier.of("qua_mario:stomp");
+		return null;
 	}
 
 	@Override
@@ -168,7 +171,8 @@ public class ActionBasic extends GroundedActionDefinition {
 						(data, seed) -> {
 
 						}
-				)
+				),
+				Skid.SKID_TRANSITION
 		);
 	}
 

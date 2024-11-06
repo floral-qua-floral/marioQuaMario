@@ -7,6 +7,7 @@ import com.floralquafloral.mariodata.client.MarioClientData;
 import com.floralquafloral.registries.states.action.GroundedActionDefinition;
 import com.floralquafloral.stats.CharaStat;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,28 +15,35 @@ import java.util.List;
 
 import static com.floralquafloral.stats.StatCategory.*;
 
-public class PRun extends GroundedActionDefinition {
+public class Skid extends GroundedActionDefinition {
 	@Override public @NotNull Identifier getID() {
-		return Identifier.of(MarioQuaMario.MOD_ID, "p_run");
+		return Identifier.of(MarioQuaMario.MOD_ID, "skid");
 	}
 	@Override public @Nullable String getAnimationName() {
-		return "p-run";
+		return "skid";
 	}
 
-	public static final CharaStat P_ACCEL = new CharaStat(0.13, P_RUNNING, FORWARD, ACCELERATION);
-	public static final CharaStat P_SPEED = new CharaStat(0.665, P_RUNNING, FORWARD, SPEED);
-	public static final CharaStat P_REDIRECTION = new CharaStat(6.0, P_RUNNING, FORWARD, REDIRECTION);
+	public static final CharaStat SKID_THRESHOLD = new CharaStat(0.285, RUNNING, THRESHOLD);
+
+	public static final CharaStat SKID_DRAG = new CharaStat(0.185, RUNNING, DRAG);
+	public static final CharaStat SKID_DRAG_MIN = new CharaStat(0.02, RUNNING, DRAG);
+	public static final CharaStat SKID_REDIRECTION = new CharaStat(4.5, RUNNING, REDIRECTION);
+
+	public static final ActionTransitionDefinition SKID_TRANSITION = new ActionTransitionDefinition(
+			"qua_mario:skid",
+			data -> Input.getForwardInput() < -0.65 && data.getForwardVel() > SKID_THRESHOLD.get(data)
+	);
 
 	@Override
 	public void groundedTravel(MarioClientData data) {
-		boolean sprinting = data.getMario().isSprinting();
-		groundAccel(data,
-				sprinting ? ActionBasic.OVERRUN_ACCEL : ActionBasic.OVERWALK_ACCEL,
-				sprinting ? P_SPEED : ActionBasic.WALK_SPEED,
-				ActionBasic.STRAFE_ACCEL, ActionBasic.STRAFE_SPEED,
-				Input.getForwardInput(), Input.getStrafeInput(),
-				P_REDIRECTION
+		applyDrag(data,
+				SKID_DRAG,
+				SKID_DRAG_MIN,
+				-Input.getForwardInput(),
+				Input.getStrafeInput(),
+				SKID_REDIRECTION
 		);
+		if(MathHelper.approximatelyEquals(data.getForwardVel(), 0.0)) data.actionTimer++;
 	}
 
 	@Override public void clientTick(MarioPlayerData data, boolean isSelf) {}
@@ -46,7 +54,7 @@ public class PRun extends GroundedActionDefinition {
 		return SneakLegalityRule.ALLOW;
 	}
 	@Override public SlidingStatus getConstantSlidingStatus() {
-		return SlidingStatus.NOT_SLIDING_SMOOTH;
+		return SlidingStatus.SKIDDING;
 	}
 	@Override public @Nullable Identifier getStompType() {
 		return null;
@@ -58,20 +66,16 @@ public class PRun extends GroundedActionDefinition {
 				GroundedTransitions.FALL,
 				GroundedTransitions.DUCK_WADDLE,
 				new ActionTransitionDefinition("qua_mario:basic",
-						(data) -> data.getForwardVel() < ActionBasic.RUN_SPEED.getAsThreshold(data)
-				),
-				Skid.SKID_TRANSITION
+						data -> (data.actionTimer > 0 || Input.getForwardInput() >= 0 || data.getForwardVel() < -0.05)
+				)
 		);
 	}
 
 	@Override
 	public List<ActionTransitionDefinition> getPostTickTransitions() {
 		return List.of(
-				new ActionTransitionDefinition("qua_mario:p_jump",
-						GroundedTransitions.JUMP.EVALUATOR,
-						GroundedTransitions.JUMP.EXECUTOR_CLIENT,
-						GroundedTransitions.JUMP.EXECUTOR_SERVER
-				)
+				// Sideflip!!!
+				GroundedTransitions.JUMP
 		);
 	}
 

@@ -13,11 +13,8 @@ public abstract class ParsedMarioState {
 		this.DEFINITION = definition;
 	}
 
-	public void selfTick(MarioClientData data) {
-		this.DEFINITION.selfTick(data);
-	}
-	public void otherClientsTick(MarioPlayerData data) {
-		this.DEFINITION.otherClientsTick(data);
+	public void clientTick(MarioPlayerData data, boolean isSelf) {
+		this.DEFINITION.clientTick(data, isSelf);
 	}
 	public void serverTick(MarioPlayerData data) {
 		this.DEFINITION.serverTick(data);

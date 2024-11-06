@@ -42,11 +42,11 @@ public class Fall extends AirborneActionDefinition {
 		return null;
 	}
 
-	@Override public void aerialSelfTick(MarioClientData data) {
+	@Override public void airborneTravel(MarioClientData data) {
 		airborneAccel(data);
 	}
 
-	@Override public void otherClientsTick(MarioPlayerData data) {
+	@Override public void clientTick(MarioPlayerData data, boolean isSelf) {
 
 	}
 

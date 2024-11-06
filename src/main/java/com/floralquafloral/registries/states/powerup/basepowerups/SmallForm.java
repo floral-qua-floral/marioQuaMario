@@ -20,12 +20,7 @@ public class SmallForm implements PowerUpDefinition {
 	}
 
 	@Override
-	public void selfTick(MarioClientData data) {
-
-	}
-
-	@Override
-	public void otherClientsTick(MarioPlayerData data) {
+	public void clientTick(MarioPlayerData data, boolean isSelf) {
 
 	}
 
@@ -59,6 +54,11 @@ public class SmallForm implements PowerUpDefinition {
 	@Override
 	public int getValue() {
 		return 0;
+	}
+
+	@Override
+	public float getVoicePitch() {
+		return 1.075F;
 	}
 
 	@Override

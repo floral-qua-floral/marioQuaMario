@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 public class ParsedPowerUp extends ParsedMajorMarioState {
 
 	public final int VALUE;
+	public final float VOICE_PITCH;
 	public final SoundEvent ACQUISITION_SOUND;
 	public final Identifier REVERT_TARGET;
 
@@ -23,6 +24,7 @@ public class ParsedPowerUp extends ParsedMajorMarioState {
 		super(definition);
 
 		this.VALUE = definition.getValue();
+		this.VOICE_PITCH = definition.getVoicePitch();
 		SoundEvent acquisitionSound = definition.getAcquisitionSound();
 		this.ACQUISITION_SOUND = acquisitionSound == null ? MarioSFX.NORMAL_POWER : acquisitionSound;
 		this.REVERT_TARGET = definition.getRevertTarget();

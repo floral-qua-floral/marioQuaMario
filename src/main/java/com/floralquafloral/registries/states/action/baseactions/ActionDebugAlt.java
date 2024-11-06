@@ -22,7 +22,7 @@ public class ActionDebugAlt implements ActionDefinition {
 	}
 
 	@Override
-	public void selfTick(MarioClientData data) {
+	public void travelHook(MarioClientData data) {
 		data.actionTimer++;
 		data.setStrafeVel(Input.getStrafeInput() * 0.5);
 
@@ -32,7 +32,7 @@ public class ActionDebugAlt implements ActionDefinition {
 	}
 
 	@Override
-	public void otherClientsTick(MarioPlayerData data) {}
+	public void clientTick(MarioPlayerData data, boolean isSelf) {}
 
 	@Override
 	public void serverTick(MarioPlayerData data) {

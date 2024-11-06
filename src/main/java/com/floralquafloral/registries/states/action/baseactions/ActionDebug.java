@@ -22,14 +22,14 @@ public class ActionDebug implements ActionDefinition {
 	}
 
 	@Override
-	public void selfTick(MarioClientData data) {
+	public void travelHook(MarioClientData data) {
 		data.actionTimer++;
 		data.setForwardStrafeVel(Input.getForwardInput() * 0.5, Input.getStrafeInput() * 0.5);
 		data.setYVel(Input.JUMP.isHeld() ? 0.4 : (Input.DUCK.isHeld() ? -0.4 : (0.03 * Math.sin((double) data.actionTimer / 16))));
 	}
 
 	@Override
-	public void otherClientsTick(MarioPlayerData data) {}
+	public void clientTick(MarioPlayerData data, boolean isSelf) {}
 
 	@Override
 	public void serverTick(MarioPlayerData data) {

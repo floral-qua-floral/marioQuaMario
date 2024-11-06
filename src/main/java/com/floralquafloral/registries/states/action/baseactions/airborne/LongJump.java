@@ -12,17 +12,18 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class Jump extends AirborneActionDefinition {
+public class LongJump extends AirborneActionDefinition {
 	@Override public @NotNull Identifier getID() {
-		return Identifier.of(MarioQuaMario.MOD_ID, "jump");
+		return Identifier.of(MarioQuaMario.MOD_ID, "long_jump");
 	}
 	@Override public @Nullable String getAnimationName() {
-		return null;
+		return "long-jump";
 	}
 
-	public static final CharaStat JUMP_VEL = new CharaStat(0.858, StatCategory.JUMP_VELOCITY);
-	public static final CharaStat JUMP_ADDEND = new CharaStat(0.117, StatCategory.JUMP_VELOCITY);
-	public static final CharaStat JUMP_CAP = new CharaStat(0.39, StatCategory.JUMP_CAP);
+	public static final CharaStat GRAVITY = new CharaStat(-0.0735, StatCategory.NORMAL_GRAVITY);
+
+	public static final CharaStat LONG_JUMP_VEL = new CharaStat(0.67, StatCategory.JUMP_VELOCITY);
+	public static final CharaStat LONG_JUMP_THRESHOLD = new CharaStat(0.3, StatCategory.THRESHOLD);
 
 	@Override public SneakLegalityRule getSneakLegalityRule() {
 		return SneakLegalityRule.PROHIBIT;
@@ -35,16 +36,16 @@ public class Jump extends AirborneActionDefinition {
 	}
 
 	@Override protected @NotNull CharaStat getGravity() {
-		return AerialStats.GRAVITY;
+		return GRAVITY;
 	}
 	@Override protected @Nullable CharaStat getJumpGravity() {
-		return AerialStats.JUMP_GRAVITY;
+		return GRAVITY;
 	}
 	@Override protected @NotNull CharaStat getTerminalVelocity() {
 		return AerialStats.TERMINAL_VELOCITY;
 	}
 	@Override protected @Nullable CharaStat getJumpCap() {
-		return JUMP_CAP;
+		return null;
 	}
 
 	@Override public void airborneTravel(MarioClientData data) {
@@ -61,6 +62,7 @@ public class Jump extends AirborneActionDefinition {
 
 	@Override public List<ActionTransitionDefinition> getPreTickTransitions() {
 		return List.of(
+				AerialTransitions.DUCKING_LANDING,
 				AerialTransitions.DOUBLE_JUMPABLE_LANDING
 		);
 	}

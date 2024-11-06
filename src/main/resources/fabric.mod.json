@@ -26,6 +26,7 @@
 		"mario-actions-grounded": [
 			"com.floralquafloral.registries.states.action.baseactions.grounded.ActionBasic",
 			"com.floralquafloral.registries.states.action.baseactions.grounded.PRun",
+			"com.floralquafloral.registries.states.action.baseactions.grounded.Skid",
 			"com.floralquafloral.registries.states.action.baseactions.grounded.DuckWaddle",
 			"com.floralquafloral.registries.states.action.baseactions.grounded.DuckSlide"
 		],
@@ -34,7 +35,8 @@
 			"com.floralquafloral.registries.states.action.baseactions.airborne.Jump",
 			"com.floralquafloral.registries.states.action.baseactions.airborne.PJump",
 			"com.floralquafloral.registries.states.action.baseactions.airborne.DuckFall",
-			"com.floralquafloral.registries.states.action.baseactions.airborne.DuckJump"
+			"com.floralquafloral.registries.states.action.baseactions.airborne.DuckJump",
+			"com.floralquafloral.registries.states.action.baseactions.airborne.LongJump"
 		],
 		"mario-actions-aquatic": [
 

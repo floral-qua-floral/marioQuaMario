@@ -7,6 +7,7 @@ import com.floralquafloral.mariodata.client.MarioClientData;
 import com.floralquafloral.registries.states.ParsedMarioState;
 import com.floralquafloral.registries.RegistryManager;
 import com.floralquafloral.registries.stomp.ParsedStomp;
+import com.floralquafloral.stats.CharaStat;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.RandomSeed;
 import org.jetbrains.annotations.Nullable;
@@ -19,6 +20,8 @@ import java.util.Map;
 public class ParsedAction extends ParsedMarioState {
 	public final String ANIMATION;
 
+	private final ActionDefinition ACTION_DEFINITION;
+
 	public final ActionDefinition.SneakLegalityRule SNEAK_LEGALITY;
 	public final ActionDefinition.SlidingStatus SLIDING_STATUS;
 	public final ParsedStomp STOMP;
@@ -27,7 +30,7 @@ public class ParsedAction extends ParsedMarioState {
 
 	public ParsedAction(ActionDefinition definition) {
 		super(definition);
-//		this.DEFINITION = definition;
+		this.ACTION_DEFINITION = definition;
 		this.ANIMATION = definition.getAnimationName();
 		this.SNEAK_LEGALITY = definition.getSneakLegalityRule();
 		this.SLIDING_STATUS = definition.getConstantSlidingStatus();
@@ -35,6 +38,10 @@ public class ParsedAction extends ParsedMarioState {
 		this.STOMP = stompID == null ? null : RegistryManager.STOMP_TYPES.get(stompID);
 
 		this.TRANSITION_LISTS = new EnumMap<>(TransitionPhase.class);
+	}
+
+	public void travelHook(MarioClientData data) {
+		this.ACTION_DEFINITION.travelHook(data);
 	}
 
 	public boolean attemptTransitions(MarioClientData data, TransitionPhase phase) {

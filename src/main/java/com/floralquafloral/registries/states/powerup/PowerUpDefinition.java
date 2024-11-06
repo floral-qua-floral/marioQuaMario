@@ -13,6 +13,8 @@ public interface PowerUpDefinition extends MarioMajorStateDefinition {
 
 	int getValue();
 
+	float getVoicePitch();
+
 	@Nullable SoundEvent getAcquisitionSound();
 
 	@Nullable Identifier getRevertTarget();

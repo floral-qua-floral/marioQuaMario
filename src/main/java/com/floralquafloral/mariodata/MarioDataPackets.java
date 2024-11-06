@@ -215,7 +215,6 @@ public class MarioDataPackets {
 		);
 		public SetActionC2SPayload(@NotNull ParsedAction newAction, long seed) {
 			this(RegistryManager.ACTIONS.getRawIdOrThrow(newAction), seed);
-			MarioQuaMario.LOGGER.info("Made new SetActionC2S packet");
 		}
 		public static void registerReceiver() {
 			ServerPlayNetworking.registerGlobalReceiver(ID, (payload, context) ->

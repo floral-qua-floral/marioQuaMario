@@ -10,12 +10,9 @@ import com.floralquafloral.stats.CharaStat;
 import com.floralquafloral.util.ClientSoundPlayer;
 import com.floralquafloral.util.JumpSoundPlayer;
 import com.floralquafloral.util.MarioSFX;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2d;
-
-import static com.floralquafloral.MarioQuaMario.LOGGER;
 
 public abstract class GroundedActionDefinition implements ActionDefinition {
 	public static final CharaStat ZERO = new CharaStat(0.0);
@@ -58,13 +55,13 @@ public abstract class GroundedActionDefinition implements ActionDefinition {
 		);
 	}
 
-	@Override public final void selfTick(MarioClientData data) {
-		data.setYVel(data.getYVel() - 0.01);
+	@Override public final void travelHook(MarioClientData data) {
+		data.setYVel(data.getYVel() + AirborneActionDefinition.AerialStats.GRAVITY.get(data));
 		AirborneActionDefinition.jumpCapped = false;
-		this.groundedSelfTick(data);
+		this.groundedTravel(data);
 	}
 
-	public abstract void groundedSelfTick(MarioClientData data);
+	public abstract void groundedTravel(MarioClientData data);
 
 	public void groundAccel(
 			MarioClientData data,
@@ -72,6 +69,7 @@ public abstract class GroundedActionDefinition implements ActionDefinition {
 			double forwardAngleContribution, double strafeAngleContribution, CharaStat redirectDelta
 	) {
 		double slipFactor = getSlipFactor(data);
+
 		data.approachAngleAndAccel(
 				forwardAccel.get(data) * slipFactor, forwardTarget.get(data) * Input.getForwardInput(),
 				strafeAccel.get(data) * slipFactor, strafeTarget.get(data) * Input.getStrafeInput(),

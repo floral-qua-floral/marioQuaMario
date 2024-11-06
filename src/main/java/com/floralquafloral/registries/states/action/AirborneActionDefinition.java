@@ -39,6 +39,13 @@ public abstract class AirborneActionDefinition implements ActionDefinition {
 				null
 		);
 
+		public static final ActionTransitionDefinition DUCKING_LANDING = new ActionTransitionDefinition(
+				"qua_mario:duck_waddle",
+				data -> Input.DUCK.isHeld() && AerialTransitions.BASIC_LANDING.EVALUATOR.shouldTransition(data),
+				(data, isSelf, seed) -> data.setForwardStrafeVel(0.0, 0.0),
+				null
+		);
+
 		public static final ActionTransitionDefinition GROUND_POUND = new ActionTransitionDefinition(
 				"qua_mario:ground_pound",
 				data -> Input.DUCK.isPressed(),
@@ -52,16 +59,16 @@ public abstract class AirborneActionDefinition implements ActionDefinition {
 		public static final CharaStat TERMINAL_VELOCITY = new CharaStat(-3.25, StatCategory.TERMINAL_VELOCITY);
 
 		public static final CharaStat JUMP_GRAVITY = new CharaStat(-0.095, JUMPING_GRAVITY);
-		public static final CharaStat JUMP_CAP = new CharaStat(0.39, StatCategory.JUMP_CAP);
 
-		public static final CharaStat FORWARD_DRIFT_ACCEL = new CharaStat(0.04, DRIFTING, FORWARD, ACCELERATION);
+		public static final CharaStat FORWARD_DRIFT_ACCEL = new CharaStat(0.045, DRIFTING, FORWARD, ACCELERATION);
 		public static final CharaStat FORWARD_DRIFT_SPEED = new CharaStat(0.275, DRIFTING, FORWARD, SPEED);
+		public static final CharaStat FORWARD_DRIFT_SPRINT_SPEED = new CharaStat(0.44, DRIFTING, FORWARD, SPEED);
 
-		public static final CharaStat BACKWARD_DRIFT_ACCEL = new CharaStat(0.05, DRIFTING, BACKWARD, ACCELERATION);
+		public static final CharaStat BACKWARD_DRIFT_ACCEL = new CharaStat(0.055, DRIFTING, BACKWARD, ACCELERATION);
 		public static final CharaStat BACKWARD_DRIFT_SPEED = new CharaStat(0.2, DRIFTING, BACKWARD, SPEED);
 
-		public static final CharaStat STRAFE_DRIFT_ACCEL = new CharaStat(0.04, DRIFTING, STRAFE, ACCELERATION);
-		public static final CharaStat STRAFE_DRIFT_SPEED = new CharaStat(0.2, DRIFTING, STRAFE, SPEED);
+		public static final CharaStat STRAFE_DRIFT_ACCEL = new CharaStat(0.065, DRIFTING, STRAFE, ACCELERATION);
+		public static final CharaStat STRAFE_DRIFT_SPEED = new CharaStat(0.25, DRIFTING, STRAFE, SPEED);
 
 		public static final CharaStat DRIFT_REDIRECTION = new CharaStat(6.0, DRIFTING, REDIRECTION);
 	}
@@ -76,7 +83,7 @@ public abstract class AirborneActionDefinition implements ActionDefinition {
 	protected abstract @NotNull CharaStat getTerminalVelocity();
 	protected abstract @Nullable CharaStat getJumpCap();
 
-	@Override public final void selfTick(MarioClientData data) {
+	@Override public final void travelHook(MarioClientData data) {
 		double yVel = data.getYVel();
 		double terminalVelocity = ACTION_TERMINAL_VELOCITY.get(data);
 
@@ -101,10 +108,10 @@ public abstract class AirborneActionDefinition implements ActionDefinition {
 			data.setYVel(Math.max(terminalVelocity, yVel));
 		}
 
-		aerialSelfTick(data);
+		airborneTravel(data);
 	}
 
-	public abstract void aerialSelfTick(MarioClientData data);
+	public abstract void airborneTravel(MarioClientData data);
 
 	public static void airborneAccel(
 			MarioClientData data,
@@ -157,7 +164,7 @@ public abstract class AirborneActionDefinition implements ActionDefinition {
 				AerialStats.FORWARD_DRIFT_ACCEL, AerialStats.FORWARD_DRIFT_SPEED,
 				AerialStats.BACKWARD_DRIFT_ACCEL, AerialStats.BACKWARD_DRIFT_SPEED,
 				AerialStats.STRAFE_DRIFT_ACCEL, AerialStats.STRAFE_DRIFT_SPEED,
-				Input.getForwardInput(), Input.getStrafeInput(), AerialStats.DRIFT_REDIRECTION
+				1, 1, AerialStats.DRIFT_REDIRECTION
 		);
 	}
 }

@@ -47,12 +47,7 @@ public class Luigi implements CharacterDefinition {
 	}
 
 	@Override
-	public void selfTick(MarioClientData data) {
-
-	}
-
-	@Override
-	public void otherClientsTick(MarioPlayerData data) {
+	public void clientTick(MarioPlayerData data, boolean isSelf) {
 
 	}
 

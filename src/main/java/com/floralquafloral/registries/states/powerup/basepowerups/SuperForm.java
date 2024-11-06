@@ -20,12 +20,7 @@ public class SuperForm implements PowerUpDefinition {
 	}
 
 	@Override
-	public void selfTick(MarioClientData data) {
-
-	}
-
-	@Override
-	public void otherClientsTick(MarioPlayerData data) {
+	public void clientTick(MarioPlayerData data, boolean isSelf) {
 
 	}
 
@@ -59,6 +54,11 @@ public class SuperForm implements PowerUpDefinition {
 	@Override
 	public int getValue() {
 		return 1;
+	}
+
+	@Override
+	public float getVoicePitch() {
+		return 1.0F;
 	}
 
 	@Override

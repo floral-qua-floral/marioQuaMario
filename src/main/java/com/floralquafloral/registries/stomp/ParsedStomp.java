@@ -91,14 +91,15 @@ public class ParsedStomp {
 		data.applyModifiedVelocity();
 	}
 
-	public void attempt(MarioData data, Vec3d movement) {
+	public boolean attempt(MarioData data, Vec3d movement) {
 		ServerPlayerEntity mario = (ServerPlayerEntity) data.getMario();
 		List<Entity> targets = mario.getWorld().getOtherEntities(mario, mario.getBoundingBox().stretch(movement));
 
 		long seed = RandomSeed.getSeed();
 		for(Entity target : targets) {
-			if(attemptOnTarget(mario, data, target, seed)) break;
+			if(attemptOnTarget(mario, data, target, seed)) return true;
 		}
+		return false;
 	}
 
 	private boolean attemptOnTarget(ServerPlayerEntity mario, MarioData data, Entity target, long seed) {
@@ -109,7 +110,7 @@ public class ParsedStomp {
 		if(this.SHOULD_ATTEMPT_MOUNTING) {
 			if((target instanceof Saddleable saddleableTarget && saddleableTarget.isSaddled())
 					|| target instanceof VehicleEntity) {
-				if(mario.startRiding(target)) return false;
+				if(mario.startRiding(target)) return true;
 			}
 		}
 
@@ -118,13 +119,6 @@ public class ParsedStomp {
 		livingTarget.isDead();
 
 		boolean targetHurtsToStomp = target.getType().isIn(StompHandler.HURTS_TO_STOMP_TAG);
-		MarioQuaMario.LOGGER.info("hurts:"
-				+ "\ntarget type: " + target.getType()
-				+ "\ntag: " + StompHandler.HURTS_TO_STOMP_TAG
-				+ "\ninTag: " + target.getType().isIn(StompHandler.HURTS_TO_STOMP_TAG)
-				+ "\ninVanillaTag: " + target.getType().isIn(EntityTypeTags.AQUATIC)
-				+ "\nresponse: " + this.PAINFUL_STOMP_RESPONSE
-		);
 		if(this.PAINFUL_STOMP_RESPONSE == StompDefinition.PainfulStompResponse.INJURY && targetHurtsToStomp) {
 			// Hurt Mario
 			mario.damage(makeDamageSource(mario.getServerWorld(), DamageTypes.THORNS, target), 2.8F);

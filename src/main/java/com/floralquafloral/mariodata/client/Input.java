@@ -28,6 +28,11 @@ public enum Input {
 		return this.isHeld;
 	}
 	public boolean isPressed() {
+		boolean result = this.isPressedNoUnbuffer();
+		if(result) this.unbuffer();
+		return result;
+	}
+	public boolean isPressedNoUnbuffer() {
 		return this.pressBuffer > 0;
 	}
 	public void unbuffer() {

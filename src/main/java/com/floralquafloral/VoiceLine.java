@@ -64,30 +64,17 @@ public enum VoiceLine {
 	}
 
 	public void play(MarioData data, long seed) {
-		MarioQuaMario.LOGGER.info("UWU: {}", SOUND_EVENTS.get(data.getCharacter()));
-
 		PlayerEntity mario = data.getMario();
 
 		if(mario.getWorld().isClient) {
 			ClientSoundPlayer.SOUND_MANAGER.stop(PLAYER_VOICE_LINES.get(mario));
 
-//			PositionedSoundInstance voiceSound = new PositionedSoundInstance(
-//					SOUND_EVENTS.get(data.getCharacter()),
-//					SoundCategory.VOICE,
-//					1.0F,
-//					1.0F,
-//					Random.create(seed),
-//					data.getMario().getX(),
-//					data.getMario().getY(),
-//					data.getMario().getZ()
-//			);
-//			ClientSoundPlayer.SOUND_MANAGER.play(voiceSound);
 			PLAYER_VOICE_LINES.put(mario, ClientSoundPlayer.playSound(
 					SOUND_EVENTS.get(data.getCharacter()),
 					SoundCategory.VOICE,
 					mario,
 					1.0F,
-					1.0F,
+					data.getPowerUp().VOICE_PITCH,
 					seed
 			));
 		}

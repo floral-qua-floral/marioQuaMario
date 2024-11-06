@@ -54,12 +54,14 @@ public class MarioClientData extends MarioPlayerData {
 	public boolean travel(Vec3d movementInput) {
 		Input.updateDirections(movementInput.z, movementInput.x);
 
+		// TODO: Levitation effect functionality
+
 		getAction().attemptTransitions(this, TransitionPhase.PRE_TICK);
-		getAction().selfTick(this);
+		getAction().travelHook(this);
 		getAction().attemptTransitions(this, TransitionPhase.POST_TICK);
 
 		applyModifiedVelocity();
-		marioClient.move(MovementType.PLAYER, marioClient.getVelocity());
+		marioClient.move(MovementType.SELF, marioClient.getVelocity());
 		if(getAction().attemptTransitions(this, TransitionPhase.POST_MOVE))
 			applyModifiedVelocity();
 

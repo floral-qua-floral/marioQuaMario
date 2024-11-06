@@ -40,8 +40,13 @@ public abstract class EntityMixin {
 	@Inject(method = "setPose", at = @At("HEAD"), cancellable = true)
 	private void preventSettingSneakPose(EntityPose pose, CallbackInfo ci) {
 		if((Entity) (Object) this instanceof PlayerEntity player && pose == EntityPose.CROUCHING) {
-			if(MarioDataManager.getMarioData(player).getSneakProhibited())
+//			MarioQuaMario.LOGGER.info("setPose called on player! Pose == {}", pose);
+			if(MarioDataManager.getMarioData(player).getSneakProhibited()) {
+
+				if(player.getPose() == EntityPose.CROUCHING)
+					player.setPose(EntityPose.STANDING);
 				ci.cancel();
+			}
 		}
 	}
 
@@ -57,7 +62,7 @@ public abstract class EntityMixin {
 	@Unique
 	private static boolean shouldStompHook = true;
 
-	@Inject(method = "move", at = @At("HEAD"))
+	@Inject(method = "move", at = @At("HEAD"), cancellable = true)
 	private void executeStompsOnServer(MovementType movementType, Vec3d movement, CallbackInfo ci) {
 		if((Entity) (Object) this instanceof ServerPlayerEntity player && shouldStompHook) {
 			MarioData data = MarioDataManager.getMarioData(player);
@@ -65,7 +70,7 @@ public abstract class EntityMixin {
 				ParsedAction action = data.getAction();
 				if(action.STOMP != null) {
 					shouldStompHook = false;
-					action.STOMP.attempt(data, movement);
+					if(action.STOMP.attempt(data, movement)) ci.cancel();
 					shouldStompHook = true;
 				}
 			}
