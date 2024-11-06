@@ -66,12 +66,15 @@ public class DuckSlide extends GroundedActionDefinition {
 		);
 	}
 
-	@Override
-	public List<ActionTransitionDefinition> getPostTickTransitions() {
+	@Override public List<ActionTransitionDefinition> getPostTickTransitions() {
 		return List.of(
 				DuckWaddle.UNDUCK,
 				new ActionTransitionDefinition("qua_mario:long_jump",
-						data -> Input.JUMP.isPressed() && data.getForwardVel() > LongJump.LONG_JUMP_THRESHOLD.get(data),
+						data ->
+								Input.getForwardInput() > 0.4 &&
+								data.actionTimer < 5 &&
+								data.getForwardVel() > LongJump.LONG_JUMP_THRESHOLD.get(data)
+								&& Input.JUMP.isPressed(),
 						(data, isSelf, seed) -> {
 							GroundedTransitions.performJump(data, LongJump.LONG_JUMP_VEL, null, seed, true);
 							data.setForwardVel(data.getForwardVel() * 1.4);

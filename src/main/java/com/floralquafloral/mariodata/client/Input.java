@@ -36,7 +36,7 @@ public enum Input {
 		return this.pressBuffer > 0;
 	}
 	public void unbuffer() {
-		this.pressBuffer = 0;
+		this.pressBuffer = 1;
 	}
 
 	public static double getForwardInput() {

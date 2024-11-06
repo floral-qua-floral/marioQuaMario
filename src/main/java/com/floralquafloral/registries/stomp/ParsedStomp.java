@@ -2,7 +2,9 @@ package com.floralquafloral.registries.stomp;
 
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioData;
+import com.floralquafloral.mariodata.MarioDataPackets;
 import com.floralquafloral.mariodata.MarioPlayerData;
+import com.floralquafloral.registries.RegistryManager;
 import com.floralquafloral.util.ClientSoundPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
@@ -110,7 +112,10 @@ public class ParsedStomp {
 		if(this.SHOULD_ATTEMPT_MOUNTING) {
 			if((target instanceof Saddleable saddleableTarget && saddleableTarget.isSaddled())
 					|| target instanceof VehicleEntity) {
-				if(mario.startRiding(target)) return true;
+				if(mario.startRiding(target)) {
+					MarioDataPackets.forceSetMarioAction(mario, RegistryManager.ACTIONS.get(Identifier.of("qua_mario:basic")));
+					return true;
+				}
 			}
 		}
 

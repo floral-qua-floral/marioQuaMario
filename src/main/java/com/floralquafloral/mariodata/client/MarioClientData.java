@@ -12,7 +12,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Vector2d;
 
-public class MarioClientData extends MarioPlayerData {
+public class MarioClientData extends AbstractMarioClientData {
 	private static MarioClientData instance;
 	public static MarioClientData getInstance() {
 		return instance;
@@ -171,7 +171,7 @@ public class MarioClientData extends MarioPlayerData {
 		double angleBetween = Math.acos(dotProduct);
 
 		// If the angle is very small, just return the current velocity (no need to slerp)
-		if(angleBetween < MathHelper.EPSILON || MathHelper.approximatelyEquals(angleBetween, MathHelper.PI))
+		if(Math.abs(angleBetween) < MathHelper.EPSILON || MathHelper.approximatelyEquals(angleBetween, MathHelper.PI))
 			return new Vector2d(currentVelocity);
 
 		// Calculate the fraction of the way we want to rotate (clamp to 0.0 to 1.0)

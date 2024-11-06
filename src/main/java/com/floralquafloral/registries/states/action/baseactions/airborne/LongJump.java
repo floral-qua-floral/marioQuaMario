@@ -2,6 +2,7 @@ package com.floralquafloral.registries.states.action.baseactions.airborne;
 
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioPlayerData;
+import com.floralquafloral.mariodata.client.Input;
 import com.floralquafloral.mariodata.client.MarioClientData;
 import com.floralquafloral.registries.states.action.AirborneActionDefinition;
 import com.floralquafloral.stats.CharaStat;
@@ -23,10 +24,11 @@ public class LongJump extends AirborneActionDefinition {
 	public static final CharaStat GRAVITY = new CharaStat(-0.0735, StatCategory.NORMAL_GRAVITY);
 
 	public static final CharaStat LONG_JUMP_VEL = new CharaStat(0.67, StatCategory.JUMP_VELOCITY);
-	public static final CharaStat LONG_JUMP_THRESHOLD = new CharaStat(0.3, StatCategory.THRESHOLD);
+//	public static final CharaStat LONG_JUMP_VEL = new CharaStat(0.858, StatCategory.JUMP_VELOCITY);
+	public static final CharaStat LONG_JUMP_THRESHOLD = new CharaStat(0.285, StatCategory.THRESHOLD);
 
 	@Override public SneakLegalityRule getSneakLegalityRule() {
-		return SneakLegalityRule.PROHIBIT;
+		return SneakLegalityRule.ALLOW;
 	}
 	@Override public SlidingStatus getConstantSlidingStatus() {
 		return SlidingStatus.NOT_SLIDING;

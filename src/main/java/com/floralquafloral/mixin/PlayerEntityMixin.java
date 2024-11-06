@@ -19,16 +19,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class PlayerEntityMixin {
 	@Inject(method = "travel", at = @At("HEAD"), cancellable = true)
 	private void travelHook(Vec3d movementInput, CallbackInfo ci) {
-//		PlayerEntity player = (PlayerEntity) (Object) this;
-//		if(player.getWorld().isClient) MarioQuaMario.LOGGER.info("Travel mixin:"
-//				+ "\nPlayer: " + player
-//				+ "\nData: " + MarioDataManager.getMarioData(player)
-//				+ "\nDataM: " + MarioDataManager.getMarioData(player).getMario()
-//				+ "\nPhys: " + MarioDataManager.getMarioData(player).useMarioPhysics()
-//		);
-		if(MarioDataManager.getMarioData(this) instanceof MarioClientData marioClientData
-				&& marioClientData.useMarioPhysics() && marioClientData.travel(movementInput))
-					ci.cancel();
+		MarioData marioData = MarioDataManager.getMarioData(this);
+		if(marioData.useMarioPhysics()) {
+			if(!marioData.getMario().getWorld().isClient) {
+				// Cancel travel on the server side
+				// TODO: Server-side travel?????????????
+//				ci.cancel();
+			}
+			else if(marioData instanceof MarioClientData marioClientData && marioClientData.travel(movementInput))
+				ci.cancel();
+		}
+
+
 	}
 
 	@Inject(method = "shouldSwimInFluids", at = @At("HEAD"), cancellable = true)
