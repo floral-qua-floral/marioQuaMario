@@ -49,11 +49,13 @@ public abstract class GroundedActionDefinition implements ActionDefinition {
 	}
 
 	@Override public final void travelHook(MarioTravelData data) {
-		if(data.isClient())
+		if(data.isClient()) {
+			AirborneActionDefinition.jumpCapped = false;
 			data.setYVel(data.getYVel() + AirborneActionDefinition.AerialStats.GRAVITY.get(data));
+		}
 		else
 			data.setYVel(-0.1);
-		AirborneActionDefinition.jumpCapped = false;
+
 		this.groundedTravel(data);
 	}
 

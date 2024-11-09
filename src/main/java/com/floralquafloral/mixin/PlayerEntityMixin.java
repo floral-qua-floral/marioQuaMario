@@ -78,7 +78,6 @@ public abstract class PlayerEntityMixin {
 	public void uwuuber(CallbackInfo ci) {
 		MarioData data = MarioDataManager.getMarioData(this);
 		if(data.isClient() && !data.getAction().SLIDING_STATUS.doViewBobbing()) {
-//			prevStrideDistance = 0;
 			strideDistance = prevStrideDistance * 0.6F;
 		}
 	}

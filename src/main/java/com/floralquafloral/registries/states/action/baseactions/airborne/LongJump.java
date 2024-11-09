@@ -28,7 +28,7 @@ public class LongJump extends AirborneActionDefinition {
 	public static final CharaStat LONG_JUMP_THRESHOLD = new CharaStat(0.285, StatCategory.THRESHOLD);
 
 	@Override public SneakLegalityRule getSneakLegalityRule() {
-		return SneakLegalityRule.ALLOW;
+		return SneakLegalityRule.PROHIBIT;
 	}
 	@Override public SlidingStatus getConstantSlidingStatus() {
 		return SlidingStatus.NOT_SLIDING;

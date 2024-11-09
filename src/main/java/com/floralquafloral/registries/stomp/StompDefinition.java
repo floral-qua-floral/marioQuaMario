@@ -25,7 +25,7 @@ public interface StompDefinition {
 
 	boolean canStompTarget(MarioData data, Entity target);
 
-	float calculateDamage(MarioData data, ServerPlayerEntity mario, ItemStack equipment, double equipmentArmor, double equipmentToughness, Entity target);
+	float calculateDamage(MarioData data, ServerPlayerEntity mario, ItemStack equipment, float equipmentArmorValue, Entity target);
 
 	void executeTravellers(MarioTravelData data, Entity target, boolean harmless);
 	void executeClients(MarioClientSideData data, boolean isSelf, Entity target, boolean harmless, long seed);

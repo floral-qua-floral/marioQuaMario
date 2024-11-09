@@ -35,6 +35,10 @@ public class MarioMainClientData extends MarioMoveableData implements MarioClien
 	}
 
 	@Override public void setAction(ParsedAction action, long seed) {
+		this.setActionTransitionless(action);
+	}
+
+	@Override public void setActionTransitionless(ParsedAction action) {
 		MarioQuaMario.LOGGER.info("MarioMainClientData setAction to " + action.ID);
 		if(action != getAction()) getTimers().actionTimer = 0;
 		if(this.getAction().ANIMATION != null)

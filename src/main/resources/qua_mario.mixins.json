@@ -6,6 +6,7 @@
     "DamageSourceMixin",
     "EntityMixin",
     "JumpMixin",
+    "LivingEntityMixin",
     "PlayerEntityMixin"
   ],
   "injectors": {
@@ -14,7 +15,6 @@
   "client": [
     "ClientPlayerEntityMixin",
     "ClientPlayNetworkHandlerMixin",
-    "GameOptionsMixin",
     "InGameHudMixin",
     "LivingEntityRendererMixin"
   ]

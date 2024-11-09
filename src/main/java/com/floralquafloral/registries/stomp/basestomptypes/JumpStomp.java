@@ -3,10 +3,11 @@ package com.floralquafloral.registries.stomp.basestomptypes;
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.mariodata.MarioData;
-import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import com.floralquafloral.registries.stomp.StompDefinition;
 import com.floralquafloral.registries.stomp.StompHandler;
+import com.floralquafloral.stats.CharaStat;
+import com.floralquafloral.stats.StatCategory;
 import com.floralquafloral.util.MarioSFX;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MovementType;
@@ -22,6 +23,9 @@ public class JumpStomp implements StompDefinition {
 	@Override public @NotNull Identifier getID() {
 		return Identifier.of(MarioQuaMario.MOD_ID, "stomp");
 	}
+
+	public final CharaStat BASE_DAMAGE = new CharaStat(4.5, StatCategory.STOMP_BASE_DAMAGE);
+	public final CharaStat BOUNCE_VEL = new CharaStat(1.15, StatCategory.STOMP_BOUNCE);
 
 	@Override public boolean mustFallOnTarget() {
 		return true;
@@ -47,28 +51,24 @@ public class JumpStomp implements StompDefinition {
 	}
 
 	@Override public @Nullable Identifier getPostStompAction() {
-		return null;
+		return Identifier.of(MarioQuaMario.MOD_ID, "stomp");
 	}
 
-	@Override
-	public boolean canStompTarget(MarioData data, Entity target) {
+	@Override public boolean canStompTarget(MarioData data, Entity target) {
 		return !target.getType().isIn(StompHandler.IMMUNE_TO_BASIC_STOMP_TAG);
 	}
 
-	@Override
-	public float calculateDamage(MarioData data, ServerPlayerEntity mario, ItemStack equipment, double equipmentArmor, double equipmentToughness, Entity target) {
-		return 1000;
+	@Override public float calculateDamage(MarioData data, ServerPlayerEntity mario, ItemStack equipment, float equipmentArmorValue, Entity target) {
+		return ((float) BASE_DAMAGE.get(data)) + equipmentArmorValue * 2.25F;
 	}
 
-	@Override
-	public void executeTravellers(MarioTravelData data, Entity target, boolean harmless) {
+	@Override public void executeTravellers(MarioTravelData data, Entity target, boolean harmless) {
 		double deltaY = data.getMario().getY() - (target.getY() - target.getHeight());
 		data.getMario().move(MovementType.PISTON, new Vec3d(0, deltaY, 0));
-		data.setYVel(1.0);
+		data.setYVel(BOUNCE_VEL.get(data));
 	}
 
-	@Override
-	public void executeClients(MarioClientSideData data, boolean isSelf, Entity target, boolean harmless, long seed) {
+	@Override public void executeClients(MarioClientSideData data, boolean isSelf, Entity target, boolean harmless, long seed) {
 
 	}
 }

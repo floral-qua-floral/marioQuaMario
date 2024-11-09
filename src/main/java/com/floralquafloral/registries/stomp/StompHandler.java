@@ -68,7 +68,9 @@ public class StompHandler {
 					MarioQuaMario.LOGGER.error("Target: {}", target);
 					return;
 				}
-				stompType.executeClient((MarioClientSideData) getMarioData(mario), mario.isMainPlayer(), target, payload.harmless, payload.seed);
+				MarioPlayerData data = getMarioData(mario);
+				stompType.executeClient((MarioClientSideData) data, mario.isMainPlayer(), target, payload.harmless, payload.seed);
+				data.setActionTransitionless(RegistryManager.ACTIONS.get(stompType.POST_STOMP_ACTION));
 			});
 		}
 

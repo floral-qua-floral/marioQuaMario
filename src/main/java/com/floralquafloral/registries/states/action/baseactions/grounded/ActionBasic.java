@@ -175,7 +175,7 @@ public class ActionBasic extends GroundedActionDefinition {
 				new ActionTransitionDefinition("qua_mario:p_run",
 						(data) -> data.getForwardVel() >= RUN_SPEED.getAsThreshold(data),
 						data -> data.setForwardVel(Math.max(PRun.P_SPEED.get(data), data.getForwardVel())),
-						(data, isSelf, seed) -> data.playSoundEvent(SoundEvents.ENTITY_ARROW_SHOOT, seed)
+						null
 				)
 		);
 	}

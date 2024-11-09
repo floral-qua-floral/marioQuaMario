@@ -1,22 +1,26 @@
 package com.floralquafloral.registries.stomp;
 
+import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioClientSideData;
-import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioDataPackets;
-import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.mariodata.moveable.MarioMoveableData;
 import com.floralquafloral.mariodata.moveable.MarioServerData;
-import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import com.floralquafloral.registries.RegistryManager;
-import com.floralquafloral.util.ClientSoundPlayer;
+import com.floralquafloral.registries.states.action.AirborneActionDefinition;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.AttributeModifierSlot;
+import net.minecraft.component.type.AttributeModifiersComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Saddleable;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.vehicle.VehicleEntity;
+import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
@@ -27,6 +31,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.RandomSeed;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -41,7 +46,7 @@ public class ParsedStomp {
 
 	private final RegistryKey<DamageType> DAMAGE_TYPE;
 	private final SoundEvent SOUND_EVENT;
-	private final Identifier POST_STOMP_ACTION;
+	public final Identifier POST_STOMP_ACTION;
 
 	public ParsedStomp(StompDefinition definition) {
 		this.ID = definition.getID();
@@ -57,27 +62,53 @@ public class ParsedStomp {
 		this.POST_STOMP_ACTION = definition.getPostStompAction();
 	}
 
-	public void executeServer(MarioServerData data, Entity target, boolean harmless, long seed) {
+	public void executeServer(MarioServerData data, Entity target, boolean affectMario, boolean harmless, long seed) {
 		ServerPlayerEntity mario = data.getMario();
-		DamageSource damageSource = makeDamageSource(mario.getServerWorld(), this.DAMAGE_TYPE, mario);
-		boolean useLegsItem = damageSource.isIn(StompHandler.USES_LEGS_ITEM_TAG);
+//		DamageSource damageSource = makeDamageSource(mario.getServerWorld(), this.DAMAGE_TYPE, mario);
+		StompDamageSource stompDamageSource = new StompDamageSource(mario.getServerWorld(), this.DAMAGE_TYPE, mario);
+		boolean useLegsItem = stompDamageSource.isIn(StompHandler.USES_LEGS_ITEM_TAG);
 
 		ItemStack attackingArmor = mario.getEquippedStack(useLegsItem ? EquipmentSlot.LEGS : EquipmentSlot.FEET);
 
+		float armor = 0.0F;
+		float toughness = 0.0F;
+		boolean attributeModifierFound = false;
 
-		float damage = this.DEFINITION.calculateDamage(data, mario, attackingArmor, 0, 0, target);
-//		for(RegistryEntry<Enchantment> ick : attackingArmor.getEnchantments().getEnchantments()) {
-//			int level = attackingArmor.getEnchantments().getLevel(ick);
-////			ick.
-//		}
+		for(AttributeModifiersComponent.Entry entry : attackingArmor.getOrDefault(
+				DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT).modifiers()) {
+			attributeModifierFound = true;
+			if(
+					entry.modifier().operation() == EntityAttributeModifier.Operation.ADD_VALUE &&
+					(entry.slot() == AttributeModifierSlot.ANY
+					|| entry.slot() == AttributeModifierSlot.ARMOR
+					|| entry.slot() == (useLegsItem ? AttributeModifierSlot.LEGS : AttributeModifierSlot.FEET))
+			) {
+				if (entry.attribute().value().equals(EntityAttributes.GENERIC_ARMOR.value()))
+					armor += (float) entry.modifier().value();
+				else if (entry.attribute().value().equals(EntityAttributes.GENERIC_ARMOR_TOUGHNESS.value()))
+					toughness += (float) entry.modifier().value();
+			}
+		}
 
-		target.damage(damageSource, damage);
+		if(!attributeModifierFound && attackingArmor.getItem() instanceof ArmorItem trueArmor) {
+			armor = trueArmor.getProtection();
+			toughness = trueArmor.getToughness();
+		}
 
-		this.DEFINITION.executeTravellers(data, target, harmless);
+		float damage = this.DEFINITION.calculateDamage(data, mario, attackingArmor, armor, target);
+		stompDamageSource.piercing = 2.0F * toughness;
+
+		target.damage(stompDamageSource, Math.max(1.0F, damage - 0.6F * stompDamageSource.piercing));
+
+		if(affectMario) {
+			this.DEFINITION.executeTravellers(data, target, harmless);
+			data.setActionTransitionless(RegistryManager.ACTIONS.get(this.POST_STOMP_ACTION));
+			StompHandler.networkStomp(data.getMario(), target, this, harmless, seed);
+		}
 	}
 	public void executeClient(MarioClientSideData data, boolean isSelf, Entity target, boolean harmless, long seed) {
 		if(this.SOUND_EVENT != null) {
-			ClientSoundPlayer.playSound(
+			data.playSoundEvent(
 					this.SOUND_EVENT,
 					SoundCategory.PLAYERS,
 					data.getMario().getX(),
@@ -94,20 +125,23 @@ public class ParsedStomp {
 			this.DEFINITION.executeTravellers(moveableData, target, harmless);
 			moveableData.applyModifiedVelocity();
 		}
+
+		if(data.getMario().isMainPlayer()) AirborneActionDefinition.jumpCapped = false;
 	}
 
 	public boolean attempt(MarioServerData data, Vec3d movement) {
 		ServerPlayerEntity mario = data.getMario();
 		List<Entity> targets = mario.getWorld().getOtherEntities(mario, mario.getBoundingBox().stretch(movement));
 
+		boolean affectMario = true;
 		long seed = RandomSeed.getSeed();
 		for(Entity target : targets) {
-			if(attemptOnTarget(mario, data, target, seed)) return true;
+			if(attemptOnTarget(mario, data, target, affectMario, seed)) affectMario = false;
 		}
 		return false;
 	}
 
-	private boolean attemptOnTarget(ServerPlayerEntity mario, MarioServerData data, Entity target, long seed) {
+	private boolean attemptOnTarget(ServerPlayerEntity mario, MarioServerData data, Entity target, boolean affectMario, long seed) {
 		if(target.getType().isIn(StompHandler.UNSTOMPABLE_TAG)) return false;
 
 		if(this.MUST_FALL_ON_TARGET && target.getY() + target.getHeight() > mario.getY()) return false;
@@ -139,13 +173,25 @@ public class ParsedStomp {
 
 		}
 
-		StompHandler.networkStomp(mario, target, this, harmless, seed);
-		executeServer(data, target, true, seed);
+
+		executeServer(data, target, affectMario, harmless, seed);
 
 		return true;
 	}
 
 	private static DamageSource makeDamageSource(ServerWorld world, RegistryKey<DamageType> key, Entity attacker) {
 		return new DamageSource(world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(key), attacker);
+	}
+
+	public static class StompDamageSource extends DamageSource {
+		private float piercing;
+
+		public StompDamageSource(ServerWorld world, RegistryKey<DamageType> key, @Nullable Entity attacker) {
+			super(world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(key), attacker);
+		}
+
+		public float getPiercing() {
+			return this.piercing;
+		}
 	}
 }
