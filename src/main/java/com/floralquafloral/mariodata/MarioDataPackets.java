@@ -72,8 +72,8 @@ public class MarioDataPackets {
 	}
 
 	public static void setMarioAction(ServerPlayerEntity mario, ParsedAction action, long seed) {
-		MarioData data = getMarioData(mario);
-		boolean foundTransition = data.getAction().transitionTo((MarioPlayerData) data, action, seed);
+		MarioPlayerData data = getMarioData(mario);
+		boolean foundTransition = data.getAction().transitionTo(data, action, seed);
 		if(foundTransition || !mario.getWorld().getGameRules().getBoolean(MarioQuaMario.REJECT_INVALID_ACTION_TRANSITIONS)) {
 			data.setActionTransitionless(action);
 			MarioPackets.sendPacketToTrackersExclusive(mario, new SetActionS2CPayload(mario, action, false, seed));
@@ -142,7 +142,7 @@ public class MarioDataPackets {
 		}
 		public static void registerReceiver() {
 			ClientPlayNetworking.registerGlobalReceiver(ID, (payload, context) -> {
-				MarioData data = getMarioData(context, payload.mario);
+				MarioPlayerData data = getMarioData(context, payload.mario);
 				ParsedAction action = RegistryManager.ACTIONS.get(payload.newAction);
 				if(payload.transitionless)
 					data.setActionTransitionless(action);

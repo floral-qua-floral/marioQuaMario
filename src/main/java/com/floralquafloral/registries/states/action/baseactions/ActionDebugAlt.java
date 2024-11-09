@@ -1,11 +1,10 @@
 package com.floralquafloral.registries.states.action.baseactions;
 
 import com.floralquafloral.MarioQuaMario;
-import com.floralquafloral.mariodata.MarioPlayerData;
-import com.floralquafloral.mariodata.client.Input;
-import com.floralquafloral.mariodata.client.MarioClientData;
+import com.floralquafloral.mariodata.MarioClientSideData;
+import com.floralquafloral.mariodata.moveable.MarioServerData;
+import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import com.floralquafloral.registries.states.action.ActionDefinition;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -22,20 +21,19 @@ public class ActionDebugAlt implements ActionDefinition {
 	}
 
 	@Override
-	public void travelHook(MarioClientData data) {
-		data.actionTimer++;
-		data.setStrafeVel(Input.getStrafeInput() * 0.5);
+	public void travelHook(MarioTravelData data) {
+		data.setStrafeVel(data.getInputs().getStrafeInput() * 0.5);
 
 		double pitchRadians = Math.toRadians(data.getMario().getPitch());
-		data.setForwardVel(Input.getForwardInput() * Math.cos(pitchRadians));
-		data.setYVel(Input.getForwardInput() * -Math.sin(pitchRadians));
+		data.setForwardVel(data.getInputs().getForwardInput() * Math.cos(pitchRadians));
+		data.setYVel(data.getInputs().getForwardInput() * -Math.sin(pitchRadians));
 	}
 
 	@Override
-	public void clientTick(MarioPlayerData data, boolean isSelf) {}
+	public void clientTick(MarioClientSideData data, boolean isSelf) {}
 
 	@Override
-	public void serverTick(MarioPlayerData data) {
+	public void serverTick(MarioServerData data) {
 
 	}
 
@@ -57,18 +55,10 @@ public class ActionDebugAlt implements ActionDefinition {
 						(data) -> { //evaluator
 							return !data.getMario().isSprinting();
 						},
-						(data, isSelf, seed) -> { //executor for clients
-							MarioQuaMario.LOGGER.info("DebugAlt action transition's evaluator for clients (isSelf: {})", isSelf);
-							if(isSelf) data.getMario().playSoundToPlayer(
-									SoundEvents.BLOCK_BEACON_POWER_SELECT,
-									SoundCategory.PLAYERS,
-									1.0F,
-									1.0F
-							);
+						data -> {
+
 						},
-						(data, seed) -> { //executor for the server
-							MarioQuaMario.LOGGER.info("DebugAlt action transition's evaluator for server");
-						}
+						(data, isSelf, seed) -> data.playSoundEvent(SoundEvents.BLOCK_BEACON_POWER_SELECT, seed)
 				)
 		);
 	}

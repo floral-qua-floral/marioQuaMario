@@ -3,6 +3,7 @@ package com.floralquafloral;
 import com.floralquafloral.mariodata.MarioDataManager;
 import com.floralquafloral.mariodata.MarioDataPackets;
 import com.floralquafloral.mariodata.MarioPlayerData;
+import com.floralquafloral.mariodata.moveable.MarioServerData;
 import com.floralquafloral.registries.RegistryManager;
 import com.floralquafloral.registries.stomp.ParsedStomp;
 import com.floralquafloral.registries.stomp.StompHandler;
@@ -123,7 +124,7 @@ public class MarioCommand {
 		stomper.teleport((ServerWorld) target.getWorld(), target.getX(), target.getY() + target.getHeight(), target.getZ(), target.getPitch(), target.getYaw());
 		long seed = RandomSeed.getSeed();
 		StompHandler.networkStomp(stomper, target, stompType, false, seed);
-		stompType.executeServer((MarioPlayerData) MarioDataManager.getMarioData(stomper), target, false, seed);
+		stompType.executeServer((MarioServerData) MarioDataManager.getMarioData(stomper), target, false, seed);
 
 		return sendFeedback(context, "Made " + stomper.getName().getString() + " perform a stomp of type " + stompType.ID + " on " + target.getName().getString());
 	}

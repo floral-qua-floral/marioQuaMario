@@ -20,8 +20,15 @@ public class CharaStat {
 	}
 
 	public CharaStat(double base, StatCategory... categories) {
+		this(base, Set.of(categories));
+	}
+	private CharaStat(double base, Set<StatCategory> categorySet) {
 		this.BASE = base;
-		this.CATEGORIES = Set.of(categories);
+		this.CATEGORIES = categorySet;
+	}
+
+	public CharaStat variate(double multiplier) {
+		return new CharaStat(this.BASE * multiplier, this.CATEGORIES);
 	}
 
 	private static final double MOVEMENT_SPEED_MULTIPLIER = 1.0 / 0.10000000149011612;
@@ -61,7 +68,7 @@ public class CharaStat {
 		return attributeFactor * modifiedBase + attributeAddend;
 	}
 	public double getAsThreshold(MarioData data) {
-		return this.get(data) * 0.99;
+		return this.get(data) * 0.96;
 	}
 	public double getAsLimit(MarioData data) {
 		return this.get(data) * 1.015;

@@ -3,6 +3,7 @@ package com.floralquafloral.mixin;
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioDataManager;
+import com.floralquafloral.mariodata.moveable.MarioServerData;
 import com.floralquafloral.registries.states.action.ParsedAction;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
@@ -70,7 +71,7 @@ public abstract class EntityMixin {
 				ParsedAction action = data.getAction();
 				if(action.STOMP != null) {
 					shouldStompHook = false;
-					if(action.STOMP.attempt(data, movement)) ci.cancel();
+					if(action.STOMP.attempt((MarioServerData) data, movement)) ci.cancel();
 					shouldStompHook = true;
 				}
 			}

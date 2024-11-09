@@ -1,12 +1,10 @@
 package com.floralquafloral.registries.states.action.baseactions;
 
 import com.floralquafloral.MarioQuaMario;
-import com.floralquafloral.mariodata.client.Input;
-import com.floralquafloral.mariodata.client.MarioClientData;
-import com.floralquafloral.mariodata.MarioPlayerData;
+import com.floralquafloral.mariodata.MarioClientSideData;
+import com.floralquafloral.mariodata.moveable.MarioServerData;
+import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import com.floralquafloral.registries.states.action.ActionDefinition;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,17 +20,17 @@ public class ActionDebug implements ActionDefinition {
 	}
 
 	@Override
-	public void travelHook(MarioClientData data) {
-		data.actionTimer++;
-		data.setForwardStrafeVel(Input.getForwardInput() * 0.5, Input.getStrafeInput() * 0.5);
-		data.setYVel(Input.JUMP.isHeld() ? 0.4 : (Input.DUCK.isHeld() ? -0.4 : (0.03 * Math.sin((double) data.actionTimer / 16))));
+	public void travelHook(MarioTravelData data) {
+		data.getTimers().actionTimer++;
+		data.setForwardStrafeVel(data.getInputs().getForwardInput() * 0.5, data.getInputs().getStrafeInput() * 0.5);
+		data.setYVel(data.getInputs().JUMP.isHeld() ? 0.4 : (data.getInputs().DUCK.isHeld() ? -0.4 : (0.03 * Math.sin((double) data.getTimers().actionTimer++ / 16))));
 	}
 
 	@Override
-	public void clientTick(MarioPlayerData data, boolean isSelf) {}
+	public void clientTick(MarioClientSideData data, boolean isSelf) {}
 
 	@Override
-	public void serverTick(MarioPlayerData data) {
+	public void serverTick(MarioServerData data) {
 
 	}
 
@@ -54,18 +52,11 @@ public class ActionDebug implements ActionDefinition {
 						(data) -> { //evaluator
 							return data.getMario().isSprinting();
 						},
-						(data, isSelf, seed) -> { //executor for self
-							MarioQuaMario.LOGGER.info("Debug action transition's evaluator for clients (isSelf: {})", isSelf);
+						data -> { // executor for the server and Mario's own client
+
 						},
-						(data, seed) -> { //executor for the server
-							MarioQuaMario.LOGGER.info("Debug action transitions evaluator for server");
-							MarioQuaMario.LOGGER.info("Playing sound effect @ {}", data.getMario().getBlockPos());
-							data.getMario().getWorld().playSound(
-									null,
-									data.getMario().getBlockPos(),
-									SoundEvents.BLOCK_ANVIL_FALL,
-									SoundCategory.PLAYERS
-							);
+						(data, isSelf, seed) -> { // executor for all clients (Mario and anyone nearby)
+							data.voice(MarioClientSideData.VoiceLine.FIREBALL, seed);
 						}
 				)
 		);

@@ -68,7 +68,7 @@ public class MarioQuaMario implements ModInitializer {
 		MarioDataManager.registerEventListeners();
 
 		RegistryManager.register();
-		MarioSFX.staticInitialize();
+
 
 		MarioPackets.registerCommon();
 

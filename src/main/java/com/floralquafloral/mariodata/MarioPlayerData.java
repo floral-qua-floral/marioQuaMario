@@ -17,8 +17,9 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 
-public class MarioPlayerData implements MarioData {
+public abstract class MarioPlayerData implements MarioData {
 	private boolean enabled;
+	private final boolean IS_CLIENT;
 	private ParsedAction action;
 	private ParsedPowerUp powerUp;
 	private ParsedCharacter character;
@@ -31,6 +32,7 @@ public class MarioPlayerData implements MarioData {
 
 	public MarioPlayerData(PlayerEntity mario) {
 		this.mario = mario;
+		this.IS_CLIENT = mario.getWorld().isClient;
 		this.enabled = true;
 		this.action = RegistryManager.ACTIONS.get(Identifier.of("qua_mario:basic"));
 		this.powerUp = RegistryManager.POWER_UPS.get(Identifier.of("qua_mario:super"));
@@ -38,14 +40,9 @@ public class MarioPlayerData implements MarioData {
 
 		MarioQuaMario.LOGGER.info("Initialized a MarioData: {}, for {}", this, mario);
 	}
-	public MarioPlayerData(PlayerEntity mario, MarioData oldData) {
-		this.mario = mario;
-		this.enabled = oldData.isEnabled();
-		this.action = oldData.getAction();
-		this.powerUp = oldData.getPowerUp();
-		this.character = oldData.getCharacter();
 
-		MarioQuaMario.LOGGER.info("Initialized a MarioData from old data: {}, for {}, from {}", this, mario, oldData);
+	@Override public boolean isClient() {
+		return this.IS_CLIENT;
 	}
 
 	@Override public boolean useMarioPhysics() {
@@ -54,100 +51,18 @@ public class MarioPlayerData implements MarioData {
 				&& !mario.getAbilities().flying
 				&& !mario.isFallFlying()
 				&& !mario.hasVehicle()
-				&& !mario.isClimbing()
+//				&& !mario.isClimbing()
 		);
 	}
 
-	private class MarioVelocities {
-		private double forward;
-		private double strafe;
-		private double vertical;
-		private double negativeSineYaw;
-		private double cosineYaw;
-		private boolean isGenerated;
-		private boolean isDirty;
 
-		private MarioVelocities ensure() {
-			if(this.isGenerated) return this;
-			this.isGenerated = true;
 
-			// Calculate forward and sideways vector components
-			double yawRad = Math.toRadians(mario.getYaw());
-			this.negativeSineYaw = -Math.sin(yawRad);
-			this.cosineYaw = Math.cos(yawRad);
-
-			// Calculate current forwards and sideways velocity
-			Vec3d currentVel = mario.getVelocity();
-			this.forward = currentVel.x * negativeSineYaw + currentVel.z * cosineYaw;
-			this.strafe = currentVel.x * cosineYaw + currentVel.z * -negativeSineYaw;
-			this.vertical = currentVel.y;
-
-			return this;
-		}
-		private MarioVelocities ensureDirty() {
-			this.isDirty = true;
-			return this.ensure();
-		}
-		private void apply() {
-			if(!this.isGenerated || !this.isDirty) return;
-			getMario().setVelocity(this.forward * this.negativeSineYaw + this.strafe * this.cosineYaw,
-					this.vertical, this.forward * this.cosineYaw + this.strafe * -this.negativeSineYaw);
-		}
-	}
-
-	private final MarioVelocities VELOCITIES = new MarioVelocities();
-	@Override public double getForwardVel() {
-		return this.VELOCITIES.ensure().forward;
-	}
-	@Override public double getStrafeVel() {
-		return this.VELOCITIES.ensure().strafe;
-	}
-	@Override public double getYVel() {
-		if(this.VELOCITIES.isGenerated) return this.VELOCITIES.vertical;
-		else return this.mario.getVelocity().y;
-	}
-	@Override public void setForwardVel(double forward) {
-		VELOCITIES.ensureDirty().forward = forward;
-	}
-	@Override public void setStrafeVel(double strafe) {
-		this.VELOCITIES.ensureDirty().strafe = strafe;
-	}
-	@Override public void setYVel(double vertical) {
-		if(this.VELOCITIES.isGenerated) this.VELOCITIES.ensureDirty().vertical = vertical;
-		else {
-			Vec3d oldVel = this.mario.getVelocity();
-			this.mario.setVelocity(oldVel.x, vertical, oldVel.z);
-		}
-	}
-	@Override public void applyModifiedVelocity() {
-		this.VELOCITIES.apply();
-		this.VELOCITIES.isDirty = false;
-		this.VELOCITIES.isGenerated = false;
-	}
-
-//	private double prevY;
-	public void tick() {
-		if(this.getMario().getWorld().isClient) {
-			this.action.clientTick(this, false);
-			this.powerUp.clientTick(this, false);
-			this.character.clientTick(this, false);
-		}
-		else {
-			this.action.serverTick(this);
-			this.powerUp.serverTick(this);
-			this.character.serverTick(this);
-
-//			if(this.action.STOMP != null) this.action.STOMP.attempt(this, prevY);
-//			prevY = getMario().getY();
-
-			this.applyModifiedVelocity();
-		}
-	}
+	public abstract void tick();
 
 	@Override public boolean isEnabled() {
 		return enabled;
 	}
-	@Override public void setEnabled(boolean enabled) {
+	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
 	@Override public ParsedAction getAction() {
@@ -242,12 +157,12 @@ public class MarioPlayerData implements MarioData {
 		this.makeSkidSFX(isWall, SkidSoundInstance.getFloorSkidMaterial(this.getMario()), scaling);
 	}
 
-	@Override public void setAction(ParsedAction action, long seed) {
+	public void setAction(ParsedAction action, long seed) {
 		getAction().transitionTo(this, action, seed);
 		this.setActionTransitionless(action);
 	}
-	@Override public void setActionTransitionless(ParsedAction action) {
-		if(this.mario.getWorld().isClient) {
+	public void setActionTransitionless(ParsedAction action) {
+		if(this.isClient()) {
 			// Skid SFX
 			if(this.skidSFX != null) this.skidSFX.kill();
 			if(action.SLIDING_STATUS.doSlideSfx() || action.SLIDING_STATUS.doWallSlideSfx()) {
@@ -267,7 +182,7 @@ public class MarioPlayerData implements MarioData {
 	@Override public ParsedPowerUp getPowerUp() {
 		return powerUp;
 	}
-	@Override public void setPowerUp(ParsedPowerUp powerUp) {
+	public void setPowerUp(ParsedPowerUp powerUp) {
 		MarioQuaMario.LOGGER.info("Set Power-up to {}", powerUp.ID);
 		this.powerUp.losePower(this);
 		powerUp.acquirePower(this);
@@ -279,7 +194,7 @@ public class MarioPlayerData implements MarioData {
 	@Override public ParsedCharacter getCharacter() {
 		return character;
 	}
-	@Override public void setCharacter(ParsedCharacter character) {
+	public void setCharacter(ParsedCharacter character) {
 		this.character = character;
 		this.mario.calculateDimensions();
 		CharaStat.invalidateCache();

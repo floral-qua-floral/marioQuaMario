@@ -1,9 +1,9 @@
 package com.floralquafloral.registries.states.powerup.basepowerups;
 
 import com.floralquafloral.MarioQuaMario;
+import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.mariodata.MarioData;
-import com.floralquafloral.mariodata.MarioPlayerData;
-import com.floralquafloral.mariodata.client.MarioClientData;
+import com.floralquafloral.mariodata.moveable.MarioServerData;
 import com.floralquafloral.registries.states.powerup.PowerUpDefinition;
 import com.floralquafloral.stats.StatCategory;
 import net.minecraft.sound.SoundEvent;
@@ -20,12 +20,12 @@ public class SmallForm implements PowerUpDefinition {
 	}
 
 	@Override
-	public void clientTick(MarioPlayerData data, boolean isSelf) {
+	public void clientTick(MarioClientSideData data, boolean isSelf) {
 
 	}
 
 	@Override
-	public void serverTick(MarioPlayerData data) {
+	public void serverTick(MarioServerData data) {
 
 	}
 

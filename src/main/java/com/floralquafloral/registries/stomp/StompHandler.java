@@ -2,6 +2,7 @@ package com.floralquafloral.registries.stomp;
 
 import com.floralquafloral.MarioPackets;
 import com.floralquafloral.MarioQuaMario;
+import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.registries.RegistryManager;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -67,7 +68,7 @@ public class StompHandler {
 					MarioQuaMario.LOGGER.error("Target: {}", target);
 					return;
 				}
-				stompType.executeClient((MarioPlayerData) getMarioData(mario), mario.isMainPlayer(), target, payload.harmless, payload.seed);
+				stompType.executeClient((MarioClientSideData) getMarioData(mario), mario.isMainPlayer(), target, payload.harmless, payload.seed);
 			});
 		}
 

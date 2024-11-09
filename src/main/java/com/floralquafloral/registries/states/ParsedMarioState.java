@@ -1,7 +1,8 @@
 package com.floralquafloral.registries.states;
 
+import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.mariodata.MarioPlayerData;
-import com.floralquafloral.mariodata.client.MarioClientData;
+import com.floralquafloral.mariodata.moveable.MarioServerData;
 import net.minecraft.util.Identifier;
 
 public abstract class ParsedMarioState {
@@ -13,10 +14,10 @@ public abstract class ParsedMarioState {
 		this.DEFINITION = definition;
 	}
 
-	public void clientTick(MarioPlayerData data, boolean isSelf) {
+	public void clientTick(MarioClientSideData data, boolean isSelf) {
 		this.DEFINITION.clientTick(data, isSelf);
 	}
-	public void serverTick(MarioPlayerData data) {
+	public void serverTick(MarioServerData data) {
 		this.DEFINITION.serverTick(data);
 	}
 }

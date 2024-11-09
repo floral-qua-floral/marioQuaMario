@@ -1,10 +1,9 @@
 package com.floralquafloral.registries.states.action.baseactions.grounded;
 
 import com.floralquafloral.MarioQuaMario;
-import com.floralquafloral.VoiceLine;
-import com.floralquafloral.mariodata.MarioPlayerData;
-import com.floralquafloral.mariodata.client.Input;
-import com.floralquafloral.mariodata.client.MarioClientData;
+import com.floralquafloral.mariodata.MarioClientSideData;
+import com.floralquafloral.mariodata.moveable.MarioServerData;
+import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import com.floralquafloral.registries.states.action.GroundedActionDefinition;
 import com.floralquafloral.registries.states.action.baseactions.airborne.LongJump;
 import com.floralquafloral.stats.CharaStat;
@@ -34,20 +33,20 @@ public class DuckSlide extends GroundedActionDefinition {
 	public static final CharaStat SLIDE_REDIRECTION = new CharaStat(4.0, DUCKING, REDIRECTION);
 
 	@Override
-	public void groundedTravel(MarioClientData data) {
-		data.actionTimer++;
+	public void groundedTravel(MarioTravelData data) {
+		data.getTimers().actionTimer++;
 		applyDrag(data,
 				SLIDE_DRAG,
 				SLIDE_DRAG_MIN,
-				Input.getForwardInput(),
-				Input.getStrafeInput(),
+				data.getInputs().getForwardInput(),
+				data.getInputs().getStrafeInput(),
 				SLIDE_REDIRECTION
 		);
 	}
 
-	@Override public void clientTick(MarioPlayerData data, boolean isSelf) {}
+	@Override public void clientTick(MarioClientSideData data, boolean isSelf) {}
 
-	@Override public void serverTick(MarioPlayerData data) {}
+	@Override public void serverTick(MarioServerData data) {}
 
 	@Override public SneakLegalityRule getSneakLegalityRule() {
 		return SneakLegalityRule.SLIP;
@@ -71,16 +70,19 @@ public class DuckSlide extends GroundedActionDefinition {
 				DuckWaddle.UNDUCK,
 				new ActionTransitionDefinition("qua_mario:long_jump",
 						data ->
-								Input.getForwardInput() > 0.4 &&
-								data.actionTimer < 5 &&
+								data.getInputs().getForwardInput() > 0.4 &&
+								data.getTimers().actionTimer < 5 &&
 								data.getForwardVel() > LongJump.LONG_JUMP_THRESHOLD.get(data)
-								&& Input.JUMP.isPressed(),
-						(data, isSelf, seed) -> {
-							GroundedTransitions.performJump(data, LongJump.LONG_JUMP_VEL, null, seed, true);
+								&& data.getInputs().JUMP.isPressed(),
+						data -> {
+							GroundedTransitions.performJump(data, LongJump.LONG_JUMP_VEL, null);
 							data.setForwardVel(data.getForwardVel() * 1.4);
-							VoiceLine.LONG_JUMP.play(data, seed);
+//							VoiceLine.LONG_JUMP.play(data, seed);
 						},
-						(data, seed) -> GroundedTransitions.performJump(data, LongJump.LONG_JUMP_VEL, null, seed, false)
+						(data, isSelf, seed) -> {
+							data.playJumpSound(seed);
+							data.voice(MarioClientSideData.VoiceLine.LONG_JUMP, seed);
+						}
 				),
 				DuckWaddle.DUCK_JUMP,
 				new ActionTransitionDefinition("qua_mario:duck_waddle",
@@ -107,12 +109,12 @@ public class DuckSlide extends GroundedActionDefinition {
 								(data) -> {
 									double threshold = SLIDE_THRESHOLD.get(data);
 									return
-											Input.DUCK.isHeld()
+											data.getInputs().DUCK.isHeld()
 													&& Vector2d.lengthSquared(data.getForwardVel(), data.getStrafeVel()) > threshold * threshold
 													&& !data.getAction().ID.equals(getID());
 								},
-								GroundedTransitions.DUCK_WADDLE.EXECUTOR_CLIENT,
-								GroundedTransitions.DUCK_WADDLE.EXECUTOR_SERVER
+								GroundedTransitions.DUCK_WADDLE.EXECUTOR_TRAVELLERS,
+								GroundedTransitions.DUCK_WADDLE.EXECUTOR_CLIENTS
 						)
 				),
 				new ActionTransitionInjection(
@@ -124,10 +126,10 @@ public class DuckSlide extends GroundedActionDefinition {
 								(data) -> {
 									double threshold = SLIDE_THRESHOLD.get(data);
 									return
-											Input.DUCK.isHeld()
+											data.getInputs().DUCK.isHeld()
 													&& data.getMario().isOnGround()
-													&& !(MathHelper.approximatelyEquals(Input.getForwardInput(), 0)
-													&& MathHelper.approximatelyEquals(Input.getStrafeInput(), 0))
+													&& !(MathHelper.approximatelyEquals(data.getInputs().getForwardInput(), 0)
+													&& MathHelper.approximatelyEquals(data.getInputs().getStrafeInput(), 0))
 													&& Vector2d.lengthSquared(data.getForwardVel(), data.getStrafeVel()) > threshold * threshold
 													&& !data.getAction().ID.equals(getID());
 								},

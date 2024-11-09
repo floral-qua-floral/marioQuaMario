@@ -24,7 +24,7 @@ public class MarioPackets {
 		SyncUseCharacterStatsS2CPayload.register();
 		MarioDataPackets.registerCommon();
 		StompHandler.registerPackets();
-		VoiceLine.registerPackets();
+//		VoiceLine.registerPackets();
 		JumpSoundPlayer.registerPackets();
 
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
@@ -35,7 +35,7 @@ public class MarioPackets {
 		SyncUseCharacterStatsS2CPayload.registerReceiver();
 		MarioDataPackets.registerClient();
 		StompHandler.registerPacketsClient();
-		VoiceLine.registerPacketsClient();
+//		VoiceLine.registerPacketsClient();
 		JumpSoundPlayer.registerPacketsClient();
 	}
 

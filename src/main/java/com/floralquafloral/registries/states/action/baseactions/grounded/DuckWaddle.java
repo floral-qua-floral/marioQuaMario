@@ -1,14 +1,12 @@
 package com.floralquafloral.registries.states.action.baseactions.grounded;
 
 import com.floralquafloral.MarioQuaMario;
-import com.floralquafloral.VoiceLine;
-import com.floralquafloral.mariodata.MarioPlayerData;
-import com.floralquafloral.mariodata.client.Input;
-import com.floralquafloral.mariodata.client.MarioClientData;
+import com.floralquafloral.mariodata.MarioClientSideData;
+import com.floralquafloral.mariodata.moveable.MarioServerData;
+import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import com.floralquafloral.registries.states.action.GroundedActionDefinition;
 import com.floralquafloral.registries.states.action.baseactions.airborne.Jump;
 import com.floralquafloral.stats.CharaStat;
-import com.floralquafloral.util.ClientSoundPlayer;
 import com.floralquafloral.util.MarioSFX;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -28,9 +26,9 @@ public class DuckWaddle extends GroundedActionDefinition {
 
 	public static final ActionTransitionDefinition UNDUCK = new ActionTransitionDefinition(
 			"qua_mario:basic",
-			(data) -> !Input.DUCK.isHeld(),
-			(data, isSelf, seed) -> ClientSoundPlayer.playSound(MarioSFX.UNDUCK, data, seed),
-			null
+			(data) -> !data.getInputs().DUCK.isHeld(),
+			null,
+			(data, isSelf, seed) -> data.playSoundEvent(MarioSFX.UNDUCK, seed)
 	);
 	public static final ActionTransitionDefinition DUCK_FALL = new ActionTransitionDefinition(
 			"qua_mario:duck_fall",
@@ -39,17 +37,15 @@ public class DuckWaddle extends GroundedActionDefinition {
 	public static final ActionTransitionDefinition DUCK_JUMP = new ActionTransitionDefinition(
 			"qua_mario:duck_jump",
 			GroundedTransitions.JUMP.EVALUATOR,
+			data -> GroundedTransitions.performJump(data, Jump.JUMP_VEL, null),
 			(data, isSelf, seed) -> {
-				GroundedTransitions.performJump(data, Jump.JUMP_VEL, null, seed, true);
-				VoiceLine.DUCK_JUMP.play(data, seed);
-			},
-			(data, seed) -> GroundedTransitions.performJump(data, Jump.JUMP_VEL, null, seed, false)
+				data.voice(MarioClientSideData.VoiceLine.DUCK_JUMP, seed);
+				data.playJumpSound(seed);
+			}
 	);
 	public static final ActionTransitionDefinition BACKFLIP = new ActionTransitionDefinition(
 			"qua_mario:backflip",
-			data -> Input.JUMP.isPressed() && data.getForwardVel() < -0.05 && Input.getForwardInput() < 0.5,
-			(data, isSelf, seed) -> {},
-			(data, seed) -> {}
+			data -> data.getInputs().JUMP.isPressed() && data.getForwardVel() < -0.05 && data.getInputs().getForwardInput() < 0.5
 	);
 
 	public static final CharaStat WADDLE_ACCEL = new CharaStat(0.06, DUCKING, FORWARD, ACCELERATION);
@@ -64,19 +60,19 @@ public class DuckWaddle extends GroundedActionDefinition {
 	public static final CharaStat WADDLE_REDIRECTION = new CharaStat(0.0, DUCKING, REDIRECTION);
 
 	@Override
-	public void groundedTravel(MarioClientData data) {
+	public void groundedTravel(MarioTravelData data) {
 		boolean waddlingForward = data.getForwardVel() > 0;
 		groundAccel(data,
 				waddlingForward ? WADDLE_ACCEL : WADDLE_BACKPEDAL_ACCEL,
 				waddlingForward ? WADDLE_SPEED : WADDLE_BACKPEDAL_SPEED,
 				WADDLE_STRAFE_ACCEL, WADDLE_STRAFE_SPEED,
-				Input.getForwardInput(), Input.getStrafeInput(), WADDLE_REDIRECTION
+				data.getInputs().getForwardInput(), data.getInputs().getStrafeInput(), WADDLE_REDIRECTION
 		);
 	}
 
-	@Override public void clientTick(MarioPlayerData data, boolean isSelf) {}
+	@Override public void clientTick(MarioClientSideData data, boolean isSelf) {}
 
-	@Override public void serverTick(MarioPlayerData data) {}
+	@Override public void serverTick(MarioServerData data) {}
 
 	@Override public SneakLegalityRule getSneakLegalityRule() {
 		return SneakLegalityRule.ALLOW;

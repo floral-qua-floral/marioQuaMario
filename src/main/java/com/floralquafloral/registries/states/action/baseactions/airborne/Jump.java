@@ -1,8 +1,9 @@
 package com.floralquafloral.registries.states.action.baseactions.airborne;
 
 import com.floralquafloral.MarioQuaMario;
-import com.floralquafloral.mariodata.MarioPlayerData;
-import com.floralquafloral.mariodata.client.MarioClientData;
+import com.floralquafloral.mariodata.MarioClientSideData;
+import com.floralquafloral.mariodata.moveable.MarioServerData;
+import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import com.floralquafloral.registries.states.action.AirborneActionDefinition;
 import com.floralquafloral.stats.CharaStat;
 import com.floralquafloral.stats.StatCategory;
@@ -47,15 +48,15 @@ public class Jump extends AirborneActionDefinition {
 		return JUMP_CAP;
 	}
 
-	@Override public void airborneTravel(MarioClientData data) {
+	@Override public void airborneTravel(MarioTravelData data) {
 		airborneAccel(data);
 	}
 
-	@Override public void clientTick(MarioPlayerData data, boolean isSelf) {
+	@Override public void clientTick(MarioClientSideData data, boolean isSelf) {
 
 	}
 
-	@Override public void serverTick(MarioPlayerData data) {
+	@Override public void serverTick(MarioServerData data) {
 
 	}
 

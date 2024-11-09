@@ -1,9 +1,9 @@
 package com.floralquafloral.registries.states.action.baseactions.grounded;
 
 import com.floralquafloral.MarioQuaMario;
-import com.floralquafloral.mariodata.MarioPlayerData;
-import com.floralquafloral.mariodata.client.Input;
-import com.floralquafloral.mariodata.client.MarioClientData;
+import com.floralquafloral.mariodata.MarioClientSideData;
+import com.floralquafloral.mariodata.moveable.MarioServerData;
+import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import com.floralquafloral.registries.states.action.GroundedActionDefinition;
 import com.floralquafloral.stats.CharaStat;
 import net.minecraft.util.Identifier;
@@ -31,24 +31,24 @@ public class Skid extends GroundedActionDefinition {
 
 	public static final ActionTransitionDefinition SKID_TRANSITION = new ActionTransitionDefinition(
 			"qua_mario:skid",
-			data -> Input.getForwardInput() < -0.65 && data.getForwardVel() > SKID_THRESHOLD.get(data)
+			data -> data.getInputs().getForwardInput() < -0.65 && data.getForwardVel() > SKID_THRESHOLD.get(data)
 	);
 
 	@Override
-	public void groundedTravel(MarioClientData data) {
+	public void groundedTravel(MarioTravelData data) {
 		applyDrag(data,
 				SKID_DRAG,
 				SKID_DRAG_MIN,
-				-Input.getForwardInput(),
-				Input.getStrafeInput(),
+				-data.getInputs().getForwardInput(),
+				data.getInputs().getStrafeInput(),
 				SKID_REDIRECTION
 		);
-		if(MathHelper.approximatelyEquals(data.getForwardVel(), 0.0)) data.actionTimer++;
+		if(MathHelper.approximatelyEquals(data.getForwardVel(), 0.0)) data.getTimers().actionTimer++;
 	}
 
-	@Override public void clientTick(MarioPlayerData data, boolean isSelf) {}
+	@Override public void clientTick(MarioClientSideData data, boolean isSelf) {}
 
-	@Override public void serverTick(MarioPlayerData data) {}
+	@Override public void serverTick(MarioServerData data) {}
 
 	@Override public SneakLegalityRule getSneakLegalityRule() {
 		return SneakLegalityRule.ALLOW;
@@ -66,7 +66,7 @@ public class Skid extends GroundedActionDefinition {
 				GroundedTransitions.FALL,
 				GroundedTransitions.DUCK_WADDLE,
 				new ActionTransitionDefinition("qua_mario:basic",
-						data -> (data.actionTimer > 0 || Input.getForwardInput() >= 0 || data.getForwardVel() < -0.05)
+						data -> (data.getTimers().actionTimer > 0 || data.getInputs().getForwardInput() >= 0 || data.getForwardVel() < -0.05)
 				)
 		);
 	}
