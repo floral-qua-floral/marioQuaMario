@@ -1,8 +1,10 @@
 package com.floralquafloral.registries.stomp.basestomptypes;
 
 import com.floralquafloral.MarioQuaMario;
+import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioPlayerData;
+import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import com.floralquafloral.registries.stomp.StompDefinition;
 import com.floralquafloral.registries.stomp.StompHandler;
 import com.floralquafloral.util.MarioSFX;
@@ -59,24 +61,14 @@ public class JumpStomp implements StompDefinition {
 	}
 
 	@Override
-	public void executeServer(MarioPlayerData data, Entity target, boolean harmless, long seed) {
-		executeCommon(data, target);
-//		world.playSound(
-//				null,
-//
-//		);
-	}
-
-	@Override
-	public void executeClient(MarioPlayerData data, boolean isSelf, Entity target, boolean harmless, long seed) {
-		executeCommon(data, target);
-
-//		world.playSoundFromEntity(null, target, Registries.SOUND_EVENT.getEntry(MarioSFX.STOMP), SoundCategory.PLAYERS, 1.0F, 1.0F, seed);
-	}
-
-	private void executeCommon(MarioPlayerData data, Entity target) {
+	public void executeTravellers(MarioTravelData data, Entity target, boolean harmless) {
 		double deltaY = data.getMario().getY() - (target.getY() - target.getHeight());
 		data.getMario().move(MovementType.PISTON, new Vec3d(0, deltaY, 0));
 		data.setYVel(1.0);
+	}
+
+	@Override
+	public void executeClients(MarioClientSideData data, boolean isSelf, Entity target, boolean harmless, long seed) {
+
 	}
 }

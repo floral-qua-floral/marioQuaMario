@@ -1,75 +1,95 @@
-package com.floralquafloral.mariodata.client;
+package com.floralquafloral.mariodata.moveable;
 
-import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioPlayerData;
-import com.floralquafloral.registries.states.action.ParsedAction;
-import com.floralquafloral.registries.states.action.TransitionPhase;
-import com.floralquafloral.util.CPMIntegration;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2d;
 
-public class MarioClientData extends AbstractMarioClientData {
-	private static MarioClientData instance;
-	public static MarioClientData getInstance() {
-		return instance;
-	}
-
-	private ClientPlayerEntity marioClient;
-	@Override public ClientPlayerEntity getMario() {
-		return marioClient;
-	}
-	@Override public void setMario(PlayerEntity mario) {
-		this.marioClient = (ClientPlayerEntity) mario;
-		super.setMario(mario);
-	}
-
-	public MarioClientData(ClientPlayerEntity mario) {
+public abstract class MarioMoveableData extends MarioPlayerData implements MarioTravelData {
+	public MarioMoveableData(PlayerEntity mario) {
 		super(mario);
-		this.marioClient = mario;
-		MarioClientData.instance = this;
+		this.TIMERS = new MarioTimers();
 	}
 
-	public int actionTimer = 0;
-	@Override public void setAction(ParsedAction action, long seed) {
-		MarioQuaMario.LOGGER.info("MarioClientData setAction to " + action.ID);
-		if(action != getAction()) actionTimer = 0;
-		if(this.getAction().ANIMATION != null)
-			CPMIntegration.clientAPI.playAnimation(getAction().ANIMATION, 0);
-		if(action.ANIMATION != null)
-			CPMIntegration.clientAPI.playAnimation(action.ANIMATION, 1);
-		super.setActionTransitionless(action);
+	private class MarioVelocities {
+		private double forward;
+		private double strafe;
+		private double vertical;
+		private double negativeSineYaw;
+		private double cosineYaw;
+		private boolean isGenerated;
+		private boolean isDirty;
+
+		private MarioVelocities ensure() {
+			if(this.isGenerated) return this;
+			this.isGenerated = true;
+
+			// Calculate forward and sideways vector components
+			double yawRad = Math.toRadians(getMario().getYaw());
+			this.negativeSineYaw = -Math.sin(yawRad);
+			this.cosineYaw = Math.cos(yawRad);
+
+			// Calculate current forwards and sideways velocity
+			Vec3d currentVel = getMario().getVelocity();
+			this.forward = currentVel.x * negativeSineYaw + currentVel.z * cosineYaw;
+			this.strafe = currentVel.x * cosineYaw + currentVel.z * -negativeSineYaw;
+			this.vertical = currentVel.y;
+
+			return this;
+		}
+		private MarioVelocities ensureDirty() {
+			this.isDirty = true;
+			return this.ensure();
+		}
+		private void apply() {
+			if(!this.isGenerated || !this.isDirty) return;
+			getMario().setVelocity(this.forward * this.negativeSineYaw + this.strafe * this.cosineYaw,
+					this.vertical, this.forward * this.cosineYaw + this.strafe * -this.negativeSineYaw);
+		}
 	}
 
-	public int jumpLandingTime = 0;
-	public int doubleJumpLandingTime = 0;
-
-	@Override public void tick() {
-		Input.update(getMario());
+	private final MarioVelocities VELOCITIES = new MarioVelocities();
+	@Override public double getForwardVel() {
+		return this.VELOCITIES.ensure().forward;
+	}
+	@Override public double getStrafeVel() {
+		return this.VELOCITIES.ensure().strafe;
+	}
+	@Override public double getYVel() {
+		if(this.VELOCITIES.isGenerated) return this.VELOCITIES.vertical;
+		else return this.getMario().getVelocity().y;
 	}
 
-	public boolean travel(Vec3d movementInput) {
-		Input.updateDirections(movementInput.z, movementInput.x);
-
-		// TODO: Levitation effect functionality
-
-		getAction().attemptTransitions(this, TransitionPhase.PRE_TICK);
-		getAction().travelHook(this);
-		getAction().attemptTransitions(this, TransitionPhase.POST_TICK);
-
-		applyModifiedVelocity();
-		marioClient.move(MovementType.SELF, marioClient.getVelocity());
-		if(getAction().attemptTransitions(this, TransitionPhase.POST_MOVE))
-			applyModifiedVelocity();
-
-		marioClient.updateLimbs(false);
-		return true;
+	@Override public void setForwardVel(double forward) {
+		VELOCITIES.ensureDirty().forward = forward;
+	}
+	@Override public void setStrafeVel(double strafe) {
+		this.VELOCITIES.ensureDirty().strafe = strafe;
+	}
+	@Override public void setYVel(double vertical) {
+		if(this.VELOCITIES.isGenerated) this.VELOCITIES.ensureDirty().vertical = vertical;
+		else {
+			Vec3d oldVel = this.getMario().getVelocity();
+			this.getMario().setVelocity(oldVel.x, vertical, oldVel.z);
+		}
 	}
 
-	public void approachAngleAndAccel(
+	public abstract boolean travelHook(double forwardInput, double strafeInput);
+
+	public void applyModifiedVelocity() {
+		this.VELOCITIES.apply();
+		this.VELOCITIES.isDirty = false;
+		this.VELOCITIES.isGenerated = false;
+	}
+
+	private final MarioTimers TIMERS;
+	@Override public @NotNull MarioTimers getTimers() {
+		return this.TIMERS;
+	}
+
+	@Override public void approachAngleAndAccel(
 			double forwardAccel, double forwardTarget, double strafeAccel, double strafeTarget,
 			double forwardAngleContribution, double strafeAngleContribution, double redirectDelta
 	) {
@@ -85,7 +105,7 @@ public class MarioClientData extends AbstractMarioClientData {
 			Vector2d currentVel = new Vector2d(forwardVel, strafeVel);
 			Vector2d intendedAngle = new Vector2d(forwardAngleContribution, strafeAngleContribution);
 
-			if (redirectDelta > 0) redirectedVel = slerp(currentVel, intendedAngle, redirectDelta);
+			if (redirectDelta > 0) redirectedVel = MarioMoveableData.slerp(currentVel, intendedAngle, redirectDelta);
 			else
 				redirectedVel = intendedAngle.normalize(currentVel.length()); // redirectAngle < 0 for instant redirection
 		}

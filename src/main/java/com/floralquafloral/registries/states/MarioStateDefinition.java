@@ -1,13 +1,13 @@
 package com.floralquafloral.registries.states;
 
-import com.floralquafloral.mariodata.MarioPlayerData;
-import com.floralquafloral.mariodata.client.MarioClientData;
+import com.floralquafloral.mariodata.MarioClientSideData;
+import com.floralquafloral.mariodata.moveable.MarioServerData;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 public interface MarioStateDefinition {
 	@NotNull Identifier getID();
 
-	void clientTick(MarioPlayerData data, boolean isSelf);
-	void serverTick(MarioPlayerData data);
+	void clientTick(MarioClientSideData data, boolean isSelf);
+	void serverTick(MarioServerData data);
 }

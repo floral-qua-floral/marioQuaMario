@@ -1,7 +1,9 @@
 package com.floralquafloral.mixin;
 
 import com.floralquafloral.MarioQuaMario;
-import com.floralquafloral.mariodata.client.MarioClientData;
+import com.floralquafloral.mariodata.MarioData;
+import com.floralquafloral.mariodata.MarioDataManager;
+import com.floralquafloral.mariodata.moveable.MarioMainClientData;
 import com.floralquafloral.registries.states.powerup.PowerUpDefinition;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -9,6 +11,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.util.Window;
 import net.minecraft.entity.Entity;
@@ -17,7 +20,9 @@ import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.util.Colors;
 import net.minecraft.util.Identifier;
 import org.joml.Vector2d;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -27,13 +32,15 @@ import java.util.Objects;
 
 @Mixin(InGameHud.class)
 public abstract class InGameHudMixin {
+	@Shadow @Final private MinecraftClient client;
+
 	@WrapOperation(method = "drawHeart", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud$HeartType;getTexture(ZZZ)Lnet/minecraft/util/Identifier;"))
 	public Identifier usePowerUpHeart(InGameHud.HeartType instance, boolean hardcore, boolean half, boolean blinking, Operation<Identifier> original) {
 		// Cancel if the power-up hearts are disabled in the config or if this is a special heart
 		if(!MarioQuaMario.CONFIG.shouldUsePowerUpHearts() || (instance != InGameHud.HeartType.CONTAINER && instance != InGameHud.HeartType.NORMAL))
 			return original.call(instance, hardcore, half, blinking);
 
-		MarioClientData data = MarioClientData.getInstance();
+		MarioMainClientData data = MarioMainClientData.getInstance();
 		// Cancel if there's no Mario Client Data or if the player isn't Mario
 		if(data == null || !data.isEnabled())
 			return original.call(instance, hardcore, half, blinking);
@@ -56,30 +63,36 @@ public abstract class InGameHudMixin {
 
 
 		MinecraftClient client = MinecraftClient.getInstance();
-		PlayerEntity mario = client.player;
-		if(mario == null) return;
+		ClientPlayerEntity clientMario = client.player;
+		if(clientMario == null) return;
+		MarioData clientData = MarioDataManager.getMarioData(clientMario);
 
-		double horizontalSpeed = Vector2d.distance(mario.getX(), mario.getZ(), mario.prevX, mario.prevZ);
-		double verticalSpeed = mario.getY() - mario.prevY;
+		double horizontalSpeed = Vector2d.distance(clientMario.getX(), clientMario.getZ(), clientMario.prevX, clientMario.prevZ);
+		double verticalSpeed = clientMario.getY() - clientMario.prevY;
 
-		renderText(context, 3, "C: ", horizontalSpeed);
-		renderText(context, 1, "C(v): ", verticalSpeed);
+		renderText(context, 1, "C: ", horizontalSpeed, verticalSpeed);
 
 		IntegratedServer integratedServer = MinecraftClient.getInstance().getServer();
 		if(integratedServer == null) return;
-		Entity serverMario = Objects.requireNonNull(integratedServer.getWorld(mario.getWorld().getRegistryKey())).getEntityById(mario.getId());
+		Entity serverMario = Objects.requireNonNull(integratedServer.getWorld(clientMario.getWorld().getRegistryKey())).getEntityById(clientMario.getId());
 		if(serverMario == null) return;
+		MarioData serverData = MarioDataManager.getMarioData(serverMario);
 
-		renderText(context, 2, "S: ", serverMario.getVelocity().horizontalLength());
-		renderText(context, 0, "S(v): ", serverMario.getVelocity().y);
+		renderText(context, 0, "S: ", serverMario.getVelocity().horizontalLength(), serverMario.getVelocity().y);
 
-		renderText(context, 6, mario.getHeight() + " VS " + mario.getHeight());
-		renderText(context, 5, mario.getPose() + " VS " + mario.getPose());
+		renderText(context, 3, clientMario.getPose() + " (" + clientMario.getHeight() + ") VS "
+				+ serverMario.getPose() + " (" + serverMario.getHeight() + ")");
+
+		renderText(context, 5, clientData.getAction().ID + " VS " + serverData.getAction().ID);
 	}
 
 	@Unique
-	private void renderText(DrawContext context, int linesFromBottom, String label, double value) {
-		renderText(context, linesFromBottom, String.format(label + "%.2f", value));
+	private void renderText(DrawContext context, int linesFromBottom, String label, double firstValue, double... extraValues) {
+		StringBuilder toDisplay = new StringBuilder(label + String.format("%.2f", firstValue));
+		for(double value : extraValues) {
+			toDisplay.append(", ").append(String.format("%.2f", value));
+		}
+		renderText(context, linesFromBottom, toDisplay.toString());
 	}
 
 	@Unique

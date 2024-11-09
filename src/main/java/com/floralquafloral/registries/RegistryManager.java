@@ -1,6 +1,7 @@
 package com.floralquafloral.registries;
 
 import com.floralquafloral.MarioQuaMario;
+import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.registries.states.action.ActionDefinition;
 import com.floralquafloral.registries.states.action.AirborneActionDefinition;
 import com.floralquafloral.registries.states.action.GroundedActionDefinition;
@@ -11,6 +12,7 @@ import com.floralquafloral.registries.states.powerup.ParsedPowerUp;
 import com.floralquafloral.registries.states.powerup.PowerUpDefinition;
 import com.floralquafloral.registries.stomp.ParsedStomp;
 import com.floralquafloral.registries.stomp.StompDefinition;
+import com.floralquafloral.util.MarioSFX;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.fabricmc.loader.api.FabricLoader;
@@ -30,6 +32,9 @@ public class RegistryManager {
 		registerActions();
 		registerPowerUps();
 		registerCharacters();
+
+		MarioSFX.staticInitialize();
+		MarioClientSideData.VoiceLine.staticInitialize();
 	}
 
 	public static final RegistryKey<Registry<ParsedStomp>> STOMP_TYPES_KEY = RegistryKey.ofRegistry(

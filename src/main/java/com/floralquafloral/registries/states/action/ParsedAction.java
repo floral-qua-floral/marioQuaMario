@@ -1,13 +1,15 @@
 package com.floralquafloral.registries.states.action;
 
 import com.floralquafloral.MarioQuaMario;
+import com.floralquafloral.mariodata.MarioClientSideData;
+import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioDataPackets;
 import com.floralquafloral.mariodata.MarioPlayerData;
-import com.floralquafloral.mariodata.client.MarioClientData;
+import com.floralquafloral.mariodata.moveable.MarioMainClientData;
+import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import com.floralquafloral.registries.states.ParsedMarioState;
 import com.floralquafloral.registries.RegistryManager;
 import com.floralquafloral.registries.stomp.ParsedStomp;
-import com.floralquafloral.stats.CharaStat;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.RandomSeed;
 import org.jetbrains.annotations.Nullable;
@@ -40,17 +42,18 @@ public class ParsedAction extends ParsedMarioState {
 		this.TRANSITION_LISTS = new EnumMap<>(TransitionPhase.class);
 	}
 
-	public void travelHook(MarioClientData data) {
+	public void travelHook(MarioTravelData data) {
 		this.ACTION_DEFINITION.travelHook(data);
 	}
 
-	public boolean attemptTransitions(MarioClientData data, TransitionPhase phase) {
+	public boolean attemptTransitions(MarioMainClientData data, TransitionPhase phase) {
 		for(ParsedTransition transition : this.TRANSITION_LISTS.get(phase)) {
 			if(transition.EVALUATOR.shouldTransition(data)) {
 				// Send C2S packet to tell the server!
 
 				long seed = RandomSeed.getSeed();
-				if(transition.EXECUTOR_CLIENT != null) transition.EXECUTOR_CLIENT.execute(data, true, seed);
+				if(transition.EXECUTOR_TRAVELLERS != null) transition.EXECUTOR_TRAVELLERS.execute(data);
+				if(transition.EXECUTOR_CLIENTS != null) transition.EXECUTOR_CLIENTS.execute(data, true, seed);
 				MarioDataPackets.broadcastSetMarioAction(transition.TARGET_ACTION, seed);
 				data.setAction(transition.TARGET_ACTION, seed);
 				return true;
@@ -142,23 +145,23 @@ public class ParsedAction extends ParsedMarioState {
 
 		private final ActionDefinition.ActionTransitionDefinition.TransitionEvaluator EVALUATOR;
 
-		private final ActionDefinition.ActionTransitionDefinition.TransitionExecutorClient EXECUTOR_CLIENT;
-		private final ActionDefinition.ActionTransitionDefinition.TransitionExecutor EXECUTOR_SERVER;
+		private final ActionDefinition.ActionTransitionDefinition.TransitionExecutorTravelling EXECUTOR_TRAVELLERS;
+		private final ActionDefinition.ActionTransitionDefinition.TransitionExecutorClients EXECUTOR_CLIENTS;
 
 		private ParsedTransition(ActionDefinition.ActionTransitionDefinition definition) {
 			TARGET_ACTION = RegistryManager.ACTIONS.get(definition.TARGET_IDENTIFIER);
 			if(TARGET_ACTION == null) MarioQuaMario.LOGGER.error("Transition target isn't registered?!?! {}", definition.TARGET_IDENTIFIER);
 			EVALUATOR = definition.EVALUATOR;
-			EXECUTOR_CLIENT = definition.EXECUTOR_CLIENT;
-			EXECUTOR_SERVER = definition.EXECUTOR_SERVER;
+			EXECUTOR_TRAVELLERS = definition.EXECUTOR_TRAVELLERS;
+			EXECUTOR_CLIENTS = definition.EXECUTOR_CLIENTS;
 		}
 
-		private void execute(MarioPlayerData data, long seed) {
-			if(data.getMario().getWorld().isClient) {
-				if (this.EXECUTOR_CLIENT != null)
-					this.EXECUTOR_CLIENT.execute(data, false, seed);
-			}
-			else if (this.EXECUTOR_SERVER != null) this.EXECUTOR_SERVER.execute(data, seed);
+		private void execute(MarioData data, long seed) {
+			if(this.EXECUTOR_TRAVELLERS != null && data instanceof MarioTravelData travelData)
+				this.EXECUTOR_TRAVELLERS.execute(travelData);
+
+			if(this.EXECUTOR_CLIENTS != null && data instanceof MarioClientSideData clientData)
+				this.EXECUTOR_CLIENTS.execute(clientData, data.getMario().isMainPlayer(), seed);
 		}
 	}
 }

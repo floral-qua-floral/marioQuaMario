@@ -1,10 +1,10 @@
 package com.floralquafloral.registries.states.action;
 
-import com.floralquafloral.mariodata.client.MarioClientData;
+import com.floralquafloral.mariodata.MarioClientSideData;
+import com.floralquafloral.mariodata.MarioData;
+import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.registries.states.MarioStateDefinition;
-import com.floralquafloral.stats.CharaStat;
-import com.floralquafloral.stats.StatCategory;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,7 +17,7 @@ public interface ActionDefinition extends MarioStateDefinition {
 	SlidingStatus getConstantSlidingStatus();
 	@Nullable Identifier getStompType();
 
-	void travelHook(MarioClientData data);
+	void travelHook(MarioTravelData data);
 
 //	class GravityProfile {
 //		public final @NotNull CharaStat GRAVITATIONAL_ACCELERATION;
@@ -105,6 +105,52 @@ public interface ActionDefinition extends MarioStateDefinition {
 		}
 	}
 
+	class ActionTransitionDefinition {
+		@FunctionalInterface public interface TransitionEvaluator {
+			boolean shouldTransition(MarioTravelData data);
+		}
+		@FunctionalInterface public interface TransitionExecutorTravelling {
+			void execute(MarioTravelData data);
+		}
+		@FunctionalInterface public interface TransitionExecutorClients {
+			void execute(MarioClientSideData data, boolean isSelf, long seed);
+		}
+
+		public final Identifier TARGET_IDENTIFIER;
+		public final TransitionEvaluator EVALUATOR;
+
+		public final TransitionExecutorTravelling EXECUTOR_TRAVELLERS;
+		public final TransitionExecutorClients EXECUTOR_CLIENTS;
+
+		public ActionTransitionDefinition(
+				@NotNull String targetID,
+				@NotNull TransitionEvaluator evaluator,
+				@Nullable TransitionExecutorTravelling executeTravel,
+				@Nullable TransitionExecutorClients executeClients
+		) {
+			this.EVALUATOR = evaluator;
+			this.TARGET_IDENTIFIER = Identifier.of(targetID);
+
+			this.EXECUTOR_TRAVELLERS = executeTravel;
+			this.EXECUTOR_CLIENTS = executeClients;
+		}
+
+		public ActionTransitionDefinition(
+				@NotNull String targetID,
+				@NotNull TransitionEvaluator evaluator
+		) {
+			this(targetID, evaluator, null, null);
+		}
+
+		public ActionTransitionDefinition(
+				@NotNull String targetID,
+				@NotNull TransitionEvaluator evaluator,
+				@NotNull TransitionExecutorTravelling executeTravel
+		) {
+			this(targetID, evaluator, executeTravel, null);
+		}
+	}
+
 	class ActionTransitionInjection {
 		public final Identifier INJECT_NEAR_TRANSITIONS_TO;
 		public final boolean INJECT_BEFORE_TARGET;
@@ -143,42 +189,6 @@ public interface ActionDefinition extends MarioStateDefinition {
 				this.IS_AIRBORNE = airborne;
 				this.IS_AQUATIC = aquatic;
 			}
-		}
-	}
-
-	class ActionTransitionDefinition {
-		@FunctionalInterface public interface TransitionEvaluator {
-			boolean shouldTransition(MarioClientData data);
-		}
-		@FunctionalInterface public interface TransitionExecutorClient {
-			void execute(MarioPlayerData data, boolean isSelf, long seed);
-		}
-		@FunctionalInterface public interface TransitionExecutor {
-			void execute(MarioPlayerData data, long seed);
-		}
-
-		public final Identifier TARGET_IDENTIFIER;
-		public final TransitionEvaluator EVALUATOR;
-		public final TransitionExecutorClient EXECUTOR_CLIENT;
-		public final TransitionExecutor EXECUTOR_SERVER;
-
-		public ActionTransitionDefinition(
-				@NotNull String targetID,
-				@NotNull TransitionEvaluator evaluator,
-				@Nullable TransitionExecutorClient executeClient,
-				@Nullable TransitionExecutor executeServer
-		) {
-			this.EVALUATOR = evaluator;
-			this.TARGET_IDENTIFIER = Identifier.of(targetID);
-			this.EXECUTOR_CLIENT = executeClient;
-			this.EXECUTOR_SERVER = executeServer;
-		}
-
-		public ActionTransitionDefinition(
-				@NotNull String targetID,
-				@NotNull TransitionEvaluator evaluator
-		) {
-			this(targetID, evaluator, null, null);
 		}
 	}
 }

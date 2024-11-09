@@ -1,15 +1,18 @@
 package com.floralquafloral.mixin;
 
 import com.floralquafloral.mariodata.MarioData;
-import com.floralquafloral.mariodata.client.MarioClientData;
 import com.floralquafloral.mariodata.MarioDataManager;
+import com.floralquafloral.mariodata.MarioPlayerData;
+import com.floralquafloral.mariodata.moveable.MarioMoveableData;
 import com.floralquafloral.registries.states.character.ParsedCharacter;
 import com.floralquafloral.registries.states.powerup.ParsedPowerUp;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -17,20 +20,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin {
+	@Shadow public float strideDistance;
+
+	@Shadow public float prevStrideDistance;
+
 	@Inject(method = "travel", at = @At("HEAD"), cancellable = true)
 	private void travelHook(Vec3d movementInput, CallbackInfo ci) {
-		MarioData marioData = MarioDataManager.getMarioData(this);
-		if(marioData.useMarioPhysics()) {
-			if(!marioData.getMario().getWorld().isClient) {
-				// Cancel travel on the server side
-				// TODO: Server-side travel?????????????
-//				ci.cancel();
-			}
-			else if(marioData instanceof MarioClientData marioClientData && marioClientData.travel(movementInput))
-				ci.cancel();
-		}
-
-
+		MarioPlayerData data = MarioDataManager.getMarioData(this);
+		if(data instanceof MarioMoveableData moveableData && data.useMarioPhysics()
+				&& moveableData.travelHook(movementInput.z, movementInput.x))
+			ci.cancel();
 	}
 
 	@Inject(method = "shouldSwimInFluids", at = @At("HEAD"), cancellable = true)
@@ -72,6 +71,15 @@ public abstract class PlayerEntityMixin {
 		MarioData data = MarioDataManager.getMarioData(this);
 		if(data.useMarioPhysics() && data.getAction().SNEAK_LEGALITY.slipOffLedges()) {
 			cir.setReturnValue(false);
+		}
+	}
+
+	@Inject(method = "tickMovement", at = @At("TAIL"))
+	public void uwuuber(CallbackInfo ci) {
+		MarioData data = MarioDataManager.getMarioData(this);
+		if(data.isClient() && !data.getAction().SLIDING_STATUS.doViewBobbing()) {
+//			prevStrideDistance = 0;
+			strideDistance = prevStrideDistance * 0.6F;
 		}
 	}
 }

@@ -1,10 +1,8 @@
 package com.floralquafloral.registries.states.action;
 
-import com.floralquafloral.mariodata.client.Input;
-import com.floralquafloral.mariodata.client.MarioClientData;
+import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import com.floralquafloral.stats.CharaStat;
 import com.floralquafloral.stats.StatCategory;
-import com.floralquafloral.util.ClientSoundPlayer;
 import com.floralquafloral.util.JumpSoundPlayer;
 import com.floralquafloral.util.MarioSFX;
 import org.jetbrains.annotations.NotNull;
@@ -23,34 +21,28 @@ public abstract class AirborneActionDefinition implements ActionDefinition {
 		public static final ActionTransitionDefinition DOUBLE_JUMPABLE_LANDING = new ActionTransitionDefinition(
 				"qua_mario:basic",
 				BASIC_LANDING.EVALUATOR,
-				(data, isSelf, seed) -> {
-					if(isSelf && data instanceof MarioClientData clientData)
-						clientData.jumpLandingTime = 5;
-				},
+				data -> data.getTimers().jumpLandingTime = 5,
 				null
 		);
 		public static final ActionTransitionDefinition TRIPLE_JUMPABLE_LANDING = new ActionTransitionDefinition(
 				"qua_mario:basic",
 				BASIC_LANDING.EVALUATOR,
-				(data, isSelf, seed) -> {
-					if(isSelf && data instanceof MarioClientData clientData)
-						clientData.doubleJumpLandingTime = 5;
-				},
+				data -> data.getTimers().doubleJumpLandingTime = 5,
 				null
 		);
 
 		public static final ActionTransitionDefinition DUCKING_LANDING = new ActionTransitionDefinition(
 				"qua_mario:duck_waddle",
-				data -> Input.DUCK.isHeld() && AerialTransitions.BASIC_LANDING.EVALUATOR.shouldTransition(data),
-				(data, isSelf, seed) -> data.setForwardStrafeVel(0.0, 0.0),
+				data -> data.getInputs().DUCK.isHeld() && AerialTransitions.BASIC_LANDING.EVALUATOR.shouldTransition(data),
+				data -> data.setForwardStrafeVel(0.0, 0.0),
 				null
 		);
 
 		public static final ActionTransitionDefinition GROUND_POUND = new ActionTransitionDefinition(
-				"qua_mario:ground_pound",
-				data -> Input.DUCK.isPressed(),
-				(data, isSelf, seed) -> ClientSoundPlayer.playSound(MarioSFX.GROUND_POUND_PRE, data, seed),
-				null
+				"qua_mario:ground_pound_windup",
+				data -> data.getInputs().DUCK.isPressed(),
+				null,
+				(data, isSelf, seed) -> data.playSoundEvent(MarioSFX.GROUND_POUND_PRE, seed)
 		);
 	}
 
@@ -83,7 +75,7 @@ public abstract class AirborneActionDefinition implements ActionDefinition {
 	protected abstract @NotNull CharaStat getTerminalVelocity();
 	protected abstract @Nullable CharaStat getJumpCap();
 
-	@Override public final void travelHook(MarioClientData data) {
+	@Override public final void travelHook(MarioTravelData data) {
 		double yVel = data.getYVel();
 		double terminalVelocity = ACTION_TERMINAL_VELOCITY.get(data);
 
@@ -93,15 +85,16 @@ public abstract class AirborneActionDefinition implements ActionDefinition {
 			CharaStat useGravity = aboveJumpCap ? ACTION_JUMP_GRAVITY : ACTION_GRAVITY;
 			yVel += useGravity.get(data);
 
-			if(!jumpCapped) {
-				if(!aboveJumpCap) {
-					jumpCapped = true;
-					JumpSoundPlayer.fadeJumpSfx(data);
-				}
-				else if(!Input.JUMP.isHeld()) {
-					yVel = ACTION_JUMP_CAP.get(data);
-					jumpCapped = true;
-					JumpSoundPlayer.fadeJumpSfx(data);
+			if(data.isClient()) {
+				if (!jumpCapped) {
+					if (!aboveJumpCap) {
+						jumpCapped = true;
+						JumpSoundPlayer.fadeJumpSfx(data);
+					} else if (!data.getInputs().JUMP.isHeld()) {
+						yVel = ACTION_JUMP_CAP.get(data);
+						jumpCapped = true;
+						JumpSoundPlayer.fadeJumpSfx(data);
+					}
 				}
 			}
 
@@ -111,16 +104,16 @@ public abstract class AirborneActionDefinition implements ActionDefinition {
 		airborneTravel(data);
 	}
 
-	public abstract void airborneTravel(MarioClientData data);
+	public abstract void airborneTravel(MarioTravelData data);
 
 	public static void airborneAccel(
-			MarioClientData data,
+			MarioTravelData data,
 			CharaStat accelStat, CharaStat speedStat,
 			CharaStat strafeAccelStat, CharaStat strafeSpeedStat,
 			double forwardAngleContribution, double strafeAngleContribution, CharaStat redirectStat
 	) {
-		double forwardInput = Input.getForwardInput();
-		double strafeInput = Input.getStrafeInput();
+		double forwardInput = data.getInputs().getForwardInput();
+		double strafeInput = data.getInputs().getStrafeInput();
 		double forwardVel = data.getForwardVel();
 		double strafeVel = data.getStrafeVel();
 
@@ -143,7 +136,7 @@ public abstract class AirborneActionDefinition implements ActionDefinition {
 		);
 	}
 	public static void airborneAccel(
-			MarioClientData data,
+			MarioTravelData data,
 			CharaStat forwardAccelStat, CharaStat forwardSpeedStat,
 			CharaStat backwardAccelStat, CharaStat backwardSpeedStat,
 			CharaStat strafeAccelStat, CharaStat strafeSpeedStat,
@@ -151,7 +144,7 @@ public abstract class AirborneActionDefinition implements ActionDefinition {
 	) {
 		// Unlike when on the ground, when Mario is in midair, neutral inputs don't cause him to accelerate towards 0.
 		// He only accelerates when actively making an input, and will always try to accelerate in that direction, never backwards.
-		boolean forwards = Input.getForwardInput() >= 0;
+		boolean forwards = data.getInputs().getForwardInput() >= 0;
 		airborneAccel(data,
 				forwards ? forwardAccelStat : backwardAccelStat,
 				forwards ? forwardSpeedStat : backwardSpeedStat,
@@ -159,7 +152,7 @@ public abstract class AirborneActionDefinition implements ActionDefinition {
 				forwardAngleContribution, strafeAngleContribution, redirectStat
 		);
 	}
-	public static void airborneAccel(MarioClientData data) {
+	public static void airborneAccel(MarioTravelData data) {
 		airborneAccel(data,
 				AerialStats.FORWARD_DRIFT_ACCEL, AerialStats.FORWARD_DRIFT_SPEED,
 				AerialStats.BACKWARD_DRIFT_ACCEL, AerialStats.BACKWARD_DRIFT_SPEED,

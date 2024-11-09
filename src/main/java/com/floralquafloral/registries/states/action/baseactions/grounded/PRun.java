@@ -1,14 +1,15 @@
 package com.floralquafloral.registries.states.action.baseactions.grounded;
 
 import com.floralquafloral.MarioQuaMario;
-import com.floralquafloral.mariodata.MarioPlayerData;
-import com.floralquafloral.mariodata.client.Input;
-import com.floralquafloral.mariodata.client.MarioClientData;
+import com.floralquafloral.mariodata.MarioClientSideData;
+import com.floralquafloral.mariodata.moveable.MarioServerData;
+import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import com.floralquafloral.registries.states.action.GroundedActionDefinition;
 import com.floralquafloral.stats.CharaStat;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector2d;
 
 import java.util.List;
 
@@ -27,20 +28,20 @@ public class PRun extends GroundedActionDefinition {
 	public static final CharaStat P_REDIRECTION = new CharaStat(6.0, P_RUNNING, FORWARD, REDIRECTION);
 
 	@Override
-	public void groundedTravel(MarioClientData data) {
+	public void groundedTravel(MarioTravelData data) {
 		boolean sprinting = data.getMario().isSprinting();
 		groundAccel(data,
 				sprinting ? ActionBasic.OVERRUN_ACCEL : ActionBasic.OVERWALK_ACCEL,
 				sprinting ? P_SPEED : ActionBasic.WALK_SPEED,
 				ActionBasic.STRAFE_ACCEL, ActionBasic.STRAFE_SPEED,
-				Input.getForwardInput(), Input.getStrafeInput(),
+				data.getInputs().getForwardInput(), data.getInputs().getStrafeInput(),
 				P_REDIRECTION
 		);
 	}
 
-	@Override public void clientTick(MarioPlayerData data, boolean isSelf) {}
+	@Override public void clientTick(MarioClientSideData data, boolean isSelf) {}
 
-	@Override public void serverTick(MarioPlayerData data) {}
+	@Override public void serverTick(MarioServerData data) {}
 
 	@Override public SneakLegalityRule getSneakLegalityRule() {
 		return SneakLegalityRule.ALLOW;
@@ -58,7 +59,11 @@ public class PRun extends GroundedActionDefinition {
 				GroundedTransitions.FALL,
 				GroundedTransitions.DUCK_WADDLE,
 				new ActionTransitionDefinition("qua_mario:basic",
-						(data) -> data.getForwardVel() < ActionBasic.RUN_SPEED.getAsThreshold(data)
+						(data) -> {
+							double threshold = ActionBasic.RUN_SPEED.getAsThreshold(data);
+							return data.getForwardVel() <= 0 ||
+									Vector2d.lengthSquared(data.getForwardVel(), data.getStrafeVel()) < threshold * threshold;
+						}
 				),
 				Skid.SKID_TRANSITION
 		);
@@ -69,8 +74,8 @@ public class PRun extends GroundedActionDefinition {
 		return List.of(
 				new ActionTransitionDefinition("qua_mario:p_jump",
 						GroundedTransitions.JUMP.EVALUATOR,
-						GroundedTransitions.JUMP.EXECUTOR_CLIENT,
-						GroundedTransitions.JUMP.EXECUTOR_SERVER
+						GroundedTransitions.JUMP.EXECUTOR_TRAVELLERS,
+						GroundedTransitions.JUMP.EXECUTOR_CLIENTS
 				)
 		);
 	}

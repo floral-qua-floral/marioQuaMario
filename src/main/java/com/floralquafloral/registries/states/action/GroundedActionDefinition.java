@@ -1,14 +1,11 @@
 package com.floralquafloral.registries.states.action;
 
-import com.floralquafloral.VoiceLine;
+import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.mariodata.MarioData;
-import com.floralquafloral.mariodata.client.Input;
-import com.floralquafloral.mariodata.client.MarioClientData;
+import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import com.floralquafloral.registries.states.action.baseactions.airborne.Jump;
 import com.floralquafloral.registries.states.action.baseactions.grounded.PRun;
 import com.floralquafloral.stats.CharaStat;
-import com.floralquafloral.util.ClientSoundPlayer;
-import com.floralquafloral.util.JumpSoundPlayer;
 import com.floralquafloral.util.MarioSFX;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
@@ -18,8 +15,7 @@ public abstract class GroundedActionDefinition implements ActionDefinition {
 	public static final CharaStat ZERO = new CharaStat(0.0);
 
 	public abstract static class GroundedTransitions {
-		public static void performJump(MarioData data, CharaStat velocityStat, @Nullable CharaStat addendStat,
-									   long seed, boolean playSound) {
+		public static void performJump(MarioTravelData data, CharaStat velocityStat, @Nullable CharaStat addendStat) {
 			if(data.getMario().isMainPlayer() || !data.getMario().getWorld().isClient) {
 				double jumpVel = velocityStat.get(data);
 				if(addendStat != null)
@@ -27,8 +23,6 @@ public abstract class GroundedActionDefinition implements ActionDefinition {
 
 				data.setYVel(jumpVel);
 			}
-
-			if(data.getMario().getWorld().isClient && playSound) JumpSoundPlayer.playJumpSfx(data, seed);
 		}
 
 		public static final ActionTransitionDefinition FALL = new ActionTransitionDefinition(
@@ -38,47 +32,49 @@ public abstract class GroundedActionDefinition implements ActionDefinition {
 
 		public static final ActionTransitionDefinition JUMP = new ActionTransitionDefinition(
 				"qua_mario:jump",
-				(data) -> Input.JUMP.isPressed(),
-				(data, isSelf, seed) -> performJump(data, Jump.JUMP_VEL, Jump.JUMP_ADDEND, seed, true),
-				(data, seed) -> performJump(data, Jump.JUMP_VEL, Jump.JUMP_ADDEND, seed, false)
+				(data) -> data.getInputs().JUMP.isPressed(),
+				data -> performJump(data, Jump.JUMP_VEL, Jump.JUMP_ADDEND),
+				(data, isSelf, seed) -> data.playJumpSound(seed)
 		);
 
 		public static final ActionTransitionDefinition DUCK_WADDLE = new ActionTransitionDefinition(
 				"qua_mario:duck_waddle",
-				(data) -> Input.DUCK.isHeld(),
+				(data) -> data.getInputs().DUCK.isHeld(),
+				null,
 				(data, isSelf, seed) -> {
-					// Play duck voiceline
-					ClientSoundPlayer.playSound(MarioSFX.DUCK, data, 0.5F, 1.0F, seed);
-					VoiceLine.DUCK.play(data, seed);
-				},
-				null
+					data.playSoundEvent(MarioSFX.DUCK, 1.0F, 0.5F, seed);
+					data.voice(MarioClientSideData.VoiceLine.DUCK, seed);
+				}
 		);
 	}
 
-	@Override public final void travelHook(MarioClientData data) {
-		data.setYVel(data.getYVel() + AirborneActionDefinition.AerialStats.GRAVITY.get(data));
+	@Override public final void travelHook(MarioTravelData data) {
+		if(data.isClient())
+			data.setYVel(data.getYVel() + AirborneActionDefinition.AerialStats.GRAVITY.get(data));
+		else
+			data.setYVel(-0.1);
 		AirborneActionDefinition.jumpCapped = false;
 		this.groundedTravel(data);
 	}
 
-	public abstract void groundedTravel(MarioClientData data);
+	public abstract void groundedTravel(MarioTravelData data);
 
 	public void groundAccel(
-			MarioClientData data,
+			MarioTravelData data,
 			CharaStat forwardAccel, CharaStat forwardTarget, CharaStat strafeAccel, CharaStat strafeTarget,
 			double forwardAngleContribution, double strafeAngleContribution, CharaStat redirectDelta
 	) {
 		double slipFactor = getSlipFactor(data);
 
 		data.approachAngleAndAccel(
-				forwardAccel.get(data) * slipFactor, forwardTarget.get(data) * Input.getForwardInput(),
-				strafeAccel.get(data) * slipFactor, strafeTarget.get(data) * Input.getStrafeInput(),
+				forwardAccel.get(data) * slipFactor, forwardTarget.get(data) * data.getInputs().getForwardInput(),
+				strafeAccel.get(data) * slipFactor, strafeTarget.get(data) * data.getInputs().getStrafeInput(),
 				forwardAngleContribution, strafeAngleContribution, redirectDelta.get(data) * slipFactor
 		);
 	}
 
 	public void applyDrag(
-			MarioClientData data,
+			MarioTravelData data,
 			CharaStat drag, CharaStat dragMin,
 			double forwardAngleContribution, double strafeAngleContribution,
 			CharaStat redirection
