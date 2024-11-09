@@ -149,10 +149,7 @@ public class ParsedStomp {
 		if(this.SHOULD_ATTEMPT_MOUNTING) {
 			if((target instanceof Saddleable saddleableTarget && saddleableTarget.isSaddled())
 					|| target instanceof VehicleEntity) {
-				if(mario.startRiding(target)) {
-					MarioDataPackets.forceSetMarioAction(mario, RegistryManager.ACTIONS.get(Identifier.of("qua_mario:basic")));
-					return true;
-				}
+				if(mario.startRiding(target)) return true;
 			}
 		}
 

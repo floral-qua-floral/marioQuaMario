@@ -3,7 +3,9 @@ package com.floralquafloral.mixin;
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioDataManager;
+import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.mariodata.moveable.MarioServerData;
+import com.floralquafloral.registries.RegistryManager;
 import com.floralquafloral.registries.states.action.ParsedAction;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
@@ -11,6 +13,7 @@ import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Mixin;
@@ -75,6 +78,16 @@ public abstract class EntityMixin {
 					shouldStompHook = true;
 				}
 			}
+		}
+	}
+
+	@Inject(method = "startRiding(Lnet/minecraft/entity/Entity;Z)Z", at = @At("HEAD"))
+	private void setMountedAction(Entity entity, boolean force, CallbackInfoReturnable<Boolean> cir) {
+		if((Entity) (Object) this instanceof PlayerEntity mario) {
+			MarioPlayerData data = MarioDataManager.getMarioData(mario);
+
+			data.attemptDismount = false;
+			data.setActionTransitionless(RegistryManager.ACTIONS.get(Identifier.of("qua_mario:mounted")));
 		}
 	}
 }

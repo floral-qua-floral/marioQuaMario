@@ -21,7 +21,8 @@
 
 		"mario-actions-uncategorized": [
 			"com.floralquafloral.registries.states.action.baseactions.ActionDebug",
-			"com.floralquafloral.registries.states.action.baseactions.ActionDebugAlt"
+			"com.floralquafloral.registries.states.action.baseactions.ActionDebugAlt",
+			"com.floralquafloral.registries.states.action.baseactions.Mounted"
 		],
 		"mario-actions-grounded": [
 			"com.floralquafloral.registries.states.action.baseactions.grounded.ActionBasic",
@@ -49,7 +50,8 @@
 		],
 		"mario-characters": [
 			"com.floralquafloral.registries.states.character.basecharacters.Mario",
-			"com.floralquafloral.registries.states.character.basecharacters.Luigi"
+			"com.floralquafloral.registries.states.character.basecharacters.Luigi",
+			"com.floralquafloral.registries.states.character.basecharacters.Toadette"
 		],
 
 		"main": [

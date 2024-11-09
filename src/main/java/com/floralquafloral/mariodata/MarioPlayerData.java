@@ -50,12 +50,12 @@ public abstract class MarioPlayerData implements MarioData {
 				isEnabled()
 				&& !mario.getAbilities().flying
 				&& !mario.isFallFlying()
-				&& !mario.hasVehicle()
+//				&& !mario.hasVehicle()
 //				&& !mario.isClimbing()
 		);
 	}
 
-
+	public boolean attemptDismount = false;
 
 	public abstract void tick();
 
@@ -169,12 +169,7 @@ public abstract class MarioPlayerData implements MarioData {
 				makeSkidSFX(action.SLIDING_STATUS.doWallSlideSfx(), action.SLIDING_STATUS.doSpeedScaling());
 			}
 		}
-		else {
-			if(this.action.ANIMATION != null)
-				CPMIntegration.commonAPI.playAnimation(PlayerEntity.class, this.mario, this.action.ANIMATION, 0);
-			if(action.ANIMATION != null)
-				CPMIntegration.commonAPI.playAnimation(PlayerEntity.class, this.mario, action.ANIMATION, 1);
-		}
+
 		this.action = action;
 		this.mario.setPose(this.mario.getPose());
 

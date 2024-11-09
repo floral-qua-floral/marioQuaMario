@@ -6,6 +6,8 @@
 	"text.autoconfig.qua_mario.option.spinputType": "Spin Input Type",
 	"fabric.mods.qua_mario.spin": "Spin",
 
+	"mount.onboard.mario": "Hold %s and press %s to Dismount",
+
 	"text.autoconfig.qua_mario.option.sideflipAnimType": "Sideflip Camera Animation",
 	"text.autoconfig.qua_mario.option.backflipAnimType": "Backflip Camera Animation",
 	"text.autoconfig.qua_mario.option.tripleJumpAnimType": "Triple Jump Camera Animation",

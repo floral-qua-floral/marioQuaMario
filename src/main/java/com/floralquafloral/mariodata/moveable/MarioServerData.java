@@ -1,8 +1,10 @@
 package com.floralquafloral.mariodata.moveable;
 
+import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.registries.states.action.ParsedAction;
+import com.floralquafloral.util.CPMIntegration;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +27,19 @@ public class MarioServerData extends MarioMoveableData {
 	@Override public boolean travelHook(double forwardInput, double strafeInput) {
 		getAction().travelHook(this);
 		applyModifiedVelocity();
-		return true;
+		return !marioServer.hasVehicle();
+	}
+
+	@Override
+	public void setActionTransitionless(ParsedAction action) {
+		MarioQuaMario.LOGGER.info("MarioServerData setAction to {}", action.ID);
+
+		if(this.getAction().ANIMATION != null)
+			CPMIntegration.commonAPI.playAnimation(PlayerEntity.class, this.marioServer, this.getAction().ANIMATION, 0);
+		if(action.ANIMATION != null)
+			CPMIntegration.commonAPI.playAnimation(PlayerEntity.class, this.marioServer, action.ANIMATION, 1);
+
+		super.setActionTransitionless(action);
 	}
 
 	@Override public void tick() {

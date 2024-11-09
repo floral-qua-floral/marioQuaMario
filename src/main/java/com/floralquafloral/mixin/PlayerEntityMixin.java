@@ -75,10 +75,19 @@ public abstract class PlayerEntityMixin {
 	}
 
 	@Inject(method = "tickMovement", at = @At("TAIL"))
-	public void uwuuber(CallbackInfo ci) {
+	public void preventViewBobbing(CallbackInfo ci) {
 		MarioData data = MarioDataManager.getMarioData(this);
 		if(data.isClient() && !data.getAction().SLIDING_STATUS.doViewBobbing()) {
 			strideDistance = prevStrideDistance * 0.6F;
+		}
+	}
+
+	@Inject(method = "shouldDismount", at = @At("HEAD"), cancellable = true)
+	public void changeDismounting(CallbackInfoReturnable<Boolean> cir) {
+		MarioPlayerData data = MarioDataManager.getMarioData(this);
+		if(data.isEnabled()) {
+			cir.setReturnValue(data.attemptDismount);
+			if(data.attemptDismount) data.attemptDismount = false;
 		}
 	}
 }

@@ -73,7 +73,7 @@ public class MarioMainClientData extends MarioMoveableData implements MarioClien
 			applyModifiedVelocity();
 
 		marioClient.updateLimbs(false);
-		return true;
+		return !marioClient.hasVehicle();
 	}
 
 	@Override public @NotNull MarioInputs getInputs() {
