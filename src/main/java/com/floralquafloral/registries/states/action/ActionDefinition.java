@@ -120,6 +120,19 @@ public interface ActionDefinition extends MarioStateDefinition {
 			return this.DO_FADING;
 		}
 	}
+	enum BumpType {
+		NONE(0, 0),
+		HIT_CEILINGS(2, 0),
+		GROUND_POUND(0, 2),
+		SPIN_JUMP(2, 1);
+
+		public final int HIT_CEILING_STRENGTH;
+		public final int HIT_FLOOR_STRENGTH;
+		BumpType(int hitCeilingStrength, int hitFloorStrength) {
+			this.HIT_CEILING_STRENGTH = hitCeilingStrength;
+			this.HIT_FLOOR_STRENGTH = hitFloorStrength;
+		}
+	}
 
 	class ActionTransitionDefinition {
 		@FunctionalInterface public interface TransitionEvaluator {

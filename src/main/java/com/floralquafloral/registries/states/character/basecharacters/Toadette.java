@@ -17,13 +17,13 @@ public class Toadette implements CharacterDefinition {
 
 	}
 
-	@Override
-	public float getWidthFactor() {
+	@Override public int getBumpStrengthModifier() {
+		return 0;
+	}
+	@Override public float getWidthFactor() {
 		return 1.0F;
 	}
-
-	@Override
-	public float getHeightFactor() {
+	@Override public float getHeightFactor() {
 		return 1.0F;
 	}
 

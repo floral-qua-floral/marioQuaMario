@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 public abstract class ParsedMajorMarioState extends ParsedMarioState {
+	public final int BUMP_STRENGTH_MODIFIER;
 	public final float WIDTH_FACTOR;
 	public final float HEIGHT_FACTOR;
 	public final Map<Set<StatCategory>, Double> STAT_MODIFIERS;
@@ -15,6 +16,7 @@ public abstract class ParsedMajorMarioState extends ParsedMarioState {
 	protected ParsedMajorMarioState(MarioMajorStateDefinition definition) {
 		super(definition);
 
+		this.BUMP_STRENGTH_MODIFIER = definition.getBumpStrengthModifier();
 		this.WIDTH_FACTOR = definition.getWidthFactor();
 		this.HEIGHT_FACTOR = definition.getHeightFactor();
 		this.STAT_MODIFIERS = new HashMap<>();

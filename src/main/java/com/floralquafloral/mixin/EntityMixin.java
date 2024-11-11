@@ -1,12 +1,17 @@
 package com.floralquafloral.mixin;
 
+import com.floralquafloral.BlockBumping;
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioDataManager;
 import com.floralquafloral.mariodata.MarioPlayerData;
+import com.floralquafloral.mariodata.moveable.MarioMainClientData;
+import com.floralquafloral.mariodata.moveable.MarioMoveableData;
 import com.floralquafloral.mariodata.moveable.MarioServerData;
 import com.floralquafloral.registries.RegistryManager;
 import com.floralquafloral.registries.states.action.ParsedAction;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
@@ -16,6 +21,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -68,8 +74,8 @@ public abstract class EntityMixin {
 
 	@Inject(method = "move", at = @At("HEAD"), cancellable = true)
 	private void executeStompsOnServer(MovementType movementType, Vec3d movement, CallbackInfo ci) {
-		if((Entity) (Object) this instanceof ServerPlayerEntity player && shouldStompHook) {
-			MarioData data = MarioDataManager.getMarioData(player);
+		if((Entity) (Object) this instanceof ServerPlayerEntity mario && shouldStompHook) {
+			MarioData data = MarioDataManager.getMarioData(mario);
 			if(data.useMarioPhysics()) {
 				ParsedAction action = data.getAction();
 				if(action.STOMP != null) {
@@ -78,6 +84,13 @@ public abstract class EntityMixin {
 					shouldStompHook = true;
 				}
 			}
+		}
+	}
+
+	@WrapOperation(method = "checkBlockCollision", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;onEntityCollision(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/Entity;)V"))
+	private void executeBumpsOnClient(BlockState instance, World world, BlockPos blockPos, Entity entity, Operation<Void> original) {
+		if(entity instanceof ServerPlayerEntity mario) {
+//			world.breakBlock(blockPos, true, mario);
 		}
 	}
 

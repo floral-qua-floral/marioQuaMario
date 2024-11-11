@@ -29,6 +29,9 @@ public class SmallForm implements PowerUpDefinition {
 
 	}
 
+	@Override public int getBumpStrengthModifier() {
+		return -1;
+	}
 	@Override public float getWidthFactor() {
 		return 1.0F;
 	}

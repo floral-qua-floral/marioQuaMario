@@ -4,15 +4,13 @@ import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import com.floralquafloral.stats.CharaStat;
 import com.floralquafloral.stats.StatCategory;
-import com.floralquafloral.util.AsymmetricalEasing;
-import com.floralquafloral.util.Easings;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.floralquafloral.util.AsymmetricalEasing.*;
+import static com.floralquafloral.util.MixedEasing.*;
 
 public class Backflip extends Jump {
 	@Override public @NotNull Identifier getID() {
@@ -25,7 +23,7 @@ public class Backflip extends Jump {
 		return new CameraAnimationSet(
 				new CameraAnimation(
 						false, 1.0F,
-						(progress, offsets) -> offsets[1] = asymmetricEase(progress, easeInOutSine, easeInOutCubic) * -360
+						(progress, offsets) -> offsets[1] = mixedEase(progress, SINE, CUBIC) * -360
 				),
 				null,
 				null

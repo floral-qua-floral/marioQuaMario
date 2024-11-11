@@ -29,6 +29,9 @@ public class SuperForm implements PowerUpDefinition {
 
 	}
 
+	@Override public int getBumpStrengthModifier() {
+		return 0;
+	}
 	@Override public float getWidthFactor() {
 		return 1.0F;
 	}
