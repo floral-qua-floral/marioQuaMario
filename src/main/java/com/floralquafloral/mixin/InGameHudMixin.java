@@ -65,7 +65,7 @@ public abstract class InGameHudMixin {
 		MinecraftClient client = MinecraftClient.getInstance();
 		ClientPlayerEntity clientMario = client.player;
 		if(clientMario == null) return;
-		MarioData clientData = MarioDataManager.getMarioData(clientMario);
+		MarioMainClientData clientData = (MarioMainClientData) MarioDataManager.getMarioData(clientMario);
 
 		double horizontalSpeed = Vector2d.distance(clientMario.getX(), clientMario.getZ(), clientMario.prevX, clientMario.prevZ);
 		double verticalSpeed = clientMario.getY() - clientMario.prevY;
@@ -84,6 +84,8 @@ public abstract class InGameHudMixin {
 				+ serverMario.getPose() + " (" + serverMario.getHeight() + ")");
 
 		renderText(context, 5, clientData.getAction().ID + " VS " + serverData.getAction().ID);
+
+		renderText(context, 6, "cameraAnim: " + clientData.TEMPORARY2);
 	}
 
 	@Unique

@@ -22,6 +22,10 @@ public class Skid extends GroundedActionDefinition {
 	@Override public @Nullable String getAnimationName() {
 		return "skid";
 	}
+	@Override
+	public @Nullable CameraAnimationSet getCameraAnimations() {
+		return null;
+	}
 
 	public static final CharaStat SKID_THRESHOLD = new CharaStat(0.285, RUNNING, THRESHOLD);
 
@@ -53,7 +57,7 @@ public class Skid extends GroundedActionDefinition {
 	@Override public SneakLegalityRule getSneakLegalityRule() {
 		return SneakLegalityRule.ALLOW;
 	}
-	@Override public SlidingStatus getConstantSlidingStatus() {
+	@Override public SlidingStatus getActionSlidingStatus() {
 		return SlidingStatus.SKIDDING;
 	}
 	@Override public @Nullable Identifier getStompType() {

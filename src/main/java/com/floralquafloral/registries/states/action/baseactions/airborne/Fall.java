@@ -19,11 +19,15 @@ public class Fall extends AirborneActionDefinition {
 	@Override public @Nullable String getAnimationName() {
 		return null;
 	}
+	@Override
+	public @Nullable CameraAnimationSet getCameraAnimations() {
+		return null;
+	}
 
 	@Override public SneakLegalityRule getSneakLegalityRule() {
 		return SneakLegalityRule.PROHIBIT;
 	}
-	@Override public SlidingStatus getConstantSlidingStatus() {
+	@Override public SlidingStatus getActionSlidingStatus() {
 		return SlidingStatus.NOT_SLIDING;
 	}
 	@Override public @Nullable Identifier getStompType() {
@@ -38,9 +42,6 @@ public class Fall extends AirborneActionDefinition {
 	}
 	@Override protected @NotNull CharaStat getTerminalVelocity() {
 		return AerialStats.TERMINAL_VELOCITY;
-	}
-	@Override protected @Nullable CharaStat getJumpCap() {
-		return null;
 	}
 
 	@Override public void airborneTravel(MarioTravelData data) {

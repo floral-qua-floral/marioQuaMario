@@ -1,9 +1,7 @@
 package com.floralquafloral.registries.states.action;
 
 import com.floralquafloral.mariodata.MarioClientSideData;
-import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.moveable.MarioTravelData;
-import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.registries.states.MarioStateDefinition;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -13,35 +11,53 @@ import java.util.List;
 
 public interface ActionDefinition extends MarioStateDefinition {
 	@Nullable String getAnimationName();
+	@Nullable CameraAnimationSet getCameraAnimations();
+
 	SneakLegalityRule getSneakLegalityRule();
-	SlidingStatus getConstantSlidingStatus();
+	SlidingStatus getActionSlidingStatus();
 	@Nullable Identifier getStompType();
 
 	void travelHook(MarioTravelData data);
-
-//	class GravityProfile {
-//		public final @NotNull CharaStat GRAVITATIONAL_ACCELERATION;
-//		public final @NotNull CharaStat TERMINAL_VELOCITY;
-//		public final @NotNull CharaStat JUMPING_GRAVITATIONAL_ACCELERATION;
-//
-//		public GravityProfile(double gravitationalAccel, double terminalVelocity) {
-//			this.GRAVITATIONAL_ACCELERATION = new CharaStat(gravitationalAccel, StatCategory.NORMAL_GRAVITY);
-//			this.TERMINAL_VELOCITY = new CharaStat(terminalVelocity, StatCategory.TERMINAL_VELOCITY);
-//
-//			this.JUMPING_GRAVITATIONAL_ACCELERATION = this.GRAVITATIONAL_ACCELERATION;
-//		}
-//
-//		public GravityProfile(double gravitationalAccel, double terminalVelocity, double jumpingGravityAccel) {
-//			this.GRAVITATIONAL_ACCELERATION = new CharaStat(gravitationalAccel, StatCategory.NORMAL_GRAVITY);
-//			this.TERMINAL_VELOCITY = new CharaStat(terminalVelocity, StatCategory.TERMINAL_VELOCITY);
-//			this.JUMPING_GRAVITATIONAL_ACCELERATION = new CharaStat(jumpingGravityAccel, StatCategory.JUMPING_GRAVITY);
-//		}
-//	}
 
 	List<ActionTransitionDefinition> getPreTickTransitions();
 	List<ActionTransitionDefinition> getPostTickTransitions();
 	List<ActionTransitionDefinition> getPostMoveTransitions();
 	List<ActionTransitionInjection> getTransitionInjections();
+
+	class CameraAnimationSet {
+		@NotNull public final CameraAnimation AUTHENTIC_ANIMATION;
+		@NotNull public final CameraAnimation GENTLE_ANIMATION;
+		@Nullable public final CameraAnimation MINIMAL_ANIMATION;
+
+		public CameraAnimationSet(
+				@NotNull CameraAnimation authentic,
+				@Nullable CameraAnimation gentle,
+				@Nullable CameraAnimation minimal
+		) {
+			this.AUTHENTIC_ANIMATION = authentic;
+			this.GENTLE_ANIMATION = gentle == null ? authentic : gentle;
+			this.MINIMAL_ANIMATION = minimal;
+		}
+	}
+	class CameraAnimation {
+		@FunctionalInterface public interface rotationalOffsetCalculator {
+			void setRotationalOffsets(float progress, float[] offsets);
+		}
+
+		public final boolean SHOULD_LOOP;
+		public final float DURATION_TICKS;
+		public final rotationalOffsetCalculator CALCULATOR;
+
+		public CameraAnimation(
+				boolean looping,
+				float durationSeconds,
+				rotationalOffsetCalculator calculator
+		) {
+			this.SHOULD_LOOP = looping;
+			this.DURATION_TICKS = durationSeconds * 20;
+			this.CALCULATOR = calculator;
+		}
+	}
 
 	enum SneakLegalityRule {
 		ALLOW(true, false),		// Player can enter the sneaking pose

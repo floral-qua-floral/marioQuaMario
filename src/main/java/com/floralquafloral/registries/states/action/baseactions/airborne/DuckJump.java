@@ -6,19 +6,12 @@ import com.floralquafloral.stats.CharaStat;
 import com.floralquafloral.stats.StatCategory;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class DuckJump extends Jump {
 	@Override public @NotNull Identifier getID() {
 		return Identifier.of(MarioQuaMario.MOD_ID, "duck_jump");
-	}
-
-	public static final CharaStat CAP = new CharaStat(0.14, StatCategory.JUMP_CAP);
-
-	@Override protected @Nullable CharaStat getJumpCap() {
-		return CAP;
 	}
 
 	@Override public SneakLegalityRule getSneakLegalityRule() {
@@ -35,7 +28,8 @@ public class DuckJump extends Jump {
 		return List.of(
 				new ActionTransitionDefinition("qua_mario:jump",
 						DuckWaddle.UNDUCK.EVALUATOR
-				)
+				),
+				AerialTransitions.makeJumpCapTransition(this, 0.14)
 		);
 	}
 }

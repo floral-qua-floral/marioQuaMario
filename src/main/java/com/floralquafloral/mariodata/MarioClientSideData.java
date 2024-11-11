@@ -21,6 +21,10 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * This is supposedly an interface but every method is implemented because that's the closest i can get to multiple
+ * inheritance. endless pains and agonies for ever & ever!
+ */
 @SuppressWarnings("UnusedReturnValue")
 public interface MarioClientSideData extends MarioData {
 	SoundManager SOUND_MANAGER = MinecraftClient.getInstance().getSoundManager();

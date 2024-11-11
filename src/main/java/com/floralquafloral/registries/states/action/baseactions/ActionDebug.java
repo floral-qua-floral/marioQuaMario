@@ -18,6 +18,10 @@ public class ActionDebug implements ActionDefinition {
 	@Override @Nullable public String getAnimationName() {
 		return null;
 	}
+	@Override
+	public @Nullable CameraAnimationSet getCameraAnimations() {
+		return null;
+	}
 
 	@Override
 	public void travelHook(MarioTravelData data) {
@@ -37,7 +41,7 @@ public class ActionDebug implements ActionDefinition {
 	@Override public SneakLegalityRule getSneakLegalityRule() {
 		return SneakLegalityRule.PROHIBIT;
 	}
-	@Override public SlidingStatus getConstantSlidingStatus() {
+	@Override public SlidingStatus getActionSlidingStatus() {
 		return SlidingStatus.SLIDING_SILENT;
 	}
 	@Override public @Nullable Identifier getStompType() {

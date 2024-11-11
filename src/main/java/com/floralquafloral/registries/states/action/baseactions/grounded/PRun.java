@@ -22,6 +22,10 @@ public class PRun extends GroundedActionDefinition {
 	@Override public @Nullable String getAnimationName() {
 		return "p-run";
 	}
+	@Override
+	public @Nullable CameraAnimationSet getCameraAnimations() {
+		return null;
+	}
 
 	public static final CharaStat P_ACCEL = new CharaStat(0.13, P_RUNNING, FORWARD, ACCELERATION);
 	public static final CharaStat P_SPEED = new CharaStat(0.665, P_RUNNING, FORWARD, SPEED);
@@ -46,7 +50,7 @@ public class PRun extends GroundedActionDefinition {
 	@Override public SneakLegalityRule getSneakLegalityRule() {
 		return SneakLegalityRule.ALLOW;
 	}
-	@Override public SlidingStatus getConstantSlidingStatus() {
+	@Override public SlidingStatus getActionSlidingStatus() {
 		return SlidingStatus.NOT_SLIDING_SMOOTH;
 	}
 	@Override public @Nullable Identifier getStompType() {

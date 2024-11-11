@@ -6,7 +6,6 @@ import com.floralquafloral.mariodata.moveable.MarioServerData;
 import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import com.floralquafloral.registries.states.action.GroundedActionDefinition;
 import com.floralquafloral.stats.CharaStat;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,6 +20,10 @@ public class ActionBasic extends GroundedActionDefinition {
 		return Identifier.of(MarioQuaMario.MOD_ID, "basic");
 	}
 	@Override public @Nullable String getAnimationName() {
+		return null;
+	}
+	@Override
+	public @Nullable CameraAnimationSet getCameraAnimations() {
 		return null;
 	}
 
@@ -152,7 +155,7 @@ public class ActionBasic extends GroundedActionDefinition {
 	@Override public SneakLegalityRule getSneakLegalityRule() {
 		return SneakLegalityRule.ALLOW;
 	}
-	@Override public SlidingStatus getConstantSlidingStatus() {
+	@Override public SlidingStatus getActionSlidingStatus() {
 		return SlidingStatus.NOT_SLIDING;
 	}
 	@Override public @Nullable Identifier getStompType() {

@@ -6,8 +6,8 @@ import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.mariodata.moveable.MarioServerData;
 import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import com.floralquafloral.registries.states.action.ActionDefinition;
-import com.floralquafloral.registries.states.action.AirborneActionDefinition;
 import com.floralquafloral.registries.states.action.GroundedActionDefinition;
+import com.floralquafloral.registries.states.action.baseactions.grounded.DuckWaddle;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,10 +21,14 @@ public class Mounted implements ActionDefinition {
 	@Override @Nullable public String getAnimationName() {
 		return null;
 	}
+	@Override
+	public @Nullable CameraAnimationSet getCameraAnimations() {
+		return null;
+	}
 
 	@Override
 	public void travelHook(MarioTravelData data) {
-		AirborneActionDefinition.jumpCapped = false;
+		data.getTimers().jumpCapped = false;
 	}
 
 	@Override
@@ -36,9 +40,9 @@ public class Mounted implements ActionDefinition {
 	}
 
 	@Override public SneakLegalityRule getSneakLegalityRule() {
-		return SneakLegalityRule.ALLOW;
+		return SneakLegalityRule.PROHIBIT;
 	}
-	@Override public SlidingStatus getConstantSlidingStatus() {
+	@Override public SlidingStatus getActionSlidingStatus() {
 		return SlidingStatus.NOT_SLIDING;
 	}
 	@Override public @Nullable Identifier getStompType() {
@@ -48,6 +52,16 @@ public class Mounted implements ActionDefinition {
 	@Override
 	public List<ActionTransitionDefinition> getPreTickTransitions() {
 		return List.of(
+				new ActionTransitionDefinition("qua_mario:backflip",
+						data -> !data.getMario().hasVehicle() && ((MarioPlayerData) data).attemptDismount
+								&& MarioQuaMario.CONFIG.canBackflipFromVehicles(),
+						data -> {
+							((MarioPlayerData) data).attemptDismount = false;
+							assert DuckWaddle.BACKFLIP.EXECUTOR_TRAVELLERS != null;
+							DuckWaddle.BACKFLIP.EXECUTOR_TRAVELLERS.execute(data);
+						},
+						DuckWaddle.BACKFLIP.EXECUTOR_CLIENTS
+				),
 				new ActionTransitionDefinition("qua_mario:jump",
 						data -> !data.getMario().hasVehicle() && ((MarioPlayerData) data).attemptDismount,
 						data -> {

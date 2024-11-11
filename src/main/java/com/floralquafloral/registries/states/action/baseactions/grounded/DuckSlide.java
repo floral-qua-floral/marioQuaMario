@@ -24,6 +24,10 @@ public class DuckSlide extends GroundedActionDefinition {
 	@Override public @Nullable String getAnimationName() {
 		return "duck_waddle";
 	}
+	@Override
+	public @Nullable CameraAnimationSet getCameraAnimations() {
+		return null;
+	}
 
 	public static final CharaStat SLIDE_THRESHOLD = new CharaStat(0.25, DUCKING, THRESHOLD);
 	public static final CharaStat SLIDE_BOOST = new CharaStat(-0.15);
@@ -51,7 +55,7 @@ public class DuckSlide extends GroundedActionDefinition {
 	@Override public SneakLegalityRule getSneakLegalityRule() {
 		return SneakLegalityRule.SLIP;
 	}
-	@Override public SlidingStatus getConstantSlidingStatus() {
+	@Override public SlidingStatus getActionSlidingStatus() {
 		return SlidingStatus.SLIDING;
 	}
 	@Override public @Nullable Identifier getStompType() {
@@ -84,6 +88,7 @@ public class DuckSlide extends GroundedActionDefinition {
 							data.voice(MarioClientSideData.VoiceLine.LONG_JUMP, seed);
 						}
 				),
+				DuckWaddle.BACKFLIP,
 				DuckWaddle.DUCK_JUMP,
 				new ActionTransitionDefinition("qua_mario:duck_waddle",
 						(data) -> MathHelper.approximatelyEquals(Vector2d.lengthSquared(data.getForwardVel(), data.getStrafeVel()), 0.0)
@@ -128,8 +133,11 @@ public class DuckSlide extends GroundedActionDefinition {
 									return
 											data.getInputs().DUCK.isHeld()
 													&& data.getMario().isOnGround()
-													&& !(MathHelper.approximatelyEquals(data.getInputs().getForwardInput(), 0)
-													&& MathHelper.approximatelyEquals(data.getInputs().getStrafeInput(), 0))
+													&& (
+															data.getMario().isInSneakingPose()
+															|| (!(MathHelper.approximatelyEquals(data.getInputs().getForwardInput(), 0)
+															&& MathHelper.approximatelyEquals(data.getInputs().getStrafeInput(), 0)))
+													)
 													&& Vector2d.lengthSquared(data.getForwardVel(), data.getStrafeVel()) > threshold * threshold
 													&& !data.getAction().ID.equals(getID());
 								},

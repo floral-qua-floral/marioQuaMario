@@ -54,5 +54,7 @@ public interface MarioTravelData extends MarioData {
 		public int actionTimer = 0;
 		public int jumpLandingTime = 0;
 		public int doubleJumpLandingTime = 0;
+
+		public boolean jumpCapped = false;
 	}
 }

@@ -20,6 +20,10 @@ public class LongJump extends AirborneActionDefinition {
 	@Override public @Nullable String getAnimationName() {
 		return "long-jump";
 	}
+	@Override
+	public @Nullable CameraAnimationSet getCameraAnimations() {
+		return null;
+	}
 
 	public static final CharaStat GRAVITY = AerialStats.GRAVITY.variate(0.575);
 
@@ -30,7 +34,7 @@ public class LongJump extends AirborneActionDefinition {
 	@Override public SneakLegalityRule getSneakLegalityRule() {
 		return SneakLegalityRule.PROHIBIT;
 	}
-	@Override public SlidingStatus getConstantSlidingStatus() {
+	@Override public SlidingStatus getActionSlidingStatus() {
 		return SlidingStatus.NOT_SLIDING;
 	}
 	@Override public @Nullable Identifier getStompType() {
@@ -45,9 +49,6 @@ public class LongJump extends AirborneActionDefinition {
 	}
 	@Override protected @NotNull CharaStat getTerminalVelocity() {
 		return AerialStats.TERMINAL_VELOCITY;
-	}
-	@Override protected @Nullable CharaStat getJumpCap() {
-		return null;
 	}
 
 	@Override public void airborneTravel(MarioTravelData data) {

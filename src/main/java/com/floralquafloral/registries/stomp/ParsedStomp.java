@@ -122,11 +122,12 @@ public class ParsedStomp {
 
 		this.DEFINITION.executeClients(data, isSelf, target, harmless, seed);
 		if(data instanceof MarioMoveableData moveableData) {
+			moveableData.getTimers().jumpCapped = false;
 			this.DEFINITION.executeTravellers(moveableData, target, harmless);
 			moveableData.applyModifiedVelocity();
 		}
 
-		if(data.getMario().isMainPlayer()) AirborneActionDefinition.jumpCapped = false;
+//		if(data.getMario().isMainPlayer()) AirborneActionDefinition.jumpCapped = false;
 	}
 
 	public boolean attempt(MarioServerData data, Vec3d movement) {

@@ -65,7 +65,7 @@ public class JumpSoundPlayer {
 	}
 	public static void fadeJumpSfx(PlayerEntity mario) {
 		FADING_JUMPS.add(mario);
-		if(mario.isMainPlayer()) ClientPlayNetworking.send(new FadeJumpSoundC2SPayload());
+//		if(mario.isMainPlayer()) ClientPlayNetworking.send(new FadeJumpSoundC2SPayload());
 	}
 	public static void fadeJumpSfx(MarioData data) {
 		fadeJumpSfx(data.getMario());

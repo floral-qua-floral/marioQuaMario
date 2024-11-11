@@ -20,15 +20,18 @@ public class Jump extends AirborneActionDefinition {
 	@Override public @Nullable String getAnimationName() {
 		return null;
 	}
+	@Override
+	public @Nullable CameraAnimationSet getCameraAnimations() {
+		return null;
+	}
 
 	public static final CharaStat JUMP_VEL = new CharaStat(0.858, StatCategory.JUMP_VELOCITY);
 	public static final CharaStat JUMP_ADDEND = new CharaStat(0.117, StatCategory.JUMP_VELOCITY);
-	public static final CharaStat JUMP_CAP = new CharaStat(0.39, StatCategory.JUMP_CAP);
 
 	@Override public SneakLegalityRule getSneakLegalityRule() {
 		return SneakLegalityRule.PROHIBIT;
 	}
-	@Override public SlidingStatus getConstantSlidingStatus() {
+	@Override public SlidingStatus getActionSlidingStatus() {
 		return SlidingStatus.NOT_SLIDING;
 	}
 	@Override public @Nullable Identifier getStompType() {
@@ -43,9 +46,6 @@ public class Jump extends AirborneActionDefinition {
 	}
 	@Override protected @NotNull CharaStat getTerminalVelocity() {
 		return AerialStats.TERMINAL_VELOCITY;
-	}
-	@Override protected @Nullable CharaStat getJumpCap() {
-		return JUMP_CAP;
 	}
 
 	@Override public void airborneTravel(MarioTravelData data) {
@@ -67,7 +67,9 @@ public class Jump extends AirborneActionDefinition {
 	}
 
 	@Override public List<ActionTransitionDefinition> getPostTickTransitions() {
-		return List.of();
+		return List.of(
+				AerialTransitions.makeJumpCapTransition(this, 0.39)
+		);
 	}
 
 	@Override public List<ActionTransitionDefinition> getPostMoveTransitions() {

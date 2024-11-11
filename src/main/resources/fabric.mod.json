@@ -38,7 +38,8 @@
 			"com.floralquafloral.registries.states.action.baseactions.airborne.DuckFall",
 			"com.floralquafloral.registries.states.action.baseactions.airborne.DuckJump",
 			"com.floralquafloral.registries.states.action.baseactions.airborne.LongJump",
-			"com.floralquafloral.registries.states.action.baseactions.airborne.Stomp"
+			"com.floralquafloral.registries.states.action.baseactions.airborne.Stomp",
+			"com.floralquafloral.registries.states.action.baseactions.airborne.Backflip"
 		],
 		"mario-actions-aquatic": [
 

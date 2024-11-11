@@ -14,6 +14,19 @@ public abstract class AirborneActionDefinition implements ActionDefinition {
 	public static boolean jumpCapped;
 
 	public abstract static class AerialTransitions {
+		public static ActionTransitionDefinition makeJumpCapTransition(ActionDefinition forAction, double capThreshold) {
+			CharaStat cap = new CharaStat(capThreshold, JUMP_CAP);
+			return new ActionTransitionDefinition(
+					forAction.getID().toString(),
+					data -> !data.getTimers().jumpCapped && (!data.getInputs().JUMP.isHeld() || data.getYVel() < cap.get(data)),
+					data -> {
+						data.setYVel(Math.min(cap.get(data), data.getYVel()));
+						data.getTimers().jumpCapped = true;
+					},
+					(data, isSelf, seed) -> JumpSoundPlayer.fadeJumpSfx(data)
+			);
+		}
+
 		public static final ActionTransitionDefinition BASIC_LANDING = new ActionTransitionDefinition(
 				"qua_mario:basic",
 				(data) -> data.getMario().isOnGround()
@@ -54,7 +67,7 @@ public abstract class AirborneActionDefinition implements ActionDefinition {
 
 		public static final CharaStat FORWARD_DRIFT_ACCEL = new CharaStat(0.045, DRIFTING, FORWARD, ACCELERATION);
 		public static final CharaStat FORWARD_DRIFT_SPEED = new CharaStat(0.275, DRIFTING, FORWARD, SPEED);
-		public static final CharaStat FORWARD_DRIFT_SPRINT_SPEED = new CharaStat(0.44, DRIFTING, FORWARD, SPEED);
+		public static final CharaStat FORWARD_DRIFT_SPRINT_SPEED = new CharaStat(0.275, DRIFTING, FORWARD, SPEED);
 
 		public static final CharaStat BACKWARD_DRIFT_ACCEL = new CharaStat(0.055, DRIFTING, BACKWARD, ACCELERATION);
 		public static final CharaStat BACKWARD_DRIFT_SPEED = new CharaStat(0.2, DRIFTING, BACKWARD, SPEED);
@@ -68,35 +81,31 @@ public abstract class AirborneActionDefinition implements ActionDefinition {
 	private final @NotNull CharaStat ACTION_GRAVITY = getGravity();
 	private final @Nullable CharaStat ACTION_JUMP_GRAVITY = getJumpGravity();
 	private final @NotNull CharaStat ACTION_TERMINAL_VELOCITY = getTerminalVelocity();
-	private final @Nullable CharaStat ACTION_JUMP_CAP = getJumpCap();
 
 	protected abstract @NotNull CharaStat getGravity();
 	protected abstract @Nullable CharaStat getJumpGravity();
 	protected abstract @NotNull CharaStat getTerminalVelocity();
-	protected abstract @Nullable CharaStat getJumpCap();
 
 	@Override public final void travelHook(MarioTravelData data) {
 		double yVel = data.getYVel();
 		double terminalVelocity = ACTION_TERMINAL_VELOCITY.get(data);
 
 		if(yVel > terminalVelocity) {
-			boolean aboveJumpCap = ACTION_JUMP_CAP != null && ACTION_JUMP_GRAVITY != null && yVel > ACTION_JUMP_CAP.get(data);
-
-			CharaStat useGravity = aboveJumpCap ? ACTION_JUMP_GRAVITY : ACTION_GRAVITY;
+			CharaStat useGravity = (ACTION_JUMP_GRAVITY == null || data.getTimers().jumpCapped) ? ACTION_GRAVITY : ACTION_JUMP_GRAVITY;
 			yVel += useGravity.get(data);
 
-			if(data.isClient()) {
-				if (!jumpCapped) {
-					if (!aboveJumpCap) {
-						jumpCapped = true;
-						JumpSoundPlayer.fadeJumpSfx(data);
-					} else if (!data.getInputs().JUMP.isHeld()) {
-						yVel = ACTION_JUMP_CAP.get(data);
-						jumpCapped = true;
-						JumpSoundPlayer.fadeJumpSfx(data);
-					}
-				}
-			}
+//			if(data.isClient()) {
+//				if (!jumpCapped) {
+//					if (!aboveJumpCap) {
+//						jumpCapped = true;
+//						JumpSoundPlayer.fadeJumpSfx(data);
+//					} else if (!data.getInputs().JUMP.isHeld()) {
+//						yVel = ACTION_JUMP_CAP.get(data);
+//						jumpCapped = true;
+//						JumpSoundPlayer.fadeJumpSfx(data);
+//					}
+//				}
+//			}
 
 			data.setYVel(Math.max(terminalVelocity, yVel));
 		}

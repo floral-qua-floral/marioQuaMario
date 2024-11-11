@@ -13,7 +13,7 @@ public class DuckFall extends Fall {
 	}
 
 	@Override public SneakLegalityRule getSneakLegalityRule() {
-		return SneakLegalityRule.ALLOW;
+		return SneakLegalityRule.SLIP;
 	}
 
 	@Override public List<ActionTransitionDefinition> getPreTickTransitions() {

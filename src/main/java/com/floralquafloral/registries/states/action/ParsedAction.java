@@ -21,6 +21,7 @@ import java.util.Map;
 
 public class ParsedAction extends ParsedMarioState {
 	public final String ANIMATION;
+	public final ActionDefinition.CameraAnimationSet CAMERA_ANIMATIONS;
 
 	private final ActionDefinition ACTION_DEFINITION;
 
@@ -34,12 +35,18 @@ public class ParsedAction extends ParsedMarioState {
 		super(definition);
 		this.ACTION_DEFINITION = definition;
 		this.ANIMATION = definition.getAnimationName();
+		this.CAMERA_ANIMATIONS = definition.getCameraAnimations();
 		this.SNEAK_LEGALITY = definition.getSneakLegalityRule();
-		this.SLIDING_STATUS = definition.getConstantSlidingStatus();
+		this.SLIDING_STATUS = definition.getActionSlidingStatus();
 		Identifier stompID = definition.getStompType();
 		this.STOMP = stompID == null ? null : RegistryManager.STOMP_TYPES.get(stompID);
 
 		this.TRANSITION_LISTS = new EnumMap<>(TransitionPhase.class);
+	}
+
+	public @Nullable ActionDefinition.CameraAnimation getCameraAnimation() {
+		if(this.CAMERA_ANIMATIONS == null) return null;
+		return this.CAMERA_ANIMATIONS.AUTHENTIC_ANIMATION;
 	}
 
 	public void travelHook(MarioTravelData data) {

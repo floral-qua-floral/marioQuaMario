@@ -2,6 +2,8 @@ package com.floralquafloral.mariodata.moveable;
 
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioClientSideData;
+import com.floralquafloral.mixin.CameraMixin;
+import com.floralquafloral.registries.states.action.ActionDefinition;
 import com.floralquafloral.registries.states.action.ParsedAction;
 import com.floralquafloral.registries.states.action.TransitionPhase;
 import com.floralquafloral.util.CPMIntegration;
@@ -38,13 +40,43 @@ public class MarioMainClientData extends MarioMoveableData implements MarioClien
 		this.setActionTransitionless(action);
 	}
 
+	public ActionDefinition.CameraAnimation cameraAnimation;
+	public int cameraAnimationLoops;
+	public int TEMPORARY;
+	public float TEMPORARY2;
+	public boolean cameraAnimationDoneLooping;
+	public float cameraAnimationStartTime;
+	public float cameraAnimationProgression;
+	public final float[] CAMERA_ROTATIONS = new float[3];
+
 	@Override public void setActionTransitionless(ParsedAction action) {
 		MarioQuaMario.LOGGER.info("MarioMainClientData setAction to " + action.ID);
 		if(action != getAction()) getTimers().actionTimer = 0;
+
+		// CPM animation
 		if(this.getAction().ANIMATION != null)
 			CPMIntegration.clientAPI.playAnimation(getAction().ANIMATION, 0);
 		if(action.ANIMATION != null)
 			CPMIntegration.clientAPI.playAnimation(action.ANIMATION, 1);
+
+		// Camera animation
+		if(action != this.getAction()) {
+			ActionDefinition.CameraAnimation newCameraAnimation = action.getCameraAnimation();
+			if (newCameraAnimation != null) {
+				this.cameraAnimation = newCameraAnimation;
+				this.cameraAnimationLoops = 1;
+				this.cameraAnimationDoneLooping = !newCameraAnimation.SHOULD_LOOP;
+				this.cameraAnimationStartTime = marioClient.getWorld().getTime() + 1;
+				this.cameraAnimationProgression = 0;
+				TEMPORARY = 0;
+				TEMPORARY2 = 0;
+
+				this.CAMERA_ROTATIONS[0] = 0.0F;
+				this.CAMERA_ROTATIONS[1] = 0.0F;
+				this.CAMERA_ROTATIONS[2] = 0.0F;
+			} else this.cameraAnimationDoneLooping = true;
+		}
+
 		super.setActionTransitionless(action);
 	}
 
@@ -112,7 +144,7 @@ public class MarioMainClientData extends MarioMoveableData implements MarioClien
 			}
 
 			private boolean unbuffer() {
-				this.pressBuffer = 0;
+				this.pressBuffer = 1;
 				return true;
 			}
 

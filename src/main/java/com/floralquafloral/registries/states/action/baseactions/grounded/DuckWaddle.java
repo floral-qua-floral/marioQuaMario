@@ -5,6 +5,7 @@ import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.mariodata.moveable.MarioServerData;
 import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import com.floralquafloral.registries.states.action.GroundedActionDefinition;
+import com.floralquafloral.registries.states.action.baseactions.airborne.Backflip;
 import com.floralquafloral.registries.states.action.baseactions.airborne.Jump;
 import com.floralquafloral.stats.CharaStat;
 import com.floralquafloral.util.MarioSFX;
@@ -22,6 +23,10 @@ public class DuckWaddle extends GroundedActionDefinition {
 	}
 	@Override public @Nullable String getAnimationName() {
 		return "duck_waddle";
+	}
+	@Override
+	public @Nullable CameraAnimationSet getCameraAnimations() {
+		return null;
 	}
 
 	public static final ActionTransitionDefinition UNDUCK = new ActionTransitionDefinition(
@@ -45,7 +50,18 @@ public class DuckWaddle extends GroundedActionDefinition {
 	);
 	public static final ActionTransitionDefinition BACKFLIP = new ActionTransitionDefinition(
 			"qua_mario:backflip",
-			data -> data.getInputs().JUMP.isPressed() && data.getForwardVel() < -0.05 && data.getInputs().getForwardInput() < 0.5
+			data -> data.getForwardVel() < 0.0 && data.getInputs().getForwardInput() < -0.65 && data.getInputs().JUMP.isPressed(),
+			data -> {
+				GroundedTransitions.performJump(data, Backflip.BACKFLIP_VEL, null);
+
+				double backflipBackwardsVel = Backflip.BACKFLIP_BACKWARDS_SPEED.get(data);
+				if(data.getForwardVel() > backflipBackwardsVel)
+					data.setForwardStrafeVel(backflipBackwardsVel, 0.0);
+			},
+			(data, isSelf, seed) -> {
+				data.playJumpSound(seed);
+				data.voice(MarioClientSideData.VoiceLine.BACKFLIP, seed);
+			}
 	);
 
 	public static final CharaStat WADDLE_ACCEL = new CharaStat(0.06, DUCKING, FORWARD, ACCELERATION);
@@ -77,7 +93,7 @@ public class DuckWaddle extends GroundedActionDefinition {
 	@Override public SneakLegalityRule getSneakLegalityRule() {
 		return SneakLegalityRule.ALLOW;
 	}
-	@Override public SlidingStatus getConstantSlidingStatus() {
+	@Override public SlidingStatus getActionSlidingStatus() {
 		return SlidingStatus.NOT_SLIDING;
 	}
 	@Override public @Nullable Identifier getStompType() {
@@ -95,6 +111,7 @@ public class DuckWaddle extends GroundedActionDefinition {
 	public List<ActionTransitionDefinition> getPostTickTransitions() {
 		return List.of(
 				UNDUCK,
+				BACKFLIP,
 				DUCK_JUMP
 		);
 	}
