@@ -12,10 +12,12 @@
     "defaultRequire": 1
   },
   "client": [
+    "BlockMixin",
     "CameraMixin",
     "ClientPlayerEntityMixin",
     "ClientPlayNetworkHandlerMixin",
     "InGameHudMixin",
-    "LivingEntityRendererMixin"
+    "LivingEntityRendererMixin",
+    "SectionBuilderMixin"
   ]
 }

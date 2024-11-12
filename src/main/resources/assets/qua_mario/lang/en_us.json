@@ -33,6 +33,7 @@
 	"subtitles.qua_mario.movement.skid_sand": "Skidding",
 	"subtitles.qua_mario.movement.skid_snow": "Skidding",
 	"subtitles.qua_mario.movement.skid_wall": "Sliding",
+	"subtitles.qua_mario.movement.bump": "Block bumped",
 	"subtitles.qua_mario.power_up.normal_power": "Powering up",
 	"subtitles.qua_mario.power_up.revert": "Powering down",
 	"subtitles.qua_mario.stomp.stomp": "Something gets stomped",

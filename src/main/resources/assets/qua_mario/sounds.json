@@ -41,6 +41,12 @@
       "qua_mario:sfx/movement/skid_wall"
     ]
   },
+  "sfx.movement.bump": {
+    "subtitle": "subtitles.qua_mario.movement.bump",
+    "sounds": [
+      "qua_mario:sfx/movement/bump"
+    ]
+  },
   "sfx.power_up.normal_power": {
     "subtitle": "subtitles.qua_mario.power_up.normal_power",
     "sounds": [

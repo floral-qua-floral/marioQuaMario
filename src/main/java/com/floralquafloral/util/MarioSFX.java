@@ -14,6 +14,7 @@ public final class MarioSFX {
 	public static final SoundEvent SKID_SAND = makeMovementSound("skid_sand");
 	public static final SoundEvent SKID_SNOW = makeMovementSound("skid_snow");
 	public static final SoundEvent SKID_WALL = makeMovementSound("skid_wall");
+	public static final SoundEvent BUMP = makeMovementSound("bump");
 
 	public static final SoundEvent NORMAL_POWER = makePowerSound("normal_power");
 	public static final SoundEvent REVERT = makePowerSound("revert");

@@ -26,6 +26,7 @@ public enum MixedEasing {
 	}
 
 	public static float mixedEase(float x, MixedEasing first, MixedEasing second) {
-		return (float) (x < 0.5 ? first.FUNCTION.ease(x) : second.FUNCTION.ease(x));
+//		return (float) (x < 0.5 ? first.FUNCTION.ease(x) : second.FUNCTION.ease(x));
+		return x * (float) first.FUNCTION.ease(x) + (1 - x) * (float) second.FUNCTION.ease(x);
 	}
 }
