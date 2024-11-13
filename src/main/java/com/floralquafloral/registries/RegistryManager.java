@@ -61,7 +61,7 @@ public class RegistryManager {
 			.attribute(RegistryAttribute.SYNCED)
 			.buildAndRegister();
 
-	private static <T> List<T> getEntrypoints(String key, Class<T> clazz) {
+	public static <T> List<T> getEntrypoints(String key, Class<T> clazz) {
 		return FabricLoader.getInstance().getEntrypointContainers(key, clazz).stream().map(EntrypointContainer::getEntrypoint).toList();
 	}
 

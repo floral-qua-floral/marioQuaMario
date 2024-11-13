@@ -28,6 +28,7 @@ public class ParsedAction extends ParsedMarioState {
 	public final ActionDefinition.SneakLegalityRule SNEAK_LEGALITY;
 	public final ActionDefinition.SlidingStatus SLIDING_STATUS;
 	public final ParsedStomp STOMP;
+	public final ActionDefinition.BumpingRule BUMPING_RULE;
 
 	private final EnumMap<TransitionPhase, List<ParsedTransition>> TRANSITION_LISTS;
 
@@ -40,6 +41,7 @@ public class ParsedAction extends ParsedMarioState {
 		this.SLIDING_STATUS = definition.getActionSlidingStatus();
 		Identifier stompID = definition.getStompType();
 		this.STOMP = stompID == null ? null : RegistryManager.STOMP_TYPES.get(stompID);
+		this.BUMPING_RULE = definition.getBumpingRule();
 
 		this.TRANSITION_LISTS = new EnumMap<>(TransitionPhase.class);
 	}

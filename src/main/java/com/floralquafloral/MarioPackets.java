@@ -1,9 +1,9 @@
 package com.floralquafloral;
 
+import com.floralquafloral.bumping.BumpManager;
 import com.floralquafloral.mariodata.MarioDataManager;
 import com.floralquafloral.mariodata.MarioDataPackets;
 import com.floralquafloral.registries.stomp.StompHandler;
-import com.floralquafloral.util.JumpSoundPlayer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
@@ -24,7 +24,7 @@ public class MarioPackets {
 		SyncUseCharacterStatsS2CPayload.register();
 		MarioDataPackets.registerCommon();
 		StompHandler.registerPackets();
-		BlockBumping.registerPackets();
+		BumpManager.registerPackets();
 
 
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
@@ -35,7 +35,7 @@ public class MarioPackets {
 		SyncUseCharacterStatsS2CPayload.registerReceiver();
 		MarioDataPackets.registerClient();
 		StompHandler.registerPacketsClient();
-		BlockBumping.registerPacketsClient();
+		BumpManager.registerPacketsClient();
 	}
 
 	public static PlayerEntity getPlayerFromInt(ClientPlayNetworking.Context context, int playerID) {

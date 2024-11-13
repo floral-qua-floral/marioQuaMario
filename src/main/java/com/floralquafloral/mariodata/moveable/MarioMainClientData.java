@@ -1,7 +1,9 @@
 package com.floralquafloral.mariodata.moveable;
 
 import com.floralquafloral.MarioQuaMario;
+import com.floralquafloral.bumping.BumpManager;
 import com.floralquafloral.mariodata.MarioClientSideData;
+import com.floralquafloral.mariodata.MarioDataManager;
 import com.floralquafloral.mixin.CameraMixin;
 import com.floralquafloral.registries.states.action.ActionDefinition;
 import com.floralquafloral.registries.states.action.ParsedAction;
@@ -10,6 +12,9 @@ import com.floralquafloral.util.CPMIntegration;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.world.BlockCollisionSpliterator;
 import org.jetbrains.annotations.NotNull;
 
 public class MarioMainClientData extends MarioMoveableData implements MarioClientSideData {
@@ -95,17 +100,50 @@ public class MarioMainClientData extends MarioMoveableData implements MarioClien
 
 		getAction().attemptTransitions(this, TransitionPhase.PRE_TICK);
 		getAction().travelHook(this);
-//		getMario().strideDistance = 0;
-//		getMario().prevStrideDistance = 0;
 		getAction().attemptTransitions(this, TransitionPhase.POST_TICK);
 
 		applyModifiedVelocity();
 		marioClient.move(MovementType.SELF, marioClient.getVelocity());
-		if(getAction().attemptTransitions(this, TransitionPhase.POST_MOVE))
-			applyModifiedVelocity();
+
+		ActionDefinition.BumpingRule bumpingRule = getAction().BUMPING_RULE;
+		if(bumpingRule != null) {
+			if (marioClient.verticalCollision) {
+				if (marioClient.groundCollision) {
+					if (bumpingRule.FLOORS > 0) BumpManager.bumpBlocks(
+							this,
+							marioClient.clientWorld,
+							getBumpPositions(0, -0.15, 0),
+							Direction.DOWN,
+							bumpingRule.FLOORS
+					);
+				} else if (bumpingRule.CEILINGS > 0) BumpManager.bumpBlocks(
+						this,
+						marioClient.clientWorld,
+						getBumpPositions(0, 0.15, 0),
+						Direction.UP,
+						bumpingRule.CEILINGS
+				);
+			}
+			if (marioClient.horizontalCollision && bumpingRule.WALLS > 0) {
+
+			}
+		}
+
+		getAction().attemptTransitions(this, TransitionPhase.POST_MOVE);
+
+		applyModifiedVelocity();
 
 		marioClient.updateLimbs(false);
 		return !marioClient.hasVehicle();
+	}
+
+	private Iterable<BlockPos> getBumpPositions(double stretchX, double stretchY, double stretchZ) {
+		return () -> new BlockCollisionSpliterator<>(
+				marioClient.getWorld(),
+				marioClient,
+				marioClient.getBoundingBox().stretch(stretchX, stretchY, stretchZ),
+				false,
+				(pos, voxelShape) -> pos);
 	}
 
 	@Override public @NotNull MarioInputs getInputs() {

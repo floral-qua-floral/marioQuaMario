@@ -1,5 +1,6 @@
 package com.floralquafloral;
 
+import com.floralquafloral.bumping.BumpManager;
 import com.floralquafloral.mariodata.MarioDataManager;
 import com.floralquafloral.mariodata.MarioDataPackets;
 import com.floralquafloral.mariodata.MarioPlayerData;
@@ -8,17 +9,23 @@ import com.floralquafloral.registries.RegistryManager;
 import com.floralquafloral.registries.stomp.ParsedStomp;
 import com.floralquafloral.registries.stomp.StompHandler;
 import com.mojang.brigadier.arguments.BoolArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.tom.cpm.shared.template.args.BoolArg;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.minecraft.command.argument.BlockPosArgumentType;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.RegistryEntryReferenceArgumentType;
 import net.minecraft.entity.Entity;
+import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.random.RandomSeed;
 
 import static net.minecraft.server.command.CommandManager.argument;
@@ -75,6 +82,18 @@ public class MarioCommand {
 						)
 					)
 				)
+				.then(literal("bump")
+					.requires(source -> source.hasPermissionLevel(2))
+					.then(argument("position", BlockPosArgumentType.blockPos())
+						.executes(context -> executeBump(context, false, Direction.UP, 4))
+						.then(makeBumpDirectionFork("up", Direction.UP))
+						.then(makeBumpDirectionFork("down", Direction.DOWN))
+//						.then(makeBumpDirectionFork("north", Direction.NORTH))
+//						.then(makeBumpDirectionFork("south", Direction.SOUTH))
+//						.then(makeBumpDirectionFork("east", Direction.EAST))
+//						.then(makeBumpDirectionFork("west", Direction.WEST))
+					)
+				)
 			)
 		);
 	}
@@ -125,5 +144,27 @@ public class MarioCommand {
 		stompType.executeServer((MarioServerData) MarioDataManager.getMarioData(stomper), target, true, false, RandomSeed.getSeed());
 
 		return sendFeedback(context, "Made " + stomper.getName().getString() + " perform a stomp of type " + stompType.ID + " on " + target.getName().getString());
+	}
+
+
+	private static int executeBump(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven, Direction direction, Integer strength) throws CommandSyntaxException {
+		ServerPlayerEntity bumper = getPlayerFromCmd(context, playerArgumentGiven);
+		if(strength == null) strength = IntegerArgumentType.getInteger(context, "strength");
+		BlockPos position = BlockPosArgumentType.getBlockPos(context, "position");
+
+		MarioServerData data = (MarioServerData) MarioDataManager.getMarioData(bumper);
+		BumpManager.bumpResponseCommon(data, data, bumper.getServerWorld(), bumper.getServerWorld().getBlockState(position), position, strength, strength, direction);
+
+		return sendFeedback(context, "Made " + bumper + " bump block " + direction + " with a strength " + strength);
+	}
+	private static LiteralArgumentBuilder<ServerCommandSource> makeBumpDirectionFork(String name, Direction direction) {
+		return literal(name)
+			.executes(context -> executeBump(context, false, direction, 4))
+			.then(argument("strength", IntegerArgumentType.integer())
+				.executes(context -> executeBump(context, false, direction, null))
+				.then(argument("target", EntityArgumentType.player())
+					.executes(context -> executeBump(context, true, direction, null))
+				)
+			);
 	}
 }

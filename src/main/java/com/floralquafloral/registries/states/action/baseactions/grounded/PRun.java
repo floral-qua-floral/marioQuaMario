@@ -22,8 +22,10 @@ public class PRun extends GroundedActionDefinition {
 	@Override public @Nullable String getAnimationName() {
 		return "p-run";
 	}
-	@Override
-	public @Nullable CameraAnimationSet getCameraAnimations() {
+	@Override @Nullable public CameraAnimationSet getCameraAnimations() {
+		return null;
+	}
+	@Override @Nullable public BumpingRule getBumpingRule() {
 		return null;
 	}
 

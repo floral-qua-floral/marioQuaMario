@@ -1,5 +1,6 @@
 package com.floralquafloral;
 
+import com.floralquafloral.bumping.BumpManager;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioDataManager;
 import com.floralquafloral.mariodata.MarioDataPackets;
@@ -16,7 +17,9 @@ import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
 import net.fabricmc.fabric.api.gamerule.v1.rule.DoubleRule;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Identifier;
@@ -62,13 +65,15 @@ public class MarioQuaMario implements ModInitializer {
 			GameRuleRegistry.register("qua_mario:alwaysRevertToSmall", GameRules.Category.PLAYER,
 					GameRuleFactory.createBooleanRule(false));
 
+	public static final SimpleParticleType GAMER = FabricParticleTypes.simple();
+
 	@Override
 	public void onInitialize() {
 		LOGGER.info("MarioQuaMario.java loaded on environment type " + FabricLoader.getInstance().getEnvironmentType());
 		MarioDataManager.registerEventListeners();
+		BumpManager.registerEventListeners();
 
 		RegistryManager.register();
-
 
 		MarioPackets.registerCommon();
 

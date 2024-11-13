@@ -20,9 +20,11 @@ public class Jump extends AirborneActionDefinition {
 	@Override public @Nullable String getAnimationName() {
 		return null;
 	}
-	@Override
-	public @Nullable CameraAnimationSet getCameraAnimations() {
+	@Override @Nullable public CameraAnimationSet getCameraAnimations() {
 		return null;
+	}
+	@Override @Nullable public BumpingRule getBumpingRule() {
+		return BumpingRule.JUMPING;
 	}
 
 	public static final CharaStat JUMP_VEL = new CharaStat(0.858, StatCategory.JUMP_VELOCITY);

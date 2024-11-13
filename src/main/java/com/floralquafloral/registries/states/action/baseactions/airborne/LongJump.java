@@ -20,9 +20,11 @@ public class LongJump extends AirborneActionDefinition {
 	@Override public @Nullable String getAnimationName() {
 		return "long-jump";
 	}
-	@Override
-	public @Nullable CameraAnimationSet getCameraAnimations() {
+	@Override @Nullable public CameraAnimationSet getCameraAnimations() {
 		return null;
+	}
+	@Override @Nullable public BumpingRule getBumpingRule() {
+		return BumpingRule.JUMPING;
 	}
 
 	public static final CharaStat GRAVITY = AerialStats.GRAVITY.variate(0.575);

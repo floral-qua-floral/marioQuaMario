@@ -55,6 +55,11 @@
 			"com.floralquafloral.registries.states.character.basecharacters.Toadette"
 		],
 
+		"mario-bumping-handlers": [
+			"com.floralquafloral.bumping.handlers.TrapdoorBumpingHandler",
+			"com.floralquafloral.bumping.handlers.PistonBumpingHandler"
+		],
+
 		"main": [
 			"com.floralquafloral.MarioQuaMario"
 		],

@@ -5,6 +5,7 @@ import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.registries.states.action.ParsedAction;
 import com.floralquafloral.util.CPMIntegration;
+import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +28,7 @@ public class MarioServerData extends MarioMoveableData {
 	@Override public boolean travelHook(double forwardInput, double strafeInput) {
 		getAction().travelHook(this);
 		applyModifiedVelocity();
+//		marioServer.move(MovementType.SELF, marioServer.getVelocity()); // ???????
 		return !marioServer.hasVehicle();
 	}
 

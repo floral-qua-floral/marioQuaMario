@@ -1,12 +1,15 @@
 package com.floralquafloral.mixin;
 
 import com.floralquafloral.MarioQuaMario;
+import com.floralquafloral.bumping.BumpManager;
+import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.moveable.MarioMainClientData;
 import com.floralquafloral.registries.states.action.ActionDefinition;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
+import net.minecraft.util.math.Vec3d;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Final;
@@ -14,11 +17,30 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Camera.class)
-public class CameraMixin {
+public abstract class CameraMixin {
 	@Shadow private boolean thirdPerson;
 	@Shadow private float lastTickDelta;
+
+	@Shadow protected abstract void setPos(double x, double y, double z);
+
+	@Unique private static boolean shouldAdjustPos = true;
+
+	@Inject(method = "setPos(Lnet/minecraft/util/math/Vec3d;)V", at = @At("HEAD"), cancellable = true)
+	public void applyCameraDip(Vec3d pos, CallbackInfo ci) {
+		if(shouldAdjustPos && BumpManager.eyeAdjustmentParticle != null && BumpManager.eyeAdjustmentParticle.isAlive()) {
+			MarioData data = MarioMainClientData.getInstance();
+			if(data != null && data.getMario().isOnGround()) {
+				shouldAdjustPos = false;
+				setPos(pos.x, pos.y - BumpManager.eyeAdjustmentParticle.lastOffset, pos.z);
+				shouldAdjustPos = true;
+				ci.cancel();
+			}
+		}
+	}
 
 	@WrapOperation(method = "setRotation", at = @At(value = "INVOKE", target = "Lorg/joml/Quaternionf;rotationYXZ(FFF)Lorg/joml/Quaternionf;"))
 	public Quaternionf applyCameraAnimation(Quaternionf instance, float angleY, float angleX, float angleZ, Operation<Quaternionf> original) {

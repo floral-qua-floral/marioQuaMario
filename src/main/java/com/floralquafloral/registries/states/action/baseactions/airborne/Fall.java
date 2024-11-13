@@ -19,9 +19,11 @@ public class Fall extends AirborneActionDefinition {
 	@Override public @Nullable String getAnimationName() {
 		return null;
 	}
-	@Override
-	public @Nullable CameraAnimationSet getCameraAnimations() {
+	@Override @Nullable public CameraAnimationSet getCameraAnimations() {
 		return null;
+	}
+	@Override @Nullable public BumpingRule getBumpingRule() {
+		return BumpingRule.FALLING;
 	}
 
 	@Override public SneakLegalityRule getSneakLegalityRule() {

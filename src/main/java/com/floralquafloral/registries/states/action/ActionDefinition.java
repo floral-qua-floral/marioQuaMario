@@ -16,12 +16,22 @@ public interface ActionDefinition extends MarioStateDefinition {
 	SneakLegalityRule getSneakLegalityRule();
 	SlidingStatus getActionSlidingStatus();
 	@Nullable Identifier getStompType();
+	BumpingRule getBumpingRule();
 
 	void travelHook(MarioTravelData data);
 
+	/**
+	 * PRE-TICK transitions are meant to be used for making Mario react to the Player's actions or motion. For instance,
+	 * ducking is a pre-tick transition, as is skidding.
+	 * POST-TICK transitions are meant to be used for responding to Mario's inputs. For instance, jumping is a post-tick
+	 * transition.
+	 * POST-MOVE transitions are meant to be used for transitions based on Mario's position. For instance, falling is a
+	 * post-move transition.
+	 */
 	List<ActionTransitionDefinition> getPreTickTransitions();
 	List<ActionTransitionDefinition> getPostTickTransitions();
 	List<ActionTransitionDefinition> getPostMoveTransitions();
+
 	List<ActionTransitionInjection> getTransitionInjections();
 
 	class CameraAnimationSet {
@@ -120,19 +130,42 @@ public interface ActionDefinition extends MarioStateDefinition {
 			return this.DO_FADING;
 		}
 	}
-	enum BumpType {
-		NONE(0, 0),
-		HIT_CEILINGS(2, 0),
-		GROUND_POUND(0, 2),
-		SPIN_JUMP(2, 1);
+	class BumpingRule {
+		/**
+		 * A strength of 4 represents Super Mario being able to destroy a Brick Block, but Small Mario only bumping it.
+		 * <p>
+		 * A strength of 2 represents Super Mario being able to shatter a Flip Block, and Small Mario having no effect on it.
+		 * <p>
+		 * A strength of 1 represents Mario landing on a block and having no effect on it.
+		 */
+		public static final BumpingRule JUMPING = new BumpingRule(4, 1, 0);
+		public static final BumpingRule FALLING = new BumpingRule(4, 4, 0);
+		public static final BumpingRule GROUND_POUND = new BumpingRule(0, 4, 0);
+		public static final BumpingRule SPIN_JUMPING = new BumpingRule(2, 2, 0);
 
-		public final int HIT_CEILING_STRENGTH;
-		public final int HIT_FLOOR_STRENGTH;
-		BumpType(int hitCeilingStrength, int hitFloorStrength) {
-			this.HIT_CEILING_STRENGTH = hitCeilingStrength;
-			this.HIT_FLOOR_STRENGTH = hitFloorStrength;
+		public final int CEILINGS;
+		public final int FLOORS;
+		public final int WALLS;
+
+		public BumpingRule(int ceilingBumpStrength, int floorBumpStrength, int wallBumpStrength) {
+			this.CEILINGS = ceilingBumpStrength;
+			this.FLOORS = floorBumpStrength;
+			this.WALLS = wallBumpStrength;
 		}
 	}
+//	enum BumpType {
+//		NONE(0, 0),
+//		HIT_CEILINGS(2, 0),
+//		GROUND_POUND(0, 2),
+//		SPIN_JUMP(2, 1);
+//
+//		public final int HIT_CEILING_STRENGTH;
+//		public final int HIT_FLOOR_STRENGTH;
+//		BumpType(int hitCeilingStrength, int hitFloorStrength) {
+//			this.HIT_CEILING_STRENGTH = hitCeilingStrength;
+//			this.HIT_FLOOR_STRENGTH = hitFloorStrength;
+//		}
+//	}
 
 	class ActionTransitionDefinition {
 		@FunctionalInterface public interface TransitionEvaluator {

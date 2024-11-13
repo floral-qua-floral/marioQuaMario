@@ -1,5 +1,7 @@
 package com.floralquafloral.mixin;
 
+import com.floralquafloral.MarioQuaMario;
+import com.floralquafloral.bumping.BumpManager;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioDataManager;
 import com.floralquafloral.mariodata.MarioPlayerData;
@@ -54,6 +56,13 @@ public abstract class PlayerEntityMixin {
 			float widthFactor = powerUp.WIDTH_FACTOR * character.WIDTH_FACTOR;
 			float heightFactor = powerUp.HEIGHT_FACTOR * character.HEIGHT_FACTOR;
 			if(pose == EntityPose.CROUCHING) heightFactor *= 0.6F;
+
+//			float eyeHeightOffset = 0;
+//			if(data.isClient() && data.getMario().isMainPlayer() &&
+//					BumpManager.eyeAdjustmentParticle != null && BumpManager.eyeAdjustmentParticle.isAlive()) {
+//				eyeHeightOffset = BumpManager.eyeAdjustmentParticle.lastOffset;
+//				MarioQuaMario.LOGGER.info("Found it!\n{}\n{}", BumpManager.eyeAdjustmentParticle, BumpManager.eyeAdjustmentParticle.lastOffset);
+//			}
 
 			EntityDimensions resultDimensions = cir.getReturnValue();
 
