@@ -14,15 +14,24 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class Mounted implements ActionDefinition {
+import static com.floralquafloral.util.MixedEasing.*;
+
+public class GroundPoundWindup implements ActionDefinition {
 	@Override @NotNull public Identifier getID() {
-		return Identifier.of(MarioQuaMario.MOD_ID, "mounted");
+		return Identifier.of(MarioQuaMario.MOD_ID, "ground_pound_windup");
 	}
 	@Override @Nullable public String getAnimationName() {
-		return null;
+		return "ground-pound-windup";
 	}
 	@Override @Nullable public CameraAnimationSet getCameraAnimations() {
-		return null;
+		return new CameraAnimationSet(
+				new CameraAnimation(
+						false, 0.35F,
+						(progress, offsets) -> offsets[1] = mixedEase(progress, SINE, CUBIC) * 360
+				),
+				null,
+				null
+		);
 	}
 	@Override @Nullable public BumpingRule getBumpingRule() {
 		return null;
@@ -30,7 +39,9 @@ public class Mounted implements ActionDefinition {
 
 	@Override
 	public void travelHook(MarioTravelData data) {
-		data.getTimers().jumpCapped = false;
+		data.getTimers().actionTimer++;
+		data.setForwardStrafeVel(0, 0);
+		data.setYVel(0);
 	}
 
 	@Override
@@ -54,38 +65,15 @@ public class Mounted implements ActionDefinition {
 	@Override
 	public List<ActionTransitionDefinition> getPreTickTransitions() {
 		return List.of(
-				new ActionTransitionDefinition("qua_mario:backflip",
-						data -> !data.getMario().hasVehicle() && ((MarioPlayerData) data).attemptDismount
-								&& MarioQuaMario.CONFIG.canBackflipFromVehicles(),
-						data -> {
-							((MarioPlayerData) data).attemptDismount = false;
-							assert DuckWaddle.BACKFLIP.EXECUTOR_TRAVELLERS != null;
-							DuckWaddle.BACKFLIP.EXECUTOR_TRAVELLERS.execute(data);
-						},
-						DuckWaddle.BACKFLIP.EXECUTOR_CLIENTS
-				),
-				new ActionTransitionDefinition("qua_mario:jump",
-						data -> !data.getMario().hasVehicle() && ((MarioPlayerData) data).attemptDismount,
-						data -> {
-							((MarioPlayerData) data).attemptDismount = false;
-							assert GroundedActionDefinition.GroundedTransitions.JUMP.EXECUTOR_TRAVELLERS != null;
-							GroundedActionDefinition.GroundedTransitions.JUMP.EXECUTOR_TRAVELLERS.execute(data);
-						},
-						GroundedActionDefinition.GroundedTransitions.JUMP.EXECUTOR_CLIENTS
-				),
-				new ActionTransitionDefinition("qua_mario:fall",
-						data -> !data.getMario().hasVehicle() && !((MarioPlayerData) data).attemptDismount
+				new ActionTransitionDefinition("qua_mario:ground_pound",
+						data -> data.getTimers().actionTimer > 4
 				)
 		);
 	}
 
 	@Override
 	public List<ActionTransitionDefinition> getPostTickTransitions() {
-		return List.of(new ActionTransitionDefinition("qua_mario:mounted",
-				(data) -> (!((MarioPlayerData) data).attemptDismount) && data.getInputs().DUCK.isHeld() && data.getInputs().JUMP.isPressed(),
-				data -> ((MarioPlayerData) data).attemptDismount = true,
-				null
-		));
+		return List.of();
 	}
 
 	@Override

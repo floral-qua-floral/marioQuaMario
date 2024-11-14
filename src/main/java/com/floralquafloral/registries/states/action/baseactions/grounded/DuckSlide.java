@@ -67,13 +67,15 @@ public class DuckSlide extends GroundedActionDefinition {
 	@Override
 	public List<ActionTransitionDefinition> getPreTickTransitions() {
 		return List.of(
-				DuckWaddle.DUCK_FALL
+				DuckWaddle.UNDUCK,
+				new ActionTransitionDefinition("qua_mario:duck_waddle",
+						(data) -> MathHelper.approximatelyEquals(Vector2d.lengthSquared(data.getForwardVel(), data.getStrafeVel()), 0.0)
+				)
 		);
 	}
 
 	@Override public List<ActionTransitionDefinition> getPostTickTransitions() {
 		return List.of(
-				DuckWaddle.UNDUCK,
 				new ActionTransitionDefinition("qua_mario:long_jump",
 						data ->
 								data.getInputs().getForwardInput() > 0.4 &&
@@ -91,16 +93,15 @@ public class DuckSlide extends GroundedActionDefinition {
 						}
 				),
 				DuckWaddle.BACKFLIP,
-				DuckWaddle.DUCK_JUMP,
-				new ActionTransitionDefinition("qua_mario:duck_waddle",
-						(data) -> MathHelper.approximatelyEquals(Vector2d.lengthSquared(data.getForwardVel(), data.getStrafeVel()), 0.0)
-				)
+				DuckWaddle.DUCK_JUMP
 		);
 	}
 
 	@Override
 	public List<ActionTransitionDefinition> getPostMoveTransitions() {
-		return List.of();
+		return List.of(
+				DuckWaddle.DUCK_FALL
+		);
 	}
 
 	@Override

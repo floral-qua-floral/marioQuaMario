@@ -15,6 +15,7 @@ public class Stomp extends Jump {
 
 	@Override public List<ActionTransitionDefinition> getPostTickTransitions() {
 		return List.of(
+				AerialTransitions.GROUND_POUND,
 				AerialTransitions.makeJumpCapTransition(this, 0.65)
 		);
 	}

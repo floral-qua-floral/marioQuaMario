@@ -88,10 +88,10 @@ public class MarioCommand {
 						.executes(context -> executeBump(context, false, Direction.UP, 4))
 						.then(makeBumpDirectionFork("up", Direction.UP))
 						.then(makeBumpDirectionFork("down", Direction.DOWN))
-//						.then(makeBumpDirectionFork("north", Direction.NORTH))
-//						.then(makeBumpDirectionFork("south", Direction.SOUTH))
-//						.then(makeBumpDirectionFork("east", Direction.EAST))
-//						.then(makeBumpDirectionFork("west", Direction.WEST))
+						.then(makeBumpDirectionFork("north", Direction.NORTH))
+						.then(makeBumpDirectionFork("south", Direction.SOUTH))
+						.then(makeBumpDirectionFork("east", Direction.EAST))
+						.then(makeBumpDirectionFork("west", Direction.WEST))
 					)
 				)
 			)
@@ -153,9 +153,10 @@ public class MarioCommand {
 		BlockPos position = BlockPosArgumentType.getBlockPos(context, "position");
 
 		MarioServerData data = (MarioServerData) MarioDataManager.getMarioData(bumper);
-		BumpManager.bumpResponseCommon(data, data, bumper.getServerWorld(), bumper.getServerWorld().getBlockState(position), position, strength, strength, direction);
+		BumpManager.bumpBlockServer(data, bumper.getServerWorld(), position, strength, strength, direction, true, true);
+//		BumpManager.bumpResponseCommon(data, data, bumper.getServerWorld(), bumper.getServerWorld().getBlockState(position), position, strength, strength, direction);
 
-		return sendFeedback(context, "Made " + bumper + " bump block " + direction + " with a strength " + strength);
+		return sendFeedback(context, "Made " + bumper.getName().getString() + " bump block " + direction + " with a strength " + strength);
 	}
 	private static LiteralArgumentBuilder<ServerCommandSource> makeBumpDirectionFork(String name, Direction direction) {
 		return literal(name)

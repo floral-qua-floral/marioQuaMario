@@ -55,6 +55,7 @@ public class DuckWaddle extends GroundedActionDefinition {
 			data -> data.getForwardVel() < 0.0 && data.getInputs().getForwardInput() < -0.65 && data.getInputs().JUMP.isPressed(),
 			data -> {
 				GroundedTransitions.performJump(data, Backflip.BACKFLIP_VEL, null);
+				data.getInputs().DUCK.isPressed();
 
 				double backflipBackwardsVel = Backflip.BACKFLIP_BACKWARDS_SPEED.get(data);
 				if(data.getForwardVel() > backflipBackwardsVel)
@@ -105,14 +106,13 @@ public class DuckWaddle extends GroundedActionDefinition {
 	@Override
 	public List<ActionTransitionDefinition> getPreTickTransitions() {
 		return List.of(
-				DUCK_FALL
+				UNDUCK
 		);
 	}
 
 	@Override
 	public List<ActionTransitionDefinition> getPostTickTransitions() {
 		return List.of(
-				UNDUCK,
 				BACKFLIP,
 				DUCK_JUMP
 		);
@@ -120,7 +120,9 @@ public class DuckWaddle extends GroundedActionDefinition {
 
 	@Override
 	public List<ActionTransitionDefinition> getPostMoveTransitions() {
-		return List.of();
+		return List.of(
+				DUCK_FALL
+		);
 	}
 
 	@Override

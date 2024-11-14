@@ -20,16 +20,22 @@ public class DuckJump extends Jump {
 
 	@Override public List<ActionTransitionDefinition> getPreTickTransitions() {
 		return List.of(
-				AerialTransitions.DUCKING_LANDING
+				new ActionTransitionDefinition("qua_mario:jump",
+						DuckWaddle.UNDUCK.EVALUATOR
+				)
 		);
 	}
 
 	@Override public List<ActionTransitionDefinition> getPostTickTransitions() {
 		return List.of(
-				new ActionTransitionDefinition("qua_mario:jump",
-						DuckWaddle.UNDUCK.EVALUATOR
-				),
 				AerialTransitions.makeJumpCapTransition(this, 0.14)
+		);
+	}
+
+	@Override
+	public List<ActionTransitionDefinition> getPostMoveTransitions() {
+		return List.of(
+				AerialTransitions.DUCKING_LANDING
 		);
 	}
 }

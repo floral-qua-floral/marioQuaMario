@@ -22,14 +22,17 @@
 		"mario-actions-uncategorized": [
 			"com.floralquafloral.registries.states.action.baseactions.ActionDebug",
 			"com.floralquafloral.registries.states.action.baseactions.ActionDebugAlt",
-			"com.floralquafloral.registries.states.action.baseactions.Mounted"
+			"com.floralquafloral.registries.states.action.baseactions.Mounted",
+			"com.floralquafloral.registries.states.action.baseactions.GroundPoundWindup",
+			"com.floralquafloral.registries.states.action.baseactions.GroundPound"
 		],
 		"mario-actions-grounded": [
 			"com.floralquafloral.registries.states.action.baseactions.grounded.ActionBasic",
 			"com.floralquafloral.registries.states.action.baseactions.grounded.PRun",
 			"com.floralquafloral.registries.states.action.baseactions.grounded.Skid",
 			"com.floralquafloral.registries.states.action.baseactions.grounded.DuckWaddle",
-			"com.floralquafloral.registries.states.action.baseactions.grounded.DuckSlide"
+			"com.floralquafloral.registries.states.action.baseactions.grounded.DuckSlide",
+			"com.floralquafloral.registries.states.action.baseactions.grounded.GroundPoundLanding"
 		],
 		"mario-actions-airborne" : [
 			"com.floralquafloral.registries.states.action.baseactions.airborne.Fall",

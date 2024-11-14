@@ -17,7 +17,7 @@ public class PJump extends Jump {
 	}
 
 	@Override
-	public List<ActionTransitionDefinition> getPreTickTransitions() {
+	public List<ActionTransitionDefinition> getPostMoveTransitions() {
 		return List.of(
 				new ActionTransitionDefinition("qua_mario:p_run",
 						(data) -> data.getMario().isOnGround() && data.getForwardVel() >= ActionBasic.RUN_SPEED.getAsThreshold(data),

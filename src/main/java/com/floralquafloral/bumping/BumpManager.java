@@ -6,6 +6,8 @@ import com.floralquafloral.bumping.handlers.BaselineBumpingHandler;
 import com.floralquafloral.bumping.handlers.BumpingHandler;
 import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.mariodata.MarioData;
+import com.floralquafloral.mariodata.MarioDataManager;
+import com.floralquafloral.mariodata.MarioDataPackets;
 import com.floralquafloral.mariodata.moveable.MarioMainClientData;
 import com.floralquafloral.mariodata.moveable.MarioServerData;
 import com.floralquafloral.mariodata.moveable.MarioTravelData;
@@ -13,14 +15,24 @@ import com.floralquafloral.registries.RegistryManager;
 import com.floralquafloral.util.MarioSFX;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.codec.PacketCodecs;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
@@ -41,10 +53,13 @@ public abstract class BumpManager {
 	private record BlockBumpingPlan(ClientWorld world, BlockPos pos, BlockState state, Direction direction) {}
 
 	public static void registerPackets() {
+		BumpC2SPayload.register();
+		BumpC2SPayload.registerReceiver();
 
+		BumpS2CPayload.register();
 	}
 	public static void registerPacketsClient() {
-
+		BumpS2CPayload.registerReceiver();
 	}
 
 	private static BlockPos eyeAdjustmentParticlePos;
@@ -77,6 +92,21 @@ public abstract class BumpManager {
 		WorldRenderEvents.BEFORE_BLOCK_OUTLINE.register((context, hitResult) -> {
 			assert hitResult != null;
 			return hitResult.getType() != HitResult.Type.BLOCK || !HIDDEN_BLOCKS.contains(((BlockHitResult) hitResult).getBlockPos());
+		});
+
+		ServerTickEvents.END_SERVER_TICK.register((server) -> {
+			Set<BaselineBumpingHandler.ForcedSignalSpot> removeSpots = null;
+			for(BaselineBumpingHandler.ForcedSignalSpot spot : BaselineBumpingHandler.FORCED_SIGNALS_DATA) {
+				if(spot.delay-- <= 0) {
+					BaselineBumpingHandler.FORCED_SIGNALS.remove(spot.POSITION);
+					spot.WORLD.updateNeighbor(spot.POSITION, spot.WORLD.getBlockState(spot.POSITION).getBlock(), spot.POSITION);
+					if(removeSpots == null) removeSpots = new HashSet<>();
+					removeSpots.add(spot);
+				}
+			}
+			if(removeSpots != null) for(BaselineBumpingHandler.ForcedSignalSpot spot : removeSpots) {
+				BaselineBumpingHandler.FORCED_SIGNALS_DATA.remove(spot);
+			}
 		});
 	}
 
@@ -113,9 +143,10 @@ public abstract class BumpManager {
 			if(bumpBlockClient(
 					data, world, lastPos,
 					baseStrength, modifiedStrength, direction,
+					false,
 					blockSoundGroups)) {
 				bumpCount++;
-				// Network bump individually? :(
+				ClientPlayNetworking.send(new BumpC2SPayload(lastPos, direction, baseStrength));
 			}
 		}
 
@@ -143,13 +174,13 @@ public abstract class BumpManager {
 	public static boolean bumpBlockClient(
 			MarioClientSideData data, ClientWorld world, BlockPos pos,
 			int baseStrength, int modifiedStrength, Direction direction,
-			@Nullable Set<BlockSoundGroup> soundGroups
+			boolean force, @Nullable Set<BlockSoundGroup> soundGroups
 	) {
 		BlockState blockState = world.getBlockState(pos);
 
-		BumpingHandler.BumpLegality result = evaluateBumpLegality(blockState, world, pos, baseStrength, direction);
+		BumpingHandler.BumpLegality result = evaluateBumpLegality(blockState, world, pos, Math.max(baseStrength, modifiedStrength), direction);
 
-		if(result == BumpingHandler.BumpLegality.IGNORE) return false;
+		if(!force && result == BumpingHandler.BumpLegality.IGNORE) return false;
 
 		bumpResponseClients(data, world, blockState, pos, baseStrength, modifiedStrength, direction);
 		bumpResponseCommon(data, (data instanceof MarioMainClientData mainClientData) ? mainClientData : null,
@@ -173,13 +204,20 @@ public abstract class BumpManager {
 		return true;
 	}
 
-	public void bumpBlockServer(
-			MarioServerData data, ServerWorld world,BlockPos pos,
+	public static void bumpBlockServer(
+			MarioServerData data, ServerWorld world, BlockPos pos,
 			int baseStrength, int modifiedStrength, Direction direction,
-			boolean networkToMario
+			boolean force, boolean networkToMario
 	) {
-		bumpResponseCommon(data, data, world, world.getBlockState(pos), pos, baseStrength, modifiedStrength, direction);
-//		MarioPackets.sendPacketToTrackersExclusive(data.getMario(), new );
+		BlockState blockState = world.getBlockState(pos);
+		if(!force && evaluateBumpLegality(blockState, world, pos, Math.max(baseStrength, modifiedStrength), direction)
+				== BumpingHandler.BumpLegality.IGNORE) return;
+
+		bumpResponseCommon(data, data, world, blockState, pos, baseStrength, modifiedStrength, direction);
+
+		BumpS2CPayload packet = new BumpS2CPayload(data.getMario().getId(), pos, direction, baseStrength);
+		MarioPackets.sendPacketToTrackersExclusive(data.getMario(), packet);
+		if(networkToMario) ServerPlayNetworking.send(data.getMario(), packet);
 	}
 
 	public static @NotNull BumpingHandler.BumpLegality evaluateBumpLegality(
@@ -216,5 +254,65 @@ public abstract class BumpManager {
 			if(handler.bumpResponseClients(data, world, state, pos, baseStrength, modifiedStrength, direction)) return;
 		}
 		BASELINE_HANDLER.bumpResponseClients(data, world, state, pos, baseStrength, modifiedStrength, direction);
+	}
+
+	private record BumpC2SPayload(BlockPos pos, Direction direction, int strength) implements CustomPayload {
+		public static final CustomPayload.Id<BumpC2SPayload> ID = new CustomPayload.Id<>(Identifier.of(MarioQuaMario.MOD_ID, "bump_c2s"));
+		public static final PacketCodec<RegistryByteBuf, BumpC2SPayload> CODEC = PacketCodec.tuple(
+				BlockPos.PACKET_CODEC, BumpC2SPayload::pos,
+				Direction.PACKET_CODEC, BumpC2SPayload::direction,
+				PacketCodecs.INTEGER, BumpC2SPayload::strength,
+				BumpC2SPayload::new
+		);
+		public static void registerReceiver() {
+			ServerPlayNetworking.registerGlobalReceiver(ID, (payload, context) -> {
+				MarioServerData data = (MarioServerData) MarioDataManager.getMarioData(context.player());
+				bumpBlockServer(
+						data, context.player().getServerWorld(), payload.pos,
+						payload.strength,
+						payload.strength + data.getCharacter().BUMP_STRENGTH_MODIFIER + data.getPowerUp().BUMP_STRENGTH_MODIFIER,
+						payload.direction,
+						false, false
+				);
+			});
+		}
+
+		@Override public Id<? extends CustomPayload> getId() {
+			return ID;
+		}
+		public static void register() {
+			PayloadTypeRegistry.playC2S().register(ID, CODEC);
+		}
+	}
+
+	private record BumpS2CPayload(int player, BlockPos pos, Direction direction, int strength) implements CustomPayload {
+		public static final CustomPayload.Id<BumpS2CPayload> ID = new CustomPayload.Id<>(Identifier.of(MarioQuaMario.MOD_ID, "bump_s2c"));
+		public static final PacketCodec<RegistryByteBuf, BumpS2CPayload> CODEC = PacketCodec.tuple(
+				PacketCodecs.INTEGER, BumpS2CPayload::player,
+				BlockPos.PACKET_CODEC, BumpS2CPayload::pos,
+				Direction.PACKET_CODEC, BumpS2CPayload::direction,
+				PacketCodecs.INTEGER, BumpS2CPayload::strength,
+				BumpS2CPayload::new
+		);
+		public static void registerReceiver() {
+			ClientPlayNetworking.registerGlobalReceiver(ID, (payload, context) -> {
+				MarioClientSideData data = (MarioClientSideData) MarioDataManager.getMarioData(context.player());
+				bumpBlockClient(
+						data, context.player().clientWorld, payload.pos,
+						payload.strength,
+						payload.strength + data.getCharacter().BUMP_STRENGTH_MODIFIER + data.getPowerUp().BUMP_STRENGTH_MODIFIER,
+						payload.direction,
+						true,
+						null
+				);
+			});
+		}
+
+		@Override public Id<? extends CustomPayload> getId() {
+			return ID;
+		}
+		public static void register() {
+			PayloadTypeRegistry.playS2C().register(ID, CODEC);
+		}
 	}
 }

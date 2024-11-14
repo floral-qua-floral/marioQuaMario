@@ -18,15 +18,19 @@ public class DuckFall extends Fall {
 
 	@Override public List<ActionTransitionDefinition> getPreTickTransitions() {
 		return List.of(
-				AerialTransitions.DUCKING_LANDING
+				new ActionTransitionDefinition("qua_mario:fall",
+						DuckWaddle.UNDUCK.EVALUATOR
+				)
 		);
 	}
 
 	@Override public List<ActionTransitionDefinition> getPostTickTransitions() {
+		return List.of();
+	}
+
+	@Override public List<ActionTransitionDefinition> getPostMoveTransitions() {
 		return List.of(
-				new ActionTransitionDefinition("qua_mario:fall",
-						DuckWaddle.UNDUCK.EVALUATOR
-				)
+				AerialTransitions.DUCKING_LANDING
 		);
 	}
 }

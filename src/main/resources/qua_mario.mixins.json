@@ -6,7 +6,8 @@
     "DamageSourceMixin",
     "EntityMixin",
     "LivingEntityMixin",
-    "PlayerEntityMixin"
+    "PlayerEntityMixin",
+    "RedstoneViewMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -139,7 +139,7 @@ public interface ActionDefinition extends MarioStateDefinition {
 		 * A strength of 1 represents Mario landing on a block and having no effect on it.
 		 */
 		public static final BumpingRule JUMPING = new BumpingRule(4, 1, 0);
-		public static final BumpingRule FALLING = new BumpingRule(4, 4, 0);
+		public static final BumpingRule FALLING = new BumpingRule(4, 1, 0);
 		public static final BumpingRule GROUND_POUND = new BumpingRule(0, 4, 0);
 		public static final BumpingRule SPIN_JUMPING = new BumpingRule(2, 2, 0);
 

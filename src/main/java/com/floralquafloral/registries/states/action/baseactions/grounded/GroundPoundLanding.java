@@ -15,12 +15,12 @@ import java.util.List;
 
 import static com.floralquafloral.stats.StatCategory.*;
 
-public class Skid extends GroundedActionDefinition {
+public class GroundPoundLanding extends GroundedActionDefinition {
 	@Override public @NotNull Identifier getID() {
-		return Identifier.of(MarioQuaMario.MOD_ID, "skid");
+		return Identifier.of(MarioQuaMario.MOD_ID, "ground_pound_landing");
 	}
 	@Override public @Nullable String getAnimationName() {
-		return "skid";
+		return "ground-pound-landing";
 	}
 	@Override @Nullable public CameraAnimationSet getCameraAnimations() {
 		return null;
@@ -29,27 +29,9 @@ public class Skid extends GroundedActionDefinition {
 		return null;
 	}
 
-	public static final CharaStat SKID_THRESHOLD = new CharaStat(0.285, RUNNING, THRESHOLD);
-
-	public static final CharaStat SKID_DRAG = new CharaStat(0.185, RUNNING, DRAG);
-	public static final CharaStat SKID_DRAG_MIN = new CharaStat(0.02, RUNNING, DRAG);
-	public static final CharaStat SKID_REDIRECTION = new CharaStat(4.5, RUNNING, REDIRECTION);
-
-	public static final ActionTransitionDefinition SKID_TRANSITION = new ActionTransitionDefinition(
-			"qua_mario:skid",
-			data -> data.getInputs().getForwardInput() < -0.65 && data.getForwardVel() > SKID_THRESHOLD.get(data)
-	);
-
 	@Override
 	public void groundedTravel(MarioTravelData data) {
-		applyDrag(data,
-				SKID_DRAG,
-				SKID_DRAG_MIN,
-				-data.getInputs().getForwardInput(),
-				data.getInputs().getStrafeInput(),
-				SKID_REDIRECTION
-		);
-		if(MathHelper.approximatelyEquals(data.getForwardVel(), 0.0)) data.getTimers().actionTimer++;
+		data.getTimers().actionTimer++;
 	}
 
 	@Override public void clientTick(MarioClientSideData data, boolean isSelf) {}
@@ -57,10 +39,10 @@ public class Skid extends GroundedActionDefinition {
 	@Override public void serverTick(MarioServerData data) {}
 
 	@Override public SneakLegalityRule getSneakLegalityRule() {
-		return SneakLegalityRule.ALLOW;
+		return SneakLegalityRule.PROHIBIT;
 	}
 	@Override public SlidingStatus getActionSlidingStatus() {
-		return SlidingStatus.SKIDDING;
+		return SlidingStatus.NOT_SLIDING;
 	}
 	@Override public @Nullable Identifier getStompType() {
 		return null;
@@ -69,9 +51,8 @@ public class Skid extends GroundedActionDefinition {
 	@Override
 	public List<ActionTransitionDefinition> getPreTickTransitions() {
 		return List.of(
-				GroundedTransitions.DUCK_WADDLE,
 				new ActionTransitionDefinition("qua_mario:basic",
-						data -> (data.getTimers().actionTimer > 0 || data.getInputs().getForwardInput() >= 0 || data.getForwardVel() < -0.05)
+						data -> (data.getTimers().actionTimer > 3 && !data.getInputs().DUCK.isHeld())
 				)
 		);
 	}
@@ -79,14 +60,15 @@ public class Skid extends GroundedActionDefinition {
 	@Override
 	public List<ActionTransitionDefinition> getPostTickTransitions() {
 		return List.of(
-				// Sideflip!!!
-				GroundedTransitions.JUMP
 		);
 	}
 
 	@Override
 	public List<ActionTransitionDefinition> getPostMoveTransitions() {
 		return List.of(
+				new ActionTransitionDefinition("qua_mario:ground_pound",
+						data -> GroundedTransitions.FALL.EVALUATOR.shouldTransition(data) && data.getInputs().DUCK.isHeld()
+				),
 				GroundedTransitions.FALL
 		);
 	}

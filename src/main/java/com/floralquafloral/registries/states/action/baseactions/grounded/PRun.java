@@ -62,7 +62,6 @@ public class PRun extends GroundedActionDefinition {
 	@Override
 	public List<ActionTransitionDefinition> getPreTickTransitions() {
 		return List.of(
-				GroundedTransitions.FALL,
 				GroundedTransitions.DUCK_WADDLE,
 				new ActionTransitionDefinition("qua_mario:basic",
 						(data) -> {
@@ -88,7 +87,9 @@ public class PRun extends GroundedActionDefinition {
 
 	@Override
 	public List<ActionTransitionDefinition> getPostMoveTransitions() {
-		return List.of();
+		return List.of(
+				GroundedTransitions.FALL
+		);
 	}
 
 	@Override

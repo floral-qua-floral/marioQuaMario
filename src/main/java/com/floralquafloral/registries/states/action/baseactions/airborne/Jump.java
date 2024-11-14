@@ -64,18 +64,21 @@ public class Jump extends AirborneActionDefinition {
 
 	@Override public List<ActionTransitionDefinition> getPreTickTransitions() {
 		return List.of(
-				AerialTransitions.DOUBLE_JUMPABLE_LANDING
+
 		);
 	}
 
 	@Override public List<ActionTransitionDefinition> getPostTickTransitions() {
 		return List.of(
+				AerialTransitions.GROUND_POUND,
 				AerialTransitions.makeJumpCapTransition(this, 0.39)
 		);
 	}
 
 	@Override public List<ActionTransitionDefinition> getPostMoveTransitions() {
-		return List.of();
+		return List.of(
+				AerialTransitions.DOUBLE_JUMPABLE_LANDING
+		);
 	}
 
 	@Override public List<ActionTransitionInjection> getTransitionInjections() {

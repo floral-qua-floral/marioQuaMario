@@ -54,16 +54,17 @@ public class Backflip extends Jump {
 		);
 	}
 
-	@Override public List<ActionTransitionDefinition> getPreTickTransitions() {
+	@Override public List<ActionTransitionDefinition> getPostTickTransitions() {
 		return List.of(
-				AerialTransitions.BASIC_LANDING
+				AerialTransitions.makeJumpCapTransition(this, 0.765),
+				AerialTransitions.GROUND_POUND
 		);
 	}
 
 	@Override
-	public List<ActionTransitionDefinition> getPostTickTransitions() {
+	public List<ActionTransitionDefinition> getPostMoveTransitions() {
 		return List.of(
-				AerialTransitions.makeJumpCapTransition(this, 0.765)
+				AerialTransitions.BASIC_LANDING
 		);
 	}
 }

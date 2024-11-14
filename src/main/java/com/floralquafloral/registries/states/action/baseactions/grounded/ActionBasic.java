@@ -167,16 +167,8 @@ public class ActionBasic extends GroundedActionDefinition {
 	@Override
 	public List<ActionTransitionDefinition> getPreTickTransitions() {
 		return List.of(
-				GroundedTransitions.FALL,
 				GroundedTransitions.DUCK_WADDLE,
-				Skid.SKID_TRANSITION
-		);
-	}
-
-	@Override
-	public List<ActionTransitionDefinition> getPostTickTransitions() {
-		return List.of(
-				GroundedTransitions.JUMP,
+				Skid.SKID_TRANSITION,
 				new ActionTransitionDefinition("qua_mario:p_run",
 						(data) -> data.getForwardVel() >= RUN_SPEED.getAsThreshold(data),
 						data -> data.setForwardVel(Math.max(PRun.P_SPEED.get(data), data.getForwardVel())),
@@ -186,8 +178,17 @@ public class ActionBasic extends GroundedActionDefinition {
 	}
 
 	@Override
+	public List<ActionTransitionDefinition> getPostTickTransitions() {
+		return List.of(
+				GroundedTransitions.JUMP
+		);
+	}
+
+	@Override
 	public List<ActionTransitionDefinition> getPostMoveTransitions() {
-		return List.of();
+		return List.of(
+				GroundedTransitions.FALL
+		);
 	}
 
 	@Override

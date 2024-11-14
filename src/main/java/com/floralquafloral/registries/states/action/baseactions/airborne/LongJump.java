@@ -66,10 +66,7 @@ public class LongJump extends AirborneActionDefinition {
 	}
 
 	@Override public List<ActionTransitionDefinition> getPreTickTransitions() {
-		return List.of(
-				AerialTransitions.DUCKING_LANDING,
-				AerialTransitions.DOUBLE_JUMPABLE_LANDING
-		);
+		return List.of();
 	}
 
 	@Override public List<ActionTransitionDefinition> getPostTickTransitions() {
@@ -77,7 +74,9 @@ public class LongJump extends AirborneActionDefinition {
 	}
 
 	@Override public List<ActionTransitionDefinition> getPostMoveTransitions() {
-		return List.of();
+		return List.of(
+				AerialTransitions.DUCKING_LANDING,
+				AerialTransitions.DOUBLE_JUMPABLE_LANDING);
 	}
 
 	@Override public List<ActionTransitionInjection> getTransitionInjections() {
