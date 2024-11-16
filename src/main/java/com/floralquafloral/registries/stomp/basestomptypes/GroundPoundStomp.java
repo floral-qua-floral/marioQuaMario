@@ -19,16 +19,15 @@ import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class JumpStomp implements StompDefinition {
+public class GroundPoundStomp implements StompDefinition {
 	@Override public @NotNull Identifier getID() {
-		return Identifier.of(MarioQuaMario.MOD_ID, "stomp");
+		return Identifier.of(MarioQuaMario.MOD_ID, "ground_pound");
 	}
 
-	public final CharaStat BASE_DAMAGE = new CharaStat(4.5, StatCategory.STOMP_BASE_DAMAGE);
-	public final CharaStat BOUNCE_VEL = new CharaStat(1.15, StatCategory.STOMP_BOUNCE);
+	public final CharaStat BASE_DAMAGE = new CharaStat(7, StatCategory.STOMP_BASE_DAMAGE);
 
 	@Override public boolean mustFallOnTarget() {
-		return true;
+		return false;
 	}
 
 	@Override public @NotNull PainfulStompResponse getPainfulStompResponse() {
@@ -40,18 +39,18 @@ public class JumpStomp implements StompDefinition {
 	}
 
 	@Override public boolean canHitNonLiving() {
-		return false;
+		return true;
 	}
 
 	@Override public @NotNull Identifier getDamageType() {
-		return Identifier.of(MarioQuaMario.MOD_ID, "stomp");
+		return Identifier.of(MarioQuaMario.MOD_ID, "ground_pound");
 	}
 	@Override public @Nullable SoundEvent getSoundEvent() {
-		return MarioSFX.STOMP;
+		return MarioSFX.KICK;
 	}
 
 	@Override public @Nullable Identifier getPostStompAction() {
-		return Identifier.of(MarioQuaMario.MOD_ID, "stomp");
+		return null;
 	}
 
 	@Override public boolean canStompTarget(MarioData data, Entity target) {
@@ -59,20 +58,11 @@ public class JumpStomp implements StompDefinition {
 	}
 
 	@Override public float calculateDamage(MarioData data, ServerPlayerEntity mario, ItemStack equipment, float equipmentArmorValue, Entity target) {
-		return ((float) BASE_DAMAGE.get(data)) + equipmentArmorValue * 2.25F;
+		return ((float) BASE_DAMAGE.get(data)) + equipmentArmorValue;
 	}
 
 	@Override public void executeTravellers(MarioTravelData data, Entity target, boolean harmless) {
-		double deltaY = (target.getY() + target.getHeight()) - data.getMario().getY();
-//		MarioQuaMario.LOGGER.info("executeTravellers 1:"
-//				+ "\nTarget: " + target
-//				+ "\nTargetY: " + (target.getY() + target.getHeight())
-//				+ "\nMarioY: " + data.getMario().getY()
-//				+ "\ndeltaY: " + (data.getMario().getY())
-//		);
-		data.getMario().move(MovementType.SELF, new Vec3d(0, deltaY, 0));
-//		data.getMario().setPos(data.getMario().getX(), target.getY() + target.getHeight(), data.getMario().getZ());
-		data.setYVel(BOUNCE_VEL.get(data));
+		double deltaY = data.getMario().getY() - (target.getY() - target.getHeight());
 	}
 
 	@Override public void executeClients(MarioClientSideData data, boolean isSelf, Entity target, boolean harmless, long seed) {

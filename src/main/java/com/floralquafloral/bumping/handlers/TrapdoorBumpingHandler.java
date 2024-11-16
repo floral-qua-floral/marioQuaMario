@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 public class TrapdoorBumpingHandler implements BumpingHandler {
 	@Override
 	public @Nullable BumpLegality evaluateBumpLegality(BlockState state, BlockView world, BlockPos pos, int strength, Direction direction) {
-		if(state.isIn(BlockTags.TRAPDOORS)) {
+		if(state.isIn(BlockTags.TRAPDOORS) && strength >= (state.isIn(BlockTags.WOODEN_TRAPDOORS) ? 3 : 4)) {
 			if(state.get(Properties.OPEN)) {
 				// It's an open trapdoor; check to see if we'd be knocking it closed
 				if (

@@ -54,7 +54,7 @@ public abstract class AirborneActionDefinition implements ActionDefinition {
 		public static final ActionTransitionDefinition GROUND_POUND = new ActionTransitionDefinition(
 				"qua_mario:ground_pound_windup",
 				data -> data.getInputs().DUCK.isPressed(),
-				null,
+				data -> data.getMario().fallDistance *= 0.4F,
 				(data, isSelf, seed) -> data.playSoundEvent(MarioSFX.GROUND_POUND_PRE, seed)
 		);
 	}

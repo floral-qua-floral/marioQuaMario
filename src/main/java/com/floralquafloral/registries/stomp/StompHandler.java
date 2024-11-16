@@ -70,7 +70,7 @@ public class StompHandler {
 				}
 				MarioPlayerData data = getMarioData(mario);
 				stompType.executeClient((MarioClientSideData) data, mario.isMainPlayer(), target, payload.harmless, payload.seed);
-				data.setActionTransitionless(RegistryManager.ACTIONS.get(stompType.POST_STOMP_ACTION));
+//				data.setActionTransitionless(RegistryManager.ACTIONS.get(stompType.POST_STOMP_ACTION));
 			});
 		}
 

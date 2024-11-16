@@ -15,10 +15,6 @@
 	"icon": "assets/qua_mario/icon.png",
 	"environment": "*",
 	"entrypoints": {
-		"mario-stomp-types": [
-			"com.floralquafloral.registries.stomp.basestomptypes.JumpStomp"
-		],
-
 		"mario-actions-uncategorized": [
 			"com.floralquafloral.registries.states.action.baseactions.ActionDebug",
 			"com.floralquafloral.registries.states.action.baseactions.ActionDebugAlt",
@@ -42,7 +38,9 @@
 			"com.floralquafloral.registries.states.action.baseactions.airborne.DuckJump",
 			"com.floralquafloral.registries.states.action.baseactions.airborne.LongJump",
 			"com.floralquafloral.registries.states.action.baseactions.airborne.Stomp",
-			"com.floralquafloral.registries.states.action.baseactions.airborne.Backflip"
+			"com.floralquafloral.registries.states.action.baseactions.airborne.Backflip",
+			"com.floralquafloral.registries.states.action.baseactions.airborne.DoubleJump",
+			"com.floralquafloral.registries.states.action.baseactions.airborne.TripleJump"
 		],
 		"mario-actions-aquatic": [
 
@@ -58,9 +56,15 @@
 			"com.floralquafloral.registries.states.character.basecharacters.Toadette"
 		],
 
+		"mario-stomp-types": [
+			"com.floralquafloral.registries.stomp.basestomptypes.JumpStomp",
+			"com.floralquafloral.registries.stomp.basestomptypes.GroundPoundStomp"
+		],
+
 		"mario-bumping-handlers": [
 			"com.floralquafloral.bumping.handlers.TrapdoorBumpingHandler",
-			"com.floralquafloral.bumping.handlers.PistonBumpingHandler"
+			"com.floralquafloral.bumping.handlers.PistonBumpingHandler",
+			"com.floralquafloral.bumping.handlers.SpawnerBumpingHandler"
 		],
 
 		"main": [

@@ -24,6 +24,7 @@ public final class MarioSFX {
 	public static final SoundEvent STOMP_SPIN = makeStompSound("spin");
 	public static final SoundEvent STOMP_HEAVY = makeStompSound("heavy");
 	public static final SoundEvent STOMP_YOSHI = makeStompSound("yoshi");
+	public static final SoundEvent KICK = makeStompSound("kick");
 
 	public static final SoundEvent DUCK = makeActionSound("duck");
 	public static final SoundEvent UNDUCK = makeActionSound("unduck");

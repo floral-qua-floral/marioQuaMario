@@ -34,6 +34,7 @@ import net.minecraft.util.math.random.RandomSeed;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 
 public class ParsedStomp {
 	public final Identifier ID;
@@ -62,7 +63,7 @@ public class ParsedStomp {
 		this.POST_STOMP_ACTION = definition.getPostStompAction();
 	}
 
-	public void executeServer(MarioServerData data, Entity target, boolean affectMario, boolean harmless, long seed) {
+	public boolean executeServer(MarioServerData data, Entity target, boolean affectMario, boolean harmless, long seed) {
 		ServerPlayerEntity mario = data.getMario();
 //		DamageSource damageSource = makeDamageSource(mario.getServerWorld(), this.DAMAGE_TYPE, mario);
 		StompDamageSource stompDamageSource = new StompDamageSource(mario.getServerWorld(), this.DAMAGE_TYPE, mario);
@@ -98,13 +99,16 @@ public class ParsedStomp {
 		float damage = this.DEFINITION.calculateDamage(data, mario, attackingArmor, armor, target);
 		stompDamageSource.piercing = 2.0F * toughness;
 
-		target.damage(stompDamageSource, Math.max(1.0F, damage - 0.6F * stompDamageSource.piercing));
-
-		if(affectMario) {
-			this.DEFINITION.executeTravellers(data, target, harmless);
-			data.setActionTransitionless(RegistryManager.ACTIONS.get(this.POST_STOMP_ACTION));
-			StompHandler.networkStomp(data.getMario(), target, this, harmless, seed);
+		if(target.damage(stompDamageSource, Math.max(1.0F, damage - 0.6F * stompDamageSource.piercing))) {
+			if(affectMario) {
+				this.DEFINITION.executeTravellers(data, target, harmless);
+				if(this.POST_STOMP_ACTION != null)
+					data.setActionTransitionless(Objects.requireNonNull(RegistryManager.ACTIONS.get(this.POST_STOMP_ACTION)));
+				StompHandler.networkStomp(data.getMario(), target, this, harmless, seed);
+			}
+			return true;
 		}
+		return false;
 	}
 	public void executeClient(MarioClientSideData data, boolean isSelf, Entity target, boolean harmless, long seed) {
 		if(this.SOUND_EVENT != null) {
@@ -124,6 +128,8 @@ public class ParsedStomp {
 		if(data instanceof MarioMoveableData moveableData) {
 			moveableData.getTimers().jumpCapped = false;
 			this.DEFINITION.executeTravellers(moveableData, target, harmless);
+			if(this.POST_STOMP_ACTION != null)
+				moveableData.setActionTransitionless(Objects.requireNonNull(RegistryManager.ACTIONS.get(this.POST_STOMP_ACTION)));
 			moveableData.applyModifiedVelocity();
 		}
 
@@ -132,7 +138,7 @@ public class ParsedStomp {
 
 	public boolean attempt(MarioServerData data, Vec3d movement) {
 		ServerPlayerEntity mario = data.getMario();
-		List<Entity> targets = mario.getWorld().getOtherEntities(mario, mario.getBoundingBox().stretch(movement));
+		List<Entity> targets = mario.getWorld().getOtherEntities(mario, mario.getBoundingBox().stretch(movement.multiply(1, 2, 1)));
 
 		boolean affectMario = true;
 		long seed = RandomSeed.getSeed();
@@ -171,10 +177,7 @@ public class ParsedStomp {
 
 		}
 
-
-		executeServer(data, target, affectMario, harmless, seed);
-
-		return true;
+		return executeServer(data, target, affectMario, harmless, seed);
 	}
 
 	private static DamageSource makeDamageSource(ServerWorld world, RegistryKey<DamageType> key, Entity attacker) {

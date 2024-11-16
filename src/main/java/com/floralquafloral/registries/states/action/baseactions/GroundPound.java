@@ -39,7 +39,7 @@ public class GroundPound implements ActionDefinition {
 		return SlidingStatus.NOT_SLIDING;
 	}
 	@Override public @Nullable Identifier getStompType() {
-		return Identifier.of("qua_mario", "stomp");
+		return Identifier.of("qua_mario", "ground_pound");
 	}
 
 	@Override public void travelHook(MarioTravelData data) {
@@ -73,7 +73,7 @@ public class GroundPound implements ActionDefinition {
 				new ActionTransitionDefinition(
 						"qua_mario:ground_pound_landing",
 						AirborneActionDefinition.AerialTransitions.BASIC_LANDING.EVALUATOR,
-						data -> {},
+						data -> data.setForwardStrafeVel(0, 0),
 						(data, isSelf, seed) -> data.playSoundEvent(MarioSFX.GROUND_POUND, seed)
 				)
 		);

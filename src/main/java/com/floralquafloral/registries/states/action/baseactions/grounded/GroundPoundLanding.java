@@ -51,8 +51,11 @@ public class GroundPoundLanding extends GroundedActionDefinition {
 	@Override
 	public List<ActionTransitionDefinition> getPreTickTransitions() {
 		return List.of(
+				new ActionTransitionDefinition("qua_mario:ground_pound",
+						data -> data.getTimers().actionTimer > 3 && data.getInputs().DUCK.isHeld() && data.getTimers().canRepeatPound
+				),
 				new ActionTransitionDefinition("qua_mario:basic",
-						data -> (data.getTimers().actionTimer > 3 && !data.getInputs().DUCK.isHeld())
+						data -> (data.getTimers().actionTimer > 4 && !data.getInputs().DUCK.isHeld())
 				)
 		);
 	}

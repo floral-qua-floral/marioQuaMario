@@ -34,7 +34,7 @@ public class MarioServerData extends MarioMoveableData {
 
 	@Override
 	public void setActionTransitionless(ParsedAction action) {
-		MarioQuaMario.LOGGER.info("MarioServerData setAction to {}", action.ID);
+//		MarioQuaMario.LOGGER.info("MarioServerData setAction to {}", action.ID);
 
 		if(this.getAction().ANIMATION != null)
 			CPMIntegration.commonAPI.playAnimation(PlayerEntity.class, this.marioServer, this.getAction().ANIMATION, 0);

@@ -89,6 +89,12 @@
       "qua_mario:sfx/stomp/yoshi"
     ]
   },
+  "sfx.stomp.kick": {
+    "subtitle": "subtitles.qua_mario.stomp.kick",
+    "sounds": [
+      "qua_mario:sfx/stomp/kick"
+    ]
+  },
   "sfx.action.duck": {
     "subtitle": "subtitles.qua_mario.action.duck",
     "sounds": [
