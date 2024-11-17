@@ -20,6 +20,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 import static com.floralquafloral.mariodata.MarioDataManager.getMarioData;
 
 public class MarioDataPackets {
@@ -172,7 +174,7 @@ public class MarioDataPackets {
 		}
 		public static void registerReceiver() {
 			ClientPlayNetworking.registerGlobalReceiver(ID, (payload, context) ->
-					getMarioData(context, payload.player).setPowerUp(RegistryManager.POWER_UPS.get(payload.powerUp)));
+					getMarioData(context, payload.player).setPowerUp(Objects.requireNonNull(RegistryManager.POWER_UPS.get(payload.powerUp))));
 		}
 
 		@Override public Id<? extends CustomPayload> getId() {

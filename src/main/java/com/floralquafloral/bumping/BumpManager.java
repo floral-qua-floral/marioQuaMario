@@ -2,14 +2,10 @@ package com.floralquafloral.bumping;
 
 import com.floralquafloral.MarioPackets;
 import com.floralquafloral.MarioQuaMario;
-import com.floralquafloral.bumping.handlers.BaselineBumpingHandler;
-import com.floralquafloral.bumping.handlers.BumpingHandler;
 import com.floralquafloral.mariodata.MarioClientSideData;
-import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioDataManager;
 import com.floralquafloral.mariodata.moveable.MarioMainClientData;
 import com.floralquafloral.mariodata.moveable.MarioServerData;
-import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import com.floralquafloral.registries.RegistryManager;
 import com.floralquafloral.util.MarioSFX;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -29,7 +25,6 @@ import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundCategory;
@@ -39,9 +34,6 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.random.Random;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -51,7 +43,7 @@ import static com.floralquafloral.MarioQuaMario.MOD_ID;
 public abstract class BumpManager {
 	public static final Map<BlockPos, BumpedBlockParticle> BUMPED_BLOCKS = new HashMap<>();
 	public static final Set<BlockPos> HIDDEN_BLOCKS = new HashSet<>();
-	private static final Set<BlockBumpingPlan> BLOCKS_TO_BUMP = new HashSet<>();
+	private static final Set<BlockBumpingPlan> BLOCKS_TO_DISPLACE = new HashSet<>();
 
 	public static final TagKey<Block> ALWAYS_REPEAT_BUMP = TagKey.of(RegistryKeys.BLOCK, Identifier.of(MOD_ID, "always_repeat_bump"));
 	public static final TagKey<Block> NEVER_REPEAT_BUMP = TagKey.of(RegistryKeys.BLOCK, Identifier.of(MOD_ID, "never_repeat_bump"));
@@ -73,10 +65,6 @@ public abstract class BumpManager {
 	private static BlockPos eyeAdjustmentParticlePos;
 	@Nullable public static BumpedBlockParticle eyeAdjustmentParticle;
 
-	private static final List<BumpingHandler> HANDLERS =
-			RegistryManager.getEntrypoints("mario-bumping-handlers", BumpingHandler.class);
-	private static final BaselineBumpingHandler BASELINE_HANDLER = new BaselineBumpingHandler();
-
 	public static void registerEventListeners() {
 		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
 			HIDDEN_BLOCKS.clear();
@@ -84,14 +72,14 @@ public abstract class BumpManager {
 		});
 
 		ClientTickEvents.START_CLIENT_TICK.register(client -> {
-			if(!BLOCKS_TO_BUMP.isEmpty()) {
-				for(BlockBumpingPlan plan : BLOCKS_TO_BUMP) {
+			if(!BLOCKS_TO_DISPLACE.isEmpty()) {
+				for(BlockBumpingPlan plan : BLOCKS_TO_DISPLACE) {
 					visuallyBumpBlock(plan.world, plan.pos, plan.direction);
 					if(plan.pos.equals(eyeAdjustmentParticlePos)) {
 						eyeAdjustmentParticle = BUMPED_BLOCKS.get(plan.pos);
 					}
 				}
-				BLOCKS_TO_BUMP.clear();
+				BLOCKS_TO_DISPLACE.clear();
 			}
 			eyeAdjustmentParticlePos = null;
 		});
@@ -102,18 +90,27 @@ public abstract class BumpManager {
 		});
 
 		ServerTickEvents.END_SERVER_TICK.register((server) -> {
-			Set<BaselineBumpingHandler.ForcedSignalSpot> removeSpots = null;
-			for(BaselineBumpingHandler.ForcedSignalSpot spot : BaselineBumpingHandler.FORCED_SIGNALS_DATA) {
+			Set<BlockBumpHandler.ForcedSignalSpot> removeSpots = null;
+			for(BlockBumpHandler.ForcedSignalSpot spot : BlockBumpHandler.FORCED_SIGNALS_DATA) {
 				if(spot.delay-- <= 0) {
-					BaselineBumpingHandler.FORCED_SIGNALS.remove(spot.POSITION);
+					BlockBumpHandler.FORCED_SIGNALS.remove(spot.POSITION);
 					spot.WORLD.updateNeighbor(spot.POSITION, spot.WORLD.getBlockState(spot.POSITION).getBlock(), spot.POSITION);
 					if(removeSpots == null) removeSpots = new HashSet<>();
 					removeSpots.add(spot);
 				}
 			}
-			if(removeSpots != null) for(BaselineBumpingHandler.ForcedSignalSpot spot : removeSpots) {
-				BaselineBumpingHandler.FORCED_SIGNALS_DATA.remove(spot);
+			if(removeSpots != null) for(BlockBumpHandler.ForcedSignalSpot spot : removeSpots) {
+				BlockBumpHandler.FORCED_SIGNALS_DATA.remove(spot);
 			}
+		});
+
+		BlockBumpCallback.EVENT.register((
+				marioData, marioClientData, marioTravelData,
+				world, blockPos, blockState,
+				strength, modifier, direction
+		) -> {
+			MarioQuaMario.LOGGER.info("Bump listener!!");
+			return BlockBumpResult.PASS;
 		});
 	}
 
@@ -139,143 +136,116 @@ public abstract class BumpManager {
 		world.updateListeners(pos, blockState, blockState, Block.NOTIFY_ALL);
 	}
 
-	public static void bumpBlocks(MarioMainClientData data, ClientWorld world, Iterable<BlockPos> blocks, Direction direction, int baseStrength) {
-		int bumpCount = 0, bumpAttemptCount = 0;
-		int modifiedStrength = baseStrength + data.getPowerUp().BUMP_STRENGTH_MODIFIER + data.getCharacter().BUMP_STRENGTH_MODIFIER;
-		Set<BlockSoundGroup> blockSoundGroups = new HashSet<>();
-		BlockPos lastPos = null;
-		data.getTimers().canRepeatPound = false;
-		for(BlockPos bumpPos : blocks) {
-			bumpAttemptCount++;
-			lastPos = new BlockPos(bumpPos);
-			if(bumpBlockClient(
-					data, world, lastPos,
-					baseStrength, modifiedStrength, direction,
-					false,
-					blockSoundGroups)) {
-				bumpCount++;
-				ClientPlayNetworking.send(new BumpC2SPayload(lastPos, direction, baseStrength));
-			}
-		}
-
-		if(bumpCount > 0) {
-			for(BlockSoundGroup group : blockSoundGroups) {
-				data.playSoundEvent(
-						group.getPlaceSound(), SoundCategory.BLOCKS,
-						data.getMario().getX(), data.getMario().getY() + data.getMario().getHeight(), data.getMario().getZ(),
-						group.pitch * 0.8F, group.volume, Random.create().nextLong()
-				);
-			}
-			data.playSoundEvent(
-					MarioSFX.BUMP, SoundCategory.BLOCKS,
-					data.getMario().getX(), data.getMario().getY() + data.getMario().getHeight(), data.getMario().getZ(),
-					1.0F, 0.2F, Random.create().nextLong()
-			);
-
-			if(direction == Direction.DOWN && bumpCount == bumpAttemptCount) {
-				eyeAdjustmentParticlePos = lastPos;
-			}
-		}
-	}
-
-	public static boolean bumpBlockClient(
-			MarioClientSideData data, ClientWorld world, BlockPos pos,
-			int baseStrength, int modifiedStrength, Direction direction,
-			boolean force, @Nullable Set<BlockSoundGroup> soundGroups
+	public static void attemptBumpBlocks(
+			MarioMainClientData data, ClientWorld world,
+			Iterable<BlockPos> blocks, Direction direction,
+			int baseStrength
 	) {
-		BlockState blockState = world.getBlockState(pos);
+		data.canRepeatPound = false;
+		Set<BlockPos> fullBlocksSet = new HashSet<>();
+		for(BlockPos pos : blocks) fullBlocksSet.add(new BlockPos(pos));
 
-		BumpingHandler.BumpLegality result = evaluateBumpLegality(blockState, world, pos, Math.max(baseStrength, modifiedStrength), direction);
+		Set<BlockPos> prunedBlocksSet = bumpBlocksClient(data, data, world, fullBlocksSet, baseStrength, direction);
 
-		if(!force && result == BumpingHandler.BumpLegality.IGNORE) return false;
-
-		bumpResponseClients(data, world, blockState, pos, baseStrength, modifiedStrength, direction);
-		bumpResponseCommon(data, (data instanceof MarioMainClientData mainClientData) ? mainClientData : null,
-				world, blockState, pos, baseStrength, modifiedStrength, direction);
-
-		if (result == BumpingHandler.BumpLegality.SILENT_REACTION) return true;
-
-		if (soundGroups == null) {
-			visuallyBumpBlock(world, pos, direction);
-			BlockSoundGroup group = blockState.getSoundGroup();
-			data.playSoundEvent(
-					group.getPlaceSound(), SoundCategory.BLOCKS,
-					data.getMario().getX(), data.getMario().getY() + data.getMario().getHeight(), data.getMario().getZ(),
-					group.pitch * 0.8F, group.volume, Random.create().nextLong()
-			);
-		} else {
-			BLOCKS_TO_BUMP.add(new BlockBumpingPlan(world, pos, blockState, direction));
-			soundGroups.add(blockState.getSoundGroup());
+		if(!prunedBlocksSet.isEmpty()) {
+			ClientPlayNetworking.send(new BumpC2SPayload(prunedBlocksSet, direction, baseStrength));
+			if (fullBlocksSet.size() == prunedBlocksSet.size() && direction == Direction.DOWN) {
+				// this will cause eye height adjustment even if some blocks returned CANCEL_NETWORKED :(
+				eyeAdjustmentParticlePos = prunedBlocksSet.stream().findFirst().get();
+			}
 		}
-
-		return true;
 	}
 
-	public static void bumpBlockServer(
-			MarioServerData data, ServerWorld world, BlockPos pos,
-			int baseStrength, int modifiedStrength, Direction direction,
-			boolean force, boolean networkToMario
-	) {
-		BlockState blockState = world.getBlockState(pos);
-		if(!force && evaluateBumpLegality(blockState, world, pos, Math.max(baseStrength, modifiedStrength), direction)
-				== BumpingHandler.BumpLegality.IGNORE) return;
-
-		bumpResponseCommon(data, data, world, blockState, pos, baseStrength, modifiedStrength, direction);
-
-		BumpS2CPayload packet = new BumpS2CPayload(data.getMario().getId(), pos, direction, baseStrength);
-		MarioPackets.sendPacketToTrackersExclusive(data.getMario(), packet);
-		if(networkToMario) ServerPlayNetworking.send(data.getMario(), packet);
-	}
-
-	public static @NotNull BumpingHandler.BumpLegality evaluateBumpLegality(
-			BlockState state, BlockView world, BlockPos pos,
+	public static Set<BlockPos> bumpBlocksClient(
+			MarioClientSideData marioClientData, @Nullable MarioMainClientData marioMainClientData,
+			ClientWorld world, Iterable<BlockPos> positions,
 			int strength, Direction direction
 	) {
-		for(BumpingHandler handler : HANDLERS) {
-			BumpingHandler.BumpLegality result = handler.evaluateBumpLegality(
-					state, world, pos,
-					strength, direction
+		boolean playBumpSound = false;
+		int modifier = marioClientData.getPowerUp().BUMP_STRENGTH_MODIFIER + marioClientData.getCharacter().BUMP_STRENGTH_MODIFIER;
+
+		Set<BlockPos> blocksBumped = new HashSet<>();
+		Set<BlockSoundGroup> soundGroups = new HashSet<>();
+
+		for(BlockPos pos : positions) {
+			BlockState state = world.getBlockState(pos);
+
+			BlockBumpResult result = BlockBumpHandler.processBumpResult(
+					marioClientData, marioClientData, marioMainClientData,
+					world, pos, state,
+					strength, modifier, direction
 			);
-			if(result != null) return result;
-		}
-		return BASELINE_HANDLER.evaluateBumpLegality(state, world, pos, strength, direction);
-	}
 
-	public static void bumpResponseCommon(
-			MarioData data, @Nullable MarioTravelData travelData, World world,
-			BlockState state, BlockPos pos,
-			int baseStrength, int modifiedStrength, Direction direction
-	) {
-		response: {
-			for(BumpingHandler handler : HANDLERS) {
-				if(handler.bumpResponseCommon(data, travelData, world, state, pos, baseStrength, modifiedStrength, direction))
-					break response;
+			if(result == BlockBumpResult.DISPLACE) {
+				blocksBumped.add(pos);
+				playBumpSound = true;
+				soundGroups.add(state.getSoundGroup());
+				if(marioMainClientData == null) visuallyBumpBlock(world, pos, direction);
+				else BLOCKS_TO_DISPLACE.add(new BlockBumpingPlan(world, pos, state, direction));
 			}
-			BASELINE_HANDLER.bumpResponseCommon(data, travelData, world, state, pos, baseStrength, modifiedStrength, direction);
+			else if(result == BlockBumpResult.BREAK) {
+				blocksBumped.add(pos);
+				playBumpSound = true;
+			}
+			else if (result == BlockBumpResult.CANCEL_NETWORKED) blocksBumped.add(pos);
 		}
-		if(!state.isIn(NEVER_REPEAT_BUMP) && (state.isIn(ALWAYS_REPEAT_BUMP) || !state.equals(world.getBlockState(pos)))) {
-			if(data.getMario() instanceof ServerPlayerEntity marioServer)
-				ServerPlayNetworking.send(marioServer, new AllowRepeatBumpS2CPayload());
-			else if(data.getMario().isMainPlayer())
-				((MarioMainClientData) data).getTimers().canRepeatPound = true; // is this even possible??
+
+		double marioHeadY = marioClientData.getMario().getY() + marioClientData.getMario().getHeight();
+		if(playBumpSound) marioClientData.playSoundEvent(
+				MarioSFX.BUMP, SoundCategory.BLOCKS,
+				marioClientData.getMario().getX(), marioHeadY, marioClientData.getMario().getZ(),
+				1.0F, 0.2F, Random.create().nextLong()
+		);
+		for(BlockSoundGroup group : soundGroups) {
+			marioClientData.playSoundEvent(
+					group.getPlaceSound(), SoundCategory.BLOCKS,
+					marioClientData.getMario().getX(), marioHeadY, marioClientData.getMario().getZ(),
+					group.pitch * 0.8F /* why... */, group.volume, Random.create().nextLong()
+			);
 		}
+
+		return blocksBumped;
 	}
 
-	public static void bumpResponseClients(
-			MarioClientSideData data, ClientWorld world,
-			BlockState state, BlockPos pos,
-			int baseStrength, int modifiedStrength, Direction direction
+	public static void bumpBlocksServer(
+			MarioServerData marioServerData,
+			ServerWorld world, Set<BlockPos> positions,
+			int strength, Direction direction, boolean networkToBumper
 	) {
-		for(BumpingHandler handler : HANDLERS) {
-			if(handler.bumpResponseClients(data, world, state, pos, baseStrength, modifiedStrength, direction)) return;
+		boolean canRepeatBump = false;
+		int modifier = marioServerData.getPowerUp().BUMP_STRENGTH_MODIFIER + marioServerData.getCharacter().BUMP_STRENGTH_MODIFIER;
+		Set<BlockPos> bumpedPositions = new HashSet<>();
+
+		for(BlockPos pos : positions) {
+			BlockState state = world.getBlockState(pos);
+
+			BlockBumpResult result = BlockBumpHandler.processBumpResult(
+					marioServerData, null, marioServerData,
+					world, pos, state,
+					strength, modifier, direction
+			);
+
+			if(
+					result == BlockBumpResult.DISPLACE
+					&& (state.isIn(ALWAYS_REPEAT_BUMP) || !state.equals(world.getBlockState(pos)))
+					&& !state.isIn(NEVER_REPEAT_BUMP)
+			) canRepeatBump = true;
+			if(result != BlockBumpResult.CANCEL) bumpedPositions.add(pos);
 		}
-		BASELINE_HANDLER.bumpResponseClients(data, world, state, pos, baseStrength, modifiedStrength, direction);
+
+		if(canRepeatBump) ServerPlayNetworking.send(marioServerData.getMario(), new AllowRepeatBumpS2CPayload());
+
+		if(!bumpedPositions.isEmpty()) {
+			BumpS2CPayload payload = new BumpS2CPayload(marioServerData.getMario().getId(), bumpedPositions, direction, strength);
+			MarioPackets.sendPacketToTrackersExclusive(marioServerData.getMario(), payload);
+			if(networkToBumper) ServerPlayNetworking.send(marioServerData.getMario(), payload);
+		}
 	}
 
-	private record BumpC2SPayload(BlockPos pos, Direction direction, int strength) implements CustomPayload {
+	private record BumpC2SPayload(Set<BlockPos> positions, Direction direction, int strength) implements CustomPayload {
 		public static final CustomPayload.Id<BumpC2SPayload> ID = new CustomPayload.Id<>(Identifier.of(MarioQuaMario.MOD_ID, "bump_c2s"));
 		public static final PacketCodec<RegistryByteBuf, BumpC2SPayload> CODEC = PacketCodec.tuple(
-				BlockPos.PACKET_CODEC, BumpC2SPayload::pos,
+				BlockPos.PACKET_CODEC.collect(PacketCodecs.toCollection(HashSet::new)), BumpC2SPayload::positions,
 				Direction.PACKET_CODEC, BumpC2SPayload::direction,
 				PacketCodecs.INTEGER, BumpC2SPayload::strength,
 				BumpC2SPayload::new
@@ -283,13 +253,7 @@ public abstract class BumpManager {
 		public static void registerReceiver() {
 			ServerPlayNetworking.registerGlobalReceiver(ID, (payload, context) -> {
 				MarioServerData data = (MarioServerData) MarioDataManager.getMarioData(context.player());
-				bumpBlockServer(
-						data, context.player().getServerWorld(), payload.pos,
-						payload.strength,
-						payload.strength + data.getCharacter().BUMP_STRENGTH_MODIFIER + data.getPowerUp().BUMP_STRENGTH_MODIFIER,
-						payload.direction,
-						false, false
-				);
+				bumpBlocksServer(data, context.player().getServerWorld(), payload.positions, payload.strength, payload.direction, false);
 			});
 		}
 
@@ -301,11 +265,11 @@ public abstract class BumpManager {
 		}
 	}
 
-	private record BumpS2CPayload(int player, BlockPos pos, Direction direction, int strength) implements CustomPayload {
+	private record BumpS2CPayload(int player, Set<BlockPos> positions, Direction direction, int strength) implements CustomPayload {
 		public static final CustomPayload.Id<BumpS2CPayload> ID = new CustomPayload.Id<>(Identifier.of(MarioQuaMario.MOD_ID, "bump_s2c"));
 		public static final PacketCodec<RegistryByteBuf, BumpS2CPayload> CODEC = PacketCodec.tuple(
 				PacketCodecs.INTEGER, BumpS2CPayload::player,
-				BlockPos.PACKET_CODEC, BumpS2CPayload::pos,
+				BlockPos.PACKET_CODEC.collect(PacketCodecs.toCollection(HashSet::new)), BumpS2CPayload::positions,
 				Direction.PACKET_CODEC, BumpS2CPayload::direction,
 				PacketCodecs.INTEGER, BumpS2CPayload::strength,
 				BumpS2CPayload::new
@@ -313,13 +277,10 @@ public abstract class BumpManager {
 		public static void registerReceiver() {
 			ClientPlayNetworking.registerGlobalReceiver(ID, (payload, context) -> {
 				MarioClientSideData data = (MarioClientSideData) MarioDataManager.getMarioData(context.player());
-				bumpBlockClient(
-						data, context.player().clientWorld, payload.pos,
-						payload.strength,
-						payload.strength + data.getCharacter().BUMP_STRENGTH_MODIFIER + data.getPowerUp().BUMP_STRENGTH_MODIFIER,
-						payload.direction,
-						true,
-						null
+				bumpBlocksClient(
+						data, null,
+						context.player().clientWorld, payload.positions,
+						payload.strength, payload.direction
 				);
 			});
 		}
@@ -338,7 +299,7 @@ public abstract class BumpManager {
 		public static void registerReceiver() {
 			ClientPlayNetworking.registerGlobalReceiver(ID, (payload, context) -> {
 				MarioMainClientData data = MarioMainClientData.getInstance();
-				if(data != null) data.getTimers().canRepeatPound = true;
+				if(data != null) data.canRepeatPound = true;
 			});
 		}
 

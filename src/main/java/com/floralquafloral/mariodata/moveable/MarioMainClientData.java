@@ -3,8 +3,6 @@ package com.floralquafloral.mariodata.moveable;
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.bumping.BumpManager;
 import com.floralquafloral.mariodata.MarioClientSideData;
-import com.floralquafloral.mariodata.MarioDataManager;
-import com.floralquafloral.mixin.CameraMixin;
 import com.floralquafloral.registries.states.action.ActionDefinition;
 import com.floralquafloral.registries.states.action.ParsedAction;
 import com.floralquafloral.registries.states.action.TransitionPhase;
@@ -112,14 +110,14 @@ public class MarioMainClientData extends MarioMoveableData implements MarioClien
 		if(bumpingRule != null) {
 			if (marioClient.verticalCollision) {
 				if (marioClient.groundCollision) {
-					if (bumpingRule.FLOORS > 0) BumpManager.bumpBlocks(
+					if (bumpingRule.FLOORS > 0) BumpManager.attemptBumpBlocks(
 							this,
 							marioClient.clientWorld,
 							getBumpPositions(0, -0.15, 0),
 							Direction.DOWN,
 							bumpingRule.FLOORS
 					);
-				} else if (bumpingRule.CEILINGS > 0) BumpManager.bumpBlocks(
+				} else if (bumpingRule.CEILINGS > 0) BumpManager.attemptBumpBlocks(
 						this,
 						marioClient.clientWorld,
 						getBumpPositions(0, 0.15, 0),
@@ -230,4 +228,5 @@ public class MarioMainClientData extends MarioMoveableData implements MarioClien
 		}
 	}
 
+	public boolean canRepeatPound = true;
 }

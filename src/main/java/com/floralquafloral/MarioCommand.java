@@ -153,7 +153,7 @@ public class MarioCommand {
 		BlockPos position = BlockPosArgumentType.getBlockPos(context, "position");
 
 		MarioServerData data = (MarioServerData) MarioDataManager.getMarioData(bumper);
-		BumpManager.bumpBlockServer(data, bumper.getServerWorld(), position, strength, strength, direction, true, true);
+//		BumpManager.bumpBlockServer(data, bumper.getServerWorld(), position, strength, strength, direction, true, true);
 //		BumpManager.bumpResponseCommon(data, data, bumper.getServerWorld(), bumper.getServerWorld().getBlockState(position), position, strength, strength, direction);
 
 		return sendFeedback(context, "Made " + bumper.getName().getString() + " bump block " + direction + " with a strength " + strength);

@@ -15,6 +15,10 @@ public class MarioServerData extends MarioMoveableData {
 	public MarioServerData(ServerPlayerEntity mario) {
 		super(mario);
 		this.marioServer = mario;
+//		this.setActionTransitionless(this.getAction());
+//		this.setEnabled(this.isEnabled());
+//		this.setPowerUp(this.getPowerUp());
+//		this.setCharacter(this.getCharacter());
 	}
 
 	@Override public ServerPlayerEntity getMario() {

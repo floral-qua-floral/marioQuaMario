@@ -2,6 +2,7 @@ package com.floralquafloral.registries.states.action.baseactions.grounded;
 
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioClientSideData;
+import com.floralquafloral.mariodata.moveable.MarioMainClientData;
 import com.floralquafloral.mariodata.moveable.MarioServerData;
 import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import com.floralquafloral.registries.states.action.GroundedActionDefinition;
@@ -52,7 +53,7 @@ public class GroundPoundLanding extends GroundedActionDefinition {
 	public List<ActionTransitionDefinition> getPreTickTransitions() {
 		return List.of(
 				new ActionTransitionDefinition("qua_mario:ground_pound",
-						data -> data.getTimers().actionTimer > 3 && data.getInputs().DUCK.isHeld() && data.getTimers().canRepeatPound
+						data -> data.getTimers().actionTimer > 3 && data.getInputs().DUCK.isHeld() && ((MarioMainClientData) data).canRepeatPound
 				),
 				new ActionTransitionDefinition("qua_mario:basic",
 						data -> (data.getTimers().actionTimer > 4 && !data.getInputs().DUCK.isHeld())

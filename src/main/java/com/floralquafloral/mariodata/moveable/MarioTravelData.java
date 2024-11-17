@@ -56,6 +56,5 @@ public interface MarioTravelData extends MarioData {
 		public int doubleJumpLandingTime = 0;
 
 		public boolean jumpCapped = false;
-		public boolean canRepeatPound = true;
 	}
 }

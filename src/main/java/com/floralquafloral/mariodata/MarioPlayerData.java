@@ -11,6 +11,9 @@ import com.floralquafloral.util.MarioSFX;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.*;
+import net.minecraft.entity.attribute.EntityAttributeInstance;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
@@ -18,6 +21,18 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 
 public abstract class MarioPlayerData implements MarioData {
+	private static final Identifier FALL_RESISTANCE_ID = Identifier.of(MarioQuaMario.MOD_ID, "mario_fall_resistance");
+	private static final EntityAttributeModifier FALL_RESISTANCE = new EntityAttributeModifier(
+			FALL_RESISTANCE_ID, 8, EntityAttributeModifier.Operation.ADD_VALUE
+	);
+
+	private static final Identifier ATTACK_SLOWDOWN_ID = Identifier.of(MarioQuaMario.MOD_ID, "mario_fall_resistance");
+	private static final EntityAttributeModifier ATTACK_SLOWDOWN = new EntityAttributeModifier(
+			ATTACK_SLOWDOWN_ID, -0.5, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
+	);
+
+
+
 	private boolean enabled;
 	private final boolean IS_CLIENT;
 	private ParsedAction action;
@@ -37,6 +52,11 @@ public abstract class MarioPlayerData implements MarioData {
 		this.action = RegistryManager.ACTIONS.get(Identifier.of("qua_mario:basic"));
 		this.powerUp = RegistryManager.POWER_UPS.get(Identifier.of("qua_mario:super"));
 		this.character = RegistryManager.CHARACTERS.get(Identifier.of("qua_mario:mario"));
+
+//		this.setEnabled(true);
+//		this.setActionTransitionless(this.action);
+//		this.setPowerUp(this.powerUp);
+//		this.setCharacter(this.character);
 
 		MarioQuaMario.LOGGER.info("Initialized a MarioData: {}, for {}", this, mario);
 	}
@@ -64,6 +84,13 @@ public abstract class MarioPlayerData implements MarioData {
 	}
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+		EntityAttributeInstance safeFallAttributeInstance = this.mario.getAttributeInstance(EntityAttributes.GENERIC_SAFE_FALL_DISTANCE);
+		EntityAttributeInstance attackSpeedAttributeInstance = this.mario.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_SPEED);
+		assert safeFallAttributeInstance != null && attackSpeedAttributeInstance != null;
+		safeFallAttributeInstance.removeModifier(FALL_RESISTANCE_ID);
+		safeFallAttributeInstance.addPersistentModifier(FALL_RESISTANCE);
+		attackSpeedAttributeInstance.removeModifier(ATTACK_SLOWDOWN_ID);
+		attackSpeedAttributeInstance.addPersistentModifier(ATTACK_SLOWDOWN);
 	}
 	@Override public ParsedAction getAction() {
 		return action;
