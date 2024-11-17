@@ -101,6 +101,7 @@ public class ParsedStomp {
 
 		if(target.damage(stompDamageSource, Math.max(1.0F, damage - 0.6F * stompDamageSource.piercing))) {
 			if(affectMario) {
+				mario.fallDistance = 0;
 				this.DEFINITION.executeTravellers(data, target, harmless);
 				if(this.POST_STOMP_ACTION != null)
 					data.setActionTransitionless(Objects.requireNonNull(RegistryManager.ACTIONS.get(this.POST_STOMP_ACTION)));
@@ -111,6 +112,7 @@ public class ParsedStomp {
 		return false;
 	}
 	public void executeClient(MarioClientSideData data, boolean isSelf, Entity target, boolean harmless, long seed) {
+		data.getMario().fallDistance = 0;
 		if(this.SOUND_EVENT != null) {
 			data.playSoundEvent(
 					this.SOUND_EVENT,

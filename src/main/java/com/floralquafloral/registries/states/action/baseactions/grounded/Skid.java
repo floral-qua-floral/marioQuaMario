@@ -5,6 +5,7 @@ import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.mariodata.moveable.MarioServerData;
 import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import com.floralquafloral.registries.states.action.GroundedActionDefinition;
+import com.floralquafloral.registries.states.action.baseactions.airborne.Sideflip;
 import com.floralquafloral.stats.CharaStat;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -79,7 +80,18 @@ public class Skid extends GroundedActionDefinition {
 	@Override
 	public List<ActionTransitionDefinition> getPostTickTransitions() {
 		return List.of(
-				// Sideflip!!!
+				new ActionTransitionDefinition("qua_mario:sideflip",
+						data -> data.getForwardVel() < Sideflip.SIDEFLIP_THRESHOLD.get(data) && data.getInputs().JUMP.isPressed(),
+						data -> {
+							GroundedTransitions.performJump(data, Sideflip.SIDEFLIP_VEL, null);
+							data.setForwardStrafeVel(Sideflip.SIDEFLIP_BACKWARDS_SPEED.get(data), 0);
+							data.getMario().setYaw(data.getMario().getYaw() + 180);
+						},
+						(data, isSelf, seed) -> {
+							data.playJumpSound(seed);
+							data.voice(MarioClientSideData.VoiceLine.SIDEFLIP, seed);
+						}
+				),
 				GroundedTransitions.JUMP
 		);
 	}

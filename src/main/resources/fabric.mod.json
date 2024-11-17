@@ -39,6 +39,7 @@
 			"com.floralquafloral.registries.states.action.baseactions.airborne.LongJump",
 			"com.floralquafloral.registries.states.action.baseactions.airborne.Stomp",
 			"com.floralquafloral.registries.states.action.baseactions.airborne.Backflip",
+			"com.floralquafloral.registries.states.action.baseactions.airborne.Sideflip",
 			"com.floralquafloral.registries.states.action.baseactions.airborne.DoubleJump",
 			"com.floralquafloral.registries.states.action.baseactions.airborne.TripleJump"
 		],

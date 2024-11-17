@@ -19,6 +19,8 @@ import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
@@ -79,7 +81,19 @@ public class MarioQuaMario implements ModInitializer {
 
 		MarioCommand.registerMarioCommand();
 
-		ServerLivingEntityEvents.ALLOW_DEATH.register((livingEntity, damageSource, damageAmount) -> {
+		// Mario can't be damaged by a mob that he's high enough to stomp on
+		ServerLivingEntityEvents.ALLOW_DAMAGE.register((livingEntity, damageSource, amount) -> {
+			if(livingEntity instanceof PlayerEntity player && damageSource.getSource() instanceof LivingEntity sourceEntity && sourceEntity.equals(damageSource.getAttacker())) {
+				MarioData data = MarioDataManager.getMarioData(player);
+				if(data.isEnabled() && livingEntity.getY() >= sourceEntity.getY() + sourceEntity.getHeight() && data.getAction().STOMP != null) {
+					LOGGER.info("Prevented Mario from taking damage against {} due to stomp eligibility.", sourceEntity);
+					return false;
+				}
+			}
+			return true;
+		});
+
+		ServerLivingEntityEvents.ALLOW_DEATH.register((livingEntity, damageSource, amount) -> {
 			if(livingEntity instanceof ServerPlayerEntity player) {
 				MarioData data = MarioDataManager.getMarioData(player);
 				if(data.isEnabled()) {

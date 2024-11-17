@@ -78,7 +78,7 @@ public interface MarioClientSideData extends MarioData {
 		PositionedSoundInstance newSoundInstance = this.playSoundEvent(
 				line.SOUND_EVENTS.get(this.getCharacter()), SoundCategory.VOICE,
 				mario.getX(), mario.getY(), mario.getZ(),
-				1.0F, this.getPowerUp().VOICE_PITCH,
+				this.getPowerUp().VOICE_PITCH, 1.0F,
 				seed
 		);
 		VoiceLine.MARIO_VOICE_LINES.put(this, newSoundInstance);
