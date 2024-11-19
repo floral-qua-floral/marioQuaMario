@@ -1,6 +1,6 @@
 package com.floralquafloral.registries.stomp;
 
-import com.floralquafloral.mariodata.MarioClientSideData;
+import com.floralquafloral.mariodata.MarioClientSideDataImplementation;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import net.minecraft.entity.Entity;
@@ -28,7 +28,7 @@ public interface StompDefinition {
 	float calculateDamage(MarioData data, ServerPlayerEntity mario, ItemStack equipment, float equipmentArmorValue, Entity target);
 
 	void executeTravellers(MarioTravelData data, Entity target, boolean harmless);
-	void executeClients(MarioClientSideData data, boolean isSelf, Entity target, boolean harmless, long seed);
+	void executeClients(MarioClientSideDataImplementation data, boolean isSelf, Entity target, boolean harmless, long seed);
 
 	enum PainfulStompResponse {
 		INJURY,

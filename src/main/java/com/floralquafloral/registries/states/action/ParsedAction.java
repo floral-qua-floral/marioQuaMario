@@ -1,7 +1,7 @@
 package com.floralquafloral.registries.states.action;
 
 import com.floralquafloral.MarioQuaMario;
-import com.floralquafloral.mariodata.MarioClientSideData;
+import com.floralquafloral.mariodata.MarioClientSideDataImplementation;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioDataPackets;
 import com.floralquafloral.mariodata.MarioPlayerData;
@@ -64,7 +64,7 @@ public class ParsedAction extends ParsedMarioState {
 				if(transition.EXECUTOR_TRAVELLERS != null) transition.EXECUTOR_TRAVELLERS.execute(data);
 				if(transition.EXECUTOR_CLIENTS != null) transition.EXECUTOR_CLIENTS.execute(data, true, seed);
 				MarioDataPackets.broadcastSetMarioAction(transition.TARGET_ACTION, seed);
-				data.setAction(transition.TARGET_ACTION, seed);
+				data.setActionTransitionless(transition.TARGET_ACTION);
 				return true;
 			}
 		}
@@ -169,7 +169,7 @@ public class ParsedAction extends ParsedMarioState {
 			if(this.EXECUTOR_TRAVELLERS != null && data instanceof MarioTravelData travelData)
 				this.EXECUTOR_TRAVELLERS.execute(travelData);
 
-			if(this.EXECUTOR_CLIENTS != null && data instanceof MarioClientSideData clientData)
+			if(this.EXECUTOR_CLIENTS != null && data instanceof MarioClientSideDataImplementation clientData)
 				this.EXECUTOR_CLIENTS.execute(clientData, data.getMario().isMainPlayer(), seed);
 		}
 	}

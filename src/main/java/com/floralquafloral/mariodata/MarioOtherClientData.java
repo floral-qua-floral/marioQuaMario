@@ -2,7 +2,7 @@ package com.floralquafloral.mariodata;
 
 import net.minecraft.entity.player.PlayerEntity;
 
-public class MarioOtherClientData extends MarioPlayerData implements MarioClientSideData {
+public class MarioOtherClientData extends MarioPlayerData implements MarioClientSideDataImplementation {
 	public MarioOtherClientData(PlayerEntity mario) {
 		super(mario);
 	}

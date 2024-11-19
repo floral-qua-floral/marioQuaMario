@@ -1,7 +1,7 @@
 package com.floralquafloral.registries.stomp.basestomptypes;
 
 import com.floralquafloral.MarioQuaMario;
-import com.floralquafloral.mariodata.MarioClientSideData;
+import com.floralquafloral.mariodata.MarioClientSideDataImplementation;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import com.floralquafloral.registries.stomp.StompDefinition;
@@ -10,12 +10,10 @@ import com.floralquafloral.stats.CharaStat;
 import com.floralquafloral.stats.StatCategory;
 import com.floralquafloral.util.MarioSFX;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.MovementType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,7 +63,7 @@ public class GroundPoundStomp implements StompDefinition {
 		double deltaY = data.getMario().getY() - (target.getY() - target.getHeight());
 	}
 
-	@Override public void executeClients(MarioClientSideData data, boolean isSelf, Entity target, boolean harmless, long seed) {
+	@Override public void executeClients(MarioClientSideDataImplementation data, boolean isSelf, Entity target, boolean harmless, long seed) {
 
 	}
 }

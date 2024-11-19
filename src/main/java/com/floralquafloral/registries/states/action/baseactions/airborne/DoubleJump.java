@@ -2,7 +2,6 @@ package com.floralquafloral.registries.states.action.baseactions.airborne;
 
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioClientSideData;
-import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import com.floralquafloral.registries.states.action.GroundedActionDefinition;
 import com.floralquafloral.stats.CharaStat;
 import com.floralquafloral.stats.StatCategory;
@@ -11,8 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-
-import static com.floralquafloral.util.MixedEasing.*;
 
 public class DoubleJump extends Jump {
 	@Override public @NotNull Identifier getID() {

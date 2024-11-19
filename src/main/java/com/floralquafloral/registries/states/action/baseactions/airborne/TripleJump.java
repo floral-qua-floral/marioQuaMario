@@ -12,8 +12,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.floralquafloral.util.MixedEasing.*;
-
 public class TripleJump extends Jump {
 	@Override public @NotNull Identifier getID() {
 		return Identifier.of(MarioQuaMario.MOD_ID, "triple_jump");

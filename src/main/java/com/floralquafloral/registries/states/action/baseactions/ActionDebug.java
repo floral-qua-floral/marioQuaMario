@@ -1,8 +1,9 @@
 package com.floralquafloral.registries.states.action.baseactions;
 
 import com.floralquafloral.MarioQuaMario;
+import com.floralquafloral.mariodata.MarioAuthoritativeData;
 import com.floralquafloral.mariodata.MarioClientSideData;
-import com.floralquafloral.mariodata.moveable.MarioServerData;
+import com.floralquafloral.mariodata.MarioClientSideDataImplementation;
 import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import com.floralquafloral.registries.states.action.ActionDefinition;
 import net.minecraft.util.Identifier;
@@ -33,10 +34,10 @@ public class ActionDebug implements ActionDefinition {
 	}
 
 	@Override
-	public void clientTick(MarioClientSideData data, boolean isSelf) {}
+	public void clientTick(MarioClientSideDataImplementation data, boolean isSelf) {}
 
 	@Override
-	public void serverTick(MarioServerData data) {
+	public void serverTick(MarioAuthoritativeData data) {
 
 	}
 

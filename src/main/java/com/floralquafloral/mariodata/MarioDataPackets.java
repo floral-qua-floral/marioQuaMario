@@ -67,21 +67,25 @@ public class MarioDataPackets {
 	}
 
 	public static String setMarioEnabled(ServerPlayerEntity player, boolean enabled) {
-		getMarioData(player).setEnabled(enabled);
+		getMarioData(player).setEnabledInternal(enabled);
 		MarioPackets.sendPacketToTrackers(player, new MarioDataPackets.SetEnabledS2CPayload(player, enabled));
 
 		return((enabled ? "Enabled" : "Disabled") + " Mario mode for " + player.getName().getString());
 	}
 
-	public static void setMarioAction(ServerPlayerEntity mario, ParsedAction action, long seed) {
+	public static boolean setMarioAction(ServerPlayerEntity mario, ParsedAction action, long seed, boolean networkToMario) {
 		MarioPlayerData data = getMarioData(mario);
 		boolean foundTransition = data.getAction().transitionTo(data, action, seed);
 		if(foundTransition || !mario.getWorld().getGameRules().getBoolean(MarioQuaMario.REJECT_INVALID_ACTION_TRANSITIONS)) {
 			data.setActionTransitionless(action);
-			MarioPackets.sendPacketToTrackersExclusive(mario, new SetActionS2CPayload(mario, action, false, seed));
+			SetActionS2CPayload payload = new SetActionS2CPayload(mario, action, false, seed);
+			MarioPackets.sendPacketToTrackersExclusive(mario, payload);
+			if(networkToMario) ServerPlayNetworking.send(mario, payload);
 		}
 		else // Reject transition and forcefully set Mario back to the action we last had him on
 			forceSetMarioAction(mario, data.getAction());
+
+		return foundTransition;
 	}
 	public static void broadcastSetMarioAction(@NotNull ParsedAction action, long seed) {
 		ClientPlayNetworking.send(new SetActionC2SPayload(action, seed));
@@ -119,7 +123,7 @@ public class MarioDataPackets {
 		}
 		public static void registerReceiver() {
 			ClientPlayNetworking.registerGlobalReceiver(ID, (payload, context) ->
-					getMarioData(context, payload.player).setEnabled(payload.isMario));
+					getMarioData(context, payload.player).setEnabledInternal(payload.isMario));
 		}
 
 		@Override public Id<? extends CustomPayload> getId() {
@@ -220,7 +224,7 @@ public class MarioDataPackets {
 		}
 		public static void registerReceiver() {
 			ServerPlayNetworking.registerGlobalReceiver(ID, (payload, context) ->
-					setMarioAction(context.player(), RegistryManager.ACTIONS.get(payload.newAction), payload.seed));
+					setMarioAction(context.player(), RegistryManager.ACTIONS.get(payload.newAction), payload.seed, false));
 		}
 
 		@Override public Id<? extends CustomPayload> getId() {

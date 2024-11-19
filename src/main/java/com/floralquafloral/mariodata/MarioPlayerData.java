@@ -6,7 +6,6 @@ import com.floralquafloral.registries.states.action.ParsedAction;
 import com.floralquafloral.registries.states.character.ParsedCharacter;
 import com.floralquafloral.registries.states.powerup.ParsedPowerUp;
 import com.floralquafloral.stats.CharaStat;
-import com.floralquafloral.util.CPMIntegration;
 import com.floralquafloral.util.MarioSFX;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
@@ -18,7 +17,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3d;
 
 public abstract class MarioPlayerData implements MarioData {
 	private static final Identifier FALL_RESISTANCE_ID = Identifier.of(MarioQuaMario.MOD_ID, "mario_fall_resistance");
@@ -48,7 +46,7 @@ public abstract class MarioPlayerData implements MarioData {
 	public MarioPlayerData(PlayerEntity mario) {
 		this.mario = mario;
 		this.IS_CLIENT = mario.getWorld().isClient;
-		this.enabled = true;
+		this.enabled = false;
 		this.action = RegistryManager.ACTIONS.get(Identifier.of("qua_mario:basic"));
 		this.powerUp = RegistryManager.POWER_UPS.get(Identifier.of("qua_mario:super"));
 		this.character = RegistryManager.CHARACTERS.get(Identifier.of("qua_mario:mario"));
@@ -82,7 +80,7 @@ public abstract class MarioPlayerData implements MarioData {
 	@Override public boolean isEnabled() {
 		return enabled;
 	}
-	public void setEnabled(boolean enabled) {
+	public void setEnabledInternal(boolean enabled) {
 		this.enabled = enabled;
 		EntityAttributeInstance safeFallAttributeInstance = this.mario.getAttributeInstance(EntityAttributes.GENERIC_SAFE_FALL_DISTANCE);
 		EntityAttributeInstance attackSpeedAttributeInstance = this.mario.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_SPEED);

@@ -2,7 +2,7 @@ package com.floralquafloral.mariodata.moveable;
 
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.bumping.BumpManager;
-import com.floralquafloral.mariodata.MarioClientSideData;
+import com.floralquafloral.mariodata.MarioClientSideDataImplementation;
 import com.floralquafloral.registries.states.action.ActionDefinition;
 import com.floralquafloral.registries.states.action.ParsedAction;
 import com.floralquafloral.registries.states.action.TransitionPhase;
@@ -15,7 +15,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockCollisionSpliterator;
 import org.jetbrains.annotations.NotNull;
 
-public class MarioMainClientData extends MarioMoveableData implements MarioClientSideData {
+public class MarioMainClientData extends MarioMoveableData implements MarioClientSideDataImplementation {
 	private static MarioMainClientData instance;
 	public static MarioMainClientData getInstance() {
 		return instance;
@@ -39,8 +39,10 @@ public class MarioMainClientData extends MarioMoveableData implements MarioClien
 		MarioMainClientData.instance = this;
 	}
 
-	@Override public void setAction(ParsedAction action, long seed) {
-		this.setActionTransitionless(action);
+	@Override
+	public void setAction(ParsedAction action, long seed) {
+		MarioQuaMario.LOGGER.warn("Triggered setAction with transitions for the main client. This is abnormal!");
+		super.setAction(action, seed);
 	}
 
 	public ActionDefinition.CameraAnimation cameraAnimation;

@@ -1,8 +1,8 @@
 package com.floralquafloral.registries.states.action.baseactions.grounded;
 
 import com.floralquafloral.MarioQuaMario;
-import com.floralquafloral.mariodata.MarioClientSideData;
-import com.floralquafloral.mariodata.moveable.MarioServerData;
+import com.floralquafloral.mariodata.MarioAuthoritativeData;
+import com.floralquafloral.mariodata.MarioClientSideDataImplementation;
 import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import com.floralquafloral.registries.states.action.GroundedActionDefinition;
 import com.floralquafloral.stats.CharaStat;
@@ -150,9 +150,9 @@ public class ActionBasic extends GroundedActionDefinition {
 		}
 	}
 
-	@Override public void clientTick(MarioClientSideData data, boolean isSelf) {}
+	@Override public void clientTick(MarioClientSideDataImplementation data, boolean isSelf) {}
 
-	@Override public void serverTick(MarioServerData data) {}
+	@Override public void serverTick(MarioAuthoritativeData data) {}
 
 	@Override public SneakLegalityRule getSneakLegalityRule() {
 		return SneakLegalityRule.ALLOW;

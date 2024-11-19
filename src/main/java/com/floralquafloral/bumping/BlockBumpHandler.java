@@ -1,6 +1,6 @@
 package com.floralquafloral.bumping;
 
-import com.floralquafloral.mariodata.MarioClientSideData;
+import com.floralquafloral.mariodata.MarioClientSideDataImplementation;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import net.minecraft.block.Block;
@@ -10,11 +10,9 @@ import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.crash.CrashException;
 import net.minecraft.util.crash.CrashReport;
-import net.minecraft.util.crash.CrashReportSection;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
@@ -39,7 +37,7 @@ public class BlockBumpHandler {
 	public static final Set<ForcedSignalSpot> FORCED_SIGNALS_DATA = new HashSet<>();
 
 	public static BlockBumpResult processBumpResult(
-			MarioData marioData, @Nullable MarioClientSideData marioClientData, @Nullable MarioTravelData marioTravelData,
+			MarioData marioData, @Nullable MarioClientSideDataImplementation marioClientData, @Nullable MarioTravelData marioTravelData,
 			World world, BlockPos blockPos, BlockState blockState,
 			int strength, int modifier, Direction direction
 	) {
@@ -70,7 +68,7 @@ public class BlockBumpHandler {
 	private static class InvalidBumpResultException extends RuntimeException {}
 
 	private static BlockBumpResult getBumpResult(
-			MarioData marioData, @Nullable MarioClientSideData marioClientData, @Nullable MarioTravelData marioTravelData,
+			MarioData marioData, @Nullable MarioClientSideDataImplementation marioClientData, @Nullable MarioTravelData marioTravelData,
 			World world, BlockPos blockPos, BlockState blockState,
 			int strength, int modifier, Direction direction
 	) {

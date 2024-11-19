@@ -1,24 +1,26 @@
 package com.floralquafloral.mariodata.moveable;
 
 import com.floralquafloral.MarioQuaMario;
-import com.floralquafloral.mariodata.MarioData;
-import com.floralquafloral.mariodata.MarioPlayerData;
+import com.floralquafloral.mariodata.MarioAuthoritativeData;
+import com.floralquafloral.mariodata.MarioDataPackets;
+import com.floralquafloral.registries.RegistryManager;
 import com.floralquafloral.registries.states.action.ParsedAction;
+import com.floralquafloral.registries.states.character.ParsedCharacter;
 import com.floralquafloral.util.CPMIntegration;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.random.Random;
 import org.jetbrains.annotations.NotNull;
 
-public class MarioServerData extends MarioMoveableData {
+import java.util.Objects;
+
+public class MarioServerData extends MarioMoveableData implements MarioAuthoritativeData {
 	private ServerPlayerEntity marioServer;
 	public MarioServerData(ServerPlayerEntity mario) {
 		super(mario);
 		this.marioServer = mario;
-//		this.setActionTransitionless(this.getAction());
-//		this.setEnabled(this.isEnabled());
-//		this.setPowerUp(this.getPowerUp());
-//		this.setCharacter(this.getCharacter());
 	}
 
 	@Override public ServerPlayerEntity getMario() {
@@ -32,14 +34,12 @@ public class MarioServerData extends MarioMoveableData {
 	@Override public boolean travelHook(double forwardInput, double strafeInput) {
 		getAction().travelHook(this);
 		applyModifiedVelocity();
-//		marioServer.move(MovementType.SELF, marioServer.getVelocity()); // ???????
+		marioServer.move(MovementType.SELF, marioServer.getVelocity()); // ???????
 		return !marioServer.hasVehicle();
 	}
 
 	@Override
 	public void setActionTransitionless(ParsedAction action) {
-//		MarioQuaMario.LOGGER.info("MarioServerData setAction to {}", action.ID);
-
 		if(this.getAction().ANIMATION != null)
 			CPMIntegration.commonAPI.playAnimation(PlayerEntity.class, this.marioServer, this.getAction().ANIMATION, 0);
 		if(action.ANIMATION != null)
@@ -57,6 +57,51 @@ public class MarioServerData extends MarioMoveableData {
 	private static final PhonyInputs PHONY_INPUTS = new PhonyInputs();
 	@Override public @NotNull MarioInputs getInputs() {
 		return PHONY_INPUTS;
+	}
+
+	@Override
+	public void setEnabled(boolean isEnabled) {
+		MarioDataPackets.setMarioEnabled(marioServer, isEnabled);
+	}
+
+	@Override
+	public void setCharacter(Identifier id) {
+		MarioDataPackets.setMarioCharacter(marioServer, Objects.requireNonNull(RegistryManager.CHARACTERS.get(id)));
+	}
+
+	@Override
+	public void setCharacter(String id) {
+		this.setCharacter(Identifier.of(id));
+	}
+
+	@Override
+	public void setPowerUp(Identifier id) {
+		MarioDataPackets.setMarioPowerUp(marioServer, Objects.requireNonNull(RegistryManager.POWER_UPS.get(id)));
+	}
+
+	@Override
+	public void setPowerUp(String id) {
+		this.setPowerUp(Identifier.of(id));
+	}
+
+	@Override
+	public boolean setAction(Identifier id) {
+		return MarioDataPackets.setMarioAction(marioServer, Objects.requireNonNull(RegistryManager.ACTIONS.get(id)), Random.create().nextLong(), true);
+	}
+
+	@Override
+	public boolean setAction(String id) {
+		return this.setAction(Identifier.of(id));
+	}
+
+	@Override
+	public void setActionTransitionless(Identifier id) {
+		MarioDataPackets.forceSetMarioAction(marioServer, Objects.requireNonNull(RegistryManager.ACTIONS.get(id)));
+	}
+
+	@Override
+	public void setActionTransitionless(String id) {
+		this.setActionTransitionless(Identifier.of(id));
 	}
 
 	private static class PhonyInputs extends MarioInputs {

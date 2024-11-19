@@ -1,12 +1,11 @@
 package com.floralquafloral.bumping;
 
-import com.floralquafloral.mariodata.MarioClientSideData;
+import com.floralquafloral.mariodata.MarioClientSideDataImplementation;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.block.BlockState;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
@@ -43,7 +42,7 @@ public interface BlockBumpCallback {
 	);
 
 	BlockBumpResult bump(
-			MarioData marioData, @Nullable MarioClientSideData marioClientData, @Nullable MarioTravelData marioTravelData,
+			MarioData marioData, @Nullable MarioClientSideDataImplementation marioClientData, @Nullable MarioTravelData marioTravelData,
 			World world, BlockPos blockPos, BlockState blockState,
 			int strength, int modifier, Direction direction
 	);

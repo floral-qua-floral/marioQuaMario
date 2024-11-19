@@ -3,92 +3,36 @@ package com.floralquafloral.mariodata;
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.registries.RegistryManager;
 import com.floralquafloral.registries.states.character.ParsedCharacter;
-import com.floralquafloral.util.JumpSoundPlayer;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.client.sound.SoundManager;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.random.Random;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 /**
- * This is supposedly an interface but every method is implemented because that's the closest i can get to multiple
- * inheritance. endless pains and agonies for ever & ever!
+ * An instance of MarioData on the client-side. Mostly used for playing sound effects, especially voice sounds.
+ * This isn't necessarily for the main client!
  */
-@SuppressWarnings("UnusedReturnValue")
 public interface MarioClientSideData extends MarioData {
-	SoundManager SOUND_MANAGER = MinecraftClient.getInstance().getSoundManager();
-
-	default PositionedSoundInstance playSoundEvent(
+	PositionedSoundInstance playSoundEvent(
 			SoundEvent event, SoundCategory category,
 			double x, double y, double z,
 			float pitch, float volume, long seed
-	) {
-		PositionedSoundInstance sound = new PositionedSoundInstance(
-				event, category,
-				volume, pitch,
-				Random.create(seed),
-				x, y, z
-		);
-		SOUND_MANAGER.play(sound);
-		return sound;
-	}
+	);
 
-	default PositionedSoundInstance playSoundEvent(SoundEvent event, long seed) {
-		PlayerEntity mario = this.getMario();
-		return playSoundEvent(
-				event, SoundCategory.PLAYERS,
-				mario.getX(), mario.getY(), mario.getZ(),
-				1.0F, 1.0F, seed
-		);
-	}
+	PositionedSoundInstance playSoundEvent(SoundEvent event, long seed);
+	PositionedSoundInstance playSoundEvent(SoundEvent event, float pitch, float volume, long seed);
+	PositionedSoundInstance playSoundEvent(SoundEvent event, Entity entity, SoundCategory category, long seed);
 
-	default PositionedSoundInstance playSoundEvent(SoundEvent event, float pitch, float volume, long seed) {
-		PlayerEntity mario = this.getMario();
-		return playSoundEvent(
-				event, SoundCategory.PLAYERS,
-				mario.getX(), mario.getY(), mario.getZ(),
-				pitch, volume, seed
-		);
-	}
+	void playJumpSound(long seed);
 
-	default PositionedSoundInstance playSoundEvent(SoundEvent event, Entity entity, SoundCategory category, long seed) {
-		return playSoundEvent(
-				event, category,
-				entity.getX(), entity.getY(), entity.getZ(),
-				1.0F, 1.0F, seed
-		);
-	}
-
-	default PositionedSoundInstance voice(VoiceLine line, long seed) {
-		PlayerEntity mario = this.getMario();
-
-		SOUND_MANAGER.stop(VoiceLine.MARIO_VOICE_LINES.get(this));
-
-		PositionedSoundInstance newSoundInstance = this.playSoundEvent(
-				line.SOUND_EVENTS.get(this.getCharacter()), SoundCategory.VOICE,
-				mario.getX(), mario.getY(), mario.getZ(),
-				this.getPowerUp().VOICE_PITCH, 1.0F,
-				seed
-		);
-		VoiceLine.MARIO_VOICE_LINES.put(this, newSoundInstance);
-
-		return newSoundInstance;
-	}
-
-	default void playJumpSound(long seed) {
-		JumpSoundPlayer.playJumpSfx(this, seed);
-	}
+	PositionedSoundInstance voice(VoiceLine line, long seed);
 
 	enum VoiceLine {
 		SELECT,
@@ -110,11 +54,9 @@ public interface MarioClientSideData extends MarioData {
 		FIREBALL,
 		GET_STAR;
 
-		private static final Map<MarioClientSideData, PositionedSoundInstance> MARIO_VOICE_LINES = new HashMap<>();
 		public static void staticInitialize() {
 
 		}
-
 		private final Map<ParsedCharacter, SoundEvent> SOUND_EVENTS;
 		VoiceLine() {
 			SOUND_EVENTS = new HashMap<>();
@@ -126,6 +68,9 @@ public interface MarioClientSideData extends MarioData {
 				Registry.register(Registries.SOUND_EVENT, id, event);
 				SOUND_EVENTS.put(character, event);
 			}
+		}
+		public SoundEvent getSoundEvent(ParsedCharacter character) {
+			return SOUND_EVENTS.get(character);
 		}
 	}
 }

@@ -1,22 +1,12 @@
 package com.floralquafloral.util;
 
-import com.floralquafloral.MarioPackets;
-import com.floralquafloral.MarioQuaMario;
-import com.floralquafloral.mariodata.MarioClientSideData;
+import com.floralquafloral.mariodata.MarioClientSideDataImplementation;
 import com.floralquafloral.mariodata.MarioData;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.TickableSoundInstance;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
 
 import java.util.*;
@@ -49,7 +39,7 @@ public class JumpSoundPlayer {
 
 	public static void playJumpSfx(SoundEvent event, MarioData data, long seed) {
 		PlayerEntity mario = data.getMario();
-		MarioClientSideData.SOUND_MANAGER.play(new JumpSoundInstance(event, mario, seed));
+		MarioClientSideDataImplementation.SOUND_MANAGER.play(new JumpSoundInstance(event, mario, seed));
 	}
 	public static void playJumpSfx(MarioData data, long seed) {
 		playJumpSfx(MarioSFX.JUMP, data, seed);

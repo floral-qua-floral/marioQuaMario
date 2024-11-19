@@ -1,25 +1,25 @@
 package com.floralquafloral.mixin;
 
-import com.floralquafloral.bumping.BumpManager;
+import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioDataManager;
 import com.floralquafloral.mariodata.MarioPlayerData;
-import com.floralquafloral.mariodata.moveable.MarioMainClientData;
 import com.floralquafloral.mariodata.moveable.MarioServerData;
 import com.floralquafloral.registries.RegistryManager;
 import com.floralquafloral.registries.states.action.ParsedAction;
+import com.floralquafloral.registries.states.character.ParsedCharacter;
+import com.floralquafloral.registries.states.powerup.ParsedPowerUp;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.BlockCollisionSpliterator;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -110,6 +110,55 @@ public abstract class EntityMixin {
 
 			data.attemptDismount = false;
 			data.setActionTransitionless(RegistryManager.ACTIONS.get(Identifier.of("qua_mario:mounted")));
+		}
+	}
+
+	@Unique private final String MOD_DATA_NAME = MarioQuaMario.MOD_ID + ".data";
+
+	@Inject(method = "writeNbt", at = @At("HEAD"))
+	protected void writeMarioData(NbtCompound nbt, CallbackInfoReturnable<NbtCompound> cir) {
+		if((Entity) (Object) this instanceof PlayerEntity player) {
+			NbtCompound persistentMarioData = new NbtCompound();
+			MarioPlayerData data = MarioDataManager.getMarioData(player);
+
+			persistentMarioData.putBoolean("Enabled", data.isEnabled());
+			persistentMarioData.putString("Character", data.getCharacter().ID.toString());
+			persistentMarioData.putString("PowerUp", data.getPowerUp().ID.toString());
+
+
+
+			nbt.put(MOD_DATA_NAME, persistentMarioData);
+		}
+	}
+
+	@Inject(method = "readNbt", at = @At("HEAD"))
+	protected void readMarioData(NbtCompound nbt, CallbackInfo ci) {
+		if((Entity) (Object) this instanceof ServerPlayerEntity player) {
+			MarioQuaMario.LOGGER.info("Reading player NBT!!!"
+					+ "\nContains?: " + nbt.contains(MOD_DATA_NAME, NbtElement.COMPOUND_TYPE)
+			);
+			if(nbt.contains(MOD_DATA_NAME, NbtElement.COMPOUND_TYPE)) {
+				NbtCompound persistentMarioData = nbt.getCompound(MOD_DATA_NAME);
+				MarioQuaMario.LOGGER.info("Reading player NBT 2"
+						+ "\nEnabled: " + persistentMarioData.getBoolean("Enabled")
+						+ "\nCharacter: " + persistentMarioData.getString("Character")
+						+ "\nCharacterID: " + Identifier.of(persistentMarioData.getString("Character"))
+						+ "\nParsedCharacter: " + RegistryManager.CHARACTERS.get(Identifier.of(persistentMarioData.getString("Character")))
+				);
+
+				MarioPlayerData data = MarioDataManager.getMarioData(player);
+				data.setEnabledInternal(persistentMarioData.getBoolean("enabled"));
+				ParsedCharacter character = RegistryManager.CHARACTERS.get(Identifier.of(persistentMarioData.getString("Character")));
+				if(character != null) data.setCharacter(character);
+				else data.setCharacter(data.getCharacter());
+
+				ParsedPowerUp powerUp = RegistryManager.POWER_UPS.get(Identifier.of(persistentMarioData.getString("PowerUp")));
+				if(powerUp != null) data.setPowerUp(powerUp);
+				else data.setPowerUp(data.getPowerUp());
+			}
+			else {
+
+			}
 		}
 	}
 }
