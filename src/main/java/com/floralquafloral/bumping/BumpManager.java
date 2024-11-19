@@ -2,7 +2,7 @@ package com.floralquafloral.bumping;
 
 import com.floralquafloral.MarioPackets;
 import com.floralquafloral.MarioQuaMario;
-import com.floralquafloral.mariodata.MarioClientSideDataImplementation;
+import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.mariodata.MarioDataManager;
 import com.floralquafloral.mariodata.moveable.MarioMainClientData;
 import com.floralquafloral.mariodata.moveable.MarioServerData;
@@ -156,7 +156,7 @@ public abstract class BumpManager {
 	}
 
 	public static Set<BlockPos> bumpBlocksClient(
-			MarioClientSideDataImplementation marioClientData, @Nullable MarioMainClientData marioMainClientData,
+			MarioClientSideData marioClientData, @Nullable MarioMainClientData marioMainClientData,
 			ClientWorld world, Iterable<BlockPos> positions,
 			int strength, Direction direction
 	) {
@@ -275,7 +275,7 @@ public abstract class BumpManager {
 		);
 		public static void registerReceiver() {
 			ClientPlayNetworking.registerGlobalReceiver(ID, (payload, context) -> {
-				MarioClientSideDataImplementation data = (MarioClientSideDataImplementation) MarioDataManager.getMarioData(context.player());
+				MarioClientSideData data = (MarioClientSideData) MarioDataManager.getMarioData(context.player());
 				bumpBlocksClient(
 						data, null,
 						context.player().clientWorld, payload.positions,

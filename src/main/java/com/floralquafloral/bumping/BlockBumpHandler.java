@@ -1,6 +1,6 @@
 package com.floralquafloral.bumping;
 
-import com.floralquafloral.mariodata.MarioClientSideDataImplementation;
+import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import net.minecraft.block.Block;
@@ -37,7 +37,7 @@ public class BlockBumpHandler {
 	public static final Set<ForcedSignalSpot> FORCED_SIGNALS_DATA = new HashSet<>();
 
 	public static BlockBumpResult processBumpResult(
-			MarioData marioData, @Nullable MarioClientSideDataImplementation marioClientData, @Nullable MarioTravelData marioTravelData,
+			MarioData marioData, @Nullable MarioClientSideData marioClientData, @Nullable MarioTravelData marioTravelData,
 			World world, BlockPos blockPos, BlockState blockState,
 			int strength, int modifier, Direction direction
 	) {
@@ -68,7 +68,7 @@ public class BlockBumpHandler {
 	private static class InvalidBumpResultException extends RuntimeException {}
 
 	private static BlockBumpResult getBumpResult(
-			MarioData marioData, @Nullable MarioClientSideDataImplementation marioClientData, @Nullable MarioTravelData marioTravelData,
+			MarioData marioData, @Nullable MarioClientSideData marioClientData, @Nullable MarioTravelData marioTravelData,
 			World world, BlockPos blockPos, BlockState blockState,
 			int strength, int modifier, Direction direction
 	) {

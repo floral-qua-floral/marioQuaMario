@@ -1,6 +1,6 @@
 package com.floralquafloral.registries.states.action;
 
-import com.floralquafloral.mariodata.MarioClientSideDataImplementation;
+import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import com.floralquafloral.registries.states.MarioStateDefinition;
 import net.minecraft.util.Identifier;
@@ -175,7 +175,7 @@ public interface ActionDefinition extends MarioStateDefinition {
 			void execute(MarioTravelData data);
 		}
 		@FunctionalInterface public interface TransitionExecutorClients {
-			void execute(MarioClientSideDataImplementation data, boolean isSelf, long seed);
+			void execute(MarioClientSideData data, boolean isSelf, long seed);
 		}
 
 		public final Identifier TARGET_IDENTIFIER;

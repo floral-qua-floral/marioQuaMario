@@ -3,7 +3,6 @@ package com.floralquafloral.registries.states.action.baseactions.grounded;
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioAuthoritativeData;
 import com.floralquafloral.mariodata.MarioClientSideData;
-import com.floralquafloral.mariodata.MarioClientSideDataImplementation;
 import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import com.floralquafloral.registries.states.action.GroundedActionDefinition;
 import com.floralquafloral.registries.states.action.baseactions.airborne.Sideflip;
@@ -54,7 +53,7 @@ public class Skid extends GroundedActionDefinition {
 		if(MathHelper.approximatelyEquals(data.getForwardVel(), 0.0)) data.getTimers().actionTimer++;
 	}
 
-	@Override public void clientTick(MarioClientSideDataImplementation data, boolean isSelf) {}
+	@Override public void clientTick(MarioClientSideData data, boolean isSelf) {}
 
 	@Override public void serverTick(MarioAuthoritativeData data) {}
 

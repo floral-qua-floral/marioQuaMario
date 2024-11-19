@@ -1,6 +1,6 @@
 package com.floralquafloral.registries.stomp;
 
-import com.floralquafloral.mariodata.MarioClientSideDataImplementation;
+import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.mariodata.moveable.MarioMoveableData;
 import com.floralquafloral.mariodata.moveable.MarioServerData;
 import com.floralquafloral.registries.RegistryManager;
@@ -108,7 +108,7 @@ public class ParsedStomp {
 		}
 		return false;
 	}
-	public void executeClient(MarioClientSideDataImplementation data, boolean isSelf, Entity target, boolean harmless, long seed) {
+	public void executeClient(MarioClientSideData data, boolean isSelf, Entity target, boolean harmless, long seed) {
 		data.getMario().fallDistance = 0;
 		if(this.SOUND_EVENT != null) {
 			data.playSoundEvent(
