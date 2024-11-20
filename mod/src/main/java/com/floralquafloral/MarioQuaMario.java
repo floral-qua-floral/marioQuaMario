@@ -71,7 +71,7 @@ public class MarioQuaMario implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("MarioQuaMario.java loaded on environment type " + FabricLoader.getInstance().getEnvironmentType());
+		LOGGER.info("Mario qua Mario initialized!");
 		MarioDataManager.registerEventListeners();
 		BumpManager.registerEventListeners();
 

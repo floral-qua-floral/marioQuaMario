@@ -3,6 +3,8 @@ package com.floralquafloral.bumping;
 import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.moveable.MarioTravelData;
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.registry.RegistryKeys;
@@ -35,6 +37,21 @@ public class BlockBumpHandler {
 
 	public static final Set<BlockPos> FORCED_SIGNALS = new HashSet<>();
 	public static final Set<ForcedSignalSpot> FORCED_SIGNALS_DATA = new HashSet<>();
+	public static final Event<BlockBumpCallback> EVENT = EventFactory.createArrayBacked(BlockBumpCallback.class,
+			listeners -> (marioData, marioClientData, marioTravelData, world, blockPos, blockState, strength, modifier, direction) -> {
+				for(BlockBumpCallback listener : listeners) {
+					BlockBumpResult result = listener.bump(
+							marioData, marioClientData, marioTravelData,
+							world, blockPos, blockState,
+							strength, modifier, direction
+					);
+					if(result != BlockBumpResult.PASS) return result;
+				}
+
+
+				return BlockBumpResult.PASS;
+			}
+	);
 
 	public static BlockBumpResult processBumpResult(
 			MarioData marioData, @Nullable MarioClientSideData marioClientData, @Nullable MarioTravelData marioTravelData,
@@ -72,7 +89,7 @@ public class BlockBumpHandler {
 			World world, BlockPos blockPos, BlockState blockState,
 			int strength, int modifier, Direction direction
 	) {
-		BlockBumpResult result = BlockBumpCallback.EVENT.invoker().bump(
+		BlockBumpResult result = EVENT.invoker().bump(
 				marioData, marioClientData, marioTravelData,
 				world, blockPos, blockState,
 				strength, modifier, direction

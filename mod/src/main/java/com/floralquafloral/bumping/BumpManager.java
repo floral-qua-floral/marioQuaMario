@@ -103,7 +103,7 @@ public abstract class BumpManager {
 			}
 		});
 
-		BlockBumpCallback.EVENT.register((
+		BlockBumpHandler.EVENT.register((
 				marioData, marioClientData, marioTravelData,
 				world, blockPos, blockState,
 				strength, modifier, direction
