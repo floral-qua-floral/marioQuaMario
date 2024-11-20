@@ -34,6 +34,7 @@ public interface MarioClientSideData extends MarioData {
 	PositionedSoundInstance playSoundEvent(SoundEvent event, Entity entity, SoundCategory category, long seed);
 
 	void playJumpSound(long seed);
+	void fadeJumpSound();
 
 	PositionedSoundInstance voice(VoiceLine line, long seed);
 	float getVoicePitch();

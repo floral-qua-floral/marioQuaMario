@@ -93,9 +93,11 @@ public interface MarioClientSideDataImplementation extends MarioClientSideData {
 		return newSoundInstance;
 	}
 
-	@Override
-	default void playJumpSound(long seed) {
+	@Override default void playJumpSound(long seed) {
 		JumpSoundPlayer.playJumpSfx(this, seed);
+	}
+	@Override default void fadeJumpSound() {
+		JumpSoundPlayer.fadeJumpSfx(this);
 	}
 
 	EnumMap<VoiceLine, Map<Identifier, SoundEvent>> VOICE_SOUND_EVENTS = new EnumMap<>(VoiceLine.class);

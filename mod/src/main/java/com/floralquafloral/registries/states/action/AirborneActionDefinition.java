@@ -11,8 +11,6 @@ import org.jetbrains.annotations.Nullable;
 import static com.floralquafloral.stats.StatCategory.*;
 
 public abstract class AirborneActionDefinition implements ActionDefinition {
-	public static boolean jumpCapped;
-
 	public abstract static class AerialTransitions {
 		public static ActionTransitionDefinition makeJumpCapTransition(ActionDefinition forAction, double capThreshold) {
 			CharaStat cap = new CharaStat(capThreshold, JUMP_CAP);
@@ -23,7 +21,7 @@ public abstract class AirborneActionDefinition implements ActionDefinition {
 						data.setYVel(Math.min(cap.get(data), data.getYVel()));
 						data.getTimers().jumpCapped = true;
 					},
-					(data, isSelf, seed) -> JumpSoundPlayer.fadeJumpSfx(data)
+					(data, isSelf, seed) -> data.fadeJumpSound()
 			);
 		}
 
@@ -93,19 +91,6 @@ public abstract class AirborneActionDefinition implements ActionDefinition {
 		if(yVel > terminalVelocity) {
 			CharaStat useGravity = (ACTION_JUMP_GRAVITY == null || data.getTimers().jumpCapped) ? ACTION_GRAVITY : ACTION_JUMP_GRAVITY;
 			yVel += useGravity.get(data);
-
-//			if(data.isClient()) {
-//				if (!jumpCapped) {
-//					if (!aboveJumpCap) {
-//						jumpCapped = true;
-//						JumpSoundPlayer.fadeJumpSfx(data);
-//					} else if (!data.getInputs().JUMP.isHeld()) {
-//						yVel = ACTION_JUMP_CAP.get(data);
-//						jumpCapped = true;
-//						JumpSoundPlayer.fadeJumpSfx(data);
-//					}
-//				}
-//			}
 
 			data.setYVel(Math.max(terminalVelocity, yVel));
 		}
