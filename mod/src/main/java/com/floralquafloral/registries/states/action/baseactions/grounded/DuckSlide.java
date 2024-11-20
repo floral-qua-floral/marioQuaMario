@@ -3,10 +3,10 @@ package com.floralquafloral.registries.states.action.baseactions.grounded;
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioAuthoritativeData;
 import com.floralquafloral.mariodata.MarioClientSideData;
-import com.floralquafloral.mariodata.moveable.MarioTravelData;
-import com.floralquafloral.registries.states.action.GroundedActionDefinition;
+import com.floralquafloral.mariodata.MarioTravelData;
+import com.floralquafloral.definitions.actions.GroundedActionDefinition;
 import com.floralquafloral.registries.states.action.baseactions.airborne.LongJump;
-import com.floralquafloral.stats.CharaStat;
+import com.floralquafloral.definitions.actions.CharaStat;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +15,7 @@ import org.joml.Vector2d;
 
 import java.util.List;
 
-import static com.floralquafloral.stats.StatCategory.*;
+import static com.floralquafloral.definitions.actions.StatCategory.*;
 
 public class DuckSlide extends GroundedActionDefinition {
 	@Override public @NotNull Identifier getID() {

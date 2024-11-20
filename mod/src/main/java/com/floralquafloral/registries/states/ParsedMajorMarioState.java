@@ -1,9 +1,9 @@
 package com.floralquafloral.registries.states;
 
-import com.floralquafloral.stats.CharaStat;
-import com.floralquafloral.stats.StatCategory;
+import com.floralquafloral.definitions.actions.CharaStat;
+import com.floralquafloral.definitions.MarioMajorStateDefinition;
+import com.floralquafloral.definitions.actions.StatCategory;
 
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;

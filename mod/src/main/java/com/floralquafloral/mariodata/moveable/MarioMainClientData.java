@@ -3,7 +3,7 @@ package com.floralquafloral.mariodata.moveable;
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.bumping.BumpManager;
 import com.floralquafloral.mariodata.MarioClientSideDataImplementation;
-import com.floralquafloral.registries.states.action.ActionDefinition;
+import com.floralquafloral.definitions.actions.ActionDefinition;
 import com.floralquafloral.registries.states.action.ParsedAction;
 import com.floralquafloral.registries.states.action.TransitionPhase;
 import com.floralquafloral.util.CPMIntegration;

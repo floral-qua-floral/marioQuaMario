@@ -1,6 +1,7 @@
 package com.floralquafloral.registries.states;
 
 import com.floralquafloral.mariodata.MarioClientSideData;
+import com.floralquafloral.definitions.MarioStateDefinition;
 import com.floralquafloral.mariodata.moveable.MarioServerData;
 import net.minecraft.util.Identifier;
 

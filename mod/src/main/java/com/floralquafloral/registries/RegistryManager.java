@@ -1,39 +1,36 @@
 package com.floralquafloral.registries;
 
 import com.floralquafloral.MarioQuaMario;
-import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.mariodata.MarioClientSideDataImplementation;
-import com.floralquafloral.registries.states.action.ActionDefinition;
-import com.floralquafloral.registries.states.action.AirborneActionDefinition;
-import com.floralquafloral.registries.states.action.GroundedActionDefinition;
+import com.floralquafloral.definitions.actions.ActionDefinition;
+import com.floralquafloral.definitions.actions.AirborneActionDefinition;
+import com.floralquafloral.definitions.actions.GroundedActionDefinition;
 import com.floralquafloral.registries.states.action.ParsedAction;
-import com.floralquafloral.registries.states.character.CharacterDefinition;
+import com.floralquafloral.definitions.CharacterDefinition;
 import com.floralquafloral.registries.states.character.ParsedCharacter;
 import com.floralquafloral.registries.states.powerup.ParsedPowerUp;
-import com.floralquafloral.registries.states.powerup.PowerUpDefinition;
+import com.floralquafloral.definitions.PowerUpDefinition;
 import com.floralquafloral.registries.stomp.ParsedStomp;
-import com.floralquafloral.registries.stomp.StompDefinition;
+import com.floralquafloral.definitions.StompDefinition;
 import com.floralquafloral.util.MarioSFX;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
-import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
 import java.util.*;
 
 public class RegistryManager {
 	public static void register() {
+		MarioSFX.staticInitialize();
+
 		registerStomps();
 		registerActions();
 		registerPowerUps();
 		registerCharacters();
-
-		MarioSFX.staticInitialize();
 
 		MarioClientSideDataImplementation.VoiceSoundEventInitializer.initialize();
 	}
@@ -68,6 +65,7 @@ public class RegistryManager {
 
 	private static void registerStomps() {
 		for(StompDefinition definition : getEntrypoints("mario-stomp-types", StompDefinition.class)) {
+			MarioQuaMario.LOGGER.info("Registering stomp: {}", definition);
 			MarioQuaMario.LOGGER.info("Registering stomp type {}...", definition.getID());
 
 			ParsedStomp stompType = new ParsedStomp(definition);

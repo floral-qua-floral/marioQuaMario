@@ -1,13 +1,8 @@
-package com.floralquafloral.stats;
+package com.floralquafloral.definitions.actions;
 
-import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioData;
-import com.floralquafloral.mariodata.MarioDataManager;
-import com.floralquafloral.registries.states.ParsedMajorMarioState;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.effect.StatusEffects;
 
-import java.util.*;
+import java.util.Set;
 
 public class CharaStat {
 	public final double BASE;

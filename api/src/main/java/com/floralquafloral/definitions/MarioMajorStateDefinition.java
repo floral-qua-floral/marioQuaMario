@@ -1,6 +1,6 @@
-package com.floralquafloral.registries.states;
+package com.floralquafloral.definitions;
 
-import com.floralquafloral.stats.StatCategory;
+import com.floralquafloral.definitions.actions.StatCategory;
 
 import java.util.Map;
 import java.util.Set;

@@ -1,4 +1,4 @@
-package com.floralquafloral.stats;
+package com.floralquafloral.definitions.actions;
 
 public enum StatCategory {
 	WALKING,

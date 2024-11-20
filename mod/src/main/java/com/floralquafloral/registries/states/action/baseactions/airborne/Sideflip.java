@@ -1,9 +1,9 @@
 package com.floralquafloral.registries.states.action.baseactions.airborne;
 
 import com.floralquafloral.MarioQuaMario;
-import com.floralquafloral.mariodata.moveable.MarioTravelData;
-import com.floralquafloral.stats.CharaStat;
-import com.floralquafloral.stats.StatCategory;
+import com.floralquafloral.mariodata.MarioTravelData;
+import com.floralquafloral.definitions.actions.CharaStat;
+import com.floralquafloral.definitions.actions.StatCategory;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

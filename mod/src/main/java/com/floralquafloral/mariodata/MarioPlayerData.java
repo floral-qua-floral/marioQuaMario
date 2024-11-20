@@ -1,13 +1,13 @@
 package com.floralquafloral.mariodata;
 
-import com.floralquafloral.MarioQuaMario;
+import com.floralquafloral.*;
 import com.floralquafloral.registries.RegistryManager;
 import com.floralquafloral.registries.states.action.ParsedAction;
 import com.floralquafloral.registries.states.character.ParsedCharacter;
 import com.floralquafloral.registries.states.powerup.ParsedPowerUp;
-import com.floralquafloral.stats.CharaStat;
-import com.floralquafloral.stats.StatCategory;
+import com.floralquafloral.definitions.actions.CharaStat;
 import com.floralquafloral.util.MarioSFX;
+import com.floralquafloral.definitions.actions.StatCategory;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.*;

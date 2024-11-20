@@ -1,17 +1,13 @@
 package com.floralquafloral.registries.states.powerup;
 
-import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.registries.states.ParsedMajorMarioState;
-import com.floralquafloral.stats.CharaStat;
-import com.floralquafloral.stats.StatCategory;
+import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.util.MarioSFX;
+import com.floralquafloral.definitions.PowerUpDefinition;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Map;
-import java.util.Set;
 
 public class ParsedPowerUp extends ParsedMajorMarioState {
 

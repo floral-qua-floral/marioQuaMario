@@ -1,8 +1,8 @@
-package com.floralquafloral.registries.stomp;
+package com.floralquafloral.definitions;
 
 import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.mariodata.MarioData;
-import com.floralquafloral.mariodata.moveable.MarioTravelData;
+import com.floralquafloral.mariodata.MarioTravelData;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;

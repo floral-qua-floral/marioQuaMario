@@ -1,5 +1,6 @@
 package com.floralquafloral.mariodata.moveable;
 
+import com.floralquafloral.mariodata.MarioTravelData;
 import com.floralquafloral.mariodata.MarioPlayerData;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.MathHelper;

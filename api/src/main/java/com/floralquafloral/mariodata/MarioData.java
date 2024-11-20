@@ -1,6 +1,6 @@
 package com.floralquafloral.mariodata;
 
-import com.floralquafloral.stats.CharaStat;
+import com.floralquafloral.definitions.actions.CharaStat;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 

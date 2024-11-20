@@ -1,13 +1,12 @@
 package com.floralquafloral;
 
 import com.floralquafloral.bumping.BumpManager;
-import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioDataManager;
 import com.floralquafloral.mariodata.MarioDataPackets;
 import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.registries.RegistryManager;
-import com.floralquafloral.util.ModConfig;
 import com.floralquafloral.util.MarioSFX;
+import com.floralquafloral.util.ModConfig;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
@@ -19,7 +18,6 @@ import net.fabricmc.fabric.api.gamerule.v1.rule.DoubleRule;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.SimpleParticleType;
@@ -73,6 +71,7 @@ public class MarioQuaMario implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		LOGGER.info("Mario qua Mario initialized!");
+
 		MarioDataManager.registerEventListeners();
 		BumpManager.registerEventListeners();
 

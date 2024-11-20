@@ -1,21 +1,9 @@
 package com.floralquafloral.mariodata;
 
-import com.floralquafloral.MarioQuaMario;
-import com.floralquafloral.registries.RegistryManager;
-import com.floralquafloral.registries.states.action.ParsedAction;
-import com.floralquafloral.registries.states.character.ParsedCharacter;
-import com.floralquafloral.registries.states.powerup.ParsedPowerUp;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.entity.Entity;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Identifier;
-
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * An instance of MarioData on the client-side. Mostly used for playing sound effects, especially voice sounds.

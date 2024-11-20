@@ -1,6 +1,7 @@
 package com.floralquafloral.registries.stomp;
 
 import com.floralquafloral.mariodata.MarioClientSideData;
+import com.floralquafloral.definitions.StompDefinition;
 import com.floralquafloral.mariodata.moveable.MarioMoveableData;
 import com.floralquafloral.mariodata.moveable.MarioServerData;
 import com.floralquafloral.registries.RegistryManager;

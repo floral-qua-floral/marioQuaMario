@@ -1,11 +1,9 @@
 package com.floralquafloral.mariodata.moveable;
 
-import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioAuthoritativeData;
 import com.floralquafloral.mariodata.MarioDataPackets;
 import com.floralquafloral.registries.RegistryManager;
 import com.floralquafloral.registries.states.action.ParsedAction;
-import com.floralquafloral.registries.states.character.ParsedCharacter;
 import com.floralquafloral.util.CPMIntegration;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;

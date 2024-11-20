@@ -3,8 +3,8 @@ package com.floralquafloral.registries.states.character.basecharacters;
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioAuthoritativeData;
 import com.floralquafloral.mariodata.MarioClientSideData;
-import com.floralquafloral.registries.states.character.CharacterDefinition;
-import com.floralquafloral.stats.StatCategory;
+import com.floralquafloral.definitions.CharacterDefinition;
+import com.floralquafloral.definitions.actions.StatCategory;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 

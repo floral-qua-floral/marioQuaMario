@@ -3,11 +3,10 @@ package com.floralquafloral.registries.states.action.baseactions.grounded;
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioAuthoritativeData;
 import com.floralquafloral.mariodata.MarioClientSideData;
-import com.floralquafloral.mariodata.moveable.MarioTravelData;
-import com.floralquafloral.registries.states.action.GroundedActionDefinition;
+import com.floralquafloral.mariodata.MarioTravelData;
+import com.floralquafloral.definitions.actions.GroundedActionDefinition;
 import com.floralquafloral.registries.states.action.baseactions.airborne.Backflip;
-import com.floralquafloral.registries.states.action.baseactions.airborne.Jump;
-import com.floralquafloral.stats.CharaStat;
+import com.floralquafloral.definitions.actions.CharaStat;
 import com.floralquafloral.util.MarioSFX;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.floralquafloral.stats.StatCategory.*;
+import static com.floralquafloral.definitions.actions.StatCategory.*;
 
 public class DuckWaddle extends GroundedActionDefinition {
 	@Override public @NotNull Identifier getID() {
@@ -44,7 +43,7 @@ public class DuckWaddle extends GroundedActionDefinition {
 	public static final ActionTransitionDefinition DUCK_JUMP = new ActionTransitionDefinition(
 			"qua_mario:duck_jump",
 			GroundedTransitions.JUMP.EVALUATOR,
-			data -> GroundedTransitions.performJump(data, Jump.JUMP_VEL, null),
+			data -> GroundedTransitions.performJump(data, GroundedTransitions.JUMP_VEL, null),
 			(data, isSelf, seed) -> {
 				data.voice(MarioClientSideData.VoiceLine.DUCK_JUMP, seed);
 				data.playJumpSound(seed);

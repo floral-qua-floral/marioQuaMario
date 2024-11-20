@@ -1,7 +1,6 @@
-package com.floralquafloral.registries.states.powerup;
+package com.floralquafloral.definitions;
 
 import com.floralquafloral.mariodata.MarioData;
-import com.floralquafloral.registries.states.MarioMajorStateDefinition;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;

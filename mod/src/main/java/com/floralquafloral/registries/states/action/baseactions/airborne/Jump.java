@@ -3,10 +3,9 @@ package com.floralquafloral.registries.states.action.baseactions.airborne;
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioAuthoritativeData;
 import com.floralquafloral.mariodata.MarioClientSideData;
-import com.floralquafloral.mariodata.moveable.MarioTravelData;
-import com.floralquafloral.registries.states.action.AirborneActionDefinition;
-import com.floralquafloral.stats.CharaStat;
-import com.floralquafloral.stats.StatCategory;
+import com.floralquafloral.mariodata.MarioTravelData;
+import com.floralquafloral.definitions.actions.AirborneActionDefinition;
+import com.floralquafloral.definitions.actions.CharaStat;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,9 +25,6 @@ public class Jump extends AirborneActionDefinition {
 	@Override @Nullable public BumpingRule getBumpingRule() {
 		return BumpingRule.JUMPING;
 	}
-
-	public static final CharaStat JUMP_VEL = new CharaStat(0.858, StatCategory.JUMP_VELOCITY);
-	public static final CharaStat JUMP_ADDEND = new CharaStat(0.117, StatCategory.JUMP_VELOCITY);
 
 	@Override public SneakLegalityRule getSneakLegalityRule() {
 		return SneakLegalityRule.PROHIBIT;

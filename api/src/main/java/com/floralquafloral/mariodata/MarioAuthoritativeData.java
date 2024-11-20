@@ -1,6 +1,5 @@
 package com.floralquafloral.mariodata;
 
-import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 

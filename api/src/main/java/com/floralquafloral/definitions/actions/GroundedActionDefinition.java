@@ -1,25 +1,25 @@
-package com.floralquafloral.registries.states.action;
+package com.floralquafloral.definitions.actions;
 
 import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.mariodata.MarioData;
-import com.floralquafloral.mariodata.moveable.MarioTravelData;
-import com.floralquafloral.registries.states.action.baseactions.airborne.Jump;
-import com.floralquafloral.registries.states.action.baseactions.grounded.PRun;
-import com.floralquafloral.stats.CharaStat;
+import com.floralquafloral.mariodata.MarioTravelData;
 import com.floralquafloral.util.MarioSFX;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2d;
 
+import static com.floralquafloral.definitions.actions.StatCategory.*;
+
 public abstract class GroundedActionDefinition implements ActionDefinition {
 	public static final CharaStat ZERO = new CharaStat(0.0);
 
 	public abstract static class GroundedTransitions {
+		public static final CharaStat P_SPEED = new CharaStat(0.665, P_RUNNING, FORWARD, SPEED);
 		public static void performJump(MarioTravelData data, CharaStat velocityStat, @Nullable CharaStat addendStat) {
 			if(data.getMario().isMainPlayer() || !data.getMario().getWorld().isClient) {
 				double jumpVel = velocityStat.get(data);
 				if(addendStat != null)
-					jumpVel += Math.max(0.0, data.getForwardVel() / PRun.P_SPEED.get(data)) * addendStat.get(data);
+					jumpVel += Math.max(0.0, data.getForwardVel() / P_SPEED.get(data)) * addendStat.get(data);
 
 				data.setYVel(jumpVel);
 			}
@@ -30,10 +30,12 @@ public abstract class GroundedActionDefinition implements ActionDefinition {
 				(data) -> !data.getMario().isOnGround()
 		);
 
+		public static final CharaStat JUMP_ADDEND = new CharaStat(0.117, StatCategory.JUMP_VELOCITY);
+		public static final CharaStat JUMP_VEL = new CharaStat(0.858, StatCategory.JUMP_VELOCITY);
 		public static final ActionTransitionDefinition JUMP = new ActionTransitionDefinition(
 				"qua_mario:jump",
 				(data) -> data.getInputs().JUMP.isPressed(),
-				data -> performJump(data, Jump.JUMP_VEL, Jump.JUMP_ADDEND),
+				data -> performJump(data, JUMP_VEL, JUMP_ADDEND),
 				(data, isSelf, seed) -> data.playJumpSound(seed)
 		);
 

@@ -1,15 +1,26 @@
-package com.floralquafloral.registries.states.action;
+package com.floralquafloral.definitions.actions;
 
 import com.floralquafloral.mariodata.MarioClientSideData;
-import com.floralquafloral.mariodata.moveable.MarioTravelData;
-import com.floralquafloral.registries.states.MarioStateDefinition;
+import com.floralquafloral.definitions.MarioStateDefinition;
+import com.floralquafloral.mariodata.MarioTravelData;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public interface ActionDefinition extends MarioStateDefinition {
+	default void boogersaur() {
+		Logger logger = LoggerFactory.getLogger("qua_mario_api");
+
+		logger.info("Boogersaur running!");
+		Identifier tester = Identifier.of("qua_mario:stinker");
+		logger.info("tester: {}", tester);
+	}
+
+
 	@Nullable String getAnimationName();
 	@Nullable CameraAnimationSet getCameraAnimations();
 

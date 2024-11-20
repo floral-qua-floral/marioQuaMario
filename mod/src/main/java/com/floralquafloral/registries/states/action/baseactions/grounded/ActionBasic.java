@@ -3,15 +3,15 @@ package com.floralquafloral.registries.states.action.baseactions.grounded;
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioAuthoritativeData;
 import com.floralquafloral.mariodata.MarioClientSideData;
-import com.floralquafloral.mariodata.moveable.MarioTravelData;
-import com.floralquafloral.registries.states.action.GroundedActionDefinition;
-import com.floralquafloral.stats.CharaStat;
+import com.floralquafloral.mariodata.MarioTravelData;
+import com.floralquafloral.definitions.actions.GroundedActionDefinition;
+import com.floralquafloral.definitions.actions.CharaStat;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2d;
 
-import static com.floralquafloral.stats.StatCategory.*;
+import static com.floralquafloral.definitions.actions.StatCategory.*;
 
 import java.util.List;
 
@@ -171,7 +171,7 @@ public class ActionBasic extends GroundedActionDefinition {
 				Skid.SKID_TRANSITION,
 				new ActionTransitionDefinition("qua_mario:p_run",
 						(data) -> data.getForwardVel() >= RUN_SPEED.getAsThreshold(data),
-						data -> data.setForwardVel(Math.max(PRun.P_SPEED.get(data), data.getForwardVel())),
+						data -> data.setForwardVel(Math.max(GroundedTransitions.P_SPEED.get(data), data.getForwardVel())),
 						null
 				)
 		);

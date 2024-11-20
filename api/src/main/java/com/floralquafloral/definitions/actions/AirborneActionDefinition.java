@@ -1,14 +1,11 @@
-package com.floralquafloral.registries.states.action;
+package com.floralquafloral.definitions.actions;
 
-import com.floralquafloral.mariodata.moveable.MarioTravelData;
-import com.floralquafloral.stats.CharaStat;
-import com.floralquafloral.stats.StatCategory;
-import com.floralquafloral.util.JumpSoundPlayer;
 import com.floralquafloral.util.MarioSFX;
+import com.floralquafloral.mariodata.MarioTravelData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.floralquafloral.stats.StatCategory.*;
+import static com.floralquafloral.definitions.actions.StatCategory.*;
 
 public abstract class AirborneActionDefinition implements ActionDefinition {
 	public abstract static class AerialTransitions {

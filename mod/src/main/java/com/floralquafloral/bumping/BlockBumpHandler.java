@@ -1,8 +1,10 @@
 package com.floralquafloral.bumping;
 
+import com.floralquafloral.BlockBumpCallback;
+import com.floralquafloral.BlockBumpResult;
 import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.mariodata.MarioData;
-import com.floralquafloral.mariodata.moveable.MarioTravelData;
+import com.floralquafloral.mariodata.MarioTravelData;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.block.Block;

@@ -1,9 +1,5 @@
 package com.floralquafloral.util;
 
-import org.jetbrains.annotations.Contract;
-
-import java.util.function.Function;
-
 import static java.lang.Math.*;
 
 // https://easings.net/

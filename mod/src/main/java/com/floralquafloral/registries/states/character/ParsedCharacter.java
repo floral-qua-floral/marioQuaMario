@@ -1,12 +1,9 @@
 package com.floralquafloral.registries.states.character;
 
+import com.floralquafloral.definitions.CharacterDefinition;
 import com.floralquafloral.mariodata.MarioDataManager;
 import com.floralquafloral.registries.states.ParsedMajorMarioState;
-import com.floralquafloral.stats.CharaStat;
-import com.floralquafloral.stats.StatCategory;
-
-import java.util.Map;
-import java.util.Set;
+import com.floralquafloral.definitions.actions.CharaStat;
 
 public class ParsedCharacter extends ParsedMajorMarioState {
 	public ParsedCharacter(CharacterDefinition definition) {

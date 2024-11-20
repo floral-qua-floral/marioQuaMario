@@ -41,7 +41,7 @@ public interface MarioClientSideDataImplementation extends MarioClientSideData {
 				Random.create(seed),
 				x, y, z
 		);
-		SOUND_MANAGER.play(sound);
+		MinecraftClient.getInstance().getSoundManager().play(sound);
 		return sound;
 	}
 
@@ -80,7 +80,7 @@ public interface MarioClientSideDataImplementation extends MarioClientSideData {
 	default PositionedSoundInstance voice(MarioClientSideData.VoiceLine line, long seed) {
 		PlayerEntity mario = this.getMario();
 
-		SOUND_MANAGER.stop(MARIO_VOICE_LINES.get(this));
+		MinecraftClient.getInstance().getSoundManager().stop(MARIO_VOICE_LINES.get(this));
 
 		PositionedSoundInstance newSoundInstance = this.playSoundEvent(
 				VOICE_SOUND_EVENTS.get(line).get(this.getCharacterID()), SoundCategory.VOICE,

@@ -1,6 +1,5 @@
 package com.floralquafloral.util;
 
-import com.floralquafloral.MarioQuaMario;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundEvent;
@@ -44,10 +43,11 @@ public final class MarioSFX {
 		return makeAndRegisterSound("sfx.action." + name);
 	}
 
+//	public static final Logger LOGGER = LoggerFactory.getLogger("qua_mario_api");
 	private static SoundEvent makeAndRegisterSound(String path) {
-		Identifier identifier = Identifier.of(MarioQuaMario.MOD_ID, path);
+		Identifier identifier = Identifier.of("qua_mario", path);
 		SoundEvent event = SoundEvent.of(identifier);
-		MarioQuaMario.LOGGER.info("Register sound {} ({})", identifier, event);
+//		LOGGER.info("Register sound {} ({})", identifier, event);
 
 		Registry.register(Registries.SOUND_EVENT, identifier, event);
 

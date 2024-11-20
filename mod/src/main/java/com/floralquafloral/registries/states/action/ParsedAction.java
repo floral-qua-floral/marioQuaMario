@@ -1,9 +1,11 @@
 package com.floralquafloral.registries.states.action;
 
-import com.floralquafloral.MarioQuaMario;
+import com.floralquafloral.*;
+import com.floralquafloral.definitions.actions.ActionDefinition;
+import com.floralquafloral.definitions.actions.AirborneActionDefinition;
+import com.floralquafloral.definitions.actions.GroundedActionDefinition;
 import com.floralquafloral.mariodata.*;
 import com.floralquafloral.mariodata.moveable.MarioMainClientData;
-import com.floralquafloral.mariodata.moveable.MarioTravelData;
 import com.floralquafloral.registries.states.ParsedMarioState;
 import com.floralquafloral.registries.RegistryManager;
 import com.floralquafloral.registries.stomp.ParsedStomp;

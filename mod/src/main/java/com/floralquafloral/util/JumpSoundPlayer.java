@@ -1,7 +1,7 @@
 package com.floralquafloral.util;
 
-import com.floralquafloral.mariodata.MarioClientSideDataImplementation;
 import com.floralquafloral.mariodata.MarioData;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.TickableSoundInstance;
 import net.minecraft.entity.player.PlayerEntity;
@@ -39,7 +39,7 @@ public class JumpSoundPlayer {
 
 	public static void playJumpSfx(SoundEvent event, MarioData data, long seed) {
 		PlayerEntity mario = data.getMario();
-		MarioClientSideDataImplementation.SOUND_MANAGER.play(new JumpSoundInstance(event, mario, seed));
+		MinecraftClient.getInstance().getSoundManager().play(new JumpSoundInstance(event, mario, seed));
 	}
 	public static void playJumpSfx(MarioData data, long seed) {
 		playJumpSfx(MarioSFX.JUMP, data, seed);

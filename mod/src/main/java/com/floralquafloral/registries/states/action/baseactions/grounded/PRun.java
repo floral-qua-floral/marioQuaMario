@@ -3,9 +3,9 @@ package com.floralquafloral.registries.states.action.baseactions.grounded;
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioAuthoritativeData;
 import com.floralquafloral.mariodata.MarioClientSideData;
-import com.floralquafloral.mariodata.moveable.MarioTravelData;
-import com.floralquafloral.registries.states.action.GroundedActionDefinition;
-import com.floralquafloral.stats.CharaStat;
+import com.floralquafloral.mariodata.MarioTravelData;
+import com.floralquafloral.definitions.actions.GroundedActionDefinition;
+import com.floralquafloral.definitions.actions.CharaStat;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,7 +13,7 @@ import org.joml.Vector2d;
 
 import java.util.List;
 
-import static com.floralquafloral.stats.StatCategory.*;
+import static com.floralquafloral.definitions.actions.StatCategory.*;
 
 public class PRun extends GroundedActionDefinition {
 	@Override public @NotNull Identifier getID() {
@@ -30,7 +30,6 @@ public class PRun extends GroundedActionDefinition {
 	}
 
 	public static final CharaStat P_ACCEL = new CharaStat(0.13, P_RUNNING, FORWARD, ACCELERATION);
-	public static final CharaStat P_SPEED = new CharaStat(0.665, P_RUNNING, FORWARD, SPEED);
 	public static final CharaStat P_REDIRECTION = new CharaStat(6.0, P_RUNNING, FORWARD, REDIRECTION);
 
 	@Override
@@ -38,7 +37,7 @@ public class PRun extends GroundedActionDefinition {
 		boolean sprinting = data.getMario().isSprinting();
 		groundAccel(data,
 				sprinting ? ActionBasic.OVERRUN_ACCEL : ActionBasic.OVERWALK_ACCEL,
-				sprinting ? P_SPEED : ActionBasic.WALK_SPEED,
+				sprinting ? GroundedTransitions.P_SPEED : ActionBasic.WALK_SPEED,
 				ActionBasic.STRAFE_ACCEL, ActionBasic.STRAFE_SPEED,
 				data.getInputs().getForwardInput(), data.getInputs().getStrafeInput(),
 				P_REDIRECTION
