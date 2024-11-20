@@ -2,7 +2,9 @@ package com.floralquafloral.mariodata;
 
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.registries.RegistryManager;
+import com.floralquafloral.registries.states.action.ParsedAction;
 import com.floralquafloral.registries.states.character.ParsedCharacter;
+import com.floralquafloral.registries.states.powerup.ParsedPowerUp;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.entity.Entity;
 import net.minecraft.registry.Registries;
@@ -19,6 +21,7 @@ import java.util.Map;
  * An instance of MarioData on the client-side. Mostly used for playing sound effects, especially voice sounds.
  * This isn't necessarily for the main client!
  */
+@SuppressWarnings("UnusedReturnValue")
 public interface MarioClientSideData extends MarioData {
 	PositionedSoundInstance playSoundEvent(
 			SoundEvent event, SoundCategory category,
@@ -33,6 +36,7 @@ public interface MarioClientSideData extends MarioData {
 	void playJumpSound(long seed);
 
 	PositionedSoundInstance voice(VoiceLine line, long seed);
+	float getVoicePitch();
 
 	enum VoiceLine {
 		SELECT,
@@ -52,25 +56,6 @@ public interface MarioClientSideData extends MarioData {
 		BURNT,
 
 		FIREBALL,
-		GET_STAR;
-
-		public static void staticInitialize() {
-
-		}
-		private final Map<ParsedCharacter, SoundEvent> SOUND_EVENTS;
-		VoiceLine() {
-			SOUND_EVENTS = new HashMap<>();
-
-			for(ParsedCharacter character : RegistryManager.CHARACTERS) {
-				Identifier id = Identifier.of(character.ID.getNamespace(), "voice." + character.ID.getPath() + "." + this.name().toLowerCase(Locale.ROOT));
-				MarioQuaMario.LOGGER.info("Automatically registering VoiceLine sound event {}...", id);
-				SoundEvent event = SoundEvent.of(id);
-				Registry.register(Registries.SOUND_EVENT, id, event);
-				SOUND_EVENTS.put(character, event);
-			}
-		}
-		public SoundEvent getSoundEvent(ParsedCharacter character) {
-			return SOUND_EVENTS.get(character);
-		}
+		GET_STAR
 	}
 }

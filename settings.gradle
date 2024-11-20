@@ -9,5 +9,5 @@ pluginManagement {
 	}
 }
 
-rootProject.name = 'mario-qua-mario'
+rootProject.name = 'qua_mario'
 include 'api', 'mod'

@@ -4,6 +4,7 @@ import com.floralquafloral.bumping.BumpManager;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioDataManager;
 import com.floralquafloral.mariodata.MarioDataPackets;
+import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.registries.RegistryManager;
 import com.floralquafloral.util.ModConfig;
 import com.floralquafloral.util.MarioSFX;
@@ -84,7 +85,7 @@ public class MarioQuaMario implements ModInitializer {
 		// Mario can't be damaged by a mob that he's high enough to stomp on
 		ServerLivingEntityEvents.ALLOW_DAMAGE.register((livingEntity, damageSource, amount) -> {
 			if(livingEntity instanceof PlayerEntity player && damageSource.getSource() instanceof LivingEntity sourceEntity && sourceEntity.equals(damageSource.getAttacker())) {
-				MarioData data = MarioDataManager.getMarioData(player);
+				MarioPlayerData data = MarioDataManager.getMarioData(player);
 				if(data.isEnabled() && livingEntity.getY() >= sourceEntity.getY() + sourceEntity.getHeight() && data.getAction().STOMP != null) {
 					LOGGER.info("Prevented Mario from taking damage against {} due to stomp eligibility.", sourceEntity);
 					return false;
@@ -95,7 +96,7 @@ public class MarioQuaMario implements ModInitializer {
 
 		ServerLivingEntityEvents.ALLOW_DEATH.register((livingEntity, damageSource, amount) -> {
 			if(livingEntity instanceof ServerPlayerEntity player) {
-				MarioData data = MarioDataManager.getMarioData(player);
+				MarioPlayerData data = MarioDataManager.getMarioData(player);
 				if(data.isEnabled()) {
 					// Revert if possible
 					Identifier revertTargetID = data.getPowerUp().REVERT_TARGET;

@@ -1,7 +1,6 @@
 package com.floralquafloral.mixin;
 
 import com.floralquafloral.MarioQuaMario;
-import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioDataManager;
 import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.mariodata.moveable.MarioServerData;
@@ -40,7 +39,7 @@ public abstract class EntityMixin {
 	@Inject(at = @At("HEAD"), method = "isInSneakingPose", cancellable = true)
 	private void isInSneakingPose(CallbackInfoReturnable<Boolean> cir) {
 		if((Entity) (Object) this instanceof PlayerEntity player) {
-			if(MarioDataManager.getMarioData(player).getSneakProhibited())
+			if(MarioDataManager.getMarioData(player).isSneakProhibited())
 				cir.setReturnValue(false);
 		}
 	}
@@ -49,7 +48,7 @@ public abstract class EntityMixin {
 	private void preventSettingSneakPose(EntityPose pose, CallbackInfo ci) {
 		if((Entity) (Object) this instanceof PlayerEntity player && pose == EntityPose.CROUCHING) {
 //			MarioQuaMario.LOGGER.info("setPose called on player! Pose == {}", pose);
-			if(MarioDataManager.getMarioData(player).getSneakProhibited()) {
+			if(MarioDataManager.getMarioData(player).isSneakProhibited()) {
 
 				if(player.getPose() == EntityPose.CROUCHING)
 					player.setPose(EntityPose.STANDING);
@@ -61,7 +60,7 @@ public abstract class EntityMixin {
 	@Inject(method = "playStepSounds", at = @At("HEAD"), cancellable = true)
 	private void preventStepSounds(BlockPos pos, BlockState state, CallbackInfo ci) {
 		if(((Entity) (Object) this) instanceof PlayerEntity player) {
-			MarioData data = MarioDataManager.getMarioData(player);
+			MarioPlayerData data = MarioDataManager.getMarioData(player);
 			if(!data.getAction().SLIDING_STATUS.doFootsteps())
 				ci.cancel();
 		}
@@ -73,7 +72,7 @@ public abstract class EntityMixin {
 	@Inject(method = "move", at = @At("HEAD"), cancellable = true)
 	private void executeStompsOnServer(MovementType movementType, Vec3d movement, CallbackInfo ci) {
 		if((Entity) (Object) this instanceof ServerPlayerEntity mario && shouldStompHook) {
-			MarioData data = MarioDataManager.getMarioData(mario);
+			MarioPlayerData data = MarioDataManager.getMarioData(mario);
 			if(data.useMarioPhysics()) {
 				ParsedAction action = data.getAction();
 				if(action.STOMP != null) {

@@ -119,7 +119,7 @@ public class DuckSlide extends GroundedActionDefinition {
 									return
 											data.getInputs().DUCK.isHeld()
 													&& Vector2d.lengthSquared(data.getForwardVel(), data.getStrafeVel()) > threshold * threshold
-													&& !data.getAction().ID.equals(getID());
+													&& !data.getActionID().equals(getID());
 								},
 								GroundedTransitions.DUCK_WADDLE.EXECUTOR_TRAVELLERS,
 								GroundedTransitions.DUCK_WADDLE.EXECUTOR_CLIENTS
@@ -142,7 +142,7 @@ public class DuckSlide extends GroundedActionDefinition {
 															&& MathHelper.approximatelyEquals(data.getInputs().getStrafeInput(), 0)))
 													)
 													&& Vector2d.lengthSquared(data.getForwardVel(), data.getStrafeVel()) > threshold * threshold
-													&& !data.getAction().ID.equals(getID());
+													&& !data.getActionID().equals(getID());
 								},
 								null,
 								null

@@ -1,6 +1,9 @@
 package com.floralquafloral.mariodata.moveable;
 
 import com.floralquafloral.mariodata.MarioData;
+import com.floralquafloral.registries.states.action.ParsedAction;
+import com.floralquafloral.registries.states.character.ParsedCharacter;
+import com.floralquafloral.registries.states.powerup.ParsedPowerUp;
 import org.jetbrains.annotations.NotNull;
 
 public interface MarioTravelData extends MarioData {

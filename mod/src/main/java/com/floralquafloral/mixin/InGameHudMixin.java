@@ -3,6 +3,7 @@ package com.floralquafloral.mixin;
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioDataManager;
+import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.mariodata.moveable.MarioMainClientData;
 import com.floralquafloral.registries.states.powerup.PowerUpDefinition;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -34,29 +35,29 @@ import java.util.Objects;
 public abstract class InGameHudMixin {
 	@Shadow @Final private MinecraftClient client;
 
-	@WrapOperation(method = "drawHeart", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud$HeartType;getTexture(ZZZ)Lnet/minecraft/util/Identifier;"))
-	public Identifier usePowerUpHeart(InGameHud.HeartType instance, boolean hardcore, boolean half, boolean blinking, Operation<Identifier> original) {
-		// Cancel if the power-up hearts are disabled in the config or if this is a special heart
-		if(!MarioQuaMario.CONFIG.shouldUsePowerUpHearts() || (instance != InGameHud.HeartType.CONTAINER && instance != InGameHud.HeartType.NORMAL))
-			return original.call(instance, hardcore, half, blinking);
-
-		MarioMainClientData data = MarioMainClientData.getInstance();
-		// Cancel if there's no Mario Client Data or if the player isn't Mario
-		if(data == null || !data.isEnabled())
-			return original.call(instance, hardcore, half, blinking);
-
-		if(instance == InGameHud.HeartType.CONTAINER) {
-			PowerUpDefinition.PowerHeart heartContainer = data.getPowerUp().HEART_EMPTY;
-			if(heartContainer == null) return original.call(instance, hardcore, half, blinking);
-			else return heartContainer.getTexture(half, blinking);
-		}
-		else if(hardcore) {
-			return data.getPowerUp().HEART_HARDCORE.getTexture(half, blinking);
-		}
-		else {
-			return data.getPowerUp().HEART.getTexture(half, blinking);
-		}
-	}
+//	@WrapOperation(method = "drawHeart", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud$HeartType;getTexture(ZZZ)Lnet/minecraft/util/Identifier;"))
+//	public Identifier usePowerUpHeart(InGameHud.HeartType instance, boolean hardcore, boolean half, boolean blinking, Operation<Identifier> original) {
+//		// Cancel if the power-up hearts are disabled in the config or if this is a special heart
+//		if(!MarioQuaMario.CONFIG.shouldUsePowerUpHearts() || (instance != InGameHud.HeartType.CONTAINER && instance != InGameHud.HeartType.NORMAL))
+//			return original.call(instance, hardcore, half, blinking);
+//
+//		MarioMainClientData data = MarioMainClientData.getInstance();
+//		// Cancel if there's no Mario Client Data or if the player isn't Mario
+//		if(data == null || !data.isEnabled())
+//			return original.call(instance, hardcore, half, blinking);
+//
+//		if(instance == InGameHud.HeartType.CONTAINER) {
+//			PowerUpDefinition.PowerHeart heartContainer = data.getPowerUp().HEART_EMPTY;
+//			if(heartContainer == null) return original.call(instance, hardcore, half, blinking);
+//			else return heartContainer.getTexture(half, blinking);
+//		}
+//		else if(hardcore) {
+//			return data.getPowerUp().HEART_HARDCORE.getTexture(half, blinking);
+//		}
+//		else {
+//			return data.getPowerUp().HEART.getTexture(half, blinking);
+//		}
+//	}
 
 	@Inject(method = "render", at = @At("TAIL"))
 	public void renderSpeedometerWithServerData(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
@@ -76,7 +77,7 @@ public abstract class InGameHudMixin {
 		if(integratedServer == null) return;
 		Entity serverMario = Objects.requireNonNull(integratedServer.getWorld(clientMario.getWorld().getRegistryKey())).getEntityById(clientMario.getId());
 		if(serverMario == null) return;
-		MarioData serverData = MarioDataManager.getMarioData(serverMario);
+		MarioPlayerData serverData = MarioDataManager.getMarioData(serverMario);
 
 		renderText(context, 0, "S: ", serverMario.getVelocity().horizontalLength(), serverMario.getVelocity().y);
 

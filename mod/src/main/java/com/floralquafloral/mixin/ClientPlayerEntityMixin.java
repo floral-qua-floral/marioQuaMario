@@ -1,6 +1,5 @@
 package com.floralquafloral.mixin;
 
-import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioDataManager;
 import net.minecraft.client.network.ClientPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,7 +17,7 @@ public abstract class ClientPlayerEntityMixin {
 
 	@Inject(method = "isInSneakingPose", at = @At("HEAD"), cancellable = true)
 	private void preventSneakPose(CallbackInfoReturnable<Boolean> cir) {
-		if(MarioDataManager.getMarioData(this).getSneakProhibited())
+		if(MarioDataManager.getMarioData(this).isSneakProhibited())
 			cir.setReturnValue(false);
 	}
 }

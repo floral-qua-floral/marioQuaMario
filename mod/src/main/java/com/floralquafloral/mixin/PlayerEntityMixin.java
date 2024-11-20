@@ -1,14 +1,10 @@
 package com.floralquafloral.mixin;
 
-import com.floralquafloral.MarioQuaMario;
-import com.floralquafloral.bumping.BumpManager;
-import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioDataManager;
 import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.mariodata.moveable.MarioMoveableData;
 import com.floralquafloral.registries.states.character.ParsedCharacter;
 import com.floralquafloral.registries.states.powerup.ParsedPowerUp;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.player.PlayerEntity;
@@ -42,10 +38,10 @@ public abstract class PlayerEntityMixin {
 
 	@Inject(at = @At("TAIL"), method = "getBaseDimensions(Lnet/minecraft/entity/EntityPose;)Lnet/minecraft/entity/EntityDimensions;", cancellable = true)
 	private void getBaseDimensions(EntityPose pose, CallbackInfoReturnable<EntityDimensions> cir) {
-		MarioData data = MarioDataManager.getMarioData(this);
+		MarioPlayerData data = MarioDataManager.getMarioData(this);
 		if(data.isEnabled()) {
 			// Returns the standing hitbox if being used by Mario while he can't sneak
-			if(data.getSneakProhibited() && pose == EntityPose.CROUCHING) {
+			if(data.isSneakProhibited() && pose == EntityPose.CROUCHING) {
 				cir.setReturnValue(data.getMario().getBaseDimensions(EntityPose.STANDING));
 				return;
 			}
@@ -77,7 +73,7 @@ public abstract class PlayerEntityMixin {
 
 	@Inject(method = "clipAtLedge", at = @At("HEAD"), cancellable = true)
 	public void slideOffLedges(CallbackInfoReturnable<Boolean> cir) {
-		MarioData data = MarioDataManager.getMarioData(this);
+		MarioPlayerData data = MarioDataManager.getMarioData(this);
 		if(data.useMarioPhysics() && data.getAction().SNEAK_LEGALITY.slipOffLedges()) {
 			cir.setReturnValue(false);
 		}
@@ -85,7 +81,7 @@ public abstract class PlayerEntityMixin {
 
 	@Inject(method = "tickMovement", at = @At("TAIL"))
 	public void preventViewBobbing(CallbackInfo ci) {
-		MarioData data = MarioDataManager.getMarioData(this);
+		MarioPlayerData data = MarioDataManager.getMarioData(this);
 		if(data.isClient() && !data.getAction().SLIDING_STATUS.doViewBobbing()) {
 			strideDistance = prevStrideDistance * 0.6F;
 		}

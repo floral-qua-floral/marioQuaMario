@@ -2,6 +2,7 @@ package com.floralquafloral.registries;
 
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioClientSideData;
+import com.floralquafloral.mariodata.MarioClientSideDataImplementation;
 import com.floralquafloral.registries.states.action.ActionDefinition;
 import com.floralquafloral.registries.states.action.AirborneActionDefinition;
 import com.floralquafloral.registries.states.action.GroundedActionDefinition;
@@ -17,14 +18,13 @@ import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RegistryManager {
 	public static void register() {
@@ -34,7 +34,8 @@ public class RegistryManager {
 		registerCharacters();
 
 		MarioSFX.staticInitialize();
-		MarioClientSideData.VoiceLine.staticInitialize();
+
+		MarioClientSideDataImplementation.VoiceSoundEventInitializer.initialize();
 	}
 
 	public static final RegistryKey<Registry<ParsedStomp>> STOMP_TYPES_KEY = RegistryKey.ofRegistry(

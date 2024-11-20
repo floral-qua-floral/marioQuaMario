@@ -6,6 +6,7 @@ import com.floralquafloral.registries.states.action.ParsedAction;
 import com.floralquafloral.registries.states.character.ParsedCharacter;
 import com.floralquafloral.registries.states.powerup.ParsedPowerUp;
 import com.floralquafloral.stats.CharaStat;
+import com.floralquafloral.stats.StatCategory;
 import com.floralquafloral.util.MarioSFX;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
@@ -66,11 +67,52 @@ public abstract class MarioPlayerData implements MarioData {
 	@Override public boolean useMarioPhysics() {
 		return(
 				isEnabled()
-				&& !mario.getAbilities().flying
-				&& !mario.isFallFlying()
+				&& !this.mario.getAbilities().flying
+				&& !this.mario.isFallFlying()
 //				&& !mario.hasVehicle()
 //				&& !mario.isClimbing()
 		);
+	}
+
+	private static final double MOVEMENT_SPEED_MULTIPLIER = 1.0 / 0.10000000149011612;
+	private static final double MOVEMENT_SPEED_MULTIPLIER_SPRINTING = 1.0 / 0.13000000312924387;
+
+	@Override
+	public double getStat(CharaStat stat) {
+		double modifiedBase = stat.BASE * this.getStatMultiplier(stat);
+
+		double attributeFactor = 1.0;
+		double attributeAddend = 0.0;
+
+		if(stat.CATEGORIES.contains(StatCategory.SPEED) && (
+				stat.CATEGORIES.contains(StatCategory.WALKING)
+						|| stat.CATEGORIES.contains(StatCategory.RUNNING)
+						|| stat.CATEGORIES.contains(StatCategory.P_RUNNING)
+						|| stat.CATEGORIES.contains(StatCategory.DUCKING)
+		)) {
+			attributeFactor = this.mario.getAttributes().getValue(EntityAttributes.GENERIC_MOVEMENT_SPEED)
+					* (this.mario.isSprinting() ? MOVEMENT_SPEED_MULTIPLIER_SPRINTING : MOVEMENT_SPEED_MULTIPLIER);
+		}
+
+		if(stat.CATEGORIES.contains(StatCategory.JUMP_VELOCITY)) {
+			attributeAddend = this.mario.getJumpBoostVelocityModifier();
+		}
+
+		return attributeFactor * modifiedBase + attributeAddend;
+	}
+
+	@Override
+	public double getStatMultiplier(CharaStat stat) {
+		return this.powerUp.getStatMultiplier(stat) * this.character.getStatMultiplier(stat);
+	}
+
+	@Override
+	public int getBumpStrengthModifier() {
+		return this.powerUp.BUMP_STRENGTH_MODIFIER + this.character.BUMP_STRENGTH_MODIFIER;
+	}
+
+	public float getVoicePitch() {
+		return this.powerUp.VOICE_PITCH;
 	}
 
 	public boolean attemptDismount = false;
@@ -90,10 +132,13 @@ public abstract class MarioPlayerData implements MarioData {
 		attackSpeedAttributeInstance.removeModifier(ATTACK_SLOWDOWN_ID);
 		attackSpeedAttributeInstance.addPersistentModifier(ATTACK_SLOWDOWN);
 	}
-	@Override public ParsedAction getAction() {
+	public ParsedAction getAction() {
 		return action;
 	}
-	@Override public boolean getSneakProhibited() {
+	@Override public Identifier getActionID() {
+		return action.ID;
+	}
+	@Override public boolean isSneakProhibited() {
 		return useMarioPhysics() && getAction().SNEAK_LEGALITY.prohibitSneak();
 	}
 
@@ -199,8 +244,11 @@ public abstract class MarioPlayerData implements MarioData {
 		this.mario.setPose(this.mario.getPose());
 
 	}
-	@Override public ParsedPowerUp getPowerUp() {
+	public ParsedPowerUp getPowerUp() {
 		return powerUp;
+	}
+	@Override public Identifier getPowerUpID() {
+		return powerUp.ID;
 	}
 	public void setPowerUp(ParsedPowerUp powerUp) {
 		MarioQuaMario.LOGGER.info("Set Power-up to {}", powerUp.ID);
@@ -209,14 +257,15 @@ public abstract class MarioPlayerData implements MarioData {
 		this.mario.setHealth(this.mario.getMaxHealth());
 		this.powerUp = powerUp;
 		this.mario.calculateDimensions();
-		CharaStat.invalidateCache();
 	}
-	@Override public ParsedCharacter getCharacter() {
+	public ParsedCharacter getCharacter() {
 		return character;
+	}
+	@Override public Identifier getCharacterID() {
+		return character.ID;
 	}
 	public void setCharacter(ParsedCharacter character) {
 		this.character = character;
 		this.mario.calculateDimensions();
-		CharaStat.invalidateCache();
 	}
 }

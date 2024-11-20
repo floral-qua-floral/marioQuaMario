@@ -161,7 +161,7 @@ public abstract class BumpManager {
 			int strength, Direction direction
 	) {
 		boolean playBumpSound = false;
-		int modifier = marioClientData.getPowerUp().BUMP_STRENGTH_MODIFIER + marioClientData.getCharacter().BUMP_STRENGTH_MODIFIER;
+		int modifier = marioClientData.getBumpStrengthModifier();
 
 		Set<BlockPos> blocksBumped = new HashSet<>();
 		Set<BlockSoundGroup> soundGroups = new HashSet<>();
@@ -212,7 +212,7 @@ public abstract class BumpManager {
 			int strength, Direction direction, boolean networkToBumper
 	) {
 		boolean canRepeatBump = false;
-		int modifier = marioServerData.getPowerUp().BUMP_STRENGTH_MODIFIER + marioServerData.getCharacter().BUMP_STRENGTH_MODIFIER;
+		int modifier = marioServerData.getBumpStrengthModifier();
 		Set<BlockPos> bumpedPositions = new HashSet<>();
 
 		for(BlockPos pos : positions) {

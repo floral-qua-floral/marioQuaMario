@@ -1,5 +1,6 @@
 package com.floralquafloral.registries.states;
 
+import com.floralquafloral.stats.CharaStat;
 import com.floralquafloral.stats.StatCategory;
 
 import java.util.EnumMap;
@@ -12,6 +13,21 @@ public abstract class ParsedMajorMarioState extends ParsedMarioState {
 	public final float WIDTH_FACTOR;
 	public final float HEIGHT_FACTOR;
 	public final Map<Set<StatCategory>, Double> STAT_MODIFIERS;
+
+	private final Map<CharaStat, Double> STAT_MULTIPLIERS_CACHE = new HashMap<>();
+
+	public double getStatMultiplier(CharaStat stat) {
+		if(this.STAT_MULTIPLIERS_CACHE.containsKey(stat)) return this.STAT_MULTIPLIERS_CACHE.get(stat);
+
+		double combinedModifier = 1.0;
+		for(Map.Entry<Set<StatCategory>, Double> entry : this.STAT_MODIFIERS.entrySet()) {
+			if(stat.CATEGORIES.containsAll(entry.getKey()))
+				combinedModifier *= entry.getValue();
+		}
+
+		this.STAT_MULTIPLIERS_CACHE.put(stat, combinedModifier);
+		return combinedModifier;
+	}
 
 	protected ParsedMajorMarioState(MarioMajorStateDefinition definition) {
 		super(definition);

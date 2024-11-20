@@ -1,16 +1,24 @@
 package com.floralquafloral.mariodata;
 
+import com.floralquafloral.MarioQuaMario;
+import com.floralquafloral.registries.RegistryManager;
+import com.floralquafloral.registries.states.character.ParsedCharacter;
 import com.floralquafloral.util.JumpSoundPlayer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
 
+import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -75,9 +83,9 @@ public interface MarioClientSideDataImplementation extends MarioClientSideData {
 		SOUND_MANAGER.stop(MARIO_VOICE_LINES.get(this));
 
 		PositionedSoundInstance newSoundInstance = this.playSoundEvent(
-				line.getSoundEvent(this.getCharacter()), SoundCategory.VOICE,
+				VOICE_SOUND_EVENTS.get(line).get(this.getCharacterID()), SoundCategory.VOICE,
 				mario.getX(), mario.getY(), mario.getZ(),
-				this.getPowerUp().VOICE_PITCH, 1.0F,
+				this.getVoicePitch(), 1.0F,
 				seed
 		);
 		MARIO_VOICE_LINES.put(this, newSoundInstance);
@@ -90,4 +98,21 @@ public interface MarioClientSideDataImplementation extends MarioClientSideData {
 		JumpSoundPlayer.playJumpSfx(this, seed);
 	}
 
+	EnumMap<VoiceLine, Map<Identifier, SoundEvent>> VOICE_SOUND_EVENTS = new EnumMap<>(VoiceLine.class);
+	class VoiceSoundEventInitializer {
+		public static void initialize() {
+			for(MarioClientSideData.VoiceLine voiceLine : MarioClientSideData.VoiceLine.values()) {
+				Map<Identifier, SoundEvent> soundEvents = new HashMap<>();
+				VOICE_SOUND_EVENTS.put(voiceLine, soundEvents);
+
+				for(ParsedCharacter character : RegistryManager.CHARACTERS) {
+					Identifier id = Identifier.of(character.ID.getNamespace(), "voice." + character.ID.getPath() + "." + voiceLine.name().toLowerCase(Locale.ROOT));
+					MarioQuaMario.LOGGER.info("Automatically registering VoiceLine sound event {}...", id);
+					SoundEvent event = SoundEvent.of(id);
+					Registry.register(Registries.SOUND_EVENT, id, event);
+					soundEvents.put(character.ID, event);
+				}
+			}
+		}
+	}
 }
