@@ -58,18 +58,19 @@ public class Fall extends AirborneActionDefinition {
 
 	}
 
-	@Override public List<ActionTransitionDefinition> getPreTickTransitions() {
+	@Override public List<ActionTransitionDefinition> getPreTravelTransitions() {
 		return List.of();
 	}
 
-	@Override public List<ActionTransitionDefinition> getPostTickTransitions() {
+	@Override public List<ActionTransitionDefinition> getInputTransitions() {
 		return List.of(
 				AerialTransitions.GROUND_POUND
 		);
 	}
 
-	@Override public List<ActionTransitionDefinition> getPostMoveTransitions() {
+	@Override public List<ActionTransitionDefinition> getWorldCollisionTransitions() {
 		return List.of(
+				CommonTransitions.ENTER_WATER,
 				AerialTransitions.BASIC_LANDING
 		);
 	}

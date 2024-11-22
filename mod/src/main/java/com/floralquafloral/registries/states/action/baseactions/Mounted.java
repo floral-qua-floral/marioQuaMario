@@ -54,7 +54,7 @@ public class Mounted implements ActionDefinition {
 	}
 
 	@Override
-	public List<ActionTransitionDefinition> getPreTickTransitions() {
+	public List<ActionTransitionDefinition> getPreTravelTransitions() {
 		return List.of(
 				new ActionTransitionDefinition("qua_mario:backflip",
 						data -> !data.getMario().hasVehicle() && ((MarioPlayerData) data).attemptDismount
@@ -82,7 +82,7 @@ public class Mounted implements ActionDefinition {
 	}
 
 	@Override
-	public List<ActionTransitionDefinition> getPostTickTransitions() {
+	public List<ActionTransitionDefinition> getInputTransitions() {
 		return List.of(new ActionTransitionDefinition("qua_mario:mounted",
 				(data) -> (!((MarioPlayerData) data).attemptDismount) && data.getInputs().DUCK.isHeld() && data.getInputs().JUMP.isPressed(),
 				data -> ((MarioPlayerData) data).attemptDismount = true,
@@ -91,7 +91,7 @@ public class Mounted implements ActionDefinition {
 	}
 
 	@Override
-	public List<ActionTransitionDefinition> getPostMoveTransitions() {
+	public List<ActionTransitionDefinition> getWorldCollisionTransitions() {
 		return List.of();
 	}
 

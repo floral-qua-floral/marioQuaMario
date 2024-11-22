@@ -103,14 +103,14 @@ public class DuckWaddle extends GroundedActionDefinition {
 	}
 
 	@Override
-	public List<ActionTransitionDefinition> getPreTickTransitions() {
+	public List<ActionTransitionDefinition> getPreTravelTransitions() {
 		return List.of(
 				UNDUCK
 		);
 	}
 
 	@Override
-	public List<ActionTransitionDefinition> getPostTickTransitions() {
+	public List<ActionTransitionDefinition> getInputTransitions() {
 		return List.of(
 				BACKFLIP,
 				DUCK_JUMP
@@ -118,8 +118,9 @@ public class DuckWaddle extends GroundedActionDefinition {
 	}
 
 	@Override
-	public List<ActionTransitionDefinition> getPostMoveTransitions() {
+	public List<ActionTransitionDefinition> getWorldCollisionTransitions() {
 		return List.of(
+				CommonTransitions.ENTER_WATER,
 				DUCK_FALL
 		);
 	}

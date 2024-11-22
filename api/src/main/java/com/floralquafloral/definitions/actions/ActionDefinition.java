@@ -2,25 +2,16 @@ package com.floralquafloral.definitions.actions;
 
 import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.definitions.MarioStateDefinition;
+import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioTravelData;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public interface ActionDefinition extends MarioStateDefinition {
-	default void boogersaur() {
-		Logger logger = LoggerFactory.getLogger("qua_mario_api");
-
-		logger.info("Boogersaur running!");
-		Identifier tester = Identifier.of("qua_mario:stinker");
-		logger.info("tester: {}", tester);
-	}
-
-
 	@Nullable String getAnimationName();
 	@Nullable CameraAnimationSet getCameraAnimations();
 
@@ -39,9 +30,9 @@ public interface ActionDefinition extends MarioStateDefinition {
 	 * POST-MOVE transitions are meant to be used for transitions based on Mario's position. For instance, falling is a
 	 * post-move transition.
 	 */
-	List<ActionTransitionDefinition> getPreTickTransitions();
-	List<ActionTransitionDefinition> getPostTickTransitions();
-	List<ActionTransitionDefinition> getPostMoveTransitions();
+	List<ActionTransitionDefinition> getPreTravelTransitions();
+	List<ActionTransitionDefinition> getInputTransitions();
+	List<ActionTransitionDefinition> getWorldCollisionTransitions();
 
 	List<ActionTransitionInjection> getTransitionInjections();
 
@@ -164,19 +155,15 @@ public interface ActionDefinition extends MarioStateDefinition {
 			this.WALLS = wallBumpStrength;
 		}
 	}
-//	enum BumpType {
-//		NONE(0, 0),
-//		HIT_CEILINGS(2, 0),
-//		GROUND_POUND(0, 2),
-//		SPIN_JUMP(2, 1);
-//
-//		public final int HIT_CEILING_STRENGTH;
-//		public final int HIT_FLOOR_STRENGTH;
-//		BumpType(int hitCeilingStrength, int hitFloorStrength) {
-//			this.HIT_CEILING_STRENGTH = hitCeilingStrength;
-//			this.HIT_FLOOR_STRENGTH = hitFloorStrength;
-//		}
-//	}
+
+	abstract class CommonTransitions {
+		public static final ActionTransitionDefinition ENTER_WATER = new ActionTransitionDefinition(
+				"qua_mario:submerged",
+				data -> data.getInputs().SPIN.isPressed(),
+				data -> {},
+				(data, isSelf, seed) -> data.playSoundEvent(SoundEvents.AMBIENT_UNDERWATER_ENTER, seed)
+		);
+	}
 
 	class ActionTransitionDefinition {
 		@FunctionalInterface public interface TransitionEvaluator {

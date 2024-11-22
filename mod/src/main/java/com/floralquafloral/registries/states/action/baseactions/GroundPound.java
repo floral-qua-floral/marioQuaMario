@@ -60,15 +60,15 @@ public class GroundPound implements ActionDefinition {
 
 	}
 
-	@Override public List<ActionTransitionDefinition> getPreTickTransitions() {
+	@Override public List<ActionTransitionDefinition> getPreTravelTransitions() {
 		return List.of();
 	}
 
-	@Override public List<ActionTransitionDefinition> getPostTickTransitions() {
+	@Override public List<ActionTransitionDefinition> getInputTransitions() {
 		return List.of();
 	}
 
-	@Override public List<ActionTransitionDefinition> getPostMoveTransitions() {
+	@Override public List<ActionTransitionDefinition> getWorldCollisionTransitions() {
 		return List.of(
 				new ActionTransitionDefinition(
 						"qua_mario:ground_pound_landing",

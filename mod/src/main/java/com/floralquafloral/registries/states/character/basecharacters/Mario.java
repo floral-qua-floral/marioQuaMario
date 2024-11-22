@@ -12,6 +12,13 @@ import java.util.Map;
 import java.util.Set;
 
 public class Mario implements CharacterDefinition {
+	@Override public @NotNull Map<String, String> getPoweredUpPlayermodels() {
+		return Map.of(
+				"qua_mario:small", "Small Mario",
+				"qua_mario:super", "Super Mario"
+		);
+	}
+
 	@Override
 	public void populateStatModifiers(Map<Set<StatCategory>, Double> modifiers) {
 

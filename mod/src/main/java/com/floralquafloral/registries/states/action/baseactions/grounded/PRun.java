@@ -59,7 +59,7 @@ public class PRun extends GroundedActionDefinition {
 	}
 
 	@Override
-	public List<ActionTransitionDefinition> getPreTickTransitions() {
+	public List<ActionTransitionDefinition> getPreTravelTransitions() {
 		return List.of(
 				GroundedTransitions.DUCK_WADDLE,
 				new ActionTransitionDefinition("qua_mario:basic",
@@ -74,7 +74,7 @@ public class PRun extends GroundedActionDefinition {
 	}
 
 	@Override
-	public List<ActionTransitionDefinition> getPostTickTransitions() {
+	public List<ActionTransitionDefinition> getInputTransitions() {
 		return List.of(
 				new ActionTransitionDefinition("qua_mario:p_jump",
 						GroundedTransitions.JUMP.EVALUATOR,
@@ -85,8 +85,9 @@ public class PRun extends GroundedActionDefinition {
 	}
 
 	@Override
-	public List<ActionTransitionDefinition> getPostMoveTransitions() {
+	public List<ActionTransitionDefinition> getWorldCollisionTransitions() {
 		return List.of(
+				CommonTransitions.ENTER_WATER,
 				GroundedTransitions.FALL
 		);
 	}

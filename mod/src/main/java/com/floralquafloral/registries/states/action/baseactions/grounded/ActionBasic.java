@@ -45,8 +45,8 @@ public class ActionBasic extends GroundedActionDefinition {
 	public static final CharaStat OVERBACKPEDAL_ACCEL = new CharaStat(0.04, WALKING, BACKWARD, OVERSPEED_CORRECTION);
 	public static final CharaStat UNDERBACKPEDAL_ACCEL = new CharaStat(0.055, WALKING, BACKWARD, ACCELERATION, FRICTION);
 
-	public static final CharaStat RUN_ACCEL = new CharaStat(0.0102, RUNNING, FORWARD, ACCELERATION);
-	public static final CharaStat RUN_SPEED = new CharaStat(0.575, RUNNING, FORWARD, SPEED);
+	public static final CharaStat RUN_ACCEL = new CharaStat(0.0175, RUNNING, FORWARD, ACCELERATION);
+	public static final CharaStat RUN_SPEED = new CharaStat(0.55, RUNNING, FORWARD, SPEED);
 	public static final CharaStat RUN_REDIRECTION = new CharaStat(2.76, RUNNING, FORWARD, REDIRECTION);
 	public static final CharaStat OVERRUN_ACCEL = new CharaStat(0.0175, RUNNING, FORWARD, OVERSPEED_CORRECTION);
 
@@ -165,7 +165,7 @@ public class ActionBasic extends GroundedActionDefinition {
 	}
 
 	@Override
-	public List<ActionTransitionDefinition> getPreTickTransitions() {
+	public List<ActionTransitionDefinition> getPreTravelTransitions() {
 		return List.of(
 				GroundedTransitions.DUCK_WADDLE,
 				Skid.SKID_TRANSITION,
@@ -178,15 +178,16 @@ public class ActionBasic extends GroundedActionDefinition {
 	}
 
 	@Override
-	public List<ActionTransitionDefinition> getPostTickTransitions() {
+	public List<ActionTransitionDefinition> getInputTransitions() {
 		return List.of(
 				GroundedTransitions.JUMP
 		);
 	}
 
 	@Override
-	public List<ActionTransitionDefinition> getPostMoveTransitions() {
+	public List<ActionTransitionDefinition> getWorldCollisionTransitions() {
 		return List.of(
+				CommonTransitions.ENTER_WATER,
 				GroundedTransitions.FALL
 		);
 	}

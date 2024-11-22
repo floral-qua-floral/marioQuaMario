@@ -24,7 +24,7 @@ public class DoubleJump extends Jump {
 	public static CharaStat DOUBLE_JUMP_SPEED_THRESHOLD = new CharaStat(0,
 			StatCategory.WALKING, StatCategory.FORWARD, StatCategory.THRESHOLD);
 
-	@Override public List<ActionTransitionDefinition> getPostTickTransitions() {
+	@Override public List<ActionTransitionDefinition> getInputTransitions() {
 		return List.of(
 				AerialTransitions.GROUND_POUND,
 				AerialTransitions.makeJumpCapTransition(this, 0.285)
@@ -32,8 +32,9 @@ public class DoubleJump extends Jump {
 	}
 
 	@Override
-	public List<ActionTransitionDefinition> getPostMoveTransitions() {
+	public List<ActionTransitionDefinition> getWorldCollisionTransitions() {
 		return List.of(
+				CommonTransitions.ENTER_WATER,
 				AerialTransitions.TRIPLE_JUMPABLE_LANDING
 		);
 	}

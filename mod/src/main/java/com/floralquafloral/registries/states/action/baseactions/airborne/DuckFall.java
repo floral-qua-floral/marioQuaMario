@@ -16,7 +16,7 @@ public class DuckFall extends Fall {
 		return SneakLegalityRule.SLIP;
 	}
 
-	@Override public List<ActionTransitionDefinition> getPreTickTransitions() {
+	@Override public List<ActionTransitionDefinition> getPreTravelTransitions() {
 		return List.of(
 				new ActionTransitionDefinition("qua_mario:fall",
 						DuckWaddle.UNDUCK.EVALUATOR
@@ -24,12 +24,13 @@ public class DuckFall extends Fall {
 		);
 	}
 
-	@Override public List<ActionTransitionDefinition> getPostTickTransitions() {
+	@Override public List<ActionTransitionDefinition> getInputTransitions() {
 		return List.of();
 	}
 
-	@Override public List<ActionTransitionDefinition> getPostMoveTransitions() {
+	@Override public List<ActionTransitionDefinition> getWorldCollisionTransitions() {
 		return List.of(
+				CommonTransitions.ENTER_WATER,
 				AerialTransitions.DUCKING_LANDING
 		);
 	}

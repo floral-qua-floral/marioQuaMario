@@ -37,7 +37,8 @@ public class ParsedAction extends ParsedMarioState {
 		this.ANIMATION = definition.getAnimationName();
 		this.CAMERA_ANIMATIONS = definition.getCameraAnimations();
 		this.SNEAK_LEGALITY = definition.getSneakLegalityRule();
-		this.SLIDING_STATUS = definition.getActionSlidingStatus();
+		ActionDefinition.SlidingStatus status = definition.getActionSlidingStatus();
+		this.SLIDING_STATUS = status == null ? ActionDefinition.SlidingStatus.NOT_SLIDING : status;
 		Identifier stompID = definition.getStompType();
 		this.STOMP = stompID == null ? null : RegistryManager.STOMP_TYPES.get(stompID);
 		this.BUMPING_RULE = definition.getBumpingRule();
@@ -57,8 +58,6 @@ public class ParsedAction extends ParsedMarioState {
 	public boolean attemptTransitions(MarioMainClientData data, TransitionPhase phase) {
 		for(ParsedTransition transition : this.TRANSITION_LISTS.get(phase)) {
 			if(transition.EVALUATOR.shouldTransition(data)) {
-				// Send C2S packet to tell the server!
-
 				long seed = RandomSeed.getSeed();
 				if(transition.EXECUTOR_TRAVELLERS != null) transition.EXECUTOR_TRAVELLERS.execute(data);
 				if(transition.EXECUTOR_CLIENTS != null) transition.EXECUTOR_CLIENTS.execute(data, true, seed);
@@ -72,9 +71,9 @@ public class ParsedAction extends ParsedMarioState {
 
 	public boolean transitionTo(MarioPlayerData data, ParsedAction toAction, long seed) {
 		if(
-				transitionTo(data, toAction, TransitionPhase.PRE_TICK, seed) ||
-				transitionTo(data, toAction, TransitionPhase.POST_TICK, seed) ||
-				transitionTo(data, toAction, TransitionPhase.POST_MOVE, seed)
+				transitionTo(data, toAction, TransitionPhase.PRE_TRAVEL, seed) ||
+				transitionTo(data, toAction, TransitionPhase.INPUT, seed) ||
+				transitionTo(data, toAction, TransitionPhase.WORLD_COLLISION, seed)
 		) return true;
 
 		MarioQuaMario.LOGGER.warn("{} attempted an invalid action transition: {} -> {}", data.getMario().getName().getString(), this.ID, toAction.ID);
@@ -94,11 +93,11 @@ public class ParsedAction extends ParsedMarioState {
 		MarioQuaMario.LOGGER.info("Parsing transitions out of {}...", this.ID);
 		ActionDefinition definition = (ActionDefinition) this.DEFINITION;
 		MarioQuaMario.LOGGER.info("PRE-TICK:-------");
-		this.TRANSITION_LISTS.put(TransitionPhase.PRE_TICK, this.parseTransitionDefinitions(definition.getPreTickTransitions(), injections));
+		this.TRANSITION_LISTS.put(TransitionPhase.PRE_TRAVEL, this.parseTransitionDefinitions(definition.getPreTravelTransitions(), injections));
 		MarioQuaMario.LOGGER.info("POST-TICK:------");
-		this.TRANSITION_LISTS.put(TransitionPhase.POST_TICK, this.parseTransitionDefinitions(definition.getPostTickTransitions(), injections));
+		this.TRANSITION_LISTS.put(TransitionPhase.INPUT, this.parseTransitionDefinitions(definition.getInputTransitions(), injections));
 		MarioQuaMario.LOGGER.info("POST-MOVE:------");
-		this.TRANSITION_LISTS.put(TransitionPhase.POST_MOVE, this.parseTransitionDefinitions(definition.getPostMoveTransitions(), injections));
+		this.TRANSITION_LISTS.put(TransitionPhase.WORLD_COLLISION, this.parseTransitionDefinitions(definition.getWorldCollisionTransitions(), injections));
 	}
 
 	private List<ParsedTransition> parseTransitionDefinitions(

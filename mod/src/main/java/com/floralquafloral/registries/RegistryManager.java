@@ -1,6 +1,7 @@
 package com.floralquafloral.registries;
 
 import com.floralquafloral.MarioQuaMario;
+import com.floralquafloral.definitions.actions.AquaticActionDefinition;
 import com.floralquafloral.mariodata.MarioClientSideDataImplementation;
 import com.floralquafloral.definitions.actions.ActionDefinition;
 import com.floralquafloral.definitions.actions.AirborneActionDefinition;
@@ -107,6 +108,9 @@ public class RegistryManager {
 			parseAction(definition, transitionInjections);
 		}
 		for(AirborneActionDefinition definition : getEntrypoints("mario-actions-airborne", AirborneActionDefinition.class)) {
+			parseAction(definition, transitionInjections);
+		}
+		for(AquaticActionDefinition definition : getEntrypoints("mario-actions-aquatic", AquaticActionDefinition.class)) {
 			parseAction(definition, transitionInjections);
 		}
 

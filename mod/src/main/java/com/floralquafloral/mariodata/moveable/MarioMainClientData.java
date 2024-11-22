@@ -41,7 +41,7 @@ public class MarioMainClientData extends MarioMoveableData implements MarioClien
 
 	@Override
 	public void setAction(ParsedAction action, long seed) {
-		MarioQuaMario.LOGGER.warn("Triggered setAction with transitions for the main client. This is abnormal!");
+		MarioQuaMario.LOGGER.warn("Triggered setAction with transitions on the main client. This is abnormal!");
 		super.setAction(action, seed);
 	}
 
@@ -98,9 +98,10 @@ public class MarioMainClientData extends MarioMoveableData implements MarioClien
 
 		// TODO: Levitation effect functionality
 
-		getAction().attemptTransitions(this, TransitionPhase.PRE_TICK);
+		getAction().attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
+		getAction().attemptTransitions(this, TransitionPhase.PRE_TRAVEL);
 		getAction().travelHook(this);
-		getAction().attemptTransitions(this, TransitionPhase.POST_TICK);
+		getAction().attemptTransitions(this, TransitionPhase.INPUT);
 
 		getTimers().jumpLandingTime--;
 		getTimers().doubleJumpLandingTime--;
@@ -132,7 +133,7 @@ public class MarioMainClientData extends MarioMoveableData implements MarioClien
 			}
 		}
 
-		getAction().attemptTransitions(this, TransitionPhase.POST_MOVE);
+//		getAction().attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
 
 		applyModifiedVelocity();
 

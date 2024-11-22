@@ -44,7 +44,8 @@
 			"com.floralquafloral.registries.states.action.baseactions.airborne.TripleJump"
 		],
 		"mario-actions-aquatic": [
-
+			"com.floralquafloral.registries.states.action.baseactions.aquatic.Submerged",
+			"com.floralquafloral.registries.states.action.baseactions.aquatic.Swim"
 		],
 
 		"mario-power-ups": [

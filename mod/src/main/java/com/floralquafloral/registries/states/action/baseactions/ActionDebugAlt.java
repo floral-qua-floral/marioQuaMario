@@ -54,7 +54,7 @@ public class ActionDebugAlt implements ActionDefinition {
 	}
 
 	@Override
-	public List<ActionTransitionDefinition> getPreTickTransitions() {
+	public List<ActionTransitionDefinition> getPreTravelTransitions() {
 		return List.of(
 				new ActionTransitionDefinition(
 						"qua_mario:debug",
@@ -70,12 +70,12 @@ public class ActionDebugAlt implements ActionDefinition {
 	}
 
 	@Override
-	public List<ActionTransitionDefinition> getPostTickTransitions() {
+	public List<ActionTransitionDefinition> getInputTransitions() {
 		return List.of();
 	}
 
 	@Override
-	public List<ActionTransitionDefinition> getPostMoveTransitions() {
+	public List<ActionTransitionDefinition> getWorldCollisionTransitions() {
 		return List.of();
 	}
 

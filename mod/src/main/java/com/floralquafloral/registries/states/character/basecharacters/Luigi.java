@@ -14,6 +14,13 @@ import java.util.Set;
 import static com.floralquafloral.definitions.actions.StatCategory.*;
 
 public class Luigi implements CharacterDefinition {
+	@Override public @NotNull Map<String, String> getPoweredUpPlayermodels() {
+		return Map.of(
+				"qua_mario:small", "Small Luigi",
+				"qua_mario:super", "Super Luigi"
+		);
+	}
+
 	@Override
 	public void populateStatModifiers(Map<Set<StatCategory>, Double> modifiers) {
 		// Luigi walks and runs faster

@@ -44,7 +44,7 @@ public class Sideflip extends Jump {
 		if(data.getYVel() < 0.1) airborneAccel(data);
 	}
 
-	@Override public List<ActionTransitionDefinition> getPostTickTransitions() {
+	@Override public List<ActionTransitionDefinition> getInputTransitions() {
 		return List.of(
 				AerialTransitions.GROUND_POUND,
 				AerialTransitions.makeJumpCapTransition(this, 0.65)

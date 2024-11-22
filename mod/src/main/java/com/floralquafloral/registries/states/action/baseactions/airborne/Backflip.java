@@ -54,7 +54,7 @@ public class Backflip extends Jump {
 		);
 	}
 
-	@Override public List<ActionTransitionDefinition> getPostTickTransitions() {
+	@Override public List<ActionTransitionDefinition> getInputTransitions() {
 		return List.of(
 				AerialTransitions.GROUND_POUND,
 				AerialTransitions.makeJumpCapTransition(this, 0.765)

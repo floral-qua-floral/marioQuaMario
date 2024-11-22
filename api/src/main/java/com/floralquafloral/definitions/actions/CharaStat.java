@@ -4,6 +4,10 @@ import com.floralquafloral.mariodata.MarioData;
 
 import java.util.Set;
 
+/**
+ * Represents a numerical value that might vary depending on character and power-up form.
+ * This is used for movement, speed thresholds, and damage calculations.
+ */
 public class CharaStat {
 	public final double BASE;
 	public final Set<StatCategory> CATEGORIES;

@@ -16,7 +16,7 @@ public class DuckJump extends Jump {
 		return SneakLegalityRule.ALLOW;
 	}
 
-	@Override public List<ActionTransitionDefinition> getPreTickTransitions() {
+	@Override public List<ActionTransitionDefinition> getPreTravelTransitions() {
 		return List.of(
 				new ActionTransitionDefinition("qua_mario:jump",
 						DuckWaddle.UNDUCK.EVALUATOR
@@ -24,15 +24,16 @@ public class DuckJump extends Jump {
 		);
 	}
 
-	@Override public List<ActionTransitionDefinition> getPostTickTransitions() {
+	@Override public List<ActionTransitionDefinition> getInputTransitions() {
 		return List.of(
 				AerialTransitions.makeJumpCapTransition(this, 0.14)
 		);
 	}
 
 	@Override
-	public List<ActionTransitionDefinition> getPostMoveTransitions() {
+	public List<ActionTransitionDefinition> getWorldCollisionTransitions() {
 		return List.of(
+				CommonTransitions.ENTER_WATER,
 				AerialTransitions.DUCKING_LANDING
 		);
 	}

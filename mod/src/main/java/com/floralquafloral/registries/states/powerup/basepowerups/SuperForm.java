@@ -15,6 +15,10 @@ import java.util.Map;
 import java.util.Set;
 
 public class SuperForm implements PowerUpDefinition {
+	@Override public @NotNull Map<String, String> getCharacterPlayermodels() {
+		return Map.of();
+	}
+
 	@Override public @NotNull Identifier getID() {
 		return Identifier.of(MarioQuaMario.MOD_ID, "super");
 	}

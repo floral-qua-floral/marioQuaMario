@@ -34,7 +34,7 @@ public class TripleJump extends Jump {
 	public static CharaStat TRIPLE_JUMP_SPEED_THRESHOLD = new CharaStat(0.34,
 			StatCategory.RUNNING, StatCategory.FORWARD, StatCategory.THRESHOLD);
 
-	@Override public List<ActionTransitionDefinition> getPostTickTransitions() {
+	@Override public List<ActionTransitionDefinition> getInputTransitions() {
 		return List.of(
 				AerialTransitions.GROUND_POUND,
 				AerialTransitions.makeJumpCapTransition(this, 0.65)
@@ -61,8 +61,9 @@ public class TripleJump extends Jump {
 	}
 
 	@Override
-	public List<ActionTransitionDefinition> getPostMoveTransitions() {
+	public List<ActionTransitionDefinition> getWorldCollisionTransitions() {
 		return List.of(
+				CommonTransitions.ENTER_WATER,
 				AerialTransitions.BASIC_LANDING
 		);
 	}

@@ -10,11 +10,14 @@ import com.floralquafloral.util.MarioSFX;
 import com.floralquafloral.definitions.actions.StatCategory;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.sound.*;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
@@ -29,8 +32,6 @@ public abstract class MarioPlayerData implements MarioData {
 	private static final EntityAttributeModifier ATTACK_SLOWDOWN = new EntityAttributeModifier(
 			ATTACK_SLOWDOWN_ID, -0.5, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
 	);
-
-
 
 	private boolean enabled;
 	private final boolean IS_CLIENT;
@@ -109,6 +110,16 @@ public abstract class MarioPlayerData implements MarioData {
 	@Override
 	public int getBumpStrengthModifier() {
 		return this.powerUp.BUMP_STRENGTH_MODIFIER + this.character.BUMP_STRENGTH_MODIFIER;
+	}
+
+	@Override
+	public boolean isSubmerged() {
+		return this.mario.isSubmergedInWater();
+	}
+
+	@Override
+	public boolean isWading() {
+		return this.mario.getFluidHeight(FluidTags.WATER) > 0.3;
 	}
 
 	public float getVoicePitch() {

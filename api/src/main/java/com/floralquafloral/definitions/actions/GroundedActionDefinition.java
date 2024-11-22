@@ -14,7 +14,7 @@ public abstract class GroundedActionDefinition implements ActionDefinition {
 	public static final CharaStat ZERO = new CharaStat(0.0);
 
 	public abstract static class GroundedTransitions {
-		public static final CharaStat P_SPEED = new CharaStat(0.665, P_RUNNING, FORWARD, SPEED);
+		public static final CharaStat P_SPEED = new CharaStat(0.5875, P_RUNNING, FORWARD, SPEED);
 		public static void performJump(MarioTravelData data, CharaStat velocityStat, @Nullable CharaStat addendStat) {
 			if(data.getMario().isMainPlayer() || !data.getMario().getWorld().isClient) {
 				double jumpVel = velocityStat.get(data);
@@ -62,7 +62,7 @@ public abstract class GroundedActionDefinition implements ActionDefinition {
 
 	public abstract void groundedTravel(MarioTravelData data);
 
-	public void groundAccel(
+public static void groundAccel(
 			MarioTravelData data,
 			CharaStat forwardAccel, CharaStat forwardTarget, CharaStat strafeAccel, CharaStat strafeTarget,
 			double forwardAngleContribution, double strafeAngleContribution, CharaStat redirectDelta
@@ -76,7 +76,7 @@ public abstract class GroundedActionDefinition implements ActionDefinition {
 		);
 	}
 
-	public void applyDrag(
+	public static void applyDrag(
 			MarioTravelData data,
 			CharaStat drag, CharaStat dragMin,
 			double forwardAngleContribution, double strafeAngleContribution,

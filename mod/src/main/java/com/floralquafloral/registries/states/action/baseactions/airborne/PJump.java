@@ -17,8 +17,9 @@ public class PJump extends Jump {
 	}
 
 	@Override
-	public List<ActionTransitionDefinition> getPostMoveTransitions() {
+	public List<ActionTransitionDefinition> getWorldCollisionTransitions() {
 		return List.of(
+				CommonTransitions.ENTER_WATER,
 				new ActionTransitionDefinition("qua_mario:p_run",
 						(data) -> data.getMario().isOnGround() && data.getForwardVel() >= ActionBasic.RUN_SPEED.getAsThreshold(data),
 						AerialTransitions.DOUBLE_JUMPABLE_LANDING.EXECUTOR_TRAVELLERS,

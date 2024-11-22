@@ -11,7 +11,7 @@ public class Stomp extends Jump {
 		return Identifier.of(MarioQuaMario.MOD_ID, "stomp");
 	}
 
-	@Override public List<ActionTransitionDefinition> getPostTickTransitions() {
+	@Override public List<ActionTransitionDefinition> getInputTransitions() {
 		return List.of(
 				AerialTransitions.GROUND_POUND,
 				AerialTransitions.makeJumpCapTransition(this, 0.65)

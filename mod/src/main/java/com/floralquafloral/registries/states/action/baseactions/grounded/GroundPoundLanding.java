@@ -46,7 +46,7 @@ public class GroundPoundLanding extends GroundedActionDefinition {
 	}
 
 	@Override
-	public List<ActionTransitionDefinition> getPreTickTransitions() {
+	public List<ActionTransitionDefinition> getPreTravelTransitions() {
 		return List.of(
 				new ActionTransitionDefinition("qua_mario:ground_pound",
 						data -> data.getTimers().actionTimer > 3 && data.getInputs().DUCK.isHeld() && ((MarioMainClientData) data).canRepeatPound
@@ -58,14 +58,15 @@ public class GroundPoundLanding extends GroundedActionDefinition {
 	}
 
 	@Override
-	public List<ActionTransitionDefinition> getPostTickTransitions() {
+	public List<ActionTransitionDefinition> getInputTransitions() {
 		return List.of(
 		);
 	}
 
 	@Override
-	public List<ActionTransitionDefinition> getPostMoveTransitions() {
+	public List<ActionTransitionDefinition> getWorldCollisionTransitions() {
 		return List.of(
+				CommonTransitions.ENTER_WATER,
 				new ActionTransitionDefinition("qua_mario:ground_pound",
 						data -> GroundedTransitions.FALL.EVALUATOR.shouldTransition(data) && data.getInputs().DUCK.isHeld()
 				),
