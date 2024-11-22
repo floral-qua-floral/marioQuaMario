@@ -20,7 +20,7 @@
 			"com.floralquafloral.registries.states.action.baseactions.ActionDebugAlt",
 			"com.floralquafloral.registries.states.action.baseactions.Mounted",
 			"com.floralquafloral.registries.states.action.baseactions.GroundPoundWindup",
-			"com.floralquafloral.registries.states.action.baseactions.GroundPound"
+			"com.floralquafloral.registries.states.action.baseactions.AquaticGroundPoundWindup"
 		],
 		"mario-actions-grounded": [
 			"com.floralquafloral.registries.states.action.baseactions.grounded.ActionBasic",
@@ -41,11 +41,16 @@
 			"com.floralquafloral.registries.states.action.baseactions.airborne.Backflip",
 			"com.floralquafloral.registries.states.action.baseactions.airborne.Sideflip",
 			"com.floralquafloral.registries.states.action.baseactions.airborne.DoubleJump",
-			"com.floralquafloral.registries.states.action.baseactions.airborne.TripleJump"
+			"com.floralquafloral.registries.states.action.baseactions.airborne.TripleJump",
+			"com.floralquafloral.registries.states.action.baseactions.airborne.WaterExitJump",
+			"com.floralquafloral.registries.states.action.baseactions.airborne.GroundPound"
 		],
 		"mario-actions-aquatic": [
 			"com.floralquafloral.registries.states.action.baseactions.aquatic.Submerged",
-			"com.floralquafloral.registries.states.action.baseactions.aquatic.Swim"
+			"com.floralquafloral.registries.states.action.baseactions.aquatic.Swim",
+			"com.floralquafloral.registries.states.action.baseactions.aquatic.AquaticGroundPound",
+			"com.floralquafloral.registries.states.action.baseactions.aquatic.UnderwaterWalk",
+			"com.floralquafloral.registries.states.action.baseactions.aquatic.UnderwaterDuck"
 		],
 
 		"mario-power-ups": [

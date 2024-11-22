@@ -6,25 +6,26 @@ import com.floralquafloral.definitions.actions.CharaStat;
 import com.floralquafloral.mariodata.MarioAuthoritativeData;
 import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.mariodata.MarioTravelData;
+import com.floralquafloral.registries.states.action.baseactions.grounded.DuckWaddle;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class Submerged extends AquaticActionDefinition {
+public class UnderwaterDuck extends AquaticActionDefinition {
 	@Override public @NotNull Identifier getID() {
-		return Identifier.of(MarioQuaMario.MOD_ID, "submerged");
+		return Identifier.of(MarioQuaMario.MOD_ID, "underwater_duck");
 	}
 	@Override public @Nullable String getAnimationName() {
-		return "submerged";
+		return null;
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations() {
 		return null;
 	}
 
 	@Override public SneakLegalityRule getSneakLegalityRule() {
-		return SneakLegalityRule.PROHIBIT;
+		return SneakLegalityRule.ALLOW;
 	}
 	@Override public SlidingStatus getActionSlidingStatus() {
 		return SlidingStatus.NOT_SLIDING;
@@ -33,7 +34,7 @@ public class Submerged extends AquaticActionDefinition {
 		return null;
 	}
 	@Override public BumpingRule getBumpingRule() {
-		return BumpingRule.SWIMMING;
+		return null;
 	}
 
 	@Override public double getGravity() {
@@ -43,7 +44,7 @@ public class Submerged extends AquaticActionDefinition {
 		return -0.675;
 	}
 	@Override public double getDrag() {
-		return 0.11;
+		return 0.145;
 	}
 	@Override public double getDragMinimum() {
 		return 0.01;
@@ -51,7 +52,6 @@ public class Submerged extends AquaticActionDefinition {
 
 	@Override public void aquaticTravel(MarioTravelData data) {
 		data.getTimers().actionTimer++;
-		aquaticAccel(data);
 	}
 
 	@Override public void clientTick(MarioClientSideData data, boolean isSelf) {
@@ -62,20 +62,31 @@ public class Submerged extends AquaticActionDefinition {
 	}
 
 	@Override public List<ActionTransitionDefinition> getPreTravelTransitions() {
-		return List.of();
+		return List.of(
+				new ActionTransitionDefinition("qua_mario:underwater_walk",
+						DuckWaddle.UNDUCK.EVALUATOR,
+						DuckWaddle.UNDUCK.EXECUTOR_TRAVELLERS,
+						DuckWaddle.UNDUCK.EXECUTOR_CLIENTS
+				)
+		);
 	}
 
 	@Override public List<ActionTransitionDefinition> getInputTransitions() {
 		return List.of(
-				AquaticTransitions.AQUATIC_GROUND_POUND,
 				Swim.SWIM
 		);
 	}
 
+
+
 	@Override public List<ActionTransitionDefinition> getWorldCollisionTransitions() {
 		return List.of(
-				AquaticTransitions.EXIT_WATER,
-				AquaticTransitions.LANDING
+				new ActionTransitionDefinition("qua_mario:duck_fall",
+						AquaticTransitions.EXIT_WATER.EVALUATOR,
+						AquaticTransitions.EXIT_WATER.EXECUTOR_TRAVELLERS,
+						AquaticTransitions.EXIT_WATER.EXECUTOR_CLIENTS
+				),
+				AquaticTransitions.FALL
 		);
 	}
 

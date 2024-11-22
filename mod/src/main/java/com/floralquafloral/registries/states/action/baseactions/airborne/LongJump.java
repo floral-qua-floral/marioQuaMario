@@ -75,8 +75,10 @@ public class LongJump extends AirborneActionDefinition {
 
 	@Override public List<ActionTransitionDefinition> getWorldCollisionTransitions() {
 		return List.of(
+				AerialTransitions.ENTER_WATER,
 				AerialTransitions.DUCKING_LANDING,
-				AerialTransitions.DOUBLE_JUMPABLE_LANDING);
+				AerialTransitions.DOUBLE_JUMPABLE_LANDING
+		);
 	}
 
 	@Override public List<ActionTransitionInjection> getTransitionInjections() {

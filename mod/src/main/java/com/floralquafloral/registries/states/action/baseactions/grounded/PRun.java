@@ -87,7 +87,7 @@ public class PRun extends GroundedActionDefinition {
 	@Override
 	public List<ActionTransitionDefinition> getWorldCollisionTransitions() {
 		return List.of(
-				CommonTransitions.ENTER_WATER,
+				GroundedTransitions.ENTER_WATER,
 				GroundedTransitions.FALL
 		);
 	}

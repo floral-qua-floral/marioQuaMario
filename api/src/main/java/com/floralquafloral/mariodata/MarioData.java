@@ -14,9 +14,6 @@ public interface MarioData {
 	int getBumpStrengthModifier();
 	boolean isSneakProhibited();
 
-	boolean isSubmerged();
-	boolean isWading();
-
 	boolean isEnabled();
 	Identifier getActionID();
 	Identifier getPowerUpID();

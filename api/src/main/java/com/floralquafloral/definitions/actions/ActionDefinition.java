@@ -142,6 +142,7 @@ public interface ActionDefinition extends MarioStateDefinition {
 		 */
 		public static final BumpingRule JUMPING = new BumpingRule(4, 1, 0);
 		public static final BumpingRule FALLING = new BumpingRule(4, 1, 0);
+		public static final BumpingRule SWIMMING = new BumpingRule(4, 0, 0);
 		public static final BumpingRule GROUND_POUND = new BumpingRule(0, 4, 0);
 		public static final BumpingRule SPIN_JUMPING = new BumpingRule(2, 2, 0);
 
@@ -157,12 +158,7 @@ public interface ActionDefinition extends MarioStateDefinition {
 	}
 
 	abstract class CommonTransitions {
-		public static final ActionTransitionDefinition ENTER_WATER = new ActionTransitionDefinition(
-				"qua_mario:submerged",
-				data -> data.getInputs().SPIN.isPressed(),
-				data -> {},
-				(data, isSelf, seed) -> data.playSoundEvent(SoundEvents.AMBIENT_UNDERWATER_ENTER, seed)
-		);
+
 	}
 
 	class ActionTransitionDefinition {

@@ -85,7 +85,7 @@ public class MarioQuaMario implements ModInitializer {
 		ServerLivingEntityEvents.ALLOW_DAMAGE.register((livingEntity, damageSource, amount) -> {
 			if(livingEntity instanceof PlayerEntity player && damageSource.getSource() instanceof LivingEntity sourceEntity && sourceEntity.equals(damageSource.getAttacker())) {
 				MarioPlayerData data = MarioDataManager.getMarioData(player);
-				if(data.isEnabled() && livingEntity.getY() >= sourceEntity.getY() + sourceEntity.getHeight() && data.getAction().STOMP != null) {
+				if(data.isEnabled() && player.getY() + 0.1 >= sourceEntity.getY() + sourceEntity.getHeight() && data.getAction().STOMP != null) {
 					LOGGER.info("Prevented Mario from taking damage against {} due to stomp eligibility.", sourceEntity);
 					return false;
 				}

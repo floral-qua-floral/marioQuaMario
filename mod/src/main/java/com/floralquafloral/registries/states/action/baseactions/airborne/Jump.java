@@ -73,7 +73,7 @@ public class Jump extends AirborneActionDefinition {
 
 	@Override public List<ActionTransitionDefinition> getWorldCollisionTransitions() {
 		return List.of(
-				CommonTransitions.ENTER_WATER,
+				AerialTransitions.ENTER_WATER,
 				AerialTransitions.DOUBLE_JUMPABLE_LANDING
 		);
 	}

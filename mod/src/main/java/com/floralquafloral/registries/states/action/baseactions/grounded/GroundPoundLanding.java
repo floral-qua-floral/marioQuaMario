@@ -1,11 +1,13 @@
 package com.floralquafloral.registries.states.action.baseactions.grounded;
 
 import com.floralquafloral.MarioQuaMario;
+import com.floralquafloral.definitions.actions.AquaticActionDefinition;
 import com.floralquafloral.mariodata.MarioAuthoritativeData;
 import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.mariodata.moveable.MarioMainClientData;
 import com.floralquafloral.mariodata.MarioTravelData;
 import com.floralquafloral.definitions.actions.GroundedActionDefinition;
+import com.floralquafloral.registries.states.action.baseactions.aquatic.UnderwaterWalk;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,6 +53,9 @@ public class GroundPoundLanding extends GroundedActionDefinition {
 				new ActionTransitionDefinition("qua_mario:ground_pound",
 						data -> data.getTimers().actionTimer > 3 && data.getInputs().DUCK.isHeld() && ((MarioMainClientData) data).canRepeatPound
 				),
+				new ActionTransitionDefinition("qua_mario:underwater_walk",
+						data -> (data.getTimers().actionTimer > 4 && !data.getInputs().DUCK.isHeld())
+				),
 				new ActionTransitionDefinition("qua_mario:basic",
 						data -> (data.getTimers().actionTimer > 4 && !data.getInputs().DUCK.isHeld())
 				)
@@ -66,10 +71,15 @@ public class GroundPoundLanding extends GroundedActionDefinition {
 	@Override
 	public List<ActionTransitionDefinition> getWorldCollisionTransitions() {
 		return List.of(
-				CommonTransitions.ENTER_WATER,
+				new ActionTransitionDefinition("qua_mario:aquatic_ground_pound",
+						data -> GroundedTransitions.ENTER_WATER.EVALUATOR.shouldTransition(data)
+								&& GroundedTransitions.FALL.EVALUATOR.shouldTransition(data)
+								&& data.getInputs().DUCK.isHeld()
+				),
 				new ActionTransitionDefinition("qua_mario:ground_pound",
 						data -> GroundedTransitions.FALL.EVALUATOR.shouldTransition(data) && data.getInputs().DUCK.isHeld()
 				),
+				AquaticActionDefinition.AquaticTransitions.FALL,
 				GroundedTransitions.FALL
 		);
 	}

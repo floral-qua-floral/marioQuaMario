@@ -44,9 +44,9 @@ public class MarioDataPackets {
 							handler.player.getWorld().getGameRules().getBoolean(MarioQuaMario.USE_CHARACTER_STATS)));
 		});
 
-		EntityTrackingEvents.START_TRACKING.register((trackingTarget, tracker) -> {
-			if(trackingTarget instanceof PlayerEntity trackingPlayer) {
-				sendAllData(tracker, trackingPlayer);
+		EntityTrackingEvents.START_TRACKING.register((entityBeingTracked, tracker) -> {
+			if(entityBeingTracked instanceof PlayerEntity playerBeingTracked) {
+				sendAllData(tracker, playerBeingTracked);
 			}
 		});
 	}

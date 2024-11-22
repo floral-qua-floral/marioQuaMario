@@ -120,7 +120,11 @@ public class DuckWaddle extends GroundedActionDefinition {
 	@Override
 	public List<ActionTransitionDefinition> getWorldCollisionTransitions() {
 		return List.of(
-				CommonTransitions.ENTER_WATER,
+				new ActionTransitionDefinition("qua_mario:underwater_duck",
+						GroundedTransitions.ENTER_WATER.EVALUATOR,
+						GroundedTransitions.ENTER_WATER.EXECUTOR_TRAVELLERS,
+						GroundedTransitions.ENTER_WATER.EXECUTOR_CLIENTS
+				),
 				DUCK_FALL
 		);
 	}

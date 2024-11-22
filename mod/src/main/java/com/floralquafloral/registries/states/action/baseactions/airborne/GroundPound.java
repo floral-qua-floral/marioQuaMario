@@ -1,12 +1,10 @@
-package com.floralquafloral.registries.states.action.baseactions;
+package com.floralquafloral.registries.states.action.baseactions.airborne;
 
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioAuthoritativeData;
 import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.mariodata.MarioTravelData;
-import com.floralquafloral.definitions.actions.ActionDefinition;
 import com.floralquafloral.definitions.actions.AirborneActionDefinition;
-import com.floralquafloral.registries.states.action.baseactions.airborne.Backflip;
 import com.floralquafloral.definitions.actions.CharaStat;
 import com.floralquafloral.definitions.actions.StatCategory;
 import com.floralquafloral.util.MarioSFX;
@@ -16,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class GroundPound implements ActionDefinition {
+public class GroundPound extends AirborneActionDefinition {
 	public static final CharaStat GROUND_POUND_VEL = new CharaStat(-1.5, StatCategory.TERMINAL_VELOCITY);
 
 	@Override public @NotNull Identifier getID() {
@@ -42,8 +40,17 @@ public class GroundPound implements ActionDefinition {
 		return Identifier.of("qua_mario", "ground_pound");
 	}
 
-	@Override public void travelHook(MarioTravelData data) {
-		data.setYVel(GROUND_POUND_VEL.get(data));
+	@Override protected @NotNull CharaStat getGravity() {
+		return AerialStats.GRAVITY;
+	}
+	@Override protected @Nullable CharaStat getJumpGravity() {
+		return null;
+	}
+	@Override protected @NotNull CharaStat getTerminalVelocity() {
+		return AerialStats.TERMINAL_VELOCITY;
+	}
+
+	@Override public void airborneTravel(MarioTravelData data) {
 		AirborneActionDefinition.airborneAccel(data,
 				AirborneActionDefinition.AerialStats.FORWARD_DRIFT_ACCEL, Backflip.REDUCED_FORWARD_SPEED,
 				AirborneActionDefinition.AerialStats.BACKWARD_DRIFT_ACCEL, Backflip.REDUCED_BACKWARD_SPEED,
@@ -61,20 +68,32 @@ public class GroundPound implements ActionDefinition {
 	}
 
 	@Override public List<ActionTransitionDefinition> getPreTravelTransitions() {
-		return List.of();
+		return List.of(
+				new ActionTransitionDefinition("qua_mario:fall",
+						data -> data.getYVel() > 0
+				)
+		);
 	}
 
 	@Override public List<ActionTransitionDefinition> getInputTransitions() {
-		return List.of();
+		return List.of(
+				new ActionTransitionDefinition("qua_mario:fall",
+						data -> data.getInputs().JUMP.isPressed()
+				)
+		);
 	}
 
 	@Override public List<ActionTransitionDefinition> getWorldCollisionTransitions() {
 		return List.of(
-				new ActionTransitionDefinition(
-						"qua_mario:ground_pound_landing",
+				new ActionTransitionDefinition("qua_mario:ground_pound_landing",
 						AirborneActionDefinition.AerialTransitions.BASIC_LANDING.EVALUATOR,
 						data -> data.setForwardStrafeVel(0, 0),
 						(data, isSelf, seed) -> data.playSoundEvent(MarioSFX.GROUND_POUND, seed)
+				),
+				new ActionTransitionDefinition("qua_mario:aquatic_ground_pound",
+						AerialTransitions.ENTER_WATER.EVALUATOR,
+						data -> data.setYVel(data.getYVel() * 0.4),
+						null
 				)
 		);
 	}

@@ -108,7 +108,7 @@ public abstract class BumpManager {
 				world, blockPos, blockState,
 				strength, modifier, direction
 		) -> {
-			MarioQuaMario.LOGGER.info("Bump listener!!");
+//			MarioQuaMario.LOGGER.info("Bump listener!!");
 			return BlockBumpResult.PASS;
 		});
 	}

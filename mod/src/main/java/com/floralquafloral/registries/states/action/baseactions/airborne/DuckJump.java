@@ -33,7 +33,7 @@ public class DuckJump extends Jump {
 	@Override
 	public List<ActionTransitionDefinition> getWorldCollisionTransitions() {
 		return List.of(
-				CommonTransitions.ENTER_WATER,
+				AerialTransitions.ENTER_WATER,
 				AerialTransitions.DUCKING_LANDING
 		);
 	}

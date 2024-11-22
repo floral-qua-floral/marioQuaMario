@@ -34,7 +34,7 @@ public class DoubleJump extends Jump {
 	@Override
 	public List<ActionTransitionDefinition> getWorldCollisionTransitions() {
 		return List.of(
-				CommonTransitions.ENTER_WATER,
+				AerialTransitions.ENTER_WATER,
 				AerialTransitions.TRIPLE_JUMPABLE_LANDING
 		);
 	}

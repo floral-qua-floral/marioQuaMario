@@ -4,6 +4,7 @@ import com.floralquafloral.MarioPackets;
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.moveable.MarioMainClientData;
 import com.floralquafloral.mariodata.moveable.MarioServerData;
+import com.floralquafloral.registries.RegistryManager;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
@@ -15,9 +16,11 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class MarioDataManager {
@@ -28,7 +31,7 @@ public class MarioDataManager {
 	public static void registerEventListeners() {
 		ServerLifecycleEvents.SERVER_STARTED.register((server) -> {
 			useCharacterStats = server.getGameRules().getBoolean(MarioQuaMario.USE_CHARACTER_STATS);
-			wipePlayerData();
+			SERVER_PLAYERS_DATA.clear();
 		});
 
 		ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
@@ -40,7 +43,9 @@ public class MarioDataManager {
 
 			MarioPlayerData data = getMarioData(oldPlayer);
 			data.setMario(newPlayer);
+			data.setEnabledInternal(data.isEnabled());
 			SERVER_PLAYERS_DATA.put(newPlayer, data);
+			data.setPowerUp(Objects.requireNonNull(RegistryManager.POWER_UPS.get(Identifier.of(MarioQuaMario.MOD_ID, "super"))));
 			MarioDataPackets.sendAllData(newPlayer, newPlayer);
 		});
 
@@ -79,11 +84,12 @@ public class MarioDataManager {
 				CLIENT_PLAYERS_DATA.remove(clientPlayer);
 				CLIENT_PLAYERS_DATA.remove(data.getMario());
 				data.setMario(clientPlayer);
+				data.setEnabledInternal(data.isEnabled());
 				CLIENT_PLAYERS_DATA.put(clientPlayer, data);
 			}
 		});
 
-		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> wipePlayerData());
+		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> CLIENT_PLAYERS_DATA.clear());
 
 //		ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
 //
@@ -93,8 +99,8 @@ public class MarioDataManager {
 	}
 
 	public static void wipePlayerData() {
-		SERVER_PLAYERS_DATA.clear();
-		CLIENT_PLAYERS_DATA.clear();
+//		SERVER_PLAYERS_DATA.clear();
+//		CLIENT_PLAYERS_DATA.clear();
 	}
 
 	public static MarioPlayerData getMarioData(PlayerEntity mario) {

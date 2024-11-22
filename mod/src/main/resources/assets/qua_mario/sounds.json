@@ -119,6 +119,36 @@
       "qua_mario:sfx/action/ground_pound"
     ]
   },
+  "sfx.action.swim": {
+    "subtitle": "subtitles.qua_mario.action.swim",
+    "sounds": [
+      "qua_mario:sfx/action/swim"
+    ]
+  },
+  "sfx.action.swim_paddle": {
+    "subtitle": "subtitles.qua_mario.action.swim_paddle",
+    "sounds": [
+      "qua_mario:sfx/action/swim_paddle"
+    ]
+  },
+  "sfx.action.aquatic_ground_pound_pre": {
+    "subtitle": "subtitles.qua_mario.action.aquatic_ground_pound_pre",
+    "sounds": [
+      "qua_mario:sfx/action/aquatic_ground_pound_pre"
+    ]
+  },
+  "sfx.action.aquatic_ground_pound": {
+    "subtitle": "subtitles.qua_mario.action.aquatic_ground_pound",
+    "sounds": [
+      "qua_mario:sfx/action/aquatic_ground_pound"
+    ]
+  },
+  "sfx.action.dive": {
+    "subtitle": "subtitles.qua_mario.action.dive",
+    "sounds": [
+      "qua_mario:sfx/action/dive"
+    ]
+  },
 
   "voice.luigi.backflip": {
     "subtitle": "subtitles.qua_mario.voice_luigi_backflip",

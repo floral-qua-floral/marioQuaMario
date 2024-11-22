@@ -46,6 +46,11 @@
 	"subtitles.qua_mario.action.unduck": "Un-ducking",
 	"subtitles.qua_mario.action.ground_pound_pre": "Aerial flip",
 	"subtitles.qua_mario.action.ground_pound": "Ground pounded",
+	"subtitles.qua_mario.action.swim": "Swimming",
+	"subtitles.qua_mario.action.swim_paddle": "Swimming",
+	"subtitles.qua_mario.action.aquatic_ground_pound_pre": "Aquatic flip",
+	"subtitles.qua_mario.action.aquatic_ground_pound": "Ground pounded",
+	"subtitles.qua_mario.action.dive": "Diving",
 
 	"subtitles.qua_mario.voice_luigi_backflip": "Luigi cheers",
 	"subtitles.qua_mario.voice_luigi_burnt": "Luigi gets burned",

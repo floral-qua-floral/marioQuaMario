@@ -16,13 +16,11 @@ public abstract class GroundedActionDefinition implements ActionDefinition {
 	public abstract static class GroundedTransitions {
 		public static final CharaStat P_SPEED = new CharaStat(0.5875, P_RUNNING, FORWARD, SPEED);
 		public static void performJump(MarioTravelData data, CharaStat velocityStat, @Nullable CharaStat addendStat) {
-			if(data.getMario().isMainPlayer() || !data.getMario().getWorld().isClient) {
-				double jumpVel = velocityStat.get(data);
-				if(addendStat != null)
-					jumpVel += Math.max(0.0, data.getForwardVel() / P_SPEED.get(data)) * addendStat.get(data);
+			double jumpVel = velocityStat.get(data);
+			if(addendStat != null)
+				jumpVel += Math.max(0.0, data.getForwardVel() / P_SPEED.get(data)) * addendStat.get(data);
 
-				data.setYVel(jumpVel);
-			}
+			data.setYVel(jumpVel);
 		}
 
 		public static final ActionTransitionDefinition FALL = new ActionTransitionDefinition(
@@ -47,6 +45,13 @@ public abstract class GroundedActionDefinition implements ActionDefinition {
 					data.playSoundEvent(MarioSFX.DUCK, 1.0F, 0.5F, seed);
 					data.voice(MarioClientSideData.VoiceLine.DUCK, seed);
 				}
+		);
+
+		public static final ActionTransitionDefinition ENTER_WATER = new ActionTransitionDefinition(
+				"qua_mario:underwater_walk",
+				data -> data.getMario().isSubmergedInWater(),
+				data -> data.setYVel(data.getYVel() * 0.235),
+				null
 		);
 	}
 

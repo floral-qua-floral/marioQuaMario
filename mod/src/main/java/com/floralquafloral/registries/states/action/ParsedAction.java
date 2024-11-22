@@ -3,6 +3,7 @@ package com.floralquafloral.registries.states.action;
 import com.floralquafloral.*;
 import com.floralquafloral.definitions.actions.ActionDefinition;
 import com.floralquafloral.definitions.actions.AirborneActionDefinition;
+import com.floralquafloral.definitions.actions.AquaticActionDefinition;
 import com.floralquafloral.definitions.actions.GroundedActionDefinition;
 import com.floralquafloral.mariodata.*;
 import com.floralquafloral.mariodata.moveable.MarioMainClientData;
@@ -13,10 +14,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.RandomSeed;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ParsedAction extends ParsedMarioState {
 	public final String ANIMATION;
@@ -131,7 +129,7 @@ public class ParsedAction extends ParsedMarioState {
 					injection.ONLY_FOR_CATEGORY == ActionDefinition.ActionTransitionInjection.ActionCategory.ANY
 					|| (this.DEFINITION instanceof GroundedActionDefinition && injection.ONLY_FOR_CATEGORY.IS_GROUNDED)
 					|| (this.DEFINITION instanceof AirborneActionDefinition && injection.ONLY_FOR_CATEGORY.IS_AIRBORNE)
-//					|| (this.DEFINITION instanceof AquaticActionDefinition && injection.ONLY_FOR_CATEGORY.IS_AQUATIC)
+					|| (this.DEFINITION instanceof AquaticActionDefinition && injection.ONLY_FOR_CATEGORY.IS_AQUATIC)
 			);
 
 
@@ -156,8 +154,8 @@ public class ParsedAction extends ParsedMarioState {
 		private final ActionDefinition.ActionTransitionDefinition.TransitionExecutorClients EXECUTOR_CLIENTS;
 
 		private ParsedTransition(ActionDefinition.ActionTransitionDefinition definition) {
-			TARGET_ACTION = RegistryManager.ACTIONS.get(definition.TARGET_IDENTIFIER);
-			if(TARGET_ACTION == null) MarioQuaMario.LOGGER.error("Transition target isn't registered?!?! {}", definition.TARGET_IDENTIFIER);
+			TARGET_ACTION = Objects.requireNonNull(RegistryManager.ACTIONS.get(definition.TARGET_IDENTIFIER));
+//			if(TARGET_ACTION == null) MarioQuaMario.LOGGER.error("Transition target isn't registered?!?! {}", definition.TARGET_IDENTIFIER);
 			EVALUATOR = definition.EVALUATOR;
 			EXECUTOR_TRAVELLERS = definition.EXECUTOR_TRAVELLERS;
 			EXECUTOR_CLIENTS = definition.EXECUTOR_CLIENTS;

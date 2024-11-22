@@ -52,6 +52,13 @@ public abstract class AirborneActionDefinition implements ActionDefinition {
 				data -> data.getMario().fallDistance *= 0.4F,
 				(data, isSelf, seed) -> data.playSoundEvent(MarioSFX.GROUND_POUND_PRE, seed)
 		);
+
+		public static final ActionTransitionDefinition ENTER_WATER = new ActionTransitionDefinition(
+				"qua_mario:submerged",
+				GroundedActionDefinition.GroundedTransitions.ENTER_WATER.EVALUATOR,
+				GroundedActionDefinition.GroundedTransitions.ENTER_WATER.EXECUTOR_TRAVELLERS,
+				GroundedActionDefinition.GroundedTransitions.ENTER_WATER.EXECUTOR_CLIENTS
+		);
 	}
 
 	public abstract static class AerialStats {

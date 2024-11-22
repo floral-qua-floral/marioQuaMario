@@ -1,6 +1,7 @@
 package com.floralquafloral.mixin;
 
 import com.floralquafloral.MarioQuaMario;
+import com.floralquafloral.mariodata.MarioAuthoritativeData;
 import com.floralquafloral.mariodata.MarioDataManager;
 import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.mariodata.moveable.MarioServerData;
@@ -116,15 +117,21 @@ public abstract class EntityMixin {
 
 	@Inject(method = "writeNbt", at = @At("HEAD"))
 	protected void writeMarioData(NbtCompound nbt, CallbackInfoReturnable<NbtCompound> cir) {
-		if((Entity) (Object) this instanceof PlayerEntity player) {
+		if((Entity) (Object) this instanceof ServerPlayerEntity player) {
 			NbtCompound persistentMarioData = new NbtCompound();
 			MarioPlayerData data = MarioDataManager.getMarioData(player);
 
 			persistentMarioData.putBoolean("Enabled", data.isEnabled());
-			persistentMarioData.putString("Character", data.getCharacter().ID.toString());
-			persistentMarioData.putString("PowerUp", data.getPowerUp().ID.toString());
+			persistentMarioData.putString("Character", data.getCharacterID().toString());
+			persistentMarioData.putString("PowerUp", data.getPowerUpID().toString());
 
 
+			MarioQuaMario.LOGGER.info("Writing player NBT"
+					+ "\nEnabled: " + persistentMarioData.getBoolean("Enabled")
+					+ "\nCharacter: " + persistentMarioData.getString("Character")
+					+ "\nCharacterID: " + Identifier.of(persistentMarioData.getString("Character"))
+					+ "\nParsedCharacter: " + RegistryManager.CHARACTERS.get(Identifier.of(persistentMarioData.getString("Character")))
+			);
 
 			nbt.put(MOD_DATA_NAME, persistentMarioData);
 		}
@@ -145,8 +152,14 @@ public abstract class EntityMixin {
 						+ "\nParsedCharacter: " + RegistryManager.CHARACTERS.get(Identifier.of(persistentMarioData.getString("Character")))
 				);
 
-				MarioPlayerData data = MarioDataManager.getMarioData(player);
-				data.setEnabledInternal(persistentMarioData.getBoolean("enabled"));
+				MarioServerData data = (MarioServerData) MarioDataManager.getMarioData(player);
+//				if(data.getMario().networkHandler != null) {
+//					data.setEnabled(persistentMarioData.getBoolean("Enabled"));
+//					data.setPowerUp(persistentMarioData.getString("PowerUp"));
+//					data.setCharacter(persistentMarioData.getString("Character"));
+//				}
+
+				data.setEnabledInternal(persistentMarioData.getBoolean("Enabled"));
 				ParsedCharacter character = RegistryManager.CHARACTERS.get(Identifier.of(persistentMarioData.getString("Character")));
 				if(character != null) data.setCharacter(character);
 				else data.setCharacter(data.getCharacter());
