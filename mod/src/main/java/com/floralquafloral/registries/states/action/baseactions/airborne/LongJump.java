@@ -36,6 +36,12 @@ public class LongJump extends AirborneActionDefinition {
 //	public static final CharaStat LONG_JUMP_VEL = new CharaStat(0.858, StatCategory.JUMP_VELOCITY);
 	public static final CharaStat LONG_JUMP_THRESHOLD = new CharaStat(0.285, StatCategory.THRESHOLD);
 
+	public static CharaStat REDUCED_FORWARD_ACCEL = AerialStats.FORWARD_DRIFT_ACCEL.variate(0.5);
+	public static CharaStat REDUCED_BACKWARD_ACCEL = AerialStats.BACKWARD_DRIFT_ACCEL.variate(0.5);
+	public static CharaStat REDUCED_STRAFE_ACCEL = AerialStats.STRAFE_DRIFT_ACCEL.variate(0.5);
+
+	public static CharaStat REDUCED_REDIRECTION = AerialStats.DRIFT_REDIRECTION.variate(0.66);
+
 	@Override public SneakLegalityRule getSneakLegalityRule() {
 		return SneakLegalityRule.PROHIBIT;
 	}
@@ -57,7 +63,12 @@ public class LongJump extends AirborneActionDefinition {
 	}
 
 	@Override public void airborneTravel(MarioTravelData data) {
-		airborneAccel(data);
+		airborneAccel(data,
+				REDUCED_FORWARD_ACCEL, AerialStats.FORWARD_DRIFT_SPEED,
+				REDUCED_BACKWARD_ACCEL, AerialStats.BACKWARD_DRIFT_SPEED,
+				REDUCED_STRAFE_ACCEL, AerialStats.STRAFE_DRIFT_SPEED,
+				1.0, 1.0, REDUCED_REDIRECTION
+		);
 	}
 
 	@Override public void clientTick(MarioClientSideData data, boolean isSelf) {

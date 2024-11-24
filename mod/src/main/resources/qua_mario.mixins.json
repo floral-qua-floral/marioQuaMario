@@ -20,6 +20,7 @@
     "ClientPlayNetworkHandlerMixin",
     "InGameHudMixin",
     "LivingEntityRendererMixin",
+    "MinecraftClientMixin",
     "SectionBuilderMixin"
   ]
 }

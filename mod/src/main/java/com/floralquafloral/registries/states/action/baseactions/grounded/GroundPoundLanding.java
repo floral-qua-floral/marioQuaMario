@@ -94,7 +94,12 @@ public class GroundPoundLanding extends GroundedActionDefinition {
 				new ActionTransitionDefinition("qua_mario:ground_pound",
 						data -> GroundedTransitions.FALL.EVALUATOR.shouldTransition(data) && data.getInputs().DUCK.isHeld()
 				),
-				AquaticActionDefinition.AquaticTransitions.FALL,
+				new ActionTransitionDefinition("qua_mario:submerged",
+						data -> GroundedTransitions.FALL.EVALUATOR.shouldTransition(data)
+								&& GroundedTransitions.ENTER_WATER.EVALUATOR.shouldTransition(data),
+						GroundedTransitions.FALL.EXECUTOR_TRAVELLERS,
+						GroundedTransitions.FALL.EXECUTOR_CLIENTS
+				),
 				GroundedTransitions.FALL
 		);
 	}

@@ -1,6 +1,7 @@
 package com.floralquafloral.definitions.actions;
 
 import com.floralquafloral.mariodata.MarioTravelData;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +14,9 @@ public abstract class AquaticActionDefinition implements ActionDefinition {
 	public abstract static class AquaticTransitions {
 		public static final ActionTransitionDefinition EXIT_WATER = new ActionTransitionDefinition(
 				"qua_mario:fall",
-				data -> data.getMario().getFluidHeight(FluidTags.WATER) < data.getMario().getHeight() * 0.5
+				data ->
+						data.getMario().getFluidHeight(FluidTags.WATER)
+						< data.getMario().getBoundingBox(EntityPose.STANDING).getLengthY() * 0.5
 		);
 
 		public static final ActionTransitionDefinition AQUATIC_GROUND_POUND = new ActionTransitionDefinition(
