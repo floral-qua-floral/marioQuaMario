@@ -27,6 +27,9 @@ public interface MarioClientSideData extends MarioData {
 	PositionedSoundInstance voice(VoiceLine line, long seed);
 	float getVoicePitch();
 
+	void storeSound(PositionedSoundInstance instance);
+	void stopStoredSound(SoundEvent event);
+
 	enum VoiceLine {
 		SELECT,
 		DUCK,

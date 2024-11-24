@@ -138,7 +138,7 @@ public class ParsedStomp {
 
 	public boolean attempt(MarioServerData data, Vec3d movement) {
 		ServerPlayerEntity mario = data.getMario();
-		List<Entity> targets = mario.getWorld().getOtherEntities(mario, mario.getBoundingBox().stretch(movement.multiply(1, 2, 1)));
+		List<Entity> targets = mario.getWorld().getOtherEntities(mario, mario.getBoundingBox().stretch(movement.multiply(1, 1, 1)));
 
 		boolean affectMario = true;
 		long seed = RandomSeed.getSeed();

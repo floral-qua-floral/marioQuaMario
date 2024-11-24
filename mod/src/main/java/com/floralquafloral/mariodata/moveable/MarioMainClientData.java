@@ -55,7 +55,7 @@ public class MarioMainClientData extends MarioMoveableData implements MarioClien
 	public final float[] CAMERA_ROTATIONS = new float[3];
 
 	@Override public void setActionTransitionless(ParsedAction action) {
-//		MarioQuaMario.LOGGER.info("MarioMainClientData setAction to " + action.ID);
+		MarioQuaMario.LOGGER.info("MarioMainClientData setAction to " + action.ID);
 		if(action != getAction()) getTimers().actionTimer = 0;
 
 		// CPM animation
@@ -103,9 +103,6 @@ public class MarioMainClientData extends MarioMoveableData implements MarioClien
 		getAction().travelHook(this);
 		getAction().attemptTransitions(this, TransitionPhase.INPUT);
 
-		getTimers().jumpLandingTime--;
-		getTimers().doubleJumpLandingTime--;
-
 		applyModifiedVelocity();
 		marioClient.move(MovementType.SELF, marioClient.getVelocity());
 
@@ -136,6 +133,10 @@ public class MarioMainClientData extends MarioMoveableData implements MarioClien
 //		getAction().attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
 
 		applyModifiedVelocity();
+
+		getTimers().jumpLandingTime--;
+		getTimers().doubleJumpLandingTime--;
+		getTimers().actionInterceptedAttack = false;
 
 		marioClient.updateLimbs(false);
 		return !marioClient.hasVehicle();

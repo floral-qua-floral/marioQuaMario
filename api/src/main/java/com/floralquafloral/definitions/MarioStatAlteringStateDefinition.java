@@ -5,7 +5,7 @@ import com.floralquafloral.definitions.actions.StatCategory;
 import java.util.Map;
 import java.util.Set;
 
-public interface MarioMajorStateDefinition extends MarioStateDefinition {
+public interface MarioStatAlteringStateDefinition extends MarioStateDefinition {
 	void populateStatModifiers(Map<Set<StatCategory>, Double> modifiers);
 
 	int getBumpStrengthModifier();

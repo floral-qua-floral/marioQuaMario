@@ -19,7 +19,10 @@ import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageType;
+import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
@@ -80,6 +83,16 @@ public class MarioQuaMario implements ModInitializer {
 		MarioPackets.registerCommon();
 
 		MarioCommand.registerMarioCommand();
+
+//		ServerLivingEntityEvents.ALLOW_DAMAGE.register((livingEntity, damageSource, amount) -> {
+//			if(damageSource.isDirect() && damageSource.isOf(DamageTypes.PLAYER_ATTACK) && damageSource.getAttacker() instanceof PlayerEntity player) {
+//				ItemStack weapon = damageSource.getWeaponStack();
+//				if(weapon != null && weapon.isEmpty()) {
+//					// Unarmed player attack
+//				}
+//			}
+//			return true;
+//		});
 
 		// Mario can't be damaged by a mob that he's high enough to stomp on
 		ServerLivingEntityEvents.ALLOW_DAMAGE.register((livingEntity, damageSource, amount) -> {

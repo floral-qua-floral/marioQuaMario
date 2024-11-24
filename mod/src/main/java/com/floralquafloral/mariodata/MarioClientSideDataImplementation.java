@@ -100,6 +100,17 @@ public interface MarioClientSideDataImplementation extends MarioClientSideData {
 		JumpSoundPlayer.fadeJumpSfx(this);
 	}
 
+	Map<Identifier, PositionedSoundInstance> STORED_SOUNDS = new HashMap<>();
+
+	@Override default void storeSound(PositionedSoundInstance instance) {
+		STORED_SOUNDS.put(instance.getId(), instance);
+	}
+
+	@Override
+	default void stopStoredSound(SoundEvent event) {
+		MinecraftClient.getInstance().getSoundManager().stop(STORED_SOUNDS.get(event.getId()));
+	}
+
 	EnumMap<VoiceLine, Map<Identifier, SoundEvent>> VOICE_SOUND_EVENTS = new EnumMap<>(VoiceLine.class);
 	class VoiceSoundEventInitializer {
 		public static void initialize() {

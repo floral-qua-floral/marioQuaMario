@@ -1,16 +1,15 @@
 package com.floralquafloral.registries.states.action.baseactions;
 
 import com.floralquafloral.MarioQuaMario;
-import com.floralquafloral.mariodata.MarioAuthoritativeData;
-import com.floralquafloral.mariodata.MarioClientSideData;
-import com.floralquafloral.mariodata.MarioPlayerData;
-import com.floralquafloral.mariodata.MarioTravelData;
+import com.floralquafloral.mariodata.*;
 import com.floralquafloral.definitions.actions.ActionDefinition;
 import com.floralquafloral.definitions.actions.GroundedActionDefinition;
 import com.floralquafloral.registries.states.action.baseactions.grounded.DuckWaddle;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import net.minecraft.entity.Entity;
 
 import java.util.List;
 
@@ -98,5 +97,12 @@ public class Mounted implements ActionDefinition {
 	@Override
 	public List<ActionTransitionInjection> getTransitionInjections() {
 		return List.of();
+	}
+
+	@Override public boolean interceptAttack(
+			MarioData data, @Nullable MarioClientSideData clientData, @Nullable MarioTravelData travelData,
+			@Nullable Entity entityTarget, @Nullable BlockPos blockTarget
+	) {
+		return false;
 	}
 }

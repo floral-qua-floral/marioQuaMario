@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-public interface PowerUpDefinition extends MarioMajorStateDefinition {
+public interface PowerUpDefinition extends MarioStatAlteringStateDefinition, MarioAttackInterceptingStateDefinition {
 	@NotNull Map<String, String> getCharacterPlayermodels();
 
 	void acquirePower(MarioData data);

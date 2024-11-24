@@ -29,13 +29,13 @@ public abstract class AirborneActionDefinition implements ActionDefinition {
 		public static final ActionTransitionDefinition DOUBLE_JUMPABLE_LANDING = new ActionTransitionDefinition(
 				"qua_mario:basic",
 				BASIC_LANDING.EVALUATOR,
-				data -> data.getTimers().jumpLandingTime = 5,
+				data -> data.getTimers().jumpLandingTime = 3,
 				null
 		);
 		public static final ActionTransitionDefinition TRIPLE_JUMPABLE_LANDING = new ActionTransitionDefinition(
 				"qua_mario:basic",
 				BASIC_LANDING.EVALUATOR,
-				data -> data.getTimers().doubleJumpLandingTime = 5,
+				data -> data.getTimers().doubleJumpLandingTime = 3,
 				null
 		);
 

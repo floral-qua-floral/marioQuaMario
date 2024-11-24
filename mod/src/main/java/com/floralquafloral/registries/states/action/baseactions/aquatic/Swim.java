@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 public class Swim extends Submerged {
 	public static final ActionTransitionDefinition SWIM = new ActionTransitionDefinition(
 			"qua_mario:swim",
-			data -> data.getTimers().actionTimer > 3 && data.getInputs().JUMP.isPressed(),
+			data -> data.getTimers().actionTimer > 2 && data.getInputs().JUMP.isPressed(),
 			data -> {
 				data.setYVel(Math.min(0.45, data.getYVel() + 0.4));
 				data.getTimers().actionTimer = 0;

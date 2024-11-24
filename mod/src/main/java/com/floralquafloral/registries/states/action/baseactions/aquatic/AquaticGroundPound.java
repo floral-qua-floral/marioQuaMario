@@ -7,13 +7,15 @@ import com.floralquafloral.definitions.actions.CharaStat;
 import com.floralquafloral.definitions.actions.StatCategory;
 import com.floralquafloral.mariodata.MarioAuthoritativeData;
 import com.floralquafloral.mariodata.MarioClientSideData;
+import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioTravelData;
 import com.floralquafloral.registries.states.action.baseactions.airborne.GroundPound;
 import com.floralquafloral.util.MarioSFX;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import net.minecraft.entity.Entity;
 
 import java.util.List;
 
@@ -38,7 +40,7 @@ public class AquaticGroundPound extends AquaticActionDefinition {
 		return SlidingStatus.NOT_SLIDING;
 	}
 	@Override public @Nullable Identifier getStompType() {
-		return null;
+		return Identifier.of(MarioQuaMario.MOD_ID, "aquatic_ground_pound");
 	}
 	@Override public BumpingRule getBumpingRule() {
 		return BumpingRule.GROUND_POUND;
@@ -92,12 +94,22 @@ public class AquaticGroundPound extends AquaticActionDefinition {
 				new ActionTransitionDefinition("qua_mario:ground_pound_landing",
 						AirborneActionDefinition.AerialTransitions.BASIC_LANDING.EVALUATOR,
 						data -> data.setForwardStrafeVel(0, 0),
-						(data, isSelf, seed) -> data.playSoundEvent(MarioSFX.AQUATIC_GROUND_POUND, seed)
+						(data, isSelf, seed) -> {
+							data.stopStoredSound(MarioSFX.DIVE);
+							data.playSoundEvent(MarioSFX.AQUATIC_GROUND_POUND, seed);
+						}
 				)
 		);
 	}
 
 	@Override public List<ActionTransitionInjection> getTransitionInjections() {
 		return List.of();
+	}
+
+	@Override public boolean interceptAttack(
+			MarioData data, @Nullable MarioClientSideData clientData, @Nullable MarioTravelData travelData,
+			@Nullable Entity entityTarget, @Nullable BlockPos blockTarget
+	) {
+		return false;
 	}
 }

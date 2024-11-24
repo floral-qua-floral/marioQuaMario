@@ -253,7 +253,7 @@ public abstract class MarioPlayerData implements MarioData {
 		MarioQuaMario.LOGGER.info("Set Power-up to {}", powerUp.ID);
 		this.powerUp.losePower(this);
 		powerUp.acquirePower(this);
-		this.mario.setHealth(this.mario.getMaxHealth());
+		this.mario.heal(this.mario.getMaxHealth());
 		this.powerUp = powerUp;
 		this.mario.calculateDimensions();
 	}

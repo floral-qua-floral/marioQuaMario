@@ -1,10 +1,15 @@
 package com.floralquafloral.mixin;
 
+import com.floralquafloral.MarioQuaMario;
+import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.mariodata.MarioDataManager;
 import com.floralquafloral.mariodata.MarioPlayerData;
+import com.floralquafloral.mariodata.MarioTravelData;
 import com.floralquafloral.mariodata.moveable.MarioMoveableData;
+import com.floralquafloral.mariodata.moveable.MarioServerData;
 import com.floralquafloral.registries.states.character.ParsedCharacter;
 import com.floralquafloral.registries.states.powerup.ParsedPowerUp;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.player.PlayerEntity;
@@ -95,4 +100,23 @@ public abstract class PlayerEntityMixin {
 			if(data.attemptDismount) data.attemptDismount = false;
 		}
 	}
+
+//	@Inject(method = "attack", at = @At("HEAD"), cancellable = true)
+//	public void interceptUnarmedAttacks(Entity target, CallbackInfo ci) {
+//		PlayerEntity player = (PlayerEntity) (Object) this;
+//		if(!target.isAttackable() || target.handleAttack(player)) return;
+//
+//		if(player.isUsingRiptide() || !player.getWeaponStack().isEmpty()) return;
+//
+//		MarioPlayerData data = MarioDataManager.getMarioData(player);
+//		if(data.getAction().interceptAttack(
+//				data,
+//				data instanceof MarioClientSideData clientData ? clientData : null,
+//				data instanceof MarioTravelData travelData ? travelData : null,
+//				target, null
+//		)) ci.cancel();
+//
+//		MarioQuaMario.LOGGER.info("Intercepted unarmed attack!!!");
+//		ci.cancel();
+//	}
 }

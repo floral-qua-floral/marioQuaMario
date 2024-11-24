@@ -1,5 +1,6 @@
 package com.floralquafloral.definitions.actions;
 
+import com.floralquafloral.definitions.MarioAttackInterceptingStateDefinition;
 import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.definitions.MarioStateDefinition;
 import com.floralquafloral.mariodata.MarioData;
@@ -11,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public interface ActionDefinition extends MarioStateDefinition {
+public interface ActionDefinition extends MarioStateDefinition, MarioAttackInterceptingStateDefinition {
 	@Nullable String getAnimationName();
 	@Nullable CameraAnimationSet getCameraAnimations();
 

@@ -6,11 +6,14 @@ import com.floralquafloral.definitions.actions.CharaStat;
 import com.floralquafloral.definitions.actions.GroundedActionDefinition;
 import com.floralquafloral.mariodata.MarioAuthoritativeData;
 import com.floralquafloral.mariodata.MarioClientSideData;
+import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioTravelData;
 import com.floralquafloral.util.MarioSFX;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import net.minecraft.entity.Entity;
 
 import java.util.List;
 
@@ -107,5 +110,12 @@ public class UnderwaterWalk extends AquaticActionDefinition {
 
 	@Override public List<ActionTransitionInjection> getTransitionInjections() {
 		return List.of();
+	}
+
+	@Override public boolean interceptAttack(
+			MarioData data, @Nullable MarioClientSideData clientData, @Nullable MarioTravelData travelData,
+			@Nullable Entity entityTarget, @Nullable BlockPos blockTarget
+	) {
+		return false;
 	}
 }

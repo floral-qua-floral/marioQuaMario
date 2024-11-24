@@ -11,8 +11,10 @@ import com.floralquafloral.registries.states.ParsedMarioState;
 import com.floralquafloral.registries.RegistryManager;
 import com.floralquafloral.registries.stomp.ParsedStomp;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.RandomSeed;
 import org.jetbrains.annotations.Nullable;
+import net.minecraft.entity.Entity;
 
 import java.util.*;
 
@@ -168,5 +170,12 @@ public class ParsedAction extends ParsedMarioState {
 			if(this.EXECUTOR_CLIENTS != null && data instanceof MarioClientSideData clientData)
 				this.EXECUTOR_CLIENTS.execute(clientData, data.getMario().isMainPlayer(), seed);
 		}
+	}
+
+	public boolean interceptAttack(
+			MarioData data, @Nullable MarioClientSideData clientData, @Nullable MarioTravelData travelData,
+			@Nullable Entity entityTarget, @Nullable BlockPos blockTarget
+	) {
+		return this.ACTION_DEFINITION.interceptAttack(data, clientData, travelData, entityTarget, blockTarget);
 	}
 }

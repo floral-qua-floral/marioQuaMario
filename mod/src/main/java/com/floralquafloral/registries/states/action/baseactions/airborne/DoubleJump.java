@@ -45,10 +45,9 @@ public class DoubleJump extends Jump {
 				otherAction,
 				ActionTransitionInjection.ActionCategory.GROUNDED,
 				new ActionTransitionDefinition("qua_mario:double_jump",
-						data ->
-								data.getTimers().jumpLandingTime > 0
-										&& data.getForwardVel() > DOUBLE_JUMP_SPEED_THRESHOLD.get(data)
-										&& GroundedActionDefinition.GroundedTransitions.JUMP.EVALUATOR.shouldTransition(data),
+						data -> data.getTimers().jumpLandingTime > 0
+								&& data.getForwardVel() >= DOUBLE_JUMP_SPEED_THRESHOLD.get(data)
+								&& GroundedActionDefinition.GroundedTransitions.JUMP.EVALUATOR.shouldTransition(data),
 						data -> GroundedActionDefinition.GroundedTransitions.performJump(data, DOUBLE_JUMP_VEL, DOUBLE_JUMP_VEL_ADDEND),
 						(data, isSelf, seed) -> {
 							data.playJumpSound(seed);

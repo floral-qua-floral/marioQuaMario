@@ -2,11 +2,16 @@ package com.floralquafloral.registries.states.action.baseactions;
 
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.definitions.actions.AirborneActionDefinition;
+import com.floralquafloral.mariodata.MarioClientSideData;
+import com.floralquafloral.mariodata.MarioData;
+import com.floralquafloral.mariodata.MarioTravelData;
 import com.floralquafloral.registries.states.action.baseactions.airborne.GroundPound;
 import com.floralquafloral.util.MarioSFX;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import net.minecraft.entity.Entity;
 
 import java.util.List;
 
@@ -22,7 +27,7 @@ public class AquaticGroundPoundWindup extends GroundPoundWindup {
 	@Override public @Nullable CameraAnimationSet getCameraAnimations() {
 		return new CameraAnimationSet(
 				new CameraAnimation(
-						false, 0.55F,
+						false, 0.45F,
 						(progress, offsets) -> offsets[1] = mixedEase(progress, SINE, CUBIC) * 360
 				),
 				null,
@@ -34,20 +39,27 @@ public class AquaticGroundPoundWindup extends GroundPoundWindup {
 		return List.of(
 				new ActionTransitionDefinition("qua_mario:aquatic_ground_pound",
 						data -> AirborneActionDefinition.AerialTransitions.ENTER_WATER.EVALUATOR.shouldTransition(data)
-								&& data.getTimers().actionTimer > 9,
+								&& data.getTimers().actionTimer > 7,
 						data -> {
 							data.setYVel(GroundPound.GROUND_POUND_VEL.get(data));
 							data.getInputs().JUMP.isPressed(); // Unbuffers jump
 						},
-						(data, isSelf, seed) -> data.playSoundEvent(MarioSFX.DIVE, seed)
+						(data, isSelf, seed) -> data.storeSound(data.playSoundEvent(MarioSFX.DIVE, seed))
 				),
 				new ActionTransitionDefinition("qua_mario:ground_pound",
-						data -> data.getTimers().actionTimer > 9,
+						data -> data.getTimers().actionTimer > 7,
 						data -> {
 							data.setYVel(GroundPound.GROUND_POUND_VEL.get(data));
 							data.getInputs().JUMP.isPressed(); // Unbuffers jump
 						}
 				)
 		);
+	}
+
+	@Override public boolean interceptAttack(
+			MarioData data, @Nullable MarioClientSideData clientData, @Nullable MarioTravelData travelData,
+			@Nullable Entity entityTarget, @Nullable BlockPos blockTarget
+	) {
+		return false;
 	}
 }

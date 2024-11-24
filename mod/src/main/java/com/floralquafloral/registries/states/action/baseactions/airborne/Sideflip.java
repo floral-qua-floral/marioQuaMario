@@ -1,12 +1,16 @@
 package com.floralquafloral.registries.states.action.baseactions.airborne;
 
 import com.floralquafloral.MarioQuaMario;
+import com.floralquafloral.mariodata.MarioClientSideData;
+import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioTravelData;
 import com.floralquafloral.definitions.actions.CharaStat;
 import com.floralquafloral.definitions.actions.StatCategory;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import net.minecraft.entity.Entity;
 
 import java.util.List;
 
@@ -49,5 +53,12 @@ public class Sideflip extends Jump {
 				AerialTransitions.GROUND_POUND,
 				AerialTransitions.makeJumpCapTransition(this, 0.65)
 		);
+	}
+
+	@Override public boolean interceptAttack(
+			MarioData data, @Nullable MarioClientSideData clientData, @Nullable MarioTravelData travelData,
+			@Nullable Entity entityTarget, @Nullable BlockPos blockTarget
+	) {
+		return false;
 	}
 }

@@ -48,7 +48,7 @@ public abstract class AquaticActionDefinition implements ActionDefinition {
 		public static final CharaStat BACKWARD_SWIM_ACCEL = new CharaStat(0.035, SWIMMING, BACKWARD, ACCELERATION);
 		public static final CharaStat BACKWARD_SWIM_SPEED = new CharaStat(0.2, SWIMMING, BACKWARD, SPEED);
 
-		public static final CharaStat STRAFE_SWIM_ACCEL = new CharaStat(0.055, SWIMMING, STRAFE, ACCELERATION);
+		public static final CharaStat STRAFE_SWIM_ACCEL = new CharaStat(0.025, SWIMMING, STRAFE, ACCELERATION);
 		public static final CharaStat STRAFE_SWIM_SPEED = new CharaStat(0.25, SWIMMING, STRAFE, SPEED);
 
 		public static final CharaStat SWIM_REDIRECTION = new CharaStat(2.0, SWIMMING, REDIRECTION);

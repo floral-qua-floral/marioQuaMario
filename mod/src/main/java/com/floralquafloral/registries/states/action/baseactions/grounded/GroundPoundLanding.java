@@ -4,13 +4,15 @@ import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.definitions.actions.AquaticActionDefinition;
 import com.floralquafloral.mariodata.MarioAuthoritativeData;
 import com.floralquafloral.mariodata.MarioClientSideData;
+import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.moveable.MarioMainClientData;
 import com.floralquafloral.mariodata.MarioTravelData;
 import com.floralquafloral.definitions.actions.GroundedActionDefinition;
-import com.floralquafloral.registries.states.action.baseactions.aquatic.UnderwaterWalk;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import net.minecraft.entity.Entity;
 
 import java.util.List;
 
@@ -50,14 +52,27 @@ public class GroundPoundLanding extends GroundedActionDefinition {
 	@Override
 	public List<ActionTransitionDefinition> getPreTravelTransitions() {
 		return List.of(
+				new ActionTransitionDefinition("qua_mario:aquatic_ground_pound",
+						data -> GroundedTransitions.ENTER_WATER.EVALUATOR.shouldTransition(data)
+								&& data.getTimers().actionTimer > 3
+								&& data.getInputs().DUCK.isHeld()
+								&& ((MarioMainClientData) data).canRepeatPound,
+						data -> data.setYVel(-0.25)
+				),
 				new ActionTransitionDefinition("qua_mario:ground_pound",
-						data -> data.getTimers().actionTimer > 3 && data.getInputs().DUCK.isHeld() && ((MarioMainClientData) data).canRepeatPound
+						data -> data.getTimers().actionTimer > 3
+								&& data.getInputs().DUCK.isHeld()
+								&& ((MarioMainClientData) data).canRepeatPound,
+						data -> data.setYVel(-0.25)
 				),
 				new ActionTransitionDefinition("qua_mario:underwater_walk",
-						data -> (data.getTimers().actionTimer > 4 && !data.getInputs().DUCK.isHeld())
+						data -> GroundedTransitions.ENTER_WATER.EVALUATOR.shouldTransition(data)
+								&& data.getTimers().actionTimer > 4
+								&& !data.getInputs().DUCK.isHeld()
 				),
 				new ActionTransitionDefinition("qua_mario:basic",
-						data -> (data.getTimers().actionTimer > 4 && !data.getInputs().DUCK.isHeld())
+						data -> (data.getTimers().actionTimer > 4
+								&& !data.getInputs().DUCK.isHeld())
 				)
 		);
 	}
@@ -87,5 +102,12 @@ public class GroundPoundLanding extends GroundedActionDefinition {
 	@Override
 	public List<ActionTransitionInjection> getTransitionInjections() {
 		return List.of();
+	}
+
+	@Override public boolean interceptAttack(
+			MarioData data, @Nullable MarioClientSideData clientData, @Nullable MarioTravelData travelData,
+			@Nullable Entity entityTarget, @Nullable BlockPos blockTarget
+	) {
+		return false;
 	}
 }

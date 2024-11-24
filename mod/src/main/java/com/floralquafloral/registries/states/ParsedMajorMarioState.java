@@ -1,7 +1,7 @@
 package com.floralquafloral.registries.states;
 
 import com.floralquafloral.definitions.actions.CharaStat;
-import com.floralquafloral.definitions.MarioMajorStateDefinition;
+import com.floralquafloral.definitions.MarioStatAlteringStateDefinition;
 import com.floralquafloral.definitions.actions.StatCategory;
 
 import java.util.HashMap;
@@ -29,7 +29,7 @@ public abstract class ParsedMajorMarioState extends ParsedMarioState {
 		return combinedModifier;
 	}
 
-	protected ParsedMajorMarioState(MarioMajorStateDefinition definition) {
+	protected ParsedMajorMarioState(MarioStatAlteringStateDefinition definition) {
 		super(definition);
 
 		this.BUMP_STRENGTH_MODIFIER = definition.getBumpStrengthModifier();
