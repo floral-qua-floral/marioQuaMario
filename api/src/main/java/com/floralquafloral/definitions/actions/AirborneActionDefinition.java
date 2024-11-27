@@ -95,7 +95,6 @@ public abstract class AirborneActionDefinition implements ActionDefinition {
 
 		if(yVel > terminalVelocity) {
 			CharaStat useGravity = (ACTION_JUMP_GRAVITY == null || data.getTimers().jumpCapped) ? ACTION_GRAVITY : ACTION_JUMP_GRAVITY;
-			LoggerFactory.getLogger("test").info("use gravity {}", useGravity.get(data));
 			yVel += useGravity.get(data);
 
 			data.setYVel(Math.max(terminalVelocity, yVel));

@@ -2,6 +2,7 @@ package com.floralquafloral.mariodata;
 
 import com.floralquafloral.MarioPackets;
 import com.floralquafloral.MarioQuaMario;
+import com.floralquafloral.mariodata.moveable.MarioServerData;
 import com.floralquafloral.registries.RegistryManager;
 import com.floralquafloral.registries.states.action.ParsedAction;
 import com.floralquafloral.registries.states.character.ParsedCharacter;
@@ -74,8 +75,9 @@ public class MarioDataPackets {
 	}
 
 	public static boolean setMarioAction(ServerPlayerEntity mario, ParsedAction action, long seed, boolean networkToMario) {
-		MarioPlayerData data = getMarioData(mario);
+		MarioServerData data = (MarioServerData) getMarioData(mario);
 		boolean foundTransition = data.getAction().transitionTo(data, action, seed);
+		data.applyModifiedVelocity();
 		if(foundTransition || !mario.getWorld().getGameRules().getBoolean(MarioQuaMario.REJECT_INVALID_ACTION_TRANSITIONS)) {
 			data.setActionTransitionless(action);
 			SetActionS2CPayload payload = new SetActionS2CPayload(mario, action, false, seed);
