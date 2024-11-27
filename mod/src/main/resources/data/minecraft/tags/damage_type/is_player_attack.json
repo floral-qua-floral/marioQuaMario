@@ -3,6 +3,8 @@
   "values": [
     "qua_mario:stomp",
     "qua_mario:spin_jump",
-    "qua_mario:ground_pound"
+    "qua_mario:ground_pound",
+    "qua_mario:aquatic_ground_pound",
+    "qua_mario:kick"
   ]
 }

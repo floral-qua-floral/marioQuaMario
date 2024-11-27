@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "qua_mario:stomp"
+    "qua_mario:stomp",
+    "qua_mario:aquatic_ground_pound"
   ]
 }

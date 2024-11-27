@@ -5,14 +5,10 @@ import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.definitions.actions.GroundedActionDefinition;
 import com.floralquafloral.definitions.actions.CharaStat;
 import com.floralquafloral.definitions.actions.StatCategory;
-import com.floralquafloral.mariodata.MarioData;
-import com.floralquafloral.mariodata.MarioTravelData;
 import com.floralquafloral.util.Easings;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import net.minecraft.entity.Entity;
 
 import java.util.List;
 
@@ -80,10 +76,7 @@ public class TripleJump extends Jump {
 		);
 	}
 
-	@Override public boolean interceptAttack(
-			MarioData data, @Nullable MarioClientSideData clientData, @Nullable MarioTravelData travelData,
-			@Nullable Entity entityTarget, @Nullable BlockPos blockTarget
-	) {
-		return false;
+	@Override public List<AttackInterceptionDefinition> getUnarmedAttackInterceptions() {
+		return List.of();
 	}
 }

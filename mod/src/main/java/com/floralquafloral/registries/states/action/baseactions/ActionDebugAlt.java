@@ -3,15 +3,12 @@ package com.floralquafloral.registries.states.action.baseactions;
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioAuthoritativeData;
 import com.floralquafloral.mariodata.MarioClientSideData;
-import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioTravelData;
 import com.floralquafloral.definitions.actions.ActionDefinition;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import net.minecraft.entity.Entity;
 
 import java.util.List;
 
@@ -87,10 +84,7 @@ public class ActionDebugAlt implements ActionDefinition {
 		return List.of();
 	}
 
-	@Override public boolean interceptAttack(
-			MarioData data, @Nullable MarioClientSideData clientData, @Nullable MarioTravelData travelData,
-			@Nullable Entity entityTarget, @Nullable BlockPos blockTarget
-	) {
-		return false;
+	@Override public List<AttackInterceptionDefinition> getUnarmedAttackInterceptions() {
+		return List.of();
 	}
 }

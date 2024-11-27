@@ -2,16 +2,11 @@ package com.floralquafloral.registries.states.action.baseactions;
 
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.definitions.actions.AirborneActionDefinition;
-import com.floralquafloral.mariodata.MarioClientSideData;
-import com.floralquafloral.mariodata.MarioData;
-import com.floralquafloral.mariodata.MarioTravelData;
 import com.floralquafloral.registries.states.action.baseactions.airborne.GroundPound;
 import com.floralquafloral.util.MarioSFX;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import net.minecraft.entity.Entity;
 
 import java.util.List;
 
@@ -54,12 +49,5 @@ public class AquaticGroundPoundWindup extends GroundPoundWindup {
 						}
 				)
 		);
-	}
-
-	@Override public boolean interceptAttack(
-			MarioData data, @Nullable MarioClientSideData clientData, @Nullable MarioTravelData travelData,
-			@Nullable Entity entityTarget, @Nullable BlockPos blockTarget
-	) {
-		return false;
 	}
 }

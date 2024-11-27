@@ -3,6 +3,7 @@ package com.floralquafloral;
 import com.floralquafloral.bumping.BumpManager;
 import com.floralquafloral.mariodata.MarioDataManager;
 import com.floralquafloral.mariodata.MarioDataPackets;
+import com.floralquafloral.registries.states.AttackInterceptionHandler;
 import com.floralquafloral.registries.stomp.StompHandler;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -25,6 +26,7 @@ public class MarioPackets {
 		MarioDataPackets.registerCommon();
 		StompHandler.registerPackets();
 		BumpManager.registerPackets();
+		AttackInterceptionHandler.registerPackets();
 
 
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
@@ -36,6 +38,7 @@ public class MarioPackets {
 		MarioDataPackets.registerClient();
 		StompHandler.registerPacketsClient();
 		BumpManager.registerPacketsClient();
+		AttackInterceptionHandler.registerPacketsClient();
 	}
 
 	public static PlayerEntity getPlayerFromInt(ClientPlayNetworking.Context context, int playerID) {

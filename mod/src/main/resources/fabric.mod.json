@@ -43,7 +43,8 @@
 			"com.floralquafloral.registries.states.action.baseactions.airborne.DoubleJump",
 			"com.floralquafloral.registries.states.action.baseactions.airborne.TripleJump",
 			"com.floralquafloral.registries.states.action.baseactions.airborne.WaterExitJump",
-			"com.floralquafloral.registries.states.action.baseactions.airborne.GroundPound"
+			"com.floralquafloral.registries.states.action.baseactions.airborne.GroundPound",
+			"com.floralquafloral.registries.states.action.baseactions.airborne.Kick"
 		],
 		"mario-actions-aquatic": [
 			"com.floralquafloral.registries.states.action.baseactions.aquatic.Submerged",

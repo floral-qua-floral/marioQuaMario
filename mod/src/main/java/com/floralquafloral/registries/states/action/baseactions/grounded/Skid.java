@@ -3,17 +3,14 @@ package com.floralquafloral.registries.states.action.baseactions.grounded;
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioAuthoritativeData;
 import com.floralquafloral.mariodata.MarioClientSideData;
-import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioTravelData;
 import com.floralquafloral.definitions.actions.GroundedActionDefinition;
 import com.floralquafloral.registries.states.action.baseactions.airborne.Sideflip;
 import com.floralquafloral.definitions.actions.CharaStat;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import net.minecraft.entity.Entity;
 
 import java.util.List;
 
@@ -112,10 +109,7 @@ public class Skid extends GroundedActionDefinition {
 		return List.of();
 	}
 
-	@Override public boolean interceptAttack(
-			MarioData data, @Nullable MarioClientSideData clientData, @Nullable MarioTravelData travelData,
-			@Nullable Entity entityTarget, @Nullable BlockPos blockTarget
-	) {
-		return false;
+	@Override public List<AttackInterceptionDefinition> getUnarmedAttackInterceptions() {
+		return List.of();
 	}
 }

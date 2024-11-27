@@ -6,14 +6,12 @@ import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.definitions.PowerUpDefinition;
 import com.floralquafloral.definitions.actions.StatCategory;
-import com.floralquafloral.mariodata.MarioTravelData;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import net.minecraft.entity.Entity;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -106,10 +104,7 @@ public class SuperForm implements PowerUpDefinition {
 		return null;
 	}
 
-	@Override public boolean interceptAttack(
-			MarioData data, @Nullable MarioClientSideData clientData, @Nullable MarioTravelData travelData,
-			@Nullable Entity entityTarget, @Nullable BlockPos blockTarget
-	) {
-		return false;
+	@Override public List<AttackInterceptionDefinition> getUnarmedAttackInterceptions() {
+		return List.of();
 	}
 }

@@ -1,5 +1,6 @@
 package com.floralquafloral.registries.states.powerup;
 
+import com.floralquafloral.definitions.MarioAttackInterceptingStateDefinition;
 import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.mariodata.MarioTravelData;
 import com.floralquafloral.registries.states.ParsedMajorMarioState;
@@ -12,6 +13,8 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import net.minecraft.entity.Entity;
+
+import java.util.List;
 
 
 public class ParsedPowerUp extends ParsedMajorMarioState {
@@ -26,6 +29,7 @@ public class ParsedPowerUp extends ParsedMajorMarioState {
 	@NotNull public final PowerUpDefinition.PowerHeart HEART_HARDCORE;
 	@Nullable public final PowerUpDefinition.PowerHeart HEART_EMPTY;
 
+	public final List<MarioAttackInterceptingStateDefinition.AttackInterceptionDefinition> INTERCEPTIONS;
 
 	public ParsedPowerUp(PowerUpDefinition definition) {
 		super(definition);
@@ -41,6 +45,8 @@ public class ParsedPowerUp extends ParsedMajorMarioState {
 		PowerUpDefinition.PowerHeart hardcoreHeart = definition.getHeartHardcore();
 		this.HEART_HARDCORE = hardcoreHeart == null ? this.HEART : hardcoreHeart;
 		this.HEART_EMPTY = definition.getHeartEmpty();
+
+		this.INTERCEPTIONS = definition.getUnarmedAttackInterceptions();
 	}
 
 	public void acquirePower(MarioData data) {
@@ -48,12 +54,5 @@ public class ParsedPowerUp extends ParsedMajorMarioState {
 	}
 	public void losePower(MarioData data) {
 		((PowerUpDefinition) this.DEFINITION).losePower(data);
-	}
-
-	public boolean interceptAttack(
-			MarioData data, @Nullable MarioClientSideData clientData, @Nullable MarioTravelData travelData,
-			@Nullable Entity entityTarget, @Nullable BlockPos blockTarget
-	) {
-		return this.POWER_UP_DEFINITION.interceptAttack(data, clientData, travelData, entityTarget, blockTarget);
 	}
 }

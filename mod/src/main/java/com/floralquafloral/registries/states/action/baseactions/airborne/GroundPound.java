@@ -3,17 +3,14 @@ package com.floralquafloral.registries.states.action.baseactions.airborne;
 import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioAuthoritativeData;
 import com.floralquafloral.mariodata.MarioClientSideData;
-import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioTravelData;
 import com.floralquafloral.definitions.actions.AirborneActionDefinition;
 import com.floralquafloral.definitions.actions.CharaStat;
 import com.floralquafloral.definitions.actions.StatCategory;
 import com.floralquafloral.util.MarioSFX;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import net.minecraft.entity.Entity;
 
 import java.util.List;
 
@@ -88,15 +85,15 @@ public class GroundPound extends AirborneActionDefinition {
 
 	@Override public List<ActionTransitionDefinition> getWorldCollisionTransitions() {
 		return List.of(
-				new ActionTransitionDefinition("qua_mario:ground_pound_landing",
-						AirborneActionDefinition.AerialTransitions.BASIC_LANDING.EVALUATOR,
-						data -> data.setForwardStrafeVel(0, 0),
-						(data, isSelf, seed) -> data.playSoundEvent(MarioSFX.GROUND_POUND, seed)
-				),
 				new ActionTransitionDefinition("qua_mario:aquatic_ground_pound",
 						AerialTransitions.ENTER_WATER.EVALUATOR,
 						data -> data.setYVel(data.getYVel() * 0.4),
 						null
+				),
+				new ActionTransitionDefinition("qua_mario:ground_pound_landing",
+						AirborneActionDefinition.AerialTransitions.BASIC_LANDING.EVALUATOR,
+						data -> data.setForwardStrafeVel(0, 0),
+						(data, isSelf, seed) -> data.playSoundEvent(MarioSFX.GROUND_POUND, seed)
 				)
 		);
 	}
@@ -105,10 +102,7 @@ public class GroundPound extends AirborneActionDefinition {
 		return List.of();
 	}
 
-	@Override public boolean interceptAttack(
-			MarioData data, @Nullable MarioClientSideData clientData, @Nullable MarioTravelData travelData,
-			@Nullable Entity entityTarget, @Nullable BlockPos blockTarget
-	) {
-		return false;
+	@Override public List<AttackInterceptionDefinition> getUnarmedAttackInterceptions() {
+		return List.of();
 	}
 }

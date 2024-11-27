@@ -44,7 +44,7 @@ public class AquaticGroundPoundStomp implements StompDefinition {
 	}
 
 	@Override public @NotNull Identifier getDamageType() {
-		return Identifier.of(MarioQuaMario.MOD_ID, "ground_pound");
+		return Identifier.of(MarioQuaMario.MOD_ID, "aquatic_ground_pound");
 	}
 	@Override public @Nullable SoundEvent getSoundEvent() {
 		return MarioSFX.STOMP;

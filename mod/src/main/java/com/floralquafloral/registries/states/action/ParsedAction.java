@@ -1,6 +1,7 @@
 package com.floralquafloral.registries.states.action;
 
 import com.floralquafloral.*;
+import com.floralquafloral.definitions.MarioAttackInterceptingStateDefinition;
 import com.floralquafloral.definitions.actions.ActionDefinition;
 import com.floralquafloral.definitions.actions.AirborneActionDefinition;
 import com.floralquafloral.definitions.actions.AquaticActionDefinition;
@@ -30,6 +31,7 @@ public class ParsedAction extends ParsedMarioState {
 	public final ActionDefinition.BumpingRule BUMPING_RULE;
 
 	private final EnumMap<TransitionPhase, List<ParsedTransition>> TRANSITION_LISTS;
+	public final List<MarioAttackInterceptingStateDefinition.AttackInterceptionDefinition> INTERCEPTIONS;
 
 	public ParsedAction(ActionDefinition definition) {
 		super(definition);
@@ -44,6 +46,7 @@ public class ParsedAction extends ParsedMarioState {
 		this.BUMPING_RULE = definition.getBumpingRule();
 
 		this.TRANSITION_LISTS = new EnumMap<>(TransitionPhase.class);
+		this.INTERCEPTIONS = definition.getUnarmedAttackInterceptions();
 	}
 
 	public @Nullable ActionDefinition.CameraAnimation getCameraAnimation() {
@@ -170,12 +173,5 @@ public class ParsedAction extends ParsedMarioState {
 			if(this.EXECUTOR_CLIENTS != null && data instanceof MarioClientSideData clientData)
 				this.EXECUTOR_CLIENTS.execute(clientData, data.getMario().isMainPlayer(), seed);
 		}
-	}
-
-	public boolean interceptAttack(
-			MarioData data, @Nullable MarioClientSideData clientData, @Nullable MarioTravelData travelData,
-			@Nullable Entity entityTarget, @Nullable BlockPos blockTarget
-	) {
-		return this.ACTION_DEFINITION.interceptAttack(data, clientData, travelData, entityTarget, blockTarget);
 	}
 }

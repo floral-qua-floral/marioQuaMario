@@ -4,6 +4,7 @@ import com.floralquafloral.util.MarioSFX;
 import com.floralquafloral.mariodata.MarioTravelData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.LoggerFactory;
 
 import static com.floralquafloral.definitions.actions.StatCategory.*;
 
@@ -94,6 +95,7 @@ public abstract class AirborneActionDefinition implements ActionDefinition {
 
 		if(yVel > terminalVelocity) {
 			CharaStat useGravity = (ACTION_JUMP_GRAVITY == null || data.getTimers().jumpCapped) ? ACTION_GRAVITY : ACTION_JUMP_GRAVITY;
+			LoggerFactory.getLogger("test").info("use gravity {}", useGravity.get(data));
 			yVel += useGravity.get(data);
 
 			data.setYVel(Math.max(terminalVelocity, yVel));

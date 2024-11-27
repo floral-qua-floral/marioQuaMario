@@ -185,8 +185,8 @@ public interface ActionDefinition extends MarioStateDefinition, MarioAttackInter
 				@Nullable TransitionExecutorTravelling executeTravel,
 				@Nullable TransitionExecutorClients executeClients
 		) {
-			this.EVALUATOR = evaluator;
 			this.TARGET_IDENTIFIER = Identifier.of(targetID);
+			this.EVALUATOR = evaluator;
 
 			this.EXECUTOR_TRAVELLERS = executeTravel;
 			this.EXECUTOR_CLIENTS = executeClients;

@@ -1,6 +1,7 @@
 {
   "values": [
     "qua_mario:stomp",
-    "qua_mario:spin_jump"
+    "qua_mario:spin_jump",
+    "qua_mario:kick"
   ]
 }
