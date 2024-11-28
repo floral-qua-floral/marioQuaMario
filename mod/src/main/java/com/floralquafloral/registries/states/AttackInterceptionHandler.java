@@ -49,14 +49,11 @@ public class AttackInterceptionHandler {
 	) {
 		for(MarioAttackInterceptingStateDefinition.AttackInterceptionDefinition interception : interceptions) {
 			if(interception.shouldIntercept(data, attackCooldownProgress, targetEntity, targetBlock)) {
-				long seed = Random.create().nextLong();
 				interception.executeTravellers(data, targetEntity, targetBlock);
 				data.applyModifiedVelocity();
-				interception.executeClients(data, true, seed, targetEntity, targetBlock);
 
-				Identifier actionTargetID = interception.getActionTarget();
-				if(actionTargetID != null)
-					data.setActionTransitionless(Objects.requireNonNull(RegistryManager.ACTIONS.get(actionTargetID)));
+				long seed = Random.create().nextLong();
+				performInterceptionClient(data, data, interception, targetEntity, targetBlock, seed);
 
 				ClientPlayNetworking.send(new InterceptedAttackC2SPayload(
 						targetEntity == null ? -1 : targetEntity.getId(),
@@ -117,9 +114,20 @@ public class AttackInterceptionHandler {
 				isFromAction ? data.getAction().INTERCEPTIONS : data.getPowerUp().INTERCEPTIONS;
 		MarioAttackInterceptingStateDefinition.AttackInterceptionDefinition interception = interceptions.get(interceptionIndex);
 
-		Entity targetEntity = targetEntityID == -1 ? null : data.getMario().getWorld().getEntityById(targetEntityID);
+		performInterceptionClient(
+				data, clientData, interception,
+				targetEntityID == -1 ? null : data.getMario().getWorld().getEntityById(targetEntityID),
+				targetBlock.equals(NONEXISTENT_BLOCKPOS) ? null : targetBlock,
+				seed
+		);
+	}
 
-		interception.executeClients(clientData, false, seed, targetEntity, targetBlock.equals(NONEXISTENT_BLOCKPOS) ? null : targetBlock);
+	private static void performInterceptionClient(
+			MarioPlayerData data, MarioClientSideData clientData,
+			MarioAttackInterceptingStateDefinition.AttackInterceptionDefinition interception,
+			@Nullable Entity targetEntity, @Nullable BlockPos targetBlock, long seed
+	) {
+		interception.executeClients(clientData, false, seed, targetEntity, targetBlock);
 
 		Identifier actionTargetID = interception.getActionTarget();
 		if(actionTargetID != null)

@@ -1,15 +1,19 @@
 package com.floralquafloral.mixin;
 
 import com.floralquafloral.MarioQuaMario;
-import com.floralquafloral.mariodata.MarioAuthoritativeData;
 import com.floralquafloral.mariodata.MarioDataManager;
 import com.floralquafloral.mariodata.MarioPlayerData;
+import com.floralquafloral.mariodata.moveable.MarioMainClientData;
 import com.floralquafloral.mariodata.moveable.MarioServerData;
 import com.floralquafloral.registries.RegistryManager;
 import com.floralquafloral.registries.states.action.ParsedAction;
 import com.floralquafloral.registries.states.character.ParsedCharacter;
 import com.floralquafloral.registries.states.powerup.ParsedPowerUp;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.MovementType;
@@ -18,14 +22,25 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.world.BlockCollisionSpliterator;
+import net.minecraft.world.World;
+import org.joml.Vector3d;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.Set;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin {
@@ -85,8 +100,74 @@ public abstract class EntityMixin {
 		}
 	}
 
+	@WrapOperation(method = "findCollisionsForMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;getBlockCollisions(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/Box;)Ljava/lang/Iterable;"))
+	private static Iterable<VoxelShape> bumpBlocksOnCollision(World world, Entity entity, Box movingEntityBoundingBox, Operation<Iterable<VoxelShape>> original) {
+		// This doesn't work! Fix it!
+		if(false && entity instanceof ClientPlayerEntity) {
+			MarioMainClientData data = MarioMainClientData.getInstance();
+			if(data != null) {
+				Vec3d marioVelocity = data.getMario().getVelocity(); // is this adequate?
+				Vector3d mutableMarioVelocity = new Vector3d(marioVelocity.x, marioVelocity.y, marioVelocity.z);
 
-//	@WrapOperation(method = "checkBlockCollision", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;onEntityCollision(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/Entity;)V"))
+				boolean bumpCeilings = true || marioVelocity.y != 0 && data.getAction().BUMPING_RULE.CEILINGS != 0;
+				boolean bumpFloors = true || marioVelocity.y != 0 && data.getAction().BUMPING_RULE.FLOORS != 0;
+				boolean bumpWalls = true || (marioVelocity.x != 0 || marioVelocity.z != 0) && data.getAction().BUMPING_RULE.WALLS != 0;
+				Iterable<Pair<BlockPos, VoxelShape>> blockCollisions =
+						() -> new BlockCollisionSpliterator<>(world, entity, movingEntityBoundingBox, false, (pos, voxelShape) -> new Pair<>(pos, voxelShape));
+
+				EnumMap<Direction, Set<BlockPos>> bumpBlocks = new EnumMap<>(Direction.class);
+				for(Direction direction : Direction.values()) {
+					bumpBlocks.put(direction, new HashSet<>());
+				}
+
+				for(Pair<BlockPos, VoxelShape> collidedBlock : blockCollisions) {
+					if((bumpCeilings || bumpFloors) && collidedBlock.getRight().calculateMaxDistance(Direction.Axis.Y, movingEntityBoundingBox, marioVelocity.y) != 0) {
+						if(bumpCeilings && marioVelocity.y > 0) {
+							// Mario was moving up and bumped this block on the Y axis!
+							bumpBlocks.get(Direction.UP).add(collidedBlock.getLeft().toImmutable());
+						}
+						else if(bumpFloors && marioVelocity.y < 0) {
+							// Mario was moving down and bumped this block on the Y axis!
+							bumpBlocks.get(Direction.DOWN).add(collidedBlock.getLeft().toImmutable());
+						}
+					}
+					else if(bumpWalls) {
+						boolean xAxisFirst = Math.abs(marioVelocity.x) > Math.abs(marioVelocity.z);
+						if(xAxisFirst && collidedBlock.getRight().calculateMaxDistance(Direction.Axis.X, movingEntityBoundingBox, marioVelocity.x) != 0) {
+							MarioQuaMario.LOGGER.info("Collided along X axis: {}", collidedBlock.getRight().calculateMaxDistance(Direction.Axis.X, movingEntityBoundingBox, marioVelocity.x));
+							if(marioVelocity.x > 0)
+								bumpBlocks.get(Direction.EAST).add(collidedBlock.getLeft().toImmutable());
+							else
+								bumpBlocks.get(Direction.WEST).add(collidedBlock.getLeft().toImmutable());
+						}
+						else if(collidedBlock.getRight().calculateMaxDistance(Direction.Axis.Z, movingEntityBoundingBox, marioVelocity.z) != 0) {
+							if(marioVelocity.z > 0)
+								bumpBlocks.get(Direction.SOUTH).add(collidedBlock.getLeft().toImmutable());
+							else
+								bumpBlocks.get(Direction.NORTH).add(collidedBlock.getLeft().toImmutable());
+						}
+						else if(!xAxisFirst && collidedBlock.getRight().calculateMaxDistance(Direction.Axis.X, movingEntityBoundingBox, marioVelocity.x) != 0) {
+							MarioQuaMario.LOGGER.info("Collided along X axis: {}", collidedBlock.getRight().calculateMaxDistance(Direction.Axis.X, movingEntityBoundingBox, marioVelocity.x));
+							if(marioVelocity.x > 0)
+								bumpBlocks.get(Direction.EAST).add(collidedBlock.getLeft().toImmutable());
+							else
+								bumpBlocks.get(Direction.WEST).add(collidedBlock.getLeft().toImmutable());
+						}
+					}
+				}
+
+				for(Direction direction : Direction.values()) {
+					Set<BlockPos> bumpBlocksInThisDirection = bumpBlocks.get(direction);
+					if(!bumpBlocksInThisDirection.isEmpty())
+						MarioQuaMario.LOGGER.info("BUMP {}:\t{}\t{}", direction.getName(), bumpBlocksInThisDirection.size(), bumpBlocksInThisDirection);
+				}
+			}
+		}
+
+		return original.call(world, entity, movingEntityBoundingBox);
+	}
+
+	//	@WrapOperation(method = "checkBlockCollision", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;onEntityCollision(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/Entity;)V"))
 //	private void executeBumpsOnClient(BlockState instance, World world, BlockPos blockPos, Entity entity, Operation<Void> original) {
 //		if(entity instanceof ServerPlayerEntity mario) {
 ////			world.breakBlock(blockPos, true, mario);
