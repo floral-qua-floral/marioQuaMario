@@ -16,7 +16,7 @@ import java.util.List;
 
 public class GroundPound extends AirborneActionDefinition {
 	public static final CharaStat GROUND_POUND_VEL = new CharaStat(-1.5, StatCategory.TERMINAL_VELOCITY);
-	public static final CharaStat GROUND_POUND_STRAINING_VEL = new CharaStat(0.0825, StatCategory.DRIFTING);
+	public static final CharaStat GROUND_POUND_STRAINING_VEL = new CharaStat(0.1, StatCategory.DRIFTING);
 
 	@Override public @NotNull Identifier getID() {
 		return Identifier.of(MarioQuaMario.MOD_ID, "ground_pound");

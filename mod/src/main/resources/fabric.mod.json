@@ -28,7 +28,8 @@
 			"com.floralquafloral.registries.states.action.baseactions.grounded.Skid",
 			"com.floralquafloral.registries.states.action.baseactions.grounded.DuckWaddle",
 			"com.floralquafloral.registries.states.action.baseactions.grounded.DuckSlide",
-			"com.floralquafloral.registries.states.action.baseactions.grounded.GroundPoundLanding"
+			"com.floralquafloral.registries.states.action.baseactions.grounded.GroundPoundLanding",
+			"com.floralquafloral.registries.states.action.baseactions.grounded.GroundBonk"
 		],
 		"mario-actions-airborne" : [
 			"com.floralquafloral.registries.states.action.baseactions.airborne.Fall",
@@ -44,7 +45,8 @@
 			"com.floralquafloral.registries.states.action.baseactions.airborne.TripleJump",
 			"com.floralquafloral.registries.states.action.baseactions.airborne.WaterExitJump",
 			"com.floralquafloral.registries.states.action.baseactions.airborne.GroundPound",
-			"com.floralquafloral.registries.states.action.baseactions.airborne.Kick"
+			"com.floralquafloral.registries.states.action.baseactions.airborne.Kick",
+			"com.floralquafloral.registries.states.action.baseactions.airborne.AirBonk"
 		],
 		"mario-actions-aquatic": [
 			"com.floralquafloral.registries.states.action.baseactions.aquatic.Submerged",

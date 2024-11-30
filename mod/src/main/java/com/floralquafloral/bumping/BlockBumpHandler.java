@@ -5,6 +5,7 @@ import com.floralquafloral.BlockBumpResult;
 import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioTravelData;
+import com.floralquafloral.mariodata.moveable.MarioMoveableData;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.block.Block;
@@ -81,6 +82,7 @@ public class BlockBumpHandler {
 			}
 		}
 
+		if(marioTravelData != null) ((MarioMoveableData) marioTravelData).applyModifiedVelocity();
 		return result;
 	}
 
@@ -117,6 +119,9 @@ public class BlockBumpHandler {
 			// Failing to destroy a block in this manner won't bump it at all.
 			if(modifiedStrength == 2)
 				return (adjustedHardness <= 0.25F) ? strongEnoughToBreakResult : BlockBumpResult.CANCEL;
+
+			// Bumps with base strength 3 will bump blocks the same way as strength 4, but are much less capable of breaking blocks
+			strength = Math.max(strength, 4);
 
 			BlockBumpResult failedToBreakResult = (adjustedHardness <= 0.75F * Math.max(strength, modifiedStrength))
 					? BlockBumpResult.DISPLACE : BlockBumpResult.CANCEL;

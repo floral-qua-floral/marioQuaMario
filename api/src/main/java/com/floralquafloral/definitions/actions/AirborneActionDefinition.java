@@ -1,7 +1,9 @@
 package com.floralquafloral.definitions.actions;
 
+import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.util.MarioSFX;
 import com.floralquafloral.mariodata.MarioTravelData;
+import net.minecraft.util.math.Direction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.LoggerFactory;
@@ -59,6 +61,30 @@ public abstract class AirborneActionDefinition implements ActionDefinition {
 				GroundedActionDefinition.GroundedTransitions.ENTER_WATER.EVALUATOR,
 				GroundedActionDefinition.GroundedTransitions.ENTER_WATER.EXECUTOR_TRAVELLERS,
 				GroundedActionDefinition.GroundedTransitions.ENTER_WATER.EXECUTOR_CLIENTS
+		);
+
+		public static final ActionTransitionDefinition BONK = new ActionTransitionDefinition(
+				"qua_mario:bonk_air",
+				data -> data.getTimers().bumpedWall != null,
+				data -> {
+					data.setYVel(Math.min(data.getYVel(), 0));
+					if(data.getTimers().bumpedWall != null)
+						data.getMario().setVelocity(data.getTimers().bumpedWall.getLeft().getAxis() == Direction.Axis.X
+								? data.getTimers().bumpedWall.getRight().multiply(-1, 1, 1)
+								: data.getTimers().bumpedWall.getRight().multiply(1, 1, -1));
+				},
+				(data, isSelf, seed) -> {
+					data.voice(MarioClientSideData.VoiceLine.REVERT, seed);
+					data.playSoundEvent(MarioSFX.BONK, seed);
+					data.getMario().onDamaged(data.getMario().getDamageSources().flyIntoWall());
+				}
+		);
+
+		public static final ActionTransitionDefinition BONK_WALL_JUMPABLE = new ActionTransitionDefinition(
+				"qua_mario:bonk_wall_jumpable",
+				BONK.EVALUATOR,
+				BONK.EXECUTOR_TRAVELLERS,
+				BONK.EXECUTOR_CLIENTS
 		);
 	}
 

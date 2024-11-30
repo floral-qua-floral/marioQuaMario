@@ -34,6 +34,7 @@ public final class MarioSFX {
 	public static final SoundEvent DIVE = makeActionSound("dive");
 	public static final SoundEvent AQUATIC_GROUND_POUND_PRE = makeActionSound("aquatic_ground_pound_pre");
 	public static final SoundEvent AQUATIC_GROUND_POUND = makeActionSound("aquatic_ground_pound");
+	public static final SoundEvent BONK = makeActionSound("bonk");
 
 	private static SoundEvent makeMovementSound(String name) {
 		return makeAndRegisterSound("sfx.movement." + name);

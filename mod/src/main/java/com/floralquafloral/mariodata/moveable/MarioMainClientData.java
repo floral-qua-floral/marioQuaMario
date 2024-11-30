@@ -135,43 +135,22 @@ public class MarioMainClientData extends MarioMoveableData implements MarioClien
 			}
 			if (marioClient.horizontalCollision && bumpingRule.WALLS > 0) {
 				if(Math.abs(storedVelocity.x) > bumpingRule.WALL_SPEED_THRESHOLD.get(this)) {
-					if (storedVelocity.x > 0) BumpManager.attemptBumpBlocks(
-							this,
-							marioClient.clientWorld,
-							getBumpPositions(storedBoundingBox.stretch(storedVelocity.x, 0, 0)),
-							Direction.EAST,
-							bumpingRule.WALLS
-					);
-					else BumpManager.attemptBumpBlocks(
-							this,
-							marioClient.clientWorld,
-							getBumpPositions(storedBoundingBox.stretch(storedVelocity.x, 0, 0)),
-							Direction.WEST,
-							bumpingRule.WALLS
-					);
+					if (storedVelocity.x > 0)
+						attemptHorizontalBump(Direction.EAST, storedBoundingBox, storedVelocity, bumpingRule.WALLS);
+					else
+						attemptHorizontalBump(Direction.WEST, storedBoundingBox, storedVelocity, bumpingRule.WALLS);
 				}
 
 				if(Math.abs(storedVelocity.z) > bumpingRule.WALL_SPEED_THRESHOLD.get(this)) {
-					if (storedVelocity.z > 0) BumpManager.attemptBumpBlocks(
-							this,
-							marioClient.clientWorld,
-							getBumpPositions(storedBoundingBox.stretch(0, 0, storedVelocity.z)),
-							Direction.SOUTH,
-							bumpingRule.WALLS
-					);
-					else BumpManager.attemptBumpBlocks(
-							this,
-							marioClient.clientWorld,
-							getBumpPositions(storedBoundingBox.stretch(0, 0, storedVelocity.z)),
-							Direction.NORTH,
-							bumpingRule.WALLS
-					);
+					if (storedVelocity.z > 0)
+						attemptHorizontalBump(Direction.SOUTH, storedBoundingBox, storedVelocity, bumpingRule.WALLS);
+					else
+						attemptHorizontalBump(Direction.NORTH, storedBoundingBox, storedVelocity, bumpingRule.WALLS);
 				}
 			}
 		}
 
 		getAction().attemptTransitions(this, TransitionPhase.WORLD_COLLISION); // this occurs twice per tick
-
 		applyModifiedVelocity();
 
 		getTimers().jumpLandingTime--;
@@ -191,15 +170,27 @@ public class MarioMainClientData extends MarioMoveableData implements MarioClien
 				(pos, voxelShape) -> pos.toImmutable());
 	}
 
-	private Pair<Direction, Vec3d> attemptHorizontalBump(Direction direction, Box storedBoundingBox, Vec3d storedVelocity, int bumpStrength) {
+	private void attemptHorizontalBump(Direction direction, Box storedBoundingBox, Vec3d storedVelocity, int bumpStrength) {
 		boolean isXAxis = direction.getAxis() == Direction.Axis.X;
-		return BumpManager.attemptBumpBlocks(
+		Vec3d preBumpVelocity = marioClient.getVelocity();
+		if(BumpManager.attemptBumpBlocks(
 				this,
 				marioClient.clientWorld,
 				getBumpPositions(storedBoundingBox.stretch(isXAxis ? storedVelocity.x : 0, 0, isXAxis ? 0 : storedVelocity.z)),
 				direction,
 				bumpStrength
-		) ? new Pair<>(direction, storedVelocity) : null;
+		)) {
+			boolean velocityChangedByBump = marioClient.getVelocity() != preBumpVelocity;
+			Vec3d velocityToStore = velocityChangedByBump ? marioClient.getVelocity().multiply(isXAxis ? -1 : 1, 1, isXAxis ? 1 : -1) : storedVelocity;
+			MarioQuaMario.LOGGER.info("horizontal bump vel:"
+					+ "\nPreBumpVel: " + preBumpVelocity
+					+ "\nvel: " + marioClient.getVelocity()
+					+ "\nchanged: " + velocityChangedByBump
+					+ "\nstore: " + velocityToStore
+					+ "\nstored: " + storedVelocity
+			);
+			this.getTimers().bumpedWall = new Pair<>(direction, velocityToStore);
+		}
 	}
 
 	@Override public @NotNull MarioInputs getInputs() {

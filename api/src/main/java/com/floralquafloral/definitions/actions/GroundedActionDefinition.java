@@ -4,7 +4,10 @@ import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioTravelData;
 import com.floralquafloral.util.MarioSFX;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageSources;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2d;
 
@@ -52,6 +55,13 @@ public abstract class GroundedActionDefinition implements ActionDefinition {
 				data -> data.getMario().isSubmergedInWater(),
 				data -> data.setYVel(data.getYVel() * 0.235),
 				null
+		);
+
+		public static final ActionTransitionDefinition BONK = new ActionTransitionDefinition(
+				"qua_mario:bonk_ground",
+				AirborneActionDefinition.AerialTransitions.BONK.EVALUATOR,
+				AirborneActionDefinition.AerialTransitions.BONK.EXECUTOR_TRAVELLERS,
+				AirborneActionDefinition.AerialTransitions.BONK.EXECUTOR_CLIENTS
 		);
 	}
 

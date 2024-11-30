@@ -27,13 +27,13 @@ public class Skid extends GroundedActionDefinition {
 		return null;
 	}
 	@Override @Nullable public BumpingRule getBumpingRule() {
-		return null;
+		return new BumpingRule(0, 0, 3, 0.25);
 	}
 
 	public static final CharaStat SKID_THRESHOLD = new CharaStat(0.285, RUNNING, THRESHOLD);
 
 	public static final CharaStat SKID_DRAG = new CharaStat(0.185, RUNNING, DRAG);
-	public static final CharaStat SKID_DRAG_MIN = new CharaStat(0.02, RUNNING, DRAG);
+	public static final CharaStat SKID_DRAG_MIN = new CharaStat(0.045, RUNNING, DRAG);
 	public static final CharaStat SKID_REDIRECTION = new CharaStat(4.5, RUNNING, REDIRECTION);
 
 	public static final ActionTransitionDefinition SKID_TRANSITION = new ActionTransitionDefinition(
@@ -100,6 +100,7 @@ public class Skid extends GroundedActionDefinition {
 	public List<ActionTransitionDefinition> getWorldCollisionTransitions() {
 		return List.of(
 				GroundedTransitions.ENTER_WATER,
+				GroundedTransitions.BONK,
 				GroundedTransitions.FALL
 		);
 	}

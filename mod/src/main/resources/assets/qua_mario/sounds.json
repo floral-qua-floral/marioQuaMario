@@ -149,6 +149,12 @@
       "qua_mario:sfx/action/dive"
     ]
   },
+  "sfx.action.bonk": {
+    "subtitle": "subtitles.qua_mario.action.bonk",
+    "sounds": [
+      "qua_mario:sfx/action/bonk"
+    ]
+  },
 
   "voice.luigi.backflip": {
     "subtitle": "subtitles.qua_mario.voice_luigi_backflip",

@@ -16,6 +16,8 @@ import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.SlimeBlock;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.RegistryByteBuf;
@@ -32,6 +34,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import org.jetbrains.annotations.Nullable;
 
@@ -109,7 +112,14 @@ public abstract class BumpManager {
 				world, blockPos, blockState,
 				strength, modifier, direction
 		) -> {
-//			MarioQuaMario.LOGGER.info("Bump listener!!");
+			if(blockState.isOf(Blocks.SLIME_BLOCK)) {
+				if(marioTravelData != null)
+					marioTravelData.getMario().setVelocity(marioTravelData.getMario().getVelocity().withAxis(
+							direction.getAxis(), direction.getDirection().offset() * -1 * (1 + strength * 0.2)
+					));
+//					marioTravelData.getMario().setVelocity(new Vec3d(direction.getUnitVector()).multiply(-2));
+				return BlockBumpResult.DISPLACE;
+			}
 			return BlockBumpResult.PASS;
 		});
 	}

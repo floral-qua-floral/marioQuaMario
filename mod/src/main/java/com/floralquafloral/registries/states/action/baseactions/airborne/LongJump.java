@@ -7,7 +7,9 @@ import com.floralquafloral.mariodata.MarioTravelData;
 import com.floralquafloral.definitions.actions.AirborneActionDefinition;
 import com.floralquafloral.definitions.actions.CharaStat;
 import com.floralquafloral.definitions.actions.StatCategory;
+import com.floralquafloral.util.MarioSFX;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Direction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,12 +26,12 @@ public class LongJump extends AirborneActionDefinition {
 		return null;
 	}
 	@Override @Nullable public BumpingRule getBumpingRule() {
-		return new BumpingRule(4, 0, 4, 0.2);
+		return new BumpingRule(4, 0, 3, 0.2);
 	}
 
 	public static final CharaStat GRAVITY = AerialStats.GRAVITY.variate(0.575);
 
-	public static final CharaStat LONG_JUMP_VEL = new CharaStat(0.62, StatCategory.JUMP_VELOCITY);
+	public static final CharaStat LONG_JUMP_VEL = new CharaStat(0.614, StatCategory.JUMP_VELOCITY);
 //	public static final CharaStat LONG_JUMP_VEL = new CharaStat(0.858, StatCategory.JUMP_VELOCITY);
 	public static final CharaStat LONG_JUMP_THRESHOLD = new CharaStat(0.285, StatCategory.THRESHOLD);
 
@@ -87,6 +89,20 @@ public class LongJump extends AirborneActionDefinition {
 	@Override public List<ActionTransitionDefinition> getWorldCollisionTransitions() {
 		return List.of(
 				AerialTransitions.ENTER_WATER,
+				new ActionTransitionDefinition("qua_mario:bonk_air",
+						data -> data.getTimers().bumpedWall != null,
+						data -> {
+							data.setYVel(Math.min(data.getYVel(), 0));
+							if(data.getTimers().bumpedWall != null)
+								data.getMario().setVelocity(data.getTimers().bumpedWall.getLeft().getAxis() == Direction.Axis.X
+									? data.getTimers().bumpedWall.getRight().multiply(-1, 1, 1)
+									: data.getTimers().bumpedWall.getRight().multiply(1, 1, -1));
+						},
+						(data, isSelf, seed) -> {
+							data.voice(MarioClientSideData.VoiceLine.REVERT, seed);
+							data.playSoundEvent(MarioSFX.BONK, seed);
+						}
+				),
 				AerialTransitions.DUCKING_LANDING,
 				AerialTransitions.DOUBLE_JUMPABLE_LANDING
 		);
