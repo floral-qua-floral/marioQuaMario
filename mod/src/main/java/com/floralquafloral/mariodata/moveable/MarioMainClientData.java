@@ -10,8 +10,11 @@ import com.floralquafloral.util.CPMIntegration;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.BlockCollisionSpliterator;
 import org.jetbrains.annotations.NotNull;
 
@@ -104,33 +107,70 @@ public class MarioMainClientData extends MarioMoveableData implements MarioClien
 		getAction().attemptTransitions(this, TransitionPhase.INPUT);
 
 		applyModifiedVelocity();
-		marioClient.move(MovementType.SELF, marioClient.getVelocity());
+		Vec3d storedVelocity = marioClient.getVelocity();
+		Box storedBoundingBox = marioClient.getBoundingBox();
+		marioClient.move(MovementType.SELF, storedVelocity);
 
+		getTimers().bumpedFloor = false;
+		getTimers().bumpedCeiling = false;
+		getTimers().bumpedWall = null;
 		ActionDefinition.BumpingRule bumpingRule = getAction().BUMPING_RULE;
 		if(bumpingRule != null) {
 			if (marioClient.verticalCollision) {
 				if (marioClient.groundCollision) {
-					if (bumpingRule.FLOORS > 0) BumpManager.attemptBumpBlocks(
+					if (bumpingRule.FLOORS > 0) getTimers().bumpedFloor = BumpManager.attemptBumpBlocks(
 							this,
 							marioClient.clientWorld,
-							getBumpPositions(0, -0.15, 0),
+							getBumpPositions(storedBoundingBox.stretch(0, storedVelocity.y, 0)),
 							Direction.DOWN,
 							bumpingRule.FLOORS
 					);
-				} else if (bumpingRule.CEILINGS > 0) BumpManager.attemptBumpBlocks(
+				} else if (bumpingRule.CEILINGS > 0) getTimers().bumpedCeiling = BumpManager.attemptBumpBlocks(
 						this,
 						marioClient.clientWorld,
-						getBumpPositions(0, 0.15, 0),
+						getBumpPositions(storedBoundingBox.stretch(0, storedVelocity.y, 0)),
 						Direction.UP,
 						bumpingRule.CEILINGS
 				);
 			}
 			if (marioClient.horizontalCollision && bumpingRule.WALLS > 0) {
+				if(Math.abs(storedVelocity.x) > bumpingRule.WALL_SPEED_THRESHOLD.get(this)) {
+					if (storedVelocity.x > 0) BumpManager.attemptBumpBlocks(
+							this,
+							marioClient.clientWorld,
+							getBumpPositions(storedBoundingBox.stretch(storedVelocity.x, 0, 0)),
+							Direction.EAST,
+							bumpingRule.WALLS
+					);
+					else BumpManager.attemptBumpBlocks(
+							this,
+							marioClient.clientWorld,
+							getBumpPositions(storedBoundingBox.stretch(storedVelocity.x, 0, 0)),
+							Direction.WEST,
+							bumpingRule.WALLS
+					);
+				}
 
+				if(Math.abs(storedVelocity.z) > bumpingRule.WALL_SPEED_THRESHOLD.get(this)) {
+					if (storedVelocity.z > 0) BumpManager.attemptBumpBlocks(
+							this,
+							marioClient.clientWorld,
+							getBumpPositions(storedBoundingBox.stretch(0, 0, storedVelocity.z)),
+							Direction.SOUTH,
+							bumpingRule.WALLS
+					);
+					else BumpManager.attemptBumpBlocks(
+							this,
+							marioClient.clientWorld,
+							getBumpPositions(storedBoundingBox.stretch(0, 0, storedVelocity.z)),
+							Direction.NORTH,
+							bumpingRule.WALLS
+					);
+				}
 			}
 		}
 
-//		getAction().attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
+		getAction().attemptTransitions(this, TransitionPhase.WORLD_COLLISION); // this occurs twice per tick
 
 		applyModifiedVelocity();
 
@@ -142,13 +182,24 @@ public class MarioMainClientData extends MarioMoveableData implements MarioClien
 		return !marioClient.hasVehicle();
 	}
 
-	private Iterable<BlockPos> getBumpPositions(double stretchX, double stretchY, double stretchZ) {
+	private Iterable<BlockPos> getBumpPositions(Box boundingBox) {
 		return () -> new BlockCollisionSpliterator<>(
 				marioClient.getWorld(),
 				marioClient,
-				marioClient.getBoundingBox().stretch(stretchX, stretchY, stretchZ),
+				boundingBox,
 				false,
-				(pos, voxelShape) -> pos);
+				(pos, voxelShape) -> pos.toImmutable());
+	}
+
+	private Pair<Direction, Vec3d> attemptHorizontalBump(Direction direction, Box storedBoundingBox, Vec3d storedVelocity, int bumpStrength) {
+		boolean isXAxis = direction.getAxis() == Direction.Axis.X;
+		return BumpManager.attemptBumpBlocks(
+				this,
+				marioClient.clientWorld,
+				getBumpPositions(storedBoundingBox.stretch(isXAxis ? storedVelocity.x : 0, 0, isXAxis ? 0 : storedVelocity.z)),
+				direction,
+				bumpStrength
+		) ? new Pair<>(direction, storedVelocity) : null;
 	}
 
 	@Override public @NotNull MarioInputs getInputs() {

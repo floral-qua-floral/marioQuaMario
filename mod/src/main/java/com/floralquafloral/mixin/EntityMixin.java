@@ -9,6 +9,7 @@ import com.floralquafloral.registries.RegistryManager;
 import com.floralquafloral.registries.states.action.ParsedAction;
 import com.floralquafloral.registries.states.character.ParsedCharacter;
 import com.floralquafloral.registries.states.powerup.ParsedPowerUp;
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -82,6 +83,39 @@ public abstract class EntityMixin {
 		}
 	}
 
+	@Unique public final double CLIPPING_LENIENCY = 0.2;
+
+	@WrapMethod(method = "move")
+	private void jumpBlockEdgeClipping(MovementType movementType, Vec3d movement, Operation<Void> original) {
+		if((Entity) (Object) this instanceof PlayerEntity mario && (movementType == MovementType.SELF || movementType == MovementType.PLAYER)) {
+			MarioPlayerData data = MarioDataManager.getMarioData(mario);
+
+			if(movement.y > 0 && data.useMarioPhysics()) {
+				// If Mario's horizontal velocity is responsible for him clipping a ceiling, then just cancel his horizontal movement
+				if(
+						(movement.x != 0 || movement.z != 0)
+								&& mario.getWorld().isSpaceEmpty(mario, mario.getBoundingBox().offset(movement.x, 0, movement.z))
+								&& !mario.getWorld().isSpaceEmpty(mario, mario.getBoundingBox().offset(movement))) {
+					mario.move(movementType, new Vec3d(0, movement.y, 0));
+					return;
+				}
+
+				if(!mario.getWorld().isSpaceEmpty(mario, mario.getBoundingBox().offset(0, movement.y, 0))) {
+					Box stretchedBox = mario.getBoundingBox().stretch(0, movement.y, 0);
+					if(mario.getWorld().isSpaceEmpty(mario, stretchedBox.offset(CLIPPING_LENIENCY, 0, 0)))
+						mario.move(MovementType.SELF, new Vec3d(CLIPPING_LENIENCY, 0, 0));
+					if(mario.getWorld().isSpaceEmpty(mario, stretchedBox.offset(-CLIPPING_LENIENCY, 0, 0)))
+						mario.move(MovementType.SELF, new Vec3d(-CLIPPING_LENIENCY, 0, 0));
+					if(mario.getWorld().isSpaceEmpty(mario, stretchedBox.offset(0, 0, CLIPPING_LENIENCY)))
+						mario.move(MovementType.SELF, new Vec3d(0, 0, CLIPPING_LENIENCY));
+					if(mario.getWorld().isSpaceEmpty(mario, stretchedBox.offset(0, 0, -CLIPPING_LENIENCY)))
+						mario.move(MovementType.SELF, new Vec3d(0, 0, -CLIPPING_LENIENCY));
+				}
+			}
+		}
+		original.call(movementType, movement);
+	}
+
 	@Unique
 	private static boolean shouldStompHook = true;
 
@@ -106,8 +140,8 @@ public abstract class EntityMixin {
 		if(false && entity instanceof ClientPlayerEntity) {
 			MarioMainClientData data = MarioMainClientData.getInstance();
 			if(data != null) {
-				Vec3d marioVelocity = data.getMario().getVelocity(); // is this adequate?
-				Vector3d mutableMarioVelocity = new Vector3d(marioVelocity.x, marioVelocity.y, marioVelocity.z);
+				Vec3d marioImmutableVelocity = data.getMario().getVelocity(); // is this adequate?
+				Vector3d marioVelocity = new Vector3d(marioImmutableVelocity.x, marioImmutableVelocity.y, marioImmutableVelocity.z);
 
 				boolean bumpCeilings = true || marioVelocity.y != 0 && data.getAction().BUMPING_RULE.CEILINGS != 0;
 				boolean bumpFloors = true || marioVelocity.y != 0 && data.getAction().BUMPING_RULE.FLOORS != 0;
@@ -120,8 +154,10 @@ public abstract class EntityMixin {
 					bumpBlocks.put(direction, new HashSet<>());
 				}
 
+				Box marioBoundingBox = entity.getBoundingBox();
+
 				for(Pair<BlockPos, VoxelShape> collidedBlock : blockCollisions) {
-					if((bumpCeilings || bumpFloors) && collidedBlock.getRight().calculateMaxDistance(Direction.Axis.Y, movingEntityBoundingBox, marioVelocity.y) != 0) {
+					if((bumpCeilings || bumpFloors) && collidedBlock.getRight().calculateMaxDistance(Direction.Axis.Y, marioBoundingBox, marioVelocity.y) != 0) {
 						if(bumpCeilings && marioVelocity.y > 0) {
 							// Mario was moving up and bumped this block on the Y axis!
 							bumpBlocks.get(Direction.UP).add(collidedBlock.getLeft().toImmutable());
@@ -133,21 +169,21 @@ public abstract class EntityMixin {
 					}
 					else if(bumpWalls) {
 						boolean xAxisFirst = Math.abs(marioVelocity.x) > Math.abs(marioVelocity.z);
-						if(xAxisFirst && collidedBlock.getRight().calculateMaxDistance(Direction.Axis.X, movingEntityBoundingBox, marioVelocity.x) != 0) {
-							MarioQuaMario.LOGGER.info("Collided along X axis: {}", collidedBlock.getRight().calculateMaxDistance(Direction.Axis.X, movingEntityBoundingBox, marioVelocity.x));
+						if(xAxisFirst && collidedBlock.getRight().calculateMaxDistance(Direction.Axis.X, marioBoundingBox, marioVelocity.x) != 0) {
+							MarioQuaMario.LOGGER.info("Collided along X axis: {}", collidedBlock.getRight().calculateMaxDistance(Direction.Axis.X, marioBoundingBox, marioVelocity.x));
 							if(marioVelocity.x > 0)
 								bumpBlocks.get(Direction.EAST).add(collidedBlock.getLeft().toImmutable());
 							else
 								bumpBlocks.get(Direction.WEST).add(collidedBlock.getLeft().toImmutable());
 						}
-						else if(collidedBlock.getRight().calculateMaxDistance(Direction.Axis.Z, movingEntityBoundingBox, marioVelocity.z) != 0) {
+						else if(collidedBlock.getRight().calculateMaxDistance(Direction.Axis.Z, marioBoundingBox, marioVelocity.z) != 0) {
 							if(marioVelocity.z > 0)
 								bumpBlocks.get(Direction.SOUTH).add(collidedBlock.getLeft().toImmutable());
 							else
 								bumpBlocks.get(Direction.NORTH).add(collidedBlock.getLeft().toImmutable());
 						}
-						else if(!xAxisFirst && collidedBlock.getRight().calculateMaxDistance(Direction.Axis.X, movingEntityBoundingBox, marioVelocity.x) != 0) {
-							MarioQuaMario.LOGGER.info("Collided along X axis: {}", collidedBlock.getRight().calculateMaxDistance(Direction.Axis.X, movingEntityBoundingBox, marioVelocity.x));
+						else if(!xAxisFirst && collidedBlock.getRight().calculateMaxDistance(Direction.Axis.X, marioBoundingBox, marioVelocity.x) != 0) {
+							MarioQuaMario.LOGGER.info("Collided along X axis: {}", collidedBlock.getRight().calculateMaxDistance(Direction.Axis.X, marioBoundingBox, marioVelocity.x));
 							if(marioVelocity.x > 0)
 								bumpBlocks.get(Direction.EAST).add(collidedBlock.getLeft().toImmutable());
 							else

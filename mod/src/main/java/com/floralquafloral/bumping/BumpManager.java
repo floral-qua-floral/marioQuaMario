@@ -90,7 +90,8 @@ public abstract class BumpManager {
 
 		ServerTickEvents.END_SERVER_TICK.register((server) -> {
 			Set<BlockBumpHandler.ForcedSignalSpot> removeSpots = null;
-			for(BlockBumpHandler.ForcedSignalSpot spot : BlockBumpHandler.FORCED_SIGNALS_DATA) {
+			Set<BlockBumpHandler.ForcedSignalSpot> copiedSet = new HashSet<>(BlockBumpHandler.FORCED_SIGNALS_DATA);
+			for(BlockBumpHandler.ForcedSignalSpot spot : copiedSet) {
 				if(spot.delay-- <= 0) {
 					BlockBumpHandler.FORCED_SIGNALS.remove(spot.POSITION);
 					spot.WORLD.updateNeighbor(spot.POSITION, spot.WORLD.getBlockState(spot.POSITION).getBlock(), spot.POSITION);
@@ -135,14 +136,14 @@ public abstract class BumpManager {
 		world.updateListeners(pos, blockState, blockState, Block.NOTIFY_ALL);
 	}
 
-	public static void attemptBumpBlocks(
+	public static boolean attemptBumpBlocks(
 			MarioMainClientData data, ClientWorld world,
 			Iterable<BlockPos> blocks, Direction direction,
 			int baseStrength
 	) {
 		data.canRepeatPound = false;
 		Set<BlockPos> fullBlocksSet = new HashSet<>();
-		for(BlockPos pos : blocks) fullBlocksSet.add(new BlockPos(pos));
+		for(BlockPos pos : blocks) fullBlocksSet.add(pos);
 
 		Set<BlockPos> prunedBlocksSet = bumpBlocksClient(data, data, world, fullBlocksSet, baseStrength, direction);
 
@@ -153,6 +154,7 @@ public abstract class BumpManager {
 				eyeAdjustmentParticlePos = prunedBlocksSet.stream().findFirst().get();
 			}
 		}
+		return !fullBlocksSet.isEmpty();
 	}
 
 	public static Set<BlockPos> bumpBlocksClient(

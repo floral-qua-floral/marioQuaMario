@@ -1,6 +1,10 @@
 package com.floralquafloral.mariodata;
 
+import net.minecraft.util.Pair;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface MarioTravelData extends MarioData {
 	void setForwardVel(double forward);
@@ -57,5 +61,9 @@ public interface MarioTravelData extends MarioData {
 		public boolean jumpCapped = false;
 
 		public boolean actionInterceptedAttack = false;
+
+		public boolean bumpedCeiling = false;
+		public boolean bumpedFloor = false;
+		public @Nullable Pair<Direction, Vec3d> bumpedWall = null;
 	}
 }

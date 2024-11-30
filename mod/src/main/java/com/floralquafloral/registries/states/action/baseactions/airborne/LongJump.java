@@ -24,12 +24,12 @@ public class LongJump extends AirborneActionDefinition {
 		return null;
 	}
 	@Override @Nullable public BumpingRule getBumpingRule() {
-		return BumpingRule.JUMPING;
+		return new BumpingRule(4, 0, 4, 0.2);
 	}
 
 	public static final CharaStat GRAVITY = AerialStats.GRAVITY.variate(0.575);
 
-	public static final CharaStat LONG_JUMP_VEL = new CharaStat(0.64, StatCategory.JUMP_VELOCITY);
+	public static final CharaStat LONG_JUMP_VEL = new CharaStat(0.62, StatCategory.JUMP_VELOCITY);
 //	public static final CharaStat LONG_JUMP_VEL = new CharaStat(0.858, StatCategory.JUMP_VELOCITY);
 	public static final CharaStat LONG_JUMP_THRESHOLD = new CharaStat(0.285, StatCategory.THRESHOLD);
 

@@ -141,20 +141,26 @@ public interface ActionDefinition extends MarioStateDefinition, MarioAttackInter
 		 * <p>
 		 * A strength of 1 represents Mario landing on a block and having no effect on it.
 		 */
-		public static final BumpingRule JUMPING = new BumpingRule(4, 1, 0);
-		public static final BumpingRule FALLING = new BumpingRule(4, 1, 0);
-		public static final BumpingRule SWIMMING = new BumpingRule(4, 0, 0);
-		public static final BumpingRule GROUND_POUND = new BumpingRule(0, 4, 0);
-		public static final BumpingRule SPIN_JUMPING = new BumpingRule(2, 2, 0);
+		public static final BumpingRule JUMPING = new BumpingRule(4, 1);
+		public static final BumpingRule FALLING = new BumpingRule(4, 1);
+		public static final BumpingRule SWIMMING = new BumpingRule(4, 0);
+		public static final BumpingRule GROUND_POUND = new BumpingRule(0, 4);
+		public static final BumpingRule SPIN_JUMPING = new BumpingRule(2, 2);
 
 		public final int CEILINGS;
 		public final int FLOORS;
 		public final int WALLS;
+		public final CharaStat WALL_SPEED_THRESHOLD;
 
-		public BumpingRule(int ceilingBumpStrength, int floorBumpStrength, int wallBumpStrength) {
+		public BumpingRule(int ceilingBumpStrength, int floorBumpStrength) {
+			this(ceilingBumpStrength, floorBumpStrength, 0, 0);
+		}
+
+		public BumpingRule(int ceilingBumpStrength, int floorBumpStrength, int wallBumpStrength, double wallBumpSpeedThreshold) {
 			this.CEILINGS = ceilingBumpStrength;
 			this.FLOORS = floorBumpStrength;
 			this.WALLS = wallBumpStrength;
+			this.WALL_SPEED_THRESHOLD = new CharaStat(wallBumpSpeedThreshold, StatCategory.THRESHOLD);
 		}
 	}
 
