@@ -67,6 +67,7 @@ public abstract class MarioPlayerData implements MarioData {
 				isEnabled()
 				&& !this.mario.getAbilities().flying
 				&& !this.mario.isFallFlying()
+				&& !this.mario.isUsingRiptide()
 //				&& !mario.hasVehicle()
 //				&& !mario.isClimbing()
 		);

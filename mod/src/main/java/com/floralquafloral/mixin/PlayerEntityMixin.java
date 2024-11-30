@@ -6,11 +6,13 @@ import com.floralquafloral.mariodata.moveable.MarioMoveableData;
 import com.floralquafloral.registries.states.character.ParsedCharacter;
 import com.floralquafloral.registries.states.powerup.ParsedPowerUp;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
-import net.minecraft.entity.EntityDimensions;
-import net.minecraft.entity.EntityPose;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,10 +21,56 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerEntity.class)
-public abstract class PlayerEntityMixin {
+public abstract class PlayerEntityMixin extends LivingEntity {
+	private PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
+		super(entityType, world);
+	}
+
 	@Shadow public float strideDistance;
 
 	@Shadow public float prevStrideDistance;
+
+	@Override public void setSwimming(boolean swimming) {
+		if(swimming && MarioDataManager.getMarioData(this).isEnabled()) return;
+		super.setSwimming(swimming);
+	}
+
+	@Override
+	public boolean isInSneakingPose() {
+		return super.isInSneakingPose();
+	}
+
+	@Override
+	public void setPose(EntityPose pose) {
+		super.setPose(pose);
+	}
+
+	@Override
+	protected void playStepSound(BlockPos pos, BlockState state) {
+		super.playStepSound(pos, state);
+	}
+
+	@Override
+	public void move(MovementType movementType, Vec3d movement) {
+		super.move(movementType, movement);
+	}
+
+	@Override
+	public boolean startRiding(Entity entity, boolean force) {
+		boolean startedRiding = super.startRiding(entity, force);
+
+		return startedRiding;
+	}
+
+	@Override
+	public void readNbt(NbtCompound nbt) {
+		super.readNbt(nbt);
+	}
+
+	@Override
+	public NbtCompound writeNbt(NbtCompound nbt) {
+		return super.writeNbt(nbt);
+	}
 
 	@Inject(method = "travel", at = @At("HEAD"), cancellable = true)
 	private void travelHook(Vec3d movementInput, CallbackInfo ci) {
@@ -102,4 +150,6 @@ public abstract class PlayerEntityMixin {
 	private boolean preventLivingEntityJump(LivingEntity instance) {
 		return !MarioDataManager.getMarioData(this).useMarioPhysics();
 	}
+
+
 }
