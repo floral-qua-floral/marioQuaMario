@@ -1,0 +1,37 @@
+{
+	"schemaVersion": 1,
+	"id": "qua_mario_api",
+	"version": "1.0.0",
+	"name": "Mario qua Mario API",
+	"description": "The API for the Mario qua Mario mod. Used for registering Actions, Power-ups, Characters, Stomp Types, and more!",
+	"authors": [
+		"Floral qua Floral"
+	],
+	"contact": {
+		"sources": "https://github.com/floral-qua-floral/marioQuaMario",
+		"issues": "https://github.com/floral-qua-floral/marioQuaMario/issues"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/qua_mario/icon.png",
+	"environment": "*",
+	"entrypoints": {
+	},
+	"mixins": [
+		"qua_mario_api.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.16.7",
+		"minecraft": "~1.21",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	},
+
+	"custom": {
+		"loom:injected_interfaces": {
+			"net/minecraft/entity/Entity.java": ["com/floralquafloral/StompableEntity"]
+		}
+	}
+}

@@ -1,5 +1,6 @@
 package com.floralquafloral.mixin;
 
+import com.floralquafloral.StompableEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.Saddleable;
@@ -16,23 +17,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-@SuppressWarnings("UnusedMixin")
 @Mixin(Entity.class)
 public abstract class EntityStompabilityMixin implements StompableEntity {
-	@Shadow public abstract EntityType<?> getType();
-
-	@Shadow public abstract boolean damage(DamageSource source, float amount);
-
-	@Unique private static final TagKey<EntityType<?>> UNSTOMPABLE_ENTITIES =
-			TagKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of("qua_mario:unstompable"));
-	@Unique private static final TagKey<EntityType<?>> HURTS_TO_STOMP_ENTITIES =
-			TagKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of("qua_mario:hurts_to_stomp"));
-	@Unique private static final TagKey<EntityType<?>> IMMUNE_TO_BASIC_STOMP_ENTITIES =
-			TagKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of("qua_mario:immune_to_basic_stomp"));
-
-	@Unique private static final TagKey<DamageType> BASIC_STOMPS =
-			TagKey.of(RegistryKeys.DAMAGE_TYPE, Identifier.of("qua_mario:basic_stomps"));
-
 	@Override public StompResult qua_mario$stomp(PlayerEntity mario, Identifier stompType, DamageSource damageSource, float amount) {
 		Entity self = (Entity) (Object) this;
 
@@ -46,7 +32,21 @@ public abstract class EntityStompabilityMixin implements StompableEntity {
 		if(getType().isIn(IMMUNE_TO_BASIC_STOMP_ENTITIES) && damageSource.isIn(BASIC_STOMPS)) return StompResult.FAIL;
 
 		boolean damaged = damage(damageSource, amount);
+
 		if(damaged) return StompResult.NORMAL;
 		else return StompResult.FAIL;
 	}
+
+	@Shadow public abstract EntityType<?> getType();
+	@Shadow public abstract boolean damage(DamageSource source, float amount);
+
+	@Unique private static final TagKey<EntityType<?>> UNSTOMPABLE_ENTITIES =
+			TagKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of("qua_mario:unstompable"));
+	@Unique private static final TagKey<EntityType<?>> HURTS_TO_STOMP_ENTITIES =
+			TagKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of("qua_mario:hurts_to_stomp"));
+	@Unique private static final TagKey<EntityType<?>> IMMUNE_TO_BASIC_STOMP_ENTITIES =
+			TagKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of("qua_mario:immune_to_basic_stomp"));
+
+	@Unique private static final TagKey<DamageType> BASIC_STOMPS =
+			TagKey.of(RegistryKeys.DAMAGE_TYPE, Identifier.of("qua_mario:basic_stomps"));
 }

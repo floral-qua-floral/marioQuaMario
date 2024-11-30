@@ -44,83 +44,12 @@ import java.util.Set;
 
 @Mixin(Entity.class)
 public class EntityMixin {
-	@Inject(at = @At("HEAD"), method = "isInSneakingPose", cancellable = true)
-	private void isInSneakingPose(CallbackInfoReturnable<Boolean> cir) {
-		if((Entity) (Object) this instanceof PlayerEntity player) {
-			if(MarioDataManager.getMarioData(player).isSneakProhibited())
-				cir.setReturnValue(false);
-		}
-	}
-
-	@Inject(method = "setPose", at = @At("HEAD"), cancellable = true)
-	private void preventSettingSneakPose(EntityPose pose, CallbackInfo ci) {
-		if((Entity) (Object) this instanceof PlayerEntity player && pose == EntityPose.CROUCHING) {
-			if(MarioDataManager.getMarioData(player).isSneakProhibited()) {
-
-				if(player.getPose() == EntityPose.CROUCHING)
-					player.setPose(EntityPose.STANDING);
-				ci.cancel();
-			}
-		}
-	}
-
 	@Inject(method = "playStepSounds", at = @At("HEAD"), cancellable = true)
 	private void preventStepSounds(BlockPos pos, BlockState state, CallbackInfo ci) {
 		if(((Entity) (Object) this) instanceof PlayerEntity player) {
 			MarioPlayerData data = MarioDataManager.getMarioData(player);
 			if(!data.getAction().SLIDING_STATUS.doFootsteps())
 				ci.cancel();
-		}
-	}
-
-	@Unique public final double CLIPPING_LENIENCY = 0.2;
-
-	@WrapMethod(method = "move")
-	private void jumpBlockEdgeClipping(MovementType movementType, Vec3d movement, Operation<Void> original) {
-		if((Entity) (Object) this instanceof PlayerEntity mario && (movementType == MovementType.SELF || movementType == MovementType.PLAYER)) {
-			MarioPlayerData data = MarioDataManager.getMarioData(mario);
-
-			if(movement.y > 0 && data.useMarioPhysics()) {
-				// If Mario's horizontal velocity is responsible for him clipping a ceiling, then just cancel his horizontal movement
-				if(
-						(movement.x != 0 || movement.z != 0)
-								&& mario.getWorld().isSpaceEmpty(mario, mario.getBoundingBox().offset(movement.x, 0, movement.z))
-								&& !mario.getWorld().isSpaceEmpty(mario, mario.getBoundingBox().offset(movement))) {
-					mario.move(movementType, new Vec3d(0, movement.y, 0));
-					return;
-				}
-
-				if(!mario.getWorld().isSpaceEmpty(mario, mario.getBoundingBox().offset(0, movement.y, 0))) {
-					Box stretchedBox = mario.getBoundingBox().stretch(0, movement.y, 0);
-					if(mario.getWorld().isSpaceEmpty(mario, stretchedBox.offset(CLIPPING_LENIENCY, 0, 0)))
-						mario.move(MovementType.SELF, new Vec3d(CLIPPING_LENIENCY, 0, 0));
-					if(mario.getWorld().isSpaceEmpty(mario, stretchedBox.offset(-CLIPPING_LENIENCY, 0, 0)))
-						mario.move(MovementType.SELF, new Vec3d(-CLIPPING_LENIENCY, 0, 0));
-					if(mario.getWorld().isSpaceEmpty(mario, stretchedBox.offset(0, 0, CLIPPING_LENIENCY)))
-						mario.move(MovementType.SELF, new Vec3d(0, 0, CLIPPING_LENIENCY));
-					if(mario.getWorld().isSpaceEmpty(mario, stretchedBox.offset(0, 0, -CLIPPING_LENIENCY)))
-						mario.move(MovementType.SELF, new Vec3d(0, 0, -CLIPPING_LENIENCY));
-				}
-			}
-		}
-		original.call(movementType, movement);
-	}
-
-	@Unique
-	private static boolean shouldStompHook = true;
-
-	@Inject(method = "move", at = @At("HEAD"), cancellable = true)
-	private void executeStompsOnServer(MovementType movementType, Vec3d movement, CallbackInfo ci) {
-		if((Entity) (Object) this instanceof ServerPlayerEntity mario && shouldStompHook) {
-			MarioPlayerData data = MarioDataManager.getMarioData(mario);
-			if(data.useMarioPhysics()) {
-				ParsedAction action = data.getAction();
-				if(action.STOMP != null) {
-					shouldStompHook = false;
-					if(action.STOMP.attempt((MarioServerData) data, movement)) ci.cancel();
-					shouldStompHook = true;
-				}
-			}
 		}
 	}
 
@@ -209,16 +138,6 @@ public class EntityMixin {
 //			}
 //		}
 //	}
-
-	@Inject(method = "startRiding(Lnet/minecraft/entity/Entity;Z)Z", at = @At("HEAD"))
-	private void setMountedAction(Entity entity, boolean force, CallbackInfoReturnable<Boolean> cir) {
-		if((Entity) (Object) this instanceof PlayerEntity mario) {
-			MarioPlayerData data = MarioDataManager.getMarioData(mario);
-
-			data.attemptDismount = false;
-			data.setActionTransitionless(RegistryManager.ACTIONS.get(Identifier.of("qua_mario:mounted")));
-		}
-	}
 
 	@Unique private final String MOD_DATA_NAME = MarioQuaMario.MOD_ID + ".data";
 

@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "com.floralquafloral.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "EntityStompabilityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "client": [
+  ]
+}

@@ -3,13 +3,13 @@
 	"id": "qua_mario",
 	"version": "${version}",
 	"name": "Mario qua Mario",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "Play as Mario!",
 	"authors": [
-		"Me!"
+		"Floral qua Floral"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/floral-qua-floral/marioQuaMario",
+		"issues": "https://github.com/floral-qua-floral/marioQuaMario/issues"
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/qua_mario/icon.png",

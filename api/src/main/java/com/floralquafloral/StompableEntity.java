@@ -1,4 +1,4 @@
-package com.floralquafloral.mixin;
+package com.floralquafloral;
 
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;

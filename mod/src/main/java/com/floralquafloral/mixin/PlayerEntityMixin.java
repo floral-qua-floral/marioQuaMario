@@ -3,6 +3,7 @@ package com.floralquafloral.mixin;
 import com.floralquafloral.mariodata.MarioDataManager;
 import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.mariodata.moveable.MarioMoveableData;
+import com.floralquafloral.registries.RegistryManager;
 import com.floralquafloral.registries.states.character.ParsedCharacter;
 import com.floralquafloral.registries.states.powerup.ParsedPowerUp;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
@@ -10,11 +11,14 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -37,27 +41,62 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 
 	@Override
 	public boolean isInSneakingPose() {
-		return super.isInSneakingPose();
+		return !MarioDataManager.getMarioData(this).isSneakProhibited() && super.isInSneakingPose();
 	}
 
 	@Override
 	public void setPose(EntityPose pose) {
-		super.setPose(pose);
+		super.setPose(MarioDataManager.getMarioData(this).isSneakProhibited() ? EntityPose.STANDING : pose);
 	}
 
-	@Override
-	protected void playStepSound(BlockPos pos, BlockState state) {
-		super.playStepSound(pos, state);
-	}
+	@Unique
+	public final double CLIPPING_LENIENCY = 0.33;
 
 	@Override
 	public void move(MovementType movementType, Vec3d movement) {
+		if(movementType == MovementType.SELF || movementType == MovementType.PLAYER) {
+			if(movement.y > 0 && MarioDataManager.getMarioData(this).useMarioPhysics()) {
+				// If Mario's horizontal velocity is responsible for him clipping a ceiling, then just cancel his horizontal movement
+				if(
+						(movement.x != 0 || movement.z != 0)
+								&& getWorld().isSpaceEmpty(this, getBoundingBox().offset(movement.x, 0, movement.z))
+								&& !getWorld().isSpaceEmpty(this, getBoundingBox().offset(movement))) {
+					movement = new Vec3d(0, movement.y, 0);
+				}
+
+				else if(!getWorld().isSpaceEmpty(this, getBoundingBox().offset(0, movement.y, 0))) {
+					Box stretchedBox = getBoundingBox().stretch(0, movement.y, 0);
+					if(getWorld().isSpaceEmpty(this, stretchedBox.offset(CLIPPING_LENIENCY, 0, 0))) {
+						movement = new Vec3d(movement.x - CLIPPING_LENIENCY, movement.y, movement.z);
+						move(MovementType.SELF, new Vec3d(CLIPPING_LENIENCY, 0, 0));
+					}
+					if(getWorld().isSpaceEmpty(this, stretchedBox.offset(-CLIPPING_LENIENCY, 0, 0))) {
+						movement = new Vec3d(movement.x + CLIPPING_LENIENCY, movement.y, movement.z);
+						move(MovementType.SELF, new Vec3d(-CLIPPING_LENIENCY, 0, 0));
+					}
+					if(getWorld().isSpaceEmpty(this, stretchedBox.offset(0, 0, CLIPPING_LENIENCY))) {
+						movement = new Vec3d(movement.x, movement.y, movement.z - CLIPPING_LENIENCY);
+						move(MovementType.SELF, new Vec3d(0, 0, CLIPPING_LENIENCY));
+					}
+					if(getWorld().isSpaceEmpty(this, stretchedBox.offset(0, 0, -CLIPPING_LENIENCY))) {
+						movement = new Vec3d(movement.x, movement.y, movement.z + CLIPPING_LENIENCY);
+						move(MovementType.SELF, new Vec3d(0, 0, -CLIPPING_LENIENCY));
+					}
+				}
+			}
+		}
+
 		super.move(movementType, movement);
 	}
 
 	@Override
 	public boolean startRiding(Entity entity, boolean force) {
 		boolean startedRiding = super.startRiding(entity, force);
+
+		MarioPlayerData data = MarioDataManager.getMarioData(this);
+
+		data.attemptDismount = false;
+		data.setActionTransitionless(RegistryManager.ACTIONS.get(Identifier.of("qua_mario:mounted")));
 
 		return startedRiding;
 	}

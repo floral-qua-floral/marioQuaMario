@@ -18,6 +18,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.BlockCollisionSpliterator;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class MarioMainClientData extends MarioMoveableData implements MarioClientSideDataImplementation {
 	private static MarioMainClientData instance;
 	public static MarioMainClientData getInstance() {
@@ -121,14 +124,14 @@ public class MarioMainClientData extends MarioMoveableData implements MarioClien
 					if (bumpingRule.FLOORS > 0) getTimers().bumpedFloor = BumpManager.attemptBumpBlocks(
 							this,
 							marioClient.clientWorld,
-							getBumpPositions(storedBoundingBox.stretch(0, storedVelocity.y, 0)),
+							getBumpPositions(storedBoundingBox.stretch(0, storedVelocity.y, 0), Direction.DOWN),
 							Direction.DOWN,
 							bumpingRule.FLOORS
 					);
 				} else if (bumpingRule.CEILINGS > 0) getTimers().bumpedCeiling = BumpManager.attemptBumpBlocks(
 						this,
 						marioClient.clientWorld,
-						getBumpPositions(storedBoundingBox.stretch(0, storedVelocity.y, 0)),
+						getBumpPositions(storedBoundingBox.stretch(0, storedVelocity.y, 0), Direction.UP),
 						Direction.UP,
 						bumpingRule.CEILINGS
 				);
@@ -161,13 +164,19 @@ public class MarioMainClientData extends MarioMoveableData implements MarioClien
 		return !marioClient.hasVehicle();
 	}
 
-	private Iterable<BlockPos> getBumpPositions(Box boundingBox) {
-		return () -> new BlockCollisionSpliterator<>(
+	private Set<BlockPos> getBumpPositions(Box boundingBox, Direction direction) {
+		Iterable<BlockPos> iterable = () -> new BlockCollisionSpliterator<>(
 				marioClient.getWorld(),
 				marioClient,
 				boundingBox,
 				false,
 				(pos, voxelShape) -> pos.toImmutable());
+
+		HashSet<BlockPos> positions = new HashSet<>();
+		for(BlockPos position : iterable) positions.add(position);
+		Set<BlockPos> allPositionsChecked = new HashSet<>(positions);
+		positions.removeIf(blockPos -> allPositionsChecked.contains(blockPos.offset(direction.getOpposite())));
+		return positions;
 	}
 
 	private void attemptHorizontalBump(Direction direction, Box storedBoundingBox, Vec3d storedVelocity, int bumpStrength) {
@@ -176,7 +185,7 @@ public class MarioMainClientData extends MarioMoveableData implements MarioClien
 		if(BumpManager.attemptBumpBlocks(
 				this,
 				marioClient.clientWorld,
-				getBumpPositions(storedBoundingBox.stretch(isXAxis ? storedVelocity.x : 0, 0, isXAxis ? 0 : storedVelocity.z)),
+				getBumpPositions(storedBoundingBox.stretch(isXAxis ? storedVelocity.x : 0, 0, isXAxis ? 0 : storedVelocity.z), direction),
 				direction,
 				bumpStrength
 		)) {
