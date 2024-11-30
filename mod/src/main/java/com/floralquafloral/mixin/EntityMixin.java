@@ -1,6 +1,7 @@
 package com.floralquafloral.mixin;
 
 import com.floralquafloral.MarioQuaMario;
+import com.floralquafloral.StompableEntity;
 import com.floralquafloral.mariodata.MarioDataManager;
 import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.mariodata.moveable.MarioMainClientData;
@@ -18,6 +19,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.MovementType;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -44,7 +46,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Mixin(Entity.class)
-public abstract class EntityMixin {
+public class EntityMixin {
 	@Inject(at = @At("HEAD"), method = "setSwimming(Z)V", cancellable = true)
 	private void setSwimming(boolean swimming, CallbackInfo ci) {
 		Entity entity = (Entity) (Object) this;

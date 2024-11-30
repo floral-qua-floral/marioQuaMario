@@ -136,10 +136,16 @@ public interface ActionDefinition extends MarioStateDefinition, MarioAttackInter
 	class BumpingRule {
 		/**
 		 * A strength of 4 represents Super Mario being able to destroy a Brick Block, but Small Mario only bumping it.
+		 * (Example: Ground Pound, hitting a block from below)
+		 * <p>
+		 * A strength of 3 represents Super Mario and Small Mario both bumping a Brick Block without destroying it.
+		 * (Example: Rolling into a wall, Bonking)
 		 * <p>
 		 * A strength of 2 represents Super Mario being able to shatter a Flip Block, and Small Mario having no effect on it.
+		 * (Example: Spin Jump)
 		 * <p>
 		 * A strength of 1 represents Mario landing on a block and having no effect on it.
+		 * (Example: Regular jump)
 		 */
 		public static final BumpingRule JUMPING = new BumpingRule(4, 1);
 		public static final BumpingRule FALLING = new BumpingRule(4, 1);

@@ -5,6 +5,7 @@
   "mixins": [
     "DamageSourceMixin",
     "EntityMixin",
+    "EntityStompabilityMixin",
     "LivingEntityMixin",
     "PlayerEntityMixin",
     "RedstoneViewMixin"
