@@ -4,6 +4,7 @@ import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioTravelData;
+import com.floralquafloral.util.DamageHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.entity.damage.DamageTypes;
@@ -63,7 +64,7 @@ public class Kick extends Fall {
 				MarioData data, float attackCooldownProgress,
 				ServerWorld world, @NotNull Entity target
 		) {
-			damageEntity(data, 1F, world, target, KICK_DAMAGE_TYPE, 5);
+			DamageHelper.damageEntity(data, 1F, world, target, KICK_DAMAGE_TYPE, 5);
 		}
 	};
 

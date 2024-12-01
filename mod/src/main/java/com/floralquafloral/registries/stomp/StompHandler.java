@@ -2,6 +2,7 @@ package com.floralquafloral.registries.stomp;
 
 import com.floralquafloral.MarioPackets;
 import com.floralquafloral.MarioQuaMario;
+import com.floralquafloral.StompableEntity;
 import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.mariodata.MarioPlayerData;
 import com.floralquafloral.registries.RegistryManager;
@@ -38,22 +39,22 @@ public class StompHandler {
 		ExecuteStompS2CPayload.registerReceiver();
 	}
 
-	public static void networkStomp(ServerPlayerEntity mario, Entity target, ParsedStomp stompType, boolean harmless, long seed) {
-		MarioPackets.sendPacketToTrackers(mario, new ExecuteStompS2CPayload(mario, stompType, target, harmless, seed));
+	public static void networkStomp(ServerPlayerEntity mario, Entity target, ParsedStomp stompType, StompableEntity.StompResult result, long seed) {
+		MarioPackets.sendPacketToTrackers(mario, new ExecuteStompS2CPayload(mario, stompType, target, result, seed));
 	}
 
-	private record ExecuteStompS2CPayload(int player, int stompType, int target, boolean harmless, long seed) implements CustomPayload {
+	private record ExecuteStompS2CPayload(int player, int stompType, int target, int resultOrdinal, long seed) implements CustomPayload {
 		public static final Id<ExecuteStompS2CPayload> ID = new Id<>(Identifier.of(MarioQuaMario.MOD_ID, "execute_stomp"));
 		public static final PacketCodec<RegistryByteBuf, ExecuteStompS2CPayload> CODEC = PacketCodec.tuple(
 				PacketCodecs.INTEGER, ExecuteStompS2CPayload::player,
 				PacketCodecs.INTEGER, ExecuteStompS2CPayload::stompType,
 				PacketCodecs.INTEGER, ExecuteStompS2CPayload::target,
-				PacketCodecs.BOOL, ExecuteStompS2CPayload::harmless,
+				PacketCodecs.INTEGER, ExecuteStompS2CPayload::resultOrdinal,
 				PacketCodecs.VAR_LONG, ExecuteStompS2CPayload::seed,
 				ExecuteStompS2CPayload::new
 		);
-		public ExecuteStompS2CPayload(PlayerEntity player, ParsedStomp stompType, Entity target, boolean harmless, long seed) {
-			this(player.getId(), RegistryManager.STOMP_TYPES.getRawIdOrThrow(stompType), target.getId(), harmless, seed);
+		public ExecuteStompS2CPayload(PlayerEntity player, ParsedStomp stompType, Entity target, StompableEntity.StompResult result, long seed) {
+			this(player.getId(), RegistryManager.STOMP_TYPES.getRawIdOrThrow(stompType), target.getId(), result.ordinal(), seed);
 		}
 		public static void registerReceiver() {
 			ClientPlayNetworking.registerGlobalReceiver(ID, (payload, context) -> {
@@ -68,8 +69,8 @@ public class StompHandler {
 					MarioQuaMario.LOGGER.error("Target: {}", target);
 					return;
 				}
-				MarioPlayerData data = getMarioData(mario);
-				stompType.executeClient((MarioClientSideData) data, mario.isMainPlayer(), target, payload.harmless, payload.seed);
+				MarioClientSideData data = (MarioClientSideData) getMarioData(mario);
+				stompType.executeClient(data, mario.isMainPlayer(), target, StompableEntity.StompResult.values()[payload.resultOrdinal()], payload.seed);
 //				data.setActionTransitionless(RegistryManager.ACTIONS.get(stompType.POST_STOMP_ACTION));
 			});
 		}

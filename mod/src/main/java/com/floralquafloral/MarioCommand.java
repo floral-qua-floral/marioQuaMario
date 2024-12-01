@@ -141,7 +141,7 @@ public class MarioCommand {
 		ParsedStomp stompType = RegistryEntryReferenceArgumentType.getRegistryEntry(context, "stomp", RegistryManager.STOMP_TYPES_KEY).value();
 
 		stomper.teleport((ServerWorld) target.getWorld(), target.getX(), target.getY() + target.getHeight(), target.getZ(), target.getPitch(), target.getYaw());
-		stompType.executeServer((MarioServerData) MarioDataManager.getMarioData(stomper), target, true, false, RandomSeed.getSeed());
+		stompType.executeServer((MarioServerData) MarioDataManager.getMarioData(stomper), target, true, RandomSeed.getSeed());
 
 		return sendFeedback(context, "Made " + stomper.getName().getString() + " perform a stomp of type " + stompType.ID + " on " + target.getName().getString());
 	}

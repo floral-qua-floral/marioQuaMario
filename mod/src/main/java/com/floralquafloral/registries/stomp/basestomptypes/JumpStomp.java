@@ -1,6 +1,7 @@
 package com.floralquafloral.registries.stomp.basestomptypes;
 
 import com.floralquafloral.MarioQuaMario;
+import com.floralquafloral.StompableEntity;
 import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioTravelData;
@@ -62,13 +63,13 @@ public class JumpStomp implements StompDefinition {
 		return ((float) BASE_DAMAGE.get(data)) + equipmentArmorValue * 2.25F;
 	}
 
-	@Override public void executeTravellers(MarioTravelData data, Entity target, boolean harmless) {
+	@Override public void executeTravellers(MarioTravelData data, Entity target, StompableEntity.StompResult result) {
 		double deltaY = (target.getY() + target.getHeight()) - data.getMario().getY();
 		data.getMario().move(MovementType.SELF, new Vec3d(0, deltaY, 0));
 		data.setYVel(BOUNCE_VEL.get(data));
 	}
 
-	@Override public void executeClients(MarioClientSideData data, boolean isSelf, Entity target, boolean harmless, long seed) {
+	@Override public void executeClients(MarioClientSideData data, boolean isSelf, Entity target, StompableEntity.StompResult result, long seed) {
 
 	}
 }

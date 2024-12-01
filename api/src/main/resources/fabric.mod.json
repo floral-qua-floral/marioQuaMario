@@ -31,7 +31,7 @@
 
 	"custom": {
 		"loom:injected_interfaces": {
-			"net/minecraft/entity/Entity.java": ["com/floralquafloral/StompableEntity"]
+			"net/minecraft/class_1297": ["com/floralquafloral/StompableEntity"]
 		}
 	}
 }

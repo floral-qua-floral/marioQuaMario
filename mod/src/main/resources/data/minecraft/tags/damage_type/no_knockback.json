@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "qua_mario:stomp",
-    "qua_mario:aquatic_ground_pound"
+    "qua_mario:aquatic_ground_pound",
+    "qua_mario:ceiling_bonk"
   ]
 }

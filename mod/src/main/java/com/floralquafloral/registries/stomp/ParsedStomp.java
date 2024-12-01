@@ -1,5 +1,7 @@
 package com.floralquafloral.registries.stomp;
 
+import com.floralquafloral.MarioQuaMario;
+import com.floralquafloral.StompableEntity;
 import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.definitions.StompDefinition;
 import com.floralquafloral.mariodata.moveable.MarioMoveableData;
@@ -61,11 +63,12 @@ public class ParsedStomp {
 		this.POST_STOMP_ACTION = definition.getPostStompAction();
 	}
 
-	public boolean executeServer(MarioServerData data, Entity target, boolean affectMario, boolean harmless, long seed) {
+	public boolean executeServer(MarioServerData data, Entity target, boolean affectMario, long seed) {
 		ServerPlayerEntity mario = data.getMario();
 //		DamageSource damageSource = makeDamageSource(mario.getServerWorld(), this.DAMAGE_TYPE, mario);
 		StompDamageSource stompDamageSource = new StompDamageSource(mario.getServerWorld(), this.DAMAGE_TYPE, mario);
 		boolean useLegsItem = stompDamageSource.isIn(StompHandler.USES_LEGS_ITEM_TAG);
+		stompDamageSource.equipmentSlot = useLegsItem ? EquipmentSlot.LEGS : EquipmentSlot.FEET;
 
 		ItemStack attackingArmor = mario.getEquippedStack(useLegsItem ? EquipmentSlot.LEGS : EquipmentSlot.FEET);
 
@@ -95,21 +98,24 @@ public class ParsedStomp {
 		}
 
 		float damage = this.DEFINITION.calculateDamage(data, mario, attackingArmor, armor, target);
+		damage = Math.max(1.0F, damage - 0.6F * stompDamageSource.piercing);
 		stompDamageSource.piercing = 2.0F * toughness;
 
-		if(target.damage(stompDamageSource, Math.max(1.0F, damage - 0.6F * stompDamageSource.piercing))) {
+		StompableEntity.StompResult result = target.qua_mario$stomp(data.getMario(), this.ID, stompDamageSource, damage);
+		MarioQuaMario.LOGGER.info("Result: {}", result);
+
+		if(result != StompableEntity.StompResult.FAIL && result != StompableEntity.StompResult.MOUNT) {
 			if(affectMario) {
-				mario.fallDistance = 0;
-				this.DEFINITION.executeTravellers(data, target, harmless);
+				this.DEFINITION.executeTravellers(data, target, result);
 				if(this.POST_STOMP_ACTION != null)
 					data.setActionTransitionless(Objects.requireNonNull(RegistryManager.ACTIONS.get(this.POST_STOMP_ACTION)));
-				StompHandler.networkStomp(data.getMario(), target, this, harmless, seed);
+				StompHandler.networkStomp(data.getMario(), target, this, result, seed);
 			}
 			return true;
 		}
-		return false;
+		return result == StompableEntity.StompResult.MOUNT;
 	}
-	public void executeClient(MarioClientSideData data, boolean isSelf, Entity target, boolean harmless, long seed) {
+	public void executeClient(MarioClientSideData data, boolean isSelf, Entity target, StompableEntity.StompResult result, long seed) {
 		data.getMario().fallDistance = 0;
 		if(this.SOUND_EVENT != null) {
 			data.playSoundEvent(
@@ -124,10 +130,10 @@ public class ParsedStomp {
 			);
 		}
 
-		this.DEFINITION.executeClients(data, isSelf, target, harmless, seed);
+		this.DEFINITION.executeClients(data, isSelf, target, result, seed);
 		if(data instanceof MarioMoveableData moveableData) {
 			moveableData.getTimers().jumpCapped = false;
-			this.DEFINITION.executeTravellers(moveableData, target, harmless);
+			this.DEFINITION.executeTravellers(moveableData, target, result);
 			if(this.POST_STOMP_ACTION != null)
 				moveableData.setActionTransitionless(Objects.requireNonNull(RegistryManager.ACTIONS.get(this.POST_STOMP_ACTION)));
 			moveableData.applyModifiedVelocity();
@@ -149,6 +155,8 @@ public class ParsedStomp {
 	}
 
 	private boolean attemptOnTarget(ServerPlayerEntity mario, MarioServerData data, Entity target, boolean affectMario, long seed) {
+		MarioQuaMario.LOGGER.info("Attempting to stomp 1");
+
 		if(target.getType().isIn(StompHandler.UNSTOMPABLE_TAG)) return false;
 
 		if(this.MUST_FALL_ON_TARGET && target.getY() + target.getHeight() > mario.getY()) return false;
@@ -162,22 +170,22 @@ public class ParsedStomp {
 
 		if(!(target instanceof LivingEntity livingTarget && !livingTarget.isDead())) return false;
 		if(!this.DEFINITION.canStompTarget(data, target)) return false;
-		livingTarget.isDead();
 
-		boolean targetHurtsToStomp = target.getType().isIn(StompHandler.HURTS_TO_STOMP_TAG);
-		boolean harmless = false;
-		if(targetHurtsToStomp) {
-			if(this.PAINFUL_STOMP_RESPONSE == StompDefinition.PainfulStompResponse.INJURY) {
-				// Hurt Mario
-				mario.damage(makeDamageSource(mario.getServerWorld(), DamageTypes.THORNS, target), 2.8F);
-				return false;
-			}
-			else if(this.PAINFUL_STOMP_RESPONSE == StompDefinition.PainfulStompResponse.BOUNCE)
-				harmless = true;
+//		StompableEntity.StompResult result = target.qua_mario$stomp(mario, this.ID, )
+//
+//		boolean targetHurtsToStomp = target.getType().isIn(StompHandler.HURTS_TO_STOMP_TAG);
+//		boolean harmless = false;
+//		if(targetHurtsToStomp) {
+//			if(this.PAINFUL_STOMP_RESPONSE == StompDefinition.PainfulStompResponse.INJURY) {
+//				// Hurt Mario
+//				mario.damage(makeDamageSource(mario.getServerWorld(), DamageTypes.THORNS, target), 2.8F);
+//				return false;
+//			}
+//			else if(this.PAINFUL_STOMP_RESPONSE == StompDefinition.PainfulStompResponse.BOUNCE)
+//				harmless = true;
+//		}
 
-		}
-
-		return executeServer(data, target, affectMario, harmless, seed);
+		return executeServer(data, target, affectMario, seed);
 	}
 
 	private static DamageSource makeDamageSource(ServerWorld world, RegistryKey<DamageType> key, Entity attacker) {
@@ -186,6 +194,7 @@ public class ParsedStomp {
 
 	public static class StompDamageSource extends DamageSource {
 		private float piercing;
+		private EquipmentSlot equipmentSlot;
 
 		public StompDamageSource(ServerWorld world, RegistryKey<DamageType> key, @Nullable Entity attacker) {
 			super(world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(key), attacker);
@@ -193,6 +202,11 @@ public class ParsedStomp {
 
 		public float getPiercing() {
 			return this.piercing;
+		}
+
+		@Override
+		public @Nullable ItemStack getWeaponStack() {
+			return getAttacker() instanceof LivingEntity livingAttacker ? livingAttacker.getEquippedStack(equipmentSlot) : null;
 		}
 	}
 }

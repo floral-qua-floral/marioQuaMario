@@ -21,7 +21,6 @@ public interface StompableEntity {
 		PAINFUL,
 		GLANCING,
 		RESISTED,
-		FAIL_IF_BASIC,
 		FAIL,
 		MOUNT
 	}

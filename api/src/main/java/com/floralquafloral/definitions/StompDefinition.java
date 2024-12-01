@@ -1,5 +1,6 @@
 package com.floralquafloral.definitions;
 
+import com.floralquafloral.StompableEntity;
 import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioTravelData;
@@ -27,8 +28,8 @@ public interface StompDefinition {
 
 	float calculateDamage(MarioData data, ServerPlayerEntity mario, ItemStack equipment, float equipmentArmorValue, Entity target);
 
-	void executeTravellers(MarioTravelData data, Entity target, boolean harmless);
-	void executeClients(MarioClientSideData data, boolean isSelf, Entity target, boolean harmless, long seed);
+	void executeTravellers(MarioTravelData data, Entity target, StompableEntity.StompResult result);
+	void executeClients(MarioClientSideData data, boolean isSelf, Entity target, StompableEntity.StompResult result, long seed);
 
 	enum PainfulStompResponse {
 		INJURY,

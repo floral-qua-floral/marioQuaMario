@@ -20,10 +20,12 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.SlimeBlock;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.damage.DamageType;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.world.ServerWorld;
@@ -37,6 +39,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Unique;
 
 import java.util.*;
 
@@ -49,6 +52,9 @@ public abstract class BumpManager {
 
 	public static final TagKey<Block> ALWAYS_REPEAT_BUMP = TagKey.of(RegistryKeys.BLOCK, Identifier.of(MOD_ID, "always_repeat_bump"));
 	public static final TagKey<Block> NEVER_REPEAT_BUMP = TagKey.of(RegistryKeys.BLOCK, Identifier.of(MOD_ID, "never_repeat_bump"));
+
+	public static final RegistryKey<DamageType> CEILING_BONK_DAMAGE =
+			RegistryKey.of(RegistryKeys.DAMAGE_TYPE, Identifier.of(MOD_ID, "ceiling_bonk"));
 
 	private record BlockBumpingPlan(ClientWorld world, BlockPos pos, BlockState state, Direction direction) {}
 

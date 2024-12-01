@@ -2,25 +2,34 @@ package com.floralquafloral.bumping;
 
 import com.floralquafloral.BlockBumpCallback;
 import com.floralquafloral.BlockBumpResult;
+import com.floralquafloral.MarioQuaMario;
 import com.floralquafloral.mariodata.MarioClientSideData;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.MarioTravelData;
 import com.floralquafloral.mariodata.moveable.MarioMoveableData;
+import com.floralquafloral.util.DamageHelper;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MovementType;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.crash.CrashException;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static com.floralquafloral.MarioQuaMario.MOD_ID;
@@ -67,26 +76,33 @@ public class BlockBumpHandler {
 				strength, modifier, direction
 		);
 
-		if(result == BlockBumpResult.PASS) {
-			CrashReport crashReport = CrashReport.create(new InvalidBumpResultException(), "Bumping a block");
-			throw new CrashException(crashReport);
-		}
+		if(result == BlockBumpResult.BREAK || result == BlockBumpResult.DISPLACE) {
+			if(direction == Direction.UP && marioData.getMario() instanceof ServerPlayerEntity serverMario) {
+				Box bonkBox = blockState.getCollisionShape(serverMario.getWorld(), blockPos).getBoundingBox().offset(blockPos).offset(0, 0.4, 0);
+				List<Entity> bonkEntities = serverMario.getServerWorld().getOtherEntities(serverMario, bonkBox);
+				for(Entity bonkEntity : bonkEntities) {
+					bonkEntity.setVelocity(bonkEntity.getVelocity().withAxis(Direction.Axis.Y, 0.34));
+					if(bonkEntity instanceof LivingEntity) {
+						bonkEntity.move(MovementType.PISTON, new Vec3d(0, 0.6, 0));
+						DamageHelper.damageEntity(marioData, 1F, serverMario.getServerWorld(), bonkEntity, BumpManager.CEILING_BONK_DAMAGE, 6);
+					}
+				}
+			}
 
-		if(result == BlockBumpResult.BREAK) world.breakBlock(blockPos, true, marioData.getMario());
-		else if(result == BlockBumpResult.DISPLACE) {
-			// Apply redstone power
-			if(!blockState.isIn(BlockBumpHandler.DO_NOT_POWER)) {
-				BlockBumpHandler.FORCED_SIGNALS.add(blockPos);
-				BlockBumpHandler.FORCED_SIGNALS_DATA.add(new BlockBumpHandler.ForcedSignalSpot(blockPos, world));
-				world.updateNeighbor(blockPos, blockState.getBlock(), blockPos);
+			if(result == BlockBumpResult.BREAK) world.breakBlock(blockPos, true, marioData.getMario());
+			else {
+				// Apply redstone power
+				if(!blockState.isIn(BlockBumpHandler.DO_NOT_POWER)) {
+					BlockBumpHandler.FORCED_SIGNALS.add(blockPos);
+					BlockBumpHandler.FORCED_SIGNALS_DATA.add(new ForcedSignalSpot(blockPos, world));
+					world.updateNeighbor(blockPos, blockState.getBlock(), blockPos);
+				}
 			}
 		}
 
 		if(marioTravelData != null) ((MarioMoveableData) marioTravelData).applyModifiedVelocity();
 		return result;
 	}
-
-	private static class InvalidBumpResultException extends RuntimeException {}
 
 	private static BlockBumpResult getBumpResult(
 			MarioData marioData, @Nullable MarioClientSideData marioClientData, @Nullable MarioTravelData marioTravelData,

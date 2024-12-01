@@ -8,8 +8,10 @@ import com.floralquafloral.registries.states.action.ParsedAction;
 import com.floralquafloral.registries.states.action.TransitionPhase;
 import com.floralquafloral.util.CPMIntegration;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -19,7 +21,9 @@ import net.minecraft.world.BlockCollisionSpliterator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public class MarioMainClientData extends MarioMoveableData implements MarioClientSideDataImplementation {
 	private static MarioMainClientData instance;
@@ -61,7 +65,7 @@ public class MarioMainClientData extends MarioMoveableData implements MarioClien
 	public final float[] CAMERA_ROTATIONS = new float[3];
 
 	@Override public void setActionTransitionless(ParsedAction action) {
-		MarioQuaMario.LOGGER.info("MarioMainClientData setAction to " + action.ID);
+//		MarioQuaMario.LOGGER.info("MarioMainClientData setAction to " + action.ID);
 		if(action != getAction()) getTimers().actionTimer = 0;
 
 		// CPM animation
@@ -128,13 +132,16 @@ public class MarioMainClientData extends MarioMoveableData implements MarioClien
 							Direction.DOWN,
 							bumpingRule.FLOORS
 					);
-				} else if (bumpingRule.CEILINGS > 0) getTimers().bumpedCeiling = BumpManager.attemptBumpBlocks(
-						this,
-						marioClient.clientWorld,
-						getBumpPositions(storedBoundingBox.stretch(0, storedVelocity.y, 0), Direction.UP),
-						Direction.UP,
-						bumpingRule.CEILINGS
-				);
+				} else if (bumpingRule.CEILINGS > 0) {
+					getTimers().bumpedCeiling = false;
+					getTimers().bumpedCeiling = BumpManager.attemptBumpBlocks(
+							this,
+							marioClient.clientWorld,
+							getBumpPositions(storedBoundingBox.stretch(0, storedVelocity.y, 0), Direction.UP),
+							Direction.UP,
+							bumpingRule.CEILINGS
+					) || getTimers().bumpedCeiling;
+				}
 			}
 			if (marioClient.horizontalCollision && bumpingRule.WALLS > 0) {
 				if(Math.abs(storedVelocity.x) > bumpingRule.WALL_SPEED_THRESHOLD.get(this)) {
