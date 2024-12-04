@@ -65,6 +65,12 @@
       "qua_mario:sfx/stomp/stomp"
     ]
   },
+  "sfx.stomp.last": {
+    "subtitle": "subtitles.qua_mario.stomp.last",
+    "sounds": [
+      "qua_mario:sfx/stomp/last"
+    ]
+  },
   "sfx.stomp.pointy": {
     "subtitle": "subtitles.qua_mario.stomp.pointy",
     "sounds": [

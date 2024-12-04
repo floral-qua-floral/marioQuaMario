@@ -19,6 +19,7 @@ public final class MarioSFX {
 	public static final SoundEvent REVERT = makePowerSound("revert");
 
 	public static final SoundEvent STOMP = makeStompSound("stomp");
+	public static final SoundEvent STOMP_LAST = makeStompSound("last");
 	public static final SoundEvent STOMP_POINTY = makeStompSound("pointy");
 	public static final SoundEvent STOMP_SPIN = makeStompSound("spin");
 	public static final SoundEvent STOMP_HEAVY = makeStompSound("heavy");

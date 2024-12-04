@@ -46,7 +46,6 @@ public class ParsedStomp {
 	private final boolean HITS_NONLIVING_ENTITIES;
 
 	private final RegistryKey<DamageType> DAMAGE_TYPE;
-	private final SoundEvent SOUND_EVENT;
 	public final Identifier POST_STOMP_ACTION;
 
 	public ParsedStomp(StompDefinition definition) {
@@ -59,7 +58,6 @@ public class ParsedStomp {
 		this.HITS_NONLIVING_ENTITIES = definition.canHitNonLiving();
 
 		this.DAMAGE_TYPE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, definition.getDamageType());
-		this.SOUND_EVENT = definition.getSoundEvent();
 		this.POST_STOMP_ACTION = definition.getPostStompAction();
 	}
 
@@ -117,18 +115,18 @@ public class ParsedStomp {
 	}
 	public void executeClient(MarioClientSideData data, boolean isSelf, Entity target, StompableEntity.StompResult result, long seed) {
 		data.getMario().fallDistance = 0;
-		if(this.SOUND_EVENT != null) {
-			data.playSoundEvent(
-					this.SOUND_EVENT,
-					SoundCategory.PLAYERS,
-					data.getMario().getX(),
-					target.getY() + target.getHeight(),
-					data.getMario().getZ(),
-					1.0F,
-					1.0F,
-					seed
-			);
-		}
+//		if(this.SOUND_EVENT != null) {
+//			data.playSoundEvent(
+//					this.SOUND_EVENT,
+//					SoundCategory.PLAYERS,
+//					data.getMario().getX(),
+//					target.getY() + target.getHeight(),
+//					data.getMario().getZ(),
+//					1.0F,
+//					1.0F,
+//					seed
+//			);
+//		}
 
 		this.DEFINITION.executeClients(data, isSelf, target, result, seed);
 		if(data instanceof MarioMoveableData moveableData) {

@@ -13,7 +13,7 @@ import com.floralquafloral.util.MarioSFX;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,9 +44,6 @@ public class GroundPoundStomp implements StompDefinition {
 	@Override public @NotNull Identifier getDamageType() {
 		return Identifier.of(MarioQuaMario.MOD_ID, "ground_pound");
 	}
-	@Override public @Nullable SoundEvent getSoundEvent() {
-		return MarioSFX.KICK;
-	}
 
 	@Override public @Nullable Identifier getPostStompAction() {
 		return null;
@@ -65,6 +62,6 @@ public class GroundPoundStomp implements StompDefinition {
 	}
 
 	@Override public void executeClients(MarioClientSideData data, boolean isSelf, Entity target, StompableEntity.StompResult result, long seed) {
-
+		data.playSoundEvent(MarioSFX.KICK, target, SoundCategory.PLAYERS, seed);
 	}
 }

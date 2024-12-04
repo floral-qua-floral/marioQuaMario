@@ -42,6 +42,7 @@
 	"subtitles.qua_mario.power_up.normal_power": "Powering up",
 	"subtitles.qua_mario.power_up.revert": "Powering down",
 	"subtitles.qua_mario.stomp.stomp": "Something gets stomped",
+	"subtitles.qua_mario.stomp.last": "Something gets stomped flat",
 	"subtitles.qua_mario.stomp.pointy": "Something pointy gets stomped",
 	"subtitles.qua_mario.stomp.spin": "Something gets stomped",
 	"subtitles.qua_mario.stomp.heavy": "Something gets stomped",

@@ -11,10 +11,11 @@ import com.floralquafloral.mariodata.MarioTravelData;
 import com.floralquafloral.registries.stomp.StompHandler;
 import com.floralquafloral.util.MarioSFX;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MovementType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
@@ -47,9 +48,6 @@ public class AquaticGroundPoundStomp implements StompDefinition {
 	@Override public @NotNull Identifier getDamageType() {
 		return Identifier.of(MarioQuaMario.MOD_ID, "aquatic_ground_pound");
 	}
-	@Override public @Nullable SoundEvent getSoundEvent() {
-		return MarioSFX.STOMP;
-	}
 
 	@Override public @Nullable Identifier getPostStompAction() {
 		return null;
@@ -71,5 +69,27 @@ public class AquaticGroundPoundStomp implements StompDefinition {
 
 	@Override public void executeClients(MarioClientSideData data, boolean isSelf, Entity target, StompableEntity.StompResult result, long seed) {
 		data.stopStoredSound(MarioSFX.DIVE);
+		if(target instanceof LivingEntity livingTarget && livingTarget.isDead())
+			data.playSoundEvent(
+					MarioSFX.STOMP_LAST,
+					SoundCategory.PLAYERS,
+					target.getX(),
+					target.getY(),
+					target.getZ(),
+					0.85F,
+					1,
+					seed
+			);
+		else
+			data.playSoundEvent(
+					MarioSFX.STOMP,
+					SoundCategory.PLAYERS,
+					target.getX(),
+					target.getY(),
+					target.getZ(),
+					0.825F,
+					1,
+					seed
+			);
 	}
 }
