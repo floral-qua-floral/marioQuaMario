@@ -1,6 +1,6 @@
 package com.floralquafloral.mixin;
 
-import com.floralquafloral.bumping.BumpManager;
+import com.floralquafloral.bumping.BumpManagerClient;
 import com.floralquafloral.mariodata.MarioData;
 import com.floralquafloral.mariodata.moveable.MarioMainClientData;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -27,11 +27,11 @@ public abstract class CameraMixin {
 
 	@Inject(method = "setPos(Lnet/minecraft/util/math/Vec3d;)V", at = @At("HEAD"), cancellable = true)
 	public void applyCameraDip(Vec3d pos, CallbackInfo ci) {
-		if(shouldAdjustPos && BumpManager.eyeAdjustmentParticle != null && BumpManager.eyeAdjustmentParticle.isAlive()) {
+		if(shouldAdjustPos && BumpManagerClient.eyeAdjustmentParticle != null && BumpManagerClient.eyeAdjustmentParticle.isAlive()) {
 			MarioData data = MarioMainClientData.getInstance();
 			if(data != null && data.getMario().isOnGround()) {
 				shouldAdjustPos = false;
-				setPos(pos.x, pos.y - BumpManager.eyeAdjustmentParticle.lastOffset, pos.z);
+				setPos(pos.x, pos.y - BumpManagerClient.eyeAdjustmentParticle.lastOffset, pos.z);
 				shouldAdjustPos = true;
 				ci.cancel();
 			}

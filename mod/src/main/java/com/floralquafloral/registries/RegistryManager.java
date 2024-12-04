@@ -32,8 +32,6 @@ public class RegistryManager {
 		registerActions();
 		registerPowerUps();
 		registerCharacters();
-
-		MarioClientSideDataImplementation.VoiceSoundEventInitializer.initialize();
 	}
 
 	public static final RegistryKey<Registry<ParsedStomp>> STOMP_TYPES_KEY = RegistryKey.ofRegistry(

@@ -1,6 +1,6 @@
 package com.floralquafloral.mixin;
 
-import com.floralquafloral.bumping.BumpManager;
+import com.floralquafloral.bumping.BumpManagerClient;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
@@ -21,6 +21,6 @@ public abstract class BlockMixin {
 	 */
 	@Inject(method = "shouldDrawSide", at = @At("HEAD"), cancellable = true)
 	private static void uwuuber(BlockState state, BlockView world, BlockPos pos, Direction side, BlockPos otherPos, CallbackInfoReturnable<Boolean> cir) {
-		if(BumpManager.HIDDEN_BLOCKS.contains(otherPos)) cir.setReturnValue(true);
+		if(BumpManagerClient.HIDDEN_BLOCKS.contains(otherPos)) cir.setReturnValue(true);
 	}
 }

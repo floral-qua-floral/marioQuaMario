@@ -13,7 +13,6 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
@@ -70,7 +69,9 @@ public class MarioDataManager {
 				SERVER_PLAYERS_DATA.remove(removeMe);
 			}
 		});
+	}
 
+	public static void registerClientEventListeners() {
 		ClientTickEvents.START_CLIENT_TICK.register((client) -> {
 			for(Map.Entry<PlayerEntity, MarioPlayerData> entry : CLIENT_PLAYERS_DATA.entrySet()) {
 				if(!entry.getKey().isRemoved()) entry.getValue().tick();
@@ -78,7 +79,7 @@ public class MarioDataManager {
 		});
 
 		ClientEntityEvents.ENTITY_LOAD.register((entity, world) -> {
-			if(entity instanceof ClientPlayerEntity clientPlayer) {
+			if(entity instanceof PlayerEntity clientPlayer) {
 				MarioMainClientData data = MarioMainClientData.getInstance();
 				if(data == null) return;
 				CLIENT_PLAYERS_DATA.remove(clientPlayer);
@@ -90,12 +91,6 @@ public class MarioDataManager {
 		});
 
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> CLIENT_PLAYERS_DATA.clear());
-
-//		ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
-//
-//		});
-
-
 	}
 
 	public static void wipePlayerData() {
@@ -109,8 +104,8 @@ public class MarioDataManager {
 		MarioPlayerData playerData = RELEVANT_MAP.get(mario);
 
 		if(playerData == null) {
-			if(mario.isMainPlayer() && mario instanceof ClientPlayerEntity marioClient)
-				playerData = new MarioMainClientData(marioClient);
+			if(mario.isMainPlayer())
+				playerData = new MarioMainClientData(mario);
 			else if(isClient)
 				playerData = new MarioOtherClientData(mario);
 			else

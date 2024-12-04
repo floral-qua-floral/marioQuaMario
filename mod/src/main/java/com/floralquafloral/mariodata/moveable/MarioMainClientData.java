@@ -1,17 +1,15 @@
 package com.floralquafloral.mariodata.moveable;
 
 import com.floralquafloral.MarioQuaMario;
-import com.floralquafloral.bumping.BumpManager;
+import com.floralquafloral.bumping.BumpManagerClient;
 import com.floralquafloral.mariodata.MarioClientSideDataImplementation;
 import com.floralquafloral.definitions.actions.ActionDefinition;
 import com.floralquafloral.registries.states.action.ParsedAction;
 import com.floralquafloral.registries.states.action.TransitionPhase;
 import com.floralquafloral.util.CPMIntegration;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -21,9 +19,7 @@ import net.minecraft.world.BlockCollisionSpliterator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.function.Predicate;
 
 public class MarioMainClientData extends MarioMoveableData implements MarioClientSideDataImplementation {
 	private static MarioMainClientData instance;
@@ -42,9 +38,9 @@ public class MarioMainClientData extends MarioMoveableData implements MarioClien
 		super.setMario(mario);
 	}
 
-	public MarioMainClientData(ClientPlayerEntity mario) {
+	public MarioMainClientData(PlayerEntity mario) {
 		super(mario);
-		this.marioClient = mario;
+		this.marioClient = (ClientPlayerEntity) mario;
 		this.INPUTS = new ClientInputs();
 		MarioMainClientData.instance = this;
 	}
@@ -125,7 +121,7 @@ public class MarioMainClientData extends MarioMoveableData implements MarioClien
 		if(bumpingRule != null) {
 			if (marioClient.verticalCollision) {
 				if (marioClient.groundCollision) {
-					if (bumpingRule.FLOORS > 0) getTimers().bumpedFloor = BumpManager.attemptBumpBlocks(
+					if (bumpingRule.FLOORS > 0) getTimers().bumpedFloor = BumpManagerClient.attemptBumpBlocks(
 							this,
 							marioClient.clientWorld,
 							getBumpPositions(storedBoundingBox.stretch(0, storedVelocity.y, 0), Direction.DOWN),
@@ -134,7 +130,7 @@ public class MarioMainClientData extends MarioMoveableData implements MarioClien
 					);
 				} else if (bumpingRule.CEILINGS > 0) {
 					getTimers().bumpedCeiling = false;
-					getTimers().bumpedCeiling = BumpManager.attemptBumpBlocks(
+					getTimers().bumpedCeiling = BumpManagerClient.attemptBumpBlocks(
 							this,
 							marioClient.clientWorld,
 							getBumpPositions(storedBoundingBox.stretch(0, storedVelocity.y, 0), Direction.UP),
@@ -189,7 +185,7 @@ public class MarioMainClientData extends MarioMoveableData implements MarioClien
 	private void attemptHorizontalBump(Direction direction, Box storedBoundingBox, Vec3d storedVelocity, int bumpStrength) {
 		boolean isXAxis = direction.getAxis() == Direction.Axis.X;
 		Vec3d preBumpVelocity = marioClient.getVelocity();
-		if(BumpManager.attemptBumpBlocks(
+		if(BumpManagerClient.attemptBumpBlocks(
 				this,
 				marioClient.clientWorld,
 				getBumpPositions(storedBoundingBox.stretch(isXAxis ? storedVelocity.x : 0, 0, isXAxis ? 0 : storedVelocity.z), direction),

@@ -1,6 +1,5 @@
 package com.floralquafloral.bumping;
 
-import com.floralquafloral.MarioQuaMario;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
@@ -54,12 +53,12 @@ public class BumpedBlockParticle extends Particle {
 		super.tick();
 
 		// End the bump 1 tick early to prevent flickering
-		if(this.age >= this.maxAge - 1) BumpManager.endBump(this, this.world, this.POSITION, this.blockState);
+		if(this.age >= this.maxAge - 1) BumpManagerClient.endBump(this, this.world, this.POSITION, this.blockState);
 	}
 
 	@Override
 	public void markDead() {
-		if(!replaced) BumpManager.endBump(this, this.world, this.POSITION, this.blockState);
+		if(!replaced) BumpManagerClient.endBump(this, this.world, this.POSITION, this.blockState);
 		super.markDead();
 	}
 
