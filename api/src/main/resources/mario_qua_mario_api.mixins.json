@@ -1,0 +1,11 @@
+{
+	"required": true,
+	"package": "com.fqf.mario_qua_mario.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"mixins": [
+		"ExampleMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
