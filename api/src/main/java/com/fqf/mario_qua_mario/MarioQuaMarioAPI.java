@@ -1,5 +1,7 @@
 package com.fqf.mario_qua_mario;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.api.ModInitializer;
 
 import org.slf4j.Logger;
@@ -12,5 +14,10 @@ public class MarioQuaMarioAPI implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		LOGGER.info("Mario qua Mario API initializing!");
+	}
+
+	@Environment(EnvType.CLIENT)
+	private void testasaur() {
+		
 	}
 }

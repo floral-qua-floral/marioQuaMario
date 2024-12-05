@@ -12,5 +12,7 @@ public class MarioQuaMario implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		LOGGER.info("Mario qua Mario initializing...");
+
+		MarioCommand.registerMarioCommand();
 	}
 }

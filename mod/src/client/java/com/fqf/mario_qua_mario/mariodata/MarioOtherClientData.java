@@ -1,5 +1,21 @@
 package com.fqf.mario_qua_mario.mariodata;
 
-public class MarioOtherClientData extends MarioPlayerData {
+import net.minecraft.client.network.OtherClientPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 
+public class MarioOtherClientData extends MarioPlayerData implements IMarioClientDataImpl {
+	private OtherClientPlayerEntity mario;
+	public MarioOtherClientData(OtherClientPlayerEntity mario) {
+		this.mario = mario;
+	}
+
+	@Override
+	public void setMario(PlayerEntity mario) {
+		this.mario = (OtherClientPlayerEntity) mario;
+	}
+
+	@Override
+	public OtherClientPlayerEntity getMario() {
+		return this.mario;
+	}
 }

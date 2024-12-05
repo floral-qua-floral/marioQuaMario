@@ -20,7 +20,7 @@ public class OtherClientPlayerEntityMarioDataMixin extends PlayerEntityMarioData
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void constructorHook(ClientWorld clientWorld, GameProfile gameProfile, CallbackInfo ci) {
-		this.marioData = new MarioOtherClientData();
+		this.marioData = new MarioOtherClientData((OtherClientPlayerEntity) (Object) this);
 	}
 
 	@Override

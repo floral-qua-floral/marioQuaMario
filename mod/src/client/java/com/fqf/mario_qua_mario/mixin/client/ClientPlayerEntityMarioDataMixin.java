@@ -23,7 +23,7 @@ public class ClientPlayerEntityMarioDataMixin extends PlayerEntityMarioDataMixin
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void constructorHook(MinecraftClient client, ClientWorld world, ClientPlayNetworkHandler networkHandler, StatHandler stats, ClientRecipeBook recipeBook, boolean lastSneaking, boolean lastSprinting, CallbackInfo ci) {
-		mqm$setMarioData(new MarioMainClientData());
+		mqm$setMarioData(new MarioMainClientData((ClientPlayerEntity) (Object) this));
 	}
 
 	@Override
