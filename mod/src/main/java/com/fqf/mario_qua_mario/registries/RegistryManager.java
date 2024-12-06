@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.registries;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.registries.actions.ParsedAction;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.fabricmc.loader.api.FabricLoader;
@@ -16,9 +17,6 @@ public class RegistryManager {
 		Registry.register(STOMP_TYPES, Identifier.of(MarioQuaMario.MOD_ID, "stomp"), "BOING!");
 		Registry.register(STOMP_TYPES, Identifier.of(MarioQuaMario.MOD_ID, "ground_pound"), "POW!");
 
-		Registry.register(ACTIONS, Identifier.of(MarioQuaMario.MOD_ID, "debug"), "float...");
-		Registry.register(ACTIONS, Identifier.of(MarioQuaMario.MOD_ID, "debug_alt"), "zoom!");
-
 		Registry.register(POWER_UPS, Identifier.of(MarioQuaMario.MOD_ID, "super"), "wahoo!");
 		Registry.register(POWER_UPS, Identifier.of(MarioQuaMario.MOD_ID, "small"), "owch!");
 
@@ -32,9 +30,9 @@ public class RegistryManager {
 			.attribute(RegistryAttribute.SYNCED)
 			.buildAndRegister();
 
-	public static final RegistryKey<Registry<String>> ACTIONS_KEY = RegistryKey.ofRegistry(
+	public static final RegistryKey<Registry<ParsedAction>> ACTIONS_KEY = RegistryKey.ofRegistry(
 			Identifier.of(MarioQuaMario.MOD_ID, "actions"));
-	public static final Registry<String> ACTIONS = FabricRegistryBuilder.createSimple(ACTIONS_KEY)
+	public static final Registry<ParsedAction> ACTIONS = FabricRegistryBuilder.createSimple(ACTIONS_KEY)
 			.attribute(RegistryAttribute.SYNCED)
 			.buildAndRegister();
 
@@ -54,5 +52,19 @@ public class RegistryManager {
 		return FabricLoader.getInstance().getEntrypointContainers(key, clazz).stream().map(EntrypointContainer::getEntrypoint).toList();
 	}
 
+	private static void registerStompTypes() {
 
+	}
+
+	private static void registerActions() {
+
+	}
+
+	private static void registerPowerUps() {
+
+	}
+
+	private static void registerCharacters() {
+
+	}
 }

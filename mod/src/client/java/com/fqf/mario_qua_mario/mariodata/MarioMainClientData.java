@@ -15,17 +15,19 @@ public class MarioMainClientData extends MarioPlayerData implements IMarioClient
 
 	private ClientPlayerEntity mario;
 	public MarioMainClientData(ClientPlayerEntity mario) {
+		super();
 		this.mario = mario;
 		instance = this;
 	}
-
-	@Override
-	public ClientPlayerEntity getMario() {
+	@Override public ClientPlayerEntity getMario() {
 		return mario;
+	}
+	@Override public void setMario(PlayerEntity mario) {
+		this.mario = (ClientPlayerEntity) mario;
 	}
 
 	@Override
-	public void setMario(PlayerEntity mario) {
-		this.mario = (ClientPlayerEntity) mario;
+	public void tick() {
+
 	}
 }

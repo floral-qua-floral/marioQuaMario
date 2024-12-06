@@ -11,15 +11,12 @@ public interface IMarioData {
 	PlayerEntity getMario();
 	boolean isClient();
 
-	double getStat(CharaStat stat);
-	double getStatMultiplier(CharaStat stat);
-	int getBumpStrengthModifier();
-
-	boolean canSneak();
-	boolean canSprint();
-
 	boolean isEnabled();
 	Identifier getActionID();
 	Identifier getPowerUpID();
 	Identifier getCharacterID();
+
+	double getStat(CharaStat stat);
+	double getStatMultiplier(CharaStat stat);
+	int getBumpStrengthModifier();
 }

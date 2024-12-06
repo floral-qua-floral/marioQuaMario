@@ -24,7 +24,7 @@ public abstract class ServerPlayerMarioDataMixin extends PlayerEntityMarioDataMi
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void constructorHook(MinecraftServer server, ServerWorld world, GameProfile profile, SyncedClientOptions clientOptions, CallbackInfo ci) {
-		this.mqm$setMarioData(new MarioServerPlayerData());
+		this.mqm$setMarioData(new MarioServerPlayerData((ServerPlayerEntity) (Object) this));
 	}
 
 	@Override public void mqm$setMarioData(MarioPlayerData replacementData) {
