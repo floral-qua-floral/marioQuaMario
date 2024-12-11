@@ -2,10 +2,15 @@ package com.fqf.mario_qua_mario.definitions.actions.util;
 
 import net.minecraft.util.Identifier;
 
-public class TransitionInjectionDefinition {
+public record TransitionInjectionDefinition(
+		InjectionPlacement placement,
+		Identifier injectNearTransitionsTo,
+		ActionCategory category,
+		TransitionCreator injectedTransitionCreator
+) {
 	@FunctionalInterface
 	public interface TransitionCreator {
-		TransitionDefinition makeTransition(TransitionDefinition previousTransition);
+		TransitionDefinition makeTransition(TransitionDefinition nearbyTransition);
 	}
 
 	public enum InjectionPlacement {
@@ -21,21 +26,4 @@ public class TransitionInjectionDefinition {
 		WALL,
 		UNDEFINED
 	}
-
-	public TransitionInjectionDefinition(
-			InjectionPlacement placement,
-			String injectNearTransitionsTo,
-			ActionCategory category,
-			TransitionCreator injectedTransitionCreator
-	) {
-		this.PLACEMENT = placement;
-		this.INJECT_NEAR = Identifier.of(injectNearTransitionsTo);
-		this.INJECT_IN_CATEGORY = category;
-		this.TRANSITION_CREATOR = injectedTransitionCreator;
-	}
-
-	public final InjectionPlacement PLACEMENT;
-	public final Identifier INJECT_NEAR;
-	public final ActionCategory INJECT_IN_CATEGORY;
-	public final TransitionCreator TRANSITION_CREATOR;
 }

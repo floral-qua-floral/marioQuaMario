@@ -6,40 +6,45 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class TransitionDefinition {
-	@FunctionalInterface
-	public interface Evaluator {
-		boolean shouldTransition(IMarioTravelData data);
-	}
-
-	@FunctionalInterface
-	public interface TravelExecutor {
-		boolean execute(IMarioTravelData data);
-	}
-
-	@FunctionalInterface
-	public interface ClientsExecutor {
-		boolean execute(IMarioClientData data, boolean isSelf, long seed);
-	}
-
-	public TransitionDefinition(
-			@NotNull String targetID,
-			@NotNull Evaluator evaluator,
-			@Nullable TravelExecutor travelExecutor,
-			@Nullable ClientsExecutor clientsExecutor
-	) {
-		this.TARGET_IDENTIFIER = Identifier.of(targetID);
-		this.EVALUATOR = evaluator;
-		this.TRAVEL_EXECUTOR = travelExecutor;
-		this.CLIENTS_EXECUTOR = clientsExecutor;
-	}
-
-	public TransitionDefinition(@NotNull String targetID, @NotNull Evaluator evaluator) {
+/**
+ * @param targetID The ID of the action that this transition leads to.
+ * @param evaluator The Evaluator that determines if this transition should fire.
+ * @param travelExecutor The effect the transition has on Mario's motion.
+ * @param clientsExecutor Client-side effects of this transition firing.
+ */
+public record TransitionDefinition(
+		@NotNull Identifier targetID,
+		@NotNull Evaluator evaluator,
+		@Nullable TravelExecutor travelExecutor,
+		@Nullable ClientsExecutor clientsExecutor
+) {
+	/**
+	 * Alternate constructor provided for convenience
+	 */
+	public TransitionDefinition(@NotNull Identifier targetID, @NotNull Evaluator evaluator) {
 		this(targetID, evaluator, null, null);
 	}
 
-	public final Identifier TARGET_IDENTIFIER;
-	public final Evaluator EVALUATOR;
-	public final TravelExecutor TRAVEL_EXECUTOR;
-	public final ClientsExecutor CLIENTS_EXECUTOR;
+	/**
+	 * Runs on the client-side to test if the associated transition should occur.
+	 */
+	@FunctionalInterface public interface Evaluator {
+		boolean shouldTransition(IMarioTravelData data);
+	}
+
+	/**
+	 * Runs on the main client and on the server when the associated transition occurs.
+	 * In a multiplayer environment, this won't run on your client when another player does the transition, but it will
+	 * when you're the one transitioning.
+	 */
+	@FunctionalInterface public interface TravelExecutor {
+		boolean execute(IMarioTravelData data);
+	}
+
+	/**
+	 * Runs on the client side for anyone who is in range to see Mario transition.
+	 */
+	@FunctionalInterface public interface ClientsExecutor {
+		boolean execute(IMarioClientData data, boolean isSelf, long seed);
+	}
 }
