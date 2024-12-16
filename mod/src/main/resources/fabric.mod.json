@@ -15,6 +15,9 @@
 	"icon": "assets/mario_qua_mario/icon.png",
 	"environment": "*",
 	"entrypoints": {
+		"mqm-miscellaneous-actions": [
+		],
+
 		"main": [
 			"com.fqf.mario_qua_mario.MarioQuaMario"
 		],

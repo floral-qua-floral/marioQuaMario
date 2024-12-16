@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.definitions.actions.util;
 
 import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
+import com.fqf.mario_qua_mario.mariodata.IMarioReadableMotionData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -14,22 +15,22 @@ import org.jetbrains.annotations.Nullable;
  */
 public record TransitionDefinition(
 		@NotNull Identifier targetID,
-		@NotNull Evaluator evaluator,
+		@NotNull Evaluator evaluator, @NotNull EvaluatorContext context,
 		@Nullable TravelExecutor travelExecutor,
 		@Nullable ClientsExecutor clientsExecutor
 ) {
 	/**
 	 * Alternate constructor provided for convenience
 	 */
-	public TransitionDefinition(@NotNull Identifier targetID, @NotNull Evaluator evaluator) {
-		this(targetID, evaluator, null, null);
+	public TransitionDefinition(@NotNull Identifier targetID, @NotNull Evaluator evaluator, @NotNull EvaluatorContext context) {
+		this(targetID, evaluator, context, null, null);
 	}
 
 	/**
 	 * Runs on the client-side to test if the associated transition should occur.
 	 */
 	@FunctionalInterface public interface Evaluator {
-		boolean shouldTransition(IMarioTravelData data);
+		boolean shouldTransition(IMarioReadableMotionData data);
 	}
 
 	/**
@@ -45,6 +46,6 @@ public record TransitionDefinition(
 	 * Runs on the client side for anyone who is in range to see Mario transition.
 	 */
 	@FunctionalInterface public interface ClientsExecutor {
-		boolean execute(IMarioClientData data, boolean isSelf, long seed);
+		void execute(IMarioClientData data, boolean isSelf, long seed);
 	}
 }

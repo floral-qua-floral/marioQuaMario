@@ -15,9 +15,4 @@ public class MarioQuaMarioAPI implements ModInitializer {
 	public void onInitialize() {
 		LOGGER.info("Mario qua Mario API initializing!");
 	}
-
-	@Environment(EnvType.CLIENT)
-	private void testasaur() {
-		
-	}
 }

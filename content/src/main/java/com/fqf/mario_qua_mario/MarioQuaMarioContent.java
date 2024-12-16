@@ -2,6 +2,7 @@ package com.fqf.mario_qua_mario;
 
 import net.fabricmc.api.ModInitializer;
 
+import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,5 +13,9 @@ public class MarioQuaMarioContent implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		LOGGER.info("Mario qua Mario Content intializing...");
+	}
+
+	public static Identifier makeID(String path) {
+		return Identifier.of("mqm", path);
 	}
 }

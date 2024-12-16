@@ -20,10 +20,10 @@ public record TransitionInjectionDefinition(
 
 	public enum ActionCategory {
 		ANY,
+		GENERIC,
 		GROUNDED,
 		AIRBORNE,
 		AQUATIC,
-		WALL,
-		UNDEFINED
+		WALL
 	}
 }

@@ -15,6 +15,20 @@
 	"icon": "assets/mario_qua_mario_content/icon.png",
 	"environment": "*",
 	"entrypoints": {
+		"mqm-generic-actions": [
+          "com.fqf.mario_qua_mario.actions.generic.Debug",
+          "com.fqf.mario_qua_mario.actions.generic.DebugSprint"
+		],
+		"mqm-grounded-actions": [
+          "com.fqf.mario_qua_mario.actions.grounded.SubWalk"
+		],
+		"mqm-airborne-actions": [
+		],
+		"mqm-aquatic-actions": [
+		],
+		"mqm-wallbound-actions": [
+		],
+
 		"main": [
 			"com.fqf.mario_qua_mario.MarioQuaMarioContent"
 		],
@@ -25,13 +39,7 @@
 			"com.fqf.mario_qua_mario.MarioQuaMarioContentDataGenerator"
 		]
 	},
-	"mixins": [
-		"mario_qua_mario_content.mixins.json",
-		{
-			"config": "mario_qua_mario_content.client.mixins.json",
-			"environment": "client"
-		}
-	],
+	"mixins": [],
 	"depends": {
 		"fabricloader": ">=0.16.9",
 		"minecraft": "~1.21",

@@ -1,11 +1,12 @@
-package com.fqf.mario_qua_mario.registries.actions;
+package com.fqf.mario_qua_mario.actions.generic;
 
-import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario.definitions.actions.GenericActionDefinition;
 import com.fqf.mario_qua_mario.definitions.actions.util.*;
 import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,9 +14,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-public class InitAction implements GenericActionDefinition {
+public class Debug implements GenericActionDefinition {
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMario.makeID("init");
+		return MarioQuaMarioContent.makeID("debug");
 	}
 
 	@Override public @Nullable String getAnimationName() {
@@ -25,14 +26,14 @@ public class InitAction implements GenericActionDefinition {
 		return null;
 	}
 	@Override public @NotNull SlidingStatus getSlidingStatus() {
-		return SlidingStatus.NOT_SLIDING;
+		return SlidingStatus.SLIDING_SILENT;
 	}
 
 	@Override public @NotNull SneakingRule getSneakingRule() {
 		return SneakingRule.PROHIBIT;
 	}
 	@Override public @NotNull SprintingRule getSprintingRule() {
-		return SprintingRule.PROHIBIT;
+		return SprintingRule.ALLOW;
 	}
 
 	@Override public @Nullable BumpType getBumpType() {
@@ -49,14 +50,19 @@ public class InitAction implements GenericActionDefinition {
 
 	}
 	@Override public void travelHook(IMarioTravelData data) {
-
+		MarioQuaMarioContent.LOGGER.info("Debug travelHook uwu! >.<");
+		data.getTimers().actionTimer++;
+		data.setForwardStrafeVel(data.getInputs().getForwardInput() * 0.5, data.getInputs().getStrafeInput() * 0.5);
+		data.setYVel(data.getInputs().JUMP.isHeld() ? 0.4 : (data.getInputs().DUCK.isHeld() ? -0.4 : (0.03 * Math.sin((double) data.getTimers().actionTimer++ / 16))));
 	}
 
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions() {
 		return List.of(
 				new TransitionDefinition(
-						MarioQuaMario.makeID("init"),
-						data -> false
+						MarioQuaMarioContent.makeID("debug_sprint"),
+						data -> data.getMario().isSprinting(), EvaluatorContext.CLIENT_ONLY,
+						null,
+						(data, isSelf, seed) -> data.playSound(SoundEvents.ENTITY_VEX_CHARGE, seed)
 				)
 		);
 	}

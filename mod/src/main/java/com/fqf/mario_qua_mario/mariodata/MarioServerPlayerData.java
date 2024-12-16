@@ -4,7 +4,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
-public class MarioServerPlayerData extends MarioPlayerData implements IMarioAuthoritativeData {
+public class MarioServerPlayerData extends MarioMoveableData implements IMarioAuthoritativeData {
 	private ServerPlayerEntity mario;
 	public MarioServerPlayerData(ServerPlayerEntity mario) {
 		super();
@@ -62,5 +62,37 @@ public class MarioServerPlayerData extends MarioPlayerData implements IMarioAuth
 	@Override
 	public void tick() {
 
+	}
+
+	@Override
+	public boolean travelHook(double forwardInput, double strafeInput) {
+		return false;
+	}
+
+	@Override public MarioInputs getInputs() {
+		return PHONY_INPUTS;
+	}
+
+	private static final MarioInputs PHONY_INPUTS;
+	static {
+		MarioInputs.MarioButton phonyButton = new MarioInputs.MarioButton() {
+			@Override public boolean isPressed() {
+				return false;
+			}
+			@Override public boolean isHeld() {
+				return false;
+			}
+		};
+		PHONY_INPUTS = new MarioInputs(phonyButton, phonyButton, phonyButton) {
+			@Override public double getForwardInput() {
+				return 0;
+			}
+			@Override public double getStrafeInput() {
+				return 0;
+			}
+			@Override public boolean isReal() {
+				return false;
+			}
+		};
 	}
 }

@@ -1,11 +1,14 @@
-package com.fqf.mario_qua_mario.registries.actions;
+package com.fqf.mario_qua_mario.actions.grounded;
 
-import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario.definitions.actions.AirborneActionDefinition;
 import com.fqf.mario_qua_mario.definitions.actions.GenericActionDefinition;
+import com.fqf.mario_qua_mario.definitions.actions.GroundedActionDefinition;
 import com.fqf.mario_qua_mario.definitions.actions.util.*;
 import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,9 +16,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-public class InitAction implements GenericActionDefinition {
+public class SubWalk implements GroundedActionDefinition {
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMario.makeID("init");
+		return MarioQuaMarioContent.makeID("sub_walk");
 	}
 
 	@Override public @Nullable String getAnimationName() {
@@ -25,14 +28,14 @@ public class InitAction implements GenericActionDefinition {
 		return null;
 	}
 	@Override public @NotNull SlidingStatus getSlidingStatus() {
-		return SlidingStatus.NOT_SLIDING;
+		return SlidingStatus.SLIDING_SILENT;
 	}
 
 	@Override public @NotNull SneakingRule getSneakingRule() {
 		return SneakingRule.PROHIBIT;
 	}
 	@Override public @NotNull SprintingRule getSprintingRule() {
-		return SprintingRule.PROHIBIT;
+		return SprintingRule.ALLOW;
 	}
 
 	@Override public @Nullable BumpType getBumpType() {
@@ -48,22 +51,21 @@ public class InitAction implements GenericActionDefinition {
 	@Override public void serverTick(IMarioAuthoritativeData data) {
 
 	}
-	@Override public void travelHook(IMarioTravelData data) {
+	@Override public void travelHook(IMarioTravelData data, GroundedActionHelper helper) {
 
 	}
 
-	@Override public @NotNull List<TransitionDefinition> getBasicTransitions() {
+	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(GroundedActionHelper helper) {
 		return List.of(
-				new TransitionDefinition(
-						MarioQuaMario.makeID("init"),
-						data -> false
-				)
+
 		);
 	}
-	@Override public @NotNull List<TransitionDefinition> getInputTransitions() {
-		return List.of();
+	@Override public @NotNull List<TransitionDefinition> getInputTransitions(GroundedActionHelper helper) {
+		return List.of(
+
+		);
 	}
-	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions() {
+	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(GroundedActionHelper helper) {
 		return List.of();
 	}
 

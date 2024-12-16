@@ -1,7 +1,8 @@
 package com.fqf.mario_qua_mario.mariodata;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario.registries.actions.ParsedAction;
+import com.fqf.mario_qua_mario.registries.RegistryManager;
+import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.util.CharaStat;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
@@ -13,7 +14,9 @@ import net.minecraft.util.Identifier;
 public abstract class MarioPlayerData implements IMarioData {
 	protected MarioPlayerData() {
 		this.enabled = false;
+		this.setEnabledInternal(true);
 		this.action = null;
+		this.setActionInternal(RegistryManager.ACTIONS.get(MarioQuaMario.makeID("debug")));
 //		this.powerUp = null;
 //		this.character = null;
 	}
@@ -35,14 +38,14 @@ public abstract class MarioPlayerData implements IMarioData {
 		this.enabled = enabled;
 	}
 
-	private ParsedAction action;
+	private AbstractParsedAction action;
 	@Override public Identifier getActionID() {
-		return null;
+		return this.getAction().ID;
 	}
-	public ParsedAction getAction() {
+	public AbstractParsedAction getAction() {
 		return this.action;
 	}
-	public void setActionInternal(ParsedAction action) {
+	public void setActionInternal(AbstractParsedAction action) {
 		this.action = action;
 	}
 
@@ -62,7 +65,7 @@ public abstract class MarioPlayerData implements IMarioData {
 	}
 
 	@Override public double getStatMultiplier(CharaStat stat) {
-		return 0;
+			return 1;
 	}
 
 	@Override public int getBumpStrengthModifier() {
