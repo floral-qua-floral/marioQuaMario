@@ -4,7 +4,6 @@ import net.minecraft.client.input.Input;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;
-import org.jetbrains.annotations.Nullable;
 
 public class MarioMainClientData extends MarioMoveableData implements IMarioClientDataImpl {
 	private ClientPlayerEntity mario;

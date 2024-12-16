@@ -1,7 +1,6 @@
 package com.fqf.mario_qua_mario;
 
 import net.fabricmc.api.ModInitializer;
-
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

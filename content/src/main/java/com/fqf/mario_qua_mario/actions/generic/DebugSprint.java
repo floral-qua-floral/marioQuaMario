@@ -1,7 +1,8 @@
 package com.fqf.mario_qua_mario.actions.generic;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
-import com.fqf.mario_qua_mario.definitions.actions.util.*;
+import com.fqf.mario_qua_mario.definitions.actions.util.EvaluatorEnvironment;
+import com.fqf.mario_qua_mario.definitions.actions.util.TransitionDefinition;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;

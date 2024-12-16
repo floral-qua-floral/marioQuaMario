@@ -8,8 +8,6 @@ import net.minecraft.util.crash.CrashReport;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
-
 public record ParsedTransition(
 		@NotNull AbstractParsedAction targetAction,
 		@NotNull TransitionDefinition.Evaluator evaluator,

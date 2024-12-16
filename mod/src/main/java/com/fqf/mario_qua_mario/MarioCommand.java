@@ -1,6 +1,5 @@
 package com.fqf.mario_qua_mario;
 
-import com.fqf.mario_qua_mario.mariodata.MarioServerPlayerData;
 import com.fqf.mario_qua_mario.packets.MarioDataPackets;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;

@@ -1,6 +1,5 @@
 package com.fqf.mario_qua_mario.mariodata;
 
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 

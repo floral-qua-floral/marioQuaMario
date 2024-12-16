@@ -1,6 +1,5 @@
 package com.fqf.mario_qua_mario.mariodata;
 
-import net.minecraft.util.Pair;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;

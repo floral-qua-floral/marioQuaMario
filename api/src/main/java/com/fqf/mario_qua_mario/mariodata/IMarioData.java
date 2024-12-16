@@ -4,9 +4,6 @@ import com.fqf.mario_qua_mario.util.CharaStat;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public interface IMarioData {
 	PlayerEntity getMario();
 	boolean isClient();

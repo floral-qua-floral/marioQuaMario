@@ -1,14 +1,9 @@
 package com.fqf.mario_qua_mario.packets;
 
-import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
-import com.fqf.mario_qua_mario.mariodata.MarioServerPlayerData;
-import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.network.ServerPlayerEntity;
-
-import java.util.Collection;
 
 public class MarioPackets {
 	public static void register() {

@@ -1,9 +1,8 @@
 package com.fqf.mario_qua_mario.mixin.client;
 
-import com.fqf.mario_qua_mario.mariodata.injections.MarioMainClientDataHolder;
 import com.fqf.mario_qua_mario.mariodata.MarioMainClientData;
 import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
-import com.fqf.mario_qua_mario.mixin.PlayerEntityMarioDataMixin;
+import com.fqf.mario_qua_mario.mariodata.injections.MarioMainClientDataHolder;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;

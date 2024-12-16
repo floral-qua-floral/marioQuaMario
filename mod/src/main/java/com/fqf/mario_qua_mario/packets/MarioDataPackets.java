@@ -1,7 +1,6 @@
 package com.fqf.mario_qua_mario.packets;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario.mariodata.MarioServerPlayerData;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -10,7 +9,6 @@ import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 public class MarioDataPackets {
