@@ -4,6 +4,11 @@ import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
 import org.jetbrains.annotations.NotNull;
 
 public interface MarioDataHolder {
-	@NotNull MarioPlayerData mqm$getMarioData();
-	void mqm$setMarioData(MarioPlayerData replacementData);
+	@SuppressWarnings("DataFlowIssue")
+	default @NotNull MarioPlayerData mqm$getMarioData() {
+		return null;
+	};
+	default void mqm$setMarioData(MarioPlayerData replacementData) {
+
+	};
 }

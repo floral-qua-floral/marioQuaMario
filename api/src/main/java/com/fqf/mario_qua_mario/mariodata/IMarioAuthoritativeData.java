@@ -7,17 +7,17 @@ import net.minecraft.util.Identifier;
 public interface IMarioAuthoritativeData extends IMarioData {
 	@Override ServerPlayerEntity getMario();
 
-	boolean setEnabled(boolean enable);
+	void setEnabled(boolean enable);
 
 	boolean setAction(Identifier actionID);
 	boolean setAction(String actionID);
 
-	boolean setActionTransitionless(Identifier actionID);
-	boolean setActionTransitionless(String actionID);
+	void setActionTransitionless(Identifier actionID);
+	void setActionTransitionless(String actionID);
 
-	boolean setPowerUp(Identifier powerUpID);
-	boolean setPowerUp(String powerUpID);
+	void setPowerUp(Identifier powerUpID);
+	void setPowerUp(String powerUpID);
 
-	boolean setCharacter(Identifier characterID);
-	boolean setCharacter(String characterID);
+	void setCharacter(Identifier characterID);
+	void setCharacter(String characterID);
 }

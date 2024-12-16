@@ -109,8 +109,8 @@ public abstract class AbstractParsedAction extends ParsedMarioThing {
 			MarioQuaMario.LOGGER.warn("Action {} has multiple transitions into {}! This is likely to cause issues!",
 					this.ID, transition.targetAction().ID);
 		else this.TRANSITIONS_FROM_TARGETS.put(transition.targetAction(), transition);
-		if(definition.context() != EvaluatorContext.CLIENT_ONLY) server.add(transition);
-		if(definition.context() != EvaluatorContext.SERVER_ONLY) client.add(transition);
+		if(definition.environment() != EvaluatorEnvironment.CLIENT_ONLY) server.add(transition);
+		if(definition.environment() != EvaluatorEnvironment.SERVER_ONLY) client.add(transition);
 	}
 
 	abstract public void travelHook(MarioMoveableData data);

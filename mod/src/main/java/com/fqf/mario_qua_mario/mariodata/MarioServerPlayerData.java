@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario.mariodata;
 
+import com.fqf.mario_qua_mario.MarioQuaMario;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
@@ -14,8 +15,8 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 		return this.mario;
 	}
 
-	@Override public boolean setEnabled(boolean enable) {
-		return false;
+	@Override public void setEnabled(boolean enable) {
+
 	}
 
 	@Override public boolean setAction(Identifier actionID) {
@@ -26,28 +27,28 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 		return false;
 	}
 
-	@Override public boolean setActionTransitionless(Identifier actionID) {
-		return false;
+	@Override public void setActionTransitionless(Identifier actionID) {
+
 	}
 
-	@Override public boolean setActionTransitionless(String actionID) {
-		return false;
+	@Override public void setActionTransitionless(String actionID) {
+
 	}
 
-	@Override public boolean setPowerUp(Identifier powerUpID) {
-		return false;
+	@Override public void setPowerUp(Identifier powerUpID) {
+
 	}
 
-	@Override public boolean setPowerUp(String powerUpID) {
-		return false;
+	@Override public void setPowerUp(String powerUpID) {
+
 	}
 
-	@Override public boolean setCharacter(Identifier characterID) {
-		return false;
+	@Override public void setCharacter(Identifier characterID) {
+
 	}
 
-	@Override public boolean setCharacter(String characterID) {
-		return false;
+	@Override public void setCharacter(String characterID) {
+
 	}
 
 	@Override public void setMario(PlayerEntity mario) {
@@ -66,6 +67,10 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 
 	@Override
 	public boolean travelHook(double forwardInput, double strafeInput) {
+//		ServerPlayerEntity mario = this.getMario();
+//		mario.mqm$getMarioData();
+
+
 		return false;
 	}
 

@@ -1,6 +1,9 @@
 package com.fqf.mario_qua_mario;
 
+import com.fqf.mario_qua_mario.mariodata.MarioServerPlayerData;
+import com.fqf.mario_qua_mario.packets.MarioDataPackets;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
+import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -10,6 +13,7 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.command.argument.BlockPosArgumentType;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.RegistryEntryReferenceArgumentType;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -102,60 +106,66 @@ public class MarioCommand {
 	}
 
 	private static int setEnabled(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
-//		return sendFeedback(context, MarioDataPackets.setMarioEnabled(
-//				getPlayerFromCmd(context, playerArgumentGiven),
-//				BoolArgumentType.getBool(context, "enabled")
+//		return sendFeedback(environment, MarioDataPackets.setMarioEnabled(
+//				getPlayerFromCmd(environment, playerArgumentGiven),
+//				BoolArgumentType.getBool(environment, "enabled")
 //		));
 		return 0;
 	}
 
 	private static int setAction(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
-//		return sendFeedback(context, MarioDataPackets.forceSetMarioAction(
-//				getPlayerFromCmd(context, playerArgumentGiven),
-//				RegistryEntryReferenceArgumentType.getRegistryEntry(context, "action", RegistryManager.ACTIONS_KEY).value()
+//		return sendFeedback(environment, MarioDataPackets.forceSetMarioAction(
+//				getPlayerFromCmd(environment, playerArgumentGiven),
+//				RegistryEntryReferenceArgumentType.getRegistryEntry(environment, "action", RegistryManager.ACTIONS_KEY).value()
 //		));
-		return 0;
+		ServerPlayerEntity mario = getPlayerFromCmd(context, playerArgumentGiven);
+		RegistryEntry<AbstractParsedAction> actionEntry =
+				RegistryEntryReferenceArgumentType.getRegistryEntry(context, "action", RegistryManager.ACTIONS_KEY);
+		mario.mqm$getMarioData().setActionTransitionlessInternal(actionEntry.value());
+		MarioDataPackets.setActionS2C(mario, true, actionEntry.value(), false, 0);
+
+		return sendFeedback(context, "Changed " + mario.getName().getString() + "'s action to " + actionEntry.value().ID + ".");
 	}
 
 	private static int setPowerUp(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
-//		return sendFeedback(context, MarioDataPackets.setMarioPowerUp(
-//				getPlayerFromCmd(context, playerArgumentGiven),
-//				RegistryEntryReferenceArgumentType.getRegistryEntry(context, "power", RegistryManager.POWER_UPS_KEY).value()
+//		return sendFeedback(environment, MarioDataPackets.setMarioPowerUp(
+//				getPlayerFromCmd(environment, playerArgumentGiven),
+//				RegistryEntryReferenceArgumentType.getRegistryEntry(environment, "power", RegistryManager.POWER_UPS_KEY).value()
 //		));
 		return 0;
 	}
 
 	private static int setCharacter(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
-//		return sendFeedback(context, MarioDataPackets.setMarioCharacter(
-//				getPlayerFromCmd(context, playerArgumentGiven),
-//				RegistryEntryReferenceArgumentType.getRegistryEntry(context, "character", RegistryManager.CHARACTERS_KEY).value()
+//		return sendFeedback(environment, MarioDataPackets.setMarioCharacter(
+//				getPlayerFromCmd(environment, playerArgumentGiven),
+//				RegistryEntryReferenceArgumentType.getRegistryEntry(environment, "character", RegistryManager.CHARACTERS_KEY).value()
 //		));
 		return 0;
 	}
 
 	private static int executeStomp(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
-//		ServerPlayerEntity stomper = getPlayerFromCmd(context, playerArgumentGiven);
-//		Entity target = EntityArgumentType.getEntity(context, "goomba");
-//		ParsedStomp stompType = RegistryEntryReferenceArgumentType.getRegistryEntry(context, "stomp", RegistryManager.STOMP_TYPES_KEY).value();
+//		ServerPlayerEntity stomper = getPlayerFromCmd(environment, playerArgumentGiven);
+//		Entity target = EntityArgumentType.getEntity(environment, "goomba");
+//		ParsedStomp stompType = RegistryEntryReferenceArgumentType.getRegistryEntry(environment, "stomp", RegistryManager.STOMP_TYPES_KEY).value();
 //
 //		stomper.teleport((ServerWorld) target.getWorld(), target.getX(), target.getY() + target.getHeight(), target.getZ(), target.getPitch(), target.getYaw());
 //		stompType.executeServer((MarioServerData) MarioDataManager.getMarioData(stomper), target, true, RandomSeed.getSeed());
 //
-//		return sendFeedback(context, "Made " + stomper.getName().getString() + " perform a stomp of type " + stompType.ID + " on " + target.getName().getString());
+//		return sendFeedback(environment, "Made " + stomper.getName().getString() + " perform a stomp of type " + stompType.ID + " on " + target.getName().getString());
 		return 0;
 	}
 
 
 	private static int executeBump(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven, Direction direction, Integer strength) throws CommandSyntaxException {
-//		ServerPlayerEntity bumper = getPlayerFromCmd(context, playerArgumentGiven);
-//		if(strength == null) strength = IntegerArgumentType.getInteger(context, "strength");
-//		BlockPos position = BlockPosArgumentType.getBlockPos(context, "position");
+//		ServerPlayerEntity bumper = getPlayerFromCmd(environment, playerArgumentGiven);
+//		if(strength == null) strength = IntegerArgumentType.getInteger(environment, "strength");
+//		BlockPos position = BlockPosArgumentType.getBlockPos(environment, "position");
 //
 //		MarioServerData data = (MarioServerData) MarioDataManager.getMarioData(bumper);
 ////		BumpManager.bumpBlockServer(data, bumper.getServerWorld(), position, strength, strength, direction, true, true);
 ////		BumpManager.bumpResponseCommon(data, data, bumper.getServerWorld(), bumper.getServerWorld().getBlockState(position), position, strength, strength, direction);
 //
-//		return sendFeedback(context, "Made " + bumper.getName().getString() + " bump block " + direction + " with a strength " + strength);
+//		return sendFeedback(environment, "Made " + bumper.getName().getString() + " bump block " + direction + " with a strength " + strength);
 
 		return 0;
 	}

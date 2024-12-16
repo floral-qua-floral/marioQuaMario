@@ -7,19 +7,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import org.jetbrains.annotations.Nullable;
 
 public class MarioMainClientData extends MarioMoveableData implements IMarioClientDataImpl {
-	private static MarioMainClientData instance;
-	public static @Nullable MarioMainClientData getInstance() {
-		return instance;
-	}
-	public static void clearInstance() {
-		instance = null;
-	}
-
 	private ClientPlayerEntity mario;
 	public MarioMainClientData(ClientPlayerEntity mario) {
 		super();
 		this.mario = mario;
-		instance = this;
 	}
 	@Override public ClientPlayerEntity getMario() {
 		return mario;
@@ -36,9 +27,14 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 	@Override
 	public boolean travelHook(double forwardInput, double strafeInput) {
 		this.INPUTS.updateAnalog(forwardInput, strafeInput);
+
 		this.getAction().travelHook(this);
+
+
 		this.applyModifiedVelocity();
 		this.getMario().move(MovementType.SELF, this.getMario().getVelocity());
+
+		this.getMario().updateLimbs(false);
 		return true;
 	}
 

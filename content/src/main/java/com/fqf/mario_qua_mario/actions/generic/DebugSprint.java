@@ -26,7 +26,7 @@ public class DebugSprint extends Debug {
 		return List.of(
 				new TransitionDefinition(
 						MarioQuaMarioContent.makeID("debug"),
-						data -> !data.getMario().isSprinting(), EvaluatorContext.CLIENT_ONLY,
+						data -> !data.getMario().isSprinting(), EvaluatorEnvironment.CLIENT_ONLY,
 						null,
 						(data, isSelf, seed) -> data.playSound(SoundEvents.ENTITY_ALLAY_AMBIENT_WITH_ITEM, seed)
 				)

@@ -3,6 +3,7 @@ package com.fqf.mario_qua_mario.mariodata;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
+import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
 import com.fqf.mario_qua_mario.util.CharaStat;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
@@ -16,7 +17,7 @@ public abstract class MarioPlayerData implements IMarioData {
 		this.enabled = false;
 		this.setEnabledInternal(true);
 		this.action = null;
-		this.setActionInternal(RegistryManager.ACTIONS.get(MarioQuaMario.makeID("debug")));
+		this.setActionTransitionlessInternal(RegistryManager.ACTIONS.get(MarioQuaMario.makeID("debug")));
 //		this.powerUp = null;
 //		this.character = null;
 	}
@@ -45,7 +46,13 @@ public abstract class MarioPlayerData implements IMarioData {
 	public AbstractParsedAction getAction() {
 		return this.action;
 	}
-	public void setActionInternal(AbstractParsedAction action) {
+
+	public boolean setActionInternal(AbstractParsedAction action, long seed, boolean forced) {
+		boolean transitionedNaturally = ParsedActionHelper.attemptTransitionTo(this, action, seed);
+		if(!transitionedNaturally && forced) this.setActionTransitionlessInternal(action);
+		return transitionedNaturally || forced;
+	}
+	public void setActionTransitionlessInternal(AbstractParsedAction action) {
 		this.action = action;
 	}
 

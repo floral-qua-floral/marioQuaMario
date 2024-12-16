@@ -4,5 +4,8 @@ import com.fqf.mario_qua_mario.mariodata.MarioMainClientData;
 import org.jetbrains.annotations.NotNull;
 
 public interface MarioMainClientDataHolder extends MarioDataHolder {
-	@Override @NotNull MarioMainClientData mqm$getMarioData();
+	@SuppressWarnings("DataFlowIssue") @Override
+	default @NotNull MarioMainClientData mqm$getMarioData() {
+		return null;
+	}
 }

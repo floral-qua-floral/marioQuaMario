@@ -60,7 +60,7 @@ public class Debug implements GenericActionDefinition {
 		return List.of(
 				new TransitionDefinition(
 						MarioQuaMarioContent.makeID("debug_sprint"),
-						data -> data.getMario().isSprinting(), EvaluatorContext.CLIENT_ONLY,
+						data -> data.getMario().isSprinting(), EvaluatorEnvironment.CLIENT_ONLY,
 						null,
 						(data, isSelf, seed) -> data.playSound(SoundEvents.ENTITY_VEX_CHARGE, seed)
 				)

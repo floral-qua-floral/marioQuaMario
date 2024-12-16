@@ -15,14 +15,14 @@ import org.jetbrains.annotations.Nullable;
  */
 public record TransitionDefinition(
 		@NotNull Identifier targetID,
-		@NotNull Evaluator evaluator, @NotNull EvaluatorContext context,
+		@NotNull Evaluator evaluator, @NotNull EvaluatorEnvironment environment,
 		@Nullable TravelExecutor travelExecutor,
 		@Nullable ClientsExecutor clientsExecutor
 ) {
 	/**
 	 * Alternate constructor provided for convenience
 	 */
-	public TransitionDefinition(@NotNull Identifier targetID, @NotNull Evaluator evaluator, @NotNull EvaluatorContext context) {
+	public TransitionDefinition(@NotNull Identifier targetID, @NotNull Evaluator evaluator, @NotNull EvaluatorEnvironment context) {
 		this(targetID, evaluator, context, null, null);
 	}
 

@@ -3,6 +3,8 @@ package com.fqf.mario_qua_mario;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import net.fabricmc.api.ModInitializer;
 
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

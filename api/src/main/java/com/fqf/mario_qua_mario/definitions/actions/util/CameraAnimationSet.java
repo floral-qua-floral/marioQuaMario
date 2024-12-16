@@ -3,42 +3,24 @@ package com.fqf.mario_qua_mario.definitions.actions.util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class CameraAnimationSet {
-	public CameraAnimationSet(
-			@NotNull CameraAnimation authentic,
-			@Nullable CameraAnimation gentle,
-			@Nullable CameraAnimation minimal
+public record CameraAnimationSet(
+		@NotNull CameraAnimation authentic,
+		@Nullable CameraAnimation gentle,
+		@Nullable CameraAnimation minimal
+) {
+	public record CameraAnimation(
+			boolean looping,
+			float durationSeconds,
+			CameraAnimation.rotationalOffsetCalculator calculator
 	) {
-		this.AUTHENTIC_ANIMATION = authentic;
-		this.GENTLE_ANIMATION = gentle == null ? authentic : gentle;
-		this.MINIMAL_ANIMATION = minimal;
-	}
-
-	public static class CameraAnimation {
 		@FunctionalInterface
 		public interface rotationalOffsetCalculator {
-			void setRotationalOffsets(float progress, float[] offsets);
+			void setRotationalOffsets(float progress, CameraOffsets offsets);
 		}
 
-		public CameraAnimation(
-				boolean looping,
-				float durationSeconds,
-				CameraAnimation.rotationalOffsetCalculator calculator
-		) {
-			this.SHOULD_LOOP = looping;
-			this.DURATION_TICKS = durationSeconds * 20;
-			this.CALCULATOR = calculator;
+		public static class CameraOffsets {
+			public float pitch, yaw, roll;
+			public float x, y, z;
 		}
-
-		public final boolean SHOULD_LOOP;
-		public final float DURATION_TICKS;
-		public final CameraAnimation.rotationalOffsetCalculator CALCULATOR;
 	}
-
-	@NotNull
-	public final CameraAnimation AUTHENTIC_ANIMATION;
-	@NotNull
-	public final CameraAnimation GENTLE_ANIMATION;
-	@Nullable
-	public final CameraAnimation MINIMAL_ANIMATION;
 }
