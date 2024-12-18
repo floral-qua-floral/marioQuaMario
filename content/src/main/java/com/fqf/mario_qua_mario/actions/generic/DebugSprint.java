@@ -1,8 +1,8 @@
 package com.fqf.mario_qua_mario.actions.generic;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
-import com.fqf.mario_qua_mario.definitions.actions.util.EvaluatorEnvironment;
-import com.fqf.mario_qua_mario.definitions.actions.util.TransitionDefinition;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
@@ -27,7 +27,7 @@ public class DebugSprint extends Debug {
 		return List.of(
 				new TransitionDefinition(
 						MarioQuaMarioContent.makeID("debug"),
-						data -> !data.getMario().isSprinting(), EvaluatorEnvironment.CLIENT_ONLY,
+						data -> !data.getMario().isSprinting(), EvaluatorEnvironment.SERVER_ONLY,
 						null,
 						(data, isSelf, seed) -> data.playSound(SoundEvents.ENTITY_ALLAY_AMBIENT_WITH_ITEM, seed)
 				)

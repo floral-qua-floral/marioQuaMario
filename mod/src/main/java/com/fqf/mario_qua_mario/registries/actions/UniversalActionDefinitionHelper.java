@@ -1,11 +1,11 @@
 package com.fqf.mario_qua_mario.registries.actions;
 
-import com.fqf.mario_qua_mario.definitions.actions.AirborneActionDefinition;
-import com.fqf.mario_qua_mario.definitions.actions.AquaticActionDefinition;
-import com.fqf.mario_qua_mario.definitions.actions.GroundedActionDefinition;
-import com.fqf.mario_qua_mario.definitions.actions.WallboundActionDefinition;
-import com.fqf.mario_qua_mario.definitions.actions.util.IncompleteActionDefinition;
-import com.fqf.mario_qua_mario.definitions.actions.util.TransitionDefinition;
+import com.fqf.mario_qua_mario.definitions.states.actions.AirborneActionDefinition;
+import com.fqf.mario_qua_mario.definitions.states.actions.AquaticActionDefinition;
+import com.fqf.mario_qua_mario.definitions.states.actions.GroundedActionDefinition;
+import com.fqf.mario_qua_mario.definitions.states.actions.WallboundActionDefinition;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.IncompleteActionDefinition;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.mario_qua_mario.mariodata.IMarioReadableMotionData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;

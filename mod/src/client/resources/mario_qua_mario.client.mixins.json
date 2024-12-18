@@ -5,6 +5,7 @@
   "client": [
     "ClientPlayerEntityMarioDataMixin",
     "ExampleClientMixin",
+    "InGameHudMixin",
     "OtherClientPlayerEntityMarioDataMixin"
   ],
   "injectors": {

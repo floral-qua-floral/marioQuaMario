@@ -1,13 +1,17 @@
 package com.fqf.mario_qua_mario.registries.actions;
 
+import com.fqf.mario_qua_mario.MarioClientHelperManager;
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario.definitions.actions.*;
-import com.fqf.mario_qua_mario.definitions.actions.util.IncompleteActionDefinition;
-import com.fqf.mario_qua_mario.definitions.actions.util.TransitionInjectionDefinition;
+import com.fqf.mario_qua_mario.definitions.states.actions.*;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.IncompleteActionDefinition;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
 import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
+import com.fqf.mario_qua_mario.packets.MarioDataPackets;
+import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.parsed.*;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
@@ -32,24 +36,23 @@ public class ParsedActionHelper {
 		for(ParsedTransition transition : data.isClient() ? data.getAction().CLIENT_TRANSITIONS.get(phase) : data.getAction().SERVER_TRANSITIONS.get(phase)) {
 			if(transition.evaluator().shouldTransition(data)) {
 				long seed = data.getMario().getRandom().nextLong();
-				executeTransition(data, transition, seed);
 
 				if(!data.isClient()) {
-					// Send S2C transition packet
-					// If fullyNetworked(), then send the packet to Mario too
-//					MarioAbstractClientHelper.instance.
+					MarioDataPackets.setActionS2C((ServerPlayerEntity) data.getMario(), transition.fullyNetworked(),
+							data.getAction(), transition.targetAction(), seed);
 				}
 				else if(transition.fullyNetworked()) {
-					// Send C2S transition packet
+					MarioClientHelperManager.packetSender.setActionC2S(data.getAction(), transition.targetAction(), seed);
 				}
 
+				executeTransition(data, transition, seed);
 				return;
 			}
 		}
 	}
 
-	public static boolean attemptTransitionTo(MarioPlayerData data, AbstractParsedAction action, long seed) {
-		ParsedTransition transition = data.getAction().TRANSITIONS_FROM_TARGETS.get(action);
+	public static boolean attemptTransitionTo(MarioPlayerData data, AbstractParsedAction fromAction, AbstractParsedAction toAction, long seed) {
+		ParsedTransition transition = fromAction.TRANSITIONS_FROM_TARGETS.get(toAction);
 		if(transition == null) return false;
 
 		executeTransition(data, transition, seed);
@@ -67,6 +70,10 @@ public class ParsedActionHelper {
 		if(data instanceof IMarioClientData clientData && transition.clientsExecutor() != null)
 			transition.clientsExecutor().execute(clientData, data.getMario().isMainPlayer(), seed);
 
-		data.setActionTransitionlessInternal(transition.targetAction());
+		data.setActionTransitionless(transition.targetAction());
+	}
+
+	public static AbstractParsedAction get(int ID) {
+		return RegistryManager.ACTIONS.get(ID);
 	}
 }

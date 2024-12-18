@@ -18,6 +18,9 @@ public class MarioOtherClientData extends MarioPlayerData implements IMarioClien
 
 	@Override
 	public void tick() {
-
+		super.tick();
+		this.getAction().clientTick(this, false);
+		this.getPowerUp().clientTick(this, false);
+		this.getCharacter().clientTick(this, false);
 	}
 }

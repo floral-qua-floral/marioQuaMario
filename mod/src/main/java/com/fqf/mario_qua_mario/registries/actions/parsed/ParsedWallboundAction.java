@@ -1,8 +1,8 @@
 package com.fqf.mario_qua_mario.registries.actions.parsed;
 
-import com.fqf.mario_qua_mario.definitions.actions.WallboundActionDefinition;
-import com.fqf.mario_qua_mario.definitions.actions.util.TransitionDefinition;
-import com.fqf.mario_qua_mario.definitions.actions.util.TransitionInjectionDefinition;
+import com.fqf.mario_qua_mario.definitions.states.actions.WallboundActionDefinition;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionDefinition;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.UniversalActionDefinitionHelper;

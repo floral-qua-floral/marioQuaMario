@@ -1,18 +1,17 @@
 package com.fqf.mario_qua_mario.registries.actions;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario.definitions.actions.util.*;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
 import com.fqf.mario_qua_mario.registries.ParsedMarioThing;
+import com.fqf.mario_qua_mario.registries.RegistryManager;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
 public abstract class AbstractParsedAction extends ParsedMarioThing {
-	protected final IncompleteActionDefinition DEFINITION;
-
-	public final Identifier ID;
+	protected final IncompleteActionDefinition ACTION_DEFINITION;
 
 	public final @Nullable String ANIMATION;
 	public final @Nullable CameraAnimationSet CAMERA_ANIMATIONS;
@@ -24,17 +23,14 @@ public abstract class AbstractParsedAction extends ParsedMarioThing {
 	public final @Nullable BumpType BUMP_TYPE;
 //	public final @Nullable ParsedStompType STOMP_TYPE;
 
-	public final List<ParsedTransition> ALL_TRANSITIONS;
-
 	public final Map<AbstractParsedAction, ParsedTransition> TRANSITIONS_FROM_TARGETS;
 	public final EnumMap<TransitionPhase, List<ParsedTransition>> CLIENT_TRANSITIONS;
 	public final EnumMap<TransitionPhase, List<ParsedTransition>> SERVER_TRANSITIONS;
 
 	public AbstractParsedAction(IncompleteActionDefinition definition, HashMap<Identifier, Set<TransitionInjectionDefinition>> allInjections) {
 		super(definition);
-		this.DEFINITION = definition;
+		this.ACTION_DEFINITION = definition;
 
-		this.ID = definition.getID();
 		this.ANIMATION = definition.getAnimationName();
 		this.CAMERA_ANIMATIONS = definition.getCameraAnimations();
 		this.SLIDING_STATUS = definition.getSlidingStatus();
@@ -44,7 +40,6 @@ public abstract class AbstractParsedAction extends ParsedMarioThing {
 
 		this.BUMP_TYPE = definition.getBumpType();
 
-		this.ALL_TRANSITIONS = new ArrayList<>();
 		this.TRANSITIONS_FROM_TARGETS = new HashMap<>();
 		this.CLIENT_TRANSITIONS = new EnumMap<>(TransitionPhase.class);
 		this.SERVER_TRANSITIONS = new EnumMap<>(TransitionPhase.class);
@@ -69,6 +64,7 @@ public abstract class AbstractParsedAction extends ParsedMarioThing {
 			HashMap<Identifier, Set<TransitionInjectionDefinition>> allInjections
 	) {
 		this.CLIENT_TRANSITIONS.putIfAbsent(phase, new ArrayList<>());
+		this.SERVER_TRANSITIONS.putIfAbsent(phase, new ArrayList<>());
 		List<ParsedTransition> buildingClientList = this.CLIENT_TRANSITIONS.get(phase);
 		List<ParsedTransition> buildingServerList = this.SERVER_TRANSITIONS.get(phase);
 
@@ -103,13 +99,16 @@ public abstract class AbstractParsedAction extends ParsedMarioThing {
 			TransitionDefinition definition
 	) {
 		ParsedTransition transition = new ParsedTransition(definition);
-		this.ALL_TRANSITIONS.add(transition);
 		if(this.TRANSITIONS_FROM_TARGETS.containsKey(transition.targetAction()))
 			MarioQuaMario.LOGGER.warn("Action {} has multiple transitions into {}! This is likely to cause issues!",
 					this.ID, transition.targetAction().ID);
 		else this.TRANSITIONS_FROM_TARGETS.put(transition.targetAction(), transition);
 		if(definition.environment() != EvaluatorEnvironment.CLIENT_ONLY) server.add(transition);
 		if(definition.environment() != EvaluatorEnvironment.SERVER_ONLY) client.add(transition);
+	}
+
+	public int getIntID() {
+		return RegistryManager.ACTIONS.getRawIdOrThrow(this);
 	}
 
 	abstract public void travelHook(MarioMoveableData data);

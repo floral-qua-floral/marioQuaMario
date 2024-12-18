@@ -1,8 +1,8 @@
 package com.fqf.mario_qua_mario.actions.grounded;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
-import com.fqf.mario_qua_mario.definitions.actions.GroundedActionDefinition;
-import com.fqf.mario_qua_mario.definitions.actions.util.*;
+import com.fqf.mario_qua_mario.definitions.states.actions.GroundedActionDefinition;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;

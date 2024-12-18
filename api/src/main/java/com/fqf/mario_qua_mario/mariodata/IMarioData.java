@@ -13,6 +13,8 @@ public interface IMarioData {
 	Identifier getPowerUpID();
 	Identifier getCharacterID();
 
+	boolean hasPower(String power);
+
 	double getStat(CharaStat stat);
 	double getStatMultiplier(CharaStat stat);
 	int getBumpStrengthModifier();

@@ -52,5 +52,7 @@
 			"net/minecraft/class_746": ["com/fqf/mario_qua_mario/mariodata/injections/MarioMainClientDataHolder"],
 			"net/minecraft/class_745": ["com/fqf/mario_qua_mario/mariodata/injections/MarioOtherClientDataHolder"]
 		}
-	}
+	},
+
+	"accessWidener" : "mario_qua_mario.accesswidener"
 }

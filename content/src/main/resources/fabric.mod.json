@@ -29,6 +29,16 @@
 		"mqm-wallbound-actions": [
 		],
 
+		"mqm-power-ups": [
+			"com.fqf.mario_qua_mario.powerups.Small",
+			"com.fqf.mario_qua_mario.powerups.Super",
+			"com.fqf.mario_qua_mario.powerups.Fire"
+		],
+
+		"mqm-characters": [
+			"com.fqf.mario_qua_mario.characters.Mario"
+		],
+
 		"main": [
 			"com.fqf.mario_qua_mario.MarioQuaMarioContent"
 		],

@@ -19,6 +19,7 @@ repositories {
 }
 
 loom {
+	accessWidenerPath = file("src/main/resources/mario_qua_mario.accesswidener")
 	splitEnvironmentSourceSets()
 
 	mods {

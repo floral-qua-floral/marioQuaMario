@@ -1,8 +1,8 @@
 package com.fqf.mario_qua_mario.actions.generic;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
-import com.fqf.mario_qua_mario.definitions.actions.GenericActionDefinition;
-import com.fqf.mario_qua_mario.definitions.actions.util.*;
+import com.fqf.mario_qua_mario.definitions.states.actions.GenericActionDefinition;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
@@ -50,7 +50,6 @@ public class Debug implements GenericActionDefinition {
 
 	}
 	@Override public void travelHook(IMarioTravelData data) {
-		MarioQuaMarioContent.LOGGER.info("Debug travelHook uwu! >.<");
 		data.getTimers().actionTimer++;
 		data.setForwardStrafeVel(data.getInputs().getForwardInput() * 0.5, data.getInputs().getStrafeInput() * 0.5);
 		data.setYVel(data.getInputs().JUMP.isHeld() ? 0.4 : (data.getInputs().DUCK.isHeld() ? -0.4 : (0.03 * Math.sin((double) data.getTimers().actionTimer++ / 16))));
@@ -60,7 +59,7 @@ public class Debug implements GenericActionDefinition {
 		return List.of(
 				new TransitionDefinition(
 						MarioQuaMarioContent.makeID("debug_sprint"),
-						data -> data.getMario().isSprinting(), EvaluatorEnvironment.CLIENT_ONLY,
+						data -> data.getMario().isSprinting(), EvaluatorEnvironment.COMMON,
 						null,
 						(data, isSelf, seed) -> data.playSound(SoundEvents.ENTITY_VEX_CHARGE, seed)
 				)

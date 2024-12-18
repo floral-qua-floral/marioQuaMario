@@ -1,11 +1,13 @@
 package com.fqf.mario_qua_mario.registries.actions.parsed;
 
-import com.fqf.mario_qua_mario.definitions.actions.GroundedActionDefinition;
-import com.fqf.mario_qua_mario.definitions.actions.util.TransitionDefinition;
-import com.fqf.mario_qua_mario.definitions.actions.util.TransitionInjectionDefinition;
+import com.fqf.mario_qua_mario.definitions.states.actions.GroundedActionDefinition;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionDefinition;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.UniversalActionDefinitionHelper;
+import com.fqf.mario_qua_mario.util.CharaStat;
+import com.fqf.mario_qua_mario.util.StatCategory;
 import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
@@ -20,9 +22,15 @@ public class ParsedGroundedAction extends AbstractParsedAction {
 		this.GROUNDED_DEFINITION = definition;
 	}
 
+	private static final CharaStat GROUNDED_GRAVITY = new CharaStat(-0.115, StatCategory.NORMAL_GRAVITY);
+	private static final CharaStat GROUNDED_TERMINAL_VELOCITY = new CharaStat(-0.5, StatCategory.TERMINAL_VELOCITY);
+
 	@Override
 	public void travelHook(MarioMoveableData data) {
 		this.GROUNDED_DEFINITION.travelHook(data, UniversalActionDefinitionHelper.INSTANCE);
+		if(data.isClient())
+			UniversalActionDefinitionHelper.INSTANCE.applyGravity(data, GROUNDED_GRAVITY, GROUNDED_TERMINAL_VELOCITY);
+		else data.setYVel(-0.1);
 	}
 
 	@Override

@@ -8,15 +8,21 @@ public interface IMarioAuthoritativeData extends IMarioData {
 
 	void setEnabled(boolean enable);
 
-	boolean setAction(Identifier actionID);
-	boolean setAction(String actionID);
+	boolean transitionToAction(Identifier actionID);
+	boolean transitionToAction(String actionID);
 
-	void setActionTransitionless(Identifier actionID);
-	void setActionTransitionless(String actionID);
+	void assignAction(Identifier actionID);
+	void assignAction(String actionID);
 
-	void setPowerUp(Identifier powerUpID);
-	void setPowerUp(String powerUpID);
+	void empowerTo(Identifier powerUpID);
+	void empowerTo(String powerUpID);
 
-	void setCharacter(Identifier characterID);
-	void setCharacter(String characterID);
+	void revertTo(Identifier powerUpID);
+	void revertTo(String powerUpID);
+
+	void assignPowerUp(Identifier powerUpID);
+	void assignPowerUp(String powerUpID);
+
+	void assignCharacter(Identifier characterID);
+	void assignCharacter(String characterID);
 }

@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario;
 
+import com.fqf.mario_qua_mario.packets.MarioPackets;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;
@@ -17,6 +18,8 @@ public class MarioQuaMario implements ModInitializer {
 		RegistryManager.registerAll();
 
 		MarioCommand.registerMarioCommand();
+
+		MarioPackets.register();
 	}
 
 	public static Identifier makeID(String path) {

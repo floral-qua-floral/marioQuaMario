@@ -120,8 +120,8 @@ public class MarioCommand {
 		ServerPlayerEntity mario = getPlayerFromCmd(context, playerArgumentGiven);
 		RegistryEntry<AbstractParsedAction> actionEntry =
 				RegistryEntryReferenceArgumentType.getRegistryEntry(context, "action", RegistryManager.ACTIONS_KEY);
-		mario.mqm$getMarioData().setActionTransitionlessInternal(actionEntry.value());
-		MarioDataPackets.setActionS2C(mario, true, actionEntry.value(), false, 0);
+		mario.mqm$getMarioData().setActionTransitionless(actionEntry.value());
+		MarioDataPackets.setActionTransitionlessS2C(mario, true, actionEntry.value());
 
 		return sendFeedback(context, "Changed " + mario.getName().getString() + "'s action to " + actionEntry.value().ID + ".");
 	}

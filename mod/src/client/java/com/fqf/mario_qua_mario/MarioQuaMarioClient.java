@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario;
 
+import com.fqf.mario_qua_mario.packets.MarioClientPacketHelper;
 import net.fabricmc.api.ClientModInitializer;
 
 public class MarioQuaMarioClient implements ClientModInitializer {
@@ -9,6 +10,9 @@ public class MarioQuaMarioClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		MarioQuaMario.LOGGER.info("Mario qua Mario Client initializing...");
 
-		MarioAbstractClientHelper.instance = new MarioClientHelper();
+		MarioClientHelperManager.helper = new MarioClientHelper();
+		MarioClientHelperManager.packetSender = new MarioClientPacketHelper();
+
+		MarioClientPacketHelper.registerClientReceivers();
 	}
 }

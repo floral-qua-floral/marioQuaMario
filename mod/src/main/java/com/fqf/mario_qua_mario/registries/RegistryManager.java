@@ -1,11 +1,15 @@
 package com.fqf.mario_qua_mario.registries;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario.definitions.actions.*;
-import com.fqf.mario_qua_mario.definitions.actions.util.IncompleteActionDefinition;
-import com.fqf.mario_qua_mario.definitions.actions.util.TransitionInjectionDefinition;
+import com.fqf.mario_qua_mario.definitions.states.CharacterDefinition;
+import com.fqf.mario_qua_mario.definitions.states.PowerUpDefinition;
+import com.fqf.mario_qua_mario.definitions.states.actions.*;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.IncompleteActionDefinition;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
+import com.fqf.mario_qua_mario.registries.power_granting.ParsedCharacter;
+import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.fabricmc.loader.api.FabricLoader;
@@ -25,19 +29,6 @@ public class RegistryManager {
 		registerActions();
 		registerPowerUps();
 		registerCharacters();
-
-
-		Registry.register(STOMP_TYPES, MarioQuaMario.makeID("stomp"), "BOING!");
-		Registry.register(STOMP_TYPES, MarioQuaMario.makeID("ground_pound"), "POW!");
-
-//		Registry.register(ACTIONS, MarioQuaMario.makeID("stomp"), null);
-//		Registry.register(ACTIONS, MarioQuaMario.makeID("ground_pound"), null);
-
-		Registry.register(POWER_UPS, MarioQuaMario.makeID("super"), "wahoo!");
-		Registry.register(POWER_UPS, MarioQuaMario.makeID("small"), "owch!");
-
-		Registry.register(CHARACTERS, MarioQuaMario.makeID("mario"), "yippee!");
-		Registry.register(CHARACTERS, MarioQuaMario.makeID("toadette"), "nice!");
 	}
 
 	public static final RegistryKey<Registry<String>> STOMP_TYPES_KEY =
@@ -52,15 +43,15 @@ public class RegistryManager {
 			.attribute(RegistryAttribute.SYNCED)
 			.buildAndRegister();
 
-	public static final RegistryKey<Registry<String>> POWER_UPS_KEY =
-			RegistryKey.ofRegistry(MarioQuaMario.makeID("power_ups"));
-	public static final Registry<String> POWER_UPS = FabricRegistryBuilder.createSimple(POWER_UPS_KEY)
+	public static final RegistryKey<Registry<ParsedPowerUp>> POWER_UPS_KEY =
+			RegistryKey.ofRegistry(MarioQuaMario.makeID("powerups"));
+	public static final Registry<ParsedPowerUp> POWER_UPS = FabricRegistryBuilder.createSimple(POWER_UPS_KEY)
 			.attribute(RegistryAttribute.SYNCED)
 			.buildAndRegister();
 
-	public static final RegistryKey<Registry<String>> CHARACTERS_KEY =
-			RegistryKey.ofRegistry(MarioQuaMario.makeID("characters"));
-	public static final Registry<String> CHARACTERS = FabricRegistryBuilder.createSimple(CHARACTERS_KEY)
+	public static final RegistryKey<Registry<ParsedCharacter>> CHARACTERS_KEY =
+			RegistryKey.ofRegistry(MarioQuaMario.makeID("power_granting"));
+	public static final Registry<ParsedCharacter> CHARACTERS = FabricRegistryBuilder.createSimple(CHARACTERS_KEY)
 			.attribute(RegistryAttribute.SYNCED)
 			.buildAndRegister();
 
@@ -96,10 +87,14 @@ public class RegistryManager {
 	}
 
 	private static void registerPowerUps() {
-
+		for(PowerUpDefinition definition : getEntrypoints("mqm-power-ups", PowerUpDefinition.class)) {
+			registerThing(POWER_UPS, new ParsedPowerUp(definition));
+		}
 	}
 
 	private static void registerCharacters() {
-
+		for(CharacterDefinition definition : getEntrypoints("mqm-characters", CharacterDefinition.class)) {
+			registerThing(CHARACTERS, new ParsedCharacter(definition));
+		}
 	}
 }

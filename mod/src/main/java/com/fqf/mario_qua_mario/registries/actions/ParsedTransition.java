@@ -1,7 +1,7 @@
 package com.fqf.mario_qua_mario.registries.actions;
 
-import com.fqf.mario_qua_mario.definitions.actions.util.EvaluatorEnvironment;
-import com.fqf.mario_qua_mario.definitions.actions.util.TransitionDefinition;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import net.minecraft.util.crash.CrashException;
 import net.minecraft.util.crash.CrashReport;

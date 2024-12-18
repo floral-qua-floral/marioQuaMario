@@ -1,5 +1,7 @@
 package com.fqf.mario_qua_mario.mariodata;
 
+import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
+import com.fqf.mario_qua_mario.registries.actions.TransitionPhase;
 import net.minecraft.client.input.Input;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.MovementType;
@@ -20,18 +22,28 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 
 	@Override
 	public void tick() {
+		super.tick();
 		this.INPUTS.updateButtons();
+		this.getAction().clientTick(this, true);
+		this.getPowerUp().clientTick(this, true);
+		this.getCharacter().clientTick(this, true);
 	}
 
 	@Override
 	public boolean travelHook(double forwardInput, double strafeInput) {
 		this.INPUTS.updateAnalog(forwardInput, strafeInput);
 
+		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
+		ParsedActionHelper.attemptTransitions(this, TransitionPhase.BASIC);
+
 		this.getAction().travelHook(this);
 
+		ParsedActionHelper.attemptTransitions(this, TransitionPhase.INPUT);
 
 		this.applyModifiedVelocity();
 		this.getMario().move(MovementType.SELF, this.getMario().getVelocity());
+
+		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
 
 		this.getMario().updateLimbs(false);
 		return true;
