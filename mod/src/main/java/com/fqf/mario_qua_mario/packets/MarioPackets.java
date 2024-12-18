@@ -10,11 +10,13 @@ public class MarioPackets {
 	public static void register() {
 		MarioDataPackets.ActionTransitionS2CPayload.register();
 		MarioDataPackets.AssignActionS2CPayload.register();
-		MarioDataPackets.EmpowerS2CPayload.register();
-		MarioDataPackets.RevertS2CPayload.register();
-		MarioDataPackets.AssignPowerUpS2CPayload.register();
 
 		MarioDataPackets.SetActionC2SPayload.register();
+
+		MarioDataPackets.EmpowerRevertS2CPayload.register();
+		MarioDataPackets.AssignPowerUpS2CPayload.register();
+
+		MarioDataPackets.AssignCharacterS2CPayload.register();
 	}
 
 	public static void sendToTrackers(ServerPlayerEntity mario, CustomPayload packet, boolean includeMario) {

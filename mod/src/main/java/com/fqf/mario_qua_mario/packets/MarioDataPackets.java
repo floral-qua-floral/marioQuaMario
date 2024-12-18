@@ -1,7 +1,10 @@
 package com.fqf.mario_qua_mario.packets;
 
+import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
+import com.fqf.mario_qua_mario.registries.power_granting.ParsedCharacter;
+import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.RegistryByteBuf;
@@ -11,7 +14,7 @@ import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 public class MarioDataPackets {
-	public static void setActionS2C(
+	public static void transitionToActionS2C(
 			ServerPlayerEntity mario, boolean networkToMario,
 			AbstractParsedAction fromAction, AbstractParsedAction toAction,
 			long seed
@@ -23,13 +26,43 @@ public class MarioDataPackets {
 		);
 	}
 
-	public static void setActionTransitionlessS2C(
+	public static void assignActionS2C(
 			ServerPlayerEntity mario, boolean networkToMario, AbstractParsedAction newAction
 	) {
 		MarioPackets.sendToTrackers(
 				mario,
 				new AssignActionS2CPayload(mario.getId(), newAction.getIntID()),
 				networkToMario
+		);
+	}
+
+	public static void empowerRevertS2C(
+			ServerPlayerEntity mario, ParsedPowerUp toPower, boolean isReversion, long seed
+	) {
+		MarioPackets.sendToTrackers(
+				mario,
+				new EmpowerRevertS2CPayload(mario.getId(), RegistryManager.POWER_UPS.getRawIdOrThrow(toPower), isReversion, seed),
+				true
+		);
+	}
+
+	public static void assignPowerUpS2C(
+			ServerPlayerEntity mario, ParsedPowerUp newPowerUp
+	) {
+		MarioPackets.sendToTrackers(
+				mario,
+				new AssignPowerUpS2CPayload(mario.getId(), RegistryManager.POWER_UPS.getRawIdOrThrow(newPowerUp)),
+				true
+		);
+	}
+
+	public static void assignCharacterS2C(
+			ServerPlayerEntity mario, ParsedCharacter newCharacter
+	) {
+		MarioPackets.sendToTrackers(
+				mario,
+				new AssignCharacterS2CPayload(mario.getId(), RegistryManager.CHARACTERS.getRawIdOrThrow(newCharacter)),
+				true
 		);
 	}
 
@@ -104,12 +137,14 @@ public class MarioDataPackets {
 		}
 	}
 
-	protected record EmpowerS2CPayload(int toPower, long seed) implements CustomPayload {
-		public static final Id<EmpowerS2CPayload> ID = MarioPackets.makeID("empower_s2c");
-		public static final PacketCodec<RegistryByteBuf, EmpowerS2CPayload> CODEC = PacketCodec.tuple(
-				PacketCodecs.INTEGER, EmpowerS2CPayload::toPower,
-				PacketCodecs.VAR_LONG, EmpowerS2CPayload::seed,
-				EmpowerS2CPayload::new
+	protected record EmpowerRevertS2CPayload(int marioID, int toPower, boolean isReversion, long seed) implements CustomPayload {
+		public static final Id<EmpowerRevertS2CPayload> ID = MarioPackets.makeID("empower_s2c");
+		public static final PacketCodec<RegistryByteBuf, EmpowerRevertS2CPayload> CODEC = PacketCodec.tuple(
+				PacketCodecs.INTEGER, EmpowerRevertS2CPayload::marioID,
+				PacketCodecs.INTEGER, EmpowerRevertS2CPayload::toPower,
+				PacketCodecs.BOOL, EmpowerRevertS2CPayload::isReversion,
+				PacketCodecs.VAR_LONG, EmpowerRevertS2CPayload::seed,
+				EmpowerRevertS2CPayload::new
 		);
 
 		@Override public Id<? extends CustomPayload> getId() {
@@ -120,27 +155,28 @@ public class MarioDataPackets {
 		}
 	}
 
-	protected record RevertS2CPayload(int toPower, long seed) implements CustomPayload {
-		public static final Id<RevertS2CPayload> ID = MarioPackets.makeID("revert_s2c");
-		public static final PacketCodec<RegistryByteBuf, RevertS2CPayload> CODEC = PacketCodec.tuple(
-				PacketCodecs.INTEGER, RevertS2CPayload::toPower,
-				PacketCodecs.VAR_LONG, RevertS2CPayload::seed,
-				RevertS2CPayload::new
-		);
-
-		@Override public Id<? extends CustomPayload> getId() {
-			return ID;
-		}
-		public static void register() {
-			PayloadTypeRegistry.playS2C().register(ID, CODEC);
-		}
-	}
-
-	protected record AssignPowerUpS2CPayload(int newPower) implements CustomPayload {
+	protected record AssignPowerUpS2CPayload(int marioID, int newPower) implements CustomPayload {
 		public static final Id<AssignPowerUpS2CPayload> ID = MarioPackets.makeID("assign_power_up_s2c");
 		public static final PacketCodec<RegistryByteBuf, AssignPowerUpS2CPayload> CODEC = PacketCodec.tuple(
+				PacketCodecs.INTEGER, AssignPowerUpS2CPayload::marioID,
 				PacketCodecs.INTEGER, AssignPowerUpS2CPayload::newPower,
 				AssignPowerUpS2CPayload::new
+		);
+
+		@Override public Id<? extends CustomPayload> getId() {
+			return ID;
+		}
+		public static void register() {
+			PayloadTypeRegistry.playS2C().register(ID, CODEC);
+		}
+	}
+
+	protected record AssignCharacterS2CPayload(int marioID, int newCharacter) implements CustomPayload {
+		public static final Id<AssignCharacterS2CPayload> ID = MarioPackets.makeID("assign_character_s2c");
+		public static final PacketCodec<RegistryByteBuf, AssignCharacterS2CPayload> CODEC = PacketCodec.tuple(
+				PacketCodecs.INTEGER, AssignCharacterS2CPayload::marioID,
+				PacketCodecs.INTEGER, AssignCharacterS2CPayload::newCharacter,
+				AssignCharacterS2CPayload::new
 		);
 
 		@Override public Id<? extends CustomPayload> getId() {

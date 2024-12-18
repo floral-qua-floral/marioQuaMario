@@ -5,6 +5,7 @@ import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
 import com.fqf.mario_qua_mario.registries.actions.TransitionPhase;
+import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -32,7 +33,7 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 		AbstractParsedAction toAction = Objects.requireNonNull(RegistryManager.ACTIONS.get(actionID),
 				"Target action doesn't exist!");
 		if(this.setAction(this.getAction(), toAction, seed, false)) {
-			MarioDataPackets.setActionS2C(this.getMario(), true, this.getAction(), toAction, seed);
+			MarioDataPackets.transitionToActionS2C(this.getMario(), true, this.getAction(), toAction, seed);
 		}
 		return false;
 	}
@@ -44,28 +45,42 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 		AbstractParsedAction newAction = Objects.requireNonNull(RegistryManager.ACTIONS.get(actionID),
 				"Target action doesn't exist!");
 		this.setActionTransitionless(newAction);
-		MarioDataPackets.setActionTransitionlessS2C(this.getMario(), true, newAction);
+		MarioDataPackets.assignActionS2C(this.getMario(), true, newAction);
 	}
 	@Override public void assignAction(String actionID) {
 		this.assignAction(Identifier.of(actionID));
 	}
 
 	@Override public void empowerTo(Identifier powerUpID) {
+		ParsedPowerUp newPowerUp = Objects.requireNonNull(RegistryManager.POWER_UPS.get(powerUpID),
+				"Target power-up doesn't exist!");
 
+		long seed = RandomSeed.getSeed();
+		this.setPowerUp(newPowerUp, false, seed);
+		MarioDataPackets.empowerRevertS2C(this.getMario(), newPowerUp, false, seed);
 	}
 	@Override public void empowerTo(String powerUpID) {
 		this.empowerTo(Identifier.of(powerUpID));
 	}
 
 	@Override public void revertTo(Identifier powerUpID) {
+		ParsedPowerUp newPowerUp = Objects.requireNonNull(RegistryManager.POWER_UPS.get(powerUpID),
+				"Target power-up doesn't exist!");
 
+		long seed = RandomSeed.getSeed();
+		this.setPowerUp(newPowerUp, true, seed);
+		MarioDataPackets.empowerRevertS2C(this.getMario(), newPowerUp, true, seed);
 	}
 	@Override public void revertTo(String powerUpID) {
 		this.revertTo(Identifier.of(powerUpID));
 	}
 
 	@Override public void assignPowerUp(Identifier powerUpID) {
+		ParsedPowerUp newPowerUp = Objects.requireNonNull(RegistryManager.POWER_UPS.get(powerUpID),
+				"Target power-up doesn't exist!");
 
+		this.setPowerUpTransitionless(newPowerUp);
+		MarioDataPackets.assignPowerUpS2C(this.getMario(), newPowerUp);
 	}
 	@Override public void assignPowerUp(String powerUpID) {
 		this.assignPowerUp(Identifier.of(powerUpID));

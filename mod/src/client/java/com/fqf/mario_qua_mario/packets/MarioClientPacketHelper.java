@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.packets;
 
 import com.fqf.mario_qua_mario.MarioClientHelperManager;
+import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -23,6 +24,27 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 		ClientPlayNetworking.registerGlobalReceiver(MarioDataPackets.AssignActionS2CPayload.ID, (payload, context) ->
 				getMarioFromID(context, payload.marioID()).mqm$getMarioData().setActionTransitionless(
 					ParsedActionHelper.get(payload.newAction())
+				)
+		);
+
+		// EmpowerRevertS2CPayload Receiver
+		ClientPlayNetworking.registerGlobalReceiver(MarioDataPackets.EmpowerRevertS2CPayload.ID, (payload, context) ->
+				getMarioFromID(context, payload.marioID()).mqm$getMarioData().setPowerUp(
+						RegistryManager.POWER_UPS.get(payload.toPower()), false, payload.seed()
+				)
+		);
+
+		// AssignPowerUpS2CPayload Receiver
+		ClientPlayNetworking.registerGlobalReceiver(MarioDataPackets.AssignPowerUpS2CPayload.ID, (payload, context) ->
+				getMarioFromID(context, payload.marioID()).mqm$getMarioData().setPowerUpTransitionless(
+						RegistryManager.POWER_UPS.get(payload.newPower())
+				)
+		);
+
+		// AssignCharacterS2CPayload Receiver
+		ClientPlayNetworking.registerGlobalReceiver(MarioDataPackets.AssignCharacterS2CPayload.ID, (payload, context) ->
+				getMarioFromID(context, payload.marioID()).mqm$getMarioData().setCharacter(
+						RegistryManager.CHARACTERS.get(payload.newCharacter())
 				)
 		);
 	}

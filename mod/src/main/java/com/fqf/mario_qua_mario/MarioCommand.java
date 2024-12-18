@@ -16,7 +16,9 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.random.RandomSeed;
 
 import java.util.Locale;
 
@@ -29,66 +31,77 @@ public class MarioCommand {
 			dispatcher.register(literal("mario")
 				.then(literal("set")
 					.then(literal("enabled")
-							.then(argument("enabled", BoolArgumentType.bool())
-									.requires(source -> source.hasPermissionLevel(0))
-									.executes(context -> setEnabled(context, false))
-									.then(argument("target", EntityArgumentType.player())
-											.requires(source -> source.hasPermissionLevel(2))
-											.executes(context -> setEnabled(context, true))
-									)
+						.then(argument("enabled", BoolArgumentType.bool())
+							.requires(source -> source.hasPermissionLevel(0))
+							.executes(context -> setEnabled(context, false))
+							.then(argument("target", EntityArgumentType.player())
+								.requires(source -> source.hasPermissionLevel(2))
+								.executes(context -> setEnabled(context, true))
 							)
+						)
 					)
 					.then(literal("action")
-							.requires(source -> source.hasPermissionLevel(2))
-							.then(argument("action", RegistryEntryReferenceArgumentType.registryEntry(registryAccess, RegistryManager.ACTIONS_KEY))
-									.executes(context -> setAction(context, false))
-									.then(argument("target", EntityArgumentType.player())
-											.executes(context -> setAction(context, true))
-									)
+						.requires(source -> source.hasPermissionLevel(2))
+						.then(argument("action", RegistryEntryReferenceArgumentType.registryEntry(registryAccess, RegistryManager.ACTIONS_KEY))
+							.executes(context -> setAction(context, false))
+							.then(argument("mario", EntityArgumentType.player())
+								.executes(context -> setAction(context, true))
 							)
+						)
 					)
 					.then(literal("powerUp")
-							.requires(source -> source.hasPermissionLevel(2))
-							.then(argument("power", RegistryEntryReferenceArgumentType.registryEntry(registryAccess, RegistryManager.POWER_UPS_KEY))
-									.executes(context -> setPowerUp(context, false))
-									.then(argument("target", EntityArgumentType.player())
-											.executes(context -> setPowerUp(context, true))
-									)
+						.requires(source -> source.hasPermissionLevel(2))
+						.then(argument("power-up", RegistryEntryReferenceArgumentType.registryEntry(registryAccess, RegistryManager.POWER_UPS_KEY))
+							.executes(context -> setPowerUp(context, false))
+							.then(argument("mario", EntityArgumentType.player())
+								.executes(context -> setPowerUp(context, true))
 							)
+						)
 					)
 					.then(literal("character")
-							.requires(source -> source.hasPermissionLevel(2))
-							.then(argument("character", RegistryEntryReferenceArgumentType.registryEntry(registryAccess, RegistryManager.CHARACTERS_KEY))
-									.executes(context -> setCharacter(context, false))
-									.then(argument("target", EntityArgumentType.player())
-											.executes(context -> setCharacter(context, true))
-									)
+						.requires(source -> source.hasPermissionLevel(2))
+						.then(argument("character", RegistryEntryReferenceArgumentType.registryEntry(registryAccess, RegistryManager.CHARACTERS_KEY))
+							.executes(context -> setCharacter(context, false))
+							.then(argument("mario", EntityArgumentType.player())
+								.executes(context -> setCharacter(context, true))
 							)
+						)
 					)
 				)
 				.then(literal("perform")
 					.then(literal("stomp")
-							.requires(source -> source.hasPermissionLevel(2))
-							.then(argument("stomp", RegistryEntryReferenceArgumentType.registryEntry(registryAccess, RegistryManager.STOMP_TYPES_KEY))
-									.then(argument("goomba", EntityArgumentType.entity())
-											.executes(context -> executeStomp(context, false))
-											.then(argument("target", EntityArgumentType.player())
-													.executes(context -> executeStomp(context, true))
-											)
-									)
+						.requires(source -> source.hasPermissionLevel(2))
+						.then(argument("stomp", RegistryEntryReferenceArgumentType.registryEntry(registryAccess, RegistryManager.STOMP_TYPES_KEY))
+							.then(argument("goomba", EntityArgumentType.entity())
+								.executes(context -> executeStomp(context, false))
+								.then(argument("mario", EntityArgumentType.player())
+									.executes(context -> executeStomp(context, true))
+								)
 							)
+						)
 					)
 					.then(literal("bump")
-							.requires(source -> source.hasPermissionLevel(2))
-							.then(argument("position", BlockPosArgumentType.blockPos())
-									.executes(context -> executeBump(context, false, Direction.UP, 4))
-									.then(makeBumpDirectionFork(Direction.UP))
-									.then(makeBumpDirectionFork(Direction.DOWN))
-									.then(makeBumpDirectionFork(Direction.NORTH))
-									.then(makeBumpDirectionFork(Direction.SOUTH))
-									.then(makeBumpDirectionFork(Direction.EAST))
-									.then(makeBumpDirectionFork(Direction.WEST))
+						.requires(source -> source.hasPermissionLevel(2))
+						.then(argument("position", BlockPosArgumentType.blockPos())
+							.executes(context -> executeBump(context, false, Direction.UP, 4))
+							.then(makeBumpDirectionFork(Direction.UP))
+							.then(makeBumpDirectionFork(Direction.DOWN))
+							.then(makeBumpDirectionFork(Direction.NORTH))
+							.then(makeBumpDirectionFork(Direction.SOUTH))
+							.then(makeBumpDirectionFork(Direction.EAST))
+							.then(makeBumpDirectionFork(Direction.WEST))
+						)
+					)
+					.then(literal("actionTransition")
+						.requires(source -> source.hasPermissionLevel(2))
+						.then(argument("from", RegistryEntryReferenceArgumentType.registryEntry(registryAccess, RegistryManager.ACTIONS_KEY))
+							.then(argument("to", RegistryEntryReferenceArgumentType.registryEntry(registryAccess, RegistryManager.ACTIONS_KEY))
+								.executes(context -> executeActionTransition(context, false))
+								.then(argument("mario", EntityArgumentType.player())
+									.executes(context -> executeActionTransition(context, true))
+								)
 							)
+						)
 					)
 				)
 			)
@@ -100,8 +113,11 @@ public class MarioCommand {
 		return 1;
 	}
 
+	private static ServerPlayerEntity getPlayerFromCmd(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven, String argumentName) throws CommandSyntaxException {
+		return playerArgumentGiven ? EntityArgumentType.getPlayer(context, argumentName) : context.getSource().getPlayerOrThrow();
+	}
 	private static ServerPlayerEntity getPlayerFromCmd(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
-		return playerArgumentGiven ? EntityArgumentType.getPlayer(context, "target") : context.getSource().getPlayerOrThrow();
+		return getPlayerFromCmd(context, playerArgumentGiven, "mario");
 	}
 
 	private static int setEnabled(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
@@ -109,37 +125,37 @@ public class MarioCommand {
 //				getPlayerFromCmd(environment, playerArgumentGiven),
 //				BoolArgumentType.getBool(environment, "enabled")
 //		));
+		getPlayerFromCmd(context, playerArgumentGiven, "target");
+
 		return 0;
 	}
 
 	private static int setAction(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
-//		return sendFeedback(environment, MarioDataPackets.forceSetMarioAction(
-//				getPlayerFromCmd(environment, playerArgumentGiven),
-//				RegistryEntryReferenceArgumentType.getRegistryEntry(environment, "action", RegistryManager.ACTIONS_KEY).value()
-//		));
 		ServerPlayerEntity mario = getPlayerFromCmd(context, playerArgumentGiven);
-		RegistryEntry<AbstractParsedAction> actionEntry =
-				RegistryEntryReferenceArgumentType.getRegistryEntry(context, "action", RegistryManager.ACTIONS_KEY);
-		mario.mqm$getMarioData().setActionTransitionless(actionEntry.value());
-		MarioDataPackets.setActionTransitionlessS2C(mario, true, actionEntry.value());
+		Identifier newActionID =
+				RegistryEntryReferenceArgumentType.getRegistryEntry(context, "action", RegistryManager.ACTIONS_KEY).value().ID;
+		mario.mqm$getMarioData().assignAction(newActionID);
 
-		return sendFeedback(context, "Changed " + mario.getName().getString() + "'s action to " + actionEntry.value().ID + ".");
+		return sendFeedback(context, "Changed " + mario.getName().getString() + "'s action to " + newActionID + ".");
 	}
 
 	private static int setPowerUp(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
-//		return sendFeedback(environment, MarioDataPackets.setMarioPowerUp(
-//				getPlayerFromCmd(environment, playerArgumentGiven),
-//				RegistryEntryReferenceArgumentType.getRegistryEntry(environment, "power", RegistryManager.POWER_UPS_KEY).value()
-//		));
-		return 0;
+		ServerPlayerEntity mario = getPlayerFromCmd(context, playerArgumentGiven);
+		Identifier newPowerUpID =
+				RegistryEntryReferenceArgumentType.getRegistryEntry(context, "power-up", RegistryManager.POWER_UPS_KEY).value().ID;
+		mario.mqm$getMarioData().assignPowerUp(newPowerUpID);
+
+		return sendFeedback(context, "Changed " + mario.getName().getString() + "'s power-up to " + newPowerUpID + ".");
 	}
 
 	private static int setCharacter(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
-//		return sendFeedback(environment, MarioDataPackets.setMarioCharacter(
-//				getPlayerFromCmd(environment, playerArgumentGiven),
-//				RegistryEntryReferenceArgumentType.getRegistryEntry(environment, "character", RegistryManager.CHARACTERS_KEY).value()
-//		));
-		return 0;
+		ServerPlayerEntity mario = getPlayerFromCmd(context, playerArgumentGiven);
+		Identifier newCharacterID =
+				RegistryEntryReferenceArgumentType.getRegistryEntry(context, "power-up", RegistryManager.CHARACTERS_KEY).value().ID;
+		mario.mqm$getMarioData().assignCharacter(newCharacterID);
+
+
+		return sendFeedback(context, mario.getName().getString() + " will now play as " + newCharacterID + ".");
 	}
 
 	private static int executeStomp(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
@@ -177,5 +193,30 @@ public class MarioCommand {
 					.executes(context -> executeBump(context, true, direction, null))
 				)
 			);
+	}
+
+	private static int executeActionTransition(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
+		AbstractParsedAction fromAction =
+				RegistryEntryReferenceArgumentType.getRegistryEntry(context, "from", RegistryManager.ACTIONS_KEY).value();
+		AbstractParsedAction toAction =
+				RegistryEntryReferenceArgumentType.getRegistryEntry(context, "to", RegistryManager.ACTIONS_KEY).value();
+
+		long seed = RandomSeed.getSeed();
+
+		ServerPlayerEntity mario = getPlayerFromCmd(context, playerArgumentGiven);
+		boolean successful = mario.mqm$getMarioData().setAction(fromAction, toAction, seed, false);
+
+		if(successful) MarioDataPackets.transitionToActionS2C(
+				mario,
+				true,
+				fromAction,
+				toAction,
+				seed
+		);
+
+		return sendFeedback(context, successful ?
+				"Successfully made " + mario.getName().getString() + " execute transition \"" + fromAction.ID + "->" + toAction.ID + "\"."
+				: "No transition exists from " + fromAction.ID + " to " + toAction.ID + "! :("
+		);
 	}
 }

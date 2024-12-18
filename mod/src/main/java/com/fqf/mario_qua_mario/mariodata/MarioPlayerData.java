@@ -62,12 +62,16 @@ public abstract class MarioPlayerData implements IMarioData {
 	}
 
 	public boolean setAction(@Nullable AbstractParsedAction fromAction, AbstractParsedAction toAction, long seed, boolean forced) {
-		if(fromAction == null) fromAction = this.getAction();
-		else if(!forced) {
+		if(!this.getAction().equals(fromAction) && !forced) {
 			// Check if we were recently in fromAction. If not, return false.
+			if(this.RECENT_ACTIONS.stream().noneMatch(pair -> pair.getLeft().equals(fromAction))) {
+				MarioQuaMario.LOGGER.info("Rejected action transition because we weren't in {} recently!", fromAction);
+				return false;
+			}
 		}
-		boolean transitionedNaturally = ParsedActionHelper.attemptTransitionTo(this, fromAction, toAction, seed);
-		if(!transitionedNaturally && forced) this.setActionTransitionless(toAction);
+		boolean transitionedNaturally = ParsedActionHelper.attemptTransitionTo(this, fromAction == null ? this.getAction() : fromAction, toAction, seed);
+		if(transitionedNaturally && this instanceof MarioMoveableData moveableData) moveableData.applyModifiedVelocity();
+		else if(forced) this.setActionTransitionless(toAction);
 		return transitionedNaturally || forced;
 	}
 	public void setActionTransitionless(AbstractParsedAction action) {
@@ -83,10 +87,10 @@ public abstract class MarioPlayerData implements IMarioData {
 		return this.getPowerUp().ID;
 	}
 
-	public void setPowerUp(ParsedPowerUp newPowerUp, boolean isReversion) {
-		this.setPowerUpInternal(newPowerUp);
+	public void setPowerUp(ParsedPowerUp newPowerUp, boolean isReversion, long seed) {
+		this.setPowerUpTransitionless(newPowerUp);
 	}
-	public void setPowerUpInternal(ParsedPowerUp newPowerUp) {
+	public void setPowerUpTransitionless(ParsedPowerUp newPowerUp) {
 		this.powerUp = newPowerUp;
 		refreshPlayerModel();
 		refreshPowerSet();
