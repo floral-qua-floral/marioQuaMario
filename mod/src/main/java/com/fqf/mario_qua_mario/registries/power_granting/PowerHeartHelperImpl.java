@@ -11,31 +11,31 @@ public class PowerHeartHelperImpl implements PowerUpDefinition.PowerHeartHelper 
 
 	@Override
 	public PowerUpDefinition.PowerHeart auto() {
-		return this.standard(this.ID.getNamespace(), "hud/power_hearts/" + this.ID.getPath());
+		return this.standard(this.ID.getNamespace(), this.ID.getPath());
 	}
 
 	@Override
 	public PowerUpDefinition.PowerHeart standard(String namespace, String folder) {
-		return new PowerUpDefinition.PowerHeart(
-				Identifier.of(namespace, folder + "/full"),
-				Identifier.of(namespace, folder + "/full_blinking"),
-
-				Identifier.of(namespace, folder + "/half"),
-				Identifier.of(namespace, folder + "/half_blinking"),
-
-				Identifier.of(namespace, folder + "/hardcore/full"),
-				Identifier.of(namespace, folder + "/hardcore/full_blinking"),
-
-				Identifier.of(namespace, folder + "/hardcore/half"),
-				Identifier.of(namespace, folder + "/hardcore/half_blinking"),
-
-				Identifier.ofVanilla("hud/heart/container"),
-				Identifier.ofVanilla("hud/heart/container_blinking")
-		);
+		return this.fromRoot(Identifier.of(namespace, "hud/power_hearts/" + folder));
 	}
 
 	@Override
 	public PowerUpDefinition.PowerHeart fromRoot(Identifier root) {
-		return this.standard(root.getNamespace(), root.getPath());
+		return new PowerUpDefinition.PowerHeart(
+				Identifier.of(root.getNamespace(), root.getPath() + "/full"),
+				Identifier.of(root.getNamespace(), root.getPath() + "/full_blinking"),
+
+				Identifier.of(root.getNamespace(), root.getPath() + "/half"),
+				Identifier.of(root.getNamespace(), root.getPath() + "/half_blinking"),
+
+				Identifier.of(root.getNamespace(), root.getPath() + "/hardcore/full"),
+				Identifier.of(root.getNamespace(), root.getPath() + "/hardcore/full_blinking"),
+
+				Identifier.of(root.getNamespace(), root.getPath() + "/hardcore/half"),
+				Identifier.of(root.getNamespace(), root.getPath() + "/hardcore/half_blinking"),
+
+				Identifier.ofVanilla("hud/heart/container"),
+				Identifier.ofVanilla("hud/heart/container_blinking")
+		);
 	}
 }

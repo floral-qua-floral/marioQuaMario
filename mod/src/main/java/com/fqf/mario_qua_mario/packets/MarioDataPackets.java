@@ -78,7 +78,7 @@ public class MarioDataPackets {
 		public static void receive(SetActionC2SPayload payload, ServerPlayNetworking.Context context) {
 			AbstractParsedAction fromAction = ParsedActionHelper.get(payload.toAction());
 			AbstractParsedAction toAction = ParsedActionHelper.get(payload.toAction());
-			if(context.player().mqm$getMarioData().setAction(fromAction, toAction, payload.seed, false)) {
+			if(context.player().mqm$getMarioData().setAction(fromAction, toAction, payload.seed, false, false)) {
 				MarioPackets.sendToTrackers(context.player(), new ActionTransitionS2CPayload(
 						context.player().getId(),
 						payload.fromAction,

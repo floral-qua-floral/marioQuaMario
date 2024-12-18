@@ -5,6 +5,7 @@ import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
 import com.fqf.mario_qua_mario.registries.actions.TransitionPhase;
+import com.fqf.mario_qua_mario.registries.power_granting.ParsedCharacter;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -31,8 +32,8 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 	@Override public boolean transitionToAction(Identifier actionID) {
 		long seed = RandomSeed.getSeed();
 		AbstractParsedAction toAction = Objects.requireNonNull(RegistryManager.ACTIONS.get(actionID),
-				"Target action doesn't exist!");
-		if(this.setAction(this.getAction(), toAction, seed, false)) {
+				"Target action (" + actionID + ") doesn't exist!");
+		if(this.setAction(this.getAction(), toAction, seed, false, false)) {
 			MarioDataPackets.transitionToActionS2C(this.getMario(), true, this.getAction(), toAction, seed);
 		}
 		return false;
@@ -43,7 +44,7 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 
 	@Override public void assignAction(Identifier actionID) {
 		AbstractParsedAction newAction = Objects.requireNonNull(RegistryManager.ACTIONS.get(actionID),
-				"Target action doesn't exist!");
+				"Target action (" + actionID + ") doesn't exist!");
 		this.setActionTransitionless(newAction);
 		MarioDataPackets.assignActionS2C(this.getMario(), true, newAction);
 	}
@@ -53,7 +54,7 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 
 	@Override public void empowerTo(Identifier powerUpID) {
 		ParsedPowerUp newPowerUp = Objects.requireNonNull(RegistryManager.POWER_UPS.get(powerUpID),
-				"Target power-up doesn't exist!");
+				"Target power-up (" + powerUpID + ") doesn't exist!");
 
 		long seed = RandomSeed.getSeed();
 		this.setPowerUp(newPowerUp, false, seed);
@@ -65,7 +66,7 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 
 	@Override public void revertTo(Identifier powerUpID) {
 		ParsedPowerUp newPowerUp = Objects.requireNonNull(RegistryManager.POWER_UPS.get(powerUpID),
-				"Target power-up doesn't exist!");
+				"Target power-up (" + powerUpID + ") doesn't exist!");
 
 		long seed = RandomSeed.getSeed();
 		this.setPowerUp(newPowerUp, true, seed);
@@ -77,7 +78,7 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 
 	@Override public void assignPowerUp(Identifier powerUpID) {
 		ParsedPowerUp newPowerUp = Objects.requireNonNull(RegistryManager.POWER_UPS.get(powerUpID),
-				"Target power-up doesn't exist!");
+				"Target power-up (" + powerUpID + ") doesn't exist!");
 
 		this.setPowerUpTransitionless(newPowerUp);
 		MarioDataPackets.assignPowerUpS2C(this.getMario(), newPowerUp);
@@ -87,7 +88,11 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 	}
 
 	@Override public void assignCharacter(Identifier characterID) {
+		ParsedCharacter newCharacter = Objects.requireNonNull(RegistryManager.CHARACTERS.get(characterID),
+				"Target character (" + characterID + ") doesn't exist!");
 
+		this.setCharacter(newCharacter);
+		MarioDataPackets.assignCharacterS2C(this.getMario(), newCharacter);
 	}
 	@Override public void assignCharacter(String characterID) {
 		this.assignCharacter(Identifier.of(characterID));

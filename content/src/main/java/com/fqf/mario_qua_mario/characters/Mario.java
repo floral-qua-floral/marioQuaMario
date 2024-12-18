@@ -18,7 +18,7 @@ public class Mario implements CharacterDefinition {
 		return MarioQuaMarioContent.makeID("debug");
 	}
 	@Override public Identifier getInitialPowerUp() {
-		return MarioQuaMarioContent.makeID("small");
+		return MarioQuaMarioContent.makeID("super");
 	}
 
 	@Override public float getWidthFactor() {

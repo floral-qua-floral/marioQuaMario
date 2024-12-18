@@ -16,7 +16,7 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 				getMarioFromID(context, payload.marioID()).mqm$getMarioData().setAction(
 					ParsedActionHelper.get(payload.fromAction()),
 					ParsedActionHelper.get(payload.toAction()),
-					payload.seed(), true
+					payload.seed(), true, false
 				)
 		);
 

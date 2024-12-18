@@ -61,8 +61,8 @@ public abstract class MarioPlayerData implements IMarioData {
 		return this.getAction().ID;
 	}
 
-	public boolean setAction(@Nullable AbstractParsedAction fromAction, AbstractParsedAction toAction, long seed, boolean forced) {
-		if(!this.getAction().equals(fromAction) && !forced) {
+	public boolean setAction(@Nullable AbstractParsedAction fromAction, AbstractParsedAction toAction, long seed, boolean forced, boolean fromCommand) {
+		if(!this.getAction().equals(fromAction) && !forced && !fromCommand) {
 			// Check if we were recently in fromAction. If not, return false.
 			if(this.RECENT_ACTIONS.stream().noneMatch(pair -> pair.getLeft().equals(fromAction))) {
 				MarioQuaMario.LOGGER.info("Rejected action transition because we weren't in {} recently!", fromAction);

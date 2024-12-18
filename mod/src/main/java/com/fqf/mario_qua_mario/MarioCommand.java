@@ -108,9 +108,12 @@ public class MarioCommand {
 		);
 	}
 
-	private static int sendFeedback(CommandContext<ServerCommandSource> context, String feedback) {
+	private static int sendFeedback(CommandContext<ServerCommandSource> context, String feedback, boolean successful) {
 		context.getSource().sendFeedback(() -> Text.literal(feedback), true);
-		return 1;
+		return successful ? 1 : 0;
+	}
+	private static int sendFeedback(CommandContext<ServerCommandSource> context, String feedback) {
+		return sendFeedback(context, feedback, true);
 	}
 
 	private static ServerPlayerEntity getPlayerFromCmd(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven, String argumentName) throws CommandSyntaxException {
@@ -151,7 +154,7 @@ public class MarioCommand {
 	private static int setCharacter(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
 		ServerPlayerEntity mario = getPlayerFromCmd(context, playerArgumentGiven);
 		Identifier newCharacterID =
-				RegistryEntryReferenceArgumentType.getRegistryEntry(context, "power-up", RegistryManager.CHARACTERS_KEY).value().ID;
+				RegistryEntryReferenceArgumentType.getRegistryEntry(context, "character", RegistryManager.CHARACTERS_KEY).value().ID;
 		mario.mqm$getMarioData().assignCharacter(newCharacterID);
 
 
@@ -204,7 +207,7 @@ public class MarioCommand {
 		long seed = RandomSeed.getSeed();
 
 		ServerPlayerEntity mario = getPlayerFromCmd(context, playerArgumentGiven);
-		boolean successful = mario.mqm$getMarioData().setAction(fromAction, toAction, seed, false);
+		boolean successful = mario.mqm$getMarioData().setAction(fromAction, toAction, seed, false, true);
 
 		if(successful) MarioDataPackets.transitionToActionS2C(
 				mario,
@@ -216,7 +219,6 @@ public class MarioCommand {
 
 		return sendFeedback(context, successful ?
 				"Successfully made " + mario.getName().getString() + " execute transition \"" + fromAction.ID + "->" + toAction.ID + "\"."
-				: "No transition exists from " + fromAction.ID + " to " + toAction.ID + "! :("
-		);
+				: "No transition exists from " + fromAction.ID + " to " + toAction.ID + "! :(", successful);
 	}
 }
