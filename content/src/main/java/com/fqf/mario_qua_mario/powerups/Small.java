@@ -48,23 +48,21 @@ public class Small implements PowerUpDefinition {
 	}
 
 	@Override public @NotNull PowerHeart getPowerHeart(PowerHeartHelper helper) {
-		String namespace = "mario_qua_mario";
-
 		return new PowerUpDefinition.PowerHeart(
-				Identifier.of(namespace, "hud/power_hearts/small/full"),
-				Identifier.of(namespace, "hud/power_hearts/small/full_blinking"),
+				MarioQuaMarioContent.makeResID("hud/power_hearts/small/full"),
+				MarioQuaMarioContent.makeResID("hud/power_hearts/small/full_blinking"),
 
-				Identifier.of(namespace, "hud/power_hearts/small/half"),
-				Identifier.of(namespace, "hud/power_hearts/small/half_blinking"),
+				MarioQuaMarioContent.makeResID("hud/power_hearts/small/half"),
+				MarioQuaMarioContent.makeResID("hud/power_hearts/small/half_blinking"),
 
-				Identifier.of(namespace, "hud/power_hearts/small/hardcore/full"),
-				Identifier.of(namespace, "hud/power_hearts/small/hardcore/full_blinking"),
+				MarioQuaMarioContent.makeResID("hud/power_hearts/small/hardcore/full"),
+				MarioQuaMarioContent.makeResID("hud/power_hearts/small/hardcore/full_blinking"),
 
-				Identifier.of(namespace, "hud/power_hearts/small/hardcore/half"),
-				Identifier.of(namespace, "hud/power_hearts/small/hardcore/half_blinking"),
+				MarioQuaMarioContent.makeResID("hud/power_hearts/small/hardcore/half"),
+				MarioQuaMarioContent.makeResID("hud/power_hearts/small/hardcore/half_blinking"),
 
-				Identifier.of(namespace, "hud/power_hearts/small/container"),
-				Identifier.of(namespace, "hud/power_hearts/small/container_blinking")
+				MarioQuaMarioContent.makeResID("hud/power_hearts/small/container"),
+				MarioQuaMarioContent.makeResID("hud/power_hearts/small/container_blinking")
 		);
 	}
 

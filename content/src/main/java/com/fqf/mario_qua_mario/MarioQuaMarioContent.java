@@ -17,4 +17,7 @@ public class MarioQuaMarioContent implements ModInitializer {
 	public static Identifier makeID(String path) {
 		return Identifier.of("mqm", path);
 	}
+	public static Identifier makeResID(String path) {
+		return Identifier.of("mario_qua_mario", path);
+	}
 }
