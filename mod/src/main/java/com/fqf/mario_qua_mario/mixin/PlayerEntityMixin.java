@@ -1,12 +1,15 @@
 package com.fqf.mario_qua_mario.mixin;
 
+import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
+import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
 import com.fqf.mario_qua_mario.mariodata.injections.MarioDataHolder;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -47,5 +50,24 @@ public abstract class PlayerEntityMixin extends LivingEntity implements MarioDat
 			case SLIDING, SLIDING_SILENT, SKIDDING -> {}
 			default -> super.playStepSounds(pos, state);
 		};
+	}
+
+	@Override
+	public void writeCustomDataToNbt(NbtCompound nbt) {
+		super.writeCustomDataToNbt(nbt);
+
+		NbtCompound persistentData = new NbtCompound();
+		MarioPlayerData data = mqm$getMarioData();
+
+		persistentData.putBoolean("Enabled", data.isEnabled());
+		persistentData.putString("PowerUp", data.getPowerUpID().toString());
+		persistentData.putString("Character", data.getCharacterID().toString());
+
+		MarioQuaMario.LOGGER.info("Wrote player NBT:\nEnabled: {}\nPower-up: {}\nCharacter: {}",
+				persistentData.getBoolean("Enabled"),
+				persistentData.getString("PowerUp"),
+				persistentData.getString("Character"));
+
+		nbt.put(MarioQuaMario.MOD_DATA_KEY, persistentData);
 	}
 }

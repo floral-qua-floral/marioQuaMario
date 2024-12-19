@@ -36,7 +36,8 @@
 		],
 
 		"mqm-characters": [
-			"com.fqf.mario_qua_mario.characters.Mario"
+			"com.fqf.mario_qua_mario.characters.Mario",
+			"com.fqf.mario_qua_mario.characters.Luigi"
 		],
 
 		"main": [

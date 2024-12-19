@@ -7,6 +7,10 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2d;
 
 public abstract class MarioMoveableData extends MarioPlayerData implements IMarioTravelData {
+	public MarioMoveableData() {
+		super();
+	}
+
 	private final MarioVelocities VELOCITIES = new MarioVelocities();
 	private class MarioVelocities {
 		private double forward;

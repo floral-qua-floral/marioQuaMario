@@ -17,12 +17,15 @@ import java.util.Objects;
 
 public class MarioServerPlayerData extends MarioMoveableData implements IMarioAuthoritativeData {
 	private ServerPlayerEntity mario;
-	public MarioServerPlayerData(ServerPlayerEntity mario) {
+	public MarioServerPlayerData() {
 		super();
-		this.mario = mario;
 	}
 	@Override public ServerPlayerEntity getMario() {
 		return this.mario;
+	}
+	@Override public void setMario(PlayerEntity mario) {
+		this.mario = (ServerPlayerEntity) mario;
+		super.setMario(mario);
 	}
 
 	@Override public void setEnabled(boolean enable) {
@@ -96,10 +99,6 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 	}
 	@Override public void assignCharacter(String characterID) {
 		this.assignCharacter(Identifier.of(characterID));
-	}
-
-	@Override public void setMario(PlayerEntity mario) {
-		this.mario = (ServerPlayerEntity) mario;
 	}
 
 	@Override

@@ -5,6 +5,7 @@
   "mixins": [
     "PlayerEntityMarioDataMixin",
     "PlayerEntityMixin",
+    "ServerPlayerEntityMixin",
     "ServerPlayerMarioDataMixin"
   ],
   "injectors": {

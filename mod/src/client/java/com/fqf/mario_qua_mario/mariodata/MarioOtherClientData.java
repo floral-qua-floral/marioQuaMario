@@ -5,15 +5,15 @@ import net.minecraft.entity.player.PlayerEntity;
 
 public class MarioOtherClientData extends MarioPlayerData implements IMarioClientDataImpl {
 	private OtherClientPlayerEntity mario;
-	public MarioOtherClientData(OtherClientPlayerEntity mario) {
+	public MarioOtherClientData() {
 		super();
-		this.mario = mario;
 	}
 	@Override public OtherClientPlayerEntity getMario() {
 		return this.mario;
 	}
 	@Override public void setMario(PlayerEntity mario) {
 		this.mario = (OtherClientPlayerEntity) mario;
+		super.setMario(mario);
 	}
 
 	@Override

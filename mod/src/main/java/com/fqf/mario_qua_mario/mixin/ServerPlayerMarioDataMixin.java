@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario.mixin;
 
+import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
 import com.fqf.mario_qua_mario.mariodata.MarioServerPlayerData;
 import com.fqf.mario_qua_mario.mariodata.injections.MarioServerDataHolder;
@@ -17,11 +18,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerPlayerEntity.class)
 public class ServerPlayerMarioDataMixin implements MarioServerDataHolder {
-	@Unique private MarioServerPlayerData marioServerData;
+	@Unique private MarioServerPlayerData marioServerData = new MarioServerPlayerData();
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void constructorHook(MinecraftServer server, ServerWorld world, GameProfile profile, SyncedClientOptions clientOptions, CallbackInfo ci) {
-		this.mqm$setMarioData(new MarioServerPlayerData((ServerPlayerEntity) (Object) this));
+		this.mqm$setMarioData(this.marioServerData);
 	}
 
 	@Override public @NotNull MarioServerPlayerData mqm$getMarioData() {

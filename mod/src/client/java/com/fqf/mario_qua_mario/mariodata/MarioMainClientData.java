@@ -9,15 +9,15 @@ import net.minecraft.entity.player.PlayerEntity;
 
 public class MarioMainClientData extends MarioMoveableData implements IMarioClientDataImpl {
 	private ClientPlayerEntity mario;
-	public MarioMainClientData(ClientPlayerEntity mario) {
+	public MarioMainClientData() {
 		super();
-		this.mario = mario;
 	}
 	@Override public ClientPlayerEntity getMario() {
 		return mario;
 	}
 	@Override public void setMario(PlayerEntity mario) {
 		this.mario = (ClientPlayerEntity) mario;
+		super.setMario(mario);
 	}
 
 	@Override

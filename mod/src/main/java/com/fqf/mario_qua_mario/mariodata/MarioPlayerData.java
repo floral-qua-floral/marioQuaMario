@@ -17,13 +17,11 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-/**
- * The most advanced form of MarioData that can be applied for all players.
- */
 public abstract class MarioPlayerData implements IMarioData {
 	protected MarioPlayerData() {
-		this.enabled = false;
-		this.setEnabledInternal(true);
+		MarioQuaMario.LOGGER.info("Created new MarioData: {}", this);
+
+		this.enabled = true;
 
 		this.character = Objects.requireNonNull(RegistryManager.CHARACTERS.get(MarioQuaMario.makeID("mario")),
 				"Mario isn't registered; can't initialize player!");
@@ -123,7 +121,13 @@ public abstract class MarioPlayerData implements IMarioData {
 		return this.POWERS.contains(power);
 	}
 
-	public abstract void setMario(PlayerEntity mario);
+	public void setMario(PlayerEntity mario) {
+		MarioQuaMario.LOGGER.info("Assigning player to MarioData: {} to {}", mario.getName().getString(), this);
+		this.setEnabledInternal(this.isEnabled());
+		this.setActionTransitionless(this.action);
+		this.setPowerUpTransitionless(this.powerUp);
+		this.setCharacter(this.character);
+	}
 
 	public void tick() {
 		long worldTime = this.getMario().getWorld().getTime();

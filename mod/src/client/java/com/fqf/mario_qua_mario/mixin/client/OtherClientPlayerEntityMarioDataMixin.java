@@ -15,11 +15,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(OtherClientPlayerEntity.class)
 public class OtherClientPlayerEntityMarioDataMixin implements MarioOtherClientDataHolder {
-	@Unique private MarioOtherClientData marioData;
+	@Unique private MarioOtherClientData marioData = new MarioOtherClientData();
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void constructorHook(ClientWorld clientWorld, GameProfile gameProfile, CallbackInfo ci) {
-		this.marioData = new MarioOtherClientData((OtherClientPlayerEntity) (Object) this);
+		this.mqm$setMarioData(this.marioData);
 	}
 
 	@Override
