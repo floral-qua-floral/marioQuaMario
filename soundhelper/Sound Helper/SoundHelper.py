@@ -6,6 +6,9 @@ import shutil
 from Input import rename_sounds, content_subtitles, mod_subtitles
 
 def handle_audio_files(include_voicelines, copy_to, subtitle_source):
+    # Clean out the sounds that are currently lying around
+    shutil.rmtree(copy_to)
+
     # "../../mod/src/main/java/com/fqf/mario_qua_mario"
     voice_subtitles = []
 
