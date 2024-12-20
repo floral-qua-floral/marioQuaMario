@@ -14,7 +14,7 @@ public class MarioGamerules {
 	public static boolean useCharacterStats;
 
 	public static final GameRules.Key<GameRules.BooleanRule> USE_CHARACTER_STATS =
-			GameRuleRegistry.register(MarioQuaMario.makeID("useCharacterStats").toString(), GameRules.Category.PLAYER,
+			GameRuleRegistry.register("marioUseCharacterStats", GameRules.Category.PLAYER,
 					GameRuleFactory.createBooleanRule(true, (server, booleanRule) -> {
 						useCharacterStats = booleanRule.get();
 						MarioPackets.syncUseCharacterStatsS2C(useCharacterStats);
@@ -22,20 +22,20 @@ public class MarioGamerules {
 			);
 
 	public static final GameRules.Key<GameRules.BooleanRule> REJECT_INVALID_ACTION_TRANSITIONS =
-			GameRuleRegistry.register(MarioQuaMario.makeID("rejectInvalidActionTransitions").toString(), GameRules.Category.PLAYER,
+			GameRuleRegistry.register("marioRejectInvalidActionTransitions", GameRules.Category.PLAYER,
 					GameRuleFactory.createBooleanRule(true));
 
 	public static final GameRules.Key<DoubleRule> INCOMING_DAMAGE_MULTIPLIER =
-			GameRuleRegistry.register(MarioQuaMario.makeID("marioIncomingDamageMultiplier").toString(), GameRules.Category.PLAYER,
+			GameRuleRegistry.register("marioIncomingDamageMultiplier", GameRules.Category.PLAYER,
 					GameRuleFactory.createDoubleRule(2.5));
 	// How to get value: marioWorld.getGameRules().get(MarioQuaMario.INCOMING_DAMAGE_MULTIPLIER).get()
 
 	public static final GameRules.Key<DoubleRule> OUTGOING_DAMAGE_MULTIPLIER =
-			GameRuleRegistry.register(MarioQuaMario.makeID("marioOutgoingDamageMultiplier").toString(), GameRules.Category.PLAYER,
+			GameRuleRegistry.register("marioOutgoingDamageMultiplier", GameRules.Category.PLAYER,
 					GameRuleFactory.createDoubleRule(1.0));
 
 	public static final GameRules.Key<GameRules.BooleanRule> REVERT_TO_SMALL =
-			GameRuleRegistry.register(MarioQuaMario.makeID("alwaysRevertToSmall").toString(), GameRules.Category.PLAYER,
+			GameRuleRegistry.register("marioAlwaysRevertToSmallForm", GameRules.Category.PLAYER,
 					GameRuleFactory.createBooleanRule(false));
 
 	public static void register() {

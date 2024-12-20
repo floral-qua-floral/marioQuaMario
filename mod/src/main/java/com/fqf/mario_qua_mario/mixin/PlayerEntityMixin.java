@@ -4,10 +4,13 @@ import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
 import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
 import com.fqf.mario_qua_mario.mariodata.injections.MarioDataHolder;
+import com.fqf.mario_qua_mario.util.MarioGamerules;
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
@@ -69,5 +72,13 @@ public abstract class PlayerEntityMixin extends LivingEntity implements MarioDat
 				persistentData.getString("Character"));
 
 		nbt.put(MarioQuaMario.MOD_DATA_KEY, persistentData);
+	}
+
+	@WrapMethod(method = "damage")
+	private boolean damageHook(DamageSource source, float amount, Operation<Boolean> original) {
+		float factor;
+		if(mqm$getMarioData().isEnabled()) factor = (float) getWorld().getGameRules().get(MarioGamerules.INCOMING_DAMAGE_MULTIPLIER).get();
+		else factor = 1F;
+		return original.call(source, amount * factor);
 	}
 }
