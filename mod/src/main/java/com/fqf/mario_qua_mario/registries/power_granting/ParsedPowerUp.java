@@ -3,6 +3,7 @@ package com.fqf.mario_qua_mario.registries.power_granting;
 import com.fqf.mario_qua_mario.definitions.states.PowerUpDefinition;
 import com.fqf.mario_qua_mario.registries.ParsedMarioThing;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 
 public class ParsedPowerUp extends ParsedPowerGrantingState {
@@ -20,7 +21,8 @@ public class ParsedPowerUp extends ParsedPowerGrantingState {
 		this.REVERSION_TARGET_ID = definition.getReversionTarget();
 		this.VALUE = definition.getValue();
 
-		this.ACQUISITION_SOUND = definition.getAcquisitionSound();
+		SoundEvent definedAcquisitionSound = definition.getAcquisitionSound();
+		this.ACQUISITION_SOUND = definedAcquisitionSound == null ? SoundEvents.BLOCK_SHROOMLIGHT_PLACE : definedAcquisitionSound;
 		this.VOICE_PITCH = definition.getVoicePitch();
 
 		this.HEART = definition.getPowerHeart(new PowerHeartHelperImpl(this.ID));

@@ -4,6 +4,7 @@ import com.fqf.mario_qua_mario.mariodata.MarioServerPlayerData;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 public class MarioEventListeners {
 	public static void register() {
@@ -20,7 +21,15 @@ public class MarioEventListeners {
 		});
 
 		ServerLivingEntityEvents.ALLOW_DAMAGE.register((livingEntity, damageSource, amount) -> {
-			return true;
+			if(!(livingEntity instanceof ServerPlayerEntity mario)) return true;
+
+			MarioServerPlayerData data = mario.mqm$getMarioData();
+			if(!data.isEnabled()) return true;
+
+			if(data.getPowerUp().REVERSION_TARGET_ID == null) return true;
+
+			data.revertTo(data.getPowerUp().REVERSION_TARGET_ID);
+			return false;
 		});
 	}
 }

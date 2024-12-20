@@ -1,11 +1,14 @@
 package com.fqf.mario_qua_mario.mariodata;
 
+import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
+import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.entity.Entity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
@@ -63,6 +66,17 @@ public interface IMarioClientDataImpl extends IMarioClientData {
 	}
 
 	Map<IMarioClientDataImpl, SoundInstance> MARIO_VOICE_LINES = new HashMap<>();
+
+	default void handlePowerTransitionSound(boolean isReversion, ParsedPowerUp newPower, long seed) {
+		if(isReversion) this.playSound(SoundEvents.ENTITY_SPLASH_POTION_BREAK, seed);
+		else {
+			this.playSound(newPower.ACQUISITION_SOUND, seed);
+		}
+	}
+
+	default void handleSlidingSound(AbstractParsedAction newAction) {
+
+	}
 
 	@Override
 	default SoundInstanceWrapperImpl voice(VoiceLine line, long seed) {
