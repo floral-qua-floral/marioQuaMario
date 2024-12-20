@@ -1,5 +1,36 @@
 package com.fqf.mario_qua_mario.util;
 
-public class MarioModSFX {
+import com.fqf.mario_qua_mario.MarioQuaMario;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.Identifier;
 
+public class MarioModSFX {
+	public static SoundEvent BUMP = makeMovementSound("bump");
+
+	private static SoundEvent makeMovementSound(String name) {
+		return makeAndRegisterSound("sfx.movement." + name);
+	}
+	private static SoundEvent makePowerSound(String name) {
+		return makeAndRegisterSound("sfx.power_up." + name);
+	}
+	private static SoundEvent makeStompSound(String name) {
+		return makeAndRegisterSound("sfx.stomp." + name);
+	}
+	private static SoundEvent makeActionSound(String name) {
+		return makeAndRegisterSound("sfx.action." + name);
+	}
+
+	private static SoundEvent makeAndRegisterSound(String path) {
+		Identifier identifier = MarioQuaMario.makeResID(path);
+		SoundEvent event = SoundEvent.of(identifier);
+
+		Registry.register(Registries.SOUND_EVENT, identifier, event);
+
+		return event;
+	}
+	public static void staticInitialize() {
+
+	}
 }

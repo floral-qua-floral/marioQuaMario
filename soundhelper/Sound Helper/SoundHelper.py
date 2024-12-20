@@ -132,11 +132,11 @@ def make_sounds_dot_json(location):
 
 if __name__ == "__main__":
     # Handle CONTENT sounds
-    subtitles = handle_audio_files(True, "Output/content/sounds", content_subtitles)
-    save_subtitles("Input/testInput.json", "Output/content/en_us.json", subtitles)
-    make_sounds_dot_json("Output/content/")
+    subtitles = handle_audio_files(True, "../../content/src/client/resources/assets/mario_qua_mario/sounds", content_subtitles)
+    save_subtitles("../../content/src/client/resources/assets/mario_qua_mario/lang/en_us.json", "../../content/src/client/resources/assets/mario_qua_mario/lang/en_us.json", subtitles)
+    make_sounds_dot_json("../../content/src/client/resources/assets/mario_qua_mario/")
 
     # Handle MOD sounds
-    subtitles2 = handle_audio_files(False, "Output/mod/sounds", mod_subtitles)
-    save_subtitles("Input/testInput.json", "Output/mod/en_us.json", subtitles2)
-    make_sounds_dot_json("Output/mod/")
+    subtitles2 = handle_audio_files(False, "../../mod/src/client/resources/assets/mario_qua_mario/sounds", mod_subtitles)
+    save_subtitles("../../content/src/client/resources/assets/mario_qua_mario/lang/en_us.json", "../../mod/src/client/resources/assets/mario_qua_mario/lang/en_us.json", subtitles2)
+    make_sounds_dot_json("../../mod/src/client/resources/assets/mario_qua_mario/")
