@@ -39,3 +39,5 @@ replay_*.log
 *.hprof
 *.jfr
 /soundhelper/Sound Helper/Sounds/
+/soundhelper/Sound Helper/Output/mod/sounds/
+/soundhelper/Sound Helper/Output/content/sounds/

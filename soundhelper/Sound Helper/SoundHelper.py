@@ -1,10 +1,11 @@
 import json
 import os
 import re
+import shutil
 
 from Input import rename_sounds, content_subtitles, mod_subtitles
 
-def handle_audio_files(include_voicelines, subtitle_source):
+def handle_audio_files(include_voicelines, copy_to, subtitle_source):
     # "../../mod/src/main/java/com/fqf/mario_qua_mario"
     voice_subtitles = []
 
@@ -16,12 +17,12 @@ def handle_audio_files(include_voicelines, subtitle_source):
     last_added_character = ""
 
     for file_name in os.listdir("Sounds"):
-        print(f"Checking '{file_name}'...")
+        # print(f"Checking '{file_name}'...")
 
-        attempt_sfx(file_name, subtitle_source.sfx_movement, "movement", movement_sfx_subtitles)
-        attempt_sfx(file_name, subtitle_source.sfx_power_up, "power_up", power_up_sfx_subtitles)
-        attempt_sfx(file_name, subtitle_source.sfx_stomp, "stomp", stomp_sfx_subtitles)
-        attempt_sfx(file_name, subtitle_source.sfx_action, "action", action_sfx_subtitles)
+        attempt_sfx(file_name, subtitle_source.sfx_movement, "movement", movement_sfx_subtitles, copy_to)
+        attempt_sfx(file_name, subtitle_source.sfx_power_up, "power_up", power_up_sfx_subtitles, copy_to)
+        attempt_sfx(file_name, subtitle_source.sfx_stomp, "stomp", stomp_sfx_subtitles, copy_to)
+        attempt_sfx(file_name, subtitle_source.sfx_action, "action", action_sfx_subtitles, copy_to)
 
         if(include_voicelines):
             match = re.match(r"(voc_)([a-z]+)(_)([a-z_]+)(\d*)(\.ogg)", file_name)
@@ -37,8 +38,16 @@ def handle_audio_files(include_voicelines, subtitle_source):
                     voice_subtitles.append("")
                     last_added_character = character
 
+                if(content_subtitles.voicelines[voiceline] == "SKIP"):
+                    continue
+
+                new_file_home = f"{copy_to}/voices/{character}/{voiceline}"
+                print(f"COPY VOICELINE TO: '{new_file_home}/{voiceline}{number}.ogg'")
+                os.makedirs(new_file_home, exist_ok=True)
+                shutil.copy(f"Sounds/{file_name}", f"{new_file_home}/{voiceline}{number}.ogg")
+
                 new_subtitle = f'"subtitles.mario_qua_mario.voice.{character}.{voiceline}": "{character.title()} {content_subtitles.voicelines[voiceline]}"'
-                if not new_subtitle in voice_subtitles and content_subtitles.voicelines[voiceline] != "SKIP":
+                if not new_subtitle in voice_subtitles:
                     voice_subtitles.append(new_subtitle)
 
     returnValue = []
@@ -49,12 +58,16 @@ def handle_audio_files(include_voicelines, subtitle_source):
     if(voice_subtitles): returnValue += voice_subtitles
     return returnValue
 
-def attempt_sfx(file_name, subtitles_list, prefix, to_list):
+def attempt_sfx(file_name, subtitles_list, prefix, to_list, to_path):
     sfx_name = file_name[:-4]
     if sfx_name in rename_sounds.sfx: sfx_name = rename_sounds.sfx[sfx_name]
 
     if sfx_name in subtitles_list:
         to_list.append(f'"subtitles.mario_qua_mario.{prefix}.{sfx_name}": "{subtitles_list[sfx_name]}"')
+        new_file_home = f"{to_path}/sfx/{prefix}"
+        print(f"COPY SFX TO: '{new_file_home}/{sfx_name}.ogg'")
+        os.makedirs(new_file_home, exist_ok=True)
+        shutil.copy(f"Sounds/{file_name}", f"{new_file_home}/{sfx_name}.ogg")
 
 def save_subtitles(input_file, output_file, new_subtitles):
     with open(input_file, 'r') as infile:
@@ -95,12 +108,35 @@ def save_subtitles(input_file, output_file, new_subtitles):
 
     print(f"File saved successfully to: {output_file}")
 
-# Example usage
+def make_sounds_dot_json(location):
+    print(f"Making sounds.json at {location}")
+
+    sounds_dot_json = {
+
+    }
+
+    for sfx_category in os.listdir(f"{location}sounds/sfx"):
+        for sfx in os.listdir(f"{location}sounds/sfx/{sfx_category}"):
+            sfx_name = sfx[:-4]
+            sounds_dot_json[f"sfx.{sfx_category}.{sfx_name}"] = {
+                "subtitle": f"subtitles.mario_qua_mario.{sfx_category}.{sfx_name}",
+                "sounds": [
+                    f"mario_qua_mario:sfx/{sfx_category}/{sfx_name}"
+                ]
+            }
+
+    print(f"Made sounds.json: {sounds_dot_json}")
+    with open(f"{location}sounds.json", 'w', encoding='utf-8') as file:
+        json.dump(sounds_dot_json, file, indent="\t")
+
+
 if __name__ == "__main__":
     # Handle CONTENT sounds
-    subtitles = handle_audio_files(True, content_subtitles)
+    subtitles = handle_audio_files(True, "Output/content/sounds", content_subtitles)
     save_subtitles("Input/testInput.json", "Output/content/en_us.json", subtitles)
+    make_sounds_dot_json("Output/content/")
 
     # Handle MOD sounds
-    subtitles2 = handle_audio_files(False, mod_subtitles)
+    subtitles2 = handle_audio_files(False, "Output/mod/sounds", mod_subtitles)
     save_subtitles("Input/testInput.json", "Output/mod/en_us.json", subtitles2)
+    make_sounds_dot_json("Output/mod/")
