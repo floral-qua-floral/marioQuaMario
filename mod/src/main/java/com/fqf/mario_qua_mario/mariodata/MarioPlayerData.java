@@ -60,21 +60,12 @@ public abstract class MarioPlayerData implements IMarioData {
 	}
 
 	public boolean setAction(@Nullable AbstractParsedAction fromAction, AbstractParsedAction toAction, long seed, boolean forced, boolean fromCommand) {
-		if(!this.getAction().equals(fromAction) && !forced && !fromCommand) {
-			// Check if we were recently in fromAction. If not, return false.
-			if(fromAction == null || this.RECENT_ACTIONS.stream().noneMatch(pair -> pair.getLeft().equals(fromAction))) {
-				Identifier fromActionID = fromAction == null ? null : fromAction.ID;
-				MarioQuaMario.LOGGER.info("TRANSITION REJECTED:\nCurrent action: {}\nFrom action: {}\nTo action: {}", this.getActionID(), fromActionID, toAction.ID);
-				return false;
-			}
-		}
 		boolean transitionedNaturally = ParsedActionHelper.attemptTransitionTo(this, fromAction == null ? this.getAction() : fromAction, toAction, seed);
 		if(transitionedNaturally && this instanceof MarioMoveableData moveableData) moveableData.applyModifiedVelocity();
 		else if(forced) this.setActionTransitionless(toAction);
 		return transitionedNaturally || forced;
 	}
 	public void setActionTransitionless(AbstractParsedAction action) {
-		this.RECENT_ACTIONS.add(new Pair<>(this.action, this.getMario().getWorld().getTime() + 10L));
 		this.action = action;
 	}
 
@@ -131,8 +122,6 @@ public abstract class MarioPlayerData implements IMarioData {
 	}
 
 	public void tick() {
-		long worldTime = this.getMario().getWorld().getTime();
-		this.RECENT_ACTIONS.removeIf(pair -> worldTime > pair.getRight());
 	}
 
 	@Override public double getStat(CharaStat stat) {
@@ -147,14 +136,14 @@ public abstract class MarioPlayerData implements IMarioData {
 		return this.getPowerUp().BUMP_STRENGTH_MODIFIER + this.getCharacter().BUMP_STRENGTH_MODIFIER;
 	}
 
-	private final Set<Pair<AbstractParsedAction, Long>> RECENT_ACTIONS = new HashSet<>();
-	private boolean recentlyInAction(AbstractParsedAction action) {
-		return true;
-	}
-
 	public boolean doMarioTravel() {
 		return this.isEnabled() && !this.getMario().getAbilities().flying && !this.getMario().isFallFlying() && !this.getMario().isUsingRiptide();
 	}
 
-	public boolean attemptDismount;
+	public DismountType attemptDismount;
+	public enum DismountType {
+		REMAIN_MOUNTED,
+		DISMOUNT_IN_PLACE,
+		VANILLA_DISMOUNT
+	}
 }

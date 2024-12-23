@@ -21,8 +21,9 @@ public class ParsedAirborneAction extends AbstractParsedAction {
 	}
 
 	@Override
-	public void travelHook(MarioMoveableData data) {
+	public boolean travelHook(MarioMoveableData data) {
 		this.AIRBORNE_DEFINITION.travelHook(data, UniversalActionDefinitionHelper.INSTANCE);
+		return true;
 	}
 
 	@Override

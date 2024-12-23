@@ -16,18 +16,23 @@
 	"environment": "*",
 	"entrypoints": {
 		"mqm-generic-actions": [
-          "com.fqf.mario_qua_mario.actions.generic.Debug",
-          "com.fqf.mario_qua_mario.actions.generic.DebugSprint"
+			"com.fqf.mario_qua_mario.actions.generic.Debug",
+			"com.fqf.mario_qua_mario.actions.generic.DebugSprint"
 		],
 		"mqm-grounded-actions": [
-          "com.fqf.mario_qua_mario.actions.grounded.SubWalk",
-          "com.fqf.mario_qua_mario.actions.grounded.WalkRun"
+			"com.fqf.mario_qua_mario.actions.grounded.SubWalk",
+			"com.fqf.mario_qua_mario.actions.grounded.WalkRun"
 		],
 		"mqm-airborne-actions": [
+			"com.fqf.mario_qua_mario.actions.airborne.Fall",
+			"com.fqf.mario_qua_mario.actions.airborne.Jump"
 		],
 		"mqm-aquatic-actions": [
 		],
 		"mqm-wallbound-actions": [
+		],
+		"mqm-mounted-actions": [
+			"com.fqf.mario_qua_mario.actions.mounted.Mounted"
 		],
 
 		"mqm-power-ups": [

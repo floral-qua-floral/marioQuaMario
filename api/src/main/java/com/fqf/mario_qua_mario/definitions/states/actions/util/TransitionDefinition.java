@@ -39,7 +39,7 @@ public record TransitionDefinition(
 	 * when you're the one transitioning.
 	 */
 	@FunctionalInterface public interface TravelExecutor {
-		boolean execute(IMarioTravelData data);
+		void execute(IMarioTravelData data);
 	}
 
 	/**

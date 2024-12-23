@@ -6,6 +6,8 @@ import com.fqf.mario_qua_mario.definitions.states.actions.util.SneakingRule;
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
 import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
 import com.fqf.mario_qua_mario.mariodata.injections.MarioDataHolder;
+import com.fqf.mario_qua_mario.registries.RegistryManager;
+import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedCharacter;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import com.fqf.mario_qua_mario.util.MarioGamerules;
@@ -13,10 +15,7 @@ import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.EntityDimensions;
-import net.minecraft.entity.EntityPose;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.*;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -35,7 +34,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements MarioDat
 	@Shadow public abstract EntityDimensions getBaseDimensions(EntityPose pose);
 
 	@Shadow public float strideDistance;
-
 	@Shadow public float prevStrideDistance;
 
 	private PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
@@ -126,10 +124,30 @@ public abstract class PlayerEntityMixin extends LivingEntity implements MarioDat
 			strideDistance = prevStrideDistance * 0.6F;
 	}
 
-//	@Inject(method = "shouldDismount", at = @At("HEAD"))
-//	private void changeDismounting(CallbackInfoReturnable<Boolean> cir) {
-//		MarioPlayerData data = mqm$getMarioData();
-//	}
+	@Override
+	public boolean startRiding(Entity entity, boolean force) {
+		MarioPlayerData data = mqm$getMarioData();
+		boolean mounted = data.getCharacter().getMountedAction(entity) != null && super.startRiding(entity, force);
+		if(mounted) {
+			data.setActionTransitionless(data.getCharacter().getMountedAction(entity));
+			data.attemptDismount = MarioPlayerData.DismountType.REMAIN_MOUNTED;
+		}
+		return mounted;
+	}
+
+	@Inject(method = "shouldDismount", at = @At("HEAD"), cancellable = true)
+	private void changeDismounting(CallbackInfoReturnable<Boolean> cir) {
+		MarioPlayerData data = mqm$getMarioData();
+		if(data.isEnabled()) cir.setReturnValue(data.attemptDismount != MarioPlayerData.DismountType.REMAIN_MOUNTED);
+	}
+
+	@Override
+	protected void onDismounted(Entity vehicle) {
+		if(mqm$getMarioData().attemptDismount == MarioPlayerData.DismountType.DISMOUNT_IN_PLACE)
+			requestTeleportAndDismount(this.getX(), this.getY(), this.getZ());
+		else
+			super.onDismounted(vehicle);
+	}
 
 	@WrapWithCondition(method = "jump", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;jump()V"))
 	private boolean preventLivingEntityJump(LivingEntity instance) {

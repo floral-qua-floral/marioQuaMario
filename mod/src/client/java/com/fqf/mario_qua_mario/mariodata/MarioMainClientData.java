@@ -36,7 +36,7 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.BASIC);
 
-		this.getAction().travelHook(this);
+		boolean cancelVanillaTravel = this.getAction().travelHook(this);
 
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.INPUT);
 
@@ -46,7 +46,7 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
 
 		this.getMario().updateLimbs(false);
-		return true;
+		return cancelVanillaTravel;
 	}
 
 	private final RealInputs INPUTS = new RealInputs();

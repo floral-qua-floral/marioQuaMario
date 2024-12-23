@@ -24,6 +24,7 @@ public record TransitionInjectionDefinition(
 		GROUNDED,
 		AIRBORNE,
 		AQUATIC,
-		WALL
+		WALLBOUND,
+		MOUNTED
 	}
 }

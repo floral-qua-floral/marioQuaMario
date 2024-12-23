@@ -1,6 +1,8 @@
 package com.fqf.mario_qua_mario.actions.grounded;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario.actions.airborne.Fall;
+import com.fqf.mario_qua_mario.actions.airborne.Jump;
 import com.fqf.mario_qua_mario.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
@@ -150,11 +152,13 @@ public class SubWalk implements GroundedActionDefinition {
 	}
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(GroundedActionHelper helper) {
 		return List.of(
-
+				Jump.makeJumpTransition(helper)
 		);
 	}
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(GroundedActionHelper helper) {
-		return List.of();
+		return List.of(
+				Fall.FALL
+		);
 	}
 
 	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {

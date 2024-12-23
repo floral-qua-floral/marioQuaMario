@@ -26,11 +26,12 @@ public class ParsedGroundedAction extends AbstractParsedAction {
 	private static final CharaStat GROUNDED_TERMINAL_VELOCITY = new CharaStat(-0.5, StatCategory.TERMINAL_VELOCITY);
 
 	@Override
-	public void travelHook(MarioMoveableData data) {
+	public boolean travelHook(MarioMoveableData data) {
 		this.GROUNDED_DEFINITION.travelHook(data, UniversalActionDefinitionHelper.INSTANCE);
 		if(data.isClient())
 			UniversalActionDefinitionHelper.INSTANCE.applyGravity(data, GROUNDED_GRAVITY, GROUNDED_TERMINAL_VELOCITY);
 		else data.setYVel(-0.1);
+		return true;
 	}
 
 	@Override

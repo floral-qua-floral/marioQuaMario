@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario.packets;
 
+import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
@@ -79,6 +80,7 @@ public class MarioDataPackets {
 		public static void receive(SetActionC2SPayload payload, ServerPlayNetworking.Context context) {
 			AbstractParsedAction fromAction = ParsedActionHelper.get(payload.fromAction());
 			AbstractParsedAction toAction = ParsedActionHelper.get(payload.toAction());
+			MarioQuaMario.LOGGER.info("Received setActionC2S: {}->{}", fromAction.ID, toAction.ID);
 			boolean rejectInvalid = context.player().getWorld().getGameRules().getBoolean(MarioGamerules.REJECT_INVALID_ACTION_TRANSITIONS);
 			if(context.player().mqm$getMarioData().setAction(fromAction, toAction, payload.seed, !rejectInvalid, false)) {
 				MarioPackets.sendToTrackers(context.player(), new ActionTransitionS2CPayload(

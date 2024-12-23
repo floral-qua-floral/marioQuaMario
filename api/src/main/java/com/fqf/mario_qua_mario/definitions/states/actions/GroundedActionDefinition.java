@@ -5,7 +5,9 @@ import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionDefinit
 import com.fqf.mario_qua_mario.mariodata.IMarioReadableMotionData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario.util.CharaStat;
+import net.minecraft.util.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -73,5 +75,11 @@ public interface GroundedActionDefinition extends IncompleteActionDefinition {
 		);
 
 		double getSlipFactor(IMarioReadableMotionData data);
+
+		void performJump(
+				IMarioTravelData data,
+				CharaStat jumpVel,
+				@Nullable CharaStat speedAddend
+		);
 	}
 }

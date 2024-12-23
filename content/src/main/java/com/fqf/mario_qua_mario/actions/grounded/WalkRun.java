@@ -73,6 +73,19 @@ public class WalkRun extends SubWalk implements GroundedActionDefinition {
 	}
 
 	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
-		return Set.of();
+		return Set.of(
+				new TransitionInjectionDefinition(
+						TransitionInjectionDefinition.InjectionPlacement.BEFORE,
+						MarioQuaMarioContent.makeID("sub_walk"),
+						TransitionInjectionDefinition.ActionCategory.AIRBORNE,
+						nearbyTransition -> new TransitionDefinition(
+								this.getID(),
+								data -> meetsWalkRunRequirement(data) && nearbyTransition.evaluator().shouldTransition(data),
+								EvaluatorEnvironment.CLIENT_ONLY,
+								nearbyTransition.travelExecutor(),
+								nearbyTransition.clientsExecutor()
+						)
+				)
+		);
 	}
 }

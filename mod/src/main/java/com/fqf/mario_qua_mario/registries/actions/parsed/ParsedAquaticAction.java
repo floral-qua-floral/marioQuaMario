@@ -21,8 +21,9 @@ public class ParsedAquaticAction extends AbstractParsedAction {
 	}
 
 	@Override
-	public void travelHook(MarioMoveableData data) {
+	public boolean travelHook(MarioMoveableData data) {
 		this.AQUATIC_DEFINITION.travelHook(data, UniversalActionDefinitionHelper.INSTANCE);
+		return true;
 	}
 
 	@Override

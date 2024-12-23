@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario.mariodata;
 
+import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.packets.MarioDataPackets;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
@@ -11,9 +12,13 @@ import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Pair;
 import net.minecraft.util.math.random.RandomSeed;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 public class MarioServerPlayerData extends MarioMoveableData implements IMarioAuthoritativeData {
 	private ServerPlayerEntity mario;
@@ -30,6 +35,90 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 
 	@Override public void setEnabled(boolean enable) {
 
+	}
+
+	private final Set<Pair<AbstractParsedAction, Long>> RECENT_ACTIONS = new HashSet<>();
+
+	@Override
+	public boolean setAction(@Nullable AbstractParsedAction fromAction, AbstractParsedAction toAction, long seed, boolean forced, boolean fromCommand) {
+		if(!this.getAction().equals(fromAction) && !forced && !fromCommand) {
+			// Check if we were recently in fromAction. If not, return false.
+			if(fromAction == null || this.RECENT_ACTIONS.stream().noneMatch(pair -> pair.getLeft().ID.equals(fromAction.ID))) {
+				Identifier fromActionID = fromAction == null ? null : fromAction.ID;
+				MarioQuaMario.LOGGER.warn(
+						"TRANSITION REJECTED:\nCurrent action: {}\nFrom action: {}\nTo action: {}\nRecent actions: {}",
+						this.getActionID(), fromActionID, toAction.ID, this.RECENT_ACTIONS.stream().findFirst().get().getLeft().ID);
+				return false;
+			}
+		}
+		return super.setAction(fromAction, toAction, seed, forced, fromCommand);
+	}
+
+	@Override
+	public void setActionTransitionless(AbstractParsedAction action) {
+		this.RECENT_ACTIONS.add(new Pair<>(this.getAction(), this.getMario().getWorld().getTime() + 10L));
+		super.setActionTransitionless(action);
+	}
+
+	@Override
+	public boolean isClient() {
+		return false;
+	}
+
+	@Override
+	public void tick() {
+		super.tick();
+		this.getAction().serverTick(this);
+		this.getPowerUp().serverTick(this);
+		this.getCharacter().serverTick(this);
+
+		long worldTime = this.getMario().getWorld().getTime();
+		this.RECENT_ACTIONS.removeIf(pair -> worldTime > pair.getRight());
+	}
+
+	@Override
+	public boolean travelHook(double forwardInput, double strafeInput) {
+		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
+		ParsedActionHelper.attemptTransitions(this, TransitionPhase.BASIC);
+
+		boolean cancelVanillaTravel = this.getAction().travelHook(this);
+
+		ParsedActionHelper.attemptTransitions(this, TransitionPhase.INPUT);
+
+		this.applyModifiedVelocity();
+		this.getMario().move(MovementType.SELF, this.getMario().getVelocity());
+
+		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
+
+		this.getMario().updateLimbs(false);
+		return cancelVanillaTravel;
+	}
+
+	@Override public MarioInputs getInputs() {
+		return PHONY_INPUTS;
+	}
+
+	private static final MarioInputs PHONY_INPUTS;
+	static {
+		MarioInputs.MarioButton phonyButton = new MarioInputs.MarioButton() {
+			@Override public boolean isPressed() {
+				return false;
+			}
+			@Override public boolean isHeld() {
+				return false;
+			}
+		};
+		PHONY_INPUTS = new MarioInputs(phonyButton, phonyButton, phonyButton) {
+			@Override public double getForwardInput() {
+				return 0;
+			}
+			@Override public double getStrafeInput() {
+				return 0;
+			}
+			@Override public boolean isReal() {
+				return false;
+			}
+		};
 	}
 
 	@Override public boolean transitionToAction(Identifier actionID) {
@@ -99,63 +188,5 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 	}
 	@Override public void assignCharacter(String characterID) {
 		this.assignCharacter(Identifier.of(characterID));
-	}
-
-	@Override
-	public boolean isClient() {
-		return false;
-	}
-
-	@Override
-	public void tick() {
-		super.tick();
-		this.getAction().serverTick(this);
-		this.getPowerUp().serverTick(this);
-		this.getCharacter().serverTick(this);
-	}
-
-	@Override
-	public boolean travelHook(double forwardInput, double strafeInput) {
-		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
-		ParsedActionHelper.attemptTransitions(this, TransitionPhase.BASIC);
-
-		this.getAction().travelHook(this);
-
-		ParsedActionHelper.attemptTransitions(this, TransitionPhase.INPUT);
-
-		this.applyModifiedVelocity();
-		this.getMario().move(MovementType.SELF, this.getMario().getVelocity());
-
-		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
-
-		this.getMario().updateLimbs(false);
-		return true;
-	}
-
-	@Override public MarioInputs getInputs() {
-		return PHONY_INPUTS;
-	}
-
-	private static final MarioInputs PHONY_INPUTS;
-	static {
-		MarioInputs.MarioButton phonyButton = new MarioInputs.MarioButton() {
-			@Override public boolean isPressed() {
-				return false;
-			}
-			@Override public boolean isHeld() {
-				return false;
-			}
-		};
-		PHONY_INPUTS = new MarioInputs(phonyButton, phonyButton, phonyButton) {
-			@Override public double getForwardInput() {
-				return 0;
-			}
-			@Override public double getStrafeInput() {
-				return 0;
-			}
-			@Override public boolean isReal() {
-				return false;
-			}
-		};
 	}
 }

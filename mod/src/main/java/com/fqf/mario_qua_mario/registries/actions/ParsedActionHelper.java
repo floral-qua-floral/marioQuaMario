@@ -15,6 +15,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Set;
 
 public class ParsedActionHelper {
@@ -28,12 +29,16 @@ public class ParsedActionHelper {
 			case AirborneActionDefinition def -> new ParsedAirborneAction(def, allInjections);
 			case AquaticActionDefinition def -> new ParsedAquaticAction(def, allInjections);
 			case WallboundActionDefinition def -> new ParsedWallboundAction(def, allInjections);
-			default -> null;
+			case MountedActionDefinition def -> new ParsedMountedAction(def, allInjections);
+			default -> throw new AssertionError("Action Definition wasn't one of the known types?!?!");
 		};
 	}
 
 	public static void attemptTransitions(MarioMoveableData data, TransitionPhase phase) {
+//		MarioQuaMario.LOGGER.info("Start checking on {}:", data.isClient() ? "CLIENT": "SERVER");
 		for(ParsedTransition transition : data.isClient() ? data.getAction().CLIENT_TRANSITIONS.get(phase) : data.getAction().SERVER_TRANSITIONS.get(phase)) {
+//			if(Objects.equals(data.getActionID(), MarioQuaMario.makeID("jump")))
+//				MarioQuaMario.LOGGER.info("Testing transition from {}->{}:\n{}", data.getActionID(), transition.targetAction().ID, transition.evaluator().shouldTransition(data));
 			if(transition.evaluator().shouldTransition(data)) {
 				long seed = data.getMario().getRandom().nextLong();
 

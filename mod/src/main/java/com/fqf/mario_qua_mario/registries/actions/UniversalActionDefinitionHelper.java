@@ -1,15 +1,14 @@
 package com.fqf.mario_qua_mario.registries.actions;
 
-import com.fqf.mario_qua_mario.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.mario_qua_mario.definitions.states.actions.AquaticActionDefinition;
-import com.fqf.mario_qua_mario.definitions.states.actions.GroundedActionDefinition;
-import com.fqf.mario_qua_mario.definitions.states.actions.WallboundActionDefinition;
+import com.fqf.mario_qua_mario.definitions.states.actions.*;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.IncompleteActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.mario_qua_mario.mariodata.IMarioReadableMotionData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
+import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
 import com.fqf.mario_qua_mario.util.CharaStat;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2d;
@@ -18,7 +17,8 @@ public class UniversalActionDefinitionHelper implements
 		GroundedActionDefinition.GroundedActionHelper,
 		AirborneActionDefinition.AirborneActionHelper,
 		AquaticActionDefinition.AquaticActionHelper,
-		WallboundActionDefinition.WallboundActionHelper {
+		WallboundActionDefinition.WallboundActionHelper,
+		MountedActionDefinition.MountedActionHelper {
 	public static final UniversalActionDefinitionHelper INSTANCE = new UniversalActionDefinitionHelper();
 	private UniversalActionDefinitionHelper() {}
 
@@ -75,14 +75,27 @@ public class UniversalActionDefinitionHelper implements
 
 	@Override
 	public double getSlipFactor(IMarioReadableMotionData data) {
-		return Math.pow(0.6 / getFloorSlipperiness(data), 3);
+		return Math.pow(0.6 / getFloorSlipperiness(data.getMario()), 3);
 	}
-	private static float getFloorSlipperiness(IMarioReadableMotionData data) {
-		if(data.getMario().isOnGround()) {
-			BlockPos blockPos = data.getMario().getVelocityAffectingPos();
-			return data.getMario().getWorld().getBlockState(blockPos).getBlock().getSlipperiness();
+	private static float getFloorSlipperiness(Entity stepper) {
+		if(stepper.isOnGround()) {
+			BlockPos blockPos = stepper.getVelocityAffectingPos();
+			return stepper.getWorld().getBlockState(blockPos).getBlock().getSlipperiness();
 		}
 		return 0.6F;
+	}
+
+	@Override
+	public void performJump(IMarioTravelData data, CharaStat jumpVel, @Nullable CharaStat speedAddend) {
+		double newYVel = jumpVel.get(data);
+		if(speedAddend != null) newYVel += speedAddend.get(data) * getSpeedFactor(data);
+		data.setYVel(newYVel);
+	}
+	private double getSpeedFactor(IMarioTravelData data) {
+		double scaledForwardVel = data.getForwardVel();
+		if(scaledForwardVel < 0) return scaledForwardVel * 0.2;
+		if(scaledForwardVel < 1) return scaledForwardVel * scaledForwardVel;
+		return scaledForwardVel;
 	}
 
 	@Override public void applyGravity(
@@ -90,7 +103,7 @@ public class UniversalActionDefinitionHelper implements
 			CharaStat gravity, @Nullable CharaStat jumpingGravity,
 			CharaStat terminalVelocity
 	) {
-
+		this.applyGravity(data, (jumpingGravity == null || data.getTimers().jumpCapped) ? gravity : jumpingGravity, terminalVelocity);
 	}
 
 	@Override public void airborneAccel(
@@ -110,7 +123,12 @@ public class UniversalActionDefinitionHelper implements
 
 	@Override
 	public void applyGravity(IMarioTravelData data, CharaStat gravity, CharaStat terminalVelocity) {
-
+		double maxFallSpeed = terminalVelocity.get(data);
+		double yVel = data.getYVel();
+		if(yVel > maxFallSpeed) {
+			yVel += gravity.get(data);
+			data.setYVel(Math.max(maxFallSpeed, yVel));
+		}
 	}
 
 	@Override
@@ -146,5 +164,22 @@ public class UniversalActionDefinitionHelper implements
 	@Override
 	public void setSidleVel(IMarioTravelData data, double sidleVel) {
 
+	}
+
+	@Override
+	public Entity getMount(IMarioReadableMotionData data) {
+		return data.getMario().getVehicle();
+	}
+
+	@Override
+	public void dismount(IMarioTravelData data, boolean reposition) {
+		((MarioPlayerData) data).attemptDismount = reposition
+				? MarioPlayerData.DismountType.VANILLA_DISMOUNT
+				: MarioPlayerData.DismountType.DISMOUNT_IN_PLACE;
+	}
+
+	@Override
+	public double getSlipFactor(Entity mount) {
+		return mount.isOnGround() ? 1.0 : Math.pow(0.6 / getFloorSlipperiness(mount), 3);
 	}
 }

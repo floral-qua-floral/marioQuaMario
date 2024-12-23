@@ -70,7 +70,13 @@ public abstract class AbstractParsedAction extends ParsedMarioThing {
 
 		for(TransitionDefinition definition : transitions) {
 			Set<TransitionInjectionDefinition> relevantInjections = new HashSet<>(allInjections.getOrDefault(definition.targetID(), Set.of()));
+
 			relevantInjections.removeIf(injection -> injection.category() != TransitionInjectionDefinition.ActionCategory.ANY && injection.category() != this.getCategory());
+
+			MarioQuaMario.LOGGER.info("TRANSITION INJECTIONS RELEVANT TO {}:", definition.targetID());
+			for (TransitionInjectionDefinition relevantInjection : relevantInjections) {
+				MarioQuaMario.LOGGER.info("This one: {}", relevantInjection);
+			}
 
 			this.conditionallyInjectTransitions(buildingClientList, buildingServerList, relevantInjections,
 					TransitionInjectionDefinition.InjectionPlacement.BEFORE, definition);
@@ -111,7 +117,7 @@ public abstract class AbstractParsedAction extends ParsedMarioThing {
 		return RegistryManager.ACTIONS.getRawIdOrThrow(this);
 	}
 
-	abstract public void travelHook(MarioMoveableData data);
+	abstract public boolean travelHook(MarioMoveableData data);
 
 	abstract protected TransitionInjectionDefinition.ActionCategory getCategory();
 }

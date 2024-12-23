@@ -76,6 +76,7 @@ public class RegistryManager {
 		actionDefinitions.addAll(getEntrypoints("mqm-airborne-actions", AirborneActionDefinition.class));
 		actionDefinitions.addAll(getEntrypoints("mqm-aquatic-actions", AquaticActionDefinition.class));
 		actionDefinitions.addAll(getEntrypoints("mqm-wallbound-actions", WallboundActionDefinition.class));
+		actionDefinitions.addAll(getEntrypoints("mqm-mounted-actions", MountedActionDefinition.class));
 
 		HashMap<Identifier, Set<TransitionInjectionDefinition>> allInjections = new HashMap<>();
 		for(IncompleteActionDefinition definition : actionDefinitions) {
