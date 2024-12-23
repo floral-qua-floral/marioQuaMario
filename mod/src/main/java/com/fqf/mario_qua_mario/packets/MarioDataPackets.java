@@ -5,6 +5,7 @@ import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedCharacter;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
+import com.fqf.mario_qua_mario.util.MarioGamerules;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.RegistryByteBuf;
@@ -76,9 +77,10 @@ public class MarioDataPackets {
 		);
 
 		public static void receive(SetActionC2SPayload payload, ServerPlayNetworking.Context context) {
-			AbstractParsedAction fromAction = ParsedActionHelper.get(payload.toAction());
+			AbstractParsedAction fromAction = ParsedActionHelper.get(payload.fromAction());
 			AbstractParsedAction toAction = ParsedActionHelper.get(payload.toAction());
-			if(context.player().mqm$getMarioData().setAction(fromAction, toAction, payload.seed, false, false)) {
+			boolean rejectInvalid = context.player().getWorld().getGameRules().getBoolean(MarioGamerules.REJECT_INVALID_ACTION_TRANSITIONS);
+			if(context.player().mqm$getMarioData().setAction(fromAction, toAction, payload.seed, !rejectInvalid, false)) {
 				MarioPackets.sendToTrackers(context.player(), new ActionTransitionS2CPayload(
 						context.player().getId(),
 						payload.fromAction,

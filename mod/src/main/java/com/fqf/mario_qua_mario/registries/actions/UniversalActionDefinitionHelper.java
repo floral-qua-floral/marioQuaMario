@@ -10,7 +10,9 @@ import com.fqf.mario_qua_mario.mariodata.IMarioReadableMotionData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
 import com.fqf.mario_qua_mario.util.CharaStat;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector2d;
 
 public class UniversalActionDefinitionHelper implements
 		GroundedActionDefinition.GroundedActionHelper,
@@ -27,7 +29,13 @@ public class UniversalActionDefinitionHelper implements
 			CharaStat strafeAccelStat, CharaStat strafeSpeedStat,
 			double forwardAngleContribution, double strafeAngleContribution, CharaStat redirectStat
 	) {
+		double slipFactor = getSlipFactor(data);
 
+		data.approachAngleAndAccel(
+				forwardAccelStat.get(data) * slipFactor, forwardSpeedStat.get(data) * data.getInputs().getForwardInput(),
+				strafeAccelStat.get(data) * slipFactor, strafeSpeedStat.get(data) * data.getInputs().getStrafeInput(),
+				forwardAngleContribution, strafeAngleContribution, redirectStat.get(data) * slipFactor
+		);
 	}
 
 	@Override
@@ -36,7 +44,45 @@ public class UniversalActionDefinitionHelper implements
 			CharaStat drag, CharaStat dragMin,
 			double forwardAngleContribution, double strafeAngleContribution, CharaStat redirection
 	) {
+		double dragValue = drag.get(data);
+		boolean dragInverted = dragValue < 0;
+		double slipFactor = getSlipFactor(data);
+		double dragMinValue = dragMin.get(data) * slipFactor;
+		if(!dragInverted) dragValue *= slipFactor;
 
+
+		Vector2d deltaVelocities = new Vector2d(
+				-dragValue * data.getForwardVel(),
+				-dragValue * data.getStrafeVel()
+		);
+		double dragVelocitySquared = deltaVelocities.lengthSquared();
+		if(dragVelocitySquared != 0 && dragVelocitySquared < dragMinValue * dragMinValue)
+			deltaVelocities.normalize(dragMinValue);
+
+		if(dragInverted) {
+			data.setForwardStrafeVel(data.getForwardVel() + deltaVelocities.x, data.getStrafeVel() + deltaVelocities.y);
+		}
+		else {
+			data.approachAngleAndAccel(
+					deltaVelocities.x, 0,
+					deltaVelocities.y, 0,
+					forwardAngleContribution,
+					strafeAngleContribution,
+					redirection.get(data) * slipFactor
+			);
+		}
+	}
+
+	@Override
+	public double getSlipFactor(IMarioReadableMotionData data) {
+		return Math.pow(0.6 / getFloorSlipperiness(data), 3);
+	}
+	private static float getFloorSlipperiness(IMarioReadableMotionData data) {
+		if(data.getMario().isOnGround()) {
+			BlockPos blockPos = data.getMario().getVelocityAffectingPos();
+			return data.getMario().getWorld().getBlockState(blockPos).getBlock().getSlipperiness();
+		}
+		return 0.6F;
 	}
 
 	@Override public void applyGravity(

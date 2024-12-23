@@ -62,8 +62,9 @@ public abstract class MarioPlayerData implements IMarioData {
 	public boolean setAction(@Nullable AbstractParsedAction fromAction, AbstractParsedAction toAction, long seed, boolean forced, boolean fromCommand) {
 		if(!this.getAction().equals(fromAction) && !forced && !fromCommand) {
 			// Check if we were recently in fromAction. If not, return false.
-			if(this.RECENT_ACTIONS.stream().noneMatch(pair -> pair.getLeft().equals(fromAction))) {
-				MarioQuaMario.LOGGER.info("Rejected action transition because we weren't in {} recently!", fromAction);
+			if(fromAction == null || this.RECENT_ACTIONS.stream().noneMatch(pair -> pair.getLeft().equals(fromAction))) {
+				Identifier fromActionID = fromAction == null ? null : fromAction.ID;
+				MarioQuaMario.LOGGER.info("TRANSITION REJECTED:\nCurrent action: {}\nFrom action: {}\nTo action: {}", this.getActionID(), fromActionID, toAction.ID);
 				return false;
 			}
 		}
@@ -135,7 +136,7 @@ public abstract class MarioPlayerData implements IMarioData {
 	}
 
 	@Override public double getStat(CharaStat stat) {
-		return stat.BASE * this.getStatMultiplier(stat);
+		return stat.BASE_VALUE * this.getStatMultiplier(stat);
 	}
 
 	@Override public double getStatMultiplier(CharaStat stat) {
@@ -150,4 +151,10 @@ public abstract class MarioPlayerData implements IMarioData {
 	private boolean recentlyInAction(AbstractParsedAction action) {
 		return true;
 	}
+
+	public boolean doMarioTravel() {
+		return this.isEnabled() && !this.getMario().getAbilities().flying && !this.getMario().isFallFlying() && !this.getMario().isUsingRiptide();
+	}
+
+	public boolean attemptDismount;
 }

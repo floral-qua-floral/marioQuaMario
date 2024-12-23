@@ -1,13 +1,20 @@
 package com.fqf.mario_qua_mario.mixin;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.SlidingStatus;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.SneakingRule;
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
 import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
 import com.fqf.mario_qua_mario.mariodata.injections.MarioDataHolder;
+import com.fqf.mario_qua_mario.registries.power_granting.ParsedCharacter;
+import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import com.fqf.mario_qua_mario.util.MarioGamerules;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.EntityDimensions;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -17,12 +24,20 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity implements MarioDataHolder {
+	@Shadow public abstract EntityDimensions getBaseDimensions(EntityPose pose);
+
+	@Shadow public float strideDistance;
+
+	@Shadow public float prevStrideDistance;
+
 	private PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
 		super(entityType, world);
 	}
@@ -35,6 +50,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements MarioDat
 	@Inject(method = "travel", at = @At("HEAD"), cancellable = true)
 	private void travelHook(Vec3d movementInput, CallbackInfo ci) {
 		if(this.mqm$getMarioData() instanceof MarioMoveableData moveableData
+				&& moveableData.doMarioTravel()
 				&& moveableData.travelHook(movementInput.z, movementInput.x))
 			ci.cancel();
 	}
@@ -55,6 +71,71 @@ public abstract class PlayerEntityMixin extends LivingEntity implements MarioDat
 		};
 	}
 
+	@WrapMethod(method = "damage")
+	private boolean damageHook(DamageSource source, float amount, Operation<Boolean> original) {
+		float factor;
+		if(mqm$getMarioData().isEnabled()) factor = (float) getWorld().getGameRules().get(MarioGamerules.INCOMING_DAMAGE_MULTIPLIER).get();
+		else factor = 1F;
+		return original.call(source, amount * factor);
+	}
+
+	@Inject(method = "shouldSwimInFluids", at = @At("HEAD"), cancellable = true)
+	private void preventVanillaSwimming(CallbackInfoReturnable<Boolean> cir) {
+		if(mqm$getMarioData().doMarioTravel())
+			cir.setReturnValue(false);
+	}
+
+	@Inject(method = "getBaseDimensions", at = @At("RETURN"), cancellable = true)
+	private void alterMarioHitbox(EntityPose pose, CallbackInfoReturnable<EntityDimensions> cir) {
+		MarioPlayerData data = mqm$getMarioData();
+		if(data.isEnabled()) {
+			// Return the standing hitbox if we're trying to evaluate Mario's sneaking hitbox while he can't sneak
+			if(pose == EntityPose.CROUCHING && data.getAction().SNEAKING_RULE == SneakingRule.PROHIBIT)
+				cir.setReturnValue(getBaseDimensions(EntityPose.STANDING));
+			else {
+				ParsedPowerUp powerUp = data.getPowerUp();
+				ParsedCharacter character = data.getCharacter();
+
+				float widthFactor = powerUp.WIDTH_FACTOR * character.WIDTH_FACTOR;
+				float heightFactor = powerUp.HEIGHT_FACTOR * character.HEIGHT_FACTOR;
+				if(pose == EntityPose.CROUCHING) heightFactor *= 0.6F;
+
+				EntityDimensions normalDimensions = cir.getReturnValue();
+
+				cir.setReturnValue(new EntityDimensions(
+						normalDimensions.width() * widthFactor,
+						normalDimensions.height() * heightFactor,
+						normalDimensions.eyeHeight() * heightFactor,
+						normalDimensions.attachments().scale(widthFactor, heightFactor, widthFactor), normalDimensions.fixed()
+				));
+			}
+		}
+	}
+
+	@Inject(method = "clipAtLedge", at = @At("HEAD"), cancellable = true)
+	private void slideOffLedges(CallbackInfoReturnable<Boolean> cir) {
+		MarioPlayerData data = mqm$getMarioData();
+		if(data.doMarioTravel() && data.getAction().SNEAKING_RULE == SneakingRule.SLIP)
+			cir.setReturnValue(false);
+	}
+
+	@Inject(method = "tickMovement", at = @At("TAIL"))
+	private void preventViewBobbing(CallbackInfo ci) {
+		MarioPlayerData data = mqm$getMarioData();
+		if(data.isClient() && data.getAction().SLIDING_STATUS != SlidingStatus.NOT_SLIDING)
+			strideDistance = prevStrideDistance * 0.6F;
+	}
+
+//	@Inject(method = "shouldDismount", at = @At("HEAD"))
+//	private void changeDismounting(CallbackInfoReturnable<Boolean> cir) {
+//		MarioPlayerData data = mqm$getMarioData();
+//	}
+
+	@WrapWithCondition(method = "jump", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;jump()V"))
+	private boolean preventLivingEntityJump(LivingEntity instance) {
+		return !mqm$getMarioData().doMarioTravel();
+	}
+
 	@Override
 	public void writeCustomDataToNbt(NbtCompound nbt) {
 		super.writeCustomDataToNbt(nbt);
@@ -72,13 +153,5 @@ public abstract class PlayerEntityMixin extends LivingEntity implements MarioDat
 				persistentData.getString("Character"));
 
 		nbt.put(MarioQuaMario.MOD_DATA_KEY, persistentData);
-	}
-
-	@WrapMethod(method = "damage")
-	private boolean damageHook(DamageSource source, float amount, Operation<Boolean> original) {
-		float factor;
-		if(mqm$getMarioData().isEnabled()) factor = (float) getWorld().getGameRules().get(MarioGamerules.INCOMING_DAMAGE_MULTIPLIER).get();
-		else factor = 1F;
-		return original.call(source, amount * factor);
 	}
 }

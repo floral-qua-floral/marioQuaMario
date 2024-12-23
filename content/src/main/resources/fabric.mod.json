@@ -20,7 +20,8 @@
           "com.fqf.mario_qua_mario.actions.generic.DebugSprint"
 		],
 		"mqm-grounded-actions": [
-          "com.fqf.mario_qua_mario.actions.grounded.SubWalk"
+          "com.fqf.mario_qua_mario.actions.grounded.SubWalk",
+          "com.fqf.mario_qua_mario.actions.grounded.WalkRun"
 		],
 		"mqm-airborne-actions": [
 		],

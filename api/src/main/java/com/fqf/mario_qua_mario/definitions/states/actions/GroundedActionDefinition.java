@@ -2,6 +2,7 @@ package com.fqf.mario_qua_mario.definitions.states.actions;
 
 import com.fqf.mario_qua_mario.definitions.states.actions.util.IncompleteActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionDefinition;
+import com.fqf.mario_qua_mario.mariodata.IMarioReadableMotionData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario.util.CharaStat;
 import org.jetbrains.annotations.NotNull;
@@ -70,5 +71,7 @@ public interface GroundedActionDefinition extends IncompleteActionDefinition {
 				double forwardAngleContribution, double strafeAngleContribution,
 				CharaStat redirection
 		);
+
+		double getSlipFactor(IMarioReadableMotionData data);
 	}
 }

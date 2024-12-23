@@ -9,18 +9,20 @@ import java.util.Set;
  * This is used for movement, speed thresholds, and damage calculations.
  */
 public class CharaStat {
-	public final double BASE;
+	public static final CharaStat ZERO = new CharaStat(0);
+
+	public final double BASE_VALUE;
 	public final Set<StatCategory> CATEGORIES;
 
-	public CharaStat(double base, StatCategory... categories) {
-		this(base, Set.of(categories));
+	public CharaStat(double baseValue, StatCategory... categories) {
+		this(baseValue, Set.of(categories));
 	}
 	public CharaStat variate(double multiplier) {
-		return new CharaStat(this.BASE * multiplier, this.CATEGORIES);
+		return new CharaStat(this.BASE_VALUE * multiplier, this.CATEGORIES);
 	}
 
 	private CharaStat(double base, Set<StatCategory> categorySet) {
-		this.BASE = base;
+		this.BASE_VALUE = base;
 		this.CATEGORIES = categorySet;
 	}
 
@@ -29,6 +31,10 @@ public class CharaStat {
 	}
 	public double getAsThreshold(IMarioData data) {
 		return this.get(data) * 0.96;
+	}
+	public double getAsSquaredThreshold(IMarioData data) {
+		double threshold = this.getAsThreshold(data);
+		return threshold * threshold;
 	}
 	public double getAsLimit(IMarioData data) {
 		return this.get(data) * 1.015;

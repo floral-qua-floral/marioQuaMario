@@ -59,6 +59,12 @@ public abstract class MarioMoveableData extends MarioPlayerData implements IMari
 		if(this.VELOCITIES.isGenerated) return this.VELOCITIES.vertical;
 		else return this.getMario().getVelocity().y;
 	}
+	@Override public double getHorizVel() {
+		return this.getMario().getVelocity().horizontalLength();
+	}
+	@Override public double getHorizVelSquared() {
+		return this.getMario().getVelocity().horizontalLengthSquared();
+	}
 
 	@Override public void setForwardVel(double forward) {
 		VELOCITIES.ensureDirty().forward = forward;
