@@ -71,5 +71,7 @@ public class ParsedAttackInterception {
 			this.DEFINITION.executeTravellers(moveableData, weapon, cooldownProgress, targetBlock, targetEntity);
 
 		if(this.ACTION_TARGET != null) data.setActionTransitionless(this.ACTION_TARGET);
+		if(data.isClient() && this.HAND_TO_SWING != null) data.getMario().swingHand(this.HAND_TO_SWING, false);
+		if(this.TRIGGERS_ATTACK_COOLDOWN) data.getMario().resetLastAttackedTicks();
 	}
 }

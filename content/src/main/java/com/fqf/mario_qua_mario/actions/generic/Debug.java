@@ -87,13 +87,11 @@ public class Debug implements GenericActionDefinition {
 					@Override public @Nullable Identifier getActionTarget() {
 						return null;
 					}
-
 					@Override public Hand getHandToSwing() {
 						return Hand.OFF_HAND;
 					}
-
 					@Override public boolean shouldTriggerAttackCooldown() {
-						return false;
+						return true;
 					}
 
 					@Override public boolean shouldInterceptAttack(
