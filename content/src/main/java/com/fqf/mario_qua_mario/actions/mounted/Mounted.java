@@ -84,7 +84,7 @@ public class Mounted implements MountedActionDefinition {
 		return Set.of();
 	}
 
-	@Override public @NotNull List<AttackInterceptionDefinition> getUnarmedAttackInterceptions() {
+	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions() {
 		return List.of();
 	}
 }

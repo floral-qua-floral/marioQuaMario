@@ -6,9 +6,10 @@
     "ClientPlayerEntityMarioDataMixin",
     "ClientPlayerEntityMixin",
     "InGameHudMixin",
+    "MinecraftClientMixin",
     "OtherClientPlayerEntityMarioDataMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-	}
+  }
 }

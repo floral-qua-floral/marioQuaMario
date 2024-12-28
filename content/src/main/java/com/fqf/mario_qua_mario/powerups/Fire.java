@@ -62,7 +62,7 @@ public class Fire implements PowerUpDefinition {
 
 	}
 
-	@Override public @NotNull List<AttackInterceptionDefinition> getUnarmedAttackInterceptions() {
+	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions() {
 		return List.of();
 	}
 }

@@ -2,13 +2,17 @@ package com.fqf.mario_qua_mario.mixin.client;
 
 import com.fqf.mario_qua_mario.definitions.states.actions.util.SprintingRule;
 import com.fqf.mario_qua_mario.mariodata.injections.MarioMainClientDataHolder;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.authlib.GameProfile;
+import net.minecraft.client.input.Input;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ClientPlayerEntity.class)
@@ -22,5 +26,10 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 	private void preventSprinting(CallbackInfoReturnable<Boolean> cir) {
 		if(mqm$getMarioData().doMarioTravel() && mqm$getMarioData().getAction().SPRINTING_RULE == SprintingRule.PROHIBIT)
 			cir.setReturnValue(false);
+	}
+
+	@Inject(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/AbstractClientPlayerEntity;tickMovement()V"))
+	private void tickMovementClinger(CallbackInfo ci) {
+		mqm$getMarioData().tickInputs();
 	}
 }

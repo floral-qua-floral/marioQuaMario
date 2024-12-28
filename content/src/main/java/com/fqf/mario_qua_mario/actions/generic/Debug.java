@@ -3,11 +3,16 @@ package com.fqf.mario_qua_mario.actions.generic;
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario.definitions.states.actions.GenericActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
-import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
-import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
-import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
+import com.fqf.mario_qua_mario.mariodata.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -76,7 +81,55 @@ public class Debug implements GenericActionDefinition {
 		return Set.of();
 	}
 
-	@Override public @NotNull List<AttackInterceptionDefinition> getUnarmedAttackInterceptions() {
-		return List.of();
+	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions() {
+		return List.of(
+				new AttackInterceptionDefinition() {
+					@Override public @Nullable Identifier getActionTarget() {
+						return null;
+					}
+
+					@Override public Hand getHandToSwing() {
+						return Hand.OFF_HAND;
+					}
+
+					@Override public boolean shouldTriggerAttackCooldown() {
+						return false;
+					}
+
+					@Override public boolean shouldInterceptAttack(
+							IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
+							@Nullable EntityHitResult entityHitResult
+					) {
+						return true;
+					}
+					@Override public @NotNull MiningHandling shouldInterceptMining(
+							IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
+							BlockHitResult blockHitResult, int miningTicks
+					) {
+						return weapon.isEmpty() && miningTicks < 10 ? MiningHandling.INTERCEPT : MiningHandling.MINE;
+					}
+
+					@Override public void executeTravellers(
+							IMarioTravelData data, ItemStack weapon, float attackCooldownProgress,
+							@Nullable BlockPos blockTarget, @Nullable Entity entityTarget
+					) {
+
+					}
+					@Override public void executeClients(
+							IMarioClientData data, ItemStack weapon, float attackCooldownProgress,
+							@Nullable BlockPos blockTarget, @Nullable Entity entityTarget,
+							long seed
+					) {
+						data.playSound(SoundEvents.ENTITY_GENERIC_EXPLODE.value(), seed);
+					}
+
+					@Override public void strikeEntity(
+							IMarioData data, ItemStack weapon, float attackCooldownProgress,
+							ServerWorld world, @NotNull Entity target
+					) {
+
+					}
+				}
+		);
 	}
 }

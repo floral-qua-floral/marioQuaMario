@@ -165,7 +165,7 @@ public class SubWalk implements GroundedActionDefinition {
 		return Set.of();
 	}
 
-	@Override public @NotNull List<AttackInterceptionDefinition> getUnarmedAttackInterceptions() {
+	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions() {
 		return List.of();
 	}
 }

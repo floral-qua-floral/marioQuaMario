@@ -1,22 +1,29 @@
 package com.fqf.mario_qua_mario;
 
+import com.fqf.mario_qua_mario.packets.MarioAttackInterceptionPackets;
 import com.fqf.mario_qua_mario.packets.MarioDataPackets;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
+import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.BlockPosArgumentType;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.RegistryEntryReferenceArgumentType;
+import net.minecraft.entity.Entity;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.random.RandomSeed;
 
@@ -103,13 +110,21 @@ public class MarioCommand {
 							)
 						)
 					)
+					.then(literal("attackInterception")
+						.requires(source -> source.hasPermissionLevel(2))
+						.then(argument("mario", EntityArgumentType.player())
+							.then(makeInterceptionTypeFork(true, registryAccess))
+							.then(makeInterceptionTypeFork(false, registryAccess))
+						)
+					)
 				)
 			)
 		);
 	}
 
 	private static int sendFeedback(CommandContext<ServerCommandSource> context, String feedback, boolean successful) {
-		context.getSource().sendFeedback(() -> Text.literal(feedback), true);
+		if(successful) context.getSource().sendFeedback(() -> Text.literal(feedback), true);
+		else context.getSource().sendError(Text.literal(feedback));
 		return successful ? 1 : 0;
 	}
 	private static int sendFeedback(CommandContext<ServerCommandSource> context, String feedback) {
@@ -192,10 +207,63 @@ public class MarioCommand {
 			.executes(context -> executeBump(context, false, direction, 4))
 			.then(argument("strength", IntegerArgumentType.integer())
 				.executes(context -> executeBump(context, false, direction, null))
-				.then(argument("target", EntityArgumentType.player())
+				.then(argument("mario", EntityArgumentType.player())
 					.executes(context -> executeBump(context, true, direction, null))
 				)
 			);
+	}
+
+	private static int executeAttackInterception(CommandContext<ServerCommandSource> context, boolean isAction, Boolean isEntity) throws CommandSyntaxException {
+		Entity targetEntity = null;
+		BlockPos targetBlock = null;
+		if(isEntity != null) {
+			if(isEntity) targetEntity = EntityArgumentType.getEntity(context, "target");
+			else targetBlock = BlockPosArgumentType.getValidBlockPos(context, "position");
+		}
+
+		int index = IntegerArgumentType.getInteger(context, "index");
+		ServerPlayerEntity mario = getPlayerFromCmd(context, true);
+		Identifier interceptionSourceID = null;
+
+		try {
+			if(isAction) {
+				AbstractParsedAction action = RegistryEntryReferenceArgumentType.getRegistryEntry(context, "action", RegistryManager.ACTIONS_KEY).value();
+				interceptionSourceID = action.ID;
+				MarioAttackInterceptionPackets.handleInterceptionCommandAction(mario, action, index, targetEntity, targetBlock);
+			}
+			else {
+				ParsedPowerUp powerUp = RegistryEntryReferenceArgumentType.getRegistryEntry(context, "powerUp", RegistryManager.POWER_UPS_KEY).value();
+				interceptionSourceID = powerUp.ID;
+				MarioAttackInterceptionPackets.handleInterceptionCommandPowerUp(mario, powerUp, index, targetEntity, targetBlock);
+			}
+			return sendFeedback(context, "Executed Attack Interception number " + index + " from " + interceptionSourceID);
+		}
+		catch(IndexOutOfBoundsException ignored) {
+			return sendFeedback(context, interceptionSourceID + " doesn't have an Attack Interception of index " + index, false);
+		}
+	}
+	private static LiteralArgumentBuilder<ServerCommandSource> makeInterceptionTypeFork(boolean isAction, CommandRegistryAccess registryAccess) {
+		String type = isAction ? "action" : "powerUp";
+		return literal(type)
+			.then(argument(type, uwu(isAction, registryAccess))
+				.then(argument("index", IntegerArgumentType.integer(0))
+					.executes(context -> executeAttackInterception(context, isAction, null))
+					.then(literal("entity")
+						.then(argument("target", EntityArgumentType.entity())
+							.executes(context -> executeAttackInterception(context, isAction, true))
+						)
+					)
+					.then(literal("block")
+						.then(argument("position", BlockPosArgumentType.blockPos())
+							.executes(context -> executeAttackInterception(context, isAction, false))
+						)
+					)
+				)
+			);
+	}
+	private static RegistryEntryReferenceArgumentType<?> uwu(boolean isAction, CommandRegistryAccess registryAccess) {
+		if(isAction) return RegistryEntryReferenceArgumentType.registryEntry(registryAccess, RegistryManager.ACTIONS_KEY);
+		else return RegistryEntryReferenceArgumentType.registryEntry(registryAccess, RegistryManager.POWER_UPS_KEY);
 	}
 
 	private static int executeActionTransition(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {

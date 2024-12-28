@@ -1,8 +1,10 @@
 package com.fqf.mario_qua_mario.registries.actions;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.definitions.states.AttackInterceptingStateDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
+import com.fqf.mario_qua_mario.registries.ParsedAttackInterception;
 import com.fqf.mario_qua_mario.registries.ParsedMarioThing;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import net.minecraft.util.Identifier;
@@ -27,6 +29,8 @@ public abstract class AbstractParsedAction extends ParsedMarioThing {
 	public final EnumMap<TransitionPhase, List<ParsedTransition>> CLIENT_TRANSITIONS;
 	public final EnumMap<TransitionPhase, List<ParsedTransition>> SERVER_TRANSITIONS;
 
+	public final List<ParsedAttackInterception> INTERCEPTIONS;
+
 	public AbstractParsedAction(IncompleteActionDefinition definition, HashMap<Identifier, Set<TransitionInjectionDefinition>> allInjections) {
 		super(definition);
 		this.ACTION_DEFINITION = definition;
@@ -48,6 +52,8 @@ public abstract class AbstractParsedAction extends ParsedMarioThing {
 			allInjections.putIfAbsent(injection.injectNearTransitionsTo(), new HashSet<>());
 			allInjections.get(injection.injectNearTransitionsTo()).add(injection);
 		}
+
+		this.INTERCEPTIONS = new ArrayList<>();
 	}
 
 	protected abstract List<TransitionDefinition> getBasicTransitions();
@@ -58,6 +64,10 @@ public abstract class AbstractParsedAction extends ParsedMarioThing {
 		this.parseTransitions(TransitionPhase.BASIC, this.getBasicTransitions(), allInjections);
 		this.parseTransitions(TransitionPhase.INPUT, this.getInputTransitions(), allInjections);
 		this.parseTransitions(TransitionPhase.WORLD_COLLISION, this.getWorldCollisionTransitions(), allInjections);
+
+		for (AttackInterceptingStateDefinition.AttackInterceptionDefinition interception : this.ACTION_DEFINITION.getAttackInterceptions()) {
+			this.INTERCEPTIONS.add(new ParsedAttackInterception(interception, true));
+		}
 	}
 	private void parseTransitions(
 			TransitionPhase phase, List<TransitionDefinition> transitions,

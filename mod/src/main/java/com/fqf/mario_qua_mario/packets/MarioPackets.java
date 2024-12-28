@@ -23,6 +23,14 @@ public class MarioPackets {
 		MarioDataPackets.AssignCharacterS2CPayload.register();
 
 		SyncUseCharacterStatsS2CPayload.register();
+
+		MarioAttackInterceptionPackets.MissedAttackInterceptedC2SPayload.register();
+		MarioAttackInterceptionPackets.EntityAttackInterceptedC2SPayload.register();
+		MarioAttackInterceptionPackets.BlockAttackInterceptedC2SPayload.register();
+
+		MarioAttackInterceptionPackets.MissedAttackInterceptedS2CPayload.register();
+		MarioAttackInterceptionPackets.EntityAttackInterceptedS2CPayload.register();
+		MarioAttackInterceptionPackets.BlockAttackInterceptedS2CPayload.register();
 	}
 
 	public static void syncUseCharacterStatsS2C(boolean shouldUse) {

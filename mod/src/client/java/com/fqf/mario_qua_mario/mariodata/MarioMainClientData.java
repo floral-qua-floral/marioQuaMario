@@ -23,10 +23,13 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 	@Override
 	public void tick() {
 		super.tick();
-		this.INPUTS.updateButtons();
 		this.getAction().clientTick(this, true);
 		this.getPowerUp().clientTick(this, true);
 		this.getCharacter().clientTick(this, true);
+	}
+
+	public void tickInputs() {
+		this.INPUTS.updateButtons();
 	}
 
 	@Override
