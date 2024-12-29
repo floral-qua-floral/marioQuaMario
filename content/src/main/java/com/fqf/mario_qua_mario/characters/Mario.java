@@ -5,6 +5,7 @@ import com.fqf.mario_qua_mario.definitions.states.CharacterDefinition;
 import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
 import net.minecraft.entity.Entity;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,6 +25,9 @@ public class Mario implements CharacterDefinition {
 
 	@Override public Identifier getMountedAction(Entity vehicle) {
 		return MarioQuaMarioContent.makeID("mounted");
+	}
+	@Override public SoundEvent getJumpSound() {
+		return null;
 	}
 
 	@Override public float getWidthFactor() {

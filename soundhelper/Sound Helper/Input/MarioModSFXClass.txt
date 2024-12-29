@@ -7,7 +7,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
 public class MarioModSFX {
-    $INSERT CODE HERE$
+$INSERT CODE HERE$
 
 	private static SoundEvent makeMovementSound(String name) {
 		return makeAndRegisterSound("sfx.movement." + name);
