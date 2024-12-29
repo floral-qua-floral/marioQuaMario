@@ -2,7 +2,6 @@ package com.fqf.mario_qua_mario.mixin.client;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.mariodata.MarioMainClientData;
-import com.fqf.mario_qua_mario.packets.MarioAttackInterceptionPackets;
 import com.fqf.mario_qua_mario.packets.MarioClientPacketHelper;
 import com.fqf.mario_qua_mario.registries.ParsedAttackInterception;
 import net.minecraft.client.MinecraftClient;
@@ -31,12 +30,22 @@ public abstract class MinecraftClientMixin {
 	@Shadow @Final public GameOptions options;
 
 	@Shadow protected abstract void handleBlockBreaking(boolean breaking);
+	@Shadow protected abstract boolean doAttack();
 
 	@Inject(method = "doAttack", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/hit/HitResult;getType()Lnet/minecraft/util/hit/HitResult$Type;"), cancellable = true)
 	private void doAttackInterception(CallbackInfoReturnable<Boolean> cir) {
-		assert this.player != null;
-		if(this.attemptAttackInterceptions(this.player.mqm$getMarioData()))
-			cir.setReturnValue(false);
+		assert this.player != null && this.crosshairTarget != null;
+
+		if(this.crosshairTarget.getType() == HitResult.Type.BLOCK) {
+			if(this.attemptMiningInterceptions(this.player.mqm$getMarioData()))
+				cir.setReturnValue(false);
+		}
+		else {
+			if(this.attemptAttackInterceptions(this.player.mqm$getMarioData()))
+				cir.setReturnValue(false);
+		}
+
+
 	}
 
 	@Unique
@@ -65,6 +74,8 @@ public abstract class MinecraftClientMixin {
 	) {
 		if(interception.shouldInterceptAttack(data, weapon, attackCooldownProgress, entityHitResult)) {
 			this.executeAndNetworkInterception(data, attackCooldownProgress, weapon, entityHitResult, null, interception);
+			this.miningTicks = 1; // Prevents double-interception when punching air & then moving crosshair to block
+			this.executeHeldInterception = false; // Prevents double-interception from HOLD mining interceptions that didn't end properly
 			return true;
 		}
 		return false;
@@ -78,63 +89,89 @@ public abstract class MinecraftClientMixin {
 			ParsedAttackInterception interception
 	) {
 		assert this.player != null;
+		MarioQuaMario.LOGGER.info("Executing & networking intereception!\n{}\n{}", data.getMario().getWeaponStack(), this.heldInterception);
 		long seed = this.player.getRandom().nextLong();
 		Entity entityTarget = entityHitResult == null ? null : entityHitResult.getEntity();
 		BlockPos blockTarget = blockHitResult == null ? null : blockHitResult.getBlockPos();
 		interception.execute(data, entityTarget, blockTarget, seed);
 		MarioClientPacketHelper.attackInterceptionC2S(data, interception, entityTarget, blockTarget, seed);
+
+		this.heldInterception = interception;
+		MarioQuaMario.LOGGER.info("Set held interception!");
 	}
 
-	@Unique private ParsedAttackInterception heldInterception;
+	@Unique private @Nullable ParsedAttackInterception heldInterception;
+	@Unique private boolean executeHeldInterception = false;
 	@Unique private int miningTicks;
 
 	@Inject(method = "handleBlockBreaking", at = @At("HEAD"))
 	private void resetMiningTicksAndTriggerHeldInterception(boolean breaking, CallbackInfo ci) {
 		assert this.player != null;
-		MarioQuaMario.LOGGER.info("Breaking: {}, Mining ticks: {}", breaking, miningTicks);
 		if(!breaking && !this.options.attackKey.isPressed()) {
 			this.miningTicks = 0;
 			if(this.heldInterception != null) {
-				BlockHitResult blockHitResult;
+				if(this.executeHeldInterception) {
+					BlockHitResult blockHitResult;
 
-				assert this.crosshairTarget != null;
-				if(this.crosshairTarget.getType() == HitResult.Type.BLOCK) blockHitResult = (BlockHitResult) this.crosshairTarget;
-				else blockHitResult = null;
+					assert this.crosshairTarget != null;
+					if(this.crosshairTarget.getType() == HitResult.Type.BLOCK) blockHitResult = (BlockHitResult) this.crosshairTarget;
+					else blockHitResult = null;
 
-				this.executeAndNetworkInterception(
-						this.player.mqm$getMarioData(),
-						ParsedAttackInterception.getAttackCooldownProgress(this.player), this.player.getWeaponStack(),
-						null, blockHitResult,
-						this.heldInterception
-				);
+					this.executeAndNetworkInterception(
+							this.player.mqm$getMarioData(),
+							ParsedAttackInterception.getAttackCooldownProgress(this.player), this.player.getWeaponStack(),
+							null, blockHitResult,
+							this.heldInterception
+					);
+				}
+
 				this.heldInterception = null;
+				this.executeHeldInterception = false;
+				MarioQuaMario.LOGGER.info("Never started mining!");
 			}
 		}
+		else this.miningTicks++;
 	}
 
 	@Inject(method = "handleBlockBreaking", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerInteractionManager;updateBlockBreakingProgress(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/Direction;)Z"), cancellable = true)
 	private void doMiningInterception(boolean breaking, CallbackInfo ci) {
-		assert this.player != null;
-		if (breaking) {
-			if (this.attemptMiningInterceptions(this.player.mqm$getMarioData())) {
+		assert this.player != null && this.crosshairTarget != null;
+		if (breaking && this.heldInterception != null) {
+//			if (this.attemptMiningInterceptions(this.player.mqm$getMarioData(), false)) {
+			float attackCooldownProgress = ParsedAttackInterception.getAttackCooldownProgress(this.player);
+			ItemStack weapon = this.player.getWeaponStack();
+			BlockHitResult blockHitResult = (BlockHitResult) this.crosshairTarget;
+			if (this.shouldSuppressMining(this.player.mqm$getMarioData(), attackCooldownProgress, weapon, blockHitResult, this.heldInterception, false)) {
 				this.handleBlockBreaking(false);
+				MarioQuaMario.LOGGER.info("Suppressing mining!");
 				ci.cancel();
 			}
 			else {
+				MarioQuaMario.LOGGER.info("Started mining due to holding the button past suppression window!");
+				if(this.crosshairTarget.getType() == HitResult.Type.BLOCK) this.doAttack(); // Reset mining progress
 				this.heldInterception = null;
+				this.executeHeldInterception = false;
 			}
 		}
 	}
 
 	@Unique
 	private boolean attemptMiningInterceptions(MarioMainClientData data) {
+		// If an interception is already being held out, that means that we've just started mining due to holding the
+		// attack button down past the suppression threshold, and so we shouldn't try and start a new interception.
+		if(this.heldInterception != null) return false;
+
 		assert this.player != null && this.crosshairTarget != null;
 		float attackCooldownProgress = ParsedAttackInterception.getAttackCooldownProgress(this.player);
 		ItemStack weapon = this.player.getWeaponStack();
 		BlockHitResult blockHitResult = (BlockHitResult) this.crosshairTarget;
 
 		for (ParsedAttackInterception interception : data.getAction().INTERCEPTIONS)
-			if(this.shouldSuppressMining(data, attackCooldownProgress, weapon, blockHitResult, interception))
+			if(this.shouldSuppressMining(data, attackCooldownProgress, weapon, blockHitResult, interception, true))
+				return true;
+
+		for (ParsedAttackInterception interception : data.getPowerUp().INTERCEPTIONS)
+			if(this.shouldSuppressMining(data, attackCooldownProgress, weapon, blockHitResult, interception, true))
 				return true;
 
 		return false;
@@ -144,19 +181,20 @@ public abstract class MinecraftClientMixin {
 	private boolean shouldSuppressMining(
 			MarioMainClientData data,
 			float attackCooldownProgress, ItemStack weapon, BlockHitResult blockHitResult,
-			ParsedAttackInterception interception
+			ParsedAttackInterception interception, boolean shouldExecute
 	) {
 		return switch(interception.shouldInterceptMining(data, weapon, attackCooldownProgress, blockHitResult, this.miningTicks)) {
 			case MINE -> false;
 			case HOLD -> {
-				this.heldInterception = interception;
-				this.miningTicks++;
+				if(shouldExecute) {
+					this.heldInterception = interception;
+					this.executeHeldInterception = true;
+				}
 				yield true;
 			}
 			case INTERCEPT -> {
-				if(this.miningTicks == 0)
+				if(shouldExecute)
 					this.executeAndNetworkInterception(data, attackCooldownProgress, weapon, null, blockHitResult, interception);
-				this.miningTicks++;
 				yield true;
 			}
 		};

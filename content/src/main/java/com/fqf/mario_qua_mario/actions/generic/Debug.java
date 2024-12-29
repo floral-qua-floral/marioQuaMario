@@ -104,7 +104,7 @@ public class Debug implements GenericActionDefinition {
 							IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
 							BlockHitResult blockHitResult, int miningTicks
 					) {
-						return weapon.isEmpty() && miningTicks < 10 ? MiningHandling.INTERCEPT : MiningHandling.MINE;
+						return (weapon.isEmpty() && miningTicks < 20) ? MiningHandling.INTERCEPT : MiningHandling.MINE;
 					}
 
 					@Override public void executeTravellers(
