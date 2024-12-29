@@ -123,7 +123,7 @@ def save_subtitles(input_file, output_directory, sounds):
 
     print(f"File saved successfully to: {output_directory}")
 
-def make_sounds_dot_json_and_java_file(sounds_dot_json_location, input_java_file, java_file, sound_files_location):
+def make_sounds_dot_json_and_java_file(sounds_dot_json_location, do_voices, input_java_file, java_file, sound_files_location):
     print(f"Making sounds.json at {sounds_dot_json_location}")
 
     sounds_dot_json = {}
@@ -140,17 +140,18 @@ def make_sounds_dot_json_and_java_file(sounds_dot_json_location, input_java_file
 
         java_lines.append("\n")
 
-    for character in os.listdir(f"{sound_files_location}voices"):
-        for voiceline in os.listdir(f"{sound_files_location}voices/{character}"):
-            voiceline_sound_files = []
-            for sfx in os.listdir(f"{sound_files_location}voices/{character}/{voiceline}"):
-                sfx_name = sfx[:-4]
-                voiceline_sound_files.append(f"mario_qua_mario:voices/{character}/{voiceline}/{sfx_name}")
+    if do_voices:
+        for character in os.listdir(f"{sound_files_location}voices"):
+            for voiceline in os.listdir(f"{sound_files_location}voices/{character}"):
+                voiceline_sound_files = []
+                for sfx in os.listdir(f"{sound_files_location}voices/{character}/{voiceline}"):
+                    sfx_name = sfx[:-4]
+                    voiceline_sound_files.append(f"mario_qua_mario:voices/{character}/{voiceline}/{sfx_name}")
 
-            sounds_dot_json[f"voice.{character}.{voiceline}"] = {
-                "subtitle": f"subtitles.mario_qua_mario.voice_{character}_{voiceline}",
-                "sounds": voiceline_sound_files
-            }
+                sounds_dot_json[f"voice.{character}.{voiceline}"] = {
+                    "subtitle": f"subtitles.mario_qua_mario.voice_{character}_{voiceline}",
+                    "sounds": voiceline_sound_files
+                }
 
     print(f"Made sounds.json: {sounds_dot_json}")
     with open(f"{sounds_dot_json_location}sounds.json", 'w', encoding='utf-8') as file:
@@ -176,7 +177,7 @@ def add_sound_to_json(sounds_dot_json, sfx_category, original_name, sfx_name, ja
     java_category = sfx_category
     if java_category == "power_up": java_category = "PowerUp"
     else: java_category = java_category.capitalize()
-    java_lines.append(f'\tpublic static final SoundEvent {sfx_name.upper()} = make{java_category}Sound("{sfx_name}")\n')
+    java_lines.append(f'\tpublic static final SoundEvent {sfx_name.upper()} = make{java_category}Sound("{sfx_name}");\n')
 
 def handle_sound_set(
         include_voicelines,
@@ -191,20 +192,20 @@ def handle_sound_set(
 ):
     if output_java_file == "": output_java_file = input_java_file
     if audio_destination == "": audio_destination = sounds_dot_json_destination + "sounds"
-    if old_lang_file == "": old_lang_file = sounds_dot_json_destination + "lang/"
+    if old_lang_file == "": old_lang_file = sounds_dot_json_destination + "lang/en_us.json"
     if subtitle_destination == "": subtitle_destination = sounds_dot_json_destination + "lang/"
 
     subtitles = make_subtitles(include_voicelines, audio_destination, subtitle_script)
     save_subtitles(old_lang_file, subtitle_destination, subtitles)
-    make_sounds_dot_json_and_java_file(sounds_dot_json_destination, input_java_file, output_java_file, audio_destination + "/")
+    make_sounds_dot_json_and_java_file(sounds_dot_json_destination, include_voicelines, input_java_file, output_java_file, audio_destination + "/")
 
 def get_sounds_dot_json_location(module):
     return f"../../{module}/src/client/resources/assets/mario_qua_mario/"
-def get_java_file_location(module):
-    return f"../../{module}/src/main/java/com/fqf/mario_qua_mario/util/Mario{module}SFX.java"
+def get_java_file_location(module, addend):
+    return f"../../{module}/src/main/java/com/fqf/mario_qua_mario/util/Mario{addend}SFX.java"
 
 if __name__ == "__main__":
     handle_sound_set(True, content_subtitles, "Output/content/", "Input/MarioContentSfxClass.txt", "Output/content/MarioTestSFX.java.txt",
             old_lang_file = "Input/testInput.json")
-    handle_sound_set(True, content_subtitles, get_sounds_dot_json_location("content"), "Input/MarioContentSfxClass.txt", get_java_file_location("Content"))
-    handle_sound_set(False, mod_subtitles, get_sounds_dot_json_location("mod"), "Input/MarioModSfxClass.txt", get_java_file_location(""))
+    handle_sound_set(True, content_subtitles, get_sounds_dot_json_location("content"), "Input/MarioContentSfxClass.txt", get_java_file_location("content", "Content"))
+    handle_sound_set(False, mod_subtitles, get_sounds_dot_json_location("mod"), "Input/MarioModSfxClass.txt", get_java_file_location("mod", ""))

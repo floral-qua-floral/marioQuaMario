@@ -12,7 +12,7 @@ $INSERT CODE HERE$
 	private static SoundEvent makeMovementSound(String name) {
 		return makeAndRegisterSound("sfx.movement." + name);
 	}
-	private static SoundEvent makePowerSound(String name) {
+	private static SoundEvent makePowerUpSound(String name) {
 		return makeAndRegisterSound("sfx.power_up." + name);
 	}
 	private static SoundEvent makeStompSound(String name) {

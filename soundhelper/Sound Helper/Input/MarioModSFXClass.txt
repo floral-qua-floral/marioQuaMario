@@ -6,13 +6,13 @@ import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
-public class MarioModSFX {
+public class MarioSFX {
 $INSERT CODE HERE$
 
 	private static SoundEvent makeMovementSound(String name) {
 		return makeAndRegisterSound("sfx.movement." + name);
 	}
-	private static SoundEvent makePowerSound(String name) {
+	private static SoundEvent makePowerUpSound(String name) {
 		return makeAndRegisterSound("sfx.power_up." + name);
 	}
 	private static SoundEvent makeStompSound(String name) {
