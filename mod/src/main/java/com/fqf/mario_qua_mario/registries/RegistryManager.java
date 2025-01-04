@@ -10,6 +10,7 @@ import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedCharacter;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
+import com.fqf.mario_qua_mario.util.MarioSFX;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.fabricmc.loader.api.FabricLoader;
@@ -25,7 +26,7 @@ import java.util.Set;
 
 public class RegistryManager {
 	public static void registerAll() {
-		MarioModSFX.staticInitialize();
+		MarioSFX.staticInitialize();
 		registerStompTypes();
 		registerActions();
 		registerPowerUps();

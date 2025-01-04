@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.mixin.client;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.definitions.states.AttackInterceptingStateDefinition.MiningHandling;
 import com.fqf.mario_qua_mario.mariodata.MarioMainClientData;
 import com.fqf.mario_qua_mario.packets.MarioClientPacketHelper;
 import com.fqf.mario_qua_mario.registries.ParsedAttackInterception;
@@ -13,6 +14,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -36,16 +38,16 @@ public abstract class MinecraftClientMixin {
 	private void doAttackInterception(CallbackInfoReturnable<Boolean> cir) {
 		assert this.player != null && this.crosshairTarget != null;
 
+		if(this.heldInterception != null) return;
+
 		if(this.crosshairTarget.getType() == HitResult.Type.BLOCK) {
-			if(this.attemptMiningInterceptions(this.player.mqm$getMarioData()))
+			if(this.attemptMiningAttackInterceptions(this.player.mqm$getMarioData()))
 				cir.setReturnValue(false);
 		}
 		else {
 			if(this.attemptAttackInterceptions(this.player.mqm$getMarioData()))
 				cir.setReturnValue(false);
 		}
-
-
 	}
 
 	@Unique
@@ -72,13 +74,63 @@ public abstract class MinecraftClientMixin {
 			float attackCooldownProgress, ItemStack weapon, @Nullable EntityHitResult entityHitResult,
 			ParsedAttackInterception interception
 	) {
-		if(interception.shouldInterceptAttack(data, weapon, attackCooldownProgress, entityHitResult)) {
+		if(interception.shouldInterceptAttack(data, weapon, attackCooldownProgress, entityHitResult, null)) {
 			this.executeAndNetworkInterception(data, attackCooldownProgress, weapon, entityHitResult, null, interception);
 			this.miningTicks = 1; // Prevents double-interception when punching air & then moving crosshair to block
 			this.executeHeldInterception = false; // Prevents double-interception from HOLD mining interceptions that didn't end properly
 			return true;
 		}
 		return false;
+	}
+
+	@Unique
+	private boolean attemptMiningAttackInterceptions(MarioMainClientData data) {
+		assert this.player != null && this.crosshairTarget != null;
+		float attackCooldownProgress = ParsedAttackInterception.getAttackCooldownProgress(this.player);
+		ItemStack weapon = this.player.getMainHandStack();
+
+		for (ParsedAttackInterception interception : data.getAction().INTERCEPTIONS) {
+			MiningHandling handling = this.shouldInterceptMiningAttack(
+					data, attackCooldownProgress, weapon, (BlockHitResult) this.crosshairTarget, interception);
+			if(handling != null)
+				return handling != MiningHandling.MINE;
+		}
+
+		for (ParsedAttackInterception interception : data.getPowerUp().INTERCEPTIONS) {
+			MiningHandling handling = this.shouldInterceptMiningAttack(
+					data, attackCooldownProgress, weapon, (BlockHitResult) this.crosshairTarget, interception);
+			if(handling != null)
+				return handling != MiningHandling.MINE;
+		}
+
+		return false;
+	}
+
+	@Unique
+	private MiningHandling shouldInterceptMiningAttack(
+			MarioMainClientData data,
+			float attackCooldownProgress, ItemStack weapon, @NotNull BlockHitResult blockHitResult,
+			ParsedAttackInterception interception
+	) {
+		if(interception.shouldInterceptAttack(data, weapon, attackCooldownProgress, null, blockHitResult)) {
+			MiningHandling handling = interception.shouldSuppressMining(data, weapon, blockHitResult, 0);
+			switch(handling) { // switch-case fallthrough is my dear friend and I am happy to get to use it here!!! <3
+				case INTERCEPT:
+					this.heldInterception = interception;
+					this.executeHeldInterception = false;
+					this.miningTicks = 0;
+				case MINE:
+					this.executeAndNetworkInterception(data, attackCooldownProgress, weapon, null, blockHitResult, interception);
+					break;
+				case HOLD:
+					this.heldInterception = interception;
+					this.executeHeldInterception = true;
+					this.miningTicks = 0;
+			}
+			return handling;
+		}
+
+		return MiningHandling.MINE;
 	}
 
 	@Unique
@@ -89,15 +141,11 @@ public abstract class MinecraftClientMixin {
 			ParsedAttackInterception interception
 	) {
 		assert this.player != null;
-		MarioQuaMario.LOGGER.info("Executing & networking intereception!\n{}\n{}", data.getMario().getWeaponStack(), this.heldInterception);
 		long seed = this.player.getRandom().nextLong();
 		Entity entityTarget = entityHitResult == null ? null : entityHitResult.getEntity();
 		BlockPos blockTarget = blockHitResult == null ? null : blockHitResult.getBlockPos();
 		interception.execute(data, entityTarget, blockTarget, seed);
 		MarioClientPacketHelper.attackInterceptionC2S(data, interception, entityTarget, blockTarget, seed);
-
-		this.heldInterception = interception;
-		MarioQuaMario.LOGGER.info("Set held interception!");
 	}
 
 	@Unique private @Nullable ParsedAttackInterception heldInterception;
@@ -127,7 +175,6 @@ public abstract class MinecraftClientMixin {
 
 				this.heldInterception = null;
 				this.executeHeldInterception = false;
-				MarioQuaMario.LOGGER.info("Never started mining!");
 			}
 		}
 		else this.miningTicks++;
@@ -141,13 +188,11 @@ public abstract class MinecraftClientMixin {
 			float attackCooldownProgress = ParsedAttackInterception.getAttackCooldownProgress(this.player);
 			ItemStack weapon = this.player.getWeaponStack();
 			BlockHitResult blockHitResult = (BlockHitResult) this.crosshairTarget;
-			if (this.shouldSuppressMining(this.player.mqm$getMarioData(), attackCooldownProgress, weapon, blockHitResult, this.heldInterception, false)) {
+			if (this.shouldSuppressMining(this.player.mqm$getMarioData(), weapon, blockHitResult, this.heldInterception)) {
 				this.handleBlockBreaking(false);
-				MarioQuaMario.LOGGER.info("Suppressing mining!");
 				ci.cancel();
 			}
 			else {
-				MarioQuaMario.LOGGER.info("Started mining due to holding the button past suppression window!");
 				if(this.crosshairTarget.getType() == HitResult.Type.BLOCK) this.doAttack(); // Reset mining progress
 				this.heldInterception = null;
 				this.executeHeldInterception = false;
@@ -156,47 +201,13 @@ public abstract class MinecraftClientMixin {
 	}
 
 	@Unique
-	private boolean attemptMiningInterceptions(MarioMainClientData data) {
-		// If an interception is already being held out, that means that we've just started mining due to holding the
-		// attack button down past the suppression threshold, and so we shouldn't try and start a new interception.
-		if(this.heldInterception != null) return false;
-
-		assert this.player != null && this.crosshairTarget != null;
-		float attackCooldownProgress = ParsedAttackInterception.getAttackCooldownProgress(this.player);
-		ItemStack weapon = this.player.getWeaponStack();
-		BlockHitResult blockHitResult = (BlockHitResult) this.crosshairTarget;
-
-		for (ParsedAttackInterception interception : data.getAction().INTERCEPTIONS)
-			if(this.shouldSuppressMining(data, attackCooldownProgress, weapon, blockHitResult, interception, true))
-				return true;
-
-		for (ParsedAttackInterception interception : data.getPowerUp().INTERCEPTIONS)
-			if(this.shouldSuppressMining(data, attackCooldownProgress, weapon, blockHitResult, interception, true))
-				return true;
-
-		return false;
-	}
-
-	@Unique
 	private boolean shouldSuppressMining(
-			MarioMainClientData data,
-			float attackCooldownProgress, ItemStack weapon, BlockHitResult blockHitResult,
-			ParsedAttackInterception interception, boolean shouldExecute
+			MarioMainClientData data, ItemStack weapon,
+			BlockHitResult blockHitResult, ParsedAttackInterception interception
 	) {
-		return switch(interception.shouldInterceptMining(data, weapon, attackCooldownProgress, blockHitResult, this.miningTicks)) {
+		return switch(interception.shouldSuppressMining(data, weapon, blockHitResult, this.miningTicks)) {
 			case MINE -> false;
-			case HOLD -> {
-				if(shouldExecute) {
-					this.heldInterception = interception;
-					this.executeHeldInterception = true;
-				}
-				yield true;
-			}
-			case INTERCEPT -> {
-				if(shouldExecute)
-					this.executeAndNetworkInterception(data, attackCooldownProgress, weapon, null, blockHitResult, interception);
-				yield true;
-			}
+			case HOLD, INTERCEPT -> true;
 		};
 	}
 }

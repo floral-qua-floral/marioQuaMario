@@ -4,10 +4,10 @@ import com.fqf.mario_qua_mario.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario.definitions.states.actions.GenericActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario.mariodata.*;
+import com.fqf.mario_qua_mario.util.MarioContentSFX;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
@@ -66,7 +66,7 @@ public class Debug implements GenericActionDefinition {
 						MarioQuaMarioContent.makeID("debug_sprint"),
 						data -> data.getMario().isSprinting(), EvaluatorEnvironment.COMMON,
 						null,
-						(data, isSelf, seed) -> data.playSound(SoundEvents.ENTITY_VEX_CHARGE, seed)
+						(data, isSelf, seed) -> data.playSound(MarioContentSFX.FIREBALL, seed)
 				)
 		);
 	}
@@ -96,15 +96,16 @@ public class Debug implements GenericActionDefinition {
 
 					@Override public boolean shouldInterceptAttack(
 							IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
-							@Nullable EntityHitResult entityHitResult
+							@Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult
 					) {
-						return true;
+						return weapon.isEmpty();
 					}
-					@Override public @NotNull MiningHandling shouldInterceptMining(
-							IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
-							BlockHitResult blockHitResult, int miningTicks
+
+					@Override public @NotNull MiningHandling shouldSuppressMining(
+							IMarioReadableMotionData data, ItemStack weapon,
+							@NotNull BlockHitResult blockHitResult, int miningTicks
 					) {
-						return (weapon.isEmpty() && miningTicks < 20) ? MiningHandling.INTERCEPT : MiningHandling.MINE;
+						return miningTicks < 20 ? MiningHandling.INTERCEPT : MiningHandling.MINE;
 					}
 
 					@Override public void executeTravellers(
@@ -118,12 +119,12 @@ public class Debug implements GenericActionDefinition {
 							@Nullable BlockPos blockTarget, @Nullable Entity entityTarget,
 							long seed
 					) {
-						data.playSound(SoundEvents.ENTITY_GENERIC_EXPLODE.value(), seed);
+						data.playSound(MarioContentSFX.HEAVY, seed);
 					}
 
-					@Override public void strikeEntity(
-							IMarioData data, ItemStack weapon, float attackCooldownProgress,
-							ServerWorld world, @NotNull Entity target
+					@Override public void executeServer(
+							IMarioAuthoritativeData data, ItemStack weapon, float attackCooldownProgress,
+							ServerWorld world, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget
 					) {
 
 					}

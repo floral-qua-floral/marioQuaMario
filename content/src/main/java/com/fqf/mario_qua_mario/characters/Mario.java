@@ -17,7 +17,7 @@ public class Mario implements CharacterDefinition {
 	}
 
 	@Override public Identifier getInitialAction() {
-		return MarioQuaMarioContent.makeID("debug");
+		return MarioQuaMarioContent.makeID("fall");
 	}
 	@Override public Identifier getInitialPowerUp() {
 		return MarioQuaMarioContent.makeID("super");

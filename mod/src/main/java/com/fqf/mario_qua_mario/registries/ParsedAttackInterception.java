@@ -1,10 +1,7 @@
 package com.fqf.mario_qua_mario.registries;
 
 import com.fqf.mario_qua_mario.definitions.states.AttackInterceptingStateDefinition;
-import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
-import com.fqf.mario_qua_mario.mariodata.IMarioReadableMotionData;
-import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
-import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
+import com.fqf.mario_qua_mario.mariodata.*;
 import com.fqf.mario_qua_mario.packets.MarioAttackInterceptionPackets;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
@@ -47,15 +44,14 @@ public class ParsedAttackInterception {
 
 	public boolean shouldInterceptAttack(
 			IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
-			@Nullable EntityHitResult entityHitResult
+			@Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult
 	) {
-		return this.DEFINITION.shouldInterceptAttack(data, weapon, attackCooldownProgress, entityHitResult);
+		return this.DEFINITION.shouldInterceptAttack(data, weapon, attackCooldownProgress, entityHitResult, blockHitResult);
 	}
-	public @NotNull AttackInterceptingStateDefinition.MiningHandling shouldInterceptMining(
-			IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
-			BlockHitResult blockHitResult, int miningTicks
+	public @NotNull AttackInterceptingStateDefinition.MiningHandling shouldSuppressMining(
+			IMarioReadableMotionData data, ItemStack weapon, BlockHitResult blockHitResult, int miningTicks
 	) {
-		return this.DEFINITION.shouldInterceptMining(data, weapon, attackCooldownProgress, blockHitResult, miningTicks);
+		return this.DEFINITION.shouldSuppressMining(data, weapon, blockHitResult, miningTicks);
 	}
 
 	public void execute(
@@ -69,6 +65,8 @@ public class ParsedAttackInterception {
 			this.DEFINITION.executeClients(clientData, weapon, cooldownProgress, targetBlock, targetEntity, seed);
 		if(data instanceof MarioMoveableData moveableData)
 			this.DEFINITION.executeTravellers(moveableData, weapon, cooldownProgress, targetBlock, targetEntity);
+		if(data instanceof IMarioAuthoritativeData authoritativeData)
+			this.DEFINITION.executeServer(authoritativeData, weapon, cooldownProgress, authoritativeData.getMario().getServerWorld(), targetBlock, targetEntity);
 
 		if(this.ACTION_TARGET != null) data.setActionTransitionless(this.ACTION_TARGET);
 		if(data.isClient() && this.HAND_TO_SWING != null) data.getMario().swingHand(this.HAND_TO_SWING, false);

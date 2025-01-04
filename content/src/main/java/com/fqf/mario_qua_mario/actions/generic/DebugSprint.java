@@ -3,14 +3,11 @@ package com.fqf.mario_qua_mario.actions.generic;
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
-import com.fqf.mario_qua_mario.mariodata.IMarioData;
-import com.fqf.mario_qua_mario.mariodata.IMarioReadableMotionData;
-import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
+import com.fqf.mario_qua_mario.mariodata.*;
+import com.fqf.mario_qua_mario.util.MarioContentSFX;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
@@ -40,7 +37,7 @@ public class DebugSprint extends Debug {
 						MarioQuaMarioContent.makeID("debug"),
 						data -> !data.getMario().isSprinting(), EvaluatorEnvironment.SERVER_ONLY,
 						null,
-						(data, isSelf, seed) -> data.playSound(SoundEvents.ENTITY_ALLAY_AMBIENT_WITH_ITEM, seed)
+						(data, isSelf, seed) -> data.playSound(MarioContentSFX.DUCK, seed)
 				)
 		);
 	}
@@ -60,15 +57,16 @@ public class DebugSprint extends Debug {
 
 					@Override public boolean shouldInterceptAttack(
 							IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
-							@Nullable EntityHitResult entityHitResult
+							@Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult
 					) {
-						return true;
+						return weapon.isEmpty();
 					}
-					@Override public @NotNull MiningHandling shouldInterceptMining(
-							IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
-							BlockHitResult blockHitResult, int miningTicks
+
+					@Override public @NotNull MiningHandling shouldSuppressMining(
+							IMarioReadableMotionData data, ItemStack weapon,
+							@NotNull BlockHitResult blockHitResult, int miningTicks
 					) {
-						return (weapon.isEmpty() && miningTicks < 20) ? MiningHandling.HOLD : MiningHandling.MINE;
+						return miningTicks < 20 ? MiningHandling.HOLD : MiningHandling.MINE;
 					}
 
 					@Override public void executeTravellers(
@@ -82,12 +80,12 @@ public class DebugSprint extends Debug {
 							@Nullable BlockPos blockTarget, @Nullable Entity entityTarget,
 							long seed
 					) {
-						data.playSound(SoundEvents.ENTITY_PLAYER_LEVELUP, seed);
+						data.playSound(MarioContentSFX.YOSHI, seed);
 					}
 
-					@Override public void strikeEntity(
-							IMarioData data, ItemStack weapon, float attackCooldownProgress,
-							ServerWorld world, @NotNull Entity target
+					@Override public void executeServer(
+							IMarioAuthoritativeData data, ItemStack weapon, float attackCooldownProgress,
+							ServerWorld world, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget
 					) {
 
 					}

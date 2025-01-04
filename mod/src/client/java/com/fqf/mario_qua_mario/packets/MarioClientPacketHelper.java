@@ -115,7 +115,6 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 			packet = new MarioAttackInterceptionPackets.MissedAttackInterceptedC2SPayload(
 					interception.IS_FROM_ACTION, interceptionSource, interceptionIndex, seed);
 
-		MarioQuaMario.LOGGER.info("Sending attack interception C2S packet");
 		ClientPlayNetworking.send(packet);
 	}
 }

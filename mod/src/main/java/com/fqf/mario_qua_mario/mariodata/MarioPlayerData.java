@@ -7,7 +7,9 @@ import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedCharacter;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import com.fqf.mario_qua_mario.util.CharaStat;
+import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
@@ -49,6 +51,14 @@ public abstract class MarioPlayerData implements IMarioData {
 	}
 	public void setEnabledInternal(boolean enabled) {
 		this.enabled = enabled;
+
+		EntityAttributeInstance safeFallAttributeInstance = this.getMario().getAttributeInstance(EntityAttributes.GENERIC_SAFE_FALL_DISTANCE);
+		EntityAttributeInstance attackSpeedAttributeInstance = this.getMario().getAttributeInstance(EntityAttributes.GENERIC_ATTACK_SPEED);
+		assert safeFallAttributeInstance != null && attackSpeedAttributeInstance != null;
+		safeFallAttributeInstance.removeModifier(FALL_RESISTANCE_ID);
+		safeFallAttributeInstance.addPersistentModifier(FALL_RESISTANCE);
+		attackSpeedAttributeInstance.removeModifier(ATTACK_SLOWDOWN_ID);
+		attackSpeedAttributeInstance.addPersistentModifier(ATTACK_SLOWDOWN);
 	}
 
 	private AbstractParsedAction action;
