@@ -1,11 +1,18 @@
 package com.fqf.mario_qua_mario.mariodata;
 
+import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
 import com.fqf.mario_qua_mario.registries.actions.TransitionPhase;
+import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import net.minecraft.client.input.Input;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Identifier;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MarioMainClientData extends MarioMoveableData implements IMarioClientDataImpl {
 	private ClientPlayerEntity mario;
@@ -20,8 +27,17 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		super.setMario(mario);
 	}
 
-	@Override
-	public void tick() {
+	@Override public void setPowerUp(ParsedPowerUp newPowerUp, boolean isReversion, long seed) {
+		this.handlePowerTransitionSound(isReversion, newPowerUp, seed);
+		super.setPowerUp(newPowerUp, isReversion, seed);
+	}
+
+	@Override public void setActionTransitionless(AbstractParsedAction action) {
+		this.handleSlidingSound(action);
+		super.setActionTransitionless(action);
+	}
+
+	@Override public void tick() {
 		super.tick();
 		this.getAction().clientTick(this, true);
 		this.getPowerUp().clientTick(this, true);
@@ -32,8 +48,7 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		this.INPUTS.updateButtons();
 	}
 
-	@Override
-	public boolean travelHook(double forwardInput, double strafeInput) {
+	@Override public boolean travelHook(double forwardInput, double strafeInput) {
 		this.INPUTS.updateAnalog(forwardInput, strafeInput);
 
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
@@ -55,6 +70,11 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 	private final RealInputs INPUTS = new RealInputs();
 	@Override public MarioInputs getInputs() {
 		return this.INPUTS;
+	}
+
+	private final Map<Identifier, SoundInstance> STORED_SOUNDS = new HashMap<>();
+	@Override public Map<Identifier, SoundInstance> getStoredSounds() {
+		return this.STORED_SOUNDS;
 	}
 
 	private class RealInputs extends MarioInputs {

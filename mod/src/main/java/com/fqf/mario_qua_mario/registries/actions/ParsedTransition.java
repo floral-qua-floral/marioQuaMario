@@ -12,6 +12,7 @@ public record ParsedTransition(
 		@NotNull AbstractParsedAction targetAction,
 		@NotNull TransitionDefinition.Evaluator evaluator,
 		boolean fullyNetworked,
+		boolean serverChecked,
 		@Nullable TransitionDefinition.TravelExecutor travelExecutor,
 		@Nullable TransitionDefinition.ClientsExecutor clientsExecutor
 ) {
@@ -20,6 +21,7 @@ public record ParsedTransition(
 				getTargetAction(definition),
 				definition.evaluator(),
 				definition.environment() != EvaluatorEnvironment.COMMON,
+				definition.environment() == EvaluatorEnvironment.CLIENT_CHECKED,
 				definition.travelExecutor(),
 				definition.clientsExecutor()
 		);

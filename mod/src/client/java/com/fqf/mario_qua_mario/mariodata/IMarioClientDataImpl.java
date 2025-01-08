@@ -1,7 +1,10 @@
 package com.fqf.mario_qua_mario.mariodata;
 
+import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
+import com.fqf.mario_qua_mario.util.MarioSFX;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundInstance;
@@ -55,65 +58,71 @@ public interface IMarioClientDataImpl extends IMarioClientData {
 		return this.playSound(event, category, entity.getX(), entity.getY(), entity.getZ(), 1F, 1F, seed);
 	}
 
-	@Override
-	default void playJumpSound(long seed) {
-
-	}
-
-	@Override
-	default void fadeJumpSound() {
-
-	}
-
 	Map<IMarioClientDataImpl, SoundInstance> MARIO_VOICE_LINES = new HashMap<>();
 
 	default void handlePowerTransitionSound(boolean isReversion, ParsedPowerUp newPower, long seed) {
-		if(isReversion) this.playSound(SoundEvents.ENTITY_SPLASH_POTION_BREAK, seed);
-		else {
-			this.playSound(newPower.ACQUISITION_SOUND, seed);
-		}
+		if(isReversion) this.playSound(MarioSFX.REVERT, seed);
+		else this.playSound(newPower.ACQUISITION_SOUND, seed);
 	}
+
+	// The stored sounds necessitates a tiny bit of duplicated code which is ANNOYING
+	// To minimize the amount of such duplicated code, we leverage it for as much as possible
+	Map<Identifier, SoundInstance> getStoredSounds();
+	Identifier JUMP_IDENTIFIER = Identifier.of("mqm_fake_ids", "jump");
+	Identifier COMMON_VOICE_IDENTIFIER = Identifier.of("mqm_fake_ids", "voices");
+	Identifier SLIDE_IDENTIFIER = Identifier.of("mqm_fake_ids", "slide");
 
 	default void handleSlidingSound(AbstractParsedAction newAction) {
 
 	}
 
 	@Override
-	default SoundInstanceWrapperImpl voice(VoiceLine line, long seed) {
-		MinecraftClient.getInstance().getSoundManager().stop(MARIO_VOICE_LINES.get(this));
+	default void playJumpSound(long seed) {
+		this.fadeJumpSound();
+		FadeableSoundInstance jumpSound = new FadeableSoundInstance((MarioPlayerData) this);
+		MinecraftClient.getInstance().getSoundManager().play(jumpSound);
+		this.getStoredSounds().put(JUMP_IDENTIFIER, jumpSound);
+	}
+
+	@Override
+	default void fadeJumpSound() {
+		FadeableSoundInstance jumpSoundInstance = (FadeableSoundInstance) this.getStoredSounds().get(JUMP_IDENTIFIER);
+		if(jumpSoundInstance != null) jumpSoundInstance.fade();
+	}
+
+	@Override
+	default SoundInstanceWrapperImpl voice(String voiceline, long seed) {
+		MinecraftClient.getInstance().getSoundManager().stop(this.getStoredSounds().get(COMMON_VOICE_IDENTIFIER));
 		Vec3d marioPos = this.getMario().getPos();
+		if(RegistryManager.VOICE_LINES.get(voiceline) == null)
+			throw new AssertionError("Voiceline " + voiceline + " isn't registered!!!");
+		MarioQuaMario.LOGGER.info("VOICELINE: {}", RegistryManager.VOICE_LINES.get(voiceline).get(((MarioPlayerData) this).getCharacter()).getId());
 		SoundInstanceWrapperImpl newVoiceSound = this.playSound(
-				VOICE_SOUND_EVENTS.get(line).get(this.getCharacterID()), SoundCategory.VOICE,
+				RegistryManager.VOICE_LINES.get(voiceline).get(((MarioPlayerData) this).getCharacter()), SoundCategory.VOICE,
 				marioPos.x, marioPos.y, marioPos.z,
 				this.getVoicePitch(), 1.0F,
 				seed
 		);
 
-		MARIO_VOICE_LINES.put(this, newVoiceSound.SOUND);
+		this.getStoredSounds().put(COMMON_VOICE_IDENTIFIER, newVoiceSound.SOUND);
 
 		return newVoiceSound;
 	}
 
 	@Override
 	default float getVoicePitch() {
-//		return ((MarioPlayerData) this).getPowerUp().;
-		return 1;
+		return ((MarioPlayerData) this).getPowerUp().VOICE_PITCH;
 	}
-
-	Map<IMarioClientDataImpl, Map<Identifier, SoundInstance>> STORED_SOUNDS = new HashMap<>();
 
 	@Override
 	default void storeSound(SoundInstanceWrapper instance) {
-		STORED_SOUNDS.putIfAbsent(this, new HashMap<>());
 		SoundInstance sound = ((SoundInstanceWrapperImpl) instance).SOUND;
-		STORED_SOUNDS.get(this).put(sound.getId(), sound);
+		this.getStoredSounds().put(sound.getId(), sound);
 	}
 
 	@Override
 	default void stopStoredSound(SoundEvent event) {
-		if(STORED_SOUNDS.containsKey(this)) {
-
-		}
+		MinecraftClient.getInstance().getSoundManager().stop(this.getStoredSounds().get(event.getId()));
 	}
 
 	class SoundInstanceWrapperImpl implements SoundInstanceWrapper {

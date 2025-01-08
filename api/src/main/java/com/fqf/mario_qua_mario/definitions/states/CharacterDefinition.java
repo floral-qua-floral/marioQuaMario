@@ -6,9 +6,9 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 public interface CharacterDefinition extends StatAlteringStateDefinition {
-	Identifier getInitialAction();
-	Identifier getInitialPowerUp();
+	@NotNull Identifier getInitialAction();
+	@NotNull Identifier getInitialPowerUp();
 
-	SoundEvent getJumpSound();
-	Identifier getMountedAction(Entity vehicle);
+	@NotNull SoundEvent getJumpSound();
+	@NotNull Identifier getMountedAction(Entity vehicle);
 }

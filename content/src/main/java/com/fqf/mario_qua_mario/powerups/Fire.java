@@ -49,6 +49,9 @@ public class Fire implements PowerUpDefinition {
 	@Override public float getVoicePitch() {
 		return 1;
 	}
+	@Override public float getJumpPitch() {
+		return 1F;
+	}
 
 	@Override public Set<String> getPowers() {
 		return Set.of();
@@ -101,7 +104,7 @@ public class Fire implements PowerUpDefinition {
 				long seed
 		) {
 			data.playSound(MarioContentSFX.FIREBALL, seed);
-			data.voice(IMarioClientData.VoiceLine.FIREBALL, seed);
+			data.voice("fireball", seed);
 			if(data.getMario().isMainPlayer()) {
 				long time = data.getMario().getWorld().getTime();
 				if(this.HAND == Hand.MAIN_HAND) {
@@ -126,10 +129,6 @@ public class Fire implements PowerUpDefinition {
 	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions() {
 		return List.of(
 				new FireballDefinition(Hand.MAIN_HAND) {
-					private boolean allowedCommon(IMarioReadableMotionData data, ItemStack weapon) {
-						return weapon.isEmpty();
-					}
-
 					@Override
 					public boolean shouldInterceptAttack(IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
 						return weapon.isEmpty() && data.getMario().getWorld().getTime() > noMainFireballsUntil
@@ -138,12 +137,13 @@ public class Fire implements PowerUpDefinition {
 
 					@Override
 					public @NotNull MiningHandling shouldSuppressMining(IMarioReadableMotionData data, ItemStack weapon, @NotNull BlockHitResult blockHitResult, int miningTicks) {
-						return miningTicks < 3 ? MiningHandling.INTERCEPT : MiningHandling.MINE;
+						return miningTicks <= 3 ? MiningHandling.INTERCEPT : MiningHandling.MINE;
 					}
 				},
 				new FireballDefinition(Hand.OFF_HAND) {
 					@Override
 					public boolean shouldInterceptAttack(IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
+						MarioQuaMarioContent.LOGGER.info("Attempting offhand fireball toss?");
 						long time = data.getMario().getWorld().getTime();
 						return time > noSecondaryFireballsUntil
 								&& (time < noMainFireballsUntil || !weapon.isEmpty()) // Only after throwing a first fireball, or any time if holding an item
@@ -153,7 +153,7 @@ public class Fire implements PowerUpDefinition {
 
 					@Override
 					public @NotNull MiningHandling shouldSuppressMining(IMarioReadableMotionData data, ItemStack weapon, @NotNull BlockHitResult blockHitResult, int miningTicks) {
-						return miningTicks < 3 ? MiningHandling.INTERCEPT : MiningHandling.MINE;
+						return miningTicks <= 3 ? MiningHandling.INTERCEPT : MiningHandling.MINE;
 					}
 				},
 				new PreventAttack() {

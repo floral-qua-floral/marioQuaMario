@@ -42,6 +42,9 @@ public class Small implements PowerUpDefinition {
 	@Override public float getVoicePitch() {
 		return 1.075F;
 	}
+	@Override public float getJumpPitch() {
+		return 1.3F;
+	}
 
 	@Override public Set<String> getPowers() {
 		return Set.of();

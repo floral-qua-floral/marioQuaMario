@@ -4,6 +4,7 @@ import com.fqf.mario_qua_mario.definitions.states.AttackInterceptingStateDefinit
 import com.fqf.mario_qua_mario.definitions.states.PowerUpDefinition;
 import com.fqf.mario_qua_mario.registries.ParsedAttackInterception;
 import com.fqf.mario_qua_mario.registries.ParsedMarioThing;
+import com.fqf.mario_qua_mario.util.MarioSFX;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
@@ -17,6 +18,7 @@ public class ParsedPowerUp extends ParsedPowerGrantingState {
 
 	public final SoundEvent ACQUISITION_SOUND;
 	public final float VOICE_PITCH;
+	public final float JUMP_PITCH;
 
 	public final PowerUpDefinition.PowerHeart HEART;
 
@@ -29,8 +31,9 @@ public class ParsedPowerUp extends ParsedPowerGrantingState {
 		this.VALUE = definition.getValue();
 
 		SoundEvent definedAcquisitionSound = definition.getAcquisitionSound();
-		this.ACQUISITION_SOUND = definedAcquisitionSound == null ? SoundEvents.BLOCK_SHROOMLIGHT_PLACE : definedAcquisitionSound;
+		this.ACQUISITION_SOUND = definedAcquisitionSound == null ? MarioSFX.EMPOWER : definedAcquisitionSound;
 		this.VOICE_PITCH = definition.getVoicePitch();
+		this.JUMP_PITCH = definition.getJumpPitch();
 
 		this.HEART = definition.getPowerHeart(new PowerHeartHelperImpl(this.ID));
 

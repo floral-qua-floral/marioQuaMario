@@ -65,9 +65,9 @@ public class ParsedActionHelper {
 	}
 
 	public static void executeTransition(MarioPlayerData data, ParsedTransition transition, long seed) {
-		MarioQuaMario.LOGGER.info("Executing transition for {} on {}:\n\t{} -> {} (seed: {})",
+		MarioQuaMario.LOGGER.info("Executing transition for {} on {}:t{} -> {}",
 				data.getMario().getName().getString(), data.isClient() ? "CLIENT" : "SERVER",
-				data.getActionID(), transition.targetAction().ID, seed
+				data.getActionID(), transition.targetAction().ID
 		);
 
 		if(data instanceof MarioMoveableData moveableData && transition.travelExecutor() != null)

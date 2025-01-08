@@ -119,8 +119,9 @@ public abstract class AbstractParsedAction extends ParsedMarioThing {
 			MarioQuaMario.LOGGER.warn("Action {} has multiple transitions into {}! This is likely to cause issues!",
 					this.ID, transition.targetAction().ID);
 		else this.TRANSITIONS_FROM_TARGETS.put(transition.targetAction(), transition);
-		if(definition.environment() != EvaluatorEnvironment.CLIENT_ONLY) server.add(transition);
 		if(definition.environment() != EvaluatorEnvironment.SERVER_ONLY) client.add(transition);
+		if(definition.environment() != EvaluatorEnvironment.CLIENT_ONLY && definition.environment() != EvaluatorEnvironment.CLIENT_CHECKED)
+			server.add(transition);
 	}
 
 	public int getIntID() {

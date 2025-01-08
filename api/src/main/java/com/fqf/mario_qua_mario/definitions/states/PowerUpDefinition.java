@@ -11,6 +11,7 @@ public interface PowerUpDefinition extends StatAlteringStateDefinition, AttackIn
 
 	@Nullable SoundEvent getAcquisitionSound();
 	float getVoicePitch();
+	float getJumpPitch();
 
 	@NotNull PowerHeart getPowerHeart(PowerHeartHelper helper);
 

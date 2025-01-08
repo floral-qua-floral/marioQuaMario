@@ -35,7 +35,7 @@ public class Fall implements AirborneActionDefinition {
 		return SneakingRule.PROHIBIT;
 	}
 	@Override public @NotNull SprintingRule getSprintingRule() {
-		return SprintingRule.ALLOW;
+		return SprintingRule.IF_ALREADY_SPRINTING;
 	}
 
 	@Override public @Nullable BumpType getBumpType() {

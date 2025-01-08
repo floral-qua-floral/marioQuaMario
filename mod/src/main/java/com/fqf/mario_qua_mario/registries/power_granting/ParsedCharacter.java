@@ -5,6 +5,7 @@ import com.fqf.mario_qua_mario.registries.ParsedMarioThing;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import net.minecraft.entity.Entity;
+import net.minecraft.sound.SoundEvent;
 
 import java.util.Objects;
 
@@ -12,6 +13,7 @@ public class ParsedCharacter extends ParsedPowerGrantingState {
 	private final CharacterDefinition CHARACTER_DEFINITION;
 	public final AbstractParsedAction INITIAL_ACTION;
 	public final ParsedPowerUp INITIAL_POWER_UP;
+	public final SoundEvent JUMP_SOUND;
 
 	public ParsedCharacter(CharacterDefinition definition) {
 		super(definition);
@@ -22,6 +24,7 @@ public class ParsedCharacter extends ParsedPowerGrantingState {
 		this.INITIAL_POWER_UP = Objects.requireNonNull(RegistryManager.POWER_UPS.get(definition.getInitialPowerUp()),
 				definition.getID() + "'s initial power-up (" + definition.getInitialPowerUp() + ") doesn't exist!");
 
+		this.JUMP_SOUND = definition.getJumpSound();
 	}
 
 	public AbstractParsedAction getMountedAction(Entity mount) {

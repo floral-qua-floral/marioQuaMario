@@ -18,7 +18,7 @@ public interface IMarioClientData extends IMarioData {
 	void playJumpSound(long seed);
 	void fadeJumpSound();
 
-	SoundInstanceWrapper voice(VoiceLine line, long seed);
+	SoundInstanceWrapper voice(String voiceline, long seed);
 	float getVoicePitch();
 
 	void storeSound(SoundInstanceWrapper instance);

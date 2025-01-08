@@ -80,7 +80,7 @@ public class MarioDataPackets {
 		public static void receive(SetActionC2SPayload payload, ServerPlayNetworking.Context context) {
 			AbstractParsedAction fromAction = ParsedActionHelper.get(payload.fromAction());
 			AbstractParsedAction toAction = ParsedActionHelper.get(payload.toAction());
-			MarioQuaMario.LOGGER.info("Received setActionC2S: {}->{}", fromAction.ID, toAction.ID);
+//			MarioQuaMario.LOGGER.info("Received setActionC2S: {}->{}", fromAction.ID, toAction.ID);
 			boolean rejectInvalid = context.player().getWorld().getGameRules().getBoolean(MarioGamerules.REJECT_INVALID_ACTION_TRANSITIONS);
 			if(context.player().mqm$getMarioData().setAction(fromAction, toAction, payload.seed, !rejectInvalid, false)) {
 				MarioPackets.sendToTrackers(context.player(), new ActionTransitionS2CPayload(

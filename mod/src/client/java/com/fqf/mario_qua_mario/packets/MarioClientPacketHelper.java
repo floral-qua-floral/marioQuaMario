@@ -84,7 +84,7 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 
 	@Override
 	public void setActionC2S(AbstractParsedAction fromAction, AbstractParsedAction toAction, long seed) {
-		MarioQuaMario.LOGGER.info("Sending setActionC2S Packet for {}->{}", fromAction.ID, toAction.ID);
+//		MarioQuaMario.LOGGER.info("Sending setActionC2S Packet for {}->{}", fromAction.ID, toAction.ID);
 		ClientPlayNetworking.send(new MarioDataPackets.SetActionC2SPayload(fromAction.getIntID(), toAction.getIntID(), seed));
 	}
 

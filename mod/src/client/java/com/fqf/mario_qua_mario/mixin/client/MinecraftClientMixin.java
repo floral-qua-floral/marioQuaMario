@@ -130,7 +130,7 @@ public abstract class MinecraftClientMixin {
 			return handling;
 		}
 
-		return MiningHandling.MINE;
+		return null;
 	}
 
 	@Unique

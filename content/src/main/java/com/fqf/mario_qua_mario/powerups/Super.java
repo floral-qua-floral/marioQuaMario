@@ -42,6 +42,9 @@ public class Super implements PowerUpDefinition {
 	@Override public float getVoicePitch() {
 		return 1;
 	}
+	@Override public float getJumpPitch() {
+		return 1F;
+	}
 
 	@Override public Set<String> getPowers() {
 		return Set.of();

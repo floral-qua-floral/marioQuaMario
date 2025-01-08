@@ -24,8 +24,14 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
 	@Inject(method = "canSprint", at = @At("HEAD"), cancellable = true)
 	private void preventSprinting(CallbackInfoReturnable<Boolean> cir) {
-		if(mqm$getMarioData().doMarioTravel() && mqm$getMarioData().getAction().SPRINTING_RULE == SprintingRule.PROHIBIT)
-			cir.setReturnValue(false);
+		if(mqm$getMarioData().doMarioTravel()) switch( mqm$getMarioData().getAction().SPRINTING_RULE) {
+			case ALLOW:
+				break;
+			case IF_ALREADY_SPRINTING:
+				if(isSprinting()) break;
+			case PROHIBIT:
+				cir.setReturnValue(false);
+		}
 	}
 
 	@Inject(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/AbstractClientPlayerEntity;tickMovement()V"))

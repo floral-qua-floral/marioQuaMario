@@ -5,6 +5,7 @@ import com.fqf.mario_qua_mario.packets.MarioDataPackets;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
+import com.fqf.mario_qua_mario.registries.actions.ParsedTransition;
 import com.fqf.mario_qua_mario.registries.actions.TransitionPhase;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedCharacter;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
@@ -14,6 +15,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.random.RandomSeed;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
@@ -39,18 +41,39 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 
 	private final Set<Pair<AbstractParsedAction, Long>> RECENT_ACTIONS = new HashSet<>();
 
+	public boolean validateC2STransition(@Nullable AbstractParsedAction fromAction, ParsedTransition transition) {
+
+		return true;
+	}
+
 	@Override
 	public boolean setAction(@Nullable AbstractParsedAction fromAction, AbstractParsedAction toAction, long seed, boolean forced, boolean fromCommand) {
-		if(!this.getAction().equals(fromAction) && !forced && !fromCommand) {
-			// Check if we were recently in fromAction. If not, return false.
-			if(fromAction == null || this.RECENT_ACTIONS.stream().noneMatch(pair -> pair.getLeft().ID.equals(fromAction.ID))) {
-				Identifier fromActionID = fromAction == null ? null : fromAction.ID;
-				MarioQuaMario.LOGGER.warn(
-						"TRANSITION REJECTED:\nCurrent action: {}\nFrom action: {}\nTo action: {}\nRecent actions: {}",
-						this.getActionID(), fromActionID, toAction.ID, this.RECENT_ACTIONS.stream().findFirst().get().getLeft().ID);
+		if(!forced && !fromCommand) {
+			if(!this.getAction().equals(fromAction)) {
+				// Check if we were recently in fromAction. If not, return false.
+				if(fromAction == null || this.RECENT_ACTIONS.stream().noneMatch(pair -> pair.getLeft().ID.equals(fromAction.ID))) {
+					if (MarioQuaMario.LOGGER.isWarnEnabled()) {
+						Identifier fromActionID = fromAction == null ? null : fromAction.ID;
+						StringBuilder recentActionsString = new StringBuilder();
+						for (Pair<AbstractParsedAction, Long> recentAction : RECENT_ACTIONS) {
+							recentActionsString.append("\n").append(recentAction.getLeft().ID);
+						}
+						MarioQuaMario.LOGGER.warn(
+								"TRANSITION REJECTED: Not recently in fromAction.\nServer-sided action: {}\nAttempted {} -> {}\nRecent actions: {}",
+								this.getActionID(), fromActionID, toAction.ID, recentActionsString);
+					}
+					return false;
+				}
+			}
+
+			@Nullable ParsedTransition transition = fromAction.TRANSITIONS_FROM_TARGETS.get(toAction);
+			if(transition != null && transition.serverChecked() && !transition.evaluator().shouldTransition(this)) {
+				MarioQuaMario.LOGGER.warn("TRANSITION REJECTED: Transition is server-checked and evaluator failed.\nAttempted {} -> {}",
+						fromAction.ID, toAction.ID);
 				return false;
 			}
 		}
+
 		return super.setAction(fromAction, toAction, seed, forced, fromCommand);
 	}
 

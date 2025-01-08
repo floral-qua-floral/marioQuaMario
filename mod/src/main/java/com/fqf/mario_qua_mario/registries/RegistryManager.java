@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.registries;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.definitions.VoicelineSetDefinition;
 import com.fqf.mario_qua_mario.definitions.states.CharacterDefinition;
 import com.fqf.mario_qua_mario.definitions.states.PowerUpDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.*;
@@ -15,23 +16,27 @@ import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class RegistryManager {
 	public static void registerAll() {
 		MarioSFX.staticInitialize();
+
 		registerStompTypes();
 		registerActions();
 		registerPowerUps();
 		registerCharacters();
+
+		registerVoicelines();
 	}
+
+	public static final Map<String, Map<ParsedCharacter, SoundEvent>> VOICE_LINES = new HashMap<>();
 
 	public static final RegistryKey<Registry<String>> STOMP_TYPES_KEY =
 			RegistryKey.ofRegistry(MarioQuaMario.makeID("stomp_types"));
@@ -98,6 +103,23 @@ public class RegistryManager {
 	private static void registerCharacters() {
 		for(CharacterDefinition definition : getEntrypoints("mqm-characters", CharacterDefinition.class)) {
 			registerThing(CHARACTERS, new ParsedCharacter(definition));
+		}
+	}
+
+	private static void registerVoicelines() {
+		List<VoicelineSetDefinition> voicelineSetDefinitions = getEntrypoints("mqm-voicelines", VoicelineSetDefinition.class);
+		for(VoicelineSetDefinition voicelineSet : voicelineSetDefinitions) {
+			for (String voiceLine : voicelineSet.getVoiceLines()) {
+				VOICE_LINES.put(voiceLine, new HashMap<>());
+				for (ParsedCharacter character : CHARACTERS) {
+					String characterNamespace = character.ID.getNamespace();
+					if(characterNamespace.equals("mqm")) characterNamespace = "mario_qua_mario"; //this is gross :(
+					Identifier ID = Identifier.of(characterNamespace, "voice." + character.ID.getPath() + "." + voiceLine);
+					SoundEvent event = SoundEvent.of(ID);
+					Registry.register(Registries.SOUND_EVENT, ID, event);
+					VOICE_LINES.get(voiceLine).put(character, event);
+				}
+			}
 		}
 	}
 }

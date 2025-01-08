@@ -46,6 +46,10 @@
 			"com.fqf.mario_qua_mario.characters.Luigi"
 		],
 
+		"mqm-voicelines": [
+			"com.fqf.mario_qua_mario.Voicelines"
+		],
+
 		"main": [
 			"com.fqf.mario_qua_mario.MarioQuaMarioContent"
 		],

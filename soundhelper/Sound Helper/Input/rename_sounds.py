@@ -10,7 +10,6 @@ voicelines = {
 }
 
 sfx = {
-  "skid_block": "skid",
   "nsmbwii_mushroom": "empower",
   "power_down": "revert",
 

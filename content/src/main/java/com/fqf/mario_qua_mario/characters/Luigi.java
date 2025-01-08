@@ -4,6 +4,8 @@ import com.fqf.mario_qua_mario.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario.definitions.states.CharacterDefinition;
 import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
+import com.fqf.mario_qua_mario.util.MarioContentSFX;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,6 +16,10 @@ import static com.fqf.mario_qua_mario.util.StatCategory.*;
 public class Luigi extends Mario implements CharacterDefinition {
 	@Override public @NotNull Identifier getID() {
 		return MarioQuaMarioContent.makeID("luigi");
+	}
+
+	@Override public @NotNull SoundEvent getJumpSound() {
+		return MarioContentSFX.LUIGI_JUMP;
 	}
 
 	@Override public Set<StatModifier> getStatModifiers() {
