@@ -121,7 +121,7 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 		return PHONY_INPUTS;
 	}
 
-	private static final MarioInputs PHONY_INPUTS;
+	public static final MarioInputs PHONY_INPUTS;
 	static {
 		MarioInputs.MarioButton phonyButton = new MarioInputs.MarioButton() {
 			@Override public boolean isPressed() {

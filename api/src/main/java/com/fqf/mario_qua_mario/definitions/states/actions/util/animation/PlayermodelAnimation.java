@@ -11,6 +11,8 @@ public record PlayermodelAnimation(
 		@Nullable LimbAnimation leftArmAnimation,
 
 		@Nullable LimbAnimation rightLegAnimation,
-		@Nullable LimbAnimation leftLegAnimation
+		@Nullable LimbAnimation leftLegAnimation,
+
+		@Nullable BodyPartAnimation capeAnimation
 ) {
 }

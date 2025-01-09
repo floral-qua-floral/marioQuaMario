@@ -19,7 +19,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public abstract class MarioPlayerData implements IMarioData {
+public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	protected MarioPlayerData() {
 		MarioQuaMario.LOGGER.info("Created new MarioData: {}", this);
 
@@ -62,6 +62,7 @@ public abstract class MarioPlayerData implements IMarioData {
 	}
 
 	private AbstractParsedAction action;
+	public boolean resetAnimation = false;
 	public AbstractParsedAction getAction() {
 		return this.action;
 	}

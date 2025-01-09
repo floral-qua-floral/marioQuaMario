@@ -1,5 +1,7 @@
 package com.fqf.mario_qua_mario.util;
 
+import net.minecraft.util.math.MathHelper;
+
 import static net.minecraft.util.math.MathHelper.PI;
 import static net.minecraft.util.math.MathHelper.sin;
 import static net.minecraft.util.math.MathHelper.cos;
@@ -58,6 +60,13 @@ public interface Easing {
 	}
 	static float mixedEase(InOutEasing in, InOutEasing out, float progress, float start, float end) {
 		return start + ((end - start) * mixedEase(in, out, progress));
+	}
+
+	static float clampedRangeToProgress(float x, float min, float max) {
+		return MathHelper.clamp((x - min) / (max - min), 0, 1);
+	}
+	static float clampedRangeToProgress(double x, float min, float max) {
+		return clampedRangeToProgress((float) x, min, max);
 	}
 
 	float ease(float x);
