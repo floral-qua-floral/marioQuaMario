@@ -3,6 +3,9 @@ package com.fqf.mario_qua_mario.actions.generic;
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario.definitions.states.actions.GenericActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.CameraAnimationSet;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.mario_qua_mario.mariodata.*;
 import com.fqf.mario_qua_mario.util.MarioContentSFX;
 import net.minecraft.entity.Entity;
@@ -24,7 +27,7 @@ public class Debug implements GenericActionDefinition {
 		return MarioQuaMarioContent.makeID("debug");
 	}
 
-	@Override public @Nullable String getAnimationName() {
+	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
 		return null;
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations() {

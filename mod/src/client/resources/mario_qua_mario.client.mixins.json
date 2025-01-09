@@ -3,6 +3,7 @@
   "package": "com.fqf.mario_qua_mario.mixin.client",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "PlayerEntityModelMixin",
     "ClientPlayerEntityMarioDataMixin",
     "ClientPlayerEntityMixin",
     "InGameHudMixin",

@@ -4,6 +4,8 @@ import com.fqf.mario_qua_mario.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
@@ -12,9 +14,6 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Set;
-
 import static com.fqf.mario_qua_mario.util.StatCategory.*;
 
 public class Jump extends Fall implements AirborneActionDefinition {
@@ -22,7 +21,7 @@ public class Jump extends Fall implements AirborneActionDefinition {
 		return MarioQuaMarioContent.makeID("jump");
 	}
 
-	@Override public @Nullable String getAnimationName() {
+	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
 		return null;
 	}
 

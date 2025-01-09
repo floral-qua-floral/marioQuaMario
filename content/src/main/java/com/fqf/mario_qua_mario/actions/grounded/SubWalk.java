@@ -5,6 +5,9 @@ import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.airborne.Jump;
 import com.fqf.mario_qua_mario.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.CameraAnimationSet;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
@@ -23,7 +26,7 @@ public class SubWalk implements GroundedActionDefinition {
 		return MarioQuaMarioContent.makeID("sub_walk");
 	}
 
-	@Override public @Nullable String getAnimationName() {
+	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
 		return null;
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations() {

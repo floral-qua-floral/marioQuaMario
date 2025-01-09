@@ -1,6 +1,9 @@
 package com.fqf.mario_qua_mario.definitions.states.actions.util;
 
 import com.fqf.mario_qua_mario.definitions.states.AttackInterceptingStateDefinition;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.CameraAnimationSet;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -8,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Set;
 
 public interface IncompleteActionDefinition extends AttackInterceptingStateDefinition {
-	@Nullable String getAnimationName();
+	@Nullable PlayermodelAnimation getAnimation(AnimationHelper helper);
 	@Nullable CameraAnimationSet getCameraAnimations();
 	@NotNull SlidingStatus getSlidingStatus();
 

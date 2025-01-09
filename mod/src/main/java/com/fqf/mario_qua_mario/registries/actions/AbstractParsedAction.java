@@ -3,6 +3,8 @@ package com.fqf.mario_qua_mario.registries.actions;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.definitions.states.AttackInterceptingStateDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.CameraAnimationSet;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
 import com.fqf.mario_qua_mario.registries.ParsedAttackInterception;
 import com.fqf.mario_qua_mario.registries.ParsedMarioThing;
@@ -15,7 +17,7 @@ import java.util.*;
 public abstract class AbstractParsedAction extends ParsedMarioThing {
 	protected final IncompleteActionDefinition ACTION_DEFINITION;
 
-	public final @Nullable String ANIMATION;
+	public final @Nullable PlayermodelAnimation ANIMATION;
 	public final @Nullable CameraAnimationSet CAMERA_ANIMATIONS;
 	public final SlidingStatus SLIDING_STATUS;
 
@@ -35,7 +37,7 @@ public abstract class AbstractParsedAction extends ParsedMarioThing {
 		super(definition);
 		this.ACTION_DEFINITION = definition;
 
-		this.ANIMATION = definition.getAnimationName();
+		this.ANIMATION = definition.getAnimation(null);
 		this.CAMERA_ANIMATIONS = definition.getCameraAnimations();
 		this.SLIDING_STATUS = definition.getSlidingStatus();
 
