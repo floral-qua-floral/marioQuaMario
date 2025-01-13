@@ -9,6 +9,7 @@ import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario.util.CharaStat;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +24,14 @@ public class Fall implements AirborneActionDefinition {
 	}
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return null;
+		return new PlayermodelAnimation(
+				(data, ticksPassed) -> (ticksPassed / 100F) % 1,
+				(data, arrangement, progress) -> arrangement.yaw = progress * -360,
+				null, null,
+				null, null,
+				null, null,
+				null
+		);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations() {
 		return null;

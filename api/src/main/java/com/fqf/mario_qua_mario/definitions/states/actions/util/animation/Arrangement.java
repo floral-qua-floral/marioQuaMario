@@ -16,7 +16,7 @@ public class Arrangement {
 
 	@FunctionalInterface
 	public interface Mutator {
-		void mutate(IMarioReadableMotionData data, Arrangement arrangement, float progress, int loops);
+		void mutate(IMarioReadableMotionData data, Arrangement arrangement, float progress);
 	}
 
 	public void setPos(float x, float y, float z) {

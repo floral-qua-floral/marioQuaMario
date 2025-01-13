@@ -26,7 +26,21 @@ public class Debug implements GenericActionDefinition {
 	}
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return null;
+		return new PlayermodelAnimation(
+				(data, ticksPassed) -> ticksPassed / 20F,
+				null,
+
+				null,
+				null,
+
+				new LimbAnimation(false, (data, arrangement, progress) -> arrangement.roll += 90),
+				new LimbAnimation(false, (data, arrangement, progress) -> arrangement.roll -= 90),
+
+				new LimbAnimation(false, null),
+				new LimbAnimation(false, null),
+
+				null
+		);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations() {
 		return null;
@@ -36,7 +50,7 @@ public class Debug implements GenericActionDefinition {
 	}
 
 	@Override public @NotNull SneakingRule getSneakingRule() {
-		return SneakingRule.PROHIBIT;
+		return SneakingRule.ALLOW;
 	}
 	@Override public @NotNull SprintingRule getSprintingRule() {
 		return SprintingRule.ALLOW;

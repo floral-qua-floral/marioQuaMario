@@ -3,12 +3,15 @@
   "package": "com.fqf.mario_qua_mario.mixin.client",
   "compatibilityLevel": "JAVA_21",
   "client": [
-    "PlayerEntityModelMixin",
+    "AbstractClientPlayerEntityMarioDataMixin",
+    "BipedEntityModelMixin",
     "ClientPlayerEntityMarioDataMixin",
     "ClientPlayerEntityMixin",
     "InGameHudMixin",
     "MinecraftClientMixin",
-    "OtherClientPlayerEntityMarioDataMixin"
+    "OtherClientPlayerEntityMarioDataMixin",
+    "PlayerEntityModelMixin",
+    "PlayerEntityRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

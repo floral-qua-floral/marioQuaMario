@@ -23,31 +23,29 @@ public class Jump extends Fall implements AirborneActionDefinition {
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
 		return new PlayermodelAnimation(
-				null,
-				new BodyPartAnimation((data, arrangement, progress, loops) -> arrangement.setPos(0, 0, 0)),
-				new BodyPartAnimation((data, arrangement, progress, loops) -> arrangement.addAngles(0, 0, 0)),
+				(data, ticksPassed) -> Easing.EXPO_IN_OUT.ease(Easing.clampedRangeToProgress(data.getYVel(), 0.87F, -0.85F)),
+				null, null, null,
 
-				new LimbAnimation(false, (data, arrangement, progress, loops) -> {
-					float jumpProgress = Easing.clampedRangeToProgress(data.getYVel(), 0.87F, -0.85F);
+				new LimbAnimation(false, (data, arrangement, progress) -> {
 					float scalingFactor = 0.3F;
 
 					arrangement.setAngles(
-							arrangement.pitch * -0.8F + Easing.QUINT_IN.ease(jumpProgress, -160, -30),
+							arrangement.pitch * -0.8F + Easing.QUINT_IN.ease(progress, -160, -30),
 							arrangement.yaw * scalingFactor,
 							arrangement.roll * scalingFactor
 					);
 				}),
-				new LimbAnimation(true, (data, arrangement, progress, loops) -> arrangement.setAngles(15 + 1.2F * arrangement.pitch, arrangement.yaw, arrangement.roll)),
+				new LimbAnimation(false, (data, arrangement, progress) ->
+						arrangement.setAngles(15 + 1.2F * arrangement.pitch, arrangement.yaw, arrangement.roll)),
 
-				new LimbAnimation(false, (data, arrangement, progress, loops) -> arrangement.setAngles(15, 0, 0)),
-				new LimbAnimation(false, (data, arrangement, progress, loops) -> {
-					float jumpProgress = Easing.clampedRangeToProgress(data.getYVel(), 0.87F, -0.85F);
-
+				new LimbAnimation(false, (data, arrangement, progress) ->
+						arrangement.addAngles(15, 0, 0)),
+				new LimbAnimation(false, (data, arrangement, progress) -> {
 					arrangement.setAngles(-10, 0, 0);
-					arrangement.setPos(
-							1.98F,
-							Easing.EXPO_IN.ease(jumpProgress, 7, 12),
-							Easing.QUART_IN.ease(jumpProgress, -2.5F, 0)
+					arrangement.addPos(
+							0,
+							Easing.EXPO_IN.ease(progress, -5, 0),
+							Easing.QUART_IN.ease(progress, -2.5F, 0)
 					);
 				}),
 

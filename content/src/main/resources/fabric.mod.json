@@ -17,7 +17,10 @@
 	"entrypoints": {
 		"mqm-generic-actions": [
 			"com.fqf.mario_qua_mario.actions.generic.Debug",
-			"com.fqf.mario_qua_mario.actions.generic.DebugSprint"
+			"com.fqf.mario_qua_mario.actions.generic.DebugSprint",
+			"com.fqf.mario_qua_mario.actions.generic.DebugSpinPitch",
+			"com.fqf.mario_qua_mario.actions.generic.DebugSpinYaw",
+			"com.fqf.mario_qua_mario.actions.generic.DebugSpinRoll"
 		],
 		"mqm-grounded-actions": [
 			"com.fqf.mario_qua_mario.actions.grounded.SubWalk",

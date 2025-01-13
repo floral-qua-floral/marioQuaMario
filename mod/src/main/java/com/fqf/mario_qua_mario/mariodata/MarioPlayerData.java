@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.mariodata;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
@@ -12,7 +13,6 @@ import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
@@ -62,7 +62,8 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	}
 
 	private AbstractParsedAction action;
-	public boolean resetAnimation = false;
+	public boolean resetAnimation;
+	public boolean tickAnimation = true;
 	public AbstractParsedAction getAction() {
 		return this.action;
 	}
@@ -77,6 +78,7 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 		return transitionedNaturally || forced;
 	}
 	public void setActionTransitionless(AbstractParsedAction action) {
+		this.resetAnimation = true;
 		this.action = action;
 	}
 
@@ -133,6 +135,7 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	}
 
 	public void tick() {
+		this.tickAnimation = true;
 	}
 
 	@Override public double getStat(CharaStat stat) {

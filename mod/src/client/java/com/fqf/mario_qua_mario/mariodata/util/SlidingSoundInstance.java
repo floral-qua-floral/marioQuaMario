@@ -1,5 +1,6 @@
-package com.fqf.mario_qua_mario.mariodata;
+package com.fqf.mario_qua_mario.mariodata.util;
 
+import com.fqf.mario_qua_mario.mariodata.IMarioClientDataImpl;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.sound.MovingSoundInstance;
 import net.minecraft.sound.SoundCategory;

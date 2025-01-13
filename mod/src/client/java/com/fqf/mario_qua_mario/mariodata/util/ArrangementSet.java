@@ -1,4 +1,4 @@
-package com.fqf.mario_qua_mario.util;
+package com.fqf.mario_qua_mario.mariodata.util;
 
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.Arrangement;
 
