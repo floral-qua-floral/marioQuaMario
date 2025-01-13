@@ -66,6 +66,23 @@ public abstract class MarioMoveableData extends MarioPlayerData implements IMari
 		return this.getMario().getVelocity().horizontalLengthSquared();
 	}
 
+	@Override public double getDeltaYaw() {
+		return this.smoothedDeltaYaw;
+	}
+
+	private double prevYaw;
+	private double smoothedDeltaYaw;
+	@Override public void tick() {
+		super.tick();
+
+		double deltaYaw = this.getMario().getYaw() - this.prevYaw;
+		this.prevYaw = this.getMario().getYaw();
+		this.smoothedDeltaYaw = MathHelper.lerp(0.2, this.smoothedDeltaYaw, deltaYaw);
+//		double deltaYawDiff = deltaYaw - smoothedDeltaYaw;
+//		if(Math.abs(deltaYawDiff) > 0.1) this.smoothedDeltaYaw += 0.1 * Math.signum(deltaYawDiff);
+//		else this.smoothedDeltaYaw = deltaYaw;
+	}
+
 	@Override public void setForwardVel(double forward) {
 		VELOCITIES.ensureDirty().forward = forward;
 	}

@@ -25,8 +25,8 @@ public class Fall implements AirborneActionDefinition {
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
 		return new PlayermodelAnimation(
-				(data, ticksPassed) -> (ticksPassed / 100F) % 1,
-				(data, arrangement, progress) -> arrangement.yaw = progress * -360,
+				null, (data, ticksPassed) -> (ticksPassed / 100F) % 1,
+				null,
 				null, null,
 				null, null,
 				null, null,

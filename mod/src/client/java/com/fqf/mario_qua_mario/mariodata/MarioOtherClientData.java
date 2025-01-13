@@ -115,6 +115,11 @@ public class MarioOtherClientData extends MarioPlayerData implements IMarioClien
 	}
 
 	@Override
+	public double getDeltaYaw() {
+		return 0;
+	}
+
+	@Override
 	public MarioInputs getInputs() {
 		return MarioServerPlayerData.PHONY_INPUTS;
 	}

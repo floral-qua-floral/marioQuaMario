@@ -2,6 +2,7 @@ package com.fqf.mario_qua_mario.actions.generic;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.EntireBodyAnimation;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -17,8 +18,8 @@ public class DebugSpinRoll extends Debug {
 	@Override
 	public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
 		return new PlayermodelAnimation(
-				(data, ticksPassed) -> (ticksPassed / 20F) % 1,
-				(data, arrangement, progress) -> arrangement.setAngles(0, 0, progress * -360),
+				null, (data, ticksPassed) -> (ticksPassed / 20F) % 1,
+				new EntireBodyAnimation(0.5F, (data, arrangement, progress) -> arrangement.setAngles(0, 0, progress * -360)),
 
 				null, null,
 				null, null,

@@ -9,7 +9,9 @@ import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.mariodata.IMarioReadableMotionData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario.util.CharaStat;
+import com.fqf.mario_qua_mario.util.Easing;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,6 +24,22 @@ import static com.fqf.mario_qua_mario.util.StatCategory.OVERSPEED_CORRECTION;
 public class WalkRun extends SubWalk implements GroundedActionDefinition {
 	@Override public @NotNull Identifier getID() {
 		return MarioQuaMarioContent.makeID("walk_run");
+	}
+
+	@Override
+	public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
+		return new PlayermodelAnimation(
+				null,
+				(data, ticksPassed) -> Easing.clampedRangeToProgress(data.getForwardVel(), SubWalk.WALK_SPEED.get(data), RUN_SPEED.get(data)),
+				new EntireBodyAnimation(0.0F, (data, arrangement, progress) -> {
+//					MarioQuaMarioContent.LOGGER.info("deltaYaw: {}", data.getDeltaYaw());
+					arrangement.roll = MathHelper.clamp((float) data.getDeltaYaw() * progress * -4F, -45F, 45F);
+				}),
+				null, null,
+				new LimbAnimation(true, (data, arrangement, progress) -> arrangement.roll += progress * 70),
+				new LimbAnimation(true, (data, arrangement, progress) -> arrangement.roll -= progress * 70),
+				null, null, null
+		);
 	}
 
 	@Override public @NotNull SprintingRule getSprintingRule() {

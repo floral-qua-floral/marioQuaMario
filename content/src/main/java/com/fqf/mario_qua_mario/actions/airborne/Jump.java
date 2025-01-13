@@ -23,8 +23,16 @@ public class Jump extends Fall implements AirborneActionDefinition {
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
 		return new PlayermodelAnimation(
+				(data, rightArmBusy, leftArmBusy, headRelativeYaw) -> {
+					if(leftArmBusy && !rightArmBusy) return false;
+					if(rightArmBusy && !leftArmBusy) return true;
+					if(Math.abs(headRelativeYaw) > 0.55F) return headRelativeYaw > 0;
+					return data.getMario().getRandom().nextBoolean();
+				},
 				(data, ticksPassed) -> Easing.EXPO_IN_OUT.ease(Easing.clampedRangeToProgress(data.getYVel(), 0.87F, -0.85F)),
-				null, null, null,
+				null,
+				null,
+				null,
 
 				new LimbAnimation(false, (data, arrangement, progress) -> {
 					float scalingFactor = 0.3F;
@@ -34,6 +42,7 @@ public class Jump extends Fall implements AirborneActionDefinition {
 							arrangement.yaw * scalingFactor,
 							arrangement.roll * scalingFactor
 					);
+//					arrangement.addPos(-10, 0, 0);
 				}),
 				new LimbAnimation(false, (data, arrangement, progress) ->
 						arrangement.setAngles(15 + 1.2F * arrangement.pitch, arrangement.yaw, arrangement.roll)),
@@ -41,7 +50,7 @@ public class Jump extends Fall implements AirborneActionDefinition {
 				new LimbAnimation(false, (data, arrangement, progress) ->
 						arrangement.addAngles(15, 0, 0)),
 				new LimbAnimation(false, (data, arrangement, progress) -> {
-					arrangement.setAngles(-10, 0, 0);
+					arrangement.setAngles(Easing.QUINT_IN.ease(progress, -30, -10), 0, 0);
 					arrangement.addPos(
 							0,
 							Easing.EXPO_IN.ease(progress, -5, 0),

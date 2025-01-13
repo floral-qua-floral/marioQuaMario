@@ -9,7 +9,7 @@ import static net.minecraft.util.math.MathHelper.sqrt;
 
 @FunctionalInterface
 public interface Easing {
-	InOutEasing LINEAR = progress -> progress;
+	InOutEasing LINEAR = x -> x;
 
 	Easing SNAP_EARLY = x -> x > 0 ? 1 : 0;
 	InOutEasing SNAP_HALFWAY = x -> x >= 0.5 ? 1 : 0;
@@ -56,7 +56,7 @@ public interface Easing {
 		return progress -> mixedEase(in, out, progress);
 	}
 	static float mixedEase(InOutEasing in, InOutEasing out, float progress) {
-		return LINEAR.ease(progress, in.ease(progress), out.ease(progress));
+		return CUBIC_IN_OUT.ease(progress, in.ease(progress), out.ease(progress));
 	}
 	static float mixedEase(InOutEasing in, InOutEasing out, float progress, float start, float end) {
 		return start + ((end - start) * mixedEase(in, out, progress));
@@ -65,8 +65,8 @@ public interface Easing {
 	static float clampedRangeToProgress(float x, float min, float max) {
 		return MathHelper.clamp((x - min) / (max - min), 0, 1);
 	}
-	static float clampedRangeToProgress(double x, float min, float max) {
-		return clampedRangeToProgress((float) x, min, max);
+	static float clampedRangeToProgress(double x, double min, double max) {
+		return clampedRangeToProgress((float) x, (float) min, (float) max);
 	}
 
 	float ease(float x);

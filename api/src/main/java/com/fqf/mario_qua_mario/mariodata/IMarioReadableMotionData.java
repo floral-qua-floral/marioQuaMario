@@ -8,6 +8,8 @@ public interface IMarioReadableMotionData extends IMarioData {
 	double getHorizVel();
 	double getHorizVelSquared();
 
+	double getDeltaYaw();
+
 	MarioInputs getInputs();
 
 	abstract class MarioInputs {

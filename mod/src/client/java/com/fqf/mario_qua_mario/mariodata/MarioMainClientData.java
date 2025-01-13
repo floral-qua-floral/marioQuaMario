@@ -62,6 +62,7 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		this.getMario().move(MovementType.SELF, this.getMario().getVelocity());
 
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
+		this.applyModifiedVelocity();
 
 		this.getMario().updateLimbs(false);
 		return cancelVanillaTravel;
