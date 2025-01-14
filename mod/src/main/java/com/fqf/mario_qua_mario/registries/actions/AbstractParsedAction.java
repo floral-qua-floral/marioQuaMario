@@ -7,14 +7,14 @@ import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.CameraA
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
 import com.fqf.mario_qua_mario.registries.ParsedAttackInterception;
-import com.fqf.mario_qua_mario.registries.ParsedMarioThing;
+import com.fqf.mario_qua_mario.registries.ParsedMarioState;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public abstract class AbstractParsedAction extends ParsedMarioThing {
+public abstract class AbstractParsedAction extends ParsedMarioState {
 	protected final IncompleteActionDefinition ACTION_DEFINITION;
 
 	public final @Nullable PlayermodelAnimation ANIMATION;

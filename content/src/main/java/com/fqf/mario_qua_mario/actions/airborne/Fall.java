@@ -63,6 +63,9 @@ public class Fall implements AirborneActionDefinition {
 			EvaluatorEnvironment.COMMON
 	);
 
+	@Override public @Nullable Object setupCustomMarioVars() {
+		return null;
+	}
 	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
 
 	}
@@ -71,6 +74,13 @@ public class Fall implements AirborneActionDefinition {
 	}
 	@Override public void travelHook(IMarioTravelData data, AirborneActionHelper helper) {
 		helper.applyGravity(data, FALL_ACCEL, null, FALL_SPEED);
+//		helper.airborneAccel(
+//				data,
+//				null, null,
+//				null, null,
+//				null, null,
+//				1.0, 1.0, null
+//		);
 	}
 
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(AirborneActionHelper helper) {

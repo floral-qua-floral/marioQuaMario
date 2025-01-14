@@ -31,13 +31,14 @@ public class WalkRun extends SubWalk implements GroundedActionDefinition {
 		return new PlayermodelAnimation(
 				null,
 				(data, ticksPassed) -> Easing.clampedRangeToProgress(data.getForwardVel(), SubWalk.WALK_SPEED.get(data), RUN_SPEED.get(data)),
-				new EntireBodyAnimation(0.0F, (data, arrangement, progress) -> {
-//					MarioQuaMarioContent.LOGGER.info("deltaYaw: {}", data.getDeltaYaw());
-					arrangement.roll = MathHelper.clamp((float) data.getDeltaYaw() * progress * -4F, -45F, 45F);
-				}),
+
+				new EntireBodyAnimation(0.0F, (data, arrangement, progress) ->
+						arrangement.roll = MathHelper.clamp((float) data.getDeltaYaw() * progress * -4F, -45F, 45F)),
 				null, null,
+
 				new LimbAnimation(true, (data, arrangement, progress) -> arrangement.roll += progress * 70),
 				new LimbAnimation(true, (data, arrangement, progress) -> arrangement.roll -= progress * 70),
+
 				null, null, null
 		);
 	}

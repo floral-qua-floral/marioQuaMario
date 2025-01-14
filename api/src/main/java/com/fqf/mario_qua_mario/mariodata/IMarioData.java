@@ -18,4 +18,6 @@ public interface IMarioData {
 	double getStat(CharaStat stat);
 	double getStatMultiplier(CharaStat stat);
 	int getBumpStrengthModifier();
+
+	<T> T getVars(Class<T> clazz);
 }

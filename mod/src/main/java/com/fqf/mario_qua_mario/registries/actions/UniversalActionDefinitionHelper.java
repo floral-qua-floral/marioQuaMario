@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario.registries.actions;
 
+import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.definitions.states.actions.*;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.IncompleteActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionDefinition;
@@ -8,6 +9,7 @@ import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
 import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
 import com.fqf.mario_qua_mario.util.CharaStat;
+import com.fqf.mario_qua_mario.util.StatCategory;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
@@ -103,7 +105,7 @@ public class UniversalActionDefinitionHelper implements
 			CharaStat gravity, @Nullable CharaStat jumpingGravity,
 			CharaStat terminalVelocity
 	) {
-		this.applyGravity(data, (jumpingGravity == null || data.getTimers().jumpCapped) ? gravity : jumpingGravity, terminalVelocity);
+		this.applyGravity(data, (jumpingGravity == null || ((MarioPlayerData) data).jumpCapped) ? gravity : jumpingGravity, terminalVelocity);
 	}
 
 	@Override public void airborneAccel(
@@ -113,11 +115,50 @@ public class UniversalActionDefinitionHelper implements
 			CharaStat strafeAccelStat, CharaStat strafeSpeedStat,
 			double forwardAngleContribution, double strafeAngleContribution, CharaStat redirectStat
 	) {
+		boolean forwards = data.getInputs().getForwardInput() >= 0;
+		airborneAccel(data,
+				forwards ? forwardAccelStat : backwardAccelStat,
+				forwards ? forwardSpeedStat : backwardSpeedStat,
+				strafeAccelStat, strafeSpeedStat,
+				forwardAngleContribution, strafeAngleContribution, redirectStat
+		);
+	}
 
+	private void airborneAccel(
+			IMarioTravelData data,
+			CharaStat accelStat, CharaStat speedStat,
+			CharaStat strafeAccelStat, CharaStat strafeSpeedStat,
+			double forwardAngleContribution, double strafeAngleContribution, CharaStat redirectStat
+	) {
+		double forwardInput = data.getInputs().getForwardInput();
+		double strafeInput = data.getInputs().getStrafeInput();
+		double forwardVel = data.getForwardVel();
+		double strafeVel = data.getStrafeVel();
+
+		double accelValue, strafeAccelValue;
+
+		if(forwardInput != 0 && (Math.signum(forwardVel) != Math.signum(forwardInput) || Math.abs(forwardVel) < Math.abs(speedStat.get(data))))
+			accelValue = accelStat.get(data) * forwardInput;
+		else accelValue = 0;
+
+		if(strafeInput != 0 && (Math.signum(strafeVel) != Math.signum(strafeInput) || Math.abs(strafeVel) < Math.abs(strafeSpeedStat.get(data))))
+			strafeAccelValue = strafeAccelStat.get(data) * strafeInput;
+		else strafeAccelValue = 0;
+
+		data.approachAngleAndAccel(
+				accelValue, speedStat.get(data) * Math.signum(forwardInput),
+				strafeAccelValue, strafeSpeedStat.get(data) * Math.signum(strafeInput),
+				forwardAngleContribution, strafeAngleContribution, redirectStat.get(data)
+		);
 	}
 
 	@Override
 	public TransitionDefinition makeJumpCapTransition(IncompleteActionDefinition forAction, double capThreshold) {
+		CharaStat cap = new CharaStat(capThreshold, StatCategory.JUMP_CAP);
+//		return new TransitionDefinition(
+//				forAction.getID(),
+//				data -> !
+//		);
 		return null;
 	}
 

@@ -30,9 +30,7 @@ public class Jump extends Fall implements AirborneActionDefinition {
 					return data.getMario().getRandom().nextBoolean();
 				},
 				(data, ticksPassed) -> Easing.EXPO_IN_OUT.ease(Easing.clampedRangeToProgress(data.getYVel(), 0.87F, -0.85F)),
-				null,
-				null,
-				null,
+				null, null, null,
 
 				new LimbAnimation(false, (data, arrangement, progress) -> {
 					float scalingFactor = 0.3F;
@@ -42,7 +40,6 @@ public class Jump extends Fall implements AirborneActionDefinition {
 							arrangement.yaw * scalingFactor,
 							arrangement.roll * scalingFactor
 					);
-//					arrangement.addPos(-10, 0, 0);
 				}),
 				new LimbAnimation(false, (data, arrangement, progress) ->
 						arrangement.setAngles(15 + 1.2F * arrangement.pitch, arrangement.yaw, arrangement.roll)),

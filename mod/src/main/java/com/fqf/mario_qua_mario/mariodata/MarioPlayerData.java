@@ -1,7 +1,7 @@
 package com.fqf.mario_qua_mario.mariodata;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.mario_qua_mario.registries.ParsedMarioState;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
@@ -15,9 +15,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	protected MarioPlayerData() {
@@ -79,6 +77,7 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	}
 	public void setActionTransitionless(AbstractParsedAction action) {
 		this.resetAnimation = true;
+		this.setupCustomVars(this.action, action);
 		this.action = action;
 	}
 
@@ -94,6 +93,7 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 		this.setPowerUpTransitionless(newPowerUp);
 	}
 	public void setPowerUpTransitionless(ParsedPowerUp newPowerUp) {
+		this.setupCustomVars(this.powerUp, newPowerUp);
 		this.powerUp = newPowerUp;
 		refreshPlayerModel();
 		refreshPowerSet();
@@ -108,11 +108,18 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	}
 
 	public void setCharacter(ParsedCharacter character) {
+		this.setupCustomVars(this.character, character);
 		this.character = character;
+		this.setActionTransitionless(character.INITIAL_ACTION);
+		this.setPowerUpTransitionless(character.INITIAL_POWER_UP);
 		refreshPlayerModel();
 		refreshPowerSet();
 	}
 
+	public void setupCustomVars(ParsedMarioState oldThing, ParsedMarioState newThing) {
+		if(oldThing.CUSTOM_DATA_CLASS != null) this.customVars.remove(oldThing.CUSTOM_DATA_CLASS);
+		if(newThing.CUSTOM_DATA_CLASS != null) this.customVars.put(newThing.CUSTOM_DATA_CLASS, newThing.makeCustomThing());
+	}
 	public void refreshPlayerModel() {
 
 	}
@@ -148,6 +155,17 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 
 	@Override public int getBumpStrengthModifier() {
 		return this.getPowerUp().BUMP_STRENGTH_MODIFIER + this.getCharacter().BUMP_STRENGTH_MODIFIER;
+	}
+
+	public boolean jumpCapped;
+	private final Map<Class<?>, Object> customVars = new HashMap<>();
+	@Override public <T> T getVars(Class<T> clazz) {
+		Object customData = this.customVars.get(clazz);
+		if(customData == null)
+			throw new IllegalStateException("No custom data of type " + clazz.getName() + " present!");
+		else {
+			return clazz.cast(customData);
+		}
 	}
 
 	public boolean doMarioTravel() {

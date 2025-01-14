@@ -65,16 +65,15 @@ public class Fire implements PowerUpDefinition {
 		return Set.of();
 	}
 
+	@Override public @Nullable Object setupCustomMarioVars() {
+		return new FireFlowerData();
+	}
 	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
 
 	}
 	@Override public void serverTick(IMarioAuthoritativeData data) {
 
 	}
-
-	// NOTE! THESE VALUES CAN ONLY BE SAFELY USED FOR THE MAIN CLIENT (i.e. in evaluators)!!!!!
-	private static long noMainFireballsUntil;
-	private static long noSecondaryFireballsUntil;
 
 	private abstract static class FireballDefinition implements AttackInterceptionDefinition {
 		private final Hand HAND;
@@ -108,12 +107,12 @@ public class Fire implements PowerUpDefinition {
 			if(data.getMario().isMainPlayer()) {
 				long time = data.getMario().getWorld().getTime();
 				if(this.HAND == Hand.MAIN_HAND) {
-					noMainFireballsUntil = time + 12;
-					noSecondaryFireballsUntil = time + 3;
+					data.getVars(FireFlowerData.class).noMainFireballsUntil = time + 12;
+					data.getVars(FireFlowerData.class).noSecondaryFireballsUntil = time + 3;
 				}
 				else {
-					noMainFireballsUntil = time + 12;
-					noSecondaryFireballsUntil = time + 12;
+					data.getVars(FireFlowerData.class).noMainFireballsUntil = time + 12;
+					data.getVars(FireFlowerData.class).noSecondaryFireballsUntil = time + 12;
 				}
 			}
 		}
@@ -131,7 +130,7 @@ public class Fire implements PowerUpDefinition {
 				new FireballDefinition(Hand.MAIN_HAND) {
 					@Override
 					public boolean shouldInterceptAttack(IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
-						return weapon.isEmpty() && data.getMario().getWorld().getTime() > noMainFireballsUntil
+						return weapon.isEmpty() && data.getMario().getWorld().getTime() > data.getVars(FireFlowerData.class).noMainFireballsUntil
 								&& attackCooldownProgress >= 1 && (entityHitResult == null || !entityHitResult.getEntity().isFireImmune());
 					}
 
@@ -145,8 +144,9 @@ public class Fire implements PowerUpDefinition {
 					public boolean shouldInterceptAttack(IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
 						MarioQuaMarioContent.LOGGER.info("Attempting offhand fireball toss?");
 						long time = data.getMario().getWorld().getTime();
-						return time > noSecondaryFireballsUntil
-								&& (time < noMainFireballsUntil || !weapon.isEmpty()) // Only after throwing a first fireball, or any time if holding an item
+						return time > data.getVars(FireFlowerData.class).noSecondaryFireballsUntil
+								// Only after throwing a first fireball, or any time if holding an item
+								&& (time < data.getVars(FireFlowerData.class).noMainFireballsUntil || !weapon.isEmpty())
 								&& data.getMario().getOffHandStack().isEmpty()
 								&& attackCooldownProgress < 1;
 					}
@@ -161,9 +161,14 @@ public class Fire implements PowerUpDefinition {
 					public boolean shouldInterceptAttack(IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
 						long time = data.getMario().getWorld().getTime();
 						return attackCooldownProgress < 1 && weapon.isEmpty()
-								&& (time < noSecondaryFireballsUntil || time > noMainFireballsUntil);
+								&& (time < data.getVars(FireFlowerData.class).noSecondaryFireballsUntil || time > data.getVars(FireFlowerData.class).noMainFireballsUntil);
 					}
 				}
 		);
+	}
+
+	private static class FireFlowerData {
+		private long noMainFireballsUntil;
+		private long noSecondaryFireballsUntil;
 	}
 }

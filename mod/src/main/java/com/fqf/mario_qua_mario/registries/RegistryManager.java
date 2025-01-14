@@ -66,7 +66,7 @@ public class RegistryManager {
 		return FabricLoader.getInstance().getEntrypointContainers(key, clazz).stream().map(EntrypointContainer::getEntrypoint).toList();
 	}
 
-	public static <Thing extends ParsedMarioThing> void registerThing(Registry<Thing> registry, Thing thing) {
+	public static <Thing extends ParsedMarioState> void registerThing(Registry<Thing> registry, Thing thing) {
 		Registry.register(registry, thing.ID, thing);
 	}
 
@@ -112,9 +112,8 @@ public class RegistryManager {
 			for (String voiceLine : voicelineSet.getVoiceLines()) {
 				VOICE_LINES.put(voiceLine, new HashMap<>());
 				for (ParsedCharacter character : CHARACTERS) {
-					String characterNamespace = character.ID.getNamespace();
-					if(characterNamespace.equals("mqm")) characterNamespace = "mario_qua_mario"; //this is gross :(
-					Identifier ID = Identifier.of(characterNamespace, "voice." + character.ID.getPath() + "." + voiceLine);
+					Identifier ID = Identifier.of(character.RESOURCE_ID.getNamespace(),
+							"voice." + character.RESOURCE_ID.getPath() + "." + voiceLine);
 					SoundEvent event = SoundEvent.of(ID);
 					Registry.register(Registries.SOUND_EVENT, ID, event);
 					VOICE_LINES.get(voiceLine).put(character, event);

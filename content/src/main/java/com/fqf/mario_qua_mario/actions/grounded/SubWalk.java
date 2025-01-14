@@ -67,6 +67,9 @@ public class SubWalk implements GroundedActionDefinition {
 	public static final CharaStat STRAFE_ACCEL = new CharaStat(0.065, WALKING, STRAFE, ACCELERATION);
 	public static final CharaStat STRAFE_SPEED = new CharaStat(0.275, WALKING, STRAFE, SPEED);
 
+	@Override public @Nullable Object setupCustomMarioVars() {
+		return null;
+	}
 	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
 
 	}

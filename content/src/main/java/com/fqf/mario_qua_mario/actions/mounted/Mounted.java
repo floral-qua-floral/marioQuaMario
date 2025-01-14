@@ -44,6 +44,9 @@ public class Mounted implements MountedActionDefinition {
 		return null;
 	}
 
+	@Override public @Nullable Object setupCustomMarioVars() {
+		return null;
+	}
 	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
 
 	}

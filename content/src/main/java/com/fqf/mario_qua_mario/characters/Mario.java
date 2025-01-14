@@ -5,10 +5,12 @@ import com.fqf.mario_qua_mario.definitions.states.CharacterDefinition;
 import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.util.MarioContentSFX;
+import com.fqf.mario_qua_mario.util.MarioVars;
 import net.minecraft.entity.Entity;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
@@ -50,11 +52,15 @@ public class Mario implements CharacterDefinition {
 		return Set.of();
 	}
 
-	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
-
+	@Override public @Nullable Object setupCustomMarioVars() {
+		return new MarioVars();
 	}
-
+	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
+		MarioVars.get(data).jumpLandingTime--;
+		MarioVars.get(data).doubleJumpLandingTime--;
+	}
 	@Override public void serverTick(IMarioAuthoritativeData data) {
-
+		MarioVars.get(data).jumpLandingTime--;
+		MarioVars.get(data).doubleJumpLandingTime--;
 	}
 }

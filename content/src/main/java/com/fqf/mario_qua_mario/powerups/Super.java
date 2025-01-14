@@ -69,6 +69,9 @@ public class Super implements PowerUpDefinition {
 		return Set.of();
 	}
 
+	@Override public @Nullable Object setupCustomMarioVars() {
+		return null;
+	}
 	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
 
 	}

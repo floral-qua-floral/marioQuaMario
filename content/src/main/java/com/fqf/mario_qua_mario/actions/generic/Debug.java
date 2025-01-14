@@ -5,7 +5,9 @@ import com.fqf.mario_qua_mario.definitions.states.actions.GenericActionDefinitio
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.*;
 import com.fqf.mario_qua_mario.mariodata.*;
+import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.MarioContentSFX;
+import com.fqf.mario_qua_mario.util.MarioVars;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
@@ -63,6 +65,9 @@ public class Debug implements GenericActionDefinition {
 		return null;
 	}
 
+	@Override public @Nullable Object setupCustomMarioVars() {
+		return new ActionTimerVars();
+	}
 	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
 
 	}
@@ -70,9 +75,9 @@ public class Debug implements GenericActionDefinition {
 
 	}
 	@Override public void travelHook(IMarioTravelData data) {
-		data.getTimers().actionTimer++;
+		ActionTimerVars.get(data).actionTimer++;
 		data.setForwardStrafeVel(data.getInputs().getForwardInput() * 0.5, data.getInputs().getStrafeInput() * 0.5);
-		data.setYVel(data.getInputs().JUMP.isHeld() ? 0.4 : (data.getInputs().DUCK.isHeld() ? -0.4 : (0.03 * Math.sin((double) data.getTimers().actionTimer++ / 16))));
+		data.setYVel(data.getInputs().JUMP.isHeld() ? 0.4 : (data.getInputs().DUCK.isHeld() ? -0.4 : (0.03 * Math.sin(ActionTimerVars.get(data).actionTimer++ / 16.0))));
 	}
 
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions() {

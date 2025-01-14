@@ -1,13 +1,11 @@
 package com.fqf.mario_qua_mario.registries.power_granting;
 
-import com.fqf.mario_qua_mario.definitions.states.MarioStateDefinition;
 import com.fqf.mario_qua_mario.definitions.states.StatAlteringStateDefinition;
-import com.fqf.mario_qua_mario.registries.ParsedMarioThing;
+import com.fqf.mario_qua_mario.registries.ParsedMarioState;
 
-import java.util.HashSet;
 import java.util.Set;
 
-public class ParsedPowerGrantingState extends ParsedMarioThing {
+public class ParsedPowerGrantingState extends ParsedMarioState {
 	public final float WIDTH_FACTOR;
 	public final float HEIGHT_FACTOR;
 

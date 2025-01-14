@@ -3,10 +3,8 @@ package com.fqf.mario_qua_mario.registries.power_granting;
 import com.fqf.mario_qua_mario.definitions.states.AttackInterceptingStateDefinition;
 import com.fqf.mario_qua_mario.definitions.states.PowerUpDefinition;
 import com.fqf.mario_qua_mario.registries.ParsedAttackInterception;
-import com.fqf.mario_qua_mario.registries.ParsedMarioThing;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;

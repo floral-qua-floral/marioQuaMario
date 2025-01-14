@@ -21,12 +21,6 @@ public interface IMarioTravelData extends IMarioReadableMotionData {
 
 	@NotNull MarioTimers getTimers();
 	class MarioTimers {
-		public int actionTimer = 0;
-		public int jumpLandingTime = 0;
-		public int doubleJumpLandingTime = 0;
-
-		public boolean jumpCapped = false;
-
 		public boolean actionInterceptedAttack = false;
 
 		public boolean bumpedCeiling = false;
