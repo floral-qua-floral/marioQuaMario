@@ -50,19 +50,21 @@ public abstract class PlayerEntityModelMixin<T extends LivingEntity> extends Bip
 		AbstractClientPlayerEntity mario = (AbstractClientPlayerEntity) livingEntity;
 		MarioPlayerData data = mario.mqm$getMarioData();
 		MarioAnimationData animData = mario.mqm$getAnimationData();
-		if(!data.isEnabled() || !animData.animatedLastFrame) return;
+		if(!data.isEnabled()) return;
 
-		animData.animatedLastFrame = false;
-		if(data.resetAnimation) {
-			setupArrangement(this.head, animData.prevTickArrangements.HEAD);
-			setupArrangement(this.body, animData.prevTickArrangements.BODY);
-			setupArrangement(this.rightArm, animData.prevTickArrangements.RIGHT_ARM);
-			setupArrangement(this.leftArm, animData.prevTickArrangements.LEFT_ARM);
-			setupArrangement(this.rightLeg, animData.prevTickArrangements.RIGHT_LEG);
-			setupArrangement(this.leftLeg, animData.prevTickArrangements.LEFT_LEG);
-			setupArrangement(this.cloak, animData.prevTickArrangements.CAPE);
+		if(animData.animatedLastFrame) {
+			animData.animatedLastFrame = false;
+			if (data.resetAnimation) {
+				setupArrangement(this.head, animData.prevTickArrangements.HEAD);
+				setupArrangement(this.body, animData.prevTickArrangements.BODY);
+				setupArrangement(this.rightArm, animData.prevTickArrangements.RIGHT_ARM);
+				setupArrangement(this.leftArm, animData.prevTickArrangements.LEFT_ARM);
+				setupArrangement(this.rightLeg, animData.prevTickArrangements.RIGHT_LEG);
+				setupArrangement(this.leftLeg, animData.prevTickArrangements.LEFT_LEG);
+				setupArrangement(this.cloak, animData.prevTickArrangements.CAPE);
+			}
+			this.undoLastFrame(animData, -1);
 		}
-		this.undoLastFrame(animData, -1);
 	}
 
 	@Inject(method = "setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/BipedEntityModel;setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V", shift = At.Shift.AFTER))
@@ -72,75 +74,124 @@ public abstract class PlayerEntityModelMixin<T extends LivingEntity> extends Bip
 		MarioAnimationData animData = mario.mqm$getAnimationData();
 		PlayermodelAnimation animation = data.getAction().ANIMATION;
 
-		if(!data.isEnabled() || animation == null) return;
+		if(!data.isEnabled()) return;
 
-		if(data.tickAnimation) {
-			data.tickAnimation = false;
-
-			animData.prevTickArrangements = animData.thisTickArrangements;
-			animData.thisTickArrangements = new ArrangementSet();
-
+		if(animation == null) {
+			boolean apply = false;
 			if(data.resetAnimation) {
 				data.resetAnimation = false;
-				animData.prevTickArrangements.EVERYTHING.setPos(0, 0, 0);
-				animData.prevTickArrangements.EVERYTHING.setAngles(0, 0, 0);
-//				this.undoLastFrame(animData, 1);
-//				this.undoLastFrame(animData, -1);
-				animData.animationTicks = 0;
+				animData.trailingFrame = data.prevAnimation != null;
 
-				animData.animationMirrored = animation.mirroringEvaluator() != null &&
-						animation.mirroringEvaluator().shouldMirror(data,
-								isArmBusy(this.rightArmPose, this.leftArmPose), isArmBusy(this.leftArmPose, this.rightArmPose),
-								this.head.yaw - this.body.yaw);
+				data.tickAnimation = false;
+				if(animData.trailingFrame) {
+					animData.thisTickArrangements.EVERYTHING.setPos(0, 0,0 );
+					animData.thisTickArrangements.EVERYTHING.setAngles(0, 0,0 );
+					animData.prevTickArrangements.EVERYTHING.setPos(
+							animData.prevFrameAnimationDeltas.EVERYTHING.x,
+							animData.prevFrameAnimationDeltas.EVERYTHING.y,
+							animData.prevFrameAnimationDeltas.EVERYTHING.z
+					);
+					animData.prevTickArrangements.EVERYTHING.setAngles(
+							animData.prevFrameAnimationDeltas.EVERYTHING.pitch,
+							animData.prevFrameAnimationDeltas.EVERYTHING.yaw,
+							animData.prevFrameAnimationDeltas.EVERYTHING.roll
+					);
+				}
 			}
 
-			float progress = animation.progressCalculator().calculateProgress(data, animData.animationTicks);
-			animData.animationTicks++;
-
-			boolean isMirrored = animData.animationMirrored;
-
-			if(animation.entireBodyAnimation() != null) {
-				animData.thisTickArrangements.EVERYTHING.setPos(0, 0, 0);
-				animData.thisTickArrangements.EVERYTHING.setAngles(0, 0, 0);
-				applyMutator(data, animData.thisTickArrangements.EVERYTHING, animation.entireBodyAnimation().mutator(), progress, isMirrored);
+			if(animData.trailingFrame) {
+				if(data.tickAnimation) {
+					animData.trailingFrame = false;
+					return;
+				}
+				else {
+					// This has to occur every frame to ensure that the lerp will catch up with the limbs' current position
+					setupArrangement(this.head, animData.thisTickArrangements.HEAD);
+					setupArrangement(this.body, animData.thisTickArrangements.BODY);
+					setupArrangement(this.rightArm, animData.thisTickArrangements.RIGHT_ARM);
+					setupArrangement(this.leftArm, animData.thisTickArrangements.LEFT_ARM);
+					setupArrangement(this.rightLeg, animData.thisTickArrangements.RIGHT_LEG);
+					setupArrangement(this.leftLeg, animData.thisTickArrangements.LEFT_LEG);
+					setupArrangement(this.cloak, animData.thisTickArrangements.CAPE);
+				}
 			}
+			else return;
+		}
+		else {
+			if (data.tickAnimation) {
+				data.tickAnimation = false;
 
-			animatePart(data, this.head, animData.thisTickArrangements.HEAD, animation.headAnimation(), progress, isMirrored);
-			animatePart(data, this.body, animData.thisTickArrangements.BODY, animation.torsoAnimation(), progress, isMirrored);
+				animData.prevTickArrangements = animData.thisTickArrangements;
+				animData.thisTickArrangements = new ArrangementSet();
 
-			intelligentlyAnimateArm(
-					data, animData,
-					this.rightArm,
-					animData.thisTickArrangements.RIGHT_ARM,
-					isMirrored ? animation.leftArmAnimation() : animation.rightArmAnimation(),
-					progress, isMirrored, true
-			);
-			intelligentlyAnimateArm(
-					data, animData,
-					this.leftArm,
-					animData.thisTickArrangements.LEFT_ARM,
-					isMirrored ? animation.rightArmAnimation() : animation.leftArmAnimation(),
-					progress, isMirrored, false);
+				if (data.resetAnimation) {
+					data.resetAnimation = false;
+					animData.prevTickArrangements.EVERYTHING.setPos(0, 0, 0);
+					animData.prevTickArrangements.EVERYTHING.setAngles(0, 0, 0);
+					animData.animationTicks = 0;
+					if (data.prevAnimation == null) {
+						setupArrangement(this.head, animData.prevTickArrangements.HEAD);
+						setupArrangement(this.body, animData.prevTickArrangements.BODY);
+						setupArrangement(this.rightArm, animData.prevTickArrangements.RIGHT_ARM);
+						setupArrangement(this.leftArm, animData.prevTickArrangements.LEFT_ARM);
+						setupArrangement(this.rightLeg, animData.prevTickArrangements.RIGHT_LEG);
+						setupArrangement(this.leftLeg, animData.prevTickArrangements.LEFT_LEG);
+						setupArrangement(this.cloak, animData.prevTickArrangements.CAPE);
+					}
 
-			animatePart(
-					data,
-					this.rightLeg,
-					animData.thisTickArrangements.RIGHT_LEG,
-					isMirrored ? animation.leftLegAnimation() : animation.rightLegAnimation(),
-					progress, isMirrored
-			);
-			animatePart(
-					data,
-					this.leftLeg,
-					animData.thisTickArrangements.LEFT_LEG,
-					isMirrored ? animation.rightLegAnimation() : animation.leftLegAnimation(),
-					progress, isMirrored
-			);
+					animData.animationMirrored = animation.mirroringEvaluator() != null &&
+							animation.mirroringEvaluator().shouldMirror(data,
+									isArmBusy(this.rightArmPose, this.leftArmPose), isArmBusy(this.leftArmPose, this.rightArmPose),
+									this.head.yaw - this.body.yaw);
+				}
+
+				float progress = animation.progressCalculator().calculateProgress(data, animData.animationTicks);
+				animData.animationTicks++;
+
+				boolean isMirrored = animData.animationMirrored;
+
+				if (animation.entireBodyAnimation() != null) {
+					animData.thisTickArrangements.EVERYTHING.setPos(0, 0, 0);
+					animData.thisTickArrangements.EVERYTHING.setAngles(0, 0, 0);
+					applyMutator(data, animData.thisTickArrangements.EVERYTHING, animation.entireBodyAnimation().mutator(), progress, isMirrored);
+				}
+
+				animatePart(data, this.head, animData.thisTickArrangements.HEAD, animation.headAnimation(), progress, isMirrored);
+				animatePart(data, this.body, animData.thisTickArrangements.BODY, animation.torsoAnimation(), progress, isMirrored);
+
+				intelligentlyAnimateArm(
+						data, animData,
+						this.rightArm,
+						animData.thisTickArrangements.RIGHT_ARM,
+						isMirrored ? animation.leftArmAnimation() : animation.rightArmAnimation(),
+						progress, isMirrored, true
+				);
+				intelligentlyAnimateArm(
+						data, animData,
+						this.leftArm,
+						animData.thisTickArrangements.LEFT_ARM,
+						isMirrored ? animation.rightArmAnimation() : animation.leftArmAnimation(),
+						progress, isMirrored, false);
+
+				animatePart(
+						data,
+						this.rightLeg,
+						animData.thisTickArrangements.RIGHT_LEG,
+						isMirrored ? animation.leftLegAnimation() : animation.rightLegAnimation(),
+						progress, isMirrored
+				);
+				animatePart(
+						data,
+						this.leftLeg,
+						animData.thisTickArrangements.LEFT_LEG,
+						isMirrored ? animation.rightLegAnimation() : animation.leftLegAnimation(),
+						progress, isMirrored
+				);
+			}
 		}
 
 		animData.animatedLastFrame = true;
 		float tickDelta = MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(true);
-//		MarioQuaMario.LOGGER.info("TickDelta={}", MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(true));
 
 		lerpBetweenArrangements(this.head, animData.prevTickArrangements.HEAD, animData.thisTickArrangements.HEAD, tickDelta, animData.prevFrameAnimationDeltas.HEAD);
 		lerpBetweenArrangements(this.body, animData.prevTickArrangements.BODY, animData.thisTickArrangements.BODY, tickDelta, animData.prevFrameAnimationDeltas.BODY);

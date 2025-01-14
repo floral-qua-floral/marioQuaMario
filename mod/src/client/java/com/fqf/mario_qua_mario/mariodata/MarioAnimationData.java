@@ -11,6 +11,7 @@ public class MarioAnimationData {
 	public boolean animatedLastFrame;
 	public int animationTicks;
 	public boolean animationMirrored;
+	public boolean trailingFrame;
 
 	public static float lerpRadians(float delta, float start, float end) {
 		return MathHelper.RADIANS_PER_DEGREE * MathHelper.lerpAngleDegrees(delta, MathHelper.DEGREES_PER_RADIAN * start, MathHelper.DEGREES_PER_RADIAN * end);

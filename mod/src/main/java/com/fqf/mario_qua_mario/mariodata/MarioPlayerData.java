@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.mariodata;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.mario_qua_mario.registries.ParsedMarioState;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
@@ -61,6 +62,7 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 
 	private AbstractParsedAction action;
 	public boolean resetAnimation;
+	public PlayermodelAnimation prevAnimation;
 	public boolean tickAnimation = true;
 	public AbstractParsedAction getAction() {
 		return this.action;
@@ -77,6 +79,7 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	}
 	public void setActionTransitionless(AbstractParsedAction action) {
 		this.resetAnimation = true;
+		this.prevAnimation = this.action.ANIMATION;
 		this.setupCustomVars(this.action, action);
 		this.action = action;
 	}
