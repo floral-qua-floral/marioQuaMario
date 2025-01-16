@@ -22,6 +22,7 @@ public class ParsedAquaticAction extends AbstractParsedAction {
 
 	@Override
 	public boolean travelHook(MarioMoveableData data) {
+		data.jumpCapped = false;
 		this.AQUATIC_DEFINITION.travelHook(data, UniversalActionDefinitionHelper.INSTANCE);
 		return true;
 	}

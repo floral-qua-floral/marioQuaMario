@@ -27,6 +27,7 @@ public class ParsedGroundedAction extends AbstractParsedAction {
 
 	@Override
 	public boolean travelHook(MarioMoveableData data) {
+		data.jumpCapped = false;
 		this.GROUNDED_DEFINITION.travelHook(data, UniversalActionDefinitionHelper.INSTANCE);
 		if(data.isClient())
 			UniversalActionDefinitionHelper.INSTANCE.applyGravity(data, GROUNDED_GRAVITY, GROUNDED_TERMINAL_VELOCITY);

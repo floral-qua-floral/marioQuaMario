@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MarioOtherClientData extends MarioPlayerData implements IMarioClientDataImpl {
+	public boolean jumpCapped;
 	private OtherClientPlayerEntity mario;
 	public MarioOtherClientData() {
 		super();

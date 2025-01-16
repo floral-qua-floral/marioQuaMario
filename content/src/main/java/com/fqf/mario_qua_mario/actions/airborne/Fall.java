@@ -25,7 +25,7 @@ public class Fall implements AirborneActionDefinition {
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
 		return new PlayermodelAnimation(
-				null, (data, ticksPassed) -> (ticksPassed / 100F) % 1,
+				null, null,
 				null,
 				null, null,
 				null, null,
@@ -83,6 +83,12 @@ public class Fall implements AirborneActionDefinition {
 //		);
 	}
 
+	public static final TransitionDefinition LANDING = new TransitionDefinition(
+			MarioQuaMarioContent.makeID("sub_walk"),
+			data -> data.getMario().isOnGround(),
+			EvaluatorEnvironment.CLIENT_CHECKED
+	);
+
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(AirborneActionHelper helper) {
 		return List.of();
 	}
@@ -91,11 +97,7 @@ public class Fall implements AirborneActionDefinition {
 	}
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {
 		return List.of(
-				new TransitionDefinition(
-						MarioQuaMarioContent.makeID("sub_walk"),
-						data -> data.getMario().isOnGround(),
-						EvaluatorEnvironment.CLIENT_CHECKED
-				)
+				LANDING
 		);
 	}
 

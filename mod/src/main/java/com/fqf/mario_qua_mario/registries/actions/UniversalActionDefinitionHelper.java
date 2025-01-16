@@ -2,6 +2,7 @@ package com.fqf.mario_qua_mario.registries.actions;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.definitions.states.actions.*;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.IncompleteActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.mario_qua_mario.mariodata.IMarioReadableMotionData;
@@ -105,7 +106,7 @@ public class UniversalActionDefinitionHelper implements
 			CharaStat gravity, @Nullable CharaStat jumpingGravity,
 			CharaStat terminalVelocity
 	) {
-		this.applyGravity(data, (jumpingGravity == null || ((MarioPlayerData) data).jumpCapped) ? gravity : jumpingGravity, terminalVelocity);
+		this.applyGravity(data, (jumpingGravity == null || ((MarioMoveableData) data).jumpCapped) ? gravity : jumpingGravity, terminalVelocity);
 	}
 
 	@Override public void airborneAccel(
@@ -155,11 +156,16 @@ public class UniversalActionDefinitionHelper implements
 	@Override
 	public TransitionDefinition makeJumpCapTransition(IncompleteActionDefinition forAction, double capThreshold) {
 		CharaStat cap = new CharaStat(capThreshold, StatCategory.JUMP_CAP);
-//		return new TransitionDefinition(
-//				forAction.getID(),
-//				data -> !
-//		);
-		return null;
+		return new TransitionDefinition(
+				forAction.getID(),
+				data -> !((MarioMoveableData) data).jumpCapped && (!data.getInputs().JUMP.isHeld()  || data.getYVel() < cap.get(data)),
+				EvaluatorEnvironment.CLIENT_ONLY,
+				data -> {
+					((MarioMoveableData) data).jumpCapped = true;
+					data.setYVel(Math.min(cap.get(data), data.getYVel()));
+				},
+				(data, isSelf, seed) -> data.fadeJumpSound()
+		);
 	}
 
 	@Override

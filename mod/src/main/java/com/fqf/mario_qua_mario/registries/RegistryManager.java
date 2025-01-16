@@ -67,6 +67,8 @@ public class RegistryManager {
 	}
 
 	public static <Thing extends ParsedMarioState> void registerThing(Registry<Thing> registry, Thing thing) {
+		if(registry.containsId(thing.ID))
+			throw new IllegalStateException(thing.ID + " was registered twice as a " + thing.getClass().getName() + "!!!");
 		Registry.register(registry, thing.ID, thing);
 	}
 

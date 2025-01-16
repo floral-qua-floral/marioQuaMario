@@ -6,6 +6,7 @@ import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionDefinit
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.EntireBodyAnimation;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.ProgressHandler;
 import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.mariodata.IMarioReadableMotionData;
@@ -33,7 +34,7 @@ public class DebugSpinPitch extends Debug {
 	@Override
 	public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
 		return new PlayermodelAnimation(
-				null, (data, ticksPassed) -> ticksPassed / 7F,
+				null, new ProgressHandler(7F, true),
 				new EntireBodyAnimation(0.5F, (data, arrangement, progress) -> arrangement.setAngles(MathHelper.sin(progress) * 75, 0, 0)),
 
 				null, null,

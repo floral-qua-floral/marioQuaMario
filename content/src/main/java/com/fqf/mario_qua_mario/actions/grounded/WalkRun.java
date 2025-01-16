@@ -8,6 +8,7 @@ import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.mariodata.IMarioReadableMotionData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
+import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.CharaStat;
 import com.fqf.mario_qua_mario.util.Easing;
 import net.minecraft.util.Identifier;
@@ -30,7 +31,10 @@ public class WalkRun extends SubWalk implements GroundedActionDefinition {
 	public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
 		return new PlayermodelAnimation(
 				null,
-				(data, ticksPassed) -> Easing.clampedRangeToProgress(data.getForwardVel(), SubWalk.WALK_SPEED.get(data), RUN_SPEED.get(data)),
+				new ProgressHandler(
+						(data, ticksPassed) ->
+								Easing.clampedRangeToProgress(data.getForwardVel(), SubWalk.WALK_SPEED.get(data), RUN_SPEED.get(data))
+				),
 
 				new EntireBodyAnimation(0.0F, (data, arrangement, progress) ->
 						arrangement.roll = MathHelper.clamp((float) data.getDeltaYaw() * progress * -4F, -45F, 45F)),
@@ -58,9 +62,15 @@ public class WalkRun extends SubWalk implements GroundedActionDefinition {
 				data.getHorizVelSquared() > WALK_SPEED.getAsSquaredThreshold(data);
 	}
 
+	@Override public @Nullable Object setupCustomMarioVars() {
+		return new ActionTimerVars();
+	}
 	@Override public void travelHook(IMarioTravelData data, GroundedActionHelper helper) {
 		if(data.getMario().isSprinting()) {
+			ActionTimerVars vars = ActionTimerVars.get(data);
+
 			if(data.getForwardVel() > RUN_SPEED.getAsLimit(data)) {
+				if(Math.abs(data.getStrafeVel()) < 0.175) vars.actionTimer = 50;
 				// Overrun
 				helper.groundAccel(data,
 						OVERRUN_ACCEL, RUN_SPEED,
@@ -70,6 +80,10 @@ public class WalkRun extends SubWalk implements GroundedActionDefinition {
 				);
 			}
 			else {
+				if(data.getForwardVel() > RUN_SPEED.getAsThreshold(data) && Math.abs(data.getStrafeVel()) < 0.175)
+					vars.actionTimer++;
+				else if(vars.actionTimer > 0) vars.actionTimer = 0;
+
 				// Run Accel
 				helper.groundAccel(data,
 						RUN_ACCEL, RUN_SPEED,
@@ -88,6 +102,11 @@ public class WalkRun extends SubWalk implements GroundedActionDefinition {
 						MarioQuaMarioContent.makeID("sub_walk"),
 						data -> !meetsWalkRunRequirement(data),
 						EvaluatorEnvironment.CLIENT_ONLY
+				),
+				new TransitionDefinition(
+						MarioQuaMarioContent.makeID("p_run"),
+						data -> PRun.meetsPRunRequirements(data) && ActionTimerVars.get(data).actionTimer > 20,
+						EvaluatorEnvironment.CLIENT_ONLY
 				)
 		);
 	}
@@ -98,12 +117,20 @@ public class WalkRun extends SubWalk implements GroundedActionDefinition {
 						TransitionInjectionDefinition.InjectionPlacement.BEFORE,
 						MarioQuaMarioContent.makeID("sub_walk"),
 						TransitionInjectionDefinition.ActionCategory.AIRBORNE,
-						nearbyTransition -> new TransitionDefinition(
+						nearbyTransition -> nearbyTransition.variate(
 								this.getID(),
-								data -> meetsWalkRunRequirement(data) && nearbyTransition.evaluator().shouldTransition(data),
-								EvaluatorEnvironment.CLIENT_ONLY,
-								nearbyTransition.travelExecutor(),
-								nearbyTransition.clientsExecutor()
+								data -> (!data.isClient() || meetsWalkRunRequirement(data)) && nearbyTransition.evaluator().shouldTransition(data),
+								EvaluatorEnvironment.CLIENT_CHECKED, null, null
+						)
+				),
+				new TransitionInjectionDefinition(
+						TransitionInjectionDefinition.InjectionPlacement.BEFORE,
+						MarioQuaMarioContent.makeID("sub_walk"),
+						TransitionInjectionDefinition.ActionCategory.GROUNDED,
+						nearbyTransition -> nearbyTransition.variate(
+								this.getID(),
+								data -> (!data.isClient() || meetsWalkRunRequirement(data)) && nearbyTransition.evaluator().shouldTransition(data),
+								EvaluatorEnvironment.CLIENT_ONLY, null, null
 						)
 				)
 		);

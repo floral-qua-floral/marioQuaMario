@@ -160,7 +160,6 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 		return this.getPowerUp().BUMP_STRENGTH_MODIFIER + this.getCharacter().BUMP_STRENGTH_MODIFIER;
 	}
 
-	public boolean jumpCapped;
 	private final Map<Class<?>, Object> customVars = new HashMap<>();
 	@Override public <T> T getVars(Class<T> clazz) {
 		Object customData = this.customVars.get(clazz);

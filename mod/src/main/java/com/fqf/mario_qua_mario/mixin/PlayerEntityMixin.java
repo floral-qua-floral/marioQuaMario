@@ -172,4 +172,13 @@ public abstract class PlayerEntityMixin extends LivingEntity implements MarioDat
 
 		nbt.put(MarioQuaMario.MOD_DATA_KEY, persistentData);
 	}
+
+	@Override
+	public boolean isInSneakingPose() {
+		return switch(mqm$getMarioData().getAction().SNEAKING_RULE) {
+			case ALLOW, SLIP -> super.isInSneakingPose();
+			case PROHIBIT -> false;
+			case FORCE -> true;
+		};
+	}
 }

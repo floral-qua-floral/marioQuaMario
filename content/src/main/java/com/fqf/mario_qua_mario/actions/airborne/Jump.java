@@ -14,6 +14,8 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 import static com.fqf.mario_qua_mario.util.StatCategory.*;
 
 public class Jump extends Fall implements AirborneActionDefinition {
@@ -29,7 +31,10 @@ public class Jump extends Fall implements AirborneActionDefinition {
 					if(Math.abs(headRelativeYaw) > 0.55F) return headRelativeYaw > 0;
 					return data.getMario().getRandom().nextBoolean();
 				},
-				(data, ticksPassed) -> Easing.EXPO_IN_OUT.ease(Easing.clampedRangeToProgress(data.getYVel(), 0.87F, -0.85F)),
+				new ProgressHandler(
+						(data, ticksPassed) ->
+								Easing.EXPO_IN_OUT.ease(Easing.clampedRangeToProgress(data.getYVel(), 0.87F, -0.85F)
+				)),
 				null, null, null,
 
 				new LimbAnimation(false, (data, arrangement, progress) -> {
@@ -71,6 +76,12 @@ public class Jump extends Fall implements AirborneActionDefinition {
 				EvaluatorEnvironment.CLIENT_ONLY,
 				data -> helper.performJump(data, JUMP_VEL, JUMP_ADDEND),
 				(data, isSelf, seed) -> data.playJumpSound(seed)
+		);
+	}
+
+	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {
+		return List.of(
+				helper.makeJumpCapTransition(this, 0.39)
 		);
 	}
 

@@ -3,6 +3,7 @@ package com.fqf.mario_qua_mario.definitions.states.actions.util;
 import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.mariodata.IMarioReadableMotionData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
+import net.fabricmc.api.Environment;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,8 +23,27 @@ public record TransitionDefinition(
 	/**
 	 * Alternate constructor provided for convenience
 	 */
-	public TransitionDefinition(@NotNull Identifier targetID, @NotNull Evaluator evaluator, @NotNull EvaluatorEnvironment context) {
-		this(targetID, evaluator, context, null, null);
+	public TransitionDefinition(@NotNull Identifier targetID, @NotNull Evaluator evaluator, @NotNull EvaluatorEnvironment environment) {
+		this(targetID, evaluator, environment, null, null);
+	}
+
+	public TransitionDefinition variate(
+			@Nullable Identifier targetID,
+			@Nullable Evaluator evaluator,
+			@Nullable EvaluatorEnvironment environment,
+			@Nullable TravelExecutor travelExecutor,
+			@Nullable ClientsExecutor clientsExecutor
+	) {
+		return new TransitionDefinition(
+				targetID == null ? this.targetID : targetID,
+				evaluator == null ? this.evaluator : evaluator,
+				environment == null ? this.environment : environment,
+				travelExecutor == null ? this.travelExecutor : travelExecutor,
+				clientsExecutor == null ? this.clientsExecutor : clientsExecutor
+		);
+	}
+	public TransitionDefinition variate(@NotNull Identifier targetID, @Nullable Evaluator evaluator) {
+		return this.variate(targetID, evaluator, null, null, null);
 	}
 
 	/**

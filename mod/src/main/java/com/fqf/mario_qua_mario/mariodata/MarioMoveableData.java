@@ -7,6 +7,8 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2d;
 
 public abstract class MarioMoveableData extends MarioPlayerData implements IMarioTravelData {
+	public boolean jumpCapped;
+
 	public MarioMoveableData() {
 		super();
 	}

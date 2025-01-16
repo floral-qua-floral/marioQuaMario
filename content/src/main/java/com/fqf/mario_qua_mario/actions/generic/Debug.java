@@ -29,8 +29,7 @@ public class Debug implements GenericActionDefinition {
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
 		return new PlayermodelAnimation(
-				null, (data, ticksPassed) -> ticksPassed / 20F,
-				null,
+				null, null, null,
 
 				null,
 				null,

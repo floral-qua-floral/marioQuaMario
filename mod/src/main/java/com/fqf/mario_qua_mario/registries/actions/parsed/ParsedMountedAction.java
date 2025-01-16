@@ -22,6 +22,7 @@ public class ParsedMountedAction extends AbstractParsedAction {
 
 	@Override
 	public boolean travelHook(MarioMoveableData data) {
+		data.jumpCapped = false;
 		UniversalActionDefinitionHelper helper = UniversalActionDefinitionHelper.INSTANCE;
 		return this.MOUNTED_DEFINITION.travelHook(data, helper.getMount(data), helper);
 	}

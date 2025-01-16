@@ -10,6 +10,7 @@ import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario.util.CharaStat;
+import com.fqf.mario_qua_mario.util.MarioContentSFX;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -156,6 +157,7 @@ public class SubWalk implements GroundedActionDefinition {
 	}
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(GroundedActionHelper helper) {
 		return List.of(
+				DuckWaddle.DUCK,
 				Jump.makeJumpTransition(helper)
 		);
 	}

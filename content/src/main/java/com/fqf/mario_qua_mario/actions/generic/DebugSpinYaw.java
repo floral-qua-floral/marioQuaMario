@@ -4,6 +4,7 @@ import com.fqf.mario_qua_mario.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.EntireBodyAnimation;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.ProgressHandler;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +20,7 @@ public class DebugSpinYaw extends Debug {
 	@Override
 	public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
 		return new PlayermodelAnimation(
-				null, (data, ticksPassed) -> ticksPassed / 7F,
+				null, new ProgressHandler(7F, true),
 				new EntireBodyAnimation(0.5F, (data, arrangement, progress) -> arrangement.setAngles(0, MathHelper.sin(progress) * 75, 0)),
 
 				null, null,
