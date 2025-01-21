@@ -1,7 +1,6 @@
 package com.fqf.mario_qua_mario.mixin.client;
 
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.Arrangement;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.BodyPartAnimation;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.LimbAnimation;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.mario_qua_mario.mariodata.MarioAnimationData;
@@ -55,13 +54,13 @@ public abstract class PlayerEntityModelMixin<T extends LivingEntity> extends Bip
 		if(animData.animatedLastFrame) {
 			animData.animatedLastFrame = false;
 			if (data.resetAnimation) {
-				setupArrangement(this.head, animData.prevTickArrangements.HEAD);
-				setupArrangement(this.body, animData.prevTickArrangements.BODY);
-				setupArrangement(this.rightArm, animData.prevTickArrangements.RIGHT_ARM);
-				setupArrangement(this.leftArm, animData.prevTickArrangements.LEFT_ARM);
-				setupArrangement(this.rightLeg, animData.prevTickArrangements.RIGHT_LEG);
-				setupArrangement(this.leftLeg, animData.prevTickArrangements.LEFT_LEG);
-				setupArrangement(this.cloak, animData.prevTickArrangements.CAPE);
+				MarioAnimationData.setupArrangement(this.head, animData.prevTickArrangements.HEAD);
+				MarioAnimationData.setupArrangement(this.body, animData.prevTickArrangements.BODY);
+				MarioAnimationData.setupArrangement(this.rightArm, animData.prevTickArrangements.RIGHT_ARM);
+				MarioAnimationData.setupArrangement(this.leftArm, animData.prevTickArrangements.LEFT_ARM);
+				MarioAnimationData.setupArrangement(this.rightLeg, animData.prevTickArrangements.RIGHT_LEG);
+				MarioAnimationData.setupArrangement(this.leftLeg, animData.prevTickArrangements.LEFT_LEG);
+				MarioAnimationData.setupArrangement(this.cloak, animData.prevTickArrangements.CAPE);
 			}
 			this.undoLastFrame(animData, -1);
 		}
@@ -106,13 +105,13 @@ public abstract class PlayerEntityModelMixin<T extends LivingEntity> extends Bip
 				}
 				else {
 					// This has to occur every frame to ensure that the lerp will catch up with the limbs' current position
-					setupArrangement(this.head, animData.thisTickArrangements.HEAD);
-					setupArrangement(this.body, animData.thisTickArrangements.BODY);
-					setupArrangement(this.rightArm, animData.thisTickArrangements.RIGHT_ARM);
-					setupArrangement(this.leftArm, animData.thisTickArrangements.LEFT_ARM);
-					setupArrangement(this.rightLeg, animData.thisTickArrangements.RIGHT_LEG);
-					setupArrangement(this.leftLeg, animData.thisTickArrangements.LEFT_LEG);
-					setupArrangement(this.cloak, animData.thisTickArrangements.CAPE);
+					MarioAnimationData.setupArrangement(this.head, animData.thisTickArrangements.HEAD);
+					MarioAnimationData.setupArrangement(this.body, animData.thisTickArrangements.BODY);
+					MarioAnimationData.setupArrangement(this.rightArm, animData.thisTickArrangements.RIGHT_ARM);
+					MarioAnimationData.setupArrangement(this.leftArm, animData.thisTickArrangements.LEFT_ARM);
+					MarioAnimationData.setupArrangement(this.rightLeg, animData.thisTickArrangements.RIGHT_LEG);
+					MarioAnimationData.setupArrangement(this.leftLeg, animData.thisTickArrangements.LEFT_LEG);
+					MarioAnimationData.setupArrangement(this.cloak, animData.thisTickArrangements.CAPE);
 				}
 			}
 			else return;
@@ -142,19 +141,19 @@ public abstract class PlayerEntityModelMixin<T extends LivingEntity> extends Bip
 
 						animData.animationMirrored = animation.mirroringEvaluator() != null &&
 								animation.mirroringEvaluator().shouldMirror(data,
-										isArmBusy(this.rightArmPose, this.leftArmPose), isArmBusy(this.leftArmPose, this.rightArmPose),
+										MarioAnimationData.isArmBusy(this.rightArmPose, this.leftArmPose), MarioAnimationData.isArmBusy(this.leftArmPose, this.rightArmPose),
 										this.head.yaw - this.body.yaw);
 
 						if (data.prevAnimation == null) {
 							animData.prevTickArrangements.EVERYTHING.setPos(0, 0, 0);
 							animData.prevTickArrangements.EVERYTHING.setAngles(0, 0, 0);
-							setupArrangement(this.head, animData.prevTickArrangements.HEAD);
-							setupArrangement(this.body, animData.prevTickArrangements.BODY);
-							setupArrangement(this.rightArm, animData.prevTickArrangements.RIGHT_ARM);
-							setupArrangement(this.leftArm, animData.prevTickArrangements.LEFT_ARM);
-							setupArrangement(this.rightLeg, animData.prevTickArrangements.RIGHT_LEG);
-							setupArrangement(this.leftLeg, animData.prevTickArrangements.LEFT_LEG);
-							setupArrangement(this.cloak, animData.prevTickArrangements.CAPE);
+							MarioAnimationData.setupArrangement(this.head, animData.prevTickArrangements.HEAD);
+							MarioAnimationData.setupArrangement(this.body, animData.prevTickArrangements.BODY);
+							MarioAnimationData.setupArrangement(this.rightArm, animData.prevTickArrangements.RIGHT_ARM);
+							MarioAnimationData.setupArrangement(this.leftArm, animData.prevTickArrangements.LEFT_ARM);
+							MarioAnimationData.setupArrangement(this.rightLeg, animData.prevTickArrangements.RIGHT_LEG);
+							MarioAnimationData.setupArrangement(this.leftLeg, animData.prevTickArrangements.LEFT_LEG);
+							MarioAnimationData.setupArrangement(this.cloak, animData.prevTickArrangements.CAPE);
 						}
 					}
 				}
@@ -169,11 +168,11 @@ public abstract class PlayerEntityModelMixin<T extends LivingEntity> extends Bip
 				if (animation.entireBodyAnimation() != null) {
 					animData.thisTickArrangements.EVERYTHING.setPos(0, 0, 0);
 					animData.thisTickArrangements.EVERYTHING.setAngles(0, 0, 0);
-					applyMutator(data, animData.thisTickArrangements.EVERYTHING, animation.entireBodyAnimation().mutator(), progress, isMirrored);
+					MarioAnimationData.applyMutator(data, animData.thisTickArrangements.EVERYTHING, animation.entireBodyAnimation().mutator(), progress, isMirrored);
 				}
 
-				animatePart(data, this.head, animData.thisTickArrangements.HEAD, animation.headAnimation(), progress, isMirrored);
-				animatePart(data, this.body, animData.thisTickArrangements.BODY, animation.torsoAnimation(), progress, isMirrored);
+				MarioAnimationData.animatePart(data, this.head, animData.thisTickArrangements.HEAD, animation.headAnimation(), progress, isMirrored);
+				MarioAnimationData.animatePart(data, this.body, animData.thisTickArrangements.BODY, animation.torsoAnimation(), progress, isMirrored);
 
 				intelligentlyAnimateArm(
 						data, animData,
@@ -189,14 +188,14 @@ public abstract class PlayerEntityModelMixin<T extends LivingEntity> extends Bip
 						isMirrored ? animation.rightArmAnimation() : animation.leftArmAnimation(),
 						progress, isMirrored, false);
 
-				animatePart(
+				MarioAnimationData.animatePart(
 						data,
 						this.rightLeg,
 						animData.thisTickArrangements.RIGHT_LEG,
 						isMirrored ? animation.leftLegAnimation() : animation.rightLegAnimation(),
 						progress, isMirrored
 				);
-				animatePart(
+				MarioAnimationData.animatePart(
 						data,
 						this.leftLeg,
 						animData.thisTickArrangements.LEFT_LEG,
@@ -233,11 +232,6 @@ public abstract class PlayerEntityModelMixin<T extends LivingEntity> extends Bip
 	}
 
 	@Unique
-	private static void setupArrangement(ModelPart from, Arrangement to) {
-		to.x = from.pivotX; to.y = from.pivotY; to.z = from.pivotZ;
-		to.pitch = from.pitch; to.yaw = from.yaw; to.roll = from.roll;
-	}
-	@Unique
 	private static void lerpBetweenArrangements(ModelPart part, Arrangement prevTick, Arrangement thisTick, float tickDelta, Arrangement storeDelta) {
 		float newX = MathHelper.lerp(tickDelta, prevTick.x, thisTick.x);
 		float newY = MathHelper.lerp(tickDelta, prevTick.y, thisTick.y);
@@ -252,78 +246,27 @@ public abstract class PlayerEntityModelMixin<T extends LivingEntity> extends Bip
 		part.setAngles(newPitch, newYaw, newRoll);
 		part.pitch = newPitch;
 	}
-	@Unique
-	private static void undoFrame(ModelPart part, Arrangement arrangement, float multiplier) {
-		part.pivotX += multiplier * arrangement.x;
-		part.pivotY += multiplier * arrangement.y;
-		part.pivotZ += multiplier * arrangement.z;
-		part.pitch += multiplier * arrangement.pitch;
-		part.yaw += multiplier * arrangement.yaw;
-		part.roll += multiplier * arrangement.roll;
-	}
-
-	@Unique
-	private static void animatePart(MarioPlayerData data, ModelPart part, Arrangement arrangement, Arrangement.Mutator mutator, float progress, boolean isMirrored) {
-		if(mutator == null) return;
-		setupArrangement(part, arrangement);
-		applyMutator(data, arrangement, mutator, progress, isMirrored);
-	}
-	@Unique
-	private static void animatePart(MarioPlayerData data, ModelPart part, Arrangement arrangement, BodyPartAnimation animation, float progress, boolean isMirrored) {
-		if(animation == null) setupArrangement(part, arrangement);
-		else animatePart(data, part, arrangement, animation.mutator(), progress, isMirrored);
-	}
-	@Unique
-	private static void animatePart(MarioPlayerData data, ModelPart part, Arrangement arrangement, LimbAnimation animation, float progress, boolean isMirrored) {
-		if(animation == null || animation.mutator() == null) setupArrangement(part, arrangement);
-		else animatePart(data, part, arrangement, animation.mutator(), progress, isMirrored);
-	}
 
 	@Unique
 	private void intelligentlyAnimateArm(MarioPlayerData data, MarioAnimationData animData, ModelPart part, Arrangement arrangement, LimbAnimation animation, float progress, boolean isMirrored, boolean isRight) {
 		ArmPose thisArmPose = isRight ? this.rightArmPose : this.leftArmPose;
 		ArmPose otherArmPose = isRight ? this.leftArmPose : this.rightArmPose;
-		if(isArmBusy(thisArmPose, otherArmPose)) {
-			setupArrangement(part, arrangement);
+		if(MarioAnimationData.isArmBusy(thisArmPose, otherArmPose)) {
+			MarioAnimationData.setupArrangement(part, arrangement);
 			arrangement.addPos(animData.thisTickArrangements.BODY.x, animData.thisTickArrangements.BODY.y, animData.thisTickArrangements.BODY.z);
 		}
-		else animatePart(data, part, arrangement, animation, progress, isMirrored);
-	}
-
-	@Unique
-	private static void applyMutator(MarioPlayerData data, Arrangement arrangement, Arrangement.Mutator mutator, float progress, boolean isMirrored) {
-		float factor = MathHelper.DEGREES_PER_RADIAN;
-		arrangement.setAngles(arrangement.pitch * factor, arrangement.yaw * factor, arrangement.roll * factor);
-
-		float unmutatedX = arrangement.x;
-		float unmutatedYaw = arrangement.yaw;
-		mutator.mutate(data, arrangement, progress);
-		if(isMirrored) {
-			arrangement.x -= 2 * (arrangement.x - unmutatedX);
-			arrangement.yaw -= 2 * (arrangement.yaw - unmutatedYaw);
-		}
-
-		factor = MathHelper.RADIANS_PER_DEGREE;
-		arrangement.setAngles(arrangement.pitch * factor, arrangement.yaw * factor, arrangement.roll * factor);
-	}
-
-	@Unique
-	private static boolean isArmBusy(ArmPose armPose, ArmPose otherArmPose) {
-		return armPose.isTwoHanded() || otherArmPose.isTwoHanded() || switch (armPose) {
-			case EMPTY, ITEM -> false;
-			case BLOCK, BOW_AND_ARROW, THROW_SPEAR, CROSSBOW_CHARGE, CROSSBOW_HOLD, SPYGLASS, TOOT_HORN, BRUSH -> true;
-		};
+		else MarioAnimationData.animatePart(data, part, arrangement, animation, progress, isMirrored);
 	}
 
 	@Unique
 	private void undoLastFrame(MarioAnimationData animationData, float multiplier) {
-		undoFrame(this.head, animationData.prevFrameAnimationDeltas.HEAD, multiplier);
-		undoFrame(this.body, animationData.prevFrameAnimationDeltas.BODY, multiplier);
+		MarioAnimationData.undoFrame(this.head, animationData.prevFrameAnimationDeltas.HEAD, multiplier);
+		MarioAnimationData.undoFrame(this.body, animationData.prevFrameAnimationDeltas.BODY, multiplier);
 
-		undoFrame(this.rightArm, animationData.prevFrameAnimationDeltas.RIGHT_ARM, multiplier);
-		undoFrame(this.leftArm, animationData.prevFrameAnimationDeltas.LEFT_ARM, multiplier);
+		MarioAnimationData.undoFrame(this.rightArm, animationData.prevFrameAnimationDeltas.RIGHT_ARM, multiplier);
+		MarioAnimationData.undoFrame(this.leftArm, animationData.prevFrameAnimationDeltas.LEFT_ARM, multiplier);
 
-		undoFrame(this.rightLeg, animationData.prevFrameAnimationDeltas.RIGHT_LEG, multiplier);
-		undoFrame(this.leftLeg, animationData.prevFrameAnimationDeltas.LEFT_LEG, multiplier);
+		MarioAnimationData.undoFrame(this.rightLeg, animationData.prevFrameAnimationDeltas.RIGHT_LEG, multiplier);
+		MarioAnimationData.undoFrame(this.leftLeg, animationData.prevFrameAnimationDeltas.LEFT_LEG, multiplier);
 	}
 }

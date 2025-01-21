@@ -1,8 +1,10 @@
 package com.fqf.mario_qua_mario.mixin.client;
 
+import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.mariodata.MarioOtherClientData;
 import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
-import com.fqf.mario_qua_mario.mariodata.injections.MarioOtherClientDataHolder;
+import com.fqf.mario_qua_mario.mariodata.injections.AdvMarioOtherClientDataHolder;
+import com.fqf.mario_qua_mario.mariodata.injections.IMarioClientDataHolder;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.network.OtherClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
@@ -14,8 +16,12 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(OtherClientPlayerEntity.class)
-public class OtherClientPlayerEntityMarioDataMixin implements MarioOtherClientDataHolder {
+public class OtherClientPlayerEntityMarioDataMixin implements AdvMarioOtherClientDataHolder, IMarioClientDataHolder {
 	@Unique private MarioOtherClientData marioData = new MarioOtherClientData();
+
+	@Override public IMarioClientData mqm$getIMarioClientData() {
+		return this.mqm$getMarioData();
+	}
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void constructorHook(ClientWorld clientWorld, GameProfile gameProfile, CallbackInfo ci) {

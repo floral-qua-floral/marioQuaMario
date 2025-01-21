@@ -1,9 +1,12 @@
 package com.fqf.mario_qua_mario.mixin;
 
-import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
+import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
 import com.fqf.mario_qua_mario.mariodata.MarioServerPlayerData;
-import com.fqf.mario_qua_mario.mariodata.injections.MarioServerDataHolder;
+import com.fqf.mario_qua_mario.mariodata.injections.AdvMarioServerDataHolder;
+import com.fqf.mario_qua_mario.mariodata.injections.IMarioAuthoritativeDataHolder;
+import com.fqf.mario_qua_mario.mariodata.injections.IMarioTravelDataHolder;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.network.packet.c2s.common.SyncedClientOptions;
 import net.minecraft.server.MinecraftServer;
@@ -17,8 +20,15 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerPlayerEntity.class)
-public class ServerPlayerMarioDataMixin implements MarioServerDataHolder {
+public class ServerPlayerMarioDataMixin implements AdvMarioServerDataHolder, IMarioAuthoritativeDataHolder, IMarioTravelDataHolder {
 	@Unique private MarioServerPlayerData marioServerData = new MarioServerPlayerData();
+
+	@Override public IMarioAuthoritativeData mqm$getIMarioAuthoritativeData() {
+		return this.mqm$getMarioData();
+	}
+	@Override public IMarioTravelData mqm$getIMarioTravelData() {
+		return this.mqm$getMarioData();
+	}
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void constructorHook(MinecraftServer server, ServerWorld world, GameProfile profile, SyncedClientOptions clientOptions, CallbackInfo ci) {

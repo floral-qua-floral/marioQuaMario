@@ -133,7 +133,7 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 		this.POWERS.addAll(this.getCharacter().POWERS);
 	}
 	@Override public boolean hasPower(String power) {
-		return this.POWERS.contains(power);
+		return this.isEnabled() && this.POWERS.contains(power);
 	}
 
 	public void setMario(PlayerEntity mario) {
@@ -149,11 +149,14 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	}
 
 	@Override public double getStat(CharaStat stat) {
-		return stat.BASE_VALUE * this.getStatMultiplier(stat);
+		return this.getPowerUp().adjustStat(stat, this.getCharacter().adjustStat(stat, stat.BASE_VALUE));
 	}
 
-	@Override public double getStatMultiplier(CharaStat stat) {
-			return 1;
+	@Override public float getHorizontalScale() {
+		return this.isEnabled() ? this.getPowerUp().WIDTH_FACTOR * this.getCharacter().WIDTH_FACTOR : 1;
+	}
+	@Override public float getVerticalScale() {
+		return this.isEnabled() ? this.getPowerUp().HEIGHT_FACTOR * this.getCharacter().HEIGHT_FACTOR : 1;
 	}
 
 	@Override public int getBumpStrengthModifier() {

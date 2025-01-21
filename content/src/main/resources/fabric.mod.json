@@ -47,7 +47,8 @@
 		"mqm-power-ups": [
 			"com.fqf.mario_qua_mario.powerups.Small",
 			"com.fqf.mario_qua_mario.powerups.Super",
-			"com.fqf.mario_qua_mario.powerups.Fire"
+			"com.fqf.mario_qua_mario.powerups.Fire",
+			"com.fqf.mario_qua_mario.powerups.Mini"
 		],
 
 		"mqm-characters": [
@@ -69,7 +70,13 @@
 			"com.fqf.mario_qua_mario.MarioQuaMarioContentDataGenerator"
 		]
 	},
-	"mixins": [],
+	"mixins": [
+		"mario_qua_mario_content.mixins.json",
+		{
+			"config": "mario_qua_mario_content.client.mixins.json",
+			"environment": "client"
+		}
+	],
 	"depends": {
 		"fabricloader": ">=0.16.9",
 		"minecraft": "~1.21",

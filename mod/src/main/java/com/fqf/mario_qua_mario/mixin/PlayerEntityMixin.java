@@ -5,9 +5,7 @@ import com.fqf.mario_qua_mario.definitions.states.actions.util.SlidingStatus;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.SneakingRule;
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
 import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
-import com.fqf.mario_qua_mario.mariodata.injections.MarioDataHolder;
-import com.fqf.mario_qua_mario.registries.RegistryManager;
-import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
+import com.fqf.mario_qua_mario.mariodata.injections.AdvMarioDataHolder;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedCharacter;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import com.fqf.mario_qua_mario.util.MarioGamerules;
@@ -30,7 +28,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerEntity.class)
-public abstract class PlayerEntityMixin extends LivingEntity implements MarioDataHolder {
+public abstract class PlayerEntityMixin extends LivingEntity implements AdvMarioDataHolder {
 	@Shadow public abstract EntityDimensions getBaseDimensions(EntityPose pose);
 
 	@Shadow public float strideDistance;
@@ -91,11 +89,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements MarioDat
 			if(pose == EntityPose.CROUCHING && data.getAction().SNEAKING_RULE == SneakingRule.PROHIBIT)
 				cir.setReturnValue(getBaseDimensions(EntityPose.STANDING));
 			else {
-				ParsedPowerUp powerUp = data.getPowerUp();
-				ParsedCharacter character = data.getCharacter();
-
-				float widthFactor = powerUp.WIDTH_FACTOR * character.WIDTH_FACTOR;
-				float heightFactor = powerUp.HEIGHT_FACTOR * character.HEIGHT_FACTOR;
+				float widthFactor = data.getHorizontalScale();
+				float heightFactor = data.getVerticalScale();
 				if(pose == EntityPose.CROUCHING) heightFactor *= 0.6F;
 
 				EntityDimensions normalDimensions = cir.getReturnValue();

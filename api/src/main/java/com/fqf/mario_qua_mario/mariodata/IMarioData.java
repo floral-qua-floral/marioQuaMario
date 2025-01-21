@@ -16,7 +16,8 @@ public interface IMarioData {
 	boolean hasPower(String power);
 
 	double getStat(CharaStat stat);
-	double getStatMultiplier(CharaStat stat);
+	float getHorizontalScale();
+	float getVerticalScale();
 	int getBumpStrengthModifier();
 
 	<T> T getVars(Class<T> clazz);

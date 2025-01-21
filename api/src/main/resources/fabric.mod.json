@@ -40,5 +40,22 @@
 	},
 	"suggests": {
 		"another-mod": "*"
+	},
+
+	"custom": {
+		"loom:injected_interfaces": {
+			"net/minecraft/class_1657": ["com/fqf/mario_qua_mario/mariodata/injections/IMarioDataHolder"],
+			"net/minecraft/class_3222": [
+				"com/fqf/mario_qua_mario/mariodata/injections/IMarioAuthoritativeDataHolder",
+				"com/fqf/mario_qua_mario/mariodata/injections/IMarioTravelDataHolder"
+			],
+
+			"net/minecraft/class_742": ["com/fqf/mario_qua_mario/mariodata/injections/IMarioClientDataHolder"],
+			"net/minecraft/class_746": [
+				"com/fqf/mario_qua_mario/mariodata/injections/IMarioClientDataHolder",
+				"com/fqf/mario_qua_mario/mariodata/injections/IMarioTravelDataHolder"
+			],
+			"net/minecraft/class_745": ["com/fqf/mario_qua_mario/mariodata/injections/IMarioClientDataHolder"]
+		}
 	}
 }

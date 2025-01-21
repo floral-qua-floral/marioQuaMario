@@ -2,7 +2,7 @@ package com.fqf.mario_qua_mario.mixin;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.mariodata.MarioServerPlayerData;
-import com.fqf.mario_qua_mario.mariodata.injections.MarioServerDataHolder;
+import com.fqf.mario_qua_mario.mariodata.injections.AdvMarioServerDataHolder;
 import com.fqf.mario_qua_mario.registries.ParsedMarioState;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedCharacter;
@@ -26,7 +26,7 @@ import org.spongepowered.asm.mixin.Unique;
 import java.util.Objects;
 
 @Mixin(ServerPlayerEntity.class)
-public abstract class ServerPlayerEntityMixin extends PlayerEntity implements MarioServerDataHolder {
+public abstract class ServerPlayerEntityMixin extends PlayerEntity implements AdvMarioServerDataHolder {
 	@Shadow public ServerPlayNetworkHandler networkHandler;
 
 	public ServerPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile gameProfile) {

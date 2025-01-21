@@ -46,12 +46,12 @@
 	},
 	"custom": {
 		"loom:injected_interfaces": {
-			"net/minecraft/class_1657": ["com/fqf/mario_qua_mario/mariodata/injections/MarioDataHolder"],
-			"net/minecraft/class_3222": ["com/fqf/mario_qua_mario/mariodata/injections/MarioServerDataHolder"],
+			"net/minecraft/class_1657": ["com/fqf/mario_qua_mario/mariodata/injections/AdvMarioDataHolder"],
+			"net/minecraft/class_3222": ["com/fqf/mario_qua_mario/mariodata/injections/AdvMarioServerDataHolder"],
 
-			"net/minecraft/class_742": ["com/fqf/mario_qua_mario/mariodata/injections/MarioAbstractClientDataHolder"],
-			"net/minecraft/class_746": ["com/fqf/mario_qua_mario/mariodata/injections/MarioMainClientDataHolder"],
-			"net/minecraft/class_745": ["com/fqf/mario_qua_mario/mariodata/injections/MarioOtherClientDataHolder"]
+			"net/minecraft/class_742": ["com/fqf/mario_qua_mario/mariodata/injections/AdvMarioAbstractClientDataHolder"],
+			"net/minecraft/class_746": ["com/fqf/mario_qua_mario/mariodata/injections/AdvMarioMainClientDataHolder"],
+			"net/minecraft/class_745": ["com/fqf/mario_qua_mario/mariodata/injections/AdvMarioOtherClientDataHolder"]
 		}
 	},
 

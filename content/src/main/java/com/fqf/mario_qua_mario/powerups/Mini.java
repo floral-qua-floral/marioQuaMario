@@ -4,6 +4,7 @@ import com.fqf.mario_qua_mario.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario.definitions.states.PowerUpDefinition;
 import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
+import com.fqf.mario_qua_mario.util.StatCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -12,9 +13,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-public class Small implements PowerUpDefinition {
+public class Mini implements PowerUpDefinition {
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("small");
+		return MarioQuaMarioContent.makeID("mini");
 	}
 
 	@Override public @Nullable Identifier getReversionTarget() {
@@ -29,21 +30,21 @@ public class Small implements PowerUpDefinition {
 	}
 
 	@Override public float getWidthFactor() {
-		return 1;
+		return 0.5F;
 	}
 	@Override public float getHeightFactor() {
-		return 0.5F;
+		return 0.25F;
 	}
 
 	@Override public int getBumpStrengthModifier() {
-		return -1;
+		return -2;
 	}
 
 	@Override public float getVoicePitch() {
-		return 1.075F;
+		return 1.545F;
 	}
 	@Override public float getJumpPitch() {
-		return 1.075F;
+		return 1.5F;
 	}
 
 	@Override public Set<String> getPowers() {
@@ -51,7 +52,7 @@ public class Small implements PowerUpDefinition {
 	}
 
 	@Override public @NotNull PowerHeart getPowerHeart(PowerHeartHelper helper) {
-		return new PowerUpDefinition.PowerHeart(
+		return new PowerHeart(
 				MarioQuaMarioContent.makeResID("hud/power_hearts/small/full"),
 				MarioQuaMarioContent.makeResID("hud/power_hearts/small/full_blinking"),
 
@@ -70,7 +71,11 @@ public class Small implements PowerUpDefinition {
 	}
 
 	@Override public Set<StatModifier> getStatModifiers() {
-		return Set.of();
+		return Set.of(
+				new StatModifier(Set.of(StatCategory.NORMAL_GRAVITY), 0.6),
+				new StatModifier(Set.of(StatCategory.JUMPING_GRAVITY), 0.375),
+				new StatModifier(Set.of(StatCategory.JUMP_VELOCITY), 0.75)
+		);
 	}
 
 	@Override public @Nullable Object setupCustomMarioVars() {

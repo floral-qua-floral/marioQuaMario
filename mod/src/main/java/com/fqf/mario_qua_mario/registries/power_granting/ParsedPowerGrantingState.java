@@ -2,7 +2,11 @@ package com.fqf.mario_qua_mario.registries.power_granting;
 
 import com.fqf.mario_qua_mario.definitions.states.StatAlteringStateDefinition;
 import com.fqf.mario_qua_mario.registries.ParsedMarioState;
+import com.fqf.mario_qua_mario.util.CharaStat;
+import com.fqf.mario_qua_mario.util.StatCategory;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public class ParsedPowerGrantingState extends ParsedMarioState {
@@ -12,6 +16,7 @@ public class ParsedPowerGrantingState extends ParsedMarioState {
 	public final int BUMP_STRENGTH_MODIFIER;
 
 	private final Set<StatAlteringStateDefinition.StatModifier> STAT_MODIFIERS;
+	private final Map<Set<StatCategory>, Double> STAT_MULTIPLIERS_CACHE = new HashMap<>();
 
 	public final Set<String> POWERS;
 
@@ -26,5 +31,14 @@ public class ParsedPowerGrantingState extends ParsedMarioState {
 		this.STAT_MODIFIERS = definition.getStatModifiers();
 
 		this.POWERS = definition.getPowers();
+	}
+
+	public double adjustStat(CharaStat stat, double startingValue) {
+		for(StatAlteringStateDefinition.StatModifier modifier : this.STAT_MODIFIERS) {
+			if(stat.CATEGORIES.containsAll(modifier.match()))
+				startingValue = modifier.operation().modify(startingValue, stat.CATEGORIES);
+		}
+
+		return startingValue;
 	}
 }

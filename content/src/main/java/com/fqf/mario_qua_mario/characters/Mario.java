@@ -6,6 +6,7 @@ import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.util.MarioContentSFX;
 import com.fqf.mario_qua_mario.util.MarioVars;
+import com.fqf.mario_qua_mario.util.Powers;
 import net.minecraft.entity.Entity;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
@@ -45,7 +46,9 @@ public class Mario implements CharacterDefinition {
 	}
 
 	@Override public Set<String> getPowers() {
-		return Set.of();
+		return Set.of(
+				Powers.LIGHTNING_SHRINKS
+		);
 	}
 
 	@Override public Set<StatModifier> getStatModifiers() {

@@ -2,7 +2,7 @@ package com.fqf.mario_qua_mario.mixin.client;
 
 import com.fqf.mario_qua_mario.mariodata.MarioAnimationData;
 import com.fqf.mario_qua_mario.mariodata.MarioMainClientData;
-import com.fqf.mario_qua_mario.mariodata.injections.MarioMainClientDataHolder;
+import com.fqf.mario_qua_mario.mariodata.injections.AdvMarioMainClientDataHolder;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.authlib.GameProfile;
@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ClientPlayerEntity.class)
-public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity implements MarioMainClientDataHolder {
+public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity implements AdvMarioMainClientDataHolder {
 	public ClientPlayerEntityMixin(ClientWorld world, GameProfile profile) {
 		super(world, profile);
 		throw new AssertionError("Mixin constructor?!");
