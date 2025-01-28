@@ -8,6 +8,9 @@ import net.minecraft.client.network.AbstractClientPlayerEntity;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(AbstractClientPlayerEntity.class)
 public class AbstractClientPlayerEntityMarioDataMixin implements AdvMarioAbstractClientDataHolder, IMarioClientDataHolder {
@@ -16,5 +19,10 @@ public class AbstractClientPlayerEntityMarioDataMixin implements AdvMarioAbstrac
 
 	@Override public @NotNull MarioAnimationData mqm$getAnimationData() {
 		return this.ANIMATION_DATA;
+	}
+
+	@Inject(method = "tick", at = @At("TAIL"))
+	private void tickAnimationData(CallbackInfo ci) {
+		this.mqm$getAnimationData().tick((AbstractClientPlayerEntity) (Object) this);
 	}
 }
