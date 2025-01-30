@@ -16,16 +16,16 @@ public class ArrangementSet {
 	public final Arrangement CAPE;
 
 	public ArrangementSet() {
-		this.EVERYTHING = new Arrangement(0, 0, 0);
-		this.HEAD = new Arrangement(0, 0, 0);
-		this.BODY = new Arrangement(0, 0, 0);
+		this.EVERYTHING = new Arrangement();
+		this.HEAD = new Arrangement();
+		this.BODY = new Arrangement();
 
-		this.RIGHT_ARM = new Arrangement(0, 0, 0);
-		this.LEFT_ARM = new Arrangement(0, 0, 0);
+		this.RIGHT_ARM = new Arrangement();
+		this.LEFT_ARM = new Arrangement();
 
-		this.RIGHT_LEG = new Arrangement(0, 0, 0);
-		this.LEFT_LEG = new Arrangement(0, 0, 0);
+		this.RIGHT_LEG = new Arrangement();
+		this.LEFT_LEG = new Arrangement();
 
-		this.CAPE = new Arrangement(0, 0, 0);
+		this.CAPE = new Arrangement();
 	}
 }

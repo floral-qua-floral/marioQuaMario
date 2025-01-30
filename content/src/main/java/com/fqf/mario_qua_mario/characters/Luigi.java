@@ -22,6 +22,10 @@ public class Luigi extends Mario implements CharacterDefinition {
 		return MarioContentSFX.LUIGI_JUMP;
 	}
 
+	@Override public float getHeightFactor() {
+		return 1;
+	}
+
 	@Override public Set<StatModifier> getStatModifiers() {
 		return Set.of(
 				// Luigi walks and runs faster

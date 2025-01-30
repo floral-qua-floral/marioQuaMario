@@ -46,11 +46,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 	}
 
 	@Override
-	public @NotNull MarioAnimationData mqm$getAnimationData() {
-		return super.mqm$getAnimationData();
-	}
-
-	@Override
 	public @NotNull MarioMainClientData mqm$getMarioData() {
 		throw new AssertionError("?!");
 	}

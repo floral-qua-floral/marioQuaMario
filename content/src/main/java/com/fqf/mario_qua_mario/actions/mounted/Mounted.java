@@ -31,10 +31,10 @@ public class Mounted implements MountedActionDefinition {
 	}
 
 	@Override public @NotNull SneakingRule getSneakingRule() {
-		return SneakingRule.PROHIBIT;
+		return SneakingRule.ALLOW;
 	}
 	@Override public @NotNull SprintingRule getSprintingRule() {
-		return SprintingRule.PROHIBIT;
+		return SprintingRule.ALLOW;
 	}
 
 	@Override public @Nullable BumpType getBumpType() {

@@ -4,6 +4,7 @@ import com.fqf.mario_qua_mario.mariodata.MarioAnimationData;
 import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
@@ -17,44 +18,25 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PlayerEntityRenderer.class)
 public class PlayerEntityRendererMixin {
-	@Inject(method = "render(Lnet/minecraft/client/network/AbstractClientPlayerEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", at = @At("HEAD"))
-	private void prepare(
-			AbstractClientPlayerEntity abstractClientPlayerEntity, float f, float g, MatrixStack matrixStack,
-			VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci,
-			@Share(value = "shouldUndo", namespace = "mqm") LocalBooleanRef shouldUndo
-	) {
-		shouldUndo.set(false);
-	}
-
-	@Inject(method = "render(Lnet/minecraft/client/network/AbstractClientPlayerEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", at = @At("RETURN"))
-	private void finish(
-			AbstractClientPlayerEntity abstractClientPlayerEntity, float f, float g, MatrixStack matrixStack,
-			VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci,
-			@Share(value = "shouldUndo", namespace = "mqm") LocalBooleanRef shouldUndo
-	) {
-		if(shouldUndo.get()) {
-
-		}
-	}
-
 	@Inject(method = "setupTransforms(Lnet/minecraft/client/network/AbstractClientPlayerEntity;Lnet/minecraft/client/util/math/MatrixStack;FFFF)V", at = @At("TAIL"))
 	private void applyEverythingMutator(AbstractClientPlayerEntity abstractClientPlayerEntity, MatrixStack matrixStack, float animationProgress, float bodyYaw, float tickDelta, float scale, CallbackInfo ci) {
-		MarioPlayerData data = abstractClientPlayerEntity.mqm$getMarioData();
-		if(!data.isEnabled() || data.getAction().ANIMATION == null) return;
-		MarioAnimationData animData = abstractClientPlayerEntity.mqm$getAnimationData();
-
-		matrixStack.translate(
-				animData.prevFrameAnimationDeltas.EVERYTHING.x,
-				animData.prevFrameAnimationDeltas.EVERYTHING.y,
-				animData.prevFrameAnimationDeltas.EVERYTHING.z
-		);
-		matrixStack.multiply(RotationAxis.POSITIVE_Y.rotation(animData.prevFrameAnimationDeltas.EVERYTHING.yaw));
-		if(animData.prevFrameAnimationDeltas.EVERYTHING.pitch != 0 || animData.prevFrameAnimationDeltas.EVERYTHING.roll != 0) {
-			double halfHeight = abstractClientPlayerEntity.getBoundingBox(EntityPose.STANDING).getLengthY() / 2;
-			matrixStack.translate(0, halfHeight, 0);
-			matrixStack.multiply(RotationAxis.POSITIVE_X.rotation(animData.prevFrameAnimationDeltas.EVERYTHING.pitch));
-			matrixStack.multiply(RotationAxis.POSITIVE_Z.rotation(animData.prevFrameAnimationDeltas.EVERYTHING.roll));
-			matrixStack.translate(0, -halfHeight, 0);
-		}
+		abstractClientPlayerEntity.mqm$getAnimationData().rotateTotalPlayermodel(MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(true), abstractClientPlayerEntity, matrixStack);
+//		MarioPlayerData data = abstractClientPlayerEntity.mqm$getMarioData();
+//		if(!data.isEnabled() || data.getAction().ANIMATION == null) return;
+//		MarioAnimationData animData = abstractClientPlayerEntity.mqm$getAnimationData();
+//
+//		matrixStack.translate(
+//				animData.prevFrameAnimationDeltas.EVERYTHING.x,
+//				animData.prevFrameAnimationDeltas.EVERYTHING.y,
+//				animData.prevFrameAnimationDeltas.EVERYTHING.z
+//		);
+//		matrixStack.multiply(RotationAxis.POSITIVE_Y.rotation(animData.prevFrameAnimationDeltas.EVERYTHING.yaw));
+//		if(animData.prevFrameAnimationDeltas.EVERYTHING.pitch != 0 || animData.prevFrameAnimationDeltas.EVERYTHING.roll != 0) {
+//			double halfHeight = abstractClientPlayerEntity.getBoundingBox(EntityPose.STANDING).getLengthY() / 2;
+//			matrixStack.translate(0, halfHeight, 0);
+//			matrixStack.multiply(RotationAxis.POSITIVE_X.rotation(animData.prevFrameAnimationDeltas.EVERYTHING.pitch));
+//			matrixStack.multiply(RotationAxis.POSITIVE_Z.rotation(animData.prevFrameAnimationDeltas.EVERYTHING.roll));
+//			matrixStack.translate(0, -halfHeight, 0);
+//		}
 	}
 }

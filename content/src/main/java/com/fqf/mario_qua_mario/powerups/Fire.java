@@ -41,6 +41,12 @@ public class Fire implements PowerUpDefinition {
 	@Override public float getHeightFactor() {
 		return 1;
 	}
+	@Override public float getAnimationWidthFactor() {
+		return 1;
+	}
+	@Override public float getAnimationHeightFactor() {
+		return 1;
+	}
 
 	@Override public int getBumpStrengthModifier() {
 		return 0;

@@ -86,7 +86,8 @@ public class InGameHudMixin {
 		renderText(context, 3, clientMario.getPose() + " (" + clientMario.getHeight() + ") VS "
 				+ serverMario.getPose() + " (" + serverMario.getHeight() + ")");
 
-		renderText(context, 5, clientData.getActionID() + " VS " + serverData.getActionID());
+		renderText(context, 6, clientData.getActionID() + " VS " + serverData.getActionID());
+		renderText(context, 5, String.valueOf(clientMario.mqm$getAnimationData().currentAnim));
 
 //		renderText(context, 6, "cameraAnim: " + clientData.TEMPORARY2);
 	}

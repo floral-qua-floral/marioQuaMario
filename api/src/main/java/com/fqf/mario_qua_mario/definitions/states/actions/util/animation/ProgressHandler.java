@@ -23,6 +23,6 @@ public record ProgressHandler(@Nullable Identifier animationID, @Nullable Progre
 
 	@FunctionalInterface
 	public interface ProgressResetPredicate {
-		boolean shouldReset(IMarioReadableMotionData data, Identifier prevAnimationID);
+		boolean shouldReset(IMarioReadableMotionData data, @Nullable Identifier prevAnimationID);
 	}
 }

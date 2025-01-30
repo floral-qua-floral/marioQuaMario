@@ -7,6 +7,8 @@ import java.util.Set;
 public interface StatAlteringStateDefinition extends MarioStateDefinition {
 	float getWidthFactor();
 	float getHeightFactor();
+	float getAnimationWidthFactor();
+	float getAnimationHeightFactor();
 
 	int getBumpStrengthModifier();
 

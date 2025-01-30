@@ -35,6 +35,7 @@ public class Debug implements GenericActionDefinition {
 				null,
 
 				new LimbAnimation(false, (data, arrangement, progress) -> arrangement.roll += 90),
+//				null,
 				new LimbAnimation(false, (data, arrangement, progress) -> arrangement.roll -= 90),
 
 				new LimbAnimation(false, null),
