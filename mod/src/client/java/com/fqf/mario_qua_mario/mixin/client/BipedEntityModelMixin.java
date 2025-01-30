@@ -2,6 +2,7 @@ package com.fqf.mario_qua_mario.mixin.client;
 
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.LimbAnimation;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Share;
@@ -89,6 +90,12 @@ public class BipedEntityModelMixin<T extends LivingEntity> {
 				newValue = 0;
 		}
 		original.call(instance, newValue);
+	}
+
+	@ModifyExpressionValue(method = "setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V", at = @At(value = "FIELD", target = "Lnet/minecraft/client/render/entity/model/BipedEntityModel;sneaking:Z"))
+	private boolean uwu(boolean original, @Share("apply") LocalBooleanRef applyRef) {
+		if(applyRef.get()) return false;
+		return original;
 	}
 
 	@Unique

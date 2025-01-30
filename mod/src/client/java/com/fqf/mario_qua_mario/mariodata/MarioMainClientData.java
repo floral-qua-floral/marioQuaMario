@@ -34,7 +34,7 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 
 	@Override public void setActionTransitionless(AbstractParsedAction action) {
 		this.handleSlidingSound(action);
-		this.mario.mqm$getAnimationData().replaceAnimation(action.ANIMATION);
+		this.mario.mqm$getAnimationData().replaceAnimation(this, action.ANIMATION);
 		super.setActionTransitionless(action);
 	}
 

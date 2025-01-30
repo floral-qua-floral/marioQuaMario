@@ -12,6 +12,8 @@ import java.util.Set;
 public class ParsedPowerGrantingState extends ParsedMarioState {
 	public final float WIDTH_FACTOR;
 	public final float HEIGHT_FACTOR;
+	public final float ANIMATION_WIDTH_FACTOR;
+	public final float ANIMATION_HEIGHT_FACTOR;
 
 	public final int BUMP_STRENGTH_MODIFIER;
 
@@ -25,6 +27,8 @@ public class ParsedPowerGrantingState extends ParsedMarioState {
 
 		this.WIDTH_FACTOR = definition.getWidthFactor();
 		this.HEIGHT_FACTOR = definition.getHeightFactor();
+		this.ANIMATION_WIDTH_FACTOR = definition.getAnimationWidthFactor();
+		this.ANIMATION_HEIGHT_FACTOR = definition.getAnimationHeightFactor();
 
 		this.BUMP_STRENGTH_MODIFIER = definition.getBumpStrengthModifier();
 

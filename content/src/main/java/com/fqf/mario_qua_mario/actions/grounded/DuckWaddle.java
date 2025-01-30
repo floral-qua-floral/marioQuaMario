@@ -28,40 +28,40 @@ public class DuckWaddle implements GroundedActionDefinition {
 	}
 
 	private static final LimbAnimation ARM = new LimbAnimation(false, (data, arrangement, progress) -> {
-		arrangement.addPos(0, progress * 9, -1);
-		arrangement.pitch = Easing.LINEAR.ease(Math.min(progress, 1), arrangement.pitch, -140 + 0.26F * Math.min(data.getMario().getPitch(), 0) + -1.15F * arrangement.pitch);
+		arrangement.addPos(0, progress * 12.2F, -1);
+		arrangement.pitch = Easing.LINEAR.ease(Math.min(progress, 1), arrangement.pitch, -162.92F + 0.26F * Math.min(data.getMario().getPitch(), 0) + -1.15F * arrangement.pitch);
 		if(Math.abs(arrangement.roll) < 10) arrangement.roll = 0;
 	});
 	private static LimbAnimation makeLegAnimation(boolean walking) {
 		return new LimbAnimation(walking, (data, arrangement, progress) -> {
-			arrangement.addPos(0, 0, progress * -8.4F);
+			arrangement.addPos(0, progress * 0.2F, progress * -4.4F);
 			arrangement.addAngles(progress * 25, 0, 0);
 		});
 	}
-	private static final Identifier DUCK_ANIM_ID = MarioQuaMarioContent.makeID("duck");
-	private static final Identifier DUCK_AIR_ANIM_ID = MarioQuaMarioContent.makeID("duck_air");
+	private static final Identifier DUCK_ANIM_ID = MarioQuaMarioContent.makeResID("duck");
+	private static final Identifier DUCK_AIR_ANIM_ID = MarioQuaMarioContent.makeResID("duck_air");
 	public static PlayermodelAnimation makeDuckAnimation(boolean walking, boolean airborne) {
 		return new PlayermodelAnimation(
 				null,
 				new ProgressHandler(
 						airborne ? DUCK_AIR_ANIM_ID : DUCK_ANIM_ID,
 						(data, prevAnimationID) ->
-								!prevAnimationID.equals(DUCK_ANIM_ID) && !(airborne && prevAnimationID.equals(DUCK_AIR_ANIM_ID)),
+								!DUCK_ANIM_ID.equals(prevAnimationID) && !(airborne && DUCK_AIR_ANIM_ID.equals(prevAnimationID)),
 						(data, ticksPassed) -> switch(ticksPassed) {
 							case 0 -> 0.6F;
-							case 1 -> 1.34F;
-							case 2 -> 1.48F;
+							case 1 -> 1.21F;
+							case 2 -> 1.45F;
 							default -> 1;
 						}),
 				null,
 
 				new BodyPartAnimation((data, arrangement, progress) -> {
-					arrangement.addPos(0, progress * 8, progress * -3.5F);
+					arrangement.addPos(0, progress * 12.2F, progress * -3.5F);
 					if(progress > 1) arrangement.z -= 2 * (progress - 1);
 				}),
 				new BodyPartAnimation((data, arrangement, progress) -> {
-					arrangement.addAngles(progress * 13, 0, 0);
-					arrangement.addPos(0, progress * 6.7F, progress * -3F);
+					arrangement.addAngles(progress * 41.65F, 0, 0);
+					arrangement.addPos(0, progress * 9.9F, progress * -3F);
 				}),
 
 				ARM, ARM, makeLegAnimation(walking), makeLegAnimation(walking), null

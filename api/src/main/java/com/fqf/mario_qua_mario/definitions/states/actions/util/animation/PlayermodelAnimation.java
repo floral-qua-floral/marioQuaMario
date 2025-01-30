@@ -77,6 +77,10 @@ public record PlayermodelAnimation(
 		);
 	}
 
+	public interface MutatorContainer {
+		@Nullable Arrangement.Mutator mutator();
+	}
+
 	@FunctionalInterface
 	public interface MirroringEvaluator {
 		/**

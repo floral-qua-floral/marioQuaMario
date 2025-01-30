@@ -38,6 +38,12 @@ public class Mario implements CharacterDefinition {
 		return 1;
 	}
 	@Override public float getHeightFactor() {
+		return 0.85F;
+	}
+	@Override public float getAnimationWidthFactor() {
+		return 1;
+	}
+	@Override public float getAnimationHeightFactor() {
 		return 1;
 	}
 

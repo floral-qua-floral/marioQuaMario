@@ -35,6 +35,12 @@ public class Mini implements PowerUpDefinition {
 	@Override public float getHeightFactor() {
 		return 0.25F;
 	}
+	@Override public float getAnimationWidthFactor() {
+		return 0.5F;
+	}
+	@Override public float getAnimationHeightFactor() {
+		return 0.25F;
+	}
 
 	@Override public int getBumpStrengthModifier() {
 		return -2;
