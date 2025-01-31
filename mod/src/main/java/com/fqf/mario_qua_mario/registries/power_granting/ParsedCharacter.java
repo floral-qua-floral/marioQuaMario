@@ -8,6 +8,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class ParsedCharacter extends ParsedPowerGrantingState {
@@ -17,6 +19,8 @@ public class ParsedCharacter extends ParsedPowerGrantingState {
 	public final SoundEvent JUMP_SOUND;
 
 	public final Identifier RESOURCE_ID;
+
+	public final Map<ParsedPowerUp, String> MODELS;
 
 	public ParsedCharacter(CharacterDefinition definition) {
 		super(definition);
@@ -30,6 +34,7 @@ public class ParsedCharacter extends ParsedPowerGrantingState {
 		this.JUMP_SOUND = definition.getJumpSound();
 
 		this.RESOURCE_ID = this.ID.getNamespace().equals("mqm") ? MarioQuaMario.makeResID(this.ID.getPath()) : this.ID;
+		this.MODELS = new HashMap<>();
 	}
 
 	public AbstractParsedAction getMountedAction(Entity mount) {

@@ -84,6 +84,12 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 	}
 
 	@Override
+	public void updateCharacterFormCombo() {
+		super.updateCharacterFormCombo();
+		MarioQuaMario.LOGGER.info("Hewwo: {}", this.getCharacter().MODELS.get(this.getPowerUp()));
+	}
+
+	@Override
 	public boolean isClient() {
 		return false;
 	}

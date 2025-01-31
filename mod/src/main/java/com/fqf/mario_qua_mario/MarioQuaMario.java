@@ -19,6 +19,8 @@ public class MarioQuaMario implements ModInitializer {
 	public void onInitialize() {
 		LOGGER.info("Mario qua Mario initializing...");
 
+//		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new PlayermodelListener());
+
 		RegistryManager.registerAll();
 
 		MarioCommand.registerMarioCommand();

@@ -38,7 +38,7 @@ public class Mario implements CharacterDefinition {
 		return 1;
 	}
 	@Override public float getHeightFactor() {
-		return 0.85F;
+		return 0.97F;
 	}
 	@Override public float getAnimationWidthFactor() {
 		return 1;

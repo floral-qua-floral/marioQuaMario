@@ -98,8 +98,7 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	public void setPowerUpTransitionless(ParsedPowerUp newPowerUp) {
 		this.setupCustomVars(this.powerUp, newPowerUp);
 		this.powerUp = newPowerUp;
-		refreshPlayerModel();
-		refreshPowerSet();
+		updateCharacterFormCombo();
 	}
 
 	private ParsedCharacter character;
@@ -115,19 +114,15 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 		this.character = character;
 		this.setActionTransitionless(character.INITIAL_ACTION);
 		this.setPowerUpTransitionless(character.INITIAL_POWER_UP);
-		refreshPlayerModel();
-		refreshPowerSet();
+		updateCharacterFormCombo();
 	}
 
 	public void setupCustomVars(ParsedMarioState oldThing, ParsedMarioState newThing) {
 		if(oldThing.CUSTOM_DATA_CLASS != null) this.customVars.remove(oldThing.CUSTOM_DATA_CLASS);
 		if(newThing.CUSTOM_DATA_CLASS != null) this.customVars.put(newThing.CUSTOM_DATA_CLASS, newThing.makeCustomThing());
 	}
-	public void refreshPlayerModel() {
-
-	}
 	private final Set<String> POWERS = new HashSet<>();
-	public void refreshPowerSet() {
+	public void updateCharacterFormCombo() {
 		this.POWERS.clear();
 		this.POWERS.addAll(this.getPowerUp().POWERS);
 		this.POWERS.addAll(this.getCharacter().POWERS);
