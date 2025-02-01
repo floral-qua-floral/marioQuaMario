@@ -1,0 +1,1 @@
+Due to improper client/server code separation this incarnation of the mod crashes on the dedicated server. It was too messy to untangle so I started fresh again, repo is [here](https://github.com/floral-qua-floral/marioQuaMario2).
