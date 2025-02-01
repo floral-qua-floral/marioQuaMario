@@ -46,26 +46,30 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 					persistentData.getString("Character"));
 
 			MarioServerPlayerData data = mqm$getMarioData();
-			if(networkHandler == null) {
-				data.setEnabledInternal(persistentData.getBoolean("Enabled"));
-				data.setPowerUpTransitionless(getPowerUp(nbt));
-				data.setCharacter(getCharacter(nbt));
-			}
-			else {
+			if(networkHandler != null) {
 				data.setEnabled(persistentData.getBoolean("Enabled"));
-				data.assignPowerUp(getPowerUp(nbt).ID);
-				data.assignCharacter(getCharacter(nbt).ID);
+				data.assignCharacter(getCharacterID(nbt));
+				data.assignPowerUp(getPowerUpID(nbt));
 			}
+			else data.preInitialApply(persistentData.getBoolean("Enabled"), getPowerUp(nbt), getCharacter(nbt));
 		}
 	}
 
 	@Unique
 	private static ParsedCharacter getCharacter(NbtCompound nbt) {
-		return getDataFromNbt(nbt.getString("Characters"), MarioQuaMario.makeID("mario"), RegistryManager.CHARACTERS);
+		return getDataFromNbt(getCharacterID(nbt), MarioQuaMario.makeID("mario"), RegistryManager.CHARACTERS);
 	}
 	@Unique
 	private static ParsedPowerUp getPowerUp(NbtCompound nbt) {
-		return getDataFromNbt(nbt.getString("PowerUp"), getCharacter(nbt).INITIAL_POWER_UP.ID, RegistryManager.POWER_UPS);
+		return getDataFromNbt(getPowerUpID(nbt), getCharacter(nbt).INITIAL_POWER_UP.ID, RegistryManager.POWER_UPS);
+	}
+	@Unique
+	private static String getCharacterID(NbtCompound nbt) {
+		return nbt.getString("Characters");
+	}
+	@Unique
+	private static String getPowerUpID(NbtCompound nbt) {
+		return nbt.getString("PowerUp");
 	}
 
 	@Unique

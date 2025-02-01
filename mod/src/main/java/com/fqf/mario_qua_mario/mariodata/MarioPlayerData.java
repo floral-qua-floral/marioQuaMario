@@ -12,7 +12,6 @@ import com.fqf.mario_qua_mario.util.CharaStat;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
@@ -82,6 +81,7 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 		this.prevAnimation = this.action.ANIMATION;
 		this.setupCustomVars(this.action, action);
 		this.action = action;
+		this.getMario().calculateDimensions();
 	}
 
 	private ParsedPowerUp powerUp;
@@ -92,14 +92,14 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 		return this.getPowerUp().ID;
 	}
 
-	public void setPowerUp(ParsedPowerUp newPowerUp, boolean isReversion, long seed) {
-		this.setPowerUpTransitionless(newPowerUp);
+	public boolean setPowerUp(ParsedPowerUp newPowerUp, boolean isReversion, long seed) {
+		return this.setPowerUpTransitionless(newPowerUp);
 	}
-	public void setPowerUpTransitionless(ParsedPowerUp newPowerUp) {
+	public boolean setPowerUpTransitionless(ParsedPowerUp newPowerUp) {
 		this.setupCustomVars(this.powerUp, newPowerUp);
 		this.powerUp = newPowerUp;
-		refreshPlayerModel();
-		refreshPowerSet();
+		updateCharacterFormCombo();
+		return true;
 	}
 
 	private ParsedCharacter character;
@@ -115,33 +115,34 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 		this.character = character;
 		this.setActionTransitionless(character.INITIAL_ACTION);
 		this.setPowerUpTransitionless(character.INITIAL_POWER_UP);
-		refreshPlayerModel();
-		refreshPowerSet();
+		updateCharacterFormCombo();
 	}
 
 	public void setupCustomVars(ParsedMarioState oldThing, ParsedMarioState newThing) {
 		if(oldThing.CUSTOM_DATA_CLASS != null) this.customVars.remove(oldThing.CUSTOM_DATA_CLASS);
 		if(newThing.CUSTOM_DATA_CLASS != null) this.customVars.put(newThing.CUSTOM_DATA_CLASS, newThing.makeCustomThing());
 	}
-	public void refreshPlayerModel() {
-
-	}
 	private final Set<String> POWERS = new HashSet<>();
-	public void refreshPowerSet() {
+	public void updateCharacterFormCombo() {
 		this.POWERS.clear();
 		this.POWERS.addAll(this.getPowerUp().POWERS);
 		this.POWERS.addAll(this.getCharacter().POWERS);
+		this.getMario().calculateDimensions();
 	}
 	@Override public boolean hasPower(String power) {
 		return this.isEnabled() && this.POWERS.contains(power);
 	}
 
-	public void setMario(PlayerEntity mario) {
-		MarioQuaMario.LOGGER.info("Assigning player to MarioData: {} to {}", mario.getName().getString(), this);
+	public void initialApply() {
 		this.setEnabledInternal(this.isEnabled());
 		this.setActionTransitionless(this.action);
-		this.setPowerUpTransitionless(this.powerUp);
 		this.setCharacter(this.character);
+		this.setPowerUpTransitionless(this.powerUp);
+	}
+	protected void loadFromNbtBeforeNetworkHandler(boolean enabled, ParsedPowerUp powerUp, ParsedCharacter character) {
+		this.enabled = enabled;
+		this.powerUp = powerUp;
+		this.character = character;
 	}
 
 	public void tick() {

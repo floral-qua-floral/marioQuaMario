@@ -12,13 +12,16 @@ import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedCharacter;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import com.fqf.mario_qua_mario.util.MarioSFX;
+import com.fqf.mario_qua_mario.util.PlayermodelListener;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.resource.ResourceType;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
@@ -103,8 +106,16 @@ public class RegistryManager {
 	}
 
 	private static void registerCharacters() {
+		Set<String> characterNamespaces = new HashSet<>();
 		for(CharacterDefinition definition : getEntrypoints("mqm-characters", CharacterDefinition.class)) {
-			registerThing(CHARACTERS, new ParsedCharacter(definition));
+			ParsedCharacter character = new ParsedCharacter(definition);
+			registerThing(CHARACTERS, character);
+			characterNamespaces.add(character.RESOURCE_ID.getNamespace());
+		}
+
+		for(String namespace : characterNamespaces) {
+			MarioQuaMario.LOGGER.info("Registering a playermodel resource listener {}...!", namespace);
+			ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new PlayermodelListener(namespace));
 		}
 	}
 

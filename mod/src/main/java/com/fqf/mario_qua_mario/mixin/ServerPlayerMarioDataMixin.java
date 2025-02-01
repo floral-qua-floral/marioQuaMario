@@ -21,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerPlayerEntity.class)
 public class ServerPlayerMarioDataMixin implements AdvMarioServerDataHolder, IMarioAuthoritativeDataHolder, IMarioTravelDataHolder {
-	@Unique private MarioServerPlayerData marioServerData = new MarioServerPlayerData();
+	@Unique private MarioServerPlayerData marioServerData = new MarioServerPlayerData((ServerPlayerEntity) (Object) this);
 
 	@Override public IMarioAuthoritativeData mqm$getIMarioAuthoritativeData() {
 		return this.mqm$getMarioData();
@@ -41,6 +41,7 @@ public class ServerPlayerMarioDataMixin implements AdvMarioServerDataHolder, IMa
 
 	@Override public void mqm$setMarioData(MarioPlayerData replacementData) {
 		this.marioServerData = (MarioServerPlayerData) replacementData;
-		replacementData.setMario((ServerPlayerEntity) (Object) this);
+		ServerPlayerEntity mario = (ServerPlayerEntity) (Object) this;
+		replacementData.initialApply();
 	}
 }

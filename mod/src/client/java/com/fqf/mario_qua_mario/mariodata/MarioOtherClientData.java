@@ -4,7 +4,6 @@ import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import net.minecraft.client.network.OtherClientPlayerEntity;
 import net.minecraft.client.sound.SoundInstance;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Vector2d;
@@ -14,27 +13,24 @@ import java.util.Map;
 
 public class MarioOtherClientData extends MarioPlayerData implements IMarioClientDataImpl {
 	public boolean jumpCapped;
-	private OtherClientPlayerEntity mario;
-	public MarioOtherClientData() {
+	private final OtherClientPlayerEntity MARIO;
+	public MarioOtherClientData(OtherClientPlayerEntity mario) {
 		super();
+		this.MARIO = mario;
 	}
 	@Override public OtherClientPlayerEntity getMario() {
-		return this.mario;
-	}
-	@Override public void setMario(PlayerEntity mario) {
-		this.mario = (OtherClientPlayerEntity) mario;
-		super.setMario(mario);
+		return this.MARIO;
 	}
 
 	@Override
-	public void setPowerUp(ParsedPowerUp newPowerUp, boolean isReversion, long seed) {
+	public boolean setPowerUp(ParsedPowerUp newPowerUp, boolean isReversion, long seed) {
 		this.handlePowerTransitionSound(isReversion, newPowerUp, seed);
-		super.setPowerUp(newPowerUp, isReversion, seed);
+		return super.setPowerUp(newPowerUp, isReversion, seed);
 	}
 
 	@Override public void setActionTransitionless(AbstractParsedAction action) {
 		this.handleSlidingSound(action);
-		this.mario.mqm$getAnimationData().replaceAnimation(this, action.ANIMATION);
+		this.MARIO.mqm$getAnimationData().replaceAnimation(this, action.ANIMATION);
 		super.setActionTransitionless(action);
 	}
 
@@ -46,7 +42,7 @@ public class MarioOtherClientData extends MarioPlayerData implements IMarioClien
 		this.getPowerUp().clientTick(this, false);
 		this.getCharacter().clientTick(this, false);
 
-		Vec3d pos = mario.getPos();
+		Vec3d pos = MARIO.getPos();
 		this.deltaX = pos.x - prevX;
 		this.deltaY = pos.y - prevY;
 		this.deltaZ = pos.z - prevZ;

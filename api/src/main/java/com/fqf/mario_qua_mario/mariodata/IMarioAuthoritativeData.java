@@ -14,14 +14,14 @@ public interface IMarioAuthoritativeData extends IMarioData {
 	void assignAction(Identifier actionID);
 	void assignAction(String actionID);
 
-	void empowerTo(Identifier powerUpID);
-	void empowerTo(String powerUpID);
+	boolean empowerTo(Identifier powerUpID);
+	boolean empowerTo(String powerUpID);
 
-	void revertTo(Identifier powerUpID);
-	void revertTo(String powerUpID);
+	boolean revertTo(Identifier powerUpID);
+	boolean revertTo(String powerUpID);
 
-	void assignPowerUp(Identifier powerUpID);
-	void assignPowerUp(String powerUpID);
+	boolean assignPowerUp(Identifier powerUpID);
+	boolean assignPowerUp(String powerUpID);
 
 	void assignCharacter(Identifier characterID);
 	void assignCharacter(String characterID);

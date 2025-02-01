@@ -6,19 +6,23 @@ import com.tom.cpm.api.IClientAPI;
 import com.tom.cpm.api.ICommonAPI;
 
 public class MarioCPMCompat implements ICPMPlugin {
+	private static IClientAPI clientAPI;
+	private static ICommonAPI commonAPI;
 
-	@Override
-	public void initClient(IClientAPI iClientAPI) {
-
+	public static IClientAPI getClientAPI() {
+		return clientAPI;
+	}
+	public static ICommonAPI getCommonAPI() {
+		return commonAPI;
 	}
 
-	@Override
-	public void initCommon(ICommonAPI iCommonAPI) {
-
-	}
-
-	@Override
-	public String getOwnerModId() {
+	@Override public String getOwnerModId() {
 		return MarioQuaMario.MOD_ID;
+	}
+	@Override public void initClient(IClientAPI iClientAPI) {
+		clientAPI = iClientAPI;
+	}
+	@Override public void initCommon(ICommonAPI iCommonAPI) {
+		commonAPI = iCommonAPI;
 	}
 }

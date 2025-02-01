@@ -9,13 +9,14 @@ import com.fqf.mario_qua_mario.registries.actions.ParsedTransition;
 import com.fqf.mario_qua_mario.registries.actions.TransitionPhase;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedCharacter;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
+import com.fqf.mario_qua_mario.util.MarioCPMCompat;
+import com.tom.cpm.shared.io.ModelFile;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.random.RandomSeed;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
@@ -23,27 +24,32 @@ import java.util.Objects;
 import java.util.Set;
 
 public class MarioServerPlayerData extends MarioMoveableData implements IMarioAuthoritativeData {
-	private ServerPlayerEntity mario;
-	public MarioServerPlayerData() {
+	private final ServerPlayerEntity MARIO;
+	public MarioServerPlayerData(ServerPlayerEntity mario) {
 		super();
+		this.MARIO = mario;
 	}
 	@Override public ServerPlayerEntity getMario() {
-		return this.mario;
-	}
-	@Override public void setMario(PlayerEntity mario) {
-		this.mario = (ServerPlayerEntity) mario;
-		super.setMario(mario);
-	}
-
-	@Override public void setEnabled(boolean enable) {
-
+		return this.MARIO;
 	}
 
 	private final Set<Pair<AbstractParsedAction, Long>> RECENT_ACTIONS = new HashSet<>();
 
-	public boolean validateC2STransition(@Nullable AbstractParsedAction fromAction, ParsedTransition transition) {
+	public void preInitialApply(boolean enabled, ParsedPowerUp powerUp, ParsedCharacter character) {
+		this.loadFromNbtBeforeNetworkHandler(enabled, powerUp, character);
+	}
 
-		return true;
+	@Override
+	public void initialApply() {
+		super.initialApply();
+//		this.syncToClient(this.getMario());
+	}
+
+	@Override
+	public void setEnabledInternal(boolean enabled) {
+		super.setEnabledInternal(enabled);
+		if(enabled) this.updatePlayerModel();
+		else MarioCPMCompat.getCommonAPI().resetPlayerModel(PlayerEntity.class, this.getMario());
 	}
 
 	@Override
@@ -81,6 +87,24 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 	public void setActionTransitionless(AbstractParsedAction action) {
 		this.RECENT_ACTIONS.add(new Pair<>(this.getAction(), this.getMario().getWorld().getTime() + 10L));
 		super.setActionTransitionless(action);
+	}
+
+	@Override
+	public boolean setPowerUpTransitionless(ParsedPowerUp newPowerUp) {
+		if(!this.updatePlayerModel(newPowerUp)) return false;
+		return super.setPowerUpTransitionless(newPowerUp);
+	}
+
+	private boolean updatePlayerModel(ParsedPowerUp newPowerUp) {
+		ModelFile newModel = this.getCharacter().MODELS.get(newPowerUp);
+		MarioQuaMario.LOGGER.info("Changing to model for combination ({}, {})", this.getCharacterID(), newPowerUp.ID);
+		if(newModel == null) return false;
+		if(this.getMario().networkHandler != null)
+			MarioCPMCompat.getCommonAPI().setPlayerModel(PlayerEntity.class, this.getMario(), newModel, true);
+		return true;
+	}
+	public void updatePlayerModel() {
+		this.updatePlayerModel(this.getPowerUp());
 	}
 
 	@Override
@@ -144,6 +168,19 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 		};
 	}
 
+	public void syncToClient(ServerPlayerEntity toWhom) {
+		this.setEnabled(this.isEnabled());
+		MarioDataPackets.assignCharacterS2C(this.getMario(), this.getCharacter());
+		MarioDataPackets.assignPowerUpS2C(this.getMario(), this.getPowerUp());
+		MarioDataPackets.assignActionS2C(this.getMario(), true, this.getAction());
+//		MarioDataPackets.updatePlayermodelS2C(this.getMario());
+	}
+
+	// CUTOFF FOR IMarioAuthoritativeData IMPLEMENTATION:---------------------------------------------------------------
+	@Override public void setEnabled(boolean enable) {
+
+	}
+
 	@Override public boolean transitionToAction(Identifier actionID) {
 		long seed = RandomSeed.getSeed();
 		AbstractParsedAction toAction = Objects.requireNonNull(RegistryManager.ACTIONS.get(actionID),
@@ -167,39 +204,42 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 		this.assignAction(Identifier.of(actionID));
 	}
 
-	@Override public void empowerTo(Identifier powerUpID) {
+	@Override public boolean empowerTo(Identifier powerUpID) {
 		ParsedPowerUp newPowerUp = Objects.requireNonNull(RegistryManager.POWER_UPS.get(powerUpID),
 				"Target power-up (" + powerUpID + ") doesn't exist!");
 
 		long seed = RandomSeed.getSeed();
-		this.setPowerUp(newPowerUp, false, seed);
+		if(!this.setPowerUp(newPowerUp, false, seed)) return false;
 		MarioDataPackets.empowerRevertS2C(this.getMario(), newPowerUp, false, seed);
+		return true;
 	}
-	@Override public void empowerTo(String powerUpID) {
-		this.empowerTo(Identifier.of(powerUpID));
+	@Override public boolean empowerTo(String powerUpID) {
+		return this.empowerTo(Identifier.of(powerUpID));
 	}
 
-	@Override public void revertTo(Identifier powerUpID) {
+	@Override public boolean revertTo(Identifier powerUpID) {
 		ParsedPowerUp newPowerUp = Objects.requireNonNull(RegistryManager.POWER_UPS.get(powerUpID),
 				"Target power-up (" + powerUpID + ") doesn't exist!");
 
 		long seed = RandomSeed.getSeed();
-		this.setPowerUp(newPowerUp, true, seed);
+		if(!this.setPowerUp(newPowerUp, true, seed)) return false;
 		MarioDataPackets.empowerRevertS2C(this.getMario(), newPowerUp, true, seed);
+		return true;
 	}
-	@Override public void revertTo(String powerUpID) {
-		this.revertTo(Identifier.of(powerUpID));
+	@Override public boolean revertTo(String powerUpID) {
+		return this.revertTo(Identifier.of(powerUpID));
 	}
 
-	@Override public void assignPowerUp(Identifier powerUpID) {
+	@Override public boolean assignPowerUp(Identifier powerUpID) {
 		ParsedPowerUp newPowerUp = Objects.requireNonNull(RegistryManager.POWER_UPS.get(powerUpID),
 				"Target power-up (" + powerUpID + ") doesn't exist!");
 
-		this.setPowerUpTransitionless(newPowerUp);
+		if(!this.setPowerUpTransitionless(newPowerUp)) return false;
 		MarioDataPackets.assignPowerUpS2C(this.getMario(), newPowerUp);
+		return true;
 	}
-	@Override public void assignPowerUp(String powerUpID) {
-		this.assignPowerUp(Identifier.of(powerUpID));
+	@Override public boolean assignPowerUp(String powerUpID) {
+		return this.assignPowerUp(Identifier.of(powerUpID));
 	}
 
 	@Override public void assignCharacter(Identifier characterID) {

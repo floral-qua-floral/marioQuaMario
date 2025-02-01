@@ -8,33 +8,29 @@ import net.minecraft.client.input.Input;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.entity.MovementType;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class MarioMainClientData extends MarioMoveableData implements IMarioClientDataImpl {
-	private ClientPlayerEntity mario;
-	public MarioMainClientData() {
+	private final ClientPlayerEntity MARIO;
+	public MarioMainClientData(ClientPlayerEntity mario) {
 		super();
+		this.MARIO = mario;
 	}
 	@Override public ClientPlayerEntity getMario() {
-		return mario;
-	}
-	@Override public void setMario(PlayerEntity mario) {
-		this.mario = (ClientPlayerEntity) mario;
-		super.setMario(mario);
+		return MARIO;
 	}
 
-	@Override public void setPowerUp(ParsedPowerUp newPowerUp, boolean isReversion, long seed) {
+	@Override public boolean setPowerUp(ParsedPowerUp newPowerUp, boolean isReversion, long seed) {
 		this.handlePowerTransitionSound(isReversion, newPowerUp, seed);
-		super.setPowerUp(newPowerUp, isReversion, seed);
+		return super.setPowerUp(newPowerUp, isReversion, seed);
 	}
 
 	@Override public void setActionTransitionless(AbstractParsedAction action) {
 		this.handleSlidingSound(action);
-		this.mario.mqm$getAnimationData().replaceAnimation(this, action.ANIMATION);
+		this.MARIO.mqm$getAnimationData().replaceAnimation(this, action.ANIMATION);
 		super.setActionTransitionless(action);
 	}
 
