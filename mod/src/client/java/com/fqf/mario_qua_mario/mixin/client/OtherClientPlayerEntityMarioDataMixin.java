@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(OtherClientPlayerEntity.class)
 public class OtherClientPlayerEntityMarioDataMixin implements AdvMarioOtherClientDataHolder, IMarioClientDataHolder {
-	@Unique private MarioOtherClientData marioData = new MarioOtherClientData();
+	@Unique private MarioOtherClientData marioData = new MarioOtherClientData((OtherClientPlayerEntity) (Object) this);
 
 	@Override public IMarioClientData mqm$getIMarioClientData() {
 		return this.mqm$getMarioData();
@@ -36,6 +36,6 @@ public class OtherClientPlayerEntityMarioDataMixin implements AdvMarioOtherClien
 	@Override
 	public void mqm$setMarioData(MarioPlayerData replacementData) {
 		this.marioData = (MarioOtherClientData) replacementData;
-		replacementData.setMario((OtherClientPlayerEntity) (Object) this);
+		replacementData.initialApply();
 	}
 }

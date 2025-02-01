@@ -6,6 +6,7 @@ import com.fqf.mario_qua_mario.registries.RegistryManager;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
@@ -40,9 +41,21 @@ public class MarioEventListeners {
 					reversionTarget = Objects.requireNonNull(RegistryManager.POWER_UPS.get(reversionTarget)).REVERSION_TARGET_ID;
 				}
 			}
-			data.revertTo(reversionTarget);
+			if(!data.revertTo(reversionTarget)) {
+				MarioQuaMario.LOGGER.error(
+						"{}'s current power up ({}) should revert to {}, however this is illegal for their character! ({})",
+						mario.getName().getString(), data.getPowerUpID(), reversionTarget, data.getCharacterID()
+				);
+				return true;
+			}
 			mario.setHealth(mario.getMaxHealth());
 			return false;
+		});
+
+		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+//			handler.player.mqm$getMarioData().initialApply();
+//			handler.player.mqm$getMarioData().updatePlayerModel();
+//			handler.player.mqm$getMarioData().syncToClient(handler.player);
 		});
 	}
 }

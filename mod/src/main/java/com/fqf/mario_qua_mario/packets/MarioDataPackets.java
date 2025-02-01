@@ -1,14 +1,17 @@
 package com.fqf.mario_qua_mario.packets;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.mariodata.MarioServerPlayerData;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedCharacter;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
+import com.fqf.mario_qua_mario.util.MarioCPMCompat;
 import com.fqf.mario_qua_mario.util.MarioGamerules;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
@@ -66,6 +69,14 @@ public class MarioDataPackets {
 				new AssignCharacterS2CPayload(mario.getId(), RegistryManager.CHARACTERS.getRawIdOrThrow(newCharacter)),
 				true
 		);
+	}
+
+	public static void updatePlayermodelS2C(
+			ServerPlayerEntity mario
+	) {
+		MarioServerPlayerData data = mario.mqm$getMarioData();
+		String modelString = data.getCharacter().MODELS.get(data.getPowerUp());
+		MarioCPMCompat.getCommonAPI().setPlayerModel(PlayerEntity.class, mario, modelString, true, false);
 	}
 
 	protected record SetActionC2SPayload(int fromAction, int toAction, long seed) implements CustomPayload {

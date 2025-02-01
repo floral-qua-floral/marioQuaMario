@@ -12,7 +12,6 @@ import com.fqf.mario_qua_mario.util.CharaStat;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
@@ -92,13 +91,14 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 		return this.getPowerUp().ID;
 	}
 
-	public void setPowerUp(ParsedPowerUp newPowerUp, boolean isReversion, long seed) {
-		this.setPowerUpTransitionless(newPowerUp);
+	public boolean setPowerUp(ParsedPowerUp newPowerUp, boolean isReversion, long seed) {
+		return this.setPowerUpTransitionless(newPowerUp);
 	}
-	public void setPowerUpTransitionless(ParsedPowerUp newPowerUp) {
+	public boolean setPowerUpTransitionless(ParsedPowerUp newPowerUp) {
 		this.setupCustomVars(this.powerUp, newPowerUp);
 		this.powerUp = newPowerUp;
 		updateCharacterFormCombo();
+		return true;
 	}
 
 	private ParsedCharacter character;
@@ -131,12 +131,16 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 		return this.isEnabled() && this.POWERS.contains(power);
 	}
 
-	public void setMario(PlayerEntity mario) {
-		MarioQuaMario.LOGGER.info("Assigning player to MarioData: {} to {}", mario.getName().getString(), this);
+	public void initialApply() {
 		this.setEnabledInternal(this.isEnabled());
 		this.setActionTransitionless(this.action);
-		this.setPowerUpTransitionless(this.powerUp);
 		this.setCharacter(this.character);
+		this.setPowerUpTransitionless(this.powerUp);
+	}
+	protected void loadFromNbtBeforeNetworkHandler(boolean enabled, ParsedPowerUp powerUp, ParsedCharacter character) {
+		this.enabled = enabled;
+		this.powerUp = powerUp;
+		this.character = character;
 	}
 
 	public void tick() {

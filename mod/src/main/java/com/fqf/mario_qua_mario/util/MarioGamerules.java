@@ -25,6 +25,10 @@ public class MarioGamerules {
 			GameRuleRegistry.register("marioRejectInvalidActionTransitions", GameRules.Category.PLAYER,
 					GameRuleFactory.createBooleanRule(true));
 
+	public static final GameRules.Key<GameRules.BooleanRule> REQUIRE_PLAYERMODELS =
+			GameRuleRegistry.register("requirePlayermodels", GameRules.Category.PLAYER,
+					GameRuleFactory.createBooleanRule(true));
+
 	public static final GameRules.Key<DoubleRule> INCOMING_DAMAGE_MULTIPLIER =
 			GameRuleRegistry.register("marioIncomingDamageMultiplier", GameRules.Category.PLAYER,
 					GameRuleFactory.createDoubleRule(2.5));
