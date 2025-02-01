@@ -4,6 +4,7 @@ import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.definitions.states.CharacterDefinition;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
+import com.tom.cpm.shared.io.ModelFile;
 import net.minecraft.entity.Entity;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
@@ -20,7 +21,7 @@ public class ParsedCharacter extends ParsedPowerGrantingState {
 
 	public final Identifier RESOURCE_ID;
 
-	public final Map<ParsedPowerUp, String> MODELS;
+	public final Map<ParsedPowerUp, ModelFile> MODELS;
 
 	public ParsedCharacter(CharacterDefinition definition) {
 		super(definition);

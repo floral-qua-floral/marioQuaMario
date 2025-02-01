@@ -10,6 +10,7 @@ import com.fqf.mario_qua_mario.registries.actions.TransitionPhase;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedCharacter;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import com.fqf.mario_qua_mario.util.MarioCPMCompat;
+import com.tom.cpm.shared.io.ModelFile;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -95,11 +96,11 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 	}
 
 	private boolean updatePlayerModel(ParsedPowerUp newPowerUp) {
-		String newModel = this.getCharacter().MODELS.get(newPowerUp);
+		ModelFile newModel = this.getCharacter().MODELS.get(newPowerUp);
 		MarioQuaMario.LOGGER.info("Changing to model for combination ({}, {})", this.getCharacterID(), newPowerUp.ID);
 		if(newModel == null) return false;
 		if(this.getMario().networkHandler != null)
-			MarioCPMCompat.getCommonAPI().setPlayerModel(PlayerEntity.class, this.getMario(), newModel, true, false);
+			MarioCPMCompat.getCommonAPI().setPlayerModel(PlayerEntity.class, this.getMario(), newModel, true);
 		return true;
 	}
 	public void updatePlayerModel() {

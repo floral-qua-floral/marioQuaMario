@@ -4,55 +4,71 @@ import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedCharacter;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.tom.cpm.shared.io.ModelFile;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 
-public record PlayermodelListener(String namespace) implements SimpleSynchronousResourceReloadListener {
+public class PlayermodelListener implements SimpleSynchronousResourceReloadListener {
+	private final String NAMESPACE;
+
+	public PlayermodelListener(String namespace) {
+		this.NAMESPACE = namespace;
+	}
+
 	@Override
 	public Identifier getFabricId() {
-		return Identifier.of(this.namespace, "playermodels");
+		return Identifier.of(this.NAMESPACE, "mqm_playermodels");
 	}
 
 	@Override
 	public void reload(ResourceManager manager) {
 		for(ParsedCharacter character : RegistryManager.CHARACTERS) {
+			if(!character.RESOURCE_ID.getNamespace().equals(this.NAMESPACE)) continue;
+
 			character.MODELS.clear();
-		}
 
-		Map<Identifier, Resource> i = manager.findResources("playermodels", path -> path.getPath().endsWith(".json"));
-		for (Map.Entry<Identifier, Resource> entry : i.entrySet()) {
-			try(InputStream stream = entry.getValue().getInputStream()) {
-				JsonObject json = JsonParser.parseReader(new InputStreamReader(stream)).getAsJsonObject();
-				Identifier characterID = Identifier.of(json.get("character").getAsString());
-				ParsedCharacter character = Objects.requireNonNull(RegistryManager.CHARACTERS.get(characterID),
-						"No character with ID " + characterID + " has been registered!");
-				if(!character.RESOURCE_ID.getNamespace().equals(this.namespace))
-					throw new MismatchedNamespaceException(this.namespace, characterID);
-				Identifier formID = Identifier.of(json.get("form").getAsString());
-				ParsedPowerUp form = Objects.requireNonNull(RegistryManager.POWER_UPS.get(formID),
-						"No power-up form with ID " + formID + " has been registered!");
+			String location = "playermodels/" + character.ID.getPath();
+			Map<Identifier, Resource> modelResources = manager.findResources(location,
+							path -> path.getPath().toLowerCase(Locale.ROOT).endsWith(".cpmmodel"));
 
-				character.MODELS.put(form, json.get("model_string").getAsString());
-			}
-			catch(Exception exception) {
-				MarioQuaMario.LOGGER.error(
-						"""
-								Error occurred while attempting to load Mario Qua Mario playermodels.
-								Namespace: {}
-								Json file: {}
-								Exception: {}""",
-						this.namespace, entry.getKey(), exception
-				);
+			for (Map.Entry<Identifier, Resource> entry : modelResources.entrySet()) {
+				try(InputStream stream = entry.getValue().getInputStream()) {
+					String fileName = entry.getKey().getPath().substring(location.length() + 1, entry.getKey().getPath().length() - 9);
+
+					int separationPoint = fileName.indexOf('/');
+
+					String power_namespace = fileName.substring(0, separationPoint);
+					if(power_namespace.equals("mario_qua_mario")) power_namespace = "mqm"; // this is so awful
+					String power_path = fileName.substring(separationPoint + 1);
+
+					Identifier powerUpID = Identifier.of(power_namespace, power_path);
+					ParsedPowerUp powerUp = RegistryManager.POWER_UPS.get(powerUpID);
+
+					if(powerUp != null) {
+						MarioQuaMario.LOGGER.info("Found model for character {} in form {}!", character.ID, powerUpID);
+						character.MODELS.put(powerUp, ModelFile.load(stream));
+						if(!character.ID.getNamespace().equals(powerUp.ID.getNamespace()))
+							MarioQuaMario.LOGGER.info("They have different namespaces too! Look at you, being so compatible!");
+					}
+					else MarioQuaMario.LOGGER.info("Ignoring model for character {} in unregistered power-up form {}.",
+							character.ID, powerUpID);
+				}
+				catch(Exception exception) {
+					MarioQuaMario.LOGGER.error(
+							"""
+									Error occurred while attempting to load Mario Qua Mario playermodels.
+									Namespace (this mod is responsible!!): {}
+									Json file: {}
+									Exception: {}""",
+							this.NAMESPACE, entry.getKey(), exception
+					);
+				}
 			}
 		}
 	}

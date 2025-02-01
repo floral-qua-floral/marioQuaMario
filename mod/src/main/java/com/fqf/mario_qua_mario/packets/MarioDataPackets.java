@@ -71,14 +71,6 @@ public class MarioDataPackets {
 		);
 	}
 
-	public static void updatePlayermodelS2C(
-			ServerPlayerEntity mario
-	) {
-		MarioServerPlayerData data = mario.mqm$getMarioData();
-		String modelString = data.getCharacter().MODELS.get(data.getPowerUp());
-		MarioCPMCompat.getCommonAPI().setPlayerModel(PlayerEntity.class, mario, modelString, true, false);
-	}
-
 	protected record SetActionC2SPayload(int fromAction, int toAction, long seed) implements CustomPayload {
 		public static final Id<SetActionC2SPayload> ID = MarioPackets.makeID("set_action_c2s");
 		public static final PacketCodec<RegistryByteBuf, SetActionC2SPayload> CODEC = PacketCodec.tuple(
