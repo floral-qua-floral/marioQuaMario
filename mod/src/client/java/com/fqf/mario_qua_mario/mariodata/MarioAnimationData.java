@@ -1,7 +1,6 @@
 package com.fqf.mario_qua_mario.mariodata;
 
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.*;
-import com.fqf.mario_qua_mario.mariodata.util.ArrangementSet;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -11,17 +10,11 @@ import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.RotationAxis;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.util.math.MathHelper.*;
 
 public class MarioAnimationData {
-	public @NotNull ArrangementSet thisTickArrangements = new ArrangementSet(); // used for per-frame interpolation
-	public @NotNull ArrangementSet prevFrameAnimationDeltas = new ArrangementSet(); // used to undo the previous frame's animation at the start of the next frame (for mod compatibility)
-
-
-
 	private @Nullable Pose prevTickPose = new Pose();
 	private @Nullable Pose thisTickPose = new Pose();
 
@@ -127,10 +120,7 @@ public class MarioAnimationData {
 		if(this.currentAnim != null) {
 			MarioPlayerData data = mario.mqm$getMarioData();
 
-			float progress;
-			ProgressHandler handler = this.currentAnim.progressHandler();
-			if(handler == null) progress = 1;
-			else progress = handler.calculator().calculateProgress(data, this.animationTicks);
+			float progress = this.calculateProgress(data);
 
 			this.mutate(newPose.EVERYTHING, this.currentAnim.entireBodyAnimation(), data, progress);
 			this.mutate(newPose.HEAD, this.currentAnim.headAnimation(), data, progress);
@@ -160,6 +150,11 @@ public class MarioAnimationData {
 			);
 		}
 		return newPose;
+	}
+	private float calculateProgress(MarioPlayerData data) {
+		ProgressHandler handler = this.currentAnim.progressHandler();
+		if(handler == null) return 1;
+		else return handler.calculator().calculateProgress(data, this.animationTicks);
 	}
 	private void conditionallyAnimateArm(
 			Arrangement arrangement, LimbAnimation limbAnimation, MarioPlayerData data, float progress,
@@ -249,14 +244,16 @@ public class MarioAnimationData {
 		if(this.trailingTick) thisTickArrangement = new Arrangement();
 		else if(this.thisTickPose == null) {
 			thisTickArrangement = new Arrangement();
-			if(this.currentAnim != null)
-				this.mutate(thisTickArrangement, this.currentAnim.entireBodyAnimation(), mario.mqm$getMarioData(), 0);
+			if(this.currentAnim != null) {
+				MarioPlayerData data = mario.mqm$getMarioData();
+				this.mutate(thisTickArrangement, this.currentAnim.entireBodyAnimation(), data, this.calculateProgress(data));
+			}
 		}
 		else thisTickArrangement = this.thisTickPose.EVERYTHING;
 
-		float pitch = lerp(tickDelta, prevTickArrangement.pitch, thisTickArrangement.pitch);
-		float yaw = lerp(tickDelta, prevTickArrangement.yaw, thisTickArrangement.yaw);
-		float roll = lerp(tickDelta, prevTickArrangement.roll, thisTickArrangement.roll);
+		float pitch = slerpRadians(tickDelta, prevTickArrangement.pitch, thisTickArrangement.pitch);
+		float yaw = slerpRadians(tickDelta, prevTickArrangement.yaw, thisTickArrangement.yaw);
+		float roll = slerpRadians(tickDelta, prevTickArrangement.roll, thisTickArrangement.roll);
 
 		this.headPitchOffset = pitch;
 		this.headYawOffset = yaw;

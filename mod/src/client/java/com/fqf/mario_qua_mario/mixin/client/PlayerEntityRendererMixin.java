@@ -21,22 +21,5 @@ public class PlayerEntityRendererMixin {
 	@Inject(method = "setupTransforms(Lnet/minecraft/client/network/AbstractClientPlayerEntity;Lnet/minecraft/client/util/math/MatrixStack;FFFF)V", at = @At("TAIL"))
 	private void applyEverythingMutator(AbstractClientPlayerEntity abstractClientPlayerEntity, MatrixStack matrixStack, float animationProgress, float bodyYaw, float tickDelta, float scale, CallbackInfo ci) {
 		abstractClientPlayerEntity.mqm$getAnimationData().rotateTotalPlayermodel(MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(true), abstractClientPlayerEntity, matrixStack);
-//		MarioPlayerData data = abstractClientPlayerEntity.mqm$getMarioData();
-//		if(!data.isEnabled() || data.getAction().ANIMATION == null) return;
-//		MarioAnimationData animData = abstractClientPlayerEntity.mqm$getAnimationData();
-//
-//		matrixStack.translate(
-//				animData.prevFrameAnimationDeltas.EVERYTHING.x,
-//				animData.prevFrameAnimationDeltas.EVERYTHING.y,
-//				animData.prevFrameAnimationDeltas.EVERYTHING.z
-//		);
-//		matrixStack.multiply(RotationAxis.POSITIVE_Y.rotation(animData.prevFrameAnimationDeltas.EVERYTHING.yaw));
-//		if(animData.prevFrameAnimationDeltas.EVERYTHING.pitch != 0 || animData.prevFrameAnimationDeltas.EVERYTHING.roll != 0) {
-//			double halfHeight = abstractClientPlayerEntity.getBoundingBox(EntityPose.STANDING).getLengthY() / 2;
-//			matrixStack.translate(0, halfHeight, 0);
-//			matrixStack.multiply(RotationAxis.POSITIVE_X.rotation(animData.prevFrameAnimationDeltas.EVERYTHING.pitch));
-//			matrixStack.multiply(RotationAxis.POSITIVE_Z.rotation(animData.prevFrameAnimationDeltas.EVERYTHING.roll));
-//			matrixStack.translate(0, -halfHeight, 0);
-//		}
 	}
 }

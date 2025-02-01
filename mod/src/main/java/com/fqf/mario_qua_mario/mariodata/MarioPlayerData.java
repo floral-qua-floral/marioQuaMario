@@ -81,6 +81,7 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 		this.prevAnimation = this.action.ANIMATION;
 		this.setupCustomVars(this.action, action);
 		this.action = action;
+		this.getMario().calculateDimensions();
 	}
 
 	private ParsedPowerUp powerUp;
@@ -126,6 +127,7 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 		this.POWERS.clear();
 		this.POWERS.addAll(this.getPowerUp().POWERS);
 		this.POWERS.addAll(this.getCharacter().POWERS);
+		this.getMario().calculateDimensions();
 	}
 	@Override public boolean hasPower(String power) {
 		return this.isEnabled() && this.POWERS.contains(power);
