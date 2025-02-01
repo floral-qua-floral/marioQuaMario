@@ -72,11 +72,4 @@ public class PlayermodelListener implements SimpleSynchronousResourceReloadListe
 			}
 		}
 	}
-
-	private static class MismatchedNamespaceException extends IllegalStateException {
-		public MismatchedNamespaceException(String listenerNamespace, Identifier characterID) {
-			super("A JSON file under the namespace " + listenerNamespace
-					+ " is trying to assign a player model to the character " + characterID);
-		}
-	}
 }
