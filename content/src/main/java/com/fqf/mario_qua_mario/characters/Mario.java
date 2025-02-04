@@ -65,11 +65,11 @@ public class Mario implements CharacterDefinition {
 		return new MarioVars();
 	}
 	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
-		MarioVars.get(data).jumpLandingTime--;
-		MarioVars.get(data).doubleJumpLandingTime--;
+		MarioVars.get(data).canDoubleJumpTicks--;
+		MarioVars.get(data).canTripleJumpTicks--;
 	}
 	@Override public void serverTick(IMarioAuthoritativeData data) {
-		MarioVars.get(data).jumpLandingTime--;
-		MarioVars.get(data).doubleJumpLandingTime--;
+		MarioVars.get(data).canDoubleJumpTicks--;
+		MarioVars.get(data).canTripleJumpTicks--;
 	}
 }

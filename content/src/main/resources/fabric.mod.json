@@ -31,10 +31,13 @@
 		],
 		"mqm-airborne-actions": [
 			"com.fqf.mario_qua_mario.actions.airborne.Fall",
+			"com.fqf.mario_qua_mario.actions.airborne.SpecialFall",
 			"com.fqf.mario_qua_mario.actions.airborne.Jump",
 			"com.fqf.mario_qua_mario.actions.airborne.PJump",
 			"com.fqf.mario_qua_mario.actions.airborne.DuckFall",
-			"com.fqf.mario_qua_mario.actions.airborne.DuckJump"
+			"com.fqf.mario_qua_mario.actions.airborne.DuckJump",
+			"com.fqf.mario_qua_mario.actions.airborne.DoubleJump",
+			"com.fqf.mario_qua_mario.actions.airborne.TripleJump"
 		],
 		"mqm-aquatic-actions": [
 		],

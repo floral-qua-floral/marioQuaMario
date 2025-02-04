@@ -1,8 +1,13 @@
 package com.fqf.mario_qua_mario.mariodata;
 
 import com.fqf.mario_qua_mario.definitions.states.actions.WallboundActionDefinition;
+import net.minecraft.entity.MovementType;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2d;
 
@@ -229,6 +234,44 @@ public abstract class MarioMoveableData extends MarioPlayerData implements IMari
 		newDir.mul(currentVelocity.length());
 
 		return newDir; // Return the interpolated direction with original magnitude
+	}
+
+	protected void moveWithFluidPushing() {
+//		this.getMario().getWorld().getFluidState()
+		Box box = this.getMario().getBoundingBox().contract(0.001);
+		int boxMinX = MathHelper.floor(box.minX); int boxMaxX = MathHelper.ceil(box.maxX);
+		int boxMinY = MathHelper.floor(box.minY); int boxMaxY = MathHelper.ceil(box.maxY);
+		int boxMinZ = MathHelper.floor(box.minZ); int boxMaxZ = MathHelper.ceil(box.maxZ);
+
+		BlockPos.Mutable mutable = new BlockPos.Mutable();
+		double velX = 0; double velY = 0; double velZ = 0; int fluidsCount = 0;
+		World world = this.getMario().getWorld();
+		for (int checkX = boxMinX; checkX < boxMaxX; checkX++) {
+			for (int checkY = boxMinY; checkY < boxMaxY; checkY++) {
+				for (int checkZ = boxMinZ; checkZ < boxMaxZ; checkZ++) {
+					mutable.set(checkX, checkY, checkZ);
+					FluidState fluidState = world.getFluidState(mutable);
+					double e = (float) checkY + fluidState.getHeight(world, mutable);
+					if (e >= box.minY) {
+						Vec3d fluidVelocity = fluidState.getVelocity(world, mutable);
+						double factor = 1.8;
+						int tickRate = fluidState.getFluid().getTickRate(world);
+						if(tickRate == 0) continue;
+						fluidsCount++;
+						velX += fluidVelocity.x * factor / tickRate;
+						velY += fluidVelocity.y * factor / tickRate;
+						velZ += fluidVelocity.z * factor / tickRate;
+					}
+				}
+			}
+		}
+		if(fluidsCount > 0) {
+			velX /= fluidsCount;
+			velY /= fluidsCount;
+			velZ /= fluidsCount;
+		}
+
+		this.getMario().move(MovementType.SELF, this.getMario().getVelocity().add(velX, velY, velZ));
 	}
 
 	private final MarioTimers TIMERS = new MarioTimers();

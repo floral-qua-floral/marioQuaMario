@@ -37,7 +37,7 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 		super(definition);
 		this.ACTION_DEFINITION = definition;
 
-		this.ANIMATION = definition.getAnimation(null);
+		this.ANIMATION = definition.getAnimation(AnimationHelperImpl.INSTANCE);
 		this.CAMERA_ANIMATIONS = definition.getCameraAnimations();
 		this.SLIDING_STATUS = definition.getSlidingStatus();
 
@@ -107,7 +107,7 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 	) {
 		for(TransitionInjectionDefinition injection : relevantInjections) {
 			if(injection.placement() == placement) {
-				addTransitionToLists(buildingClientList, buildingServerList, injection.injectedTransitionCreator().makeTransition(originalTransition));
+				addTransitionToLists(buildingClientList, buildingServerList, injection.injectedTransitionCreator().makeTransition(originalTransition, UniversalActionDefinitionHelper.INSTANCE));
 			}
 		}
 	}

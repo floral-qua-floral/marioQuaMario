@@ -33,7 +33,7 @@ public interface Easing {
 
 	Easing QUINT_IN = x -> x * x * x * x * x;
 	InOutEasing QUINT_IN_OUT = x -> x < 0.5F ? 16 * QUINT_IN.ease(x) : QUINT_IN.ease(-2 * x + 2) / 2;
-	Easing QUINT_OUT = x -> QUINT_IN.ease(1 - x);
+	Easing QUINT_OUT = x -> 1 - QUINT_IN.ease(1 - x);
 
 	Easing EXPO_IN = x -> x == 0 ? 0 : pow(2, 10 * x - 10);
 	InOutEasing EXPO_IN_OUT = x -> x == 0 ? 0 : x == 1 ? 1 : x < 0.5 ? pow(2, 20 * x - 10) / 2 : (2 - pow(2, -20 * x + 10)) / 2;

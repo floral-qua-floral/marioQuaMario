@@ -24,21 +24,23 @@ public abstract class PlayerEntityModelMixin<T extends LivingEntity> extends Bip
 
 	@Inject(method = "setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V", at = @At("HEAD"))
 	private void resetBodyPartsToDefaultPose(T livingEntity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, CallbackInfo ci) {
-		this.head.resetTransform();
-		this.body.resetTransform();
-		this.rightArm.resetTransform();
-		this.leftArm.resetTransform();
-		this.rightLeg.resetTransform();
-		this.leftLeg.resetTransform();
+		if(livingEntity instanceof AbstractClientPlayerEntity) {
+			this.head.resetTransform();
+			this.body.resetTransform();
+			this.rightArm.resetTransform();
+			this.leftArm.resetTransform();
+			this.rightLeg.resetTransform();
+			this.leftLeg.resetTransform();
+		}
 	}
 
 	@Inject(method = "setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/BipedEntityModel;setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V", shift = At.Shift.AFTER))
 	private void animateMario(T livingEntity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, CallbackInfo ci) {
-		AbstractClientPlayerEntity mario = (AbstractClientPlayerEntity) livingEntity;
-		mario.mqm$getAnimationData().setAngles(
-				MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(true), mario,
-				this.head, this.body, this.rightArm, this.leftArm, this.rightLeg, this.leftLeg,
-				this.rightArmPose, this.leftArmPose
-		);
+		if(livingEntity instanceof AbstractClientPlayerEntity mario)
+			mario.mqm$getAnimationData().setAngles(
+					MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(true), mario,
+					this.head, this.body, this.rightArm, this.leftArm, this.rightLeg, this.leftLeg,
+					this.rightArmPose, this.leftArmPose
+			);
 	}
 }

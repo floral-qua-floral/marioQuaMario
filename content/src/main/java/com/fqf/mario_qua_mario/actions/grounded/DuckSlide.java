@@ -102,7 +102,7 @@ public class DuckSlide implements GroundedActionDefinition {
 						TransitionInjectionDefinition.InjectionPlacement.BEFORE,
 						MarioQuaMarioContent.makeID("duck_waddle"),
 						TransitionInjectionDefinition.ActionCategory.GROUNDED,
-						nearbyTransition -> nearbyTransition.variate(
+						(nearbyTransition, castableHelper) -> nearbyTransition.variate(
 								MarioQuaMarioContent.makeID("duck_slide"),
 								data -> {
 									double threshold = SLIDE_THRESHOLD.get(data);
@@ -118,7 +118,7 @@ public class DuckSlide implements GroundedActionDefinition {
 						TransitionInjectionDefinition.InjectionPlacement.BEFORE,
 						MarioQuaMarioContent.makeID("duck_waddle"),
 						TransitionInjectionDefinition.ActionCategory.AIRBORNE,
-						nearbyTransition -> nearbyTransition.variate(
+						(nearbyTransition, castableHelper) -> nearbyTransition.variate(
 								MarioQuaMarioContent.makeID("duck_slide"),
 								data -> {
 									double threshold = SLIDE_THRESHOLD.get(data);

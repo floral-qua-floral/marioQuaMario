@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.actions.grounded;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.airborne.Jump;
 import com.fqf.mario_qua_mario.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
@@ -114,7 +115,9 @@ public class PRun implements GroundedActionDefinition {
 		);
 	}
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(GroundedActionHelper helper) {
-		return List.of();
+		return List.of(
+				Fall.FALL
+		);
 	}
 
 	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {

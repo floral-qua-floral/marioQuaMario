@@ -61,7 +61,7 @@ public class InGameHudMixin {
 		return null;
 	}
 
-	@Inject(method = "render", at = @At("TAIL"))
+	@Inject(method = "renderMainHud", at = @At("TAIL"))
 	public void renderSpeedometerWithServerData(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
 
 
@@ -87,7 +87,7 @@ public class InGameHudMixin {
 				+ serverMario.getPose() + " (" + serverMario.getHeight() + ")");
 
 		renderText(context, 6, clientData.getActionID() + " VS " + serverData.getActionID());
-		renderText(context, 5, String.valueOf(clientMario.mqm$getAnimationData().currentAnim));
+		renderText(context, 5, clientMario.mqm$getAnimationData().currentAnim == null ? "Animating" : "Not Animating");
 
 //		renderText(context, 6, "cameraAnim: " + clientData.TEMPORARY2);
 	}

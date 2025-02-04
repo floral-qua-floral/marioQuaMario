@@ -8,6 +8,7 @@ import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.RotationAxis;
 import org.jetbrains.annotations.Nullable;
@@ -258,9 +259,21 @@ public class MarioAnimationData {
 		this.headPitchOffset = pitch;
 		this.headYawOffset = yaw;
 
-		matrixStack.multiply(RotationAxis.POSITIVE_X.rotation(pitch));
 		matrixStack.multiply(RotationAxis.POSITIVE_Y.rotation(yaw));
-		matrixStack.multiply(RotationAxis.POSITIVE_Z.rotation(roll));
+		if(pitch != 0 || roll != 0) {
+			double pivotHeightFactor;
+			if(this.currentAnim == null || this.currentAnim.entireBodyAnimation() == null) {
+				if(this.prevAnim == null || this.prevAnim.entireBodyAnimation() == null) pivotHeightFactor = 0.5;
+				else pivotHeightFactor = this.prevAnim.entireBodyAnimation().pivotHeightFactor();
+			}
+			else pivotHeightFactor = this.currentAnim.entireBodyAnimation().pivotHeightFactor();
+
+			double halfHeight = mario.getBoundingBox(EntityPose.STANDING).getLengthY() * pivotHeightFactor;
+			matrixStack.translate(0, halfHeight, 0);
+			matrixStack.multiply(RotationAxis.POSITIVE_X.rotation(pitch));
+			matrixStack.multiply(RotationAxis.POSITIVE_Z.rotation(roll));
+			matrixStack.translate(0, -halfHeight, 0);
+		}
 	}
 
 	private static void setupArrangement(ModelPart from, Arrangement to) {

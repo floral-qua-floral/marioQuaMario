@@ -10,7 +10,10 @@ public record TransitionInjectionDefinition(
 ) {
 	@FunctionalInterface
 	public interface TransitionCreator {
-		TransitionDefinition makeTransition(TransitionDefinition nearbyTransition);
+		TransitionDefinition makeTransition(TransitionDefinition nearbyTransition, CastableHelper castableHelper);
+
+		interface CastableHelper {
+		}
 	}
 
 	public enum InjectionPlacement {

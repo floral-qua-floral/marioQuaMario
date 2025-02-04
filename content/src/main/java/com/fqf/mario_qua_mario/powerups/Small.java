@@ -38,7 +38,7 @@ public class Small implements PowerUpDefinition {
 		return 1;
 	}
 	@Override public float getAnimationHeightFactor() {
-		return 0.2F;
+		return 0.45F;
 	}
 
 	@Override public int getBumpStrengthModifier() {

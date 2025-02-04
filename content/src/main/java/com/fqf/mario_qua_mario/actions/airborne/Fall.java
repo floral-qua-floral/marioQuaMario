@@ -57,6 +57,27 @@ public class Fall implements AirborneActionDefinition {
 	public static final CharaStat FALL_ACCEL = new CharaStat(-0.115, NORMAL_GRAVITY);
 	public static final CharaStat FALL_SPEED = new CharaStat(-3.25, TERMINAL_VELOCITY);
 
+	public static final CharaStat FORWARD_DRIFT_ACCEL = new CharaStat(0.045, DRIFTING, FORWARD, ACCELERATION);
+	public static final CharaStat FORWARD_DRIFT_SPEED = new CharaStat(0.275, DRIFTING, FORWARD, SPEED);
+
+	public static final CharaStat BACKWARD_DRIFT_ACCEL = new CharaStat(0.055, DRIFTING, BACKWARD, ACCELERATION);
+	public static final CharaStat BACKWARD_DRIFT_SPEED = new CharaStat(0.2, DRIFTING, BACKWARD, SPEED);
+
+	public static final CharaStat STRAFE_DRIFT_ACCEL = new CharaStat(0.065, DRIFTING, STRAFE, ACCELERATION);
+	public static final CharaStat STRAFE_DRIFT_SPEED = new CharaStat(0.25, DRIFTING, STRAFE, SPEED);
+
+	public static final CharaStat DRIFT_REDIRECTION = new CharaStat(6.0, DRIFTING, REDIRECTION);
+
+	public static void drift(IMarioTravelData data, AirborneActionHelper helper) {
+		helper.airborneAccel(
+				data,
+				FORWARD_DRIFT_ACCEL, FORWARD_DRIFT_SPEED,
+				BACKWARD_DRIFT_ACCEL, BACKWARD_DRIFT_SPEED,
+				STRAFE_DRIFT_ACCEL, STRAFE_DRIFT_SPEED,
+				data.getInputs().getForwardInput(), data.getInputs().getStrafeInput(), DRIFT_REDIRECTION
+		);
+	}
+
 	public static final TransitionDefinition FALL = new TransitionDefinition(
 			MarioQuaMarioContent.makeID("fall"),
 			data -> !data.getMario().isOnGround(),
@@ -74,13 +95,7 @@ public class Fall implements AirborneActionDefinition {
 	}
 	@Override public void travelHook(IMarioTravelData data, AirborneActionHelper helper) {
 		helper.applyGravity(data, FALL_ACCEL, null, FALL_SPEED);
-//		helper.airborneAccel(
-//				data,
-//				null, null,
-//				null, null,
-//				null, null,
-//				1.0, 1.0, null
-//		);
+		drift(data, helper);
 	}
 
 	public static final TransitionDefinition LANDING = new TransitionDefinition(

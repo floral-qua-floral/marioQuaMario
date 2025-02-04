@@ -10,6 +10,8 @@ import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario.util.CharaStat;
 import com.fqf.mario_qua_mario.util.Easing;
+import com.fqf.mario_qua_mario.util.MarioVars;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,8 +35,8 @@ public class Jump extends Fall implements AirborneActionDefinition {
 				},
 				new ProgressHandler(
 						(data, ticksPassed) ->
-								Easing.EXPO_IN_OUT.ease(Easing.clampedRangeToProgress(data.getYVel(), 0.87F, -0.85F)
-				)),
+								Easing.EXPO_IN_OUT.ease(Easing.clampedRangeToProgress(data.getYVel(), 0.87F, -0.85F))
+				),
 				null, null, null,
 
 				new LimbAnimation(false, (data, arrangement, progress) -> {
@@ -67,7 +69,12 @@ public class Jump extends Fall implements AirborneActionDefinition {
 	public static final CharaStat JUMP_GRAVITY = new CharaStat(-0.095, JUMPING_GRAVITY);
 
 	public static final CharaStat JUMP_VEL = new CharaStat(0.858, JUMP_VELOCITY);
-	public static final CharaStat JUMP_ADDEND = new CharaStat(0.2, JUMP_VELOCITY);
+	public static final CharaStat JUMP_ADDEND = new CharaStat(0.3, JUMP_VELOCITY);
+
+	@Override public void travelHook(IMarioTravelData data, AirborneActionHelper helper) {
+		helper.applyGravity(data, Fall.FALL_ACCEL, JUMP_GRAVITY, Fall.FALL_SPEED);
+		Fall.drift(data, helper);
+	}
 
 	public static TransitionDefinition makeJumpTransition(GroundedActionDefinition.GroundedActionHelper helper) {
 		return new TransitionDefinition(
@@ -79,19 +86,23 @@ public class Jump extends Fall implements AirborneActionDefinition {
 		);
 	}
 
+	public static final TransitionDefinition DOUBLE_JUMPABLE_LANDING = Fall.LANDING.variate(
+			null, null, null,
+			data -> MarioVars.get(data).canDoubleJumpTicks = 3,
+			null
+	);
+
+	protected double getJumpCapThreshold() {
+		return 0.39;
+	}
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {
 		return List.of(
-				helper.makeJumpCapTransition(this, 0.39)
+				helper.makeJumpCapTransition(this, this.getJumpCapThreshold())
 		);
 	}
-
-	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
-
-	}
-	@Override public void serverTick(IMarioAuthoritativeData data) {
-
-	}
-	@Override public void travelHook(IMarioTravelData data, AirborneActionHelper helper) {
-		helper.applyGravity(data, Fall.FALL_ACCEL, JUMP_GRAVITY, Fall.FALL_SPEED);
+	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {
+		return List.of(
+				DOUBLE_JUMPABLE_LANDING
+		);
 	}
 }

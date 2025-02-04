@@ -5,6 +5,7 @@ import com.fqf.mario_qua_mario.definitions.states.actions.*;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.IncompleteActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionDefinition;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.mario_qua_mario.mariodata.IMarioReadableMotionData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
@@ -21,7 +22,8 @@ public class UniversalActionDefinitionHelper implements
 		AirborneActionDefinition.AirborneActionHelper,
 		AquaticActionDefinition.AquaticActionHelper,
 		WallboundActionDefinition.WallboundActionHelper,
-		MountedActionDefinition.MountedActionHelper {
+		MountedActionDefinition.MountedActionHelper,
+		TransitionInjectionDefinition.TransitionCreator.CastableHelper {
 	public static final UniversalActionDefinitionHelper INSTANCE = new UniversalActionDefinitionHelper();
 	private UniversalActionDefinitionHelper() {}
 

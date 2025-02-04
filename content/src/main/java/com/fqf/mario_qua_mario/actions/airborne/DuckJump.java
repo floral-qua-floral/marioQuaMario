@@ -58,9 +58,12 @@ public class DuckJump extends Jump implements AirborneActionDefinition {
 		);
 	}
 
+	@Override protected double getJumpCapThreshold() {
+		return 0.14;
+	}
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {
 		return List.of(
-				helper.makeJumpCapTransition(this, 0.14),
+				helper.makeJumpCapTransition(this, this.getJumpCapThreshold()),
 				DuckWaddle.UNDUCK.variate(MarioQuaMarioContent.makeID("fall"), null)
 		);
 	}

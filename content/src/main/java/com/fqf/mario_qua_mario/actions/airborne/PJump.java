@@ -48,18 +48,17 @@ public class PJump extends Jump implements AirborneActionDefinition {
 		return SprintingRule.ALLOW;
 	}
 
-	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {
-		return List.of(
-				helper.makeJumpCapTransition(this, 0.4)
-		);
+	@Override
+	protected double getJumpCapThreshold() {
+		return 0.4;
 	}
 
 	@Override
 	public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {
 		return List.of(
-				Fall.LANDING.variate(MarioQuaMarioContent.makeID("p_run"), data ->
+				Jump.DOUBLE_JUMPABLE_LANDING.variate(MarioQuaMarioContent.makeID("p_run"), data ->
 						Fall.LANDING.evaluator().shouldTransition(data) && (!data.isClient() || PRun.meetsPRunRequirements(data))),
-				Fall.LANDING
+				Jump.DOUBLE_JUMPABLE_LANDING
 		);
 	}
 }

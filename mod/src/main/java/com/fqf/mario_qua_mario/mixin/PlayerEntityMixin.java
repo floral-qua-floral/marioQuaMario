@@ -81,6 +81,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 			cir.setReturnValue(false);
 	}
 
+	@Inject(method = "isPushedByFluids", at = @At("HEAD"), cancellable = true)
+	private void preventVanillaFluidPushing(CallbackInfoReturnable<Boolean> cir) {
+		if(mqm$getMarioData().doMarioTravel())
+			cir.setReturnValue(false);
+	}
+
 	@Inject(method = "getBaseDimensions", at = @At("RETURN"), cancellable = true)
 	private void alterMarioHitbox(EntityPose pose, CallbackInfoReturnable<EntityDimensions> cir) {
 		MarioPlayerData data = mqm$getMarioData();
