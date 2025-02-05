@@ -1,14 +1,12 @@
 package com.fqf.mario_qua_mario.mariodata;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario.mariodata.util.FadeableSoundInstance;
+import com.fqf.mario_qua_mario.mariodata.util.*;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.entity.Entity;
@@ -67,7 +65,7 @@ public interface IMarioClientDataImpl extends IMarioClientData {
 		else this.playSound(newPower.ACQUISITION_SOUND, seed);
 	}
 
-	// The stored sounds necessitates a tiny bit of duplicated code which is ANNOYING
+	// The stored sounds feature necessitates a tiny bit of duplicated code which is ANNOYING
 	// To minimize the amount of such duplicated code, we leverage it for as much as possible
 	Map<Identifier, SoundInstance> getStoredSounds();
 	Identifier JUMP_IDENTIFIER = Identifier.of("mqm_fake_ids", "jump");
@@ -75,7 +73,19 @@ public interface IMarioClientDataImpl extends IMarioClientData {
 	Identifier SLIDE_IDENTIFIER = Identifier.of("mqm_fake_ids", "slide");
 
 	default void handleSlidingSound(AbstractParsedAction newAction) {
+		AbstractSlidingSoundInstance slidingSound = switch(newAction.SLIDING_STATUS) {
+			case NOT_SLIDING, NOT_SLIDING_SMOOTH, SLIDING_SILENT -> null;
+			case SLIDING -> new SlidingSoundInstance(this.getFloorSlidingSound(), this);
+			case SKIDDING -> new SkiddingSoundInstance(this.getFloorSlidingSound(), this);
+			case WALL_SLIDING -> new WallSlidingSoundInstance(this);
+		};
+		if(slidingSound != null)
+			MinecraftClient.getInstance().getSoundManager().play(slidingSound);
+		this.getStoredSounds().put(SLIDE_IDENTIFIER, slidingSound);
+	}
 
+	default SoundEvent getFloorSlidingSound() {
+		return MarioSFX.SKID;
 	}
 
 	@Override

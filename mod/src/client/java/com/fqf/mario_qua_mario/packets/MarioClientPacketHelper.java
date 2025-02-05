@@ -37,7 +37,7 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 		// EmpowerRevertS2CPayload Receiver
 		ClientPlayNetworking.registerGlobalReceiver(MarioDataPackets.EmpowerRevertS2CPayload.ID, (payload, context) ->
 				getMarioFromID(context, payload.marioID()).mqm$getMarioData().setPowerUp(
-						RegistryManager.POWER_UPS.get(payload.toPower()), false, payload.seed()
+						RegistryManager.POWER_UPS.get(payload.toPower()), payload.isReversion(), payload.seed()
 				)
 		);
 
