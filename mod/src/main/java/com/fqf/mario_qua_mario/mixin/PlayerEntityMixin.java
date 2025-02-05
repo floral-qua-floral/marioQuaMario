@@ -182,4 +182,16 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 			case FORCE -> true;
 		};
 	}
+
+	@Override
+	public void setSwimming(boolean swimming) {
+		super.setSwimming(swimming && !this.mqm$getMarioData().isEnabled());
+	}
+
+	@Inject(method = "updateSwimming", at = @At("HEAD"), cancellable = true)
+	private void prohibitDiveSwimming(CallbackInfo ci) {
+		if(this.mqm$getMarioData().isEnabled()) {
+			ci.cancel();
+		}
+	}
 }

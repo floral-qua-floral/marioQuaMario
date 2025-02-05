@@ -3,6 +3,7 @@ package com.fqf.mario_qua_mario.actions.grounded;
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario.actions.airborne.DuckFall;
 import com.fqf.mario_qua_mario.actions.airborne.DuckJump;
+import com.fqf.mario_qua_mario.actions.airborne.LongJump;
 import com.fqf.mario_qua_mario.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.AnimationHelper;
@@ -11,7 +12,9 @@ import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.Playerm
 import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
+import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.CharaStat;
+import com.fqf.mario_qua_mario.util.MarioVars;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
@@ -59,7 +62,7 @@ public class DuckSlide implements GroundedActionDefinition {
 	public static final CharaStat SLIDE_REDIRECTION = new CharaStat(4.0, DUCKING, REDIRECTION);
 
 	@Override public @Nullable Object setupCustomMarioVars() {
-		return null;
+		return new ActionTimerVars();
 	}
 	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
 
@@ -68,6 +71,7 @@ public class DuckSlide implements GroundedActionDefinition {
 
 	}
 	@Override public void travelHook(IMarioTravelData data, GroundedActionHelper helper) {
+		data.getVars(ActionTimerVars.class).actionTimer++;
 		helper.applyDrag(
 				data, SLIDE_DRAG, SLIDE_DRAG_MIN,
 				data.getInputs().getForwardInput(), data.getInputs().getStrafeInput(),
@@ -87,6 +91,23 @@ public class DuckSlide implements GroundedActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(GroundedActionHelper helper) {
 		return List.of(
 				DuckWaddle.UNDUCK,
+				new TransitionDefinition(
+						MarioQuaMarioContent.makeID("long_jump"),
+						data ->
+								data.getInputs().getForwardInput() > 0.4
+								&& data.getVars(ActionTimerVars.class).actionTimer < 5
+								&& data.getForwardVel() > LongJump.LONG_JUMP_THRESHOLD.get(data)
+								&& data.getInputs().JUMP.isPressed(),
+						EvaluatorEnvironment.CLIENT_ONLY,
+						data -> {
+							helper.performJump(data, LongJump.LONG_JUMP_VEL, null);
+							data.setForwardVel(data.getForwardVel() * 0.92 + 0.098);
+						},
+						(data, isSelf, seed) -> {
+							data.playJumpSound(seed);
+							data.voice("long_jump", seed);
+						}
+				),
 				DuckJump.makeDuckJumpTransition(helper)
 		);
 	}

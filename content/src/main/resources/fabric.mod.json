@@ -37,7 +37,8 @@
 			"com.fqf.mario_qua_mario.actions.airborne.DuckFall",
 			"com.fqf.mario_qua_mario.actions.airborne.DuckJump",
 			"com.fqf.mario_qua_mario.actions.airborne.DoubleJump",
-			"com.fqf.mario_qua_mario.actions.airborne.TripleJump"
+			"com.fqf.mario_qua_mario.actions.airborne.TripleJump",
+			"com.fqf.mario_qua_mario.actions.airborne.LongJump"
 		],
 		"mqm-aquatic-actions": [
 		],

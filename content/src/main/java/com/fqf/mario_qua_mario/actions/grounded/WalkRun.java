@@ -98,6 +98,7 @@ public class WalkRun extends SubWalk implements GroundedActionDefinition {
 
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(GroundedActionHelper helper) {
 		return List.of(
+				DuckWaddle.DUCK,
 				new TransitionDefinition(
 						MarioQuaMarioContent.makeID("sub_walk"),
 						data -> !meetsWalkRunRequirement(data),
