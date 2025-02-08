@@ -41,7 +41,7 @@ public record PlayermodelAnimation(
 		@Nullable LimbAnimation rightLegAnimation,
 		@Nullable LimbAnimation leftLegAnimation,
 
-		@Nullable BodyPartAnimation capeAnimation
+		@Nullable LimbAnimation capeAnimation
 ) {
 	public PlayermodelAnimation variate(
 			@Nullable PlayermodelAnimation.MirroringEvaluator mirroringEvaluator,
@@ -57,7 +57,7 @@ public record PlayermodelAnimation(
 			@Nullable LimbAnimation rightLegAnimation,
 			@Nullable LimbAnimation leftLegAnimation,
 
-			@Nullable BodyPartAnimation capeAnimation
+			@Nullable LimbAnimation capeAnimation
 	) {
 		return new PlayermodelAnimation(
 				mirroringEvaluator == null ? this.mirroringEvaluator : mirroringEvaluator,

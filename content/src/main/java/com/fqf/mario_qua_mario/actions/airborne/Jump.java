@@ -35,7 +35,7 @@ public class Jump extends Fall implements AirborneActionDefinition {
 				},
 				new ProgressHandler(
 						(data, ticksPassed) ->
-								Easing.EXPO_IN_OUT.ease(Easing.clampedRangeToProgress(data.getYVel(), 0.87F, -0.85F))
+								Easing.EXPO_IN_OUT.ease(Easing.clampedRangeToProgress(data.getYVel(), 0.87, -0.85))
 				),
 				null, null, null,
 

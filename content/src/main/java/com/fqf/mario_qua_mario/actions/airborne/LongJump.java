@@ -46,14 +46,11 @@ public class LongJump extends Jump implements AirborneActionDefinition {
 		arrangement.y += helper.interpolateKeyframes(progress * BODY_ROTATION_SPEED, 2.24F, 0, 4.4F);
 		arrangement.z += helper.interpolateKeyframes(progress * BODY_ROTATION_SPEED, -1.2F, 0, -2);
 	}
-	private static LimbAnimation makeLegAnimation(AnimationHelper helper, boolean useCos) {
+	private static LimbAnimation makeLegAnimation(AnimationHelper helper, int factor) {
 		return new LimbAnimation(false, (data, arrangement, progress) -> {
 			float interpProgress = interpProgress(helper, progress);
 			float rotationProgress = rotationProgress(progress);
-			float theta = MathHelper.sin(rotationProgress) * (useCos ? -1 : 1);
-//			if(useCos) theta = MathHelper.cos(rotationProgress);
-//			else theta = MathHelper.sin(rotationProgress);
-			arrangement.pitch += helper.interpolateKeyframes(interpProgress, 17, -5 + theta * 56.6F, -57);
+			arrangement.pitch += helper.interpolateKeyframes(interpProgress, 17, -5 + MathHelper.sin(rotationProgress) * factor * 56.6F, -57);
 			arrangement.y += helper.interpolateKeyframes(interpProgress * BODY_ROTATION_SPEED, -1.92F, -0.8F, 0);
 			arrangement.z += helper.interpolateKeyframes(interpProgress * BODY_ROTATION_SPEED, 2, -4.2F, 5);
 		});
@@ -131,8 +128,8 @@ public class LongJump extends Jump implements AirborneActionDefinition {
 					positionOffset(helper, interpProgress, arrangement);
 				}),
 
-				makeLegAnimation(helper, false),
-				makeLegAnimation(helper, true),
+				makeLegAnimation(helper, 1),
+				makeLegAnimation(helper, -1),
 				null
 		);
 	}

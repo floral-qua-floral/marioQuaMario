@@ -16,6 +16,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,10 +30,15 @@ public class Debug implements GenericActionDefinition {
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
 		return new PlayermodelAnimation(
-				null, null, null,
+				null,
+				new ProgressHandler(null, null, (data, ticksPassed) -> ticksPassed / 25F),
+				null,
 
 				null,
-				null,
+				new BodyPartAnimation((data, arrangement, progress) -> {
+					arrangement.addPos(MathHelper.sin(progress) * 30, MathHelper.cos(progress * 3) * 18, MathHelper.sin(progress * 3) * 18);
+					arrangement.addAngles(progress * 70, MathHelper.sin(progress * 2) * 100, 0);
+				}),
 
 				new LimbAnimation(false, (data, arrangement, progress) -> arrangement.roll += 90),
 //				null,
@@ -41,7 +47,7 @@ public class Debug implements GenericActionDefinition {
 				new LimbAnimation(false, null),
 				new LimbAnimation(false, null),
 
-				null
+				new LimbAnimation(false, (data, arrangement, progress) -> arrangement.addAngles(0, 0, 0))
 		);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations() {

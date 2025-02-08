@@ -64,7 +64,9 @@ public class DuckWaddle implements GroundedActionDefinition {
 					arrangement.addPos(0, progress * 9.9F, progress * -3F);
 				}),
 
-				ARM, ARM, makeLegAnimation(walking), makeLegAnimation(walking), null
+				ARM, ARM, makeLegAnimation(walking), makeLegAnimation(walking),
+				new LimbAnimation(true, (data, arrangement, progress) ->
+						arrangement.pitch -= 90)
 		);
 	}
 

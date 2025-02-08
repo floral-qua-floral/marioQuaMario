@@ -4,7 +4,12 @@ import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedCharacter;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
+import com.tom.cpl.math.Vec3f;
+import com.tom.cpm.shared.MinecraftClientAccess;
+import com.tom.cpm.shared.definition.ModelDefinition;
 import com.tom.cpm.shared.io.ModelFile;
+import com.tom.cpm.shared.model.RootModelElement;
+import com.tom.cpm.shared.model.RootModelType;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
@@ -52,7 +57,21 @@ public class PlayermodelListener implements SimpleSynchronousResourceReloadListe
 
 					if(powerUp != null) {
 						MarioQuaMario.LOGGER.info("Found model for character {} in form {}!", character.ID, powerUpID);
-						character.MODELS.put(powerUp, ModelFile.load(stream));
+						ModelFile model = ModelFile.load(stream);
+//						ModelDefinition definition = MinecraftClientAccess.get().getDefinitionLoader().loadModel(model.getDataBlock(), MinecraftClientAccess.get().getClientPlayer());
+
+//						if(definition.hasRoot(RootModelType.CAPE)) {
+//							RootModelElement element = definition.getModelElementFor(RootModelType.CAPE).get();
+//							MarioQuaMario.LOGGER.info("This model has a tail! {} @ {}", element, element.getPos());
+//						}
+//						else {
+//							MarioQuaMario.LOGGER.info("This model has no CAPE, which means no tail.");
+//						}
+
+//						Vec3f i = MinecraftClientAccess.get().getDefinitionLoader().loadModel(model.getDataBlock(), MinecraftClientAccess.get().getClientPlayer()).getModelElementFor(RootModelType.CAPE).get().getPos();
+//						MarioQuaMario.LOGGER.info("Cape position for this model: {}", i);
+
+						character.MODELS.put(powerUp, model);
 						if(!character.ID.getNamespace().equals(powerUp.ID.getNamespace()))
 							MarioQuaMario.LOGGER.info("They have different namespaces too! Look at you, being so compatible!");
 					}

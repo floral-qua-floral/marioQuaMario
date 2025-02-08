@@ -1,6 +1,12 @@
 package com.fqf.mario_qua_mario.mariodata;
 
+import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.*;
+import com.fqf.mario_qua_mario.util.Easing;
+import com.tom.cpm.client.CustomPlayerModelsClient;
+import com.tom.cpm.shared.config.Player;
+import com.tom.cpm.shared.definition.ModelDefinition;
+import com.tom.cpm.shared.model.RootModelType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -10,8 +16,10 @@ import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 import static net.minecraft.util.math.MathHelper.*;
 
@@ -29,6 +37,8 @@ public class MarioAnimationData {
 	private int animationTicks;
 	public float headPitchOffset;
 	public float headYawOffset;
+	public final Arrangement TAIL_ARRANGEMENT = new Arrangement();
+	private final Arrangement TAIL_TEMP_ARRANGEMENT = new Arrangement();
 
 	public void replaceAnimation(MarioPlayerData data, PlayermodelAnimation newAnim) {
 		this.prevAnim = this.currentAnim;
@@ -93,27 +103,38 @@ public class MarioAnimationData {
 			ModelPart head, ModelPart torso,
 			ModelPart rightArm, ModelPart leftArm,
 			ModelPart rightLeg, ModelPart leftLeg,
+			ModelPart tail,
 			BipedEntityModel.ArmPose rightArmPose, BipedEntityModel.ArmPose leftArmPose
 	) {
-		if(!this.isAnimating(mario)) return;
+		if(this.isAnimating(mario)) {
+			if (this.reevaluateMirroring && this.currentAnim != null) {
+				this.reevaluateMirroring = false;
+				this.isMirrored = this.currentAnim.mirroringEvaluator() != null &&
+						this.currentAnim.mirroringEvaluator().shouldMirror(mario.mqm$getMarioData(),
+								isArmBusy(rightArmPose, leftArmPose), isArmBusy(leftArmPose, rightArmPose),
+								head.yaw - torso.yaw);
+			}
 
-		if(this.reevaluateMirroring && this.currentAnim != null) {
-			this.reevaluateMirroring = false;
-			this.isMirrored = this.currentAnim.mirroringEvaluator() != null &&
-					this.currentAnim.mirroringEvaluator().shouldMirror(mario.mqm$getMarioData(),
-							isArmBusy(rightArmPose, leftArmPose), isArmBusy(leftArmPose, rightArmPose),
-							head.yaw - torso.yaw);
+			if (this.prevTickPose == null) this.prevTickPose = new Pose(mario);
+			if (this.thisTickPose == null) this.thisTickPose = this.makeAnimatedPose(mario, rightArmPose, leftArmPose);
+
+			this.lerpPart(tickDelta, head, this.prevTickPose.HEAD, this.thisTickPose.HEAD);
+			this.lerpPart(tickDelta, torso, this.prevTickPose.TORSO, this.thisTickPose.TORSO);
+			this.lerpPart(tickDelta, rightArm, this.prevTickPose.RIGHT_ARM, this.thisTickPose.RIGHT_ARM);
+			this.lerpPart(tickDelta, leftArm, this.prevTickPose.LEFT_ARM, this.thisTickPose.LEFT_ARM);
+			this.lerpPart(tickDelta, rightLeg, this.prevTickPose.RIGHT_LEG, this.thisTickPose.RIGHT_LEG);
+			this.lerpPart(tickDelta, leftLeg, this.prevTickPose.LEFT_LEG, this.thisTickPose.LEFT_LEG);
+
+//			setupTailArrangement(this.TAIL_ARRANGEMENT, torso.pivotX, torso.pivotY, torso.pivotZ, torso.pitch, torso.yaw, torso.roll, rightLeg.pitch, leftLeg.pitch);
+//			tail.setPivot(this.TAIL_ARRANGEMENT.x, this.TAIL_ARRANGEMENT.y, this.TAIL_ARRANGEMENT.z);
+//			tail.setAngles(this.TAIL_ARRANGEMENT.pitch, this.TAIL_ARRANGEMENT.yaw, this.TAIL_ARRANGEMENT.roll);
+//			this.lerpPart(tickDelta, tail, this.prevTickPose.TAIL, this.thisTickPose.TAIL);
 		}
-
-		if(this.prevTickPose == null) this.prevTickPose = new Pose(mario);
-		if(this.thisTickPose == null) this.thisTickPose = this.makeAnimatedPose(mario, rightArmPose, leftArmPose);
-
-		this.lerpPart(tickDelta, head, this.prevTickPose.HEAD, this.thisTickPose.HEAD);
-		this.lerpPart(tickDelta, torso, this.prevTickPose.TORSO, this.thisTickPose.TORSO);
-		this.lerpPart(tickDelta, rightArm, this.prevTickPose.RIGHT_ARM, this.thisTickPose.RIGHT_ARM);
-		this.lerpPart(tickDelta, leftArm, this.prevTickPose.LEFT_ARM, this.thisTickPose.LEFT_ARM);
-		this.lerpPart(tickDelta, rightLeg, this.prevTickPose.RIGHT_LEG, this.thisTickPose.RIGHT_LEG);
-		this.lerpPart(tickDelta, leftLeg, this.prevTickPose.LEFT_LEG, this.thisTickPose.LEFT_LEG);
+		else if(mario.mqm$getMarioData().isEnabled()) {
+			this.setupTailArrangement(this.TAIL_ARRANGEMENT, mario.mqm$getMarioData(), torso.pivotX, torso.pivotY, torso.pivotZ, torso.pitch, torso.yaw, torso.roll, rightLeg.pitch, leftLeg.pitch);
+			tail.setPivot(this.TAIL_ARRANGEMENT.x, this.TAIL_ARRANGEMENT.y, this.TAIL_ARRANGEMENT.z);
+			tail.setAngles(this.TAIL_ARRANGEMENT.pitch, this.TAIL_ARRANGEMENT.yaw, this.TAIL_ARRANGEMENT.roll);
+		}
 	}
 
 	private Pose makeAnimatedPose(AbstractClientPlayerEntity mario, BipedEntityModel.ArmPose rightArmPose, BipedEntityModel.ArmPose leftArmPose) {
@@ -149,6 +170,9 @@ public class MarioAnimationData {
 					this.isMirrored ? this.currentAnim.rightLegAnimation() : this.currentAnim.leftLegAnimation(),
 					data, progress
 			);
+
+			this.setupTailArrangement(newPose.TAIL, data, newPose.TORSO.x, newPose.TORSO.y, newPose.TORSO.z, newPose.TORSO.pitch, newPose.TORSO.yaw, newPose.TORSO.roll, newPose.RIGHT_LEG.pitch, newPose.LEFT_LEG.pitch);
+			this.mutate(newPose.TAIL, this.currentAnim.capeAnimation(), data, progress);
 		}
 		return newPose;
 	}
@@ -171,6 +195,62 @@ public class MarioAnimationData {
 			case EMPTY, ITEM -> false;
 			default -> true;
 		};
+	}
+	private void setupTailArrangement(
+			Arrangement arrangement, MarioPlayerData data,
+			float torsoX, float torsoY, float torsoZ,
+			float torsoPitch, float torsoYaw, float torsoRoll,
+			float rightLegPitch, float leftLegPitch
+	) {
+		float capeY = 0;
+
+		Player<?> pl = CustomPlayerModelsClient.INSTANCE.manager.getBoundPlayer();
+		if(pl != null) {
+			ModelDefinition def = pl.getModelDefinition();
+			if(def != null && def.hasRoot(RootModelType.CAPE)) {
+				capeY = def.getModelElementFor(RootModelType.CAPE).get().posN.y;
+			}
+		}
+
+		MarioQuaMario.LOGGER.info("Cape Y: {}", capeY);
+
+		Vector3f tailPosRelativeToTorso = new Vector3f(0, capeY, 2).rotateX(torsoPitch).rotateY(torsoYaw).rotateZ(torsoRoll);
+		arrangement.setPos(
+				torsoX + tailPosRelativeToTorso.x,
+				torsoY + tailPosRelativeToTorso.y - capeY,
+				torsoZ + tailPosRelativeToTorso.z
+		);
+
+		arrangement.setAngles(-torsoPitch, torsoYaw, torsoRoll);
+		if(this.currentAnim == null || this.currentAnim.capeAnimation() == null || this.currentAnim.capeAnimation().shouldSwingWithMovement()) {
+			float swing = (leftLegPitch - rightLegPitch) * 0.26F;
+			float lift = data.getMario().isOnGround()
+					? 1 - Easing.SINE_IN_OUT.ease(Easing.clampedRangeToProgress(data.getForwardVel(), 0, 0.55))
+					: Easing.EXPO_IN_OUT.ease(Easing.clampedRangeToProgress(data.getYVel(), 0.87, -0.85), 0.55F, -0.8F);
+			arrangement.addAngles(
+					0.65F * lift * HALF_PI,
+					swing * 0.78F,
+					swing * 1.2F * Math.abs(lift)
+			);
+		}
+	}
+	public void animateTail(
+			float tickDelta, AbstractClientPlayerEntity mario,
+			ModelPart tail, ModelPart torso, ModelPart rightLeg, ModelPart leftLeg
+	) {
+		boolean animating = this.isAnimating(mario);
+
+		if(!animating || this.trailingTick) {
+			this.setupTailArrangement(this.TAIL_ARRANGEMENT, mario.mqm$getMarioData(), torso.pivotX, torso.pivotY, torso.pivotZ, torso.pitch, torso.yaw, torso.roll, rightLeg.pitch, leftLeg.pitch);
+			tail.setPivot(this.TAIL_ARRANGEMENT.x, this.TAIL_ARRANGEMENT.y, this.TAIL_ARRANGEMENT.z);
+			tail.setAngles(this.TAIL_ARRANGEMENT.pitch, this.TAIL_ARRANGEMENT.yaw, this.TAIL_ARRANGEMENT.roll);
+		}
+
+		if(animating) {
+			assert this.prevTickPose != null && this.thisTickPose != null;
+			this.lerpPart(tickDelta, tail, this.prevTickPose.TAIL, this.thisTickPose.TAIL);
+		}
+		tail.yaw += PI;
 	}
 	private void mutate(Arrangement arrangement, PlayermodelAnimation.MutatorContainer container, MarioPlayerData data, float progress) {
 		if(container == null) return;
@@ -308,6 +388,8 @@ public class MarioAnimationData {
 		public final Arrangement RIGHT_LEG = new Arrangement();
 		public final Arrangement LEFT_LEG = new Arrangement();
 
+		public final Arrangement TAIL = new Arrangement();
+
 		public Pose() {
 
 		}
@@ -321,6 +403,16 @@ public class MarioAnimationData {
 			setupArrangement(model.leftArm, this.LEFT_ARM);
 			setupArrangement(model.rightLeg, this.RIGHT_LEG);
 			setupArrangement(model.leftLeg, this.LEFT_LEG);
+			mario.mqm$getAnimationData().setupTailArrangement(this.TAIL, mario.mqm$getMarioData(), model.body.pivotX, model.body.pivotY, model.body.pivotZ, model.body.pitch, model.body.yaw, model.body.roll, model.rightLeg.pitch, model.leftLeg.pitch);
 		}
+	}
+
+	public void launderCapeTransformations(MatrixStack matrices) {
+//		matrices.translate(0.0, 0.0, 0.0);
+//		matrices.translate(0F, 0F, 0F);
+//		matrices.translate(this.TAIL_ARRANGEMENT.x / 16F, this.TAIL_ARRANGEMENT.y / 16F, this.TAIL_ARRANGEMENT.z / 16F);
+//		matrices.multiply(RotationAxis.POSITIVE_X.rotation(this.TAIL_ARRANGEMENT.pitch));
+//		matrices.multiply(RotationAxis.POSITIVE_Y.rotation(this.TAIL_ARRANGEMENT.yaw));
+//		matrices.multiply(RotationAxis.POSITIVE_Z.rotation(this.TAIL_ARRANGEMENT.roll));
 	}
 }

@@ -16,6 +16,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerModelPart;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -193,5 +194,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 		if(this.mqm$getMarioData().isEnabled()) {
 			ci.cancel();
 		}
+	}
+
+	@Inject(method = "isPartVisible", at = @At("HEAD"), cancellable = true)
+	private void ensureCapeVisibility(PlayerModelPart modelPart, CallbackInfoReturnable<Boolean> cir) {
+		cir.setReturnValue(true);
 	}
 }

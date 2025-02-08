@@ -4,3 +4,4 @@ accessible class net/minecraft/client/gui/hud/InGameHud$HeartType
 extendable method net/minecraft/entity/Entity stepOnBlock (Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;ZZLnet/minecraft/util/math/Vec3d;)Z
 extendable method net/minecraft/entity/Entity playStepSounds (Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)V
 extendable method net/minecraft/entity/LivingEntity onDismounted (Lnet/minecraft/entity/Entity;)V
+accessible field net/minecraft/client/render/entity/model/PlayerEntityModel cloak Lnet/minecraft/client/model/ModelPart;

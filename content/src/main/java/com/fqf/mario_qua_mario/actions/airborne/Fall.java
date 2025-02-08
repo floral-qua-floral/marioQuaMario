@@ -91,7 +91,7 @@ public class Fall implements AirborneActionDefinition {
 
 	}
 	@Override public void serverTick(IMarioAuthoritativeData data) {
-
+		
 	}
 	@Override public void travelHook(IMarioTravelData data, AirborneActionHelper helper) {
 		helper.applyGravity(data, FALL_ACCEL, null, FALL_SPEED);

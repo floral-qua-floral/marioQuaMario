@@ -59,7 +59,7 @@ dependencies {
 	modApi "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}"
 	modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
 	compileOnly "com.tom5454.cpm:CustomPlayerModels-API:${project.cpm_api_version}"
-	modRuntimeOnly "com.tom5454.cpm:CustomPlayerModels-Fabric-${project.cpm_mc_version}:${project.cpm_runtime_version}"
+	modImplementation "com.tom5454.cpm:CustomPlayerModels-Fabric-${project.cpm_mc_version}:${project.cpm_runtime_version}"
 }
 
 processResources {
