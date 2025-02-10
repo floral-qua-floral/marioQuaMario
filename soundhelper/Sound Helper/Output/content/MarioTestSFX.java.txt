@@ -18,6 +18,9 @@ public class MarioContentSFX {
 	public static final SoundEvent FIREBALL = makePowerUpSound("fireball");
 	public static final SoundEvent FIREBALL_ENEMY = makePowerUpSound("fireball_enemy");
 	public static final SoundEvent FIREBALL_WALL = makePowerUpSound("fireball_wall");
+	public static final SoundEvent TAIL_EMPOWER = makePowerUpSound("tail_empower");
+	public static final SoundEvent TAIL_FLY = makePowerUpSound("tail_fly");
+	public static final SoundEvent TAIL_WHIP = makePowerUpSound("tail_whip");
 
 	public static final SoundEvent HEAVY = makeStompSound("heavy");
 	public static final SoundEvent KICK = makeStompSound("kick");

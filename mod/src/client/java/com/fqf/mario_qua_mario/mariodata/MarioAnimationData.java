@@ -1,6 +1,5 @@
 package com.fqf.mario_qua_mario.mariodata;
 
-import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.*;
 import com.fqf.mario_qua_mario.util.Easing;
 import com.tom.cpl.math.Vec3f;
@@ -18,7 +17,6 @@ import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
@@ -173,7 +171,7 @@ public class MarioAnimationData {
 					newPose.TORSO.x, newPose.TORSO.y, newPose.TORSO.z, newPose.TORSO.pitch, newPose.TORSO.yaw, newPose.TORSO.roll,
 					newPose.RIGHT_LEG.pitch, newPose.LEFT_LEG.pitch
 			);
-			this.mutate(newPose.TAIL, this.currentAnim.capeAnimation(), data, progress);
+			this.mutate(newPose.TAIL, this.currentAnim.tailAnimation(), data, progress);
 		}
 		return newPose;
 	}
@@ -227,7 +225,7 @@ public class MarioAnimationData {
 				);
 
 				arrangement.setAngles(-torsoPitch - CAPE_PITCH_OFFSET, torsoYaw, torsoRoll);
-				if(this.currentAnim == null || this.currentAnim.capeAnimation() == null || this.currentAnim.capeAnimation().shouldSwingWithMovement()) {
+				if(this.currentAnim == null || this.currentAnim.tailAnimation() == null || this.currentAnim.tailAnimation().shouldSwingWithMovement()) {
 					float swing = leftLegPitch - rightLegPitch;
 					float lift;
 					if (data.getMario().isOnGround()) {

@@ -53,6 +53,24 @@
 			"mario_qua_mario:sfx/power_up/fireball_wall"
 		]
 	},
+	"sfx.power_up.tail_empower": {
+		"subtitle": "subtitles.mario_qua_mario.power_up.tail_empower",
+		"sounds": [
+			"mario_qua_mario:sfx/power_up/tail_empower"
+		]
+	},
+	"sfx.power_up.tail_fly": {
+		"subtitle": "subtitles.mario_qua_mario.power_up.tail_fly",
+		"sounds": [
+			"mario_qua_mario:sfx/power_up/tail_fly"
+		]
+	},
+	"sfx.power_up.tail_whip": {
+		"subtitle": "subtitles.mario_qua_mario.power_up.tail_whip",
+		"sounds": [
+			"mario_qua_mario:sfx/power_up/tail_whip"
+		]
+	},
 	"sfx.stomp.heavy": {
 		"subtitle": "subtitles.mario_qua_mario.stomp.heavy",
 		"sounds": [

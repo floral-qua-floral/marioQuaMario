@@ -1,7 +1,6 @@
 package com.fqf.mario_qua_mario.definitions.states.actions.util.animation;
 
 import com.fqf.mario_qua_mario.mariodata.IMarioReadableMotionData;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -24,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
  * @param rightLegAnimation If present, will be used to rotate and/or translate Mario's right leg (left if the animation
  *                          is mirrored).
  * @param leftLegAnimation If present, will be used to rotate and/or translate Mario's left leg.
- * @param capeAnimation Primarily used for Raccoon Mario's tail. Using positional adjustments to lower the pivot down to
+ * @param tailAnimation Primarily used for Raccoon Mario's tail. Using positional adjustments to lower the pivot down to
  *                      Mario's waist is not necessary; the Raccoon Mario playermodel handles that already.
  */
 public record PlayermodelAnimation(
@@ -41,7 +40,7 @@ public record PlayermodelAnimation(
 		@Nullable LimbAnimation rightLegAnimation,
 		@Nullable LimbAnimation leftLegAnimation,
 
-		@Nullable LimbAnimation capeAnimation
+		@Nullable LimbAnimation tailAnimation
 ) {
 	public PlayermodelAnimation variate(
 			@Nullable PlayermodelAnimation.MirroringEvaluator mirroringEvaluator,
@@ -57,7 +56,7 @@ public record PlayermodelAnimation(
 			@Nullable LimbAnimation rightLegAnimation,
 			@Nullable LimbAnimation leftLegAnimation,
 
-			@Nullable LimbAnimation capeAnimation
+			@Nullable LimbAnimation tailAnimation
 	) {
 		return new PlayermodelAnimation(
 				mirroringEvaluator == null ? this.mirroringEvaluator : mirroringEvaluator,
@@ -73,7 +72,7 @@ public record PlayermodelAnimation(
 				rightLegAnimation == null ? this.rightLegAnimation : rightLegAnimation,
 				leftLegAnimation == null ? this.leftLegAnimation : leftLegAnimation,
 
-				capeAnimation == null ? this.capeAnimation : capeAnimation
+				tailAnimation == null ? this.tailAnimation : tailAnimation
 		);
 	}
 

@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.definitions.states.actions.util.animation;
 
 import com.fqf.mario_qua_mario.mariodata.IMarioReadableMotionData;
+import com.fqf.mario_qua_mario.util.Easing;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,10 +11,10 @@ public record ProgressHandler(@Nullable Identifier animationID, @Nullable Progre
 		this(null, null, calculator);
 	}
 
-	public ProgressHandler(float duration, boolean looping) {
+	public ProgressHandler(float duration, boolean looping, Easing easing) {
 		this(null, null, looping
-				? (data, ticksPassed) -> (ticksPassed / duration) % 1
-				: (data, ticksPassed) -> Math.min(ticksPassed / duration, 1));
+				? (data, ticksPassed) -> easing.ease((ticksPassed / duration) % 1)
+				: (data, ticksPassed) -> easing.ease(Math.min(ticksPassed / duration, 1)));
 	}
 
 	@FunctionalInterface
