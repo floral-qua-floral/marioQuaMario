@@ -14,6 +14,7 @@ import com.fqf.mario_qua_mario.util.CharaStat;
 import com.fqf.mario_qua_mario.util.Easing;
 import com.fqf.mario_qua_mario.util.MarioContentSFX;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -66,7 +67,7 @@ public class DuckWaddle implements GroundedActionDefinition {
 
 				ARM, ARM, makeLegAnimation(walking), makeLegAnimation(walking),
 				new LimbAnimation(true, (data, arrangement, progress) ->
-						arrangement.pitch -= 90)
+						arrangement.pitch = 108 - MathHelper.clamp((float) data.getForwardVel() * 190, 0, 108))
 		);
 	}
 
