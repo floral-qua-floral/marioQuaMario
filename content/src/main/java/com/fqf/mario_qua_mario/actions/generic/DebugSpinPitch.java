@@ -11,6 +11,7 @@ import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.mariodata.IMarioReadableMotionData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
+import com.fqf.mario_qua_mario.util.Easing;
 import com.fqf.mario_qua_mario.util.MarioContentSFX;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
@@ -34,7 +35,7 @@ public class DebugSpinPitch extends Debug {
 	@Override
 	public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
 		return new PlayermodelAnimation(
-				null, new ProgressHandler(7F, true),
+				null, new ProgressHandler(7F, true, Easing.LINEAR),
 				new EntireBodyAnimation(0.5F, (data, arrangement, progress) -> arrangement.setAngles(MathHelper.sin(progress) * 75, 0, 0)),
 
 				null, null,
