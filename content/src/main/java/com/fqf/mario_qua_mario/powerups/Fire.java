@@ -2,6 +2,7 @@ package com.fqf.mario_qua_mario.powerups;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario.definitions.states.PowerUpDefinition;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.mario_qua_mario.mariodata.*;
 import com.fqf.mario_qua_mario.util.MarioContentSFX;
 import net.minecraft.entity.Entity;
@@ -71,7 +72,7 @@ public class Fire implements PowerUpDefinition {
 		return Set.of();
 	}
 
-	@Override public @Nullable Object setupCustomMarioVars() {
+	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
 		return new FireFlowerData();
 	}
 	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
@@ -131,7 +132,7 @@ public class Fire implements PowerUpDefinition {
 		}
 	}
 
-	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions() {
+	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
 		return List.of(
 				new FireballDefinition(Hand.MAIN_HAND) {
 					@Override

@@ -7,7 +7,6 @@ import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import net.minecraft.client.input.Input;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.sound.SoundInstance;
-import net.minecraft.entity.MovementType;
 import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
@@ -30,7 +29,7 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 
 	@Override public void setActionTransitionless(AbstractParsedAction action) {
 		this.handleSlidingSound(action);
-		this.MARIO.mqm$getAnimationData().replaceAnimation(this, action.ANIMATION);
+		this.MARIO.mqm$getAnimationData().replaceAnimation(this, action.ANIMATION, -1);
 		super.setActionTransitionless(action);
 	}
 

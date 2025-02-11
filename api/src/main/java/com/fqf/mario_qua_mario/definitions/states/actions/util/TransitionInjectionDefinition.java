@@ -13,6 +13,7 @@ public record TransitionInjectionDefinition(
 		TransitionDefinition makeTransition(TransitionDefinition nearbyTransition, CastableHelper castableHelper);
 
 		interface CastableHelper {
+
 		}
 	}
 

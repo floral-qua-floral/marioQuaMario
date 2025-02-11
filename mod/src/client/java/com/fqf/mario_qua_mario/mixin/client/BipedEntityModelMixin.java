@@ -47,7 +47,7 @@ public class BipedEntityModelMixin<T extends LivingEntity> {
 			@Share("leftLeg") LocalBooleanRef leftLegRef
 			) {
 		if(livingEntity instanceof AbstractClientPlayerEntity mario) {
-			PlayermodelAnimation animation = mario.mqm$getMarioData().getAction().ANIMATION;
+			PlayermodelAnimation animation = mario.mqm$getAnimationData().currentAnim;
 			if(animation != null) {
 				applyRef.set(true);
 				marioRef.set(mario);

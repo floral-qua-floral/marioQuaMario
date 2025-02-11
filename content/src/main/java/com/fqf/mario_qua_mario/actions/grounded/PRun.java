@@ -6,10 +6,7 @@ import com.fqf.mario_qua_mario.actions.airborne.Jump;
 import com.fqf.mario_qua_mario.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.*;
-import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
-import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
-import com.fqf.mario_qua_mario.mariodata.IMarioReadableMotionData;
-import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
+import com.fqf.mario_qua_mario.mariodata.*;
 import com.fqf.mario_qua_mario.util.CharaStat;
 import com.fqf.mario_qua_mario.util.Easing;
 import net.minecraft.util.Identifier;
@@ -67,7 +64,7 @@ public class PRun implements GroundedActionDefinition {
 		return null;
 	}
 
-	@Override public @Nullable Object setupCustomMarioVars() {
+	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
 		return null;
 	}
 	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
@@ -125,7 +122,7 @@ public class PRun implements GroundedActionDefinition {
 	}
 
 	@Override
-	public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions() {
+	public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
 		return List.of();
 	}
 }

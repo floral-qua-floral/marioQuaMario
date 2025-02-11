@@ -6,12 +6,11 @@ import com.fqf.mario_qua_mario.actions.airborne.Jump;
 import com.fqf.mario_qua_mario.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.*;
-import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
-import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
-import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
+import com.fqf.mario_qua_mario.mariodata.*;
 import com.fqf.mario_qua_mario.util.CharaStat;
-import com.fqf.mario_qua_mario.util.MarioContentSFX;
+import com.fqf.mario_qua_mario.util.Powers;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -68,7 +67,7 @@ public class SubWalk implements GroundedActionDefinition {
 	public static final CharaStat STRAFE_ACCEL = new CharaStat(0.065, WALKING, STRAFE, ACCELERATION);
 	public static final CharaStat STRAFE_SPEED = new CharaStat(0.275, WALKING, STRAFE, SPEED);
 
-	@Override public @Nullable Object setupCustomMarioVars() {
+	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
 		return null;
 	}
 	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
@@ -146,18 +145,31 @@ public class SubWalk implements GroundedActionDefinition {
 		}
 	}
 
+	public static boolean isIdle(IMarioReadableMotionData data) {
+		return MathHelper.approximatelyEquals(data.getForwardVel(), 0)
+				&& MathHelper.approximatelyEquals(data.getStrafeVel(), 0)
+				&& MathHelper.approximatelyEquals(data.getInputs().getForwardInput(), 0)
+				&& MathHelper.approximatelyEquals(data.getInputs().getStrafeInput(), 0)
+				&& !data.getInputs().DUCK.isHeld();
+	}
+
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(GroundedActionHelper helper) {
 		return List.of(
-			DuckWaddle.DUCK,
 			new TransitionDefinition(
 					MarioQuaMarioContent.makeID("walk_run"),
 					WalkRun::meetsWalkRunRequirement,
 					EvaluatorEnvironment.CLIENT_ONLY
-			)
+			)//,
+//			new TransitionDefinition(
+//					MarioQuaMarioContent.makeID("smb3_idle"),
+//					data -> data.hasPower(Powers.SMB3_IDLE) && isIdle(data),
+//					EvaluatorEnvironment.CLIENT_ONLY
+//			)
 		);
 	}
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(GroundedActionHelper helper) {
 		return List.of(
+				DuckWaddle.DUCK,
 				Jump.makeJumpTransition(helper)
 		);
 	}
@@ -171,7 +183,7 @@ public class SubWalk implements GroundedActionDefinition {
 		return Set.of();
 	}
 
-	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions() {
+	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
 		return List.of();
 	}
 }

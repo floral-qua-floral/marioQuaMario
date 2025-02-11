@@ -1,12 +1,14 @@
 package com.fqf.mario_qua_mario.mariodata;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.mario_qua_mario.mariodata.util.*;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.entity.Entity;
@@ -24,6 +26,14 @@ public interface IMarioClientDataImpl extends IMarioClientData {
 	@Override
 	default boolean isClient() {
 		return true;
+	}
+
+	@Override
+	AbstractClientPlayerEntity getMario();
+
+	@Override
+	default void playAnimation(PlayermodelAnimation animation, int ticks) {
+		this.getMario().mqm$getAnimationData().replaceAnimation((MarioPlayerData) this, animation, ticks);
 	}
 
 	@Override
@@ -50,7 +60,7 @@ public interface IMarioClientDataImpl extends IMarioClientData {
 	@Override
 	default SoundInstanceWrapperImpl playSound(SoundEvent event, float pitch, float volume, long seed) {
 		Vec3d marioPos = this.getMario().getPos();
-		return this.playSound(event, SoundCategory.PLAYERS, marioPos.x, marioPos.y, marioPos.z, 1F, 1F, seed);
+		return this.playSound(event, SoundCategory.PLAYERS, marioPos.x, marioPos.y, marioPos.z, pitch, volume, seed);
 	}
 
 	@Override

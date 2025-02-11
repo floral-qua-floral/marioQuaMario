@@ -42,7 +42,7 @@ public class ParsedActionHelper {
 			if(transition.evaluator().shouldTransition(data)) {
 				long seed = data.getMario().getRandom().nextLong();
 
-				if(!data.isClient()) {
+				if(data.isServer()) {
 					MarioDataPackets.transitionToActionS2C((ServerPlayerEntity) data.getMario(), transition.fullyNetworked(),
 							data.getAction(), transition.targetAction(), seed);
 				}

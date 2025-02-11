@@ -360,6 +360,20 @@
 			"mario_qua_mario:voices/mario/sideflip/sideflip4"
 		]
 	},
+	"voice.mario.tail_spin": {
+		"subtitle": "subtitles.mario_qua_mario.voice_mario_tail_spin",
+		"sounds": [
+			"mario_qua_mario:voices/mario/tail_spin/tail_spin1",
+			"mario_qua_mario:voices/mario/tail_spin/tail_spin2"
+		]
+	},
+	"voice.mario.tail_whip": {
+		"subtitle": "subtitles.mario_qua_mario.voice_mario_tail_whip",
+		"sounds": [
+			"mario_qua_mario:voices/mario/tail_whip/tail_whip1",
+			"mario_qua_mario:voices/mario/tail_whip/tail_whip2"
+		]
+	},
 	"voice.mario.triple_jump": {
 		"subtitle": "subtitles.mario_qua_mario.voice_mario_triple_jump",
 		"sounds": [

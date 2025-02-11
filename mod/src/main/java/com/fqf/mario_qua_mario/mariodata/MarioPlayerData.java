@@ -119,8 +119,15 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	}
 
 	public void setupCustomVars(ParsedMarioState oldThing, ParsedMarioState newThing) {
-		if(oldThing.CUSTOM_DATA_CLASS != null) this.customVars.remove(oldThing.CUSTOM_DATA_CLASS);
-		if(newThing.CUSTOM_DATA_CLASS != null) this.customVars.put(newThing.CUSTOM_DATA_CLASS, newThing.makeCustomThing());
+		Object newThingVars = newThing.makeCustomThing(this);
+		Class<?> newThingVarsClass = newThingVars == null ? null : newThingVars.getClass();
+		Class<?> oldThingVarsClass = oldThing.getLastCustomVarsClass();
+
+		if(newThingVarsClass != null)
+			this.customVars.put(newThingVarsClass, newThingVars);
+
+		if(oldThingVarsClass != null && !oldThingVarsClass.equals(newThingVarsClass))
+			this.customVars.remove(oldThingVarsClass); // If we didn't already just replace the vars, delete the old ones
 	}
 	private final Set<String> POWERS = new HashSet<>();
 	public void updateCharacterFormCombo() {
@@ -167,11 +174,7 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	private final Map<Class<?>, Object> customVars = new HashMap<>();
 	@Override public <T> T getVars(Class<T> clazz) {
 		Object customData = this.customVars.get(clazz);
-		if(customData == null)
-			throw new IllegalStateException("No custom data of type " + clazz.getName() + " present!");
-		else {
-			return clazz.cast(customData);
-		}
+		return clazz.cast(customData);
 	}
 
 	public boolean doMarioTravel() {

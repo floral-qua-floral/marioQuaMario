@@ -11,6 +11,7 @@ import com.fqf.mario_qua_mario.definitions.states.actions.util.SprintingRule;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.*;
 import com.fqf.mario_qua_mario.util.Easing;
+import com.fqf.mario_qua_mario.util.Powers;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,8 +19,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class PJump extends Jump implements AirborneActionDefinition {
+	public static final Identifier ID = MarioQuaMarioContent.makeID("p_jump");
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("p_jump");
+		return ID;
 	}
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
@@ -54,10 +56,27 @@ public class PJump extends Jump implements AirborneActionDefinition {
 	}
 
 	@Override
+	public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {
+		return List.of(
+				new TransitionDefinition(
+						MarioQuaMarioContent.makeID("tail_fly"),
+						data ->
+								data.hasPower(Powers.TAIL_FLY)
+								&& (data.isServer() || (
+										data.getYVel() < TailStall.STALL_THRESHOLD.get(data)
+										&& data.getInputs().JUMP.isHeld()
+								)),
+						EvaluatorEnvironment.CLIENT_CHECKED
+				),
+				helper.makeJumpCapTransition(this, this.getJumpCapThreshold())
+		);
+	}
+
+	@Override
 	public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {
 		return List.of(
 				Jump.DOUBLE_JUMPABLE_LANDING.variate(MarioQuaMarioContent.makeID("p_run"), data ->
-						Fall.LANDING.evaluator().shouldTransition(data) && (!data.isClient() || PRun.meetsPRunRequirements(data))),
+						Fall.LANDING.evaluator().shouldTransition(data) && (data.isServer() || PRun.meetsPRunRequirements(data))),
 				Jump.DOUBLE_JUMPABLE_LANDING
 		);
 	}

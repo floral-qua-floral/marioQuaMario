@@ -3,18 +3,17 @@ package com.fqf.mario_qua_mario.actions.grounded;
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario.actions.airborne.DuckFall;
 import com.fqf.mario_qua_mario.actions.airborne.DuckJump;
-import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.*;
 import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
+import com.fqf.mario_qua_mario.mariodata.IMarioData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario.util.CharaStat;
 import com.fqf.mario_qua_mario.util.Easing;
 import com.fqf.mario_qua_mario.util.MarioContentSFX;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -110,7 +109,7 @@ public class DuckWaddle implements GroundedActionDefinition {
 
 	public static final CharaStat WADDLE_REDIRECTION = new CharaStat(0.0, DUCKING, REDIRECTION);
 
-	@Override public @Nullable Object setupCustomMarioVars() {
+	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
 		return null;
 	}
 	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
@@ -169,7 +168,7 @@ public class DuckWaddle implements GroundedActionDefinition {
 	}
 
 	@Override
-	public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions() {
+	public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
 		return List.of();
 	}
 }

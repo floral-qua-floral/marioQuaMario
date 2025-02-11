@@ -4,10 +4,7 @@ import com.fqf.mario_qua_mario.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.*;
-import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
-import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
-import com.fqf.mario_qua_mario.mariodata.IMarioReadableMotionData;
-import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
+import com.fqf.mario_qua_mario.mariodata.*;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.CharaStat;
 import com.fqf.mario_qua_mario.util.Easing;
@@ -62,7 +59,7 @@ public class WalkRun extends SubWalk implements GroundedActionDefinition {
 				data.getHorizVelSquared() > WALK_SPEED.getAsSquaredThreshold(data);
 	}
 
-	@Override public @Nullable Object setupCustomMarioVars() {
+	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
 		return new ActionTimerVars();
 	}
 	@Override public void travelHook(IMarioTravelData data, GroundedActionHelper helper) {
@@ -120,7 +117,7 @@ public class WalkRun extends SubWalk implements GroundedActionDefinition {
 						TransitionInjectionDefinition.ActionCategory.AIRBORNE,
 						(nearbyTransition, castableHelper) -> nearbyTransition.variate(
 								this.getID(),
-								data -> (!data.isClient() || meetsWalkRunRequirement(data)) && nearbyTransition.evaluator().shouldTransition(data),
+								data -> (data.isServer() || meetsWalkRunRequirement(data)) && nearbyTransition.evaluator().shouldTransition(data),
 								EvaluatorEnvironment.CLIENT_CHECKED, null, null
 						)
 				),
@@ -130,7 +127,7 @@ public class WalkRun extends SubWalk implements GroundedActionDefinition {
 						TransitionInjectionDefinition.ActionCategory.GROUNDED,
 						(nearbyTransition, castableHelper) -> nearbyTransition.variate(
 								this.getID(),
-								data -> (!data.isClient() || meetsWalkRunRequirement(data)) && nearbyTransition.evaluator().shouldTransition(data),
+								data -> (data.isServer() || meetsWalkRunRequirement(data)) && nearbyTransition.evaluator().shouldTransition(data),
 								EvaluatorEnvironment.CLIENT_ONLY, null, null
 						)
 				)

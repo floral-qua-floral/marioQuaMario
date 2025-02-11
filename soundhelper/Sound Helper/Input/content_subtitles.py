@@ -26,6 +26,8 @@ voicelines = {
   "side": "SKIP",
   "taunt": "SKIP",
   "throw": "SKIP",
+  "tail_whip": " swings",
+  "tail_spin": " cheers"
 }
 
 sfx_movement = {

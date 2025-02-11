@@ -2,8 +2,10 @@ package com.fqf.mario_qua_mario.powerups;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario.definitions.states.PowerUpDefinition;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
+import com.fqf.mario_qua_mario.mariodata.IMarioData;
 import com.fqf.mario_qua_mario.util.StatCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
@@ -84,7 +86,7 @@ public class Mini implements PowerUpDefinition {
 		);
 	}
 
-	@Override public @Nullable Object setupCustomMarioVars() {
+	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
 		return null;
 	}
 	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
@@ -94,7 +96,7 @@ public class Mini implements PowerUpDefinition {
 
 	}
 
-	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions() {
+	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
 		return List.of();
 	}
 }

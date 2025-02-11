@@ -3,6 +3,7 @@ package com.fqf.mario_qua_mario.registries.power_granting;
 import com.fqf.mario_qua_mario.definitions.states.AttackInterceptingStateDefinition;
 import com.fqf.mario_qua_mario.definitions.states.PowerUpDefinition;
 import com.fqf.mario_qua_mario.registries.ParsedAttackInterception;
+import com.fqf.mario_qua_mario.registries.actions.AnimationHelperImpl;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
@@ -36,7 +37,7 @@ public class ParsedPowerUp extends ParsedPowerGrantingState {
 		this.HEART = definition.getPowerHeart(new PowerHeartHelperImpl(this.ID));
 
 		this.INTERCEPTIONS = new ArrayList<>();
-		for (AttackInterceptingStateDefinition.AttackInterceptionDefinition interception : definition.getAttackInterceptions()) {
+		for (AttackInterceptingStateDefinition.AttackInterceptionDefinition interception : definition.getAttackInterceptions(AnimationHelperImpl.INSTANCE)) {
 			this.INTERCEPTIONS.add(new ParsedAttackInterception(interception, false));
 		}
 	}

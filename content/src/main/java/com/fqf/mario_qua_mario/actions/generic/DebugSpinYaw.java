@@ -31,7 +31,7 @@ public class DebugSpinYaw extends Debug {
 		);
 	}
 
-	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions() {
+	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
 		return List.of();
 	}
 }

@@ -7,6 +7,9 @@ import net.minecraft.util.Identifier;
 public interface IMarioData {
 	PlayerEntity getMario();
 	boolean isClient();
+	default boolean isServer() {
+		return !this.isClient();
+	}
 
 	boolean isEnabled();
 	Identifier getActionID();

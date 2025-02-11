@@ -7,7 +7,6 @@ import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.*;
 import com.fqf.mario_qua_mario.mariodata.*;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.MarioContentSFX;
-import com.fqf.mario_qua_mario.util.MarioVars;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
@@ -71,7 +70,7 @@ public class Debug implements GenericActionDefinition {
 		return null;
 	}
 
-	@Override public @Nullable Object setupCustomMarioVars() {
+	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
 		return new ActionTimerVars();
 	}
 	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
@@ -80,10 +79,11 @@ public class Debug implements GenericActionDefinition {
 	@Override public void serverTick(IMarioAuthoritativeData data) {
 
 	}
-	@Override public void travelHook(IMarioTravelData data) {
+	@Override public boolean travelHook(IMarioTravelData data) {
 		ActionTimerVars.get(data).actionTimer++;
 		data.setForwardStrafeVel(data.getInputs().getForwardInput() * 0.5, data.getInputs().getStrafeInput() * 0.5);
 		data.setYVel(data.getInputs().JUMP.isHeld() ? 0.4 : (data.getInputs().DUCK.isHeld() ? -0.4 : (0.03 * Math.sin(ActionTimerVars.get(data).actionTimer++ / 16.0))));
+		return true;
 	}
 
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions() {
@@ -107,7 +107,7 @@ public class Debug implements GenericActionDefinition {
 		return Set.of();
 	}
 
-	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions() {
+	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
 		return List.of(
 				new AttackInterceptionDefinition() {
 					@Override public @Nullable Identifier getActionTarget() {

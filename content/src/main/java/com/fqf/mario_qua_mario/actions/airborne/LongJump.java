@@ -174,7 +174,7 @@ public class LongJump extends Jump implements AirborneActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {
 		return List.of(
 				Jump.DOUBLE_JUMPABLE_LANDING.variate(MarioQuaMarioContent.makeID("p_run"), data ->
-						Fall.LANDING.evaluator().shouldTransition(data) && (!data.isClient() || PRun.meetsPRunRequirements(data))),
+						Fall.LANDING.evaluator().shouldTransition(data) && (data.isServer() || PRun.meetsPRunRequirements(data))),
 				Jump.DOUBLE_JUMPABLE_LANDING
 		);
 	}

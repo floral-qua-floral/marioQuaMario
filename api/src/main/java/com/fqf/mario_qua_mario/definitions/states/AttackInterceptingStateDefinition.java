@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario.definitions.states;
 
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.mario_qua_mario.mariodata.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public interface AttackInterceptingStateDefinition extends MarioStateDefinition {
-	@NotNull List<AttackInterceptionDefinition> getAttackInterceptions();
+	@NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper);
 
 	enum MiningHandling {
 		MINE,

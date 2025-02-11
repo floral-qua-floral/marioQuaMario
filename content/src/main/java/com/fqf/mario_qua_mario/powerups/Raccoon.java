@@ -3,12 +3,10 @@ package com.fqf.mario_qua_mario.powerups;
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario.definitions.states.PowerUpDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.*;
-import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
-import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
-import com.fqf.mario_qua_mario.mariodata.IMarioReadableMotionData;
-import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
+import com.fqf.mario_qua_mario.mariodata.*;
 import com.fqf.mario_qua_mario.util.Easing;
 import com.fqf.mario_qua_mario.util.MarioContentSFX;
+import com.fqf.mario_qua_mario.util.Powers;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
@@ -18,6 +16,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,7 +64,12 @@ public class Raccoon implements PowerUpDefinition {
 	}
 
 	@Override public Set<String> getPowers() {
-		return Set.of();
+		return Set.of(
+				Powers.SMB3_IDLE,
+				Powers.TAIL_ATTACK,
+				Powers.TAIL_STALL,
+				Powers.TAIL_FLY
+		);
 	}
 
 	@Override public @NotNull PowerHeart getPowerHeart(PowerHeartHelper helper) {
@@ -76,7 +80,7 @@ public class Raccoon implements PowerUpDefinition {
 		return Set.of();
 	}
 
-	@Override public @Nullable Object setupCustomMarioVars() {
+	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
 		return null;
 	}
 	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
@@ -88,9 +92,11 @@ public class Raccoon implements PowerUpDefinition {
 
 	private abstract static class TailAttack implements AttackInterceptionDefinition {
 		private final Identifier ACTION_TARGET;
+		private final PlayermodelAnimation ANIMATION;
 
-		private TailAttack(Identifier actionTarget) {
+		private TailAttack(Identifier actionTarget, PlayermodelAnimation animation) {
 			this.ACTION_TARGET = actionTarget;
+			this.ANIMATION = animation;
 		}
 
 		@Override
@@ -127,30 +133,38 @@ public class Raccoon implements PowerUpDefinition {
 
 		@Override
 		public void executeClients(IMarioClientData data, ItemStack weapon, float attackCooldownProgress, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget, long seed) {
+			data.getMario().setBodyYaw(data.getMario().getHeadYaw());
 			data.playSound(MarioContentSFX.TAIL_WHIP, seed);
+			if(this.ACTION_TARGET == null) {
+				data.voice("tail_whip", seed);
+				data.playAnimation(this.ANIMATION, TAIL_WHIP_ANIMATION_DURATION);
+			}
+			else data.voice("tail_spin", seed);
 		}
 
 		@Override
 		public void executeServer(IMarioAuthoritativeData data, ItemStack weapon, float attackCooldownProgress, ServerWorld world, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget) {
-
+			data.getMario().setBodyYaw(data.getMario().getHeadYaw());
 		}
 	}
 
-	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions() {
+	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
+		PlayermodelAnimation tailWhipAnimation = makeTailWhipAnimation(animationHelper);
+
 		return List.of(
-				new TailAttack(MarioQuaMarioContent.makeID("tail_whip_grounded")) {
+				new TailAttack(MarioQuaMarioContent.makeID("tail_spin_grounded"), null) {
 					@Override protected boolean testSwing(IMarioReadableMotionData data) {
-						return data.getMario().isOnGround();
+						return data.getMario().isOnGround() && data.getMario().isInSneakingPose();
 					}
 				},
-				new TailAttack(MarioQuaMarioContent.makeID("tail_whip_grounded")) {
+				new TailAttack(MarioQuaMarioContent.makeID("tail_spin_fall"), null) {
 					@Override protected boolean testSwing(IMarioReadableMotionData data) {
-						return data.getMario().isOnGround();
+						return !data.getMario().isOnGround() && data.getMario().isInSneakingPose();
 					}
 				},
-				new TailAttack(MarioQuaMarioContent.makeID("tail_whip_grounded")) {
+				new TailAttack(null, tailWhipAnimation) {
 					@Override protected boolean testSwing(IMarioReadableMotionData data) {
-						return !data.getMario().isOnGround();
+						return true;
 					}
 				},
 				new PreventAttack() {
@@ -162,29 +176,39 @@ public class Raccoon implements PowerUpDefinition {
 		);
 	}
 
-	private static final LimbAnimation ARM_ANIMATION = new LimbAnimation(false, (data, arrangement, progress) -> {
-
-	});
-	private static final LimbAnimation LEG_ANIMATION = new LimbAnimation(false, (data, arrangement, progress) -> {
-
-	});
-	public static PlayermodelAnimation makeTailSwingAnimation(AnimationHelper helper) {
+	private static final int TAIL_WHIP_ANIMATION_DURATION = 7;
+	private static PlayermodelAnimation makeTailWhipAnimation(AnimationHelper helper) {
+		LimbAnimation armAnimation = new LimbAnimation(false, (data, arrangement, progress) -> {
+			float factor = progress < 0.5 ? progress * 2 : progress * -2 + 2;
+			arrangement.addPos(0, MathHelper.lerp(factor, 2, 4), MathHelper.lerp(factor, 2, 4));
+			arrangement.pitch -= MathHelper.lerp(factor, 16, 90);
+		});
+		LimbAnimation legAnimation = new LimbAnimation(false, (data, arrangement, progress) -> {
+			float factor = progress < 0.5 ? progress * 2 : progress * -2 + 2;
+			arrangement.addPos(0, factor * 2, factor * 6);
+			arrangement.pitch -= factor * 39;
+		});
 		return new PlayermodelAnimation(
 				null,
-				new ProgressHandler(10, false, Easing.LINEAR),
+				new ProgressHandler(TAIL_WHIP_ANIMATION_DURATION, false, Easing.SINE_IN_OUT),
+//				new ProgressHandler((data, ticksPassed) ->
+//						Easing.SINE_IN_OUT.ease((float) ticksPassed / TAIL_WHIP_ANIMATION_DURATION)),
 
-				new EntireBodyAnimation(0, (data, arrangement, progress) ->
+				new EntireBodyAnimation(0.5F, (data, arrangement, progress) ->
 						arrangement.yaw = progress * 360),
 				new BodyPartAnimation((data, arrangement, progress) -> {
-
+					float factor = progress < 0.5 ? progress * 2 : progress * -2 + 2;
+					arrangement.addPos(0, factor * 4.3F, factor * -1);
 				}),
 				new BodyPartAnimation((data, arrangement, progress) -> {
-
+					float factor = progress < 0.5 ? progress * 2 : progress * -2 + 2;
+					arrangement.addPos(0, factor * 4.3F, factor * -1);
+					arrangement.pitch += factor * 42;
 				}),
-				ARM_ANIMATION, ARM_ANIMATION,
-				LEG_ANIMATION, LEG_ANIMATION,
+				armAnimation, armAnimation,
+				legAnimation, legAnimation,
 				new LimbAnimation(false, (data, arrangement, progress) -> {
-
+					arrangement.pitch = helper.interpolateKeyframes(progress * 2, 0, MathHelper.clamp(data.getMario().getPitch() - 30, -80, 75), 20);
 				})
 		);
 	}

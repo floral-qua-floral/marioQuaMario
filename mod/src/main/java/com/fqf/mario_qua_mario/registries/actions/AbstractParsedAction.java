@@ -67,7 +67,7 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 		this.parseTransitions(TransitionPhase.INPUT, this.getInputTransitions(), allInjections);
 		this.parseTransitions(TransitionPhase.WORLD_COLLISION, this.getWorldCollisionTransitions(), allInjections);
 
-		for (AttackInterceptingStateDefinition.AttackInterceptionDefinition interception : this.ACTION_DEFINITION.getAttackInterceptions()) {
+		for (AttackInterceptingStateDefinition.AttackInterceptionDefinition interception : this.ACTION_DEFINITION.getAttackInterceptions(AnimationHelperImpl.INSTANCE)) {
 			this.INTERCEPTIONS.add(new ParsedAttackInterception(interception, true));
 		}
 	}

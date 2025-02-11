@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface GenericActionDefinition extends IncompleteActionDefinition {
 	@NotNull SprintingRule getSprintingRule();
-	void travelHook(IMarioTravelData data);
+	boolean travelHook(IMarioTravelData data);
 
 	@NotNull List<TransitionDefinition> getBasicTransitions();
 	@NotNull List<TransitionDefinition> getInputTransitions();

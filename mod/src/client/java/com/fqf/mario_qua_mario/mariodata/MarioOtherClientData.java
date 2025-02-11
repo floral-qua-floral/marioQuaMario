@@ -30,7 +30,7 @@ public class MarioOtherClientData extends MarioPlayerData implements IMarioClien
 
 	@Override public void setActionTransitionless(AbstractParsedAction action) {
 		this.handleSlidingSound(action);
-		this.MARIO.mqm$getAnimationData().replaceAnimation(this, action.ANIMATION);
+		this.MARIO.mqm$getAnimationData().replaceAnimation(this, action.ANIMATION, -1);
 		super.setActionTransitionless(action);
 	}
 

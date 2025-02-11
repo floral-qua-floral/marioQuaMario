@@ -27,6 +27,8 @@ public class Voicelines implements VoicelineSetDefinition {
 
 				"revert",
 				"fireball",
+				"tail_whip",
+				"tail_spin",
 				"get_star"
 		);
 	}

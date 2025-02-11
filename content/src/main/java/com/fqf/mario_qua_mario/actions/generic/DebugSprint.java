@@ -3,6 +3,7 @@ package com.fqf.mario_qua_mario.actions.generic;
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionDefinition;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.mario_qua_mario.mariodata.*;
 import com.fqf.mario_qua_mario.util.MarioContentSFX;
 import net.minecraft.entity.Entity;
@@ -23,12 +24,13 @@ public class DebugSprint extends Debug {
 		return MarioQuaMarioContent.makeID("debug_sprint");
 	}
 
-	@Override public void travelHook(IMarioTravelData data) {
+	@Override public boolean travelHook(IMarioTravelData data) {
 		data.setStrafeVel(data.getInputs().getStrafeInput() * 0.5);
 
 		double pitchRadians = Math.toRadians(data.getMario().getPitch());
 		data.setForwardVel(data.getInputs().getForwardInput() * Math.cos(pitchRadians));
 		data.setYVel(data.getInputs().getForwardInput() * -Math.sin(pitchRadians));
+		return true;
 	}
 
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions() {
@@ -42,7 +44,7 @@ public class DebugSprint extends Debug {
 		);
 	}
 
-	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions() {
+	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
 		return List.of(
 				new AttackInterceptionDefinition() {
 					@Override public @Nullable Identifier getActionTarget() {

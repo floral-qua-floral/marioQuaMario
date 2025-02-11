@@ -35,18 +35,21 @@ public class MarioAnimationData {
 	private boolean trailingTick;
 	private boolean isAnimating;
 	private int animationTicks;
+	private int ticksUntilAutoReplaceAnimation;
 	public float headPitchOffset;
 	public float headYawOffset;
 	public final Arrangement TAIL_ARRANGEMENT = new Arrangement();
 	private final Arrangement TAIL_TEMP_ARRANGEMENT = new Arrangement();
 
-	public void replaceAnimation(MarioPlayerData data, PlayermodelAnimation newAnim) {
+	public void replaceAnimation(MarioPlayerData data, PlayermodelAnimation newAnim, int ticksUntilAutoReplace) {
+		if(this.ticksUntilAutoReplaceAnimation > 0) return;
 		this.prevAnim = this.currentAnim;
 		this.currentAnim = newAnim;
 		if(this.shouldResetAnimation(data)) {
 			this.changingAnim = true;
 			this.animationTicks = 0;
 		}
+		this.ticksUntilAutoReplaceAnimation = ticksUntilAutoReplace;
 	}
 	private boolean shouldResetAnimation(MarioPlayerData data) {
 		boolean isSame = this.currentAnim == this.prevAnim;
@@ -57,6 +60,10 @@ public class MarioAnimationData {
 		return this.currentAnim.progressHandler().resetter().shouldReset(data, this.prevAnim.progressHandler().animationID());
 	}
 	public void tick(AbstractClientPlayerEntity mario) {
+		if(--this.ticksUntilAutoReplaceAnimation == 0) {
+			this.replaceAnimation(mario.mqm$getMarioData(), mario.mqm$getMarioData().getAction().ANIMATION, -1);
+		}
+
 		this.isAnimating = false;
 		this.trailingTick = false;
 

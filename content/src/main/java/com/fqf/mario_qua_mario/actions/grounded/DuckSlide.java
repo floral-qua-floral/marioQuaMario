@@ -11,12 +11,12 @@ import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.CameraA
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
+import com.fqf.mario_qua_mario.mariodata.IMarioData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.CharaStat;
-import com.fqf.mario_qua_mario.util.MarioVars;
+import com.fqf.mario_qua_mario.util.TailSpinActionTimerVars;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,7 +61,7 @@ public class DuckSlide implements GroundedActionDefinition {
 	public static final CharaStat SLIDE_DRAG_MIN = new CharaStat(0.01, DUCKING, DRAG);
 	public static final CharaStat SLIDE_REDIRECTION = new CharaStat(4.0, DUCKING, REDIRECTION);
 
-	@Override public @Nullable Object setupCustomMarioVars() {
+	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
 		return new ActionTimerVars();
 	}
 	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
@@ -143,7 +143,7 @@ public class DuckSlide implements GroundedActionDefinition {
 								MarioQuaMarioContent.makeID("duck_slide"),
 								data -> {
 									double threshold = SLIDE_THRESHOLD.get(data);
-									return (!data.isClient() || (data.getHorizVelSquared() > threshold * threshold))
+									return (data.isServer() || (data.getHorizVelSquared() > threshold * threshold))
 											&& nearbyTransition.evaluator().shouldTransition(data);
 								},
 								EvaluatorEnvironment.CLIENT_CHECKED,
@@ -154,7 +154,7 @@ public class DuckSlide implements GroundedActionDefinition {
 	}
 
 	@Override
-	public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions() {
+	public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
 		return List.of();
 	}
 }

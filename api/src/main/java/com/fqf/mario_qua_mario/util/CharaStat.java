@@ -20,6 +20,9 @@ public class CharaStat {
 	public CharaStat variate(double multiplier) {
 		return new CharaStat(this.BASE_VALUE * multiplier, this.CATEGORIES);
 	}
+	public CharaStat variate(double multiplier, StatCategory... categories) {
+		return new CharaStat(this.BASE_VALUE * multiplier, categories);
+	}
 
 	private CharaStat(double base, Set<StatCategory> categorySet) {
 		this.BASE_VALUE = base;
