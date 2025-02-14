@@ -78,8 +78,8 @@ public class BipedEntityModelMixin<T extends LivingEntity> {
 				float modelPitchAdjustment = MathHelper.RADIANS_PER_DEGREE * MathHelper.wrapDegrees(MathHelper.DEGREES_PER_RADIAN * marioRef.get().mqm$getAnimationData().headPitchOffset);
 				float modelYawAdjustment = MathHelper.RADIANS_PER_DEGREE * MathHelper.wrapDegrees(MathHelper.DEGREES_PER_RADIAN * marioRef.get().mqm$getAnimationData().headYawOffset);
 				float maxYawAdjustment = 60F * MathHelper.RADIANS_PER_DEGREE;
-				newValue = MathHelper.clamp(newValue + modelPitchAdjustment, -MathHelper.HALF_PI, MathHelper.HALF_PI * 0.9F);
-				this.head.yaw = MathHelper.clamp(this.head.yaw + modelYawAdjustment, this.body.yaw - maxYawAdjustment, this.body.yaw + maxYawAdjustment);
+//				newValue = MathHelper.clamp(newValue + modelPitchAdjustment, -MathHelper.HALF_PI, MathHelper.HALF_PI * 0.9F);
+//				this.head.yaw = MathHelper.clamp(this.head.yaw + modelYawAdjustment, this.body.yaw - maxYawAdjustment, this.body.yaw + maxYawAdjustment);
 			}
 			else if(
 					attemptSuppression(rightArmRef, instance, this.rightArm)

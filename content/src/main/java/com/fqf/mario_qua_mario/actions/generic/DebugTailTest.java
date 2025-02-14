@@ -22,9 +22,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-public class Debug implements GenericActionDefinition {
+public class DebugTailTest implements GenericActionDefinition {
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("debug");
+		return MarioQuaMarioContent.makeID("debug_tail_test");
 	}
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
@@ -34,15 +34,19 @@ public class Debug implements GenericActionDefinition {
 				null,
 
 				null,
-				null,
+				new BodyPartAnimation((data, arrangement, progress) -> {
+					arrangement.addPos(MathHelper.sin(progress) * 30, MathHelper.cos(progress * 3) * 18, MathHelper.sin(progress * 3) * 18);
+					arrangement.addAngles(progress * 70, MathHelper.sin(progress * 2) * 100, 0);
+				}),
 
 				new LimbAnimation(false, (data, arrangement, progress) -> arrangement.roll += 90),
+//				null,
 				new LimbAnimation(false, (data, arrangement, progress) -> arrangement.roll -= 90),
 
 				new LimbAnimation(false, null),
 				new LimbAnimation(false, null),
 
-				new LimbAnimation(false, null)
+				new LimbAnimation(false, (data, arrangement, progress) -> arrangement.addAngles(0, 0, 0))
 		);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations() {

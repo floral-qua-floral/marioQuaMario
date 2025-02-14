@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientBase.class)
 public class CPMClientBaseMixin {
-	@Inject(method = "renderCape", at = @At(value = "INVOKE", target = "Lcom/tom/cpm/client/PlayerRenderManager;setModelPose(Ljava/lang/Object;)V"))
+	@Inject(method = "renderCape", at = @At(value = "INVOKE", target = "Lcom/tom/cpm/client/PlayerRenderManager;setModelPose(Ljava/lang/Object;)V"), remap = false)
 	private static void animateCapeAsTail(
 			MatrixStack matrixStack,
 			VertexConsumer buffer,

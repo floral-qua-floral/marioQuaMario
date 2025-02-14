@@ -21,7 +21,8 @@ public class DebugSpinRoll extends Debug {
 	public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
 		return new PlayermodelAnimation(
 				null, new ProgressHandler(40F, true, Easing.LINEAR),
-				new EntireBodyAnimation(0.5F, (data, arrangement, progress) -> arrangement.setAngles(0, 0, progress * -360)),
+				new EntireBodyAnimation(0.5F, (data, arrangement, progress) ->
+						arrangement.roll = progress * 360),
 
 				null, null,
 				null, null,

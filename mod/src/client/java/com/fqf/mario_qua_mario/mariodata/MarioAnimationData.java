@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario.mariodata;
 
+import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.*;
 import com.fqf.mario_qua_mario.util.Easing;
 import com.tom.cpl.math.Vec3f;
@@ -17,6 +18,7 @@ import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
@@ -126,6 +128,7 @@ public class MarioAnimationData {
 			if (this.thisTickPose == null) this.thisTickPose = this.makeAnimatedPose(mario, rightArmPose, leftArmPose);
 
 			this.lerpPart(tickDelta, head, this.prevTickPose.HEAD, this.thisTickPose.HEAD);
+//			head.pitch += this.headPitchOffset; head.yaw += this.headYawOffset;
 			this.lerpPart(tickDelta, torso, this.prevTickPose.TORSO, this.thisTickPose.TORSO);
 			this.lerpPart(tickDelta, rightArm, this.prevTickPose.RIGHT_ARM, this.thisTickPose.RIGHT_ARM);
 			this.lerpPart(tickDelta, leftArm, this.prevTickPose.LEFT_ARM, this.thisTickPose.LEFT_ARM);
@@ -148,8 +151,11 @@ public class MarioAnimationData {
 
 			this.mutate(newPose.EVERYTHING, this.currentAnim.entireBodyAnimation(), data, progress);
 			this.mutate(newPose.HEAD, this.currentAnim.headAnimation(), data, progress);
+			newPose.HEAD.yaw = approachNumber(newPose.HEAD.yaw, HALF_PI * 0.675F, newPose.EVERYTHING.yaw);
+			newPose.HEAD.pitch = approachNumber(newPose.HEAD.pitch, HALF_PI * 0.999F, newPose.EVERYTHING.pitch);
+
 			this.mutate(newPose.TORSO, this.currentAnim.torsoAnimation(), data, progress);
-//
+
 			this.conditionallyAnimateArm(
 					newPose.RIGHT_ARM,
 					this.isMirrored ? this.currentAnim.leftArmAnimation() : this.currentAnim.rightArmAnimation(),
@@ -181,6 +187,18 @@ public class MarioAnimationData {
 			this.mutate(newPose.TAIL, this.currentAnim.tailAnimation(), data, progress);
 		}
 		return newPose;
+	}
+	private static float approachNumber(float start, float limit, float delta) {
+		float wrappedStart = wrapRadians(start);
+		float wrappedDelta = wrapRadians(delta);
+		float dir = Math.signum(wrappedDelta);
+		if (Math.abs(wrappedStart) > limit)
+			return start;
+
+		if(Math.abs(wrappedStart + wrappedDelta) > limit)
+			return limit * dir;
+
+		return start + delta;
 	}
 	private float calculateProgress(MarioPlayerData data) {
 		ProgressHandler handler = this.currentAnim.progressHandler();
@@ -366,6 +384,9 @@ public class MarioAnimationData {
 
 		this.headPitchOffset = pitch;
 		this.headYawOffset = yaw;
+//		this.headPitchOffset = 0;
+//		this.headYawOffset = HALF_PI;
+
 
 		matrixStack.multiply(RotationAxis.POSITIVE_Y.rotation(yaw));
 		if(pitch != 0 || roll != 0) {
@@ -426,6 +447,7 @@ public class MarioAnimationData {
 			PlayerEntityModel<? extends LivingEntity> model =
 					((PlayerEntityRenderer) MinecraftClient.getInstance().getEntityRenderDispatcher().getRenderer(mario)).getModel();
 			setupArrangement(model.head, this.HEAD);
+			this.HEAD.pitch = MathHelper.clamp(this.HEAD.pitch, HALF_PI * -0.99F, HALF_PI * 0.99F);
 			setupArrangement(model.body, this.TORSO);
 			setupArrangement(model.rightArm, this.RIGHT_ARM);
 			setupArrangement(model.leftArm, this.LEFT_ARM);
@@ -436,14 +458,5 @@ public class MarioAnimationData {
 			this.TAIL.setAngles(oldTailArrangement.pitch, oldTailArrangement.yaw, oldTailArrangement.roll);
 //			mario.mqm$getAnimationData().setupTailArrangement(this.TAIL, mario.mqm$getMarioData(), model.body.pivotX, model.body.pivotY, model.body.pivotZ, model.body.pitch, model.body.yaw, model.body.roll, model.rightLeg.pitch, model.leftLeg.pitch);
 		}
-	}
-
-	public void launderCapeTransformations(MatrixStack matrices) {
-//		matrices.translate(0.0, 0.0, 0.0);
-//		matrices.translate(0F, 0F, 0F);
-//		matrices.translate(this.TAIL_ARRANGEMENT.x / 16F, this.TAIL_ARRANGEMENT.y / 16F, this.TAIL_ARRANGEMENT.z / 16F);
-//		matrices.multiply(RotationAxis.POSITIVE_X.rotation(this.TAIL_ARRANGEMENT.pitch));
-//		matrices.multiply(RotationAxis.POSITIVE_Y.rotation(this.TAIL_ARRANGEMENT.yaw));
-//		matrices.multiply(RotationAxis.POSITIVE_Z.rotation(this.TAIL_ARRANGEMENT.roll));
 	}
 }

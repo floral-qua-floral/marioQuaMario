@@ -88,8 +88,8 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 		return null;
 	}
 
-	public static final CharaStat FALL_ACCEL = new CharaStat(-0.0125, NORMAL_GRAVITY, POWER_UP);
-	public static final CharaStat FALL_SPEED = new CharaStat(-0.4, TERMINAL_VELOCITY, POWER_UP);
+	public static final CharaStat FALL_ACCEL = new CharaStat(-0.0135, NORMAL_GRAVITY, POWER_UP);
+	public static final CharaStat FALL_SPEED = new CharaStat(-0.445, TERMINAL_VELOCITY, POWER_UP);
 
 	public static void tailWaggleTick(IMarioClientData data) {
 		if(data.getVars(ActionTimerVars.class).actionTimer++ % 4 == 0)
