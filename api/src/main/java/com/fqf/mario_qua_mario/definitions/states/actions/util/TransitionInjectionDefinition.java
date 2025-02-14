@@ -21,14 +21,4 @@ public record TransitionInjectionDefinition(
 		BEFORE,
 		AFTER
 	}
-
-	public enum ActionCategory {
-		ANY,
-		GENERIC,
-		GROUNDED,
-		AIRBORNE,
-		AQUATIC,
-		WALLBOUND,
-		MOUNTED
-	}
 }

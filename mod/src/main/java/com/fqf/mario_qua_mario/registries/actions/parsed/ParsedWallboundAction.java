@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.registries.actions.parsed;
 
 import com.fqf.mario_qua_mario.definitions.states.actions.WallboundActionDefinition;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.ActionCategory;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
@@ -28,8 +29,8 @@ public class ParsedWallboundAction extends AbstractParsedAction {
 	}
 
 	@Override
-	protected TransitionInjectionDefinition.ActionCategory getCategory() {
-		return TransitionInjectionDefinition.ActionCategory.WALLBOUND;
+	protected ActionCategory getCategory() {
+		return ActionCategory.WALLBOUND;
 	}
 
 	@Override

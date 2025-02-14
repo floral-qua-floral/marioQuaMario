@@ -15,7 +15,6 @@ import com.fqf.mario_qua_mario.mariodata.IMarioData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.CharaStat;
-import com.fqf.mario_qua_mario.util.TailSpinActionTimerVars;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -122,7 +121,7 @@ public class DuckSlide implements GroundedActionDefinition {
 				new TransitionInjectionDefinition(
 						TransitionInjectionDefinition.InjectionPlacement.BEFORE,
 						MarioQuaMarioContent.makeID("duck_waddle"),
-						TransitionInjectionDefinition.ActionCategory.GROUNDED,
+						ActionCategory.GROUNDED,
 						(nearbyTransition, castableHelper) -> nearbyTransition.variate(
 								MarioQuaMarioContent.makeID("duck_slide"),
 								data -> {
@@ -138,7 +137,7 @@ public class DuckSlide implements GroundedActionDefinition {
 				new TransitionInjectionDefinition(
 						TransitionInjectionDefinition.InjectionPlacement.BEFORE,
 						MarioQuaMarioContent.makeID("duck_waddle"),
-						TransitionInjectionDefinition.ActionCategory.AIRBORNE,
+						ActionCategory.AIRBORNE,
 						(nearbyTransition, castableHelper) -> nearbyTransition.variate(
 								MarioQuaMarioContent.makeID("duck_slide"),
 								data -> {

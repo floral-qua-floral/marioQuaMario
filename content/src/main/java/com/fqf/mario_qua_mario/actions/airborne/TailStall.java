@@ -8,6 +8,7 @@ import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.mariodata.IMarioData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
+import com.fqf.mario_qua_mario.powerups.Raccoon;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.CharaStat;
 import com.fqf.mario_qua_mario.util.MarioContentSFX;
@@ -134,7 +135,7 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 			MarioQuaMarioContent.makeID("tail_stall"),
 			data ->
 					data.hasPower(Powers.TAIL_STALL)
-					&& !data.getMario().isSneaking()
+					&& !data.getMario().isInSneakingPose()
 					&& !data.getActionID().equals(ID)
 					&& !data.getActionID().equals(PJump.ID)
 					&& (data.isServer() || (
@@ -142,15 +143,28 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 							&& data.getInputs().JUMP.isHeld()
 					)),
 			EvaluatorEnvironment.CLIENT_CHECKED,
-			data -> data.setYVel(STALL_THRESHOLD.get(data) * 0.2),
+			data -> {
+				Raccoon.RaccoonVars vars = data.getVars(Raccoon.RaccoonVars.class);
+
+				// If Mario hasn't initiated tail-stalling yet, then set it to its initial value
+				if(vars.stallStartVel == null)
+					vars.stallStartVel = STALL_THRESHOLD.get(data) * 0.2;
+				// If he has, and his current Y velocity is actually higher than the decayed value, then set
+				// the decayed value to his current Y velocity instead.
+				else if(data.getYVel() > vars.stallStartVel)
+					vars.stallStartVel = data.getYVel();
+
+				data.setYVel(vars.stallStartVel);
+			},
 			null
 	);
+	private static final Identifier DUCK_STALL_ID = MarioQuaMarioContent.makeID("tail_stall_duck");
 	private static final TransitionDefinition DUCK_STALL_TRANSITION = STALL_TRANSITION.variate(
-			MarioQuaMarioContent.makeID("tail_stall_duck"),
+			DUCK_STALL_ID,
 			data ->
 					data.hasPower(Powers.TAIL_STALL)
-					&& data.getMario().isSneaking()
-					&& !data.getActionID().equals(ID)
+					&& data.getMario().isInSneakingPose()
+					&& !data.getActionID().equals(DUCK_STALL_ID)
 					&& !data.getActionID().equals(PJump.ID)
 					&& (data.isServer() || (
 							data.getYVel() < STALL_THRESHOLD.get(data)
@@ -162,13 +176,13 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 				new TransitionInjectionDefinition( // TODO: Change this to be after transitions into mqm:ground_pound.
 						TransitionInjectionDefinition.InjectionPlacement.AFTER,
 						MarioQuaMarioContent.makeID("sub_walk"),
-						TransitionInjectionDefinition.ActionCategory.AIRBORNE,
+						ActionCategory.AIRBORNE,
 						(nearbyTransition, castableHelper) -> STALL_TRANSITION
 				),
 				new TransitionInjectionDefinition( // TODO: Change this to be after transitions into mqm:fall or mqm:jump
 						TransitionInjectionDefinition.InjectionPlacement.AFTER,
 						MarioQuaMarioContent.makeID("duck_waddle"),
-						TransitionInjectionDefinition.ActionCategory.AIRBORNE,
+						ActionCategory.AIRBORNE,
 						(nearbyTransition, castableHelper) -> DUCK_STALL_TRANSITION
 				)
 		);

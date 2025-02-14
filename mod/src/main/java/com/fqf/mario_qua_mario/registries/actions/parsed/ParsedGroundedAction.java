@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.registries.actions.parsed;
 
 import com.fqf.mario_qua_mario.definitions.states.actions.GroundedActionDefinition;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.ActionCategory;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
@@ -36,8 +37,8 @@ public class ParsedGroundedAction extends AbstractParsedAction {
 	}
 
 	@Override
-	protected TransitionInjectionDefinition.ActionCategory getCategory() {
-		return TransitionInjectionDefinition.ActionCategory.GROUNDED;
+	protected ActionCategory getCategory() {
+		return ActionCategory.GROUNDED;
 	}
 
 	@Override

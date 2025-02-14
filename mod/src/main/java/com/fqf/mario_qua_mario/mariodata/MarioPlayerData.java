@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.mariodata;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.ActionCategory;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.mario_qua_mario.registries.ParsedMarioState;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
@@ -68,6 +69,9 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	}
 	@Override public Identifier getActionID() {
 		return this.getAction().ID;
+	}
+	@Override public ActionCategory getActionCategory() {
+		return this.getAction().CATEGORY;
 	}
 
 	public boolean setAction(@Nullable AbstractParsedAction fromAction, AbstractParsedAction toAction, long seed, boolean forced, boolean fromCommand) {

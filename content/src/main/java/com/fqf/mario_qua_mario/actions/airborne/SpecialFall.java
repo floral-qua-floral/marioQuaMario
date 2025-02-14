@@ -6,19 +6,11 @@ import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.LimbAnimation;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
-import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
-import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
-import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
-import com.fqf.mario_qua_mario.util.Easing;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Set;
-
-import static com.fqf.mario_qua_mario.util.StatCategory.*;
 
 public class SpecialFall extends Fall implements AirborneActionDefinition {
 	@Override public @NotNull Identifier getID() {
@@ -54,7 +46,7 @@ public class SpecialFall extends Fall implements AirborneActionDefinition {
 				new TransitionInjectionDefinition(
 						TransitionInjectionDefinition.InjectionPlacement.BEFORE,
 						MarioQuaMarioContent.makeID("fall"),
-						TransitionInjectionDefinition.ActionCategory.GROUNDED,
+						ActionCategory.GROUNDED,
 						(nearbyTransition, castableHelper) -> nearbyTransition.variate(this.getID(), data ->
 								data.getYVel() > 0 && nearbyTransition.evaluator().shouldTransition(data))
 				)

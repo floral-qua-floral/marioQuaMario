@@ -1,7 +1,9 @@
 package com.fqf.mario_qua_mario.powerups;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario.actions.airborne.TailStall;
 import com.fqf.mario_qua_mario.definitions.states.PowerUpDefinition;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.ActionCategory;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.*;
 import com.fqf.mario_qua_mario.mariodata.*;
 import com.fqf.mario_qua_mario.util.Easing;
@@ -21,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 public class Raccoon implements PowerUpDefinition {
@@ -80,14 +83,26 @@ public class Raccoon implements PowerUpDefinition {
 		return Set.of();
 	}
 
+	public static class RaccoonVars {
+		public int flightTicks;
+		public @Nullable Double stallStartVel;
+	}
+
 	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
-		return null;
+		return new RaccoonVars();
+	}
+	private void tick(IMarioData data) {
+		RaccoonVars vars = data.getVars(RaccoonVars.class);
+		if (data.getActionCategory() != ActionCategory.AIRBORNE && data.getActionCategory() != ActionCategory.WALLBOUND)
+			vars.stallStartVel = null;
+		else if (vars.stallStartVel != null)
+			vars.stallStartVel = Math.max(vars.stallStartVel + TailStall.FALL_ACCEL.get(data), TailStall.FALL_SPEED.get(data));
 	}
 	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
-
+		tick(data);
 	}
 	@Override public void serverTick(IMarioAuthoritativeData data) {
-
+		tick(data);
 	}
 
 	private abstract static class TailAttack implements AttackInterceptionDefinition {

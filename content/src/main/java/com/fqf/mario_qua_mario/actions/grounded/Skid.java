@@ -132,7 +132,7 @@ public class Skid implements GroundedActionDefinition {
 				new TransitionInjectionDefinition(
 						TransitionInjectionDefinition.InjectionPlacement.BEFORE,
 						MarioQuaMarioContent.makeID("duck_waddle"),
-						TransitionInjectionDefinition.ActionCategory.GROUNDED,
+						ActionCategory.GROUNDED,
 						(nearbyTransition, castableHelper) -> nearbyTransition.variate(
 								MarioQuaMarioContent.makeID("duck_slide"),
 								data -> {
@@ -148,7 +148,7 @@ public class Skid implements GroundedActionDefinition {
 				new TransitionInjectionDefinition(
 						TransitionInjectionDefinition.InjectionPlacement.BEFORE,
 						MarioQuaMarioContent.makeID("duck_waddle"),
-						TransitionInjectionDefinition.ActionCategory.AIRBORNE,
+						ActionCategory.AIRBORNE,
 						(nearbyTransition, castableHelper) -> nearbyTransition.variate(
 								MarioQuaMarioContent.makeID("duck_slide"),
 								data -> {

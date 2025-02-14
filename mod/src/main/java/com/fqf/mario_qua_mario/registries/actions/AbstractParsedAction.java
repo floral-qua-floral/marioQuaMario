@@ -16,6 +16,7 @@ import java.util.*;
 
 public abstract class AbstractParsedAction extends ParsedMarioState {
 	protected final IncompleteActionDefinition ACTION_DEFINITION;
+	public final ActionCategory CATEGORY;
 
 	public final @Nullable PlayermodelAnimation ANIMATION;
 	public final @Nullable CameraAnimationSet CAMERA_ANIMATIONS;
@@ -36,6 +37,7 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 	public AbstractParsedAction(IncompleteActionDefinition definition, HashMap<Identifier, Set<TransitionInjectionDefinition>> allInjections) {
 		super(definition);
 		this.ACTION_DEFINITION = definition;
+		this.CATEGORY = this.getCategory();
 
 		this.ANIMATION = definition.getAnimation(AnimationHelperImpl.INSTANCE);
 		this.CAMERA_ANIMATIONS = definition.getCameraAnimations();
@@ -83,7 +85,7 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 		for(TransitionDefinition definition : transitions) {
 			Set<TransitionInjectionDefinition> relevantInjections = new HashSet<>(allInjections.getOrDefault(definition.targetID(), Set.of()));
 
-			relevantInjections.removeIf(injection -> injection.category() != TransitionInjectionDefinition.ActionCategory.ANY && injection.category() != this.getCategory());
+			relevantInjections.removeIf(injection -> injection.category() != ActionCategory.ANY && injection.category() != this.getCategory());
 
 			MarioQuaMario.LOGGER.info("TRANSITION INJECTIONS RELEVANT TO {}:", definition.targetID());
 			for (TransitionInjectionDefinition relevantInjection : relevantInjections) {
@@ -132,5 +134,5 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 
 	abstract public boolean travelHook(MarioMoveableData data);
 
-	abstract protected TransitionInjectionDefinition.ActionCategory getCategory();
+	abstract protected ActionCategory getCategory();
 }

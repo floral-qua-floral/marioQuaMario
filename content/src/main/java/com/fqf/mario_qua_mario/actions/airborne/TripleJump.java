@@ -3,6 +3,7 @@ package com.fqf.mario_qua_mario.actions.airborne;
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.GroundedActionDefinition;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.ActionCategory;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.*;
@@ -10,7 +11,6 @@ import com.fqf.mario_qua_mario.util.CharaStat;
 import com.fqf.mario_qua_mario.util.Easing;
 import com.fqf.mario_qua_mario.util.MarioVars;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -116,7 +116,7 @@ public class TripleJump extends Jump implements AirborneActionDefinition {
 		return new TransitionInjectionDefinition(
 				TransitionInjectionDefinition.InjectionPlacement.BEFORE,
 				injectNearTransitionsTo,
-				TransitionInjectionDefinition.ActionCategory.GROUNDED,
+				ActionCategory.GROUNDED,
 				(nearbyTransition, castableHelper) -> nearbyTransition.variate(
 						this.getID(),
 						data ->

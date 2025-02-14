@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario.mariodata;
 
+import com.fqf.mario_qua_mario.definitions.states.actions.util.ActionCategory;
 import com.fqf.mario_qua_mario.util.CharaStat;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
@@ -13,6 +14,7 @@ public interface IMarioData {
 
 	boolean isEnabled();
 	Identifier getActionID();
+	ActionCategory getActionCategory();
 	Identifier getPowerUpID();
 	Identifier getCharacterID();
 
