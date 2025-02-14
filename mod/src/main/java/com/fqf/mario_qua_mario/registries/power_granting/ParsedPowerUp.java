@@ -34,7 +34,7 @@ public class ParsedPowerUp extends ParsedPowerGrantingState {
 		this.VOICE_PITCH = definition.getVoicePitch();
 		this.JUMP_PITCH = definition.getJumpPitch();
 
-		this.HEART = definition.getPowerHeart(new PowerHeartHelperImpl(this.ID));
+		this.HEART = definition.getPowerHeart(new PowerHeartHelperImpl(this.RESOURCE_ID));
 
 		this.INTERCEPTIONS = new ArrayList<>();
 		for (AttackInterceptingStateDefinition.AttackInterceptionDefinition interception : definition.getAttackInterceptions(AnimationHelperImpl.INSTANCE)) {

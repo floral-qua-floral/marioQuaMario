@@ -107,6 +107,7 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 	@Override public void travelHook(IMarioTravelData data, AirborneActionHelper helper) {
 		helper.applyGravity(data, FALL_ACCEL, null, FALL_SPEED);
 		drift(data, helper);
+		if(data.getYVel() > FALL_SPEED.get(data)) data.getMario().fallDistance = 0;
 	}
 
 	protected static final TransitionDefinition END_STALLING = new TransitionDefinition(

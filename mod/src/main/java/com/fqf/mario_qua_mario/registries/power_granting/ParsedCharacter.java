@@ -1,13 +1,11 @@
 package com.fqf.mario_qua_mario.registries.power_granting;
 
-import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.definitions.states.CharacterDefinition;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.tom.cpm.shared.io.ModelFile;
 import net.minecraft.entity.Entity;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,8 +16,6 @@ public class ParsedCharacter extends ParsedPowerGrantingState {
 	public final AbstractParsedAction INITIAL_ACTION;
 	public final ParsedPowerUp INITIAL_POWER_UP;
 	public final SoundEvent JUMP_SOUND;
-
-	public final Identifier RESOURCE_ID;
 
 	public final Map<ParsedPowerUp, ModelFile> MODELS;
 
@@ -34,7 +30,6 @@ public class ParsedCharacter extends ParsedPowerGrantingState {
 
 		this.JUMP_SOUND = definition.getJumpSound();
 
-		this.RESOURCE_ID = this.ID.getNamespace().equals("mqm") ? MarioQuaMario.makeResID(this.ID.getPath()) : this.ID;
 		this.MODELS = new HashMap<>();
 	}
 

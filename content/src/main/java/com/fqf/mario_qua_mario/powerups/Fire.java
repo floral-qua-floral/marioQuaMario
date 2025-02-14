@@ -65,7 +65,7 @@ public class Fire implements PowerUpDefinition {
 	}
 
 	@Override public @NotNull PowerHeart getPowerHeart(PowerHeartHelper helper) {
-		return helper.standard("mario_qua_mario", "fire");
+		return helper.auto();
 	}
 
 	@Override public Set<StatModifier> getStatModifiers() {

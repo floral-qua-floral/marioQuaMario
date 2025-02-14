@@ -1,9 +1,11 @@
 package com.fqf.mario_qua_mario.registries.power_granting;
 
+import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.definitions.states.StatAlteringStateDefinition;
 import com.fqf.mario_qua_mario.registries.ParsedMarioState;
 import com.fqf.mario_qua_mario.util.CharaStat;
 import com.fqf.mario_qua_mario.util.StatCategory;
+import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +18,7 @@ public class ParsedPowerGrantingState extends ParsedMarioState {
 	public final float ANIMATION_HEIGHT_FACTOR;
 
 	public final int BUMP_STRENGTH_MODIFIER;
+	public final Identifier RESOURCE_ID;
 
 	private final Set<StatAlteringStateDefinition.StatModifier> STAT_MODIFIERS;
 	private final Map<Set<StatCategory>, Double> STAT_MULTIPLIERS_CACHE = new HashMap<>();
@@ -24,6 +27,7 @@ public class ParsedPowerGrantingState extends ParsedMarioState {
 
 	public ParsedPowerGrantingState(StatAlteringStateDefinition definition) {
 		super(definition);
+		this.RESOURCE_ID = this.ID.getNamespace().equals("mqm") ? MarioQuaMario.makeResID(this.ID.getPath()) : this.ID;
 
 		this.WIDTH_FACTOR = definition.getWidthFactor();
 		this.HEIGHT_FACTOR = definition.getHeightFactor();
