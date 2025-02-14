@@ -22,8 +22,7 @@ public class ParsedGenericAction extends AbstractParsedAction {
 
 	@Override
 	public boolean travelHook(MarioMoveableData data) {
-		this.GENERIC_DEFINITION.travelHook(data);
-		return true;
+		return this.GENERIC_DEFINITION.travelHook(data);
 	}
 
 	@Override

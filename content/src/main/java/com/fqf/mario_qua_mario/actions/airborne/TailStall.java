@@ -136,8 +136,6 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 			data ->
 					data.hasPower(Powers.TAIL_STALL)
 					&& !data.getMario().isInSneakingPose()
-					&& !data.getActionID().equals(ID)
-					&& !data.getActionID().equals(PJump.ID)
 					&& (data.isServer() || (
 							data.getYVel() < STALL_THRESHOLD.get(data)
 							&& data.getInputs().JUMP.isHeld()
@@ -164,25 +162,28 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 			data ->
 					data.hasPower(Powers.TAIL_STALL)
 					&& data.getMario().isInSneakingPose()
-					&& !data.getActionID().equals(DUCK_STALL_ID)
-					&& !data.getActionID().equals(PJump.ID)
 					&& (data.isServer() || (
 							data.getYVel() < STALL_THRESHOLD.get(data)
 							&& data.getInputs().JUMP.isHeld()
 					))
 	);
+	private static final Set<Identifier> NO_STALL_FROM = Set.of(ID, DUCK_STALL_ID, PJump.ID);
+	private static final TransitionInjectionDefinition.InjectionPredicate STALL_INJECTION_PREDICATE =
+			(fromAction, fromCategory, existingTransitions) ->
+					!NO_STALL_FROM.contains(fromAction)
+					&& fromCategory == ActionCategory.AIRBORNE;
 	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
 		return Set.of(
 				new TransitionInjectionDefinition( // TODO: Change this to be after transitions into mqm:ground_pound.
 						TransitionInjectionDefinition.InjectionPlacement.AFTER,
 						MarioQuaMarioContent.makeID("sub_walk"),
-						ActionCategory.AIRBORNE,
+						STALL_INJECTION_PREDICATE,
 						(nearbyTransition, castableHelper) -> STALL_TRANSITION
 				),
 				new TransitionInjectionDefinition( // TODO: Change this to be after transitions into mqm:fall or mqm:jump
 						TransitionInjectionDefinition.InjectionPlacement.AFTER,
 						MarioQuaMarioContent.makeID("duck_waddle"),
-						ActionCategory.AIRBORNE,
+						STALL_INJECTION_PREDICATE,
 						(nearbyTransition, castableHelper) -> DUCK_STALL_TRANSITION
 				)
 		);

@@ -85,7 +85,7 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 		for(TransitionDefinition definition : transitions) {
 			Set<TransitionInjectionDefinition> relevantInjections = new HashSet<>(allInjections.getOrDefault(definition.targetID(), Set.of()));
 
-			relevantInjections.removeIf(injection -> injection.category() != ActionCategory.ANY && injection.category() != this.getCategory());
+			relevantInjections.removeIf(injection -> injection.predicate() != null && !injection.predicate().shouldInject(this.ID, this.CATEGORY, null));
 
 			MarioQuaMario.LOGGER.info("TRANSITION INJECTIONS RELEVANT TO {}:", definition.targetID());
 			for (TransitionInjectionDefinition relevantInjection : relevantInjections) {
