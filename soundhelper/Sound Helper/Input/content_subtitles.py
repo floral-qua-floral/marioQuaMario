@@ -58,10 +58,12 @@ sfx_action = {
   "duck": "Ducking",
   "unduck": "Un-ducking",
   "ground_pound_flip": "Aerial flip",
+  "ground_pound_drop": "Dropping",
   "ground_pound_land": "Ground pounded",
   "swim": "Swimming",
   "swim_paddle": "Swimming",
-  "aquatic_ground_pound_pre": "Aquatic flip",
-  "aquatic_ground_pound": "Ground pounded",
-  "dive": "Diving"
+  "aquatic_ground_pound_flip": "Aquatic flip",
+  "aquatic_ground_pound_drop": "Diving",
+  "aquatic_ground_pound_land": "Ground pounded",
+  "bonk": "Something slams"
 }

@@ -95,6 +95,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 			// Return the standing hitbox if we're trying to evaluate Mario's sneaking hitbox while he can't sneak
 			if(pose == EntityPose.CROUCHING && data.getAction().SNEAKING_RULE == SneakingRule.PROHIBIT)
 				cir.setReturnValue(getBaseDimensions(EntityPose.STANDING));
+			else if(pose == EntityPose.STANDING && data.getAction().SNEAKING_RULE == SneakingRule.FORCE)
+				cir.setReturnValue(getBaseDimensions(EntityPose.CROUCHING));
 			else {
 				float widthFactor = data.getHorizontalScale();
 				float heightFactor = data.getVerticalScale();

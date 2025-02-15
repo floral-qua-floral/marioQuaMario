@@ -1,12 +1,12 @@
-package com.fqf.mario_qua_mario.actions.airborne;
+package com.fqf.mario_qua_mario.actions.power;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.grounded.DuckWaddle;
 import com.fqf.mario_qua_mario.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.SneakingRule;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.SprintingRule;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
@@ -17,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Set;
 
 public class TailStallDucking extends TailStall implements AirborneActionDefinition {
 	@Override public @NotNull Identifier getID() {

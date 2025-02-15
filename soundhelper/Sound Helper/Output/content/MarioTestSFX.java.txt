@@ -7,8 +7,15 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
 public class MarioContentSFX {
+	public static final SoundEvent AQUATIC_GROUND_POUND_DROP = makeActionSound("aquatic_ground_pound_drop");
+	public static final SoundEvent AQUATIC_GROUND_POUND_LAND = makeActionSound("aquatic_ground_pound_land");
+	public static final SoundEvent BONK = makeActionSound("bonk");
 	public static final SoundEvent DUCK = makeActionSound("duck");
+	public static final SoundEvent GROUND_POUND_DROP = makeActionSound("ground_pound_drop");
 	public static final SoundEvent GROUND_POUND_FLIP = makeActionSound("ground_pound_flip");
+	public static final SoundEvent GROUND_POUND_LAND = makeActionSound("ground_pound_land");
+	public static final SoundEvent SWIM = makeActionSound("swim");
+	public static final SoundEvent SWIM_PADDLE = makeActionSound("swim_paddle");
 	public static final SoundEvent UNDUCK = makeActionSound("unduck");
 
 	public static final SoundEvent FLIP = makeMovementSound("flip");

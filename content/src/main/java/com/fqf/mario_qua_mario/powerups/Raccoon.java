@@ -1,7 +1,7 @@
 package com.fqf.mario_qua_mario.powerups;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
-import com.fqf.mario_qua_mario.actions.airborne.TailStall;
+import com.fqf.mario_qua_mario.actions.power.TailStall;
 import com.fqf.mario_qua_mario.definitions.states.PowerUpDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.ActionCategory;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.*;
@@ -23,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 public class Raccoon implements PowerUpDefinition {

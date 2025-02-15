@@ -1,9 +1,8 @@
 package com.fqf.mario_qua_mario.actions.grounded;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
-import com.fqf.mario_qua_mario.actions.airborne.DuckFall;
-import com.fqf.mario_qua_mario.actions.airborne.DuckJump;
-import com.fqf.mario_qua_mario.actions.airborne.TailSpinJump;
+import com.fqf.mario_qua_mario.actions.airborne.Fall;
+import com.fqf.mario_qua_mario.actions.airborne.GroundPoundFlip;
 import com.fqf.mario_qua_mario.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.*;
@@ -11,7 +10,7 @@ import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.mariodata.IMarioData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
-import com.fqf.mario_qua_mario.util.*;
+import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
@@ -20,42 +19,64 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-public class TailSpinGround implements GroundedActionDefinition {
+import static com.fqf.mario_qua_mario.util.StatCategory.*;
+
+public class GroundPoundLand implements GroundedActionDefinition {
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("tail_spin_grounded");
+		return MarioQuaMarioContent.makeID("ground_pound_land");
 	}
 
-	private static final float TICKS_PER_REVOLUTION = 6;
-	public static final PlayermodelAnimation ANIMATION = DuckWaddle.makeDuckAnimation(false, true).variate(
-			null,
-			null,
-			new EntireBodyAnimation(0.5F, (data, arrangement, progress) -> {
-				arrangement.yaw = Easing.LINEAR.ease((data.getVars(TailSpinActionTimerVars.class).actionTimer / TICKS_PER_REVOLUTION) % 1) * 360;
-			}),
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			new LimbAnimation(false, (data, arrangement, progress) -> {
-				arrangement.pitch = MathHelper.clamp(data.getMario().getPitch() - 10, -80, 10);
-			})
-	);
-
+	private static LimbAnimation makeArmAnimation(AnimationHelper helper, int factor) {
+		return new LimbAnimation(false, (data, arrangement, progress) -> {
+			arrangement.addAngles(
+					MathHelper.lerp(progress, -67.75F, 0),
+					0,
+					MathHelper.lerp(progress, factor * -20, 0)
+			);
+			arrangement.addPos(
+					0,
+					MathHelper.lerp(progress, 1, 0),
+					MathHelper.lerp(progress, 2.5F, 0)
+			);
+		});
+	}
+	private static LimbAnimation makeLegAnimation(AnimationHelper helper, int factor) {
+		return new LimbAnimation(false, (data, arrangement, progress) -> {
+			arrangement.addAngles(
+					MathHelper.lerp(progress, -90, 0),
+					MathHelper.lerp(progress, factor * 16.75F, 0),
+					0
+			);
+		});
+	}
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return ANIMATION;
+		return new PlayermodelAnimation(
+				null,
+				new ProgressHandler((data, ticksPassed) -> Math.min(ticksPassed / 10F, 1)),
+				new EntireBodyAnimation(0.5F, (data, arrangement, progress) -> {
+					arrangement.setPos(
+							0,
+							MathHelper.lerp(progress, -8, 0),
+							0
+					);
+					arrangement.pitch = helper.interpolateKeyframes(progress * 2, 0, -70, 0);
+				}),
+				null,
+				null,
+				makeArmAnimation(helper, 1), makeArmAnimation(helper, -1),
+				makeLegAnimation(helper, 1), makeLegAnimation(helper, -1),
+				null
+		);
 	}
-
 	@Override public @Nullable CameraAnimationSet getCameraAnimations() {
 		return null;
 	}
 	@Override public @NotNull SlidingStatus getSlidingStatus() {
-		return SlidingStatus.NOT_SLIDING;
+		return SlidingStatus.SLIDING_SILENT;
 	}
 
 	@Override public @NotNull SneakingRule getSneakingRule() {
-		return SneakingRule.SLIP;
+		return SneakingRule.PROHIBIT;
 	}
 	@Override public @NotNull SprintingRule getSprintingRule() {
 		return SprintingRule.PROHIBIT;
@@ -69,54 +90,38 @@ public class TailSpinGround implements GroundedActionDefinition {
 	}
 
 	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
-		return new TailSpinActionTimerVars(data);
-	}
-	public static void commonTick(IMarioData data) {
-		data.getVars(TailSpinActionTimerVars.class).actionTimer++;
+		return new ActionTimerVars();
 	}
 	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
-		commonTick(data);
+
 	}
 	@Override public void serverTick(IMarioAuthoritativeData data) {
-		commonTick(data);
+
 	}
 	@Override public void travelHook(IMarioTravelData data, GroundedActionHelper helper) {
-		helper.applyDrag(data, CharaStat.ZERO, CharaStat.ZERO,
-				data.getInputs().getForwardInput(), data.getInputs().getStrafeInput(), DuckSlide.SLIDE_REDIRECTION);
-	}
-
-	public static boolean doneSpinning(IMarioData data) {
-		return data.getVars(TailSpinActionTimerVars.class).actionTimer >= 2 * TICKS_PER_REVOLUTION;
+		data.setForwardStrafeVel(0, 0);
+		ActionTimerVars.get(data).actionTimer++;
 	}
 
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(GroundedActionHelper helper) {
 		return List.of(
 				new TransitionDefinition(
-						MarioQuaMarioContent.makeID("duck_waddle"),
-						data -> !data.hasPower(Powers.TAIL_ATTACK)
-								|| doneSpinning(data),
+						MarioQuaMarioContent.makeID("sub_walk"),
+						data -> ActionTimerVars.get(data).actionTimer > 10,
 						EvaluatorEnvironment.COMMON
 				)
 		);
 	}
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(GroundedActionHelper helper) {
-		return List.of(
-				DuckWaddle.UNDUCK,
-				DuckJump.makeDuckJumpTransition(helper).variate(
-						MarioQuaMarioContent.makeID("tail_spin_jump"),
-						null, null,
-						data -> {
-							helper.performJump(data, TailSpinJump.JUMP_VEL, null);
-						},
-						(data, isSelf, seed) -> {
-							data.playJumpSound(seed);
-						}
-				)
-		);
+		return List.of();
 	}
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(GroundedActionHelper helper) {
 		return List.of(
-				DuckFall.DUCK_FALL.variate(MarioQuaMarioContent.makeID("tail_spin_fall"), null)
+				Fall.FALL.variate(
+						MarioQuaMarioContent.makeID("ground_pound_drop"),
+						data -> data.getInputs().DUCK.isHeld() && Fall.FALL.evaluator().shouldTransition(data)
+				),
+				Fall.FALL
 		);
 	}
 

@@ -1,6 +1,9 @@
-package com.fqf.mario_qua_mario.actions.airborne;
+package com.fqf.mario_qua_mario.actions.power;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario.actions.airborne.Fall;
+import com.fqf.mario_qua_mario.actions.airborne.GroundPoundFlip;
+import com.fqf.mario_qua_mario.actions.airborne.PJump;
 import com.fqf.mario_qua_mario.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.*;
@@ -89,7 +92,7 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 		return null;
 	}
 
-	public static final CharaStat FALL_ACCEL = new CharaStat(-0.0135, NORMAL_GRAVITY, POWER_UP);
+	public static final CharaStat FALL_ACCEL = new CharaStat(-0.013775, NORMAL_GRAVITY, POWER_UP);
 	public static final CharaStat FALL_SPEED = new CharaStat(-0.445, TERMINAL_VELOCITY, POWER_UP);
 
 	public static void tailWaggleTick(IMarioClientData data) {
@@ -127,11 +130,12 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 	}
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {
 		return List.of(
+				GroundPoundFlip.GROUND_POUND,
 				END_STALLING
 		);
 	}
 
-	public static final CharaStat STALL_THRESHOLD = new CharaStat(-0.299, THRESHOLD, POWER_UP);
+	public static final CharaStat STALL_THRESHOLD = new CharaStat(-0.31, THRESHOLD, POWER_UP);
 	private static final TransitionDefinition STALL_TRANSITION = new TransitionDefinition(
 			MarioQuaMarioContent.makeID("tail_stall"),
 			data ->
@@ -175,15 +179,21 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 					&& fromCategory == ActionCategory.AIRBORNE;
 	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
 		return Set.of(
-				new TransitionInjectionDefinition( // TODO: Change this to be after transitions into mqm:ground_pound.
+				new TransitionInjectionDefinition(
 						TransitionInjectionDefinition.InjectionPlacement.AFTER,
-						MarioQuaMarioContent.makeID("sub_walk"),
+						MarioQuaMarioContent.makeID("ground_pound_flip"),
 						STALL_INJECTION_PREDICATE,
 						(nearbyTransition, castableHelper) -> STALL_TRANSITION
 				),
-				new TransitionInjectionDefinition( // TODO: Change this to be after transitions into mqm:fall or mqm:jump
+				new TransitionInjectionDefinition(
 						TransitionInjectionDefinition.InjectionPlacement.AFTER,
-						MarioQuaMarioContent.makeID("duck_waddle"),
+						MarioQuaMarioContent.makeID("fall"),
+						STALL_INJECTION_PREDICATE,
+						(nearbyTransition, castableHelper) -> DUCK_STALL_TRANSITION
+				),
+				new TransitionInjectionDefinition(
+						TransitionInjectionDefinition.InjectionPlacement.AFTER,
+						MarioQuaMarioContent.makeID("jump"),
 						STALL_INJECTION_PREDICATE,
 						(nearbyTransition, castableHelper) -> DUCK_STALL_TRANSITION
 				)

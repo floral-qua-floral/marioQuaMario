@@ -28,8 +28,9 @@
 			"com.fqf.mario_qua_mario.actions.grounded.PRun",
 			"com.fqf.mario_qua_mario.actions.grounded.DuckWaddle",
 			"com.fqf.mario_qua_mario.actions.grounded.DuckSlide",
-			"com.fqf.mario_qua_mario.actions.grounded.RetroIdle",
-			"com.fqf.mario_qua_mario.actions.grounded.TailSpinGround"
+			"com.fqf.mario_qua_mario.actions.grounded.GroundPoundLand",
+			"com.fqf.mario_qua_mario.actions.power.RetroIdle",
+			"com.fqf.mario_qua_mario.actions.power.TailSpinGround"
 		],
 		"mqm-airborne-actions": [
 			"com.fqf.mario_qua_mario.actions.airborne.Fall",
@@ -41,12 +42,13 @@
 			"com.fqf.mario_qua_mario.actions.airborne.DoubleJump",
 			"com.fqf.mario_qua_mario.actions.airborne.TripleJump",
 			"com.fqf.mario_qua_mario.actions.airborne.LongJump",
-
-			"com.fqf.mario_qua_mario.actions.airborne.TailStall",
-			"com.fqf.mario_qua_mario.actions.airborne.TailStallDucking",
-			"com.fqf.mario_qua_mario.actions.airborne.TailFly",
-			"com.fqf.mario_qua_mario.actions.airborne.TailSpinFall",
-			"com.fqf.mario_qua_mario.actions.airborne.TailSpinJump"
+			"com.fqf.mario_qua_mario.actions.airborne.GroundPoundFlip",
+			"com.fqf.mario_qua_mario.actions.airborne.GroundPoundDrop",
+			"com.fqf.mario_qua_mario.actions.power.TailStall",
+			"com.fqf.mario_qua_mario.actions.power.TailStallDucking",
+			"com.fqf.mario_qua_mario.actions.power.TailFly",
+			"com.fqf.mario_qua_mario.actions.power.TailSpinFall",
+			"com.fqf.mario_qua_mario.actions.power.TailSpinJump"
 		],
 		"mqm-aquatic-actions": [
 		],

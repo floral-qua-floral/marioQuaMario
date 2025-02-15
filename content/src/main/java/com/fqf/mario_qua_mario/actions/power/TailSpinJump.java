@@ -1,9 +1,9 @@
-package com.fqf.mario_qua_mario.actions.airborne;
+package com.fqf.mario_qua_mario.actions.power;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario.actions.airborne.Jump;
 import com.fqf.mario_qua_mario.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.mario_qua_mario.util.CharaStat;
-import com.fqf.mario_qua_mario.util.StatCategory;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 

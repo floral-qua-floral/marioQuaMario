@@ -97,6 +97,7 @@ public class Jump extends Fall implements AirborneActionDefinition {
 	}
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {
 		return List.of(
+				GroundPoundFlip.GROUND_POUND,
 				helper.makeJumpCapTransition(this, this.getJumpCapThreshold())
 		);
 	}

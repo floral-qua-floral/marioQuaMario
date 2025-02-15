@@ -1,14 +1,56 @@
 {
+	"sfx.action.aquatic_ground_pound_drop": {
+		"subtitle": "subtitles.mario_qua_mario.action.aquatic_ground_pound_drop",
+		"sounds": [
+			"mario_qua_mario:sfx/action/aquatic_ground_pound_drop"
+		]
+	},
+	"sfx.action.aquatic_ground_pound_land": {
+		"subtitle": "subtitles.mario_qua_mario.action.aquatic_ground_pound_land",
+		"sounds": [
+			"mario_qua_mario:sfx/action/aquatic_ground_pound_land"
+		]
+	},
+	"sfx.action.bonk": {
+		"subtitle": "subtitles.mario_qua_mario.action.bonk",
+		"sounds": [
+			"mario_qua_mario:sfx/action/bonk"
+		]
+	},
 	"sfx.action.duck": {
 		"subtitle": "subtitles.mario_qua_mario.action.duck",
 		"sounds": [
 			"mario_qua_mario:sfx/action/duck"
 		]
 	},
+	"sfx.action.ground_pound_drop": {
+		"subtitle": "subtitles.mario_qua_mario.action.ground_pound_drop",
+		"sounds": [
+			"mario_qua_mario:sfx/action/ground_pound_drop"
+		]
+	},
 	"sfx.action.ground_pound_flip": {
 		"subtitle": "subtitles.mario_qua_mario.action.ground_pound_flip",
 		"sounds": [
 			"mario_qua_mario:sfx/action/ground_pound_flip"
+		]
+	},
+	"sfx.action.ground_pound_land": {
+		"subtitle": "subtitles.mario_qua_mario.action.ground_pound_land",
+		"sounds": [
+			"mario_qua_mario:sfx/action/ground_pound_land"
+		]
+	},
+	"sfx.action.swim": {
+		"subtitle": "subtitles.mario_qua_mario.action.swim",
+		"sounds": [
+			"mario_qua_mario:sfx/action/swim"
+		]
+	},
+	"sfx.action.swim_paddle": {
+		"subtitle": "subtitles.mario_qua_mario.action.swim_paddle",
+		"sounds": [
+			"mario_qua_mario:sfx/action/swim_paddle"
 		]
 	},
 	"sfx.action.unduck": {

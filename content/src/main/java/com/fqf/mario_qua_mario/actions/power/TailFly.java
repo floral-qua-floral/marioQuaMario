@@ -1,13 +1,14 @@
-package com.fqf.mario_qua_mario.actions.airborne;
+package com.fqf.mario_qua_mario.actions.power;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario.actions.airborne.Fall;
+import com.fqf.mario_qua_mario.actions.airborne.GroundPoundFlip;
+import com.fqf.mario_qua_mario.actions.airborne.PJump;
 import com.fqf.mario_qua_mario.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.CameraAnimationSet;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.ProgressHandler;
-import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.mariodata.IMarioData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
@@ -41,7 +42,7 @@ public class TailFly extends PJump implements AirborneActionDefinition {
 		);
 	}
 
-	public static final CharaStat FLIGHT_VEL = new CharaStat(0.3, JUMP_VELOCITY, POWER_UP);
+	public static final CharaStat FLIGHT_VEL = new CharaStat(0.346, JUMP_VELOCITY, POWER_UP);
 
 	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
 		return new ActionTimerVars();
@@ -65,6 +66,7 @@ public class TailFly extends PJump implements AirborneActionDefinition {
 	}
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {
 		return List.of(
+				GroundPoundFlip.GROUND_POUND,
 				new TransitionDefinition(
 						MarioQuaMarioContent.makeID("p_jump"),
 						data -> !data.getInputs().JUMP.isHeld(),

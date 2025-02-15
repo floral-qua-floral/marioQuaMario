@@ -387,7 +387,11 @@ public class MarioAnimationData {
 //		this.headPitchOffset = 0;
 //		this.headYawOffset = HALF_PI;
 
-
+		matrixStack.translate(
+				MathHelper.lerp(tickDelta, prevTickArrangement.x, thisTickArrangement.x) / 16F,
+				MathHelper.lerp(tickDelta, prevTickArrangement.y, thisTickArrangement.y) / 16F,
+				MathHelper.lerp(tickDelta, prevTickArrangement.z, thisTickArrangement.z) / 16F
+		);
 		matrixStack.multiply(RotationAxis.POSITIVE_Y.rotation(yaw));
 		if(pitch != 0 || roll != 0) {
 			double pivotHeightFactor;

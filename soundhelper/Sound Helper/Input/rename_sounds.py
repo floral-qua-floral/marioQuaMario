@@ -18,9 +18,12 @@ sfx = {
   "stomp_heavy": "heavy",
   "stomp_yoshi": "yoshi",
 
-  "pound": "ground_pound_land",
+  "pound_land": "ground_pound_land",
+  "drumroll": "ground_pound_drop",
   "pound_twirl": "ground_pound_flip",
   "smash4_tanookifly": "tail_fly",
   "mk7_tanookiattack": "tail_whip",
-  "mk7_tanookileaf": "tail_empower"
+  "mk7_tanookileaf": "tail_empower",
+
+  "dive": "aquatic_ground_pound_drop"
 }

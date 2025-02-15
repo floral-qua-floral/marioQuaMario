@@ -1,14 +1,20 @@
-package com.fqf.mario_qua_mario.actions.airborne;
+package com.fqf.mario_qua_mario.actions.power;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario.actions.airborne.Fall;
+import com.fqf.mario_qua_mario.actions.grounded.DuckWaddle;
 import com.fqf.mario_qua_mario.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.*;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.CameraAnimationSet;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.mariodata.IMarioData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario.util.CharaStat;
+import com.fqf.mario_qua_mario.util.Powers;
+import com.fqf.mario_qua_mario.util.TailSpinActionTimerVars;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,21 +24,15 @@ import java.util.Set;
 
 import static com.fqf.mario_qua_mario.util.StatCategory.*;
 
-public class Fall implements AirborneActionDefinition {
+public class TailSpinFall implements AirborneActionDefinition {
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("fall");
+		return MarioQuaMarioContent.makeID("tail_spin_fall");
 	}
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return new PlayermodelAnimation(
-				null, null,
-				null,
-				null, null,
-				null, null,
-				null, null,
-				null
-		);
+		return TailSpinGround.ANIMATION;
 	}
+
 	@Override public @Nullable CameraAnimationSet getCameraAnimations() {
 		return null;
 	}
@@ -41,10 +41,10 @@ public class Fall implements AirborneActionDefinition {
 	}
 
 	@Override public @NotNull SneakingRule getSneakingRule() {
-		return SneakingRule.PROHIBIT;
+		return SneakingRule.ALLOW;
 	}
 	@Override public @NotNull SprintingRule getSprintingRule() {
-		return SprintingRule.IF_ALREADY_SPRINTING;
+	return SprintingRule.PROHIBIT;
 	}
 
 	@Override public @Nullable BumpType getBumpType() {
@@ -54,67 +54,53 @@ public class Fall implements AirborneActionDefinition {
 		return null;
 	}
 
-	public static final CharaStat FALL_ACCEL = new CharaStat(-0.115, NORMAL_GRAVITY);
-	public static final CharaStat FALL_SPEED = new CharaStat(-3.25, TERMINAL_VELOCITY);
+	public static final CharaStat FALL_ACCEL = Fall.FALL_ACCEL.variate(0.575, DUCKING, NORMAL_GRAVITY, POWER_UP);
+	public static final CharaStat FALL_SPEED = Fall.FALL_SPEED.variate(0.6, DUCKING, TERMINAL_VELOCITY, POWER_UP);
 
-	public static final CharaStat FORWARD_DRIFT_ACCEL = new CharaStat(0.045, DRIFTING, FORWARD, ACCELERATION);
-	public static final CharaStat FORWARD_DRIFT_SPEED = new CharaStat(0.275, DRIFTING, FORWARD, SPEED);
+	public static CharaStat REDUCED_FORWARD_ACCEL = Fall.FORWARD_DRIFT_ACCEL.variate(0.5);
+	public static CharaStat REDUCED_BACKWARD_ACCEL = Fall.BACKWARD_DRIFT_ACCEL.variate(0.5);
+	public static CharaStat REDUCED_STRAFE_ACCEL = Fall.STRAFE_DRIFT_ACCEL.variate(0.5);
 
-	public static final CharaStat BACKWARD_DRIFT_ACCEL = new CharaStat(0.055, DRIFTING, BACKWARD, ACCELERATION);
-	public static final CharaStat BACKWARD_DRIFT_SPEED = new CharaStat(0.2, DRIFTING, BACKWARD, SPEED);
-
-	public static final CharaStat STRAFE_DRIFT_ACCEL = new CharaStat(0.065, DRIFTING, STRAFE, ACCELERATION);
-	public static final CharaStat STRAFE_DRIFT_SPEED = new CharaStat(0.25, DRIFTING, STRAFE, SPEED);
-
-	public static final CharaStat DRIFT_REDIRECTION = new CharaStat(6.0, DRIFTING, REDIRECTION);
-
-	public static void drift(IMarioTravelData data, AirborneActionHelper helper) {
-		helper.airborneAccel(
-				data,
-				FORWARD_DRIFT_ACCEL, FORWARD_DRIFT_SPEED,
-				BACKWARD_DRIFT_ACCEL, BACKWARD_DRIFT_SPEED,
-				STRAFE_DRIFT_ACCEL, STRAFE_DRIFT_SPEED,
-				data.getInputs().getForwardInput(), data.getInputs().getStrafeInput(), DRIFT_REDIRECTION
-		);
-	}
-
-	public static final TransitionDefinition FALL = new TransitionDefinition(
-			MarioQuaMarioContent.makeID("fall"),
-			data -> !data.getMario().isOnGround(),
-			EvaluatorEnvironment.CLIENT_ONLY
-	);
+	public static CharaStat REDUCED_REDIRECTION = Fall.DRIFT_REDIRECTION.variate(0.66);
 
 	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
-		return null;
+		return new TailSpinActionTimerVars(data);
 	}
 	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
-
+		TailSpinGround.commonTick(data);
 	}
 	@Override public void serverTick(IMarioAuthoritativeData data) {
-		
+		TailSpinGround.commonTick(data);
 	}
 	@Override public void travelHook(IMarioTravelData data, AirborneActionHelper helper) {
 		helper.applyGravity(data, FALL_ACCEL, null, FALL_SPEED);
-		drift(data, helper);
+		helper.airborneAccel(data,
+				REDUCED_FORWARD_ACCEL, Fall.FORWARD_DRIFT_SPEED,
+				REDUCED_BACKWARD_ACCEL, Fall.BACKWARD_DRIFT_SPEED,
+				REDUCED_STRAFE_ACCEL, Fall.STRAFE_DRIFT_SPEED,
+				data.getForwardVel(), data.getStrafeVel(), REDUCED_REDIRECTION
+		);
 	}
 
-	public static final TransitionDefinition LANDING = new TransitionDefinition(
-			MarioQuaMarioContent.makeID("sub_walk"),
-			data -> data.getMario().isOnGround(),
-			EvaluatorEnvironment.CLIENT_CHECKED
-	);
-
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(AirborneActionHelper helper) {
-		return List.of();
+		return List.of(
+				new TransitionDefinition(
+						MarioQuaMarioContent.makeID("duck_fall"),
+						data -> !data.hasPower(Powers.TAIL_ATTACK),
+						EvaluatorEnvironment.COMMON
+				)
+		);
 	}
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {
 		return List.of(
-				GroundPoundFlip.GROUND_POUND
+				DuckWaddle.UNDUCK.variate(MarioQuaMarioContent.makeID("fall"), null)
 		);
 	}
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {
 		return List.of(
-				LANDING
+				Fall.LANDING.variate(MarioQuaMarioContent.makeID("tail_spin_grounded"),
+						data -> !TailSpinGround.doneSpinning(data) && Fall.LANDING.evaluator().shouldTransition(data)),
+				Fall.LANDING.variate(MarioQuaMarioContent.makeID("duck_waddle"), null)
 		);
 	}
 

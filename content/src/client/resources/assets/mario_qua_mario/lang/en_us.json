@@ -47,8 +47,15 @@
   "subtitles.mario_qua_mario.stomp.spin": "Something gets stomped",
   "subtitles.mario_qua_mario.stomp.yoshi": "Something gets crushed",
 
+  "subtitles.mario_qua_mario.action.aquatic_ground_pound_land": "Ground pounded",
+  "subtitles.mario_qua_mario.action.bonk": "Something slams",
+  "subtitles.mario_qua_mario.action.aquatic_ground_pound_drop": "Diving",
+  "subtitles.mario_qua_mario.action.ground_pound_drop": "Dropping",
   "subtitles.mario_qua_mario.action.duck": "Ducking",
+  "subtitles.mario_qua_mario.action.ground_pound_land": "Ground pounded",
   "subtitles.mario_qua_mario.action.ground_pound_flip": "Aerial flip",
+  "subtitles.mario_qua_mario.action.swim": "Swimming",
+  "subtitles.mario_qua_mario.action.swim_paddle": "Swimming",
   "subtitles.mario_qua_mario.action.unduck": "Un-ducking",
 
   "subtitles.mario_qua_mario.voice.luigi.bonk": "Luigi bonks",

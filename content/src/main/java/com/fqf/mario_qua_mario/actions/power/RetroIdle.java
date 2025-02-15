@@ -1,6 +1,8 @@
-package com.fqf.mario_qua_mario.actions.grounded;
+package com.fqf.mario_qua_mario.actions.power;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario.actions.grounded.SubWalk;
+import com.fqf.mario_qua_mario.actions.grounded.WalkRun;
 import com.fqf.mario_qua_mario.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionDefinition;
@@ -10,7 +12,6 @@ import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.LimbAni
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.mario_qua_mario.util.Powers;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
