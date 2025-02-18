@@ -202,4 +202,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 	private void ensureCapeVisibility(PlayerModelPart modelPart, CallbackInfoReturnable<Boolean> cir) {
 		cir.setReturnValue(true);
 	}
+
+	// TODO override the OTHER updateLimbs instead!
+//	@Override
+//	protected void updateLimbs(float posDelta) {
+//		super.updateLimbs((posDelta - (float) this.mqm$getMarioData().getFluidPushingVel().horizontalLength()) * 1.25F);
+//	}
 }

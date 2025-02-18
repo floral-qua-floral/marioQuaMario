@@ -12,6 +12,7 @@ import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.Progres
 import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.mariodata.IMarioData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
+import com.fqf.mario_qua_mario.powerups.Raccoon;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.CharaStat;
 import com.fqf.mario_qua_mario.util.Powers;
@@ -42,7 +43,7 @@ public class TailFly extends PJump implements AirborneActionDefinition {
 		);
 	}
 
-	public static final CharaStat FLIGHT_VEL = new CharaStat(0.346, JUMP_VELOCITY, POWER_UP);
+	public static final CharaStat FLIGHT_VEL = new CharaStat(0.41, JUMP_VELOCITY, POWER_UP);
 
 	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
 		return new ActionTimerVars();
@@ -51,6 +52,7 @@ public class TailFly extends PJump implements AirborneActionDefinition {
 		TailStall.tailWaggleTick(data);
 	}
 	@Override public void travelHook(IMarioTravelData data, AirborneActionHelper helper) {
+		data.getVars(Raccoon.RaccoonVars.class).flightTicks--;
 		data.setYVel(FLIGHT_VEL.get(data));
 		Fall.drift(data, helper);
 	}
@@ -59,7 +61,7 @@ public class TailFly extends PJump implements AirborneActionDefinition {
 		return List.of(
 				new TransitionDefinition(
 						MarioQuaMarioContent.makeID("special_fall"),
-						data -> !data.hasPower(Powers.TAIL_STALL),
+						data -> !data.hasPower(Powers.TAIL_STALL) || data.getVars(Raccoon.RaccoonVars.class).flightTicks <= 0,
 						EvaluatorEnvironment.COMMON
 				)
 		);

@@ -172,7 +172,7 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 							&& data.getInputs().JUMP.isHeld()
 					))
 	);
-	private static final Set<Identifier> NO_STALL_FROM = Set.of(ID, DUCK_STALL_ID, PJump.ID);
+	private static final Set<Identifier> NO_STALL_FROM = Set.of(ID, DUCK_STALL_ID);
 	private static final TransitionInjectionDefinition.InjectionPredicate STALL_INJECTION_PREDICATE =
 			(fromAction, fromCategory, existingTransitions) ->
 					!NO_STALL_FROM.contains(fromAction)

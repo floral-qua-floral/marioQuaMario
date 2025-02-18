@@ -92,10 +92,15 @@ public class Raccoon implements PowerUpDefinition {
 	}
 	private void tick(IMarioData data) {
 		RaccoonVars vars = data.getVars(RaccoonVars.class);
-		if (data.getActionCategory() != ActionCategory.AIRBORNE && data.getActionCategory() != ActionCategory.WALLBOUND)
+		if(data.getActionCategory() != ActionCategory.AIRBORNE && data.getActionCategory() != ActionCategory.WALLBOUND) {
 			vars.stallStartVel = null;
-		else if (vars.stallStartVel != null)
-			vars.stallStartVel = Math.max(vars.stallStartVel + TailStall.FALL_ACCEL.get(data), TailStall.FALL_SPEED.get(data));
+			vars.flightTicks = 75;
+		}
+		else {
+			if(vars.stallStartVel != null)
+				vars.stallStartVel = Math.max(vars.stallStartVel + TailStall.FALL_ACCEL.get(data), TailStall.FALL_SPEED.get(data));
+			vars.flightTicks--;
+		}
 	}
 	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
 		tick(data);

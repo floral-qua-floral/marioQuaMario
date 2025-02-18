@@ -9,6 +9,7 @@ import com.fqf.mario_qua_mario.definitions.states.actions.util.SneakingRule;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.SprintingRule;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.*;
+import com.fqf.mario_qua_mario.powerups.Raccoon;
 import com.fqf.mario_qua_mario.util.Powers;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -60,6 +61,7 @@ public class PJump extends Jump implements AirborneActionDefinition {
 						MarioQuaMarioContent.makeID("tail_fly"),
 						data ->
 								data.hasPower(Powers.TAIL_FLY)
+								&& data.getVars(Raccoon.RaccoonVars.class).flightTicks > 0
 								&& (data.isServer() || (
 										data.getYVel() < TailStall.STALL_THRESHOLD.get(data)
 										&& data.getInputs().JUMP.isHeld()
