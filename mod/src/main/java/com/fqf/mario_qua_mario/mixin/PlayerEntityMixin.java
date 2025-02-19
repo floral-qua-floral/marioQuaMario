@@ -19,10 +19,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerModelPart;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -203,9 +205,55 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 		cir.setReturnValue(true);
 	}
 
-	// TODO override the OTHER updateLimbs instead!
-//	@Override
-//	protected void updateLimbs(float posDelta) {
-//		super.updateLimbs((posDelta - (float) this.mqm$getMarioData().getFluidPushingVel().horizontalLength()) * 1.25F);
-//	}
+	@Override
+	public void updateLimbs(boolean flutter) {
+		Vec3d fluidMotionVector = this.mqm$getMarioData().getFluidPushingVel();
+		this.prevX -= fluidMotionVector.x;
+		this.prevY -= fluidMotionVector.y;
+		this.prevZ -= fluidMotionVector.z;
+		super.updateLimbs(flutter);
+		this.prevX += fluidMotionVector.x;
+		this.prevY += fluidMotionVector.y;
+		this.prevZ += fluidMotionVector.z;
+	}
+
+	@Unique
+	public final double CLIPPING_LENIENCY = 0.33;
+
+	@Override
+	public void move(MovementType movementType, Vec3d movement) {
+		if(movementType == MovementType.SELF || movementType == MovementType.PLAYER) {
+			if(movement.y > 0 && this.mqm$getMarioData().doMarioTravel()) {
+				// If Mario's horizontal velocity is responsible for him clipping a ceiling, then just cancel his horizontal movement
+				if(
+						(movement.x != 0 || movement.z != 0)
+								&& getWorld().isSpaceEmpty(this, getBoundingBox().offset(movement.x, 0, movement.z))
+								&& !getWorld().isSpaceEmpty(this, getBoundingBox().offset(movement))) {
+					movement = new Vec3d(0, movement.y, 0);
+				}
+
+				else if(!getWorld().isSpaceEmpty(this, getBoundingBox().offset(0, movement.y, 0))) {
+					Box stretchedBox = getBoundingBox().stretch(0, movement.y, 0);
+					if(getWorld().isSpaceEmpty(this, stretchedBox.offset(CLIPPING_LENIENCY, 0, 0))) {
+						movement = new Vec3d(movement.x - CLIPPING_LENIENCY, movement.y, movement.z);
+						move(MovementType.SELF, new Vec3d(CLIPPING_LENIENCY, 0, 0));
+					}
+					if(getWorld().isSpaceEmpty(this, stretchedBox.offset(-CLIPPING_LENIENCY, 0, 0))) {
+						movement = new Vec3d(movement.x + CLIPPING_LENIENCY, movement.y, movement.z);
+						move(MovementType.SELF, new Vec3d(-CLIPPING_LENIENCY, 0, 0));
+					}
+					if(getWorld().isSpaceEmpty(this, stretchedBox.offset(0, 0, CLIPPING_LENIENCY))) {
+						movement = new Vec3d(movement.x, movement.y, movement.z - CLIPPING_LENIENCY);
+						move(MovementType.SELF, new Vec3d(0, 0, CLIPPING_LENIENCY));
+					}
+					if(getWorld().isSpaceEmpty(this, stretchedBox.offset(0, 0, -CLIPPING_LENIENCY))) {
+						movement = new Vec3d(movement.x, movement.y, movement.z + CLIPPING_LENIENCY);
+						move(MovementType.SELF, new Vec3d(0, 0, -CLIPPING_LENIENCY));
+					}
+				}
+			}
+		}
+
+		super.move(movementType, movement);
+	}
 }

@@ -133,7 +133,7 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.INPUT);
 
 		this.applyModifiedVelocity();
-		this.getMario().move(MovementType.SELF, this.getMario().getVelocity());
+		this.moveWithFluidPushing();
 
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
 
