@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
@@ -27,29 +28,12 @@ public class MarioEventListeners {
 		});
 
 		ServerLivingEntityEvents.ALLOW_DEATH.register((livingEntity, damageSource, amount) -> {
+			if(damageSource.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY)) return true;
+
+			MarioQuaMario.LOGGER.info("Allow Death event on {}", livingEntity);
 			if(!(livingEntity instanceof ServerPlayerEntity mario)) return true;
 
-			MarioServerPlayerData data = mario.mqm$getMarioData();
-			if(!data.isEnabled()) return true;
-
-			Identifier reversionTarget = data.getPowerUp().REVERSION_TARGET_ID;
-			if(reversionTarget == null) return true;
-
-			if(livingEntity.getWorld().getGameRules().getBoolean(MarioGamerules.REVERT_TO_SMALL)) {
-				MarioQuaMario.LOGGER.info("Forcing maximum possible reversion!");
-				while(Objects.requireNonNull(RegistryManager.POWER_UPS.get(reversionTarget)).REVERSION_TARGET_ID != null) {
-					reversionTarget = Objects.requireNonNull(RegistryManager.POWER_UPS.get(reversionTarget)).REVERSION_TARGET_ID;
-				}
-			}
-			if(!data.revertTo(reversionTarget)) {
-				MarioQuaMario.LOGGER.error(
-						"{}'s current power up ({}) should revert to {}, however this is illegal for their character! ({})",
-						mario.getName().getString(), data.getPowerUpID(), reversionTarget, data.getCharacterID()
-				);
-				return true;
-			}
-			mario.setHealth(mario.getMaxHealth());
-			return false;
+			return mario.mqm$getMarioData().executeReversion() != MarioServerPlayerData.ReversionResult.SUCCESS;
 		});
 
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {

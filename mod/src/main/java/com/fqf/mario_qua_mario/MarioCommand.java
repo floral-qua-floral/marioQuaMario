@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario;
 
+import com.fqf.mario_qua_mario.mariodata.MarioServerPlayerData;
 import com.fqf.mario_qua_mario.packets.MarioAttackInterceptionPackets;
 import com.fqf.mario_qua_mario.packets.MarioDataPackets;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
@@ -16,9 +17,6 @@ import net.minecraft.command.argument.BlockPosArgumentType;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.RegistryEntryReferenceArgumentType;
 import net.minecraft.entity.Entity;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -115,6 +113,13 @@ public class MarioCommand {
 						.then(argument("mario", EntityArgumentType.player())
 							.then(makeInterceptionTypeFork(true, registryAccess))
 							.then(makeInterceptionTypeFork(false, registryAccess))
+						)
+					)
+					.then(literal("reversion")
+						.requires(source -> source.hasPermissionLevel(2))
+						.executes(context -> executeReversion(context, false))
+						.then(argument("mario", EntityArgumentType.player())
+							.executes(context -> executeReversion(context, true))
 						)
 					)
 				)
@@ -288,5 +293,24 @@ public class MarioCommand {
 		return sendFeedback(context, successful ?
 				"Successfully made " + mario.getName().getString() + " execute transition \"" + fromAction.ID + "->" + toAction.ID + "\"."
 				: "No transition exists from " + fromAction.ID + " to " + toAction.ID + "! :(", successful);
+	}
+
+	private static int executeReversion(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
+		ServerPlayerEntity mario = getPlayerFromCmd(context, playerArgumentGiven);
+		MarioServerPlayerData data = mario.mqm$getMarioData();
+
+		Identifier formerPowerUp = data.getPowerUpID();
+		MarioServerPlayerData.ReversionResult result = data.executeReversion();
+		Identifier newPowerUp = data.getPowerUpID();
+
+		String marioName = mario.getName().getString();
+		return sendFeedback(context, switch(result) {
+			case SUCCESS -> "Successfully reverted " + marioName + " from form " + formerPowerUp + " to " + newPowerUp + ".";
+			case NO_WEAKER_FORM -> "Unable to execute reversion; " + marioName + "'s current power-up form (" + formerPowerUp + ") has no reversion target.";
+			case ILLEGAL_TARGET ->
+					"Unable to execute reversion; " + marioName + "'s current power-up (" + formerPowerUp + ") reverts into form "
+					+ data.getPowerUp().REVERSION_TARGET_ID + ", for which their character (" + data.getCharacterID() + ") has no playermodel.";
+			case NOT_ENABLED -> "Unable to execute reversion; " + marioName + " is not playing as a character.";
+		}, result == MarioServerPlayerData.ReversionResult.SUCCESS);
 	}
 }

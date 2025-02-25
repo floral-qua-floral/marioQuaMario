@@ -10,6 +10,7 @@ import com.fqf.mario_qua_mario.registries.actions.TransitionPhase;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedCharacter;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import com.fqf.mario_qua_mario.util.MarioCPMCompat;
+import com.fqf.mario_qua_mario.util.MarioGamerules;
 import com.tom.cpm.shared.io.ModelFile;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -43,6 +44,37 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 	public void initialApply() {
 		super.initialApply();
 //		this.syncToClient(this.getMario());
+	}
+
+	public enum ReversionResult {
+		SUCCESS,
+		NO_WEAKER_FORM,
+		ILLEGAL_TARGET,
+		NOT_ENABLED
+	}
+	public ReversionResult executeReversion() {
+		if(!this.isEnabled()) return ReversionResult.NOT_ENABLED;
+
+		MarioQuaMario.LOGGER.info("Hello?!");
+
+		ServerPlayerEntity mario = this.getMario();
+		Identifier reversionTarget = this.getPowerUp().REVERSION_TARGET_ID;
+		if(reversionTarget == null) return ReversionResult.NO_WEAKER_FORM;
+
+		if(mario.getWorld().getGameRules().getBoolean(MarioGamerules.REVERT_TO_SMALL)) {
+			while(Objects.requireNonNull(RegistryManager.POWER_UPS.get(reversionTarget)).REVERSION_TARGET_ID != null) {
+				reversionTarget = Objects.requireNonNull(RegistryManager.POWER_UPS.get(reversionTarget)).REVERSION_TARGET_ID;
+			}
+		}
+		if(!this.revertTo(reversionTarget)) {
+			MarioQuaMario.LOGGER.error(
+					"{}'s current power up ({}) should revert to {}, however this is illegal for their character! ({})",
+					mario.getName().getString(), this.getPowerUpID(), reversionTarget, this.getCharacterID()
+			);
+			return ReversionResult.ILLEGAL_TARGET;
+		}
+		mario.setHealth(mario.getMaxHealth());
+		return ReversionResult.SUCCESS;
 	}
 
 	@Override
