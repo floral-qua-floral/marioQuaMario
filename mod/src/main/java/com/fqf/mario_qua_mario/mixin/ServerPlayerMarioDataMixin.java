@@ -32,7 +32,7 @@ public class ServerPlayerMarioDataMixin implements AdvMarioServerDataHolder, IMa
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void constructorHook(MinecraftServer server, ServerWorld world, GameProfile profile, SyncedClientOptions clientOptions, CallbackInfo ci) {
-		this.mqm$setMarioData(this.marioServerData);
+//		this.mqm$setMarioData(this.marioServerData);
 	}
 
 	@Override public @NotNull MarioServerPlayerData mqm$getMarioData() {

@@ -1,17 +1,14 @@
 package com.fqf.mario_qua_mario.util;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.mariodata.MarioServerPlayerData;
-import com.fqf.mario_qua_mario.registries.RegistryManager;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
-
-import java.util.Objects;
 
 public class MarioEventListeners {
 	public static void register() {
@@ -20,11 +17,12 @@ public class MarioEventListeners {
 
 		ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
 			MarioServerPlayerData data = newPlayer.mqm$getMarioData();
+			MarioServerPlayerData oldData = oldPlayer.mqm$getMarioData();
+			if(oldData.isEnabled()) data.assignCharacter(oldData.getCharacterID());
 
-			data.setEnabled(oldPlayer.mqm$getMarioData().isEnabled());
-			data.assignCharacter(oldPlayer.mqm$getMarioData().getCharacterID());
-			data.assignPowerUp(data.getCharacter().INITIAL_POWER_UP.ID);
-			data.assignAction(data.getCharacter().INITIAL_ACTION.ID);
+//			data.setEnabled(oldPlayer.mqm$getMarioData().isEnabled());
+//			data.assignPowerUp(data.getCharacter().INITIAL_POWER_UP.ID);
+//			data.assignAction(data.getCharacter().INITIAL_ACTION.ID);
 		});
 
 		ServerLivingEntityEvents.ALLOW_DEATH.register((livingEntity, damageSource, amount) -> {
@@ -33,7 +31,7 @@ public class MarioEventListeners {
 			MarioQuaMario.LOGGER.info("Allow Death event on {}", livingEntity);
 			if(!(livingEntity instanceof ServerPlayerEntity mario)) return true;
 
-			return mario.mqm$getMarioData().executeReversion() != MarioServerPlayerData.ReversionResult.SUCCESS;
+			return mario.mqm$getMarioData().executeReversion() != IMarioAuthoritativeData.ReversionResult.SUCCESS;
 		});
 
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {

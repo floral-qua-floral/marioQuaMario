@@ -57,6 +57,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
 	@Inject(method = "isInSneakingPose", at = @At("HEAD"), cancellable = true)
 	private void preventSneakPose(CallbackInfoReturnable<Boolean> cir) {
+		if(!mqm$getMarioData().isEnabled()) return;
 		switch(mqm$getMarioData().getAction().SNEAKING_RULE) {
 			case PROHIBIT -> cir.setReturnValue(false);
 			case FORCE -> cir.setReturnValue(true);

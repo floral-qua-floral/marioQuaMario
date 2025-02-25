@@ -20,6 +20,7 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -27,13 +28,12 @@ import java.util.*;
 public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	protected MarioPlayerData() {
 		MarioQuaMario.LOGGER.info("Created new MarioData: {}", this);
+//		this.disable();
 
-		this.enabled = true;
-
-		this.character = Objects.requireNonNull(RegistryManager.CHARACTERS.get(MarioQuaMario.makeID("mario")),
-				"Mario isn't registered; can't initialize player!");
-		this.action = this.character.INITIAL_ACTION;
-		this.powerUp = this.character.INITIAL_POWER_UP;
+//		this.character = Objects.requireNonNull(RegistryManager.CHARACTERS.get(MarioQuaMario.makeID("mario")),
+//				"Mario isn't registered; can't initialize player!");
+//		this.action = this.character.INITIAL_ACTION;
+//		this.powerUp = this.character.INITIAL_POWER_UP;
 
 //		this.action = RegistryManager.ACTIONS.get(MarioQuaMario.makeID("debug"));
 //		this.setActionTransitionlessInternal(this.action);
@@ -41,7 +41,6 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 //		this.character = null;
 	}
 
-	private boolean enabled;
 	private static final Identifier FALL_RESISTANCE_ID = MarioQuaMario.makeID("mario_fall_resistance");
 	private static final EntityAttributeModifier FALL_RESISTANCE = new EntityAttributeModifier(
 			FALL_RESISTANCE_ID, 8, EntityAttributeModifier.Operation.ADD_VALUE
@@ -52,11 +51,15 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 			ATTACK_SLOWDOWN_ID, -0.5, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
 	);
 	@Override public boolean isEnabled() {
-		return this.enabled;
+		return this.character != null;
 	}
-	public void setEnabledInternal(boolean enabled) {
-		this.enabled = enabled;
-
+	public void disable() {
+		this.character = null;
+		this.powerUp = null;
+		this.action = null;
+		this.updatePassiveUniversalTraits(false);
+	}
+	public void updatePassiveUniversalTraits(boolean enabled) {
 		EntityAttributeInstance safeFallAttributeInstance = this.getMario().getAttributeInstance(EntityAttributes.GENERIC_SAFE_FALL_DISTANCE);
 		EntityAttributeInstance attackSpeedAttributeInstance = this.getMario().getAttributeInstance(EntityAttributes.GENERIC_ATTACK_SPEED);
 		assert safeFallAttributeInstance != null && attackSpeedAttributeInstance != null;
@@ -74,7 +77,7 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 		return this.action;
 	}
 	@Override public Identifier getActionID() {
-		return this.getAction().ID;
+		return this.isEnabled() ? this.getAction().ID : null;
 	}
 	@Override public ActionCategory getActionCategory() {
 		return this.getAction().CATEGORY;
@@ -88,7 +91,7 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	}
 	public void setActionTransitionless(AbstractParsedAction action) {
 		this.resetAnimation = true;
-		this.prevAnimation = this.action.ANIMATION;
+		this.prevAnimation = this.action == null ? null : this.action.ANIMATION;
 		this.setupCustomVars(this.action, action);
 		this.action = action;
 		this.getMario().calculateDimensions();
@@ -99,7 +102,7 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 		return this.powerUp;
 	}
 	@Override public Identifier getPowerUpID() {
-		return this.getPowerUp().ID;
+		return this.isEnabled() ? this.getPowerUp().ID : null;
 	}
 
 	public boolean setPowerUp(ParsedPowerUp newPowerUp, boolean isReversion, long seed) {
@@ -117,21 +120,30 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 		return this.character;
 	}
 	@Override public Identifier getCharacterID() {
-		return this.getCharacter().ID;
+		return this.isEnabled() ? this.getCharacter().ID : null;
 	}
 
-	public void setCharacter(ParsedCharacter character) {
+	public void setCharacter(@NotNull ParsedCharacter character) {
+		MarioQuaMario.LOGGER.info("1: MarioPlayerData.setCharacter: {}", character.ID);
 		this.setupCustomVars(this.character, character);
+		MarioQuaMario.LOGGER.info("2: MarioPlayerData.setCharacter: {}", character.ID);
 		this.character = character;
+		this.powerUp = character.INITIAL_POWER_UP;
+		this.action = character.INITIAL_ACTION;
 		this.setActionTransitionless(character.INITIAL_ACTION);
+		MarioQuaMario.LOGGER.info("3: MarioPlayerData.setCharacter: {}", character.ID);
 		this.setPowerUpTransitionless(character.INITIAL_POWER_UP);
+		MarioQuaMario.LOGGER.info("4: MarioPlayerData.setCharacter: {}", character.ID);
 		updateCharacterFormCombo();
+		MarioQuaMario.LOGGER.info("5: MarioPlayerData.setCharacter: {}", character.ID);
+		this.updatePassiveUniversalTraits(true);
+		MarioQuaMario.LOGGER.info("6: MarioPlayerData.setCharacter: {}", character.ID);
 	}
 
 	public void setupCustomVars(ParsedMarioState oldThing, ParsedMarioState newThing) {
 		Object newThingVars = newThing.makeCustomThing(this);
 		Class<?> newThingVarsClass = newThingVars == null ? null : newThingVars.getClass();
-		Class<?> oldThingVarsClass = oldThing.getLastCustomVarsClass();
+		Class<?> oldThingVarsClass = oldThing == null ? null : oldThing.getLastCustomVarsClass();
 
 		if(newThingVarsClass != null)
 			this.customVars.put(newThingVarsClass, newThingVars);
@@ -151,13 +163,13 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	}
 
 	public void initialApply() {
-		this.setEnabledInternal(this.isEnabled());
-		this.setActionTransitionless(this.action);
-		this.setCharacter(this.character);
-		this.setPowerUpTransitionless(this.powerUp);
+		this.disable();
+//		this.updatePassiveUniversalTraits(this.isEnabled());
+//		this.setActionTransitionless(this.action);
+//		this.setCharacter(this.character);
+//		this.setPowerUpTransitionless(this.powerUp);
 	}
 	protected void loadFromNbtBeforeNetworkHandler(boolean enabled, ParsedPowerUp powerUp, ParsedCharacter character) {
-		this.enabled = enabled;
 		this.powerUp = powerUp;
 		this.character = character;
 	}

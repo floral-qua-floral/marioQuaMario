@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario;
 
+import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.mariodata.MarioServerPlayerData;
 import com.fqf.mario_qua_mario.packets.MarioAttackInterceptionPackets;
 import com.fqf.mario_qua_mario.packets.MarioDataPackets;
@@ -300,17 +301,17 @@ public class MarioCommand {
 		MarioServerPlayerData data = mario.mqm$getMarioData();
 
 		Identifier formerPowerUp = data.getPowerUpID();
-		MarioServerPlayerData.ReversionResult result = data.executeReversion();
+		IMarioAuthoritativeData.ReversionResult result = data.executeReversion();
 		Identifier newPowerUp = data.getPowerUpID();
 
 		String marioName = mario.getName().getString();
 		return sendFeedback(context, switch(result) {
 			case SUCCESS -> "Successfully reverted " + marioName + " from form " + formerPowerUp + " to " + newPowerUp + ".";
 			case NO_WEAKER_FORM -> "Unable to execute reversion; " + marioName + "'s current power-up form (" + formerPowerUp + ") has no reversion target.";
-			case ILLEGAL_TARGET ->
+			case MISSING_PLAYERMODEL ->
 					"Unable to execute reversion; " + marioName + "'s current power-up (" + formerPowerUp + ") reverts into form "
 					+ data.getPowerUp().REVERSION_TARGET_ID + ", for which their character (" + data.getCharacterID() + ") has no playermodel.";
 			case NOT_ENABLED -> "Unable to execute reversion; " + marioName + " is not playing as a character.";
-		}, result == MarioServerPlayerData.ReversionResult.SUCCESS);
+		}, result == IMarioAuthoritativeData.ReversionResult.SUCCESS);
 	}
 }

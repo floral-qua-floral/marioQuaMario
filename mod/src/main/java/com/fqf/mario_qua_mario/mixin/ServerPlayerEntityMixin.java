@@ -38,22 +38,22 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 	public void readCustomDataFromNbt(NbtCompound nbt) {
 		super.readCustomDataFromNbt(nbt);
 
-		if(nbt.contains(MarioQuaMario.MOD_DATA_KEY, NbtElement.COMPOUND_TYPE)) {
-			NbtCompound persistentData = nbt.getCompound(MarioQuaMario.MOD_DATA_KEY);
-
-			MarioQuaMario.LOGGER.info("Reading player NBT:\nEnabled: {}\nPower-up: {}\nCharacter: {}",
-					persistentData.getBoolean("Enabled"),
-					persistentData.getString("PowerUp"),
-					persistentData.getString("Character"));
-
-			MarioServerPlayerData data = mqm$getMarioData();
-			if(networkHandler != null) {
-				data.setEnabled(persistentData.getBoolean("Enabled"));
-				data.assignCharacter(getCharacterID(nbt));
-				data.assignPowerUp(getPowerUpID(nbt));
-			}
-			else data.preInitialApply(persistentData.getBoolean("Enabled"), getPowerUp(nbt), getCharacter(nbt));
-		}
+//		if(nbt.contains(MarioQuaMario.MOD_DATA_KEY, NbtElement.COMPOUND_TYPE)) {
+//			NbtCompound persistentData = nbt.getCompound(MarioQuaMario.MOD_DATA_KEY);
+//
+//			MarioQuaMario.LOGGER.info("Reading player NBT:\nEnabled: {}\nPower-up: {}\nCharacter: {}",
+//					persistentData.getBoolean("Enabled"),
+//					persistentData.getString("PowerUp"),
+//					persistentData.getString("Character"));
+//
+//			MarioServerPlayerData data = mqm$getMarioData();
+//			if(networkHandler != null) {
+////				data.setEnabled(persistentData.getBoolean("Enabled"));
+//				data.assignCharacter(getCharacterID(nbt));
+//				data.assignPowerUp(getPowerUpID(nbt));
+//			}
+//			else data.preInitialApply(persistentData.getBoolean("Enabled"), getPowerUp(nbt), getCharacter(nbt));
+//		}
 	}
 
 	@Unique

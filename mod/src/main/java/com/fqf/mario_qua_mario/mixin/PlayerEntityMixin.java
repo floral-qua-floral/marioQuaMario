@@ -43,7 +43,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 
 	@Inject(method = "tick", at = @At("HEAD"))
 	private void tickHook(CallbackInfo ci) {
-		this.mqm$getMarioData().tick();
+		MarioPlayerData data = this.mqm$getMarioData();
+		if(data.isEnabled()) data.tick();
 	}
 
 	@Inject(method = "travel", at = @At("HEAD"), cancellable = true)
@@ -56,14 +57,15 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 
 	@Override
 	protected boolean stepOnBlock(BlockPos pos, BlockState state, boolean playSound, boolean emitEvent, Vec3d movement) {
-		return switch (this.mqm$getMarioData().getAction().SLIDING_STATUS) {
+		return switch(this.mqm$getMarioData().isEnabled() ? this.mqm$getMarioData().getAction().SLIDING_STATUS : null) {
 			case SLIDING, SLIDING_SILENT, SKIDDING -> false;
-			default -> super.stepOnBlock(pos, state, playSound, emitEvent, movement);
+			case null, default -> super.stepOnBlock(pos, state, playSound, emitEvent, movement);
 		};
 	}
 
 	@Override
 	protected void playStepSounds(BlockPos pos, BlockState state) {
+		if(!this.mqm$getMarioData().isEnabled()) return;
 		switch (this.mqm$getMarioData().getAction().SLIDING_STATUS) {
 			case SLIDING, SLIDING_SILENT, SKIDDING -> {}
 			default -> super.playStepSounds(pos, state);
@@ -126,7 +128,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 	@Inject(method = "tickMovement", at = @At("TAIL"))
 	private void preventViewBobbing(CallbackInfo ci) {
 		MarioPlayerData data = mqm$getMarioData();
-		if(data.isClient() && data.getAction().SLIDING_STATUS != SlidingStatus.NOT_SLIDING)
+		if(data.isClient() && data.isEnabled() && data.getAction().SLIDING_STATUS != SlidingStatus.NOT_SLIDING)
 			strideDistance = prevStrideDistance * 0.6F;
 	}
 
@@ -164,24 +166,24 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 	public void writeCustomDataToNbt(NbtCompound nbt) {
 		super.writeCustomDataToNbt(nbt);
 
-		NbtCompound persistentData = new NbtCompound();
-		MarioPlayerData data = mqm$getMarioData();
-
-		persistentData.putBoolean("Enabled", data.isEnabled());
-		persistentData.putString("PowerUp", data.getPowerUpID().toString());
-		persistentData.putString("Character", data.getCharacterID().toString());
-
-		MarioQuaMario.LOGGER.info("Wrote player NBT:\nEnabled: {}\nPower-up: {}\nCharacter: {}",
-				persistentData.getBoolean("Enabled"),
-				persistentData.getString("PowerUp"),
-				persistentData.getString("Character"));
-
-		nbt.put(MarioQuaMario.MOD_DATA_KEY, persistentData);
+//		NbtCompound persistentData = new NbtCompound();
+//		MarioPlayerData data = mqm$getMarioData();
+//
+//		persistentData.putBoolean("Enabled", data.isEnabled());
+//		persistentData.putString("PowerUp", data.getPowerUpID().toString());
+//		persistentData.putString("Character", data.getCharacterID().toString());
+//
+//		MarioQuaMario.LOGGER.info("Wrote player NBT:\nEnabled: {}\nPower-up: {}\nCharacter: {}",
+//				persistentData.getBoolean("Enabled"),
+//				persistentData.getString("PowerUp"),
+//				persistentData.getString("Character"));
+//
+//		nbt.put(MarioQuaMario.MOD_DATA_KEY, persistentData);
 	}
 
 	@Override
 	public boolean isInSneakingPose() {
-		return switch(mqm$getMarioData().getAction().SNEAKING_RULE) {
+		return switch(mqm$getMarioData().isEnabled() ? mqm$getMarioData().getAction().SNEAKING_RULE : SneakingRule.ALLOW) {
 			case ALLOW, SLIP -> super.isInSneakingPose();
 			case PROHIBIT -> false;
 			case FORCE -> true;
@@ -207,6 +209,11 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 
 	@Override
 	public void updateLimbs(boolean flutter) {
+		if(!this.mqm$getMarioData().isEnabled()) {
+			super.updateLimbs(flutter);
+			return;
+		}
+
 		Vec3d fluidMotionVector = this.mqm$getMarioData().getFluidPushingVel();
 		this.prevX -= fluidMotionVector.x;
 		this.prevY -= fluidMotionVector.y;

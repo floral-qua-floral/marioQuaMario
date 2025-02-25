@@ -12,7 +12,6 @@ import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import com.fqf.mario_qua_mario.util.MarioCPMCompat;
 import com.fqf.mario_qua_mario.util.MarioGamerules;
 import com.tom.cpm.shared.io.ModelFile;
-import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
@@ -46,40 +45,9 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 //		this.syncToClient(this.getMario());
 	}
 
-	public enum ReversionResult {
-		SUCCESS,
-		NO_WEAKER_FORM,
-		ILLEGAL_TARGET,
-		NOT_ENABLED
-	}
-	public ReversionResult executeReversion() {
-		if(!this.isEnabled()) return ReversionResult.NOT_ENABLED;
-
-		MarioQuaMario.LOGGER.info("Hello?!");
-
-		ServerPlayerEntity mario = this.getMario();
-		Identifier reversionTarget = this.getPowerUp().REVERSION_TARGET_ID;
-		if(reversionTarget == null) return ReversionResult.NO_WEAKER_FORM;
-
-		if(mario.getWorld().getGameRules().getBoolean(MarioGamerules.REVERT_TO_SMALL)) {
-			while(Objects.requireNonNull(RegistryManager.POWER_UPS.get(reversionTarget)).REVERSION_TARGET_ID != null) {
-				reversionTarget = Objects.requireNonNull(RegistryManager.POWER_UPS.get(reversionTarget)).REVERSION_TARGET_ID;
-			}
-		}
-		if(!this.revertTo(reversionTarget)) {
-			MarioQuaMario.LOGGER.error(
-					"{}'s current power up ({}) should revert to {}, however this is illegal for their character! ({})",
-					mario.getName().getString(), this.getPowerUpID(), reversionTarget, this.getCharacterID()
-			);
-			return ReversionResult.ILLEGAL_TARGET;
-		}
-		mario.setHealth(mario.getMaxHealth());
-		return ReversionResult.SUCCESS;
-	}
-
 	@Override
-	public void setEnabledInternal(boolean enabled) {
-		super.setEnabledInternal(enabled);
+	public void updatePassiveUniversalTraits(boolean enabled) {
+		super.updatePassiveUniversalTraits(enabled);
 		if(enabled) this.updatePlayerModel();
 		else MarioCPMCompat.getCommonAPI().resetPlayerModel(PlayerEntity.class, this.getMario());
 	}
@@ -200,85 +168,119 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 		};
 	}
 
-	public void syncToClient(ServerPlayerEntity toWhom) {
-		this.setEnabled(this.isEnabled());
-		MarioDataPackets.assignCharacterS2C(this.getMario(), this.getCharacter());
-		MarioDataPackets.assignPowerUpS2C(this.getMario(), this.getPowerUp());
-		MarioDataPackets.assignActionS2C(this.getMario(), true, this.getAction());
-//		MarioDataPackets.updatePlayermodelS2C(this.getMario());
-	}
+//	public void syncToClient(ServerPlayerEntity toWhom) {
+//		this.setEnabled(this.isEnabled());
+//		MarioDataPackets.assignCharacterS2C(this.getMario(), this.getCharacter());
+//		MarioDataPackets.assignPowerUpS2C(this.getMario(), this.getPowerUp());
+//		MarioDataPackets.assignActionS2C(this.getMario(), true, this.getAction());
+////		MarioDataPackets.updatePlayermodelS2C(this.getMario());
+//	}
 
 	// CUTOFF FOR IMarioAuthoritativeData IMPLEMENTATION:---------------------------------------------------------------
 	@Override public void setEnabled(boolean enable) {
 
 	}
 
-	@Override public boolean transitionToAction(Identifier actionID) {
+	@Override public ActionTransitionResult transitionToAction(Identifier actionID) {
+		if(!this.isEnabled()) return ActionTransitionResult.NOT_ENABLED;
 		long seed = RandomSeed.getSeed();
 		AbstractParsedAction toAction = Objects.requireNonNull(RegistryManager.ACTIONS.get(actionID),
 				"Target action (" + actionID + ") doesn't exist!");
 		if(this.setAction(this.getAction(), toAction, seed, false, false)) {
 			MarioDataPackets.transitionToActionS2C(this.getMario(), true, this.getAction(), toAction, seed);
+			return ActionTransitionResult.SUCCESS;
 		}
-		return false;
+		return ActionTransitionResult.NO_SUCH_TRANSITION;
 	}
-	@Override public boolean transitionToAction(String actionID) {
+	@Override public ActionTransitionResult transitionToAction(String actionID) {
 		return this.transitionToAction(Identifier.of(actionID));
 	}
 
-	@Override public void assignAction(Identifier actionID) {
+	@Override public ActionChangeOperationResult assignAction(Identifier actionID) {
+		if(!this.isEnabled()) return ActionChangeOperationResult.NOT_ENABLED;
 		AbstractParsedAction newAction = Objects.requireNonNull(RegistryManager.ACTIONS.get(actionID),
 				"Target action (" + actionID + ") doesn't exist!");
 		this.setActionTransitionless(newAction);
 		MarioDataPackets.assignActionS2C(this.getMario(), true, newAction);
+		return ActionChangeOperationResult.SUCCESS;
 	}
-	@Override public void assignAction(String actionID) {
-		this.assignAction(Identifier.of(actionID));
+	@Override public ActionChangeOperationResult assignAction(String actionID) {
+		return this.assignAction(Identifier.of(actionID));
 	}
 
-	@Override public boolean empowerTo(Identifier powerUpID) {
+	@Override public PowerChangeOperationResult empowerTo(Identifier powerUpID) {
+		if(!this.isEnabled()) return PowerChangeOperationResult.NOT_ENABLED;
 		ParsedPowerUp newPowerUp = Objects.requireNonNull(RegistryManager.POWER_UPS.get(powerUpID),
 				"Target power-up (" + powerUpID + ") doesn't exist!");
 
 		long seed = RandomSeed.getSeed();
-		if(!this.setPowerUp(newPowerUp, false, seed)) return false;
+		if(!this.setPowerUp(newPowerUp, false, seed)) return PowerChangeOperationResult.MISSING_PLAYERMODEL;
 		MarioDataPackets.empowerRevertS2C(this.getMario(), newPowerUp, false, seed);
-		return true;
+		return PowerChangeOperationResult.SUCCESS;
 	}
-	@Override public boolean empowerTo(String powerUpID) {
+	@Override public PowerChangeOperationResult empowerTo(String powerUpID) {
 		return this.empowerTo(Identifier.of(powerUpID));
 	}
 
-	@Override public boolean revertTo(Identifier powerUpID) {
+	@Override
+	public ReversionResult executeReversion() {
+		if(!this.isEnabled()) return ReversionResult.NOT_ENABLED;
+
+		ServerPlayerEntity mario = this.getMario();
+		Identifier reversionTarget = this.getPowerUp().REVERSION_TARGET_ID;
+		if(reversionTarget == null) return ReversionResult.NO_WEAKER_FORM;
+
+		if(mario.getWorld().getGameRules().getBoolean(MarioGamerules.REVERT_TO_SMALL)) {
+			while(Objects.requireNonNull(RegistryManager.POWER_UPS.get(reversionTarget)).REVERSION_TARGET_ID != null) {
+				reversionTarget = Objects.requireNonNull(RegistryManager.POWER_UPS.get(reversionTarget)).REVERSION_TARGET_ID;
+			}
+		}
+		if(this.revertTo(reversionTarget) == PowerChangeOperationResult.MISSING_PLAYERMODEL) {
+			MarioQuaMario.LOGGER.warn(
+					"{}'s current power up ({}) should revert to {}, however this is illegal for their character! ({})",
+					mario.getName().getString(), this.getPowerUpID(), reversionTarget, this.getCharacterID()
+			);
+			return ReversionResult.MISSING_PLAYERMODEL;
+		}
+		mario.setHealth(mario.getMaxHealth());
+		return ReversionResult.SUCCESS;
+	}
+
+	@Override public PowerChangeOperationResult revertTo(Identifier powerUpID) {
+		if(!this.isEnabled()) return PowerChangeOperationResult.NOT_ENABLED;
 		ParsedPowerUp newPowerUp = Objects.requireNonNull(RegistryManager.POWER_UPS.get(powerUpID),
 				"Target power-up (" + powerUpID + ") doesn't exist!");
 
 		long seed = RandomSeed.getSeed();
-		if(!this.setPowerUp(newPowerUp, true, seed)) return false;
+		if(!this.setPowerUp(newPowerUp, true, seed)) return PowerChangeOperationResult.MISSING_PLAYERMODEL;
 		MarioDataPackets.empowerRevertS2C(this.getMario(), newPowerUp, true, seed);
-		return true;
+		return PowerChangeOperationResult.SUCCESS;
 	}
-	@Override public boolean revertTo(String powerUpID) {
+	@Override public PowerChangeOperationResult revertTo(String powerUpID) {
 		return this.revertTo(Identifier.of(powerUpID));
 	}
 
-	@Override public boolean assignPowerUp(Identifier powerUpID) {
+	@Override public PowerChangeOperationResult assignPowerUp(Identifier powerUpID) {
+		if(!this.isEnabled()) return PowerChangeOperationResult.NOT_ENABLED;
 		ParsedPowerUp newPowerUp = Objects.requireNonNull(RegistryManager.POWER_UPS.get(powerUpID),
 				"Target power-up (" + powerUpID + ") doesn't exist!");
 
-		if(!this.setPowerUpTransitionless(newPowerUp)) return false;
+		if(!this.setPowerUpTransitionless(newPowerUp)) return PowerChangeOperationResult.MISSING_PLAYERMODEL;
 		MarioDataPackets.assignPowerUpS2C(this.getMario(), newPowerUp);
-		return true;
+		return PowerChangeOperationResult.SUCCESS;
 	}
-	@Override public boolean assignPowerUp(String powerUpID) {
+	@Override public PowerChangeOperationResult assignPowerUp(String powerUpID) {
 		return this.assignPowerUp(Identifier.of(powerUpID));
 	}
 
 	@Override public void assignCharacter(Identifier characterID) {
+		MarioQuaMario.LOGGER.info("1: MarioServerPlayerData.assignCharacter: {}", characterID);
 		ParsedCharacter newCharacter = Objects.requireNonNull(RegistryManager.CHARACTERS.get(characterID),
 				"Target character (" + characterID + ") doesn't exist!");
 
+		MarioQuaMario.LOGGER.info("2: MarioServerPlayerData.assignCharacter: {}", newCharacter.ID);
 		this.setCharacter(newCharacter);
+		MarioQuaMario.LOGGER.info("3: MarioServerPlayerData.assignCharacter: {}", characterID);
 		MarioDataPackets.assignCharacterS2C(this.getMario(), newCharacter);
 	}
 	@Override public void assignCharacter(String characterID) {

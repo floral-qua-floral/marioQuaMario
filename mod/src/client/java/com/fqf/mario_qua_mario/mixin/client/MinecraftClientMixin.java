@@ -38,7 +38,7 @@ public abstract class MinecraftClientMixin {
 	private void doAttackInterception(CallbackInfoReturnable<Boolean> cir) {
 		assert this.player != null && this.crosshairTarget != null;
 
-		if(this.heldInterception != null) return;
+		if(this.heldInterception != null || !this.player.mqm$getMarioData().isEnabled()) return;
 
 		if(this.crosshairTarget.getType() == HitResult.Type.BLOCK) {
 			if(this.attemptMiningAttackInterceptions(this.player.mqm$getMarioData()))
@@ -155,6 +155,7 @@ public abstract class MinecraftClientMixin {
 	@Inject(method = "handleBlockBreaking", at = @At("HEAD"))
 	private void resetMiningTicksAndTriggerHeldInterception(boolean breaking, CallbackInfo ci) {
 		assert this.player != null;
+		if(!this.player.mqm$getMarioData().isEnabled()) return;
 		if(!breaking && !this.options.attackKey.isPressed()) {
 			this.miningTicks = 0;
 			if(this.heldInterception != null) {

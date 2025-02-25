@@ -40,7 +40,7 @@ public class InGameHudMixin {
 	@Unique
 	private static @Nullable Identifier getPowerHeart(InGameHud.HeartType heartType, boolean hardcore, boolean half, boolean blinking) {
 		ClientPlayerEntity mario = MinecraftClient.getInstance().player;
-		if(mario == null) {
+		if(mario == null || !mario.mqm$getMarioData().isEnabled()) {
 			return null;
 		}
 
@@ -69,6 +69,7 @@ public class InGameHudMixin {
 		ClientPlayerEntity clientMario = client.player;
 		if(clientMario == null) return;
 		MarioMainClientData clientData = clientMario.mqm$getMarioData();
+		if(!clientData.isEnabled()) return;
 
 		double horizontalSpeed = Vector2d.distance(clientMario.getX(), clientMario.getZ(), clientMario.prevX, clientMario.prevZ);
 		double verticalSpeed = clientMario.getY() - clientMario.prevY;
