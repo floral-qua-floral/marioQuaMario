@@ -7,7 +7,6 @@ import com.fqf.mario_qua_mario.packets.MarioDataPackets;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
-import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -154,18 +153,34 @@ public class MarioCommand {
 		ServerPlayerEntity mario = getPlayerFromCmd(context, playerArgumentGiven);
 		Identifier newActionID =
 				RegistryEntryReferenceArgumentType.getRegistryEntry(context, "action", RegistryManager.ACTIONS_KEY).value().ID;
-		mario.mqm$getMarioData().assignAction(newActionID);
 
-		return sendFeedback(context, "Changed " + mario.getName().getString() + "'s action to " + newActionID + ".");
+		String name = mario.getName().getString();
+
+		return switch(mario.mqm$getMarioData().assignAction(newActionID)) {
+			case SUCCESS -> sendFeedback(context, "Changed " + name + "'s action to " + newActionID + ".");
+			case NOT_ENABLED ->
+					sendFeedback(context, name + " is not playing as a character, and so cannot be in an action state!", false);
+		};
 	}
 
 	private static int setPowerUp(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
 		ServerPlayerEntity mario = getPlayerFromCmd(context, playerArgumentGiven);
 		Identifier newPowerUpID =
 				RegistryEntryReferenceArgumentType.getRegistryEntry(context, "power-up", RegistryManager.POWER_UPS_KEY).value().ID;
-		mario.mqm$getMarioData().assignPowerUp(newPowerUpID);
+		MarioServerPlayerData data = mario.mqm$getMarioData();
 
-		return sendFeedback(context, "Changed " + mario.getName().getString() + "'s power-up to " + newPowerUpID + ".");
+		String name = mario.getName().getString();
+		return switch(mario.mqm$getMarioData().assignPowerUp(newPowerUpID)) {
+			case SUCCESS ->
+					sendFeedback(context, "Changed " + name + "'s power-up to " + newPowerUpID + ".");
+			case NOT_ENABLED ->
+					sendFeedback(context, name + " is not playing as a character, and so cannot take on power-up forms!", false);
+			case MISSING_PLAYERMODEL ->
+					sendFeedback(context, name + "'s character (" + data.getCharacterID()
+							+ ") does not have a playermodel for the form " + newPowerUpID + ".", false);
+		};
+
+//		return sendFeedback(context, "Changed " + mario.getName().getString() + "'s power-up to " + newPowerUpID + ".");
 	}
 
 	private static int setCharacter(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
@@ -174,11 +189,17 @@ public class MarioCommand {
 				RegistryEntryReferenceArgumentType.getRegistryEntry(context, "character", RegistryManager.CHARACTERS_KEY).value().ID;
 		mario.mqm$getMarioData().assignCharacter(newCharacterID);
 
-
 		return sendFeedback(context, mario.getName().getString() + " will now play as " + newCharacterID + ".");
 	}
 
 	private static int executeStomp(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
+		ServerPlayerEntity mario = getPlayerFromCmd(context, playerArgumentGiven);
+		MarioServerPlayerData data = mario.mqm$getMarioData();
+		String name = mario.getName().getString();
+
+		if(!data.isEnabled())
+			return sendFeedback(context, name + " is not playing as a character, and as such cannot perform stomps.", false);
+
 //		ServerPlayerEntity stomper = getPlayerFromCmd(environment, playerArgumentGiven);
 //		Entity target = EntityArgumentType.getEntity(environment, "goomba");
 //		ParsedStomp stompType = RegistryEntryReferenceArgumentType.getRegistryEntry(environment, "stomp", RegistryManager.STOMP_TYPES_KEY).value();
@@ -187,12 +208,19 @@ public class MarioCommand {
 //		stompType.executeServer((MarioServerData) MarioDataManager.getMarioData(stomper), target, true, RandomSeed.getSeed());
 //
 //		return sendFeedback(environment, "Made " + stomper.getName().getString() + " perform a stomp of type " + stompType.ID + " on " + target.getName().getString());
-		return 0;
+
+		return sendFeedback(context, "Command not yet implemented.", false);
 	}
 
 
 	private static int executeBump(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven, Direction direction, Integer strength) throws CommandSyntaxException {
-//		ServerPlayerEntity bumper = getPlayerFromCmd(environment, playerArgumentGiven);
+		ServerPlayerEntity mario = getPlayerFromCmd(context, playerArgumentGiven);
+		MarioServerPlayerData data = mario.mqm$getMarioData();
+		String name = mario.getName().getString();
+
+		if(!data.isEnabled())
+			return sendFeedback(context, name + " is not playing as a character, and as such cannot bump blocks.", false);
+
 //		if(strength == null) strength = IntegerArgumentType.getInteger(environment, "strength");
 //		BlockPos position = BlockPosArgumentType.getBlockPos(environment, "position");
 //
@@ -202,7 +230,7 @@ public class MarioCommand {
 //
 //		return sendFeedback(environment, "Made " + bumper.getName().getString() + " bump block " + direction + " with a strength " + strength);
 
-		return 0;
+		return sendFeedback(context, "Command not yet implemented.", false);
 	}
 	private static LiteralArgumentBuilder<ServerCommandSource> makeBumpDirectionFork(Direction direction) {
 		return literal(direction.name().toLowerCase(Locale.ROOT))
@@ -216,6 +244,13 @@ public class MarioCommand {
 	}
 
 	private static int executeAttackInterception(CommandContext<ServerCommandSource> context, boolean isAction, Boolean isEntity) throws CommandSyntaxException {
+		ServerPlayerEntity mario = getPlayerFromCmd(context, true);
+		MarioServerPlayerData data = mario.mqm$getMarioData();
+		String name = mario.getName().getString();
+
+		if(!data.isEnabled())
+			return sendFeedback(context, name + " is not playing as a character, and as such cannot perform attack interceptions.", false);
+
 		Entity targetEntity = null;
 		BlockPos targetBlock = null;
 		if(isEntity != null) {
@@ -224,7 +259,6 @@ public class MarioCommand {
 		}
 
 		int index = IntegerArgumentType.getInteger(context, "index");
-		ServerPlayerEntity mario = getPlayerFromCmd(context, true);
 		Identifier interceptionSourceID = null;
 
 		try {
@@ -247,7 +281,7 @@ public class MarioCommand {
 	private static LiteralArgumentBuilder<ServerCommandSource> makeInterceptionTypeFork(boolean isAction, CommandRegistryAccess registryAccess) {
 		String type = isAction ? "action" : "powerUp";
 		return literal(type)
-			.then(argument(type, uwu(isAction, registryAccess))
+			.then(argument(type, actionOrPowerUpRegistryArgument(isAction, registryAccess))
 				.then(argument("index", IntegerArgumentType.integer(0))
 					.executes(context -> executeAttackInterception(context, isAction, null))
 					.then(literal("entity")
@@ -263,12 +297,19 @@ public class MarioCommand {
 				)
 			);
 	}
-	private static RegistryEntryReferenceArgumentType<?> uwu(boolean isAction, CommandRegistryAccess registryAccess) {
+	private static RegistryEntryReferenceArgumentType<?> actionOrPowerUpRegistryArgument(boolean isAction, CommandRegistryAccess registryAccess) {
 		if(isAction) return RegistryEntryReferenceArgumentType.registryEntry(registryAccess, RegistryManager.ACTIONS_KEY);
 		else return RegistryEntryReferenceArgumentType.registryEntry(registryAccess, RegistryManager.POWER_UPS_KEY);
 	}
 
 	private static int executeActionTransition(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
+		ServerPlayerEntity mario = getPlayerFromCmd(context, playerArgumentGiven);
+		MarioServerPlayerData data = mario.mqm$getMarioData();
+		String name = mario.getName().getString();
+
+		if(!data.isEnabled())
+			return sendFeedback(context, name + " is not playing as a character, and as such cannot execute action transitions.", false);
+
 		AbstractParsedAction fromAction =
 				RegistryEntryReferenceArgumentType.getRegistryEntry(context, "from", RegistryManager.ACTIONS_KEY).value();
 		AbstractParsedAction toAction =
@@ -276,7 +317,6 @@ public class MarioCommand {
 
 		long seed = RandomSeed.getSeed();
 
-		ServerPlayerEntity mario = getPlayerFromCmd(context, playerArgumentGiven);
 		boolean successful = mario.mqm$getMarioData().setAction(fromAction, toAction, seed, false, true);
 
 		if(successful) MarioDataPackets.transitionToActionS2C(
@@ -288,26 +328,29 @@ public class MarioCommand {
 		);
 
 		return sendFeedback(context, successful ?
-				"Successfully made " + mario.getName().getString() + " execute transition \"" + fromAction.ID + "->" + toAction.ID + "\"."
+				"Successfully made " + name + " execute transition \"" + fromAction.ID + "->" + toAction.ID + "\"."
 				: "No transition exists from " + fromAction.ID + " to " + toAction.ID + "! :(", successful);
 	}
 
 	private static int executeReversion(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
 		ServerPlayerEntity mario = getPlayerFromCmd(context, playerArgumentGiven);
 		MarioServerPlayerData data = mario.mqm$getMarioData();
+		String name = mario.getName().getString();
+
+		if(!data.isEnabled())
+			return sendFeedback(context, name + " is not playing as a character, and as such cannot revert forms.", false);
 
 		Identifier formerPowerUp = data.getPowerUpID();
 		IMarioAuthoritativeData.ReversionResult result = data.executeReversion();
 		Identifier newPowerUp = data.getPowerUpID();
 
-		String marioName = mario.getName().getString();
 		return sendFeedback(context, switch(result) {
-			case SUCCESS -> "Successfully reverted " + marioName + " from form " + formerPowerUp + " to " + newPowerUp + ".";
-			case NO_WEAKER_FORM -> "Unable to execute reversion; " + marioName + "'s current power-up form (" + formerPowerUp + ") has no reversion target.";
+			case SUCCESS -> "Successfully reverted " + name + " from form " + formerPowerUp + " to " + newPowerUp + ".";
+			case NO_WEAKER_FORM -> "Unable to execute reversion; " + name + "'s current power-up form (" + formerPowerUp + ") has no reversion target.";
 			case MISSING_PLAYERMODEL ->
-					"Unable to execute reversion; " + marioName + "'s current power-up (" + formerPowerUp + ") reverts into form "
+					"Unable to execute reversion; " + name + "'s current power-up (" + formerPowerUp + ") reverts into form "
 					+ data.getPowerUp().REVERSION_TARGET_ID + ", for which their character (" + data.getCharacterID() + ") has no playermodel.";
-			case NOT_ENABLED -> "Unable to execute reversion; " + marioName + " is not playing as a character.";
+			case NOT_ENABLED -> "Unable to execute reversion; " + name + " is not playing as a character.";
 		}, result == IMarioAuthoritativeData.ReversionResult.SUCCESS);
 	}
 }
