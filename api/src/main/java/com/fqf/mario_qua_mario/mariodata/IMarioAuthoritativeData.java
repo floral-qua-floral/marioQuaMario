@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 public interface IMarioAuthoritativeData extends IMarioData {
 	@Override ServerPlayerEntity getMario();
 
-	void setEnabled(boolean enable);
+	void disable();
 
 	ActionTransitionResult transitionToAction(Identifier actionID);
 	ActionTransitionResult transitionToAction(String actionID);

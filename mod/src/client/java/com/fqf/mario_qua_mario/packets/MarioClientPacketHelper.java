@@ -1,7 +1,6 @@
 package com.fqf.mario_qua_mario.packets;
 
 import com.fqf.mario_qua_mario.MarioClientHelperManager;
-import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.mariodata.MarioMainClientData;
 import com.fqf.mario_qua_mario.registries.ParsedAttackInterception;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
@@ -18,6 +17,11 @@ import java.util.Objects;
 
 public class MarioClientPacketHelper implements MarioClientHelperManager.ClientPacketSender {
 	public static void registerClientReceivers() {
+		// DisableMarioS2CPayload Receiver
+		ClientPlayNetworking.registerGlobalReceiver(MarioDataPackets.DisableMarioS2CPayload.ID, (payload, context) ->
+				getMarioFromID(context, payload.marioID()).mqm$getMarioData().disableInternal()
+		);
+
 		// ActionTransitionS2CPayload Receiver
 		ClientPlayNetworking.registerGlobalReceiver(MarioDataPackets.ActionTransitionS2CPayload.ID, (payload, context) ->
 				getMarioFromID(context, payload.marioID()).mqm$getMarioData().setAction(

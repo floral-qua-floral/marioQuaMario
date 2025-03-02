@@ -177,8 +177,9 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 //	}
 
 	// CUTOFF FOR IMarioAuthoritativeData IMPLEMENTATION:---------------------------------------------------------------
-	@Override public void setEnabled(boolean enable) {
-
+	@Override public void disable() {
+		this.disableInternal();
+		MarioDataPackets.disableMarioS2C(this.getMario());
 	}
 
 	@Override public ActionTransitionResult transitionToAction(Identifier actionID) {
@@ -274,13 +275,10 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 	}
 
 	@Override public void assignCharacter(Identifier characterID) {
-		MarioQuaMario.LOGGER.info("1: MarioServerPlayerData.assignCharacter: {}", characterID);
 		ParsedCharacter newCharacter = Objects.requireNonNull(RegistryManager.CHARACTERS.get(characterID),
 				"Target character (" + characterID + ") doesn't exist!");
 
-		MarioQuaMario.LOGGER.info("2: MarioServerPlayerData.assignCharacter: {}", newCharacter.ID);
 		this.setCharacter(newCharacter);
-		MarioQuaMario.LOGGER.info("3: MarioServerPlayerData.assignCharacter: {}", characterID);
 		MarioDataPackets.assignCharacterS2C(this.getMario(), newCharacter);
 	}
 	@Override public void assignCharacter(String characterID) {

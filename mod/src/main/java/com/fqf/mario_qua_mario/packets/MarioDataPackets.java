@@ -1,17 +1,13 @@
 package com.fqf.mario_qua_mario.packets;
 
-import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario.mariodata.MarioServerPlayerData;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedCharacter;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
-import com.fqf.mario_qua_mario.util.MarioCPMCompat;
 import com.fqf.mario_qua_mario.util.MarioGamerules;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
@@ -19,6 +15,14 @@ import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 public class MarioDataPackets {
+	public static void disableMarioS2C(ServerPlayerEntity mario) {
+		MarioPackets.sendToTrackers(
+				mario,
+				new DisableMarioS2CPayload(mario.getId()),
+				true
+		);
+	}
+
 	public static void transitionToActionS2C(
 			ServerPlayerEntity mario, boolean networkToMario,
 			AbstractParsedAction fromAction, AbstractParsedAction toAction,
@@ -69,6 +73,21 @@ public class MarioDataPackets {
 				new AssignCharacterS2CPayload(mario.getId(), RegistryManager.CHARACTERS.getRawIdOrThrow(newCharacter)),
 				true
 		);
+	}
+
+	protected record DisableMarioS2CPayload(int marioID) implements CustomPayload {
+		public static final Id<DisableMarioS2CPayload> ID = MarioPackets.makeID("disable_mario_s2c");
+		public static final PacketCodec<RegistryByteBuf, DisableMarioS2CPayload> CODEC = PacketCodec.tuple(
+				PacketCodecs.INTEGER, DisableMarioS2CPayload::marioID,
+				DisableMarioS2CPayload::new
+		);
+
+		@Override public Id<? extends CustomPayload> getId() {
+			return ID;
+		}
+		public static void register() {
+			PayloadTypeRegistry.playS2C().register(ID, CODEC);
+		}
 	}
 
 	protected record SetActionC2SPayload(int fromAction, int toAction, long seed) implements CustomPayload {

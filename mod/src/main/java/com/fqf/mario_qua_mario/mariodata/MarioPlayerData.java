@@ -4,7 +4,6 @@ import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.ActionCategory;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.mario_qua_mario.registries.ParsedMarioState;
-import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedCharacter;
@@ -53,7 +52,7 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	@Override public boolean isEnabled() {
 		return this.character != null;
 	}
-	public void disable() {
+	public void disableInternal() {
 		this.character = null;
 		this.powerUp = null;
 		this.action = null;
@@ -64,9 +63,11 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 		EntityAttributeInstance attackSpeedAttributeInstance = this.getMario().getAttributeInstance(EntityAttributes.GENERIC_ATTACK_SPEED);
 		assert safeFallAttributeInstance != null && attackSpeedAttributeInstance != null;
 		safeFallAttributeInstance.removeModifier(FALL_RESISTANCE_ID);
-		safeFallAttributeInstance.addPersistentModifier(FALL_RESISTANCE);
 		attackSpeedAttributeInstance.removeModifier(ATTACK_SLOWDOWN_ID);
-		attackSpeedAttributeInstance.addPersistentModifier(ATTACK_SLOWDOWN);
+		if(enabled) { // TODO: These should be handled by the character rather than being universal!
+			safeFallAttributeInstance.addPersistentModifier(FALL_RESISTANCE);
+			attackSpeedAttributeInstance.addPersistentModifier(ATTACK_SLOWDOWN);
+		}
 	}
 
 	private AbstractParsedAction action;
@@ -124,20 +125,14 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	}
 
 	public void setCharacter(@NotNull ParsedCharacter character) {
-		MarioQuaMario.LOGGER.info("1: MarioPlayerData.setCharacter: {}", character.ID);
 		this.setupCustomVars(this.character, character);
-		MarioQuaMario.LOGGER.info("2: MarioPlayerData.setCharacter: {}", character.ID);
 		this.character = character;
 		this.powerUp = character.INITIAL_POWER_UP;
 		this.action = character.INITIAL_ACTION;
 		this.setActionTransitionless(character.INITIAL_ACTION);
-		MarioQuaMario.LOGGER.info("3: MarioPlayerData.setCharacter: {}", character.ID);
 		this.setPowerUpTransitionless(character.INITIAL_POWER_UP);
-		MarioQuaMario.LOGGER.info("4: MarioPlayerData.setCharacter: {}", character.ID);
 		updateCharacterFormCombo();
-		MarioQuaMario.LOGGER.info("5: MarioPlayerData.setCharacter: {}", character.ID);
 		this.updatePassiveUniversalTraits(true);
-		MarioQuaMario.LOGGER.info("6: MarioPlayerData.setCharacter: {}", character.ID);
 	}
 
 	public void setupCustomVars(ParsedMarioState oldThing, ParsedMarioState newThing) {
@@ -163,7 +158,7 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	}
 
 	public void initialApply() {
-		this.disable();
+		this.disableInternal();
 //		this.updatePassiveUniversalTraits(this.isEnabled());
 //		this.setActionTransitionless(this.action);
 //		this.setCharacter(this.character);

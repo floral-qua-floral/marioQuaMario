@@ -12,6 +12,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 
 public class MarioPackets {
 	public static void register() {
+		MarioDataPackets.DisableMarioS2CPayload.register();
+
 		MarioDataPackets.ActionTransitionS2CPayload.register();
 		MarioDataPackets.AssignActionS2CPayload.register();
 

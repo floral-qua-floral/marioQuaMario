@@ -35,17 +35,14 @@ public class MarioCommand {
 	public static void registerMarioCommand() {
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
 			dispatcher.register(literal("mario")
-				.then(literal("set")
-					.then(literal("enabled")
-						.then(argument("enabled", BoolArgumentType.bool())
-							.requires(source -> source.hasPermissionLevel(0))
-							.executes(context -> setEnabled(context, false))
-							.then(argument("target", EntityArgumentType.player())
-								.requires(source -> source.hasPermissionLevel(2))
-								.executes(context -> setEnabled(context, true))
-							)
-						)
+				.then(literal("disable")
+					.requires(source -> source.hasPermissionLevel(2))
+					.executes(context -> disable(context, false))
+					.then(argument("mario", EntityArgumentType.player())
+							.executes(context -> disable(context, true))
 					)
+				)
+				.then(literal("set")
 					.then(literal("action")
 						.requires(source -> source.hasPermissionLevel(2))
 						.then(argument("action", RegistryEntryReferenceArgumentType.registryEntry(registryAccess, RegistryManager.ACTIONS_KEY))
@@ -144,14 +141,13 @@ public class MarioCommand {
 		return getPlayerFromCmd(context, playerArgumentGiven, "mario");
 	}
 
-	private static int setEnabled(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
-//		return sendFeedback(environment, MarioDataPackets.setMarioEnabled(
-//				getPlayerFromCmd(environment, playerArgumentGiven),
-//				BoolArgumentType.getBool(environment, "enabled")
-//		));
-		getPlayerFromCmd(context, playerArgumentGiven, "target");
-
-		return 0;
+	private static int disable(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
+		ServerPlayerEntity mario = getPlayerFromCmd(context, playerArgumentGiven);
+		MarioServerPlayerData data = mario.mqm$getMarioData();
+		boolean success = data.isEnabled();
+		data.disable();
+		String name = mario.getName().getString();
+		return sendFeedback(context, success ? "Disabled mod for " + name + "." : name + " is already not enabled!", success);
 	}
 
 	private static int setAction(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
@@ -201,8 +197,8 @@ public class MarioCommand {
 //		BlockPos position = BlockPosArgumentType.getBlockPos(environment, "position");
 //
 //		MarioServerData data = (MarioServerData) MarioDataManager.getMarioData(bumper);
-////		BumpManager.bumpBlockServer(data, bumper.getServerWorld(), position, strength, strength, direction, true, true);
-////		BumpManager.bumpResponseCommon(data, data, bumper.getServerWorld(), bumper.getServerWorld().getBlockState(position), position, strength, strength, direction);
+//		BumpManager.bumpBlockServer(data, bumper.getServerWorld(), position, strength, strength, direction, true, true);
+//		BumpManager.bumpResponseCommon(data, data, bumper.getServerWorld(), bumper.getServerWorld().getBlockState(position), position, strength, strength, direction);
 //
 //		return sendFeedback(environment, "Made " + bumper.getName().getString() + " bump block " + direction + " with a strength " + strength);
 
