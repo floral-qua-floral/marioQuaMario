@@ -118,7 +118,6 @@ public interface IMarioClientDataImpl extends IMarioClientData {
 		Vec3d marioPos = this.getMario().getPos();
 		if(RegistryManager.VOICE_LINES.get(voiceline) == null)
 			throw new AssertionError("Voiceline " + voiceline + " isn't registered!!!");
-		MarioQuaMario.LOGGER.info("VOICELINE: {}", RegistryManager.VOICE_LINES.get(voiceline).get(((MarioPlayerData) this).getCharacter()).getId());
 		SoundInstanceWrapperImpl newVoiceSound = this.playSound(
 				RegistryManager.VOICE_LINES.get(voiceline).get(((MarioPlayerData) this).getCharacter()), SoundCategory.VOICE,
 				marioPos.x, marioPos.y, marioPos.z,

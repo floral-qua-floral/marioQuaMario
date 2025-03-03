@@ -92,7 +92,8 @@ public class PRun implements GroundedActionDefinition {
 
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(GroundedActionHelper helper) {
 		return List.of(
-				DuckWaddle.DUCK.variate(MarioQuaMarioContent.makeID("duck_slide"), null),
+				DuckWaddle.DUCK,
+				Skid.SKID,
 				new TransitionDefinition(
 						MarioQuaMarioContent.makeID("sub_walk"),
 						data -> {

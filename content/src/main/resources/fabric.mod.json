@@ -25,6 +25,7 @@
 		"mqm-grounded-actions": [
 			"com.fqf.mario_qua_mario.actions.grounded.SubWalk",
 			"com.fqf.mario_qua_mario.actions.grounded.WalkRun",
+			"com.fqf.mario_qua_mario.actions.grounded.Skid",
 			"com.fqf.mario_qua_mario.actions.grounded.PRun",
 			"com.fqf.mario_qua_mario.actions.grounded.DuckWaddle",
 			"com.fqf.mario_qua_mario.actions.grounded.DuckSlide",

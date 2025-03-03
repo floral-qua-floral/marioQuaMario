@@ -10,6 +10,7 @@ import com.fqf.mario_qua_mario.mariodata.IMarioData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.MarioContentSFX;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
@@ -87,8 +88,14 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 		return null;
 	}
 
+	private static class FlipTimerVars extends ActionTimerVars {
+		private final float STORED_FALL_DISTANCE;
+		private FlipTimerVars(PlayerEntity mario) {
+			this.STORED_FALL_DISTANCE = mario.fallDistance;
+		}
+	}
 	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
-		return new ActionTimerVars();
+		return new FlipTimerVars(data.getMario());
 	}
 	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
 
@@ -97,7 +104,7 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 
 	}
 	@Override public void travelHook(IMarioTravelData data, AirborneActionHelper helper) {
-		ActionTimerVars.get(data).actionTimer++;
+		data.getVars(FlipTimerVars.class).actionTimer++;
 	}
 
 	public static final TransitionDefinition GROUND_POUND = new TransitionDefinition(
@@ -115,13 +122,17 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 		return List.of(
 				new TransitionDefinition(
 						MarioQuaMarioContent.makeID("ground_pound_drop"),
-						data -> ActionTimerVars.get(data).actionTimer >= FLIP_DURATION,
+						data -> data.getVars(FlipTimerVars.class).actionTimer >= FLIP_DURATION,
 						EvaluatorEnvironment.COMMON,
 						data -> {
 							data.setYVel(GroundPoundDrop.GROUND_POUND_VEL.get(data));
 							data.getInputs().JUMP.isPressed();
+							data.getMario().fallDistance = data.getVars(FlipTimerVars.class).STORED_FALL_DISTANCE;
 						},
-						(data, isSelf, seed) -> data.storeSound(data.playSound(MarioContentSFX.GROUND_POUND_DROP, seed))
+						(data, isSelf, seed) -> {
+							data.storeSound(data.playSound(MarioContentSFX.GROUND_POUND_DROP, seed));
+							data.getMario().fallDistance = data.getVars(FlipTimerVars.class).STORED_FALL_DISTANCE;
+						}
 				)
 		);
 	}

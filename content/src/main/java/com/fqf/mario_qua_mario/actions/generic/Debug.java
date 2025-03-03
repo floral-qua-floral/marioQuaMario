@@ -73,7 +73,7 @@ public class Debug implements GenericActionDefinition {
 
 	}
 	@Override public void serverTick(IMarioAuthoritativeData data) {
-
+		data.getMario().setHealth(20);
 	}
 	@Override public boolean travelHook(IMarioTravelData data) {
 		ActionTimerVars.get(data).actionTimer++;
