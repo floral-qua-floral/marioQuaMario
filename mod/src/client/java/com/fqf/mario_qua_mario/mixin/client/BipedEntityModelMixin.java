@@ -2,6 +2,7 @@ package com.fqf.mario_qua_mario.mixin.client;
 
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.LimbAnimation;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.mario_qua_mario.mariodata.MarioAnimationData;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -75,11 +76,16 @@ public class BipedEntityModelMixin<T extends LivingEntity> {
 	) {
 		if(applyRef.get()) {
 			if(instance == this.head) {
-				float modelPitchAdjustment = MathHelper.RADIANS_PER_DEGREE * MathHelper.wrapDegrees(MathHelper.DEGREES_PER_RADIAN * marioRef.get().mqm$getAnimationData().headPitchOffset);
-				float modelYawAdjustment = MathHelper.RADIANS_PER_DEGREE * MathHelper.wrapDegrees(MathHelper.DEGREES_PER_RADIAN * marioRef.get().mqm$getAnimationData().headYawOffset);
+				// TODO: Maybe make this less hideously terrible. As-is, makes arm counter-rotations 1 tick delayed (head is still frame perfect).
+				MarioAnimationData data = marioRef.get().mqm$getAnimationData();
+				float modelPitchAdjustment = MathHelper.RADIANS_PER_DEGREE * MathHelper.wrapDegrees(MathHelper.DEGREES_PER_RADIAN * data.headPitchOffset);
+				float modelYawAdjustment = MathHelper.RADIANS_PER_DEGREE * MathHelper.wrapDegrees(MathHelper.DEGREES_PER_RADIAN * data.headYawOffset);
 				float maxYawAdjustment = 60F * MathHelper.RADIANS_PER_DEGREE;
-//				newValue = MathHelper.clamp(newValue + modelPitchAdjustment, -MathHelper.HALF_PI, MathHelper.HALF_PI * 0.9F);
-//				this.head.yaw = MathHelper.clamp(this.head.yaw + modelYawAdjustment, this.body.yaw - maxYawAdjustment, this.body.yaw + maxYawAdjustment);
+				data.headAdjusted = true;
+				data.unadjustedHeadPitch = newValue;
+				data.unadjustedHeadYaw = this.head.yaw;
+				newValue = MathHelper.clamp(newValue + modelPitchAdjustment, -MathHelper.HALF_PI, MathHelper.HALF_PI * 0.9F);
+				this.head.yaw = MathHelper.clamp(this.head.yaw + modelYawAdjustment, this.body.yaw - maxYawAdjustment, this.body.yaw + maxYawAdjustment);
 			}
 			else if(
 					attemptSuppression(rightArmRef, instance, this.rightArm)

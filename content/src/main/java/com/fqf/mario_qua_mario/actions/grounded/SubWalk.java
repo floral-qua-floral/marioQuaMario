@@ -170,6 +170,7 @@ public class SubWalk implements GroundedActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(GroundedActionHelper helper) {
 		return List.of(
 				DuckWaddle.DUCK,
+				Skid.SKID,
 				Jump.makeJumpTransition(helper)
 		);
 	}

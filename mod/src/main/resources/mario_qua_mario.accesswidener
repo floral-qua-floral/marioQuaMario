@@ -5,3 +5,5 @@ extendable method net/minecraft/entity/Entity stepOnBlock (Lnet/minecraft/util/m
 extendable method net/minecraft/entity/Entity playStepSounds (Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)V
 extendable method net/minecraft/entity/LivingEntity onDismounted (Lnet/minecraft/entity/Entity;)V
 accessible field net/minecraft/client/render/entity/model/PlayerEntityModel cloak Lnet/minecraft/client/model/ModelPart;
+accessible method net/minecraft/client/render/entity/model/BipedEntityModel positionRightArm (Lnet/minecraft/entity/LivingEntity;)V
+accessible method net/minecraft/client/render/entity/model/BipedEntityModel positionLeftArm (Lnet/minecraft/entity/LivingEntity;)V

@@ -40,6 +40,9 @@ public class MarioAnimationData {
 	private int ticksUntilAutoReplaceAnimation;
 	public float headPitchOffset;
 	public float headYawOffset;
+	public boolean headAdjusted;
+	public float unadjustedHeadPitch;
+	public float unadjustedHeadYaw;
 	public final Arrangement TAIL_ARRANGEMENT = new Arrangement();
 	private final Arrangement TAIL_TEMP_ARRANGEMENT = new Arrangement();
 
@@ -151,8 +154,15 @@ public class MarioAnimationData {
 
 			this.mutate(newPose.EVERYTHING, this.currentAnim.entireBodyAnimation(), data, progress);
 			this.mutate(newPose.HEAD, this.currentAnim.headAnimation(), data, progress);
-			newPose.HEAD.yaw = approachNumber(newPose.HEAD.yaw, HALF_PI * 0.675F, newPose.EVERYTHING.yaw);
+
+			if(this.headAdjusted) {
+				this.headAdjusted = false;
+				newPose.HEAD.pitch = this.unadjustedHeadPitch;
+				newPose.HEAD.yaw = this.unadjustedHeadYaw;
+			}
+
 			newPose.HEAD.pitch = approachNumber(newPose.HEAD.pitch, HALF_PI * 0.999F, newPose.EVERYTHING.pitch);
+			newPose.HEAD.yaw = approachNumber(newPose.HEAD.yaw, HALF_PI * 0.675F, newPose.EVERYTHING.yaw);
 
 			this.mutate(newPose.TORSO, this.currentAnim.torsoAnimation(), data, progress);
 
@@ -160,13 +170,13 @@ public class MarioAnimationData {
 					newPose.RIGHT_ARM,
 					this.isMirrored ? this.currentAnim.leftArmAnimation() : this.currentAnim.rightArmAnimation(),
 					data, progress,
-					rightArmPose, leftArmPose, newPose.TORSO
+					rightArmPose, leftArmPose, true, newPose.TORSO
 			);
 			this.conditionallyAnimateArm(
 					newPose.LEFT_ARM,
 					this.isMirrored ? this.currentAnim.rightArmAnimation() : this.currentAnim.leftArmAnimation(),
 					data, progress,
-					leftArmPose, rightArmPose, newPose.TORSO
+					leftArmPose, rightArmPose, false, newPose.TORSO
 			);
 			this.mutate(
 					newPose.RIGHT_LEG,
@@ -207,10 +217,23 @@ public class MarioAnimationData {
 	}
 	private void conditionallyAnimateArm(
 			Arrangement arrangement, LimbAnimation limbAnimation, MarioPlayerData data, float progress,
-			BipedEntityModel.ArmPose thisArmPose, BipedEntityModel.ArmPose otherArmPose, Arrangement torsoArrangement
+			BipedEntityModel.ArmPose thisArmPose, BipedEntityModel.ArmPose otherArmPose, boolean isRight,
+			Arrangement torsoArrangement
 	) {
-		if(isArmBusy(thisArmPose, otherArmPose))
+		if(isArmBusy(thisArmPose, otherArmPose)) {
+			AbstractClientPlayerEntity mario = (AbstractClientPlayerEntity) data.getMario();
+			PlayerEntityModel<AbstractClientPlayerEntity> model = getModel(mario);
+			// We need to recalculate the position of the arm in question, in case the head has been rotated.
+//			model.positionRightArm(mario);
+//			model.positionLeftArm(mario);
+//			if(isRight) {
+//				setupArrangement(model.rightArm, arrangement);
+//			}
+//			else {
+//				setupArrangement(model.leftArm, arrangement);
+//			}
 			arrangement.addPos(0, torsoArrangement.y, torsoArrangement.z);
+		}
 		else
 			this.mutate(arrangement, limbAnimation, data, progress);
 	}
@@ -430,6 +453,10 @@ public class MarioAnimationData {
 		return lerp(delta, wrapRadians(start - offset), wrapRadians(end - offset)) + offset;
 	}
 
+	private static PlayerEntityModel<AbstractClientPlayerEntity> getModel(AbstractClientPlayerEntity mario) {
+		return ((PlayerEntityRenderer) MinecraftClient.getInstance().getEntityRenderDispatcher().getRenderer(mario)).getModel();
+	}
+
 	private static class Pose {
 		public final Arrangement EVERYTHING = new Arrangement();
 		public final Arrangement HEAD = new Arrangement();
@@ -448,8 +475,7 @@ public class MarioAnimationData {
 		}
 
 		public Pose(AbstractClientPlayerEntity mario) {
-			PlayerEntityModel<? extends LivingEntity> model =
-					((PlayerEntityRenderer) MinecraftClient.getInstance().getEntityRenderDispatcher().getRenderer(mario)).getModel();
+			PlayerEntityModel<AbstractClientPlayerEntity> model = getModel(mario);
 			setupArrangement(model.head, this.HEAD);
 			this.HEAD.pitch = MathHelper.clamp(this.HEAD.pitch, HALF_PI * -0.99F, HALF_PI * 0.99F);
 			setupArrangement(model.body, this.TORSO);

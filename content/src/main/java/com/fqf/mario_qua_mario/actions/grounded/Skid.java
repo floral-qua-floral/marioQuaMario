@@ -53,7 +53,11 @@ public class Skid implements GroundedActionDefinition {
 					);
 				}),
 				new LimbAnimation(false, (data, arrangement, progress) -> {
-
+					arrangement.addAngles(
+							-45,
+							0,
+							-30
+					);
 				}),
 
 				new LimbAnimation(false, (data, arrangement, progress) -> {
@@ -127,9 +131,9 @@ public class Skid implements GroundedActionDefinition {
 		);
 	}
 
-	public static TransitionDefinition SKID = new TransitionDefinition(
+	public static final TransitionDefinition SKID = new TransitionDefinition(
 			ID,
-			data -> data.getInputs().getForwardInput() < 0.5 && data.getForwardVel() > SKID_THRESHOLD.get(data),
+			data -> data.getInputs().getForwardInput() < -0.675 && data.getForwardVel() > SKID_THRESHOLD.get(data),
 			EvaluatorEnvironment.CLIENT_ONLY
 	);
 
