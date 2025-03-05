@@ -35,13 +35,14 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 
 	private final Set<Pair<AbstractParsedAction, Long>> RECENT_ACTIONS = new HashSet<>();
 
-	public void preInitialApply(boolean enabled, ParsedPowerUp powerUp, ParsedCharacter character) {
-		this.loadFromNbtBeforeNetworkHandler(enabled, powerUp, character);
-	}
-
-	@Override
-	public void initialApply() {
-		super.initialApply();
+	@Override public void initialApply() {
+		if(this.isEnabled()) {
+			ParsedPowerUp preApplyPowerUp = this.getPowerUp();
+			this.setCharacter(this.getCharacter());
+			this.setPowerUpTransitionless(preApplyPowerUp);
+			MarioDataPackets.syncMarioDataToPlayerS2C(this.getMario(), this.getMario());
+		}
+		else super.initialApply();
 //		this.syncToClient(this.getMario());
 	}
 

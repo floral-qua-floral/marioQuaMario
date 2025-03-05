@@ -24,6 +24,8 @@ public class MarioPackets {
 
 		MarioDataPackets.AssignCharacterS2CPayload.register();
 
+		MarioDataPackets.SyncMarioDataS2CPayload.register();
+
 		SyncUseCharacterStatsS2CPayload.register();
 
 		MarioAttackInterceptionPackets.MissedAttackInterceptedC2SPayload.register();

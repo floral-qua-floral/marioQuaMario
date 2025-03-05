@@ -13,8 +13,6 @@ public class MarioQuaMario implements ModInitializer {
 	public static final String MOD_ID = "mario_qua_mario";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-	public static final String MOD_DATA_KEY = MOD_ID + ".data";
-
 	@Override
 	public void onInitialize() {
 		LOGGER.info("Mario qua Mario initializing...");

@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario.packets;
 
+import com.fqf.mario_qua_mario.mariodata.MarioServerPlayerData;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
@@ -73,6 +74,18 @@ public class MarioDataPackets {
 				new AssignCharacterS2CPayload(mario.getId(), RegistryManager.CHARACTERS.getRawIdOrThrow(newCharacter)),
 				true
 		);
+	}
+
+	public static void syncMarioDataToPlayerS2C(
+			ServerPlayerEntity mario, ServerPlayerEntity syncTo
+	) {
+		MarioServerPlayerData data = mario.mqm$getMarioData();
+		ServerPlayNetworking.send(syncTo, new SyncMarioDataS2CPayload(
+				mario.getId(),
+				RegistryManager.CHARACTERS.getRawIdOrThrow(data.getCharacter()),
+				RegistryManager.POWER_UPS.getRawIdOrThrow(data.getPowerUp()),
+				RegistryManager.ACTIONS.getRawIdOrThrow(data.getAction())
+		));
 	}
 
 	protected record DisableMarioS2CPayload(int marioID) implements CustomPayload {
@@ -203,6 +216,24 @@ public class MarioDataPackets {
 				PacketCodecs.INTEGER, AssignCharacterS2CPayload::marioID,
 				PacketCodecs.INTEGER, AssignCharacterS2CPayload::newCharacter,
 				AssignCharacterS2CPayload::new
+		);
+
+		@Override public Id<? extends CustomPayload> getId() {
+			return ID;
+		}
+		public static void register() {
+			PayloadTypeRegistry.playS2C().register(ID, CODEC);
+		}
+	}
+
+	protected record SyncMarioDataS2CPayload(int marioID, int character, int powerUp, int action) implements CustomPayload {
+		public static final Id<SyncMarioDataS2CPayload> ID = MarioPackets.makeID("sync_mario_data_s2c");
+		public static final PacketCodec<RegistryByteBuf, SyncMarioDataS2CPayload> CODEC = PacketCodec.tuple(
+				PacketCodecs.INTEGER, SyncMarioDataS2CPayload::marioID,
+				PacketCodecs.INTEGER, SyncMarioDataS2CPayload::character,
+				PacketCodecs.INTEGER, SyncMarioDataS2CPayload::powerUp,
+				PacketCodecs.INTEGER, SyncMarioDataS2CPayload::action,
+				SyncMarioDataS2CPayload::new
 		);
 
 		@Override public Id<? extends CustomPayload> getId() {

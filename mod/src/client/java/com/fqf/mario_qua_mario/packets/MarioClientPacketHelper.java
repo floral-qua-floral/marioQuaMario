@@ -2,6 +2,7 @@ package com.fqf.mario_qua_mario.packets;
 
 import com.fqf.mario_qua_mario.MarioClientHelperManager;
 import com.fqf.mario_qua_mario.mariodata.MarioMainClientData;
+import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
 import com.fqf.mario_qua_mario.registries.ParsedAttackInterception;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
@@ -58,6 +59,14 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 						RegistryManager.CHARACTERS.get(payload.newCharacter())
 				)
 		);
+
+		// SyncMarioDataS2CPayload Receiver
+		ClientPlayNetworking.registerGlobalReceiver(MarioDataPackets.SyncMarioDataS2CPayload.ID, (payload, context) -> {
+			MarioPlayerData data = getMarioFromID(context, payload.marioID()).mqm$getMarioData();
+			data.setCharacter(RegistryManager.CHARACTERS.get(payload.character()));
+			data.setPowerUpTransitionless(RegistryManager.POWER_UPS.get(payload.powerUp()));
+			data.setActionTransitionless(RegistryManager.ACTIONS.get(payload.action()));
+		});
 
 		// MissedAttackInterceptedS2CPayload Receiver
 		ClientPlayNetworking.registerGlobalReceiver(MarioAttackInterceptionPackets.MissedAttackInterceptedS2CPayload.ID, (payload, context) ->

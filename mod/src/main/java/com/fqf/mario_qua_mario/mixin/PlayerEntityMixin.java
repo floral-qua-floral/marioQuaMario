@@ -9,6 +9,7 @@ import com.fqf.mario_qua_mario.mariodata.injections.AdvMarioDataHolder;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedCharacter;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import com.fqf.mario_qua_mario.util.MarioGamerules;
+import com.fqf.mario_qua_mario.util.MarioNbtKeys;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -166,19 +167,22 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 	public void writeCustomDataToNbt(NbtCompound nbt) {
 		super.writeCustomDataToNbt(nbt);
 
-//		NbtCompound persistentData = new NbtCompound();
-//		MarioPlayerData data = mqm$getMarioData();
-//
-//		persistentData.putBoolean("Enabled", data.isEnabled());
-//		persistentData.putString("PowerUp", data.getPowerUpID().toString());
-//		persistentData.putString("Character", data.getCharacterID().toString());
-//
-//		MarioQuaMario.LOGGER.info("Wrote player NBT:\nEnabled: {}\nPower-up: {}\nCharacter: {}",
-//				persistentData.getBoolean("Enabled"),
-//				persistentData.getString("PowerUp"),
-//				persistentData.getString("Character"));
-//
-//		nbt.put(MarioQuaMario.MOD_DATA_KEY, persistentData);
+		NbtCompound persistentData = new NbtCompound();
+		MarioPlayerData data = mqm$getMarioData();
+
+		boolean enabled = data.isEnabled();
+		persistentData.putBoolean(MarioNbtKeys.ENABLED, enabled);
+		if(enabled) {
+			persistentData.putString(MarioNbtKeys.CHARACTER, data.getCharacterID().toString());
+			persistentData.putString(MarioNbtKeys.POWER_UP, data.getPowerUpID().toString());
+		}
+
+		MarioQuaMario.LOGGER.info("Writing player NBT:\nEnabled: {}\nCharacter: {}\nPower-up: {}",
+				persistentData.getBoolean(MarioNbtKeys.ENABLED),
+				persistentData.getString(MarioNbtKeys.CHARACTER),
+				persistentData.getString(MarioNbtKeys.POWER_UP));
+
+		nbt.put(MarioNbtKeys.DATA, persistentData);
 	}
 
 	@Override

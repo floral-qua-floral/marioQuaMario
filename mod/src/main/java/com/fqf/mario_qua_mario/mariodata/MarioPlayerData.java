@@ -124,7 +124,7 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 		return this.isEnabled() ? this.getCharacter().ID : null;
 	}
 
-	public void setCharacter(@NotNull ParsedCharacter character) {
+	public void setCharacter(ParsedCharacter character) {
 		this.setupCustomVars(this.character, character);
 		this.character = character;
 		this.powerUp = character.INITIAL_POWER_UP;
@@ -157,16 +157,12 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 		return this.isEnabled() && this.POWERS.contains(power);
 	}
 
+	public void setupVariablesBeforeInitialApply(ParsedCharacter character, ParsedPowerUp powerUp) {
+		this.character = character;
+		this.powerUp = powerUp;
+	}
 	public void initialApply() {
 		this.disableInternal();
-//		this.updatePassiveUniversalTraits(this.isEnabled());
-//		this.setActionTransitionless(this.action);
-//		this.setCharacter(this.character);
-//		this.setPowerUpTransitionless(this.powerUp);
-	}
-	protected void loadFromNbtBeforeNetworkHandler(boolean enabled, ParsedPowerUp powerUp, ParsedCharacter character) {
-		this.powerUp = powerUp;
-		this.character = character;
 	}
 
 	public void tick() {
