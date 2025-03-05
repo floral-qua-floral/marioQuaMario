@@ -76,7 +76,7 @@ public class BipedEntityModelMixin<T extends LivingEntity> {
 	) {
 		if(applyRef.get()) {
 			if(instance == this.head) {
-				newValue = marioRef.get().mqm$getAnimationData().counterRotateHead(marioRef.get(), this.head, newValue);
+				newValue = marioRef.get().mqm$getAnimationData().counterRotateHead(this.head, newValue);
 			}
 			else if(
 					attemptSuppression(rightArmRef, instance, this.rightArm)

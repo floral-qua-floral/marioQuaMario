@@ -21,7 +21,13 @@ import net.minecraft.util.math.RotationAxis;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
-import static net.minecraft.util.math.MathHelper.*;
+import static net.minecraft.util.math.MathHelper.PI;
+import static net.minecraft.util.math.MathHelper.HALF_PI;
+import static net.minecraft.util.math.MathHelper.TAU;
+import static net.minecraft.util.math.MathHelper.RADIANS_PER_DEGREE;
+import static net.minecraft.util.math.MathHelper.DEGREES_PER_RADIAN;
+import static net.minecraft.util.math.MathHelper.sin;
+import static net.minecraft.util.math.MathHelper.lerp;
 
 public class MarioAnimationData {
 	private @Nullable Pose prevTickPose = new Pose();
@@ -36,13 +42,9 @@ public class MarioAnimationData {
 	private boolean isAnimating;
 	private int animationTicks;
 	private int ticksUntilAutoReplaceAnimation;
-	public float headPitchOffset;
-	public float headYawOffset;
-	public boolean headAdjusted;
-	public float unadjustedHeadPitch;
-	public float unadjustedHeadYaw;
+	public float headCounterRotationPitch;
+	public float headCounterRotationYaw;
 	public final Arrangement TAIL_ARRANGEMENT = new Arrangement();
-	private final Arrangement TAIL_TEMP_ARRANGEMENT = new Arrangement();
 
 	public void replaceAnimation(MarioPlayerData data, PlayermodelAnimation newAnim, int ticksUntilAutoReplace) {
 		if(this.ticksUntilAutoReplaceAnimation > 0) return;
@@ -113,7 +115,6 @@ public class MarioAnimationData {
 			ModelPart head, ModelPart torso,
 			ModelPart rightArm, ModelPart leftArm,
 			ModelPart rightLeg, ModelPart leftLeg,
-			ModelPart tail,
 			BipedEntityModel.ArmPose rightArmPose, BipedEntityModel.ArmPose leftArmPose
 	) {
 		if(this.isAnimating(mario)) {
@@ -129,17 +130,11 @@ public class MarioAnimationData {
 			if (this.thisTickPose == null) this.thisTickPose = this.makeAnimatedPose(mario, rightArmPose, leftArmPose);
 
 			this.lerpPart(tickDelta, head, this.prevTickPose.HEAD, this.thisTickPose.HEAD);
-//			head.pitch += this.headPitchOffset; head.yaw += this.headYawOffset;
 			this.lerpPart(tickDelta, torso, this.prevTickPose.TORSO, this.thisTickPose.TORSO);
 			this.lerpPart(tickDelta, rightArm, this.prevTickPose.RIGHT_ARM, this.thisTickPose.RIGHT_ARM);
 			this.lerpPart(tickDelta, leftArm, this.prevTickPose.LEFT_ARM, this.thisTickPose.LEFT_ARM);
 			this.lerpPart(tickDelta, rightLeg, this.prevTickPose.RIGHT_LEG, this.thisTickPose.RIGHT_LEG);
 			this.lerpPart(tickDelta, leftLeg, this.prevTickPose.LEFT_LEG, this.thisTickPose.LEFT_LEG);
-		}
-		else if(mario.mqm$getMarioData().isEnabled()) {
-//			this.setupTailArrangement(this.TAIL_ARRANGEMENT, mario.mqm$getMarioData(), torso.pivotX, torso.pivotY, torso.pivotZ, torso.pitch, torso.yaw, torso.roll, rightLeg.pitch, leftLeg.pitch);
-//			tail.setPivot(this.TAIL_ARRANGEMENT.x, this.TAIL_ARRANGEMENT.y, this.TAIL_ARRANGEMENT.z);
-//			tail.setAngles(this.TAIL_ARRANGEMENT.pitch, this.TAIL_ARRANGEMENT.yaw, this.TAIL_ARRANGEMENT.roll);
 		}
 	}
 
@@ -153,29 +148,19 @@ public class MarioAnimationData {
 			this.mutate(newPose.EVERYTHING, this.currentAnim.entireBodyAnimation(), data, progress);
 			this.mutate(newPose.HEAD, this.currentAnim.headAnimation(), data, progress);
 
-//			if(this.headAdjusted) {
-//				this.headAdjusted = false;
-//				newPose.HEAD.pitch = this.unadjustedHeadPitch;
-//				newPose.HEAD.yaw = this.unadjustedHeadYaw;
-//				newPose.HEAD.yaw = this.unadjustedHeadYaw;
-//			}
-
-//			newPose.HEAD.pitch = approachNumber(newPose.HEAD.pitch, HALF_PI * 0.999F, newPose.EVERYTHING.pitch);
-//			newPose.HEAD.yaw = approachNumber(newPose.HEAD.yaw, HALF_PI * 0.675F, newPose.EVERYTHING.yaw);
-
 			this.mutate(newPose.TORSO, this.currentAnim.torsoAnimation(), data, progress);
 
 			this.conditionallyAnimateArm(
 					newPose.RIGHT_ARM,
 					this.isMirrored ? this.currentAnim.leftArmAnimation() : this.currentAnim.rightArmAnimation(),
 					data, progress,
-					rightArmPose, leftArmPose, true, newPose.TORSO
+					rightArmPose, leftArmPose, newPose.TORSO
 			);
 			this.conditionallyAnimateArm(
 					newPose.LEFT_ARM,
 					this.isMirrored ? this.currentAnim.rightArmAnimation() : this.currentAnim.leftArmAnimation(),
 					data, progress,
-					leftArmPose, rightArmPose, false, newPose.TORSO
+					leftArmPose, rightArmPose, newPose.TORSO
 			);
 			this.mutate(
 					newPose.RIGHT_LEG,
@@ -197,18 +182,7 @@ public class MarioAnimationData {
 		}
 		return newPose;
 	}
-	private static float approachNumber(float start, float limit, float delta) {
-		float wrappedStart = wrapRadians(start);
-		float wrappedDelta = wrapRadians(delta);
-		float dir = Math.signum(wrappedDelta);
-		if (Math.abs(wrappedStart) > limit)
-			return start;
 
-		if(Math.abs(wrappedStart + wrappedDelta) > limit)
-			return limit * dir;
-
-		return start + delta;
-	}
 	private float calculateProgress(MarioPlayerData data) {
 		ProgressHandler handler = this.currentAnim.progressHandler();
 		if(handler == null) return 1;
@@ -216,23 +190,11 @@ public class MarioAnimationData {
 	}
 	private void conditionallyAnimateArm(
 			Arrangement arrangement, LimbAnimation limbAnimation, MarioPlayerData data, float progress,
-			BipedEntityModel.ArmPose thisArmPose, BipedEntityModel.ArmPose otherArmPose, boolean isRight,
+			BipedEntityModel.ArmPose thisArmPose, BipedEntityModel.ArmPose otherArmPose,
 			Arrangement torsoArrangement
 	) {
-		if(isArmBusy(thisArmPose, otherArmPose)) {
-			AbstractClientPlayerEntity mario = (AbstractClientPlayerEntity) data.getMario();
-			PlayerEntityModel<AbstractClientPlayerEntity> model = getModel(mario);
-			// We need to recalculate the position of the arm in question, in case the head has been rotated.
-//			model.positionRightArm(mario);
-//			model.positionLeftArm(mario);
-//			if(isRight) {
-//				setupArrangement(model.rightArm, arrangement);
-//			}
-//			else {
-//				setupArrangement(model.leftArm, arrangement);
-//			}
+		if(isArmBusy(thisArmPose, otherArmPose))
 			arrangement.addPos(0, torsoArrangement.y, torsoArrangement.z);
-		}
 		else
 			this.mutate(arrangement, limbAnimation, data, progress);
 	}
@@ -404,10 +366,8 @@ public class MarioAnimationData {
 		float yaw = slerpRadians(tickDelta, prevTickArrangement.yaw, thisTickArrangement.yaw);
 		float roll = slerpRadians(tickDelta, prevTickArrangement.roll, thisTickArrangement.roll);
 
-		this.headPitchOffset = thisTickArrangement.pitch;
-		this.headYawOffset = thisTickArrangement.yaw;
-//		this.headPitchOffset = 0;
-//		this.headYawOffset = HALF_PI;
+		this.headCounterRotationPitch = thisTickArrangement.pitch;
+		this.headCounterRotationYaw = thisTickArrangement.yaw;
 
 		matrixStack.translate(
 				MathHelper.lerp(tickDelta, prevTickArrangement.x, thisTickArrangement.x) / 16F,
@@ -434,11 +394,10 @@ public class MarioAnimationData {
 	private static final float ALMOST_HALF_PI = 0.99F * HALF_PI;
 	private static final float MAX_HEAD_YAW = HALF_PI * 0.66F;
 	public float counterRotateHead(
-			AbstractClientPlayerEntity mario,
 			ModelPart head, float assigningPitch
 	) {
-		head.yaw = MathHelper.clamp(wrapRadians(head.yaw + this.headYawOffset), -MAX_HEAD_YAW, MAX_HEAD_YAW);
-		return MathHelper.clamp(wrapRadians(assigningPitch + this.headPitchOffset), -ALMOST_HALF_PI, ALMOST_HALF_PI);
+		head.yaw = MathHelper.clamp(wrapRadians(head.yaw + this.headCounterRotationYaw), -MAX_HEAD_YAW, MAX_HEAD_YAW);
+		return MathHelper.clamp(wrapRadians(assigningPitch + this.headCounterRotationPitch), -ALMOST_HALF_PI, ALMOST_HALF_PI);
 	}
 
 	private static void setupArrangement(ModelPart from, Arrangement to) {
