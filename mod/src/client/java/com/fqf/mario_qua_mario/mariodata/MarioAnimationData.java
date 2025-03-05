@@ -1,6 +1,5 @@
 package com.fqf.mario_qua_mario.mariodata;
 
-import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.*;
 import com.fqf.mario_qua_mario.util.Easing;
 import com.tom.cpl.math.Vec3f;
@@ -17,7 +16,6 @@ import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EntityPose;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import org.jetbrains.annotations.Nullable;
@@ -155,14 +153,15 @@ public class MarioAnimationData {
 			this.mutate(newPose.EVERYTHING, this.currentAnim.entireBodyAnimation(), data, progress);
 			this.mutate(newPose.HEAD, this.currentAnim.headAnimation(), data, progress);
 
-			if(this.headAdjusted) {
-				this.headAdjusted = false;
-				newPose.HEAD.pitch = this.unadjustedHeadPitch;
-				newPose.HEAD.yaw = this.unadjustedHeadYaw;
-			}
+//			if(this.headAdjusted) {
+//				this.headAdjusted = false;
+//				newPose.HEAD.pitch = this.unadjustedHeadPitch;
+//				newPose.HEAD.yaw = this.unadjustedHeadYaw;
+//				newPose.HEAD.yaw = this.unadjustedHeadYaw;
+//			}
 
-			newPose.HEAD.pitch = approachNumber(newPose.HEAD.pitch, HALF_PI * 0.999F, newPose.EVERYTHING.pitch);
-			newPose.HEAD.yaw = approachNumber(newPose.HEAD.yaw, HALF_PI * 0.675F, newPose.EVERYTHING.yaw);
+//			newPose.HEAD.pitch = approachNumber(newPose.HEAD.pitch, HALF_PI * 0.999F, newPose.EVERYTHING.pitch);
+//			newPose.HEAD.yaw = approachNumber(newPose.HEAD.yaw, HALF_PI * 0.675F, newPose.EVERYTHING.yaw);
 
 			this.mutate(newPose.TORSO, this.currentAnim.torsoAnimation(), data, progress);
 
@@ -405,8 +404,8 @@ public class MarioAnimationData {
 		float yaw = slerpRadians(tickDelta, prevTickArrangement.yaw, thisTickArrangement.yaw);
 		float roll = slerpRadians(tickDelta, prevTickArrangement.roll, thisTickArrangement.roll);
 
-		this.headPitchOffset = pitch;
-		this.headYawOffset = yaw;
+		this.headPitchOffset = thisTickArrangement.pitch;
+		this.headYawOffset = thisTickArrangement.yaw;
 //		this.headPitchOffset = 0;
 //		this.headYawOffset = HALF_PI;
 
@@ -430,6 +429,16 @@ public class MarioAnimationData {
 			matrixStack.multiply(RotationAxis.POSITIVE_Z.rotation(roll));
 			matrixStack.translate(0, -halfHeight, 0);
 		}
+	}
+
+	private static final float ALMOST_HALF_PI = 0.99F * HALF_PI;
+	private static final float MAX_HEAD_YAW = HALF_PI * 0.66F;
+	public float counterRotateHead(
+			AbstractClientPlayerEntity mario,
+			ModelPart head, float assigningPitch
+	) {
+		head.yaw = MathHelper.clamp(wrapRadians(head.yaw + this.headYawOffset), -MAX_HEAD_YAW, MAX_HEAD_YAW);
+		return MathHelper.clamp(wrapRadians(assigningPitch + this.headPitchOffset), -ALMOST_HALF_PI, ALMOST_HALF_PI);
 	}
 
 	private static void setupArrangement(ModelPart from, Arrangement to) {

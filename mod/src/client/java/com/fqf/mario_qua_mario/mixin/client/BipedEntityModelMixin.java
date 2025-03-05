@@ -76,16 +76,7 @@ public class BipedEntityModelMixin<T extends LivingEntity> {
 	) {
 		if(applyRef.get()) {
 			if(instance == this.head) {
-				// TODO: Maybe make this less hideously terrible. As-is, makes arm counter-rotations 1 tick delayed (head is still frame perfect).
-				MarioAnimationData data = marioRef.get().mqm$getAnimationData();
-				float modelPitchAdjustment = MathHelper.RADIANS_PER_DEGREE * MathHelper.wrapDegrees(MathHelper.DEGREES_PER_RADIAN * data.headPitchOffset);
-				float modelYawAdjustment = MathHelper.RADIANS_PER_DEGREE * MathHelper.wrapDegrees(MathHelper.DEGREES_PER_RADIAN * data.headYawOffset);
-				float maxYawAdjustment = 60F * MathHelper.RADIANS_PER_DEGREE;
-				data.headAdjusted = true;
-				data.unadjustedHeadPitch = newValue;
-				data.unadjustedHeadYaw = this.head.yaw;
-				newValue = MathHelper.clamp(newValue + modelPitchAdjustment, -MathHelper.HALF_PI, MathHelper.HALF_PI * 0.9F);
-				this.head.yaw = MathHelper.clamp(this.head.yaw + modelYawAdjustment, this.body.yaw - maxYawAdjustment, this.body.yaw + maxYawAdjustment);
+				newValue = marioRef.get().mqm$getAnimationData().counterRotateHead(marioRef.get(), this.head, newValue);
 			}
 			else if(
 					attemptSuppression(rightArmRef, instance, this.rightArm)
