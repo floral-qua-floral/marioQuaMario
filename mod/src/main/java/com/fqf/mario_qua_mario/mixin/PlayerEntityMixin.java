@@ -238,8 +238,9 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 				// If Mario's horizontal velocity is responsible for him clipping a ceiling, then just cancel his horizontal movement
 				if(
 						(movement.x != 0 || movement.z != 0)
-								&& getWorld().isSpaceEmpty(this, getBoundingBox().offset(movement.x, 0, movement.z))
-								&& !getWorld().isSpaceEmpty(this, getBoundingBox().offset(movement))) {
+						&& !getWorld().isSpaceEmpty(this, getBoundingBox().offset(movement)) // movement is blocked
+						&& getWorld().isSpaceEmpty(this, getBoundingBox().offset(0, movement.y, 0)) // can move straight up
+				) {
 					movement = new Vec3d(0, movement.y, 0);
 				}
 
@@ -249,7 +250,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 						movement = new Vec3d(movement.x - CLIPPING_LENIENCY, movement.y, movement.z);
 						move(MovementType.SELF, new Vec3d(CLIPPING_LENIENCY, 0, 0));
 					}
-					if(getWorld().isSpaceEmpty(this, stretchedBox.offset(-CLIPPING_LENIENCY, 0, 0))) {
+					else if(getWorld().isSpaceEmpty(this, stretchedBox.offset(-CLIPPING_LENIENCY, 0, 0))) {
 						movement = new Vec3d(movement.x + CLIPPING_LENIENCY, movement.y, movement.z);
 						move(MovementType.SELF, new Vec3d(-CLIPPING_LENIENCY, 0, 0));
 					}
@@ -257,7 +258,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 						movement = new Vec3d(movement.x, movement.y, movement.z - CLIPPING_LENIENCY);
 						move(MovementType.SELF, new Vec3d(0, 0, CLIPPING_LENIENCY));
 					}
-					if(getWorld().isSpaceEmpty(this, stretchedBox.offset(0, 0, -CLIPPING_LENIENCY))) {
+					else if(getWorld().isSpaceEmpty(this, stretchedBox.offset(0, 0, -CLIPPING_LENIENCY))) {
 						movement = new Vec3d(movement.x, movement.y, movement.z + CLIPPING_LENIENCY);
 						move(MovementType.SELF, new Vec3d(0, 0, -CLIPPING_LENIENCY));
 					}

@@ -29,7 +29,7 @@ public class Skid implements GroundedActionDefinition {
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
 		return new PlayermodelAnimation(
-				null,
+				(data, rightArmBusy, leftArmBusy, headRelativeYaw) -> data.getMario().getRandom().nextBoolean(),
 				new ProgressHandler((data, ticksPassed) -> 1),
 				new EntireBodyAnimation(0.3F, (data, arrangement, progress) -> {
 					arrangement.y -= 4;
@@ -81,7 +81,11 @@ public class Skid implements GroundedActionDefinition {
 				}),
 
 				new LimbAnimation(false, (data, arrangement, progress) -> {
-
+					arrangement.setAngles(
+							5,
+							42,
+							-17.5F
+					);
 				})
 		);
 	}

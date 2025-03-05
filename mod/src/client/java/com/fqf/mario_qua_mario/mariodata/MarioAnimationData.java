@@ -396,6 +396,7 @@ public class MarioAnimationData {
 	public float counterRotateHead(
 			ModelPart head, float assigningPitch
 	) {
+		// FIXME: Seems to behave strangely with mirrored animations?
 		head.yaw = MathHelper.clamp(wrapRadians(head.yaw + this.headCounterRotationYaw), -MAX_HEAD_YAW, MAX_HEAD_YAW);
 		return MathHelper.clamp(wrapRadians(assigningPitch + this.headCounterRotationPitch), -ALMOST_HALF_PI, ALMOST_HALF_PI);
 	}

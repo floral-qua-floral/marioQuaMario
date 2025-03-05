@@ -272,7 +272,7 @@ public class MarioCommand {
 				interceptionSourceID = powerUp.ID;
 				MarioAttackInterceptionPackets.handleInterceptionCommandPowerUp(mario, powerUp, index, targetEntity, targetBlock);
 			}
-			return sendFeedback(context, "Executed Attack Interception number " + index + " from " + interceptionSourceID);
+			return sendFeedback(context, "Made " + name + " perform Attack Interception number " + index + " from " + interceptionSourceID);
 		}
 		catch(IndexOutOfBoundsException ignored) {
 			return sendFeedback(context, interceptionSourceID + " doesn't have an Attack Interception of index " + index, false);
