@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.actions.airborne;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
@@ -95,7 +96,7 @@ public class DoubleJump extends Jump implements AirborneActionDefinition {
 									.performJump(data, DOUBLE_JUMP_VEL, DOUBLE_JUMP_ADDEND),
 						(data, isSelf, seed) -> {
 							data.playJumpSound(seed);
-							data.voice("double_jump", seed);
+							data.voice(Voicelines.DOUBLE_JUMP, seed);
 						}
 				)
 		);

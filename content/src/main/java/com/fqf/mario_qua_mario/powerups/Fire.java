@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.powerups;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.definitions.states.PowerUpDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.mario_qua_mario.mariodata.*;
@@ -110,7 +111,7 @@ public class Fire implements PowerUpDefinition {
 				long seed
 		) {
 			data.playSound(MarioContentSFX.FIREBALL, seed);
-			data.voice("fireball", seed);
+			data.voice(Voicelines.FIREBALL, seed);
 			if(data.getMario().isMainPlayer()) {
 				long time = data.getMario().getWorld().getTime();
 				if(this.HAND == Hand.MAIN_HAND) {

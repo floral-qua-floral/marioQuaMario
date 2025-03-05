@@ -1,6 +1,8 @@
 package com.fqf.mario_qua_mario.actions.grounded;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario.Voicelines;
+import com.fqf.mario_qua_mario.actions.airborne.Backflip;
 import com.fqf.mario_qua_mario.actions.airborne.DuckFall;
 import com.fqf.mario_qua_mario.actions.airborne.DuckJump;
 import com.fqf.mario_qua_mario.actions.airborne.LongJump;
@@ -90,6 +92,7 @@ public class DuckSlide implements GroundedActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(GroundedActionHelper helper) {
 		return List.of(
 				DuckWaddle.UNDUCK,
+				Backflip.makeBackflipTransition(helper),
 				new TransitionDefinition(
 						MarioQuaMarioContent.makeID("long_jump"),
 						data ->
@@ -104,7 +107,7 @@ public class DuckSlide implements GroundedActionDefinition {
 						},
 						(data, isSelf, seed) -> {
 							data.playJumpSound(seed);
-							data.voice("long_jump", seed);
+							data.voice(Voicelines.LONG_JUMP, seed);
 						}
 				),
 				DuckJump.makeDuckJumpTransition(helper)

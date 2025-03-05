@@ -1,6 +1,5 @@
 package com.fqf.mario_qua_mario.mariodata;
 
-import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.mario_qua_mario.mariodata.util.*;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
@@ -18,7 +17,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -152,6 +150,4 @@ public interface IMarioClientDataImpl extends IMarioClientData {
 			this.SOUND = sound;
 		}
 	}
-
-	EnumMap<VoiceLine, Map<Identifier, SoundEvent>> VOICE_SOUND_EVENTS = new EnumMap<>(VoiceLine.class);
 }

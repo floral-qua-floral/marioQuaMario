@@ -40,9 +40,10 @@ def make_subtitles(include_voicelines, copy_to, subtitle_source):
 
                 if(character != last_added_character):
                     voicelines.append(empty_sound)
+                    voicelines.append(f'"subtitles.mario_qua_mario.voice.{character}.backflip": "{character.title()} {content_subtitles.voicelines["backflip"]}"')
                     last_added_character = character
 
-                if(content_subtitles.voicelines[voiceline] == "SKIP"):
+                if content_subtitles.voicelines[voiceline] == "SKIP":
                     continue
 
                 new_file_home = f"{copy_to}/voices/{character}/{voiceline}"
@@ -152,6 +153,17 @@ def make_sounds_dot_json_and_java_file(sounds_dot_json_location, do_voices, inpu
                     "subtitle": f"subtitles.mario_qua_mario.voice_{character}_{voiceline}",
                     "sounds": voiceline_sound_files
                 }
+
+                if voiceline == "sideflip": # Add backflip sound event; it just uses the Sideflip event
+                    sounds_dot_json[f"voice.{character}.backflip"] = {
+                        "subtitle": f"subtitles.mario_qua_mario.voice_{character}_backflip",
+                        "sounds": [
+                            {
+                                "type": "event",
+                                "name": f"mario_qua_mario:voice.{character}.sideflip"
+                            }
+                        ]
+                    }
 
     print(f"Made sounds.json: {sounds_dot_json}")
     with open(f"{sounds_dot_json_location}sounds.json", 'w', encoding='utf-8') as file:

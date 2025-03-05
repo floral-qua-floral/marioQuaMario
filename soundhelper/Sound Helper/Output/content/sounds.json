@@ -258,6 +258,15 @@
 			"mario_qua_mario:voices/luigi/sideflip/sideflip3"
 		]
 	},
+	"voice.luigi.backflip": {
+		"subtitle": "subtitles.mario_qua_mario.voice_luigi_backflip",
+		"sounds": [
+			{
+				"type": "event",
+				"name": "mario_qua_mario:voice.luigi.sideflip"
+			}
+		]
+	},
 	"voice.luigi.triple_jump": {
 		"subtitle": "subtitles.mario_qua_mario.voice_luigi_triple_jump",
 		"sounds": [
@@ -400,6 +409,15 @@
 			"mario_qua_mario:voices/mario/sideflip/sideflip2",
 			"mario_qua_mario:voices/mario/sideflip/sideflip3",
 			"mario_qua_mario:voices/mario/sideflip/sideflip4"
+		]
+	},
+	"voice.mario.backflip": {
+		"subtitle": "subtitles.mario_qua_mario.voice_mario_backflip",
+		"sounds": [
+			{
+				"type": "event",
+				"name": "mario_qua_mario:voice.mario.sideflip"
+			}
 		]
 	},
 	"voice.mario.tail_spin": {
@@ -565,6 +583,15 @@
 			"mario_qua_mario:voices/toad/sideflip/sideflip2"
 		]
 	},
+	"voice.toad.backflip": {
+		"subtitle": "subtitles.mario_qua_mario.voice_toad_backflip",
+		"sounds": [
+			{
+				"type": "event",
+				"name": "mario_qua_mario:voice.toad.sideflip"
+			}
+		]
+	},
 	"voice.toad.triple_jump": {
 		"subtitle": "subtitles.mario_qua_mario.voice_toad_triple_jump",
 		"sounds": [
@@ -697,6 +724,15 @@
 			"mario_qua_mario:voices/toadette/sideflip/sideflip1",
 			"mario_qua_mario:voices/toadette/sideflip/sideflip2",
 			"mario_qua_mario:voices/toadette/sideflip/sideflip3"
+		]
+	},
+	"voice.toadette.backflip": {
+		"subtitle": "subtitles.mario_qua_mario.voice_toadette_backflip",
+		"sounds": [
+			{
+				"type": "event",
+				"name": "mario_qua_mario:voice.toadette.sideflip"
+			}
 		]
 	},
 	"voice.toadette.triple_jump": {

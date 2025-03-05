@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.powerups;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.actions.power.TailStall;
 import com.fqf.mario_qua_mario.definitions.states.PowerUpDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.ActionCategory;
@@ -155,10 +156,10 @@ public class Raccoon implements PowerUpDefinition {
 			data.getMario().setBodyYaw(data.getMario().getHeadYaw());
 			data.playSound(MarioContentSFX.TAIL_WHIP, seed);
 			if(this.ACTION_TARGET == null) {
-				data.voice("tail_whip", seed);
+				data.voice(Voicelines.TAIL_WHIP, seed);
 				data.playAnimation(this.ANIMATION, TAIL_WHIP_ANIMATION_DURATION);
 			}
-			else data.voice("tail_spin", seed);
+			else data.voice(Voicelines.TAIL_SPIN, seed);
 		}
 
 		@Override

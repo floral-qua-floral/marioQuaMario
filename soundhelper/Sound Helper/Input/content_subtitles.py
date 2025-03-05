@@ -1,6 +1,6 @@
 voicelines = {
-  "burnt": "gets burned",
   "backflip": "cheers",
+  "burnt": "gets burned",
   "double_jump": "jumps",
   "duck": "ducks",
   "duck_jump": "grunts",

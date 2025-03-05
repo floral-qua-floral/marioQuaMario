@@ -58,6 +58,7 @@
   "subtitles.mario_qua_mario.action.swim_paddle": "Swimming",
   "subtitles.mario_qua_mario.action.unduck": "Un-ducking",
 
+  "subtitles.mario_qua_mario.voice.luigi.backflip": "Luigi cheers",
   "subtitles.mario_qua_mario.voice.luigi.bonk": "Luigi bonks",
   "subtitles.mario_qua_mario.voice.luigi.burnt": "Luigi gets burned",
   "subtitles.mario_qua_mario.voice.luigi.death": "Luigi dies",
@@ -75,6 +76,7 @@
   "subtitles.mario_qua_mario.voice.luigi.triple_jump": "Luigi cheers",
   "subtitles.mario_qua_mario.voice.luigi.wall_jump": "Luigi jumps",
 
+  "subtitles.mario_qua_mario.voice.mario.backflip": "Mario cheers",
   "subtitles.mario_qua_mario.voice.mario.bonk": "Mario bonks",
   "subtitles.mario_qua_mario.voice.mario.burnt": "Mario gets burned",
   "subtitles.mario_qua_mario.voice.mario.death": "Mario dies",
@@ -94,6 +96,7 @@
   "subtitles.mario_qua_mario.voice.mario.triple_jump": "Mario cheers",
   "subtitles.mario_qua_mario.voice.mario.wall_jump": "Mario jumps",
 
+  "subtitles.mario_qua_mario.voice.toadette.backflip": "Toadette cheers",
   "subtitles.mario_qua_mario.voice.toadette.bonk": "Toadette bonks",
   "subtitles.mario_qua_mario.voice.toadette.burnt": "Toadette gets burned",
   "subtitles.mario_qua_mario.voice.toadette.death": "Toadette dies",
@@ -111,6 +114,7 @@
   "subtitles.mario_qua_mario.voice.toadette.triple_jump": "Toadette cheers",
   "subtitles.mario_qua_mario.voice.toadette.wall_jump": "Toadette jumps",
 
+  "subtitles.mario_qua_mario.voice.toad.backflip": "Toad cheers",
   "subtitles.mario_qua_mario.voice.toad.bonk": "Toad bonks",
   "subtitles.mario_qua_mario.voice.toad.burnt": "Toad gets burned",
   "subtitles.mario_qua_mario.voice.toad.death": "Toad dies",

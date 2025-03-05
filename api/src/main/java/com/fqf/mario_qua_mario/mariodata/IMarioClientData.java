@@ -27,27 +27,6 @@ public interface IMarioClientData extends IMarioData {
 	void storeSound(SoundInstanceWrapper instance);
 	void stopStoredSound(SoundEvent event);
 
-	enum VoiceLine {
-		SELECT,
-		DUCK,
-
-		DOUBLE_JUMP,
-		TRIPLE_JUMP,
-		GYMNAST_SALUTE,
-
-		DUCK_JUMP,
-		LONG_JUMP,
-		BACKFLIP,
-		SIDEFLIP,
-		WALL_JUMP,
-
-		REVERT,
-		BURNT,
-
-		FIREBALL,
-		GET_STAR
-	}
-
 	interface SoundInstanceWrapper {
 	}
 }

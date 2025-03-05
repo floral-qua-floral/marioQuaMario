@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.actions.airborne;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.actions.grounded.DuckWaddle;
 import com.fqf.mario_qua_mario.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.GroundedActionDefinition;
@@ -53,7 +54,7 @@ public class DuckJump extends Jump implements AirborneActionDefinition {
 				data -> helper.performJump(data, JUMP_VEL, JUMP_ADDEND),
 				(data, isSelf, seed) -> {
 					data.playJumpSound(seed);
-					data.voice("duck_jump", seed);
+					data.voice(Voicelines.DUCK_JUMP, seed);
 				}
 		);
 	}
