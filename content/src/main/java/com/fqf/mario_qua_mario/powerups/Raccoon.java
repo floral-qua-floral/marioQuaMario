@@ -211,8 +211,6 @@ public class Raccoon implements PowerUpDefinition {
 		return new PlayermodelAnimation(
 				null,
 				new ProgressHandler(TAIL_WHIP_ANIMATION_DURATION, false, Easing.SINE_IN_OUT),
-//				new ProgressHandler((data, ticksPassed) ->
-//						Easing.SINE_IN_OUT.ease((float) ticksPassed / TAIL_WHIP_ANIMATION_DURATION)),
 
 				new EntireBodyAnimation(0.5F, (data, arrangement, progress) ->
 						arrangement.yaw = progress * 360),
