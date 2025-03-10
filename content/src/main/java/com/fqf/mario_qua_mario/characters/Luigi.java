@@ -2,8 +2,6 @@ package com.fqf.mario_qua_mario.characters;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario.definitions.states.CharacterDefinition;
-import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
-import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.util.MarioContentSFX;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;

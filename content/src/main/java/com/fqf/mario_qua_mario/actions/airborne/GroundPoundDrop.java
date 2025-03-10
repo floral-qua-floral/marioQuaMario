@@ -20,7 +20,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-import static com.fqf.mario_qua_mario.util.StatCategory.*;
+import static com.fqf.mario_qua_mario.util.StatCategory.DRIFTING;
+import static com.fqf.mario_qua_mario.util.StatCategory.TERMINAL_VELOCITY;
 
 public class GroundPoundDrop implements AirborneActionDefinition {
 	@Override public @NotNull Identifier getID() {

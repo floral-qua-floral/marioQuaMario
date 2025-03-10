@@ -3,27 +3,16 @@ package com.fqf.mario_qua_mario.actions.airborne;
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario.actions.grounded.DuckWaddle;
 import com.fqf.mario_qua_mario.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.mario_qua_mario.definitions.states.actions.GroundedActionDefinition;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.SneakingRule;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.SprintingRule;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.LimbAnimation;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
-import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
-import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
-import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
-import com.fqf.mario_qua_mario.util.CharaStat;
-import com.fqf.mario_qua_mario.util.Easing;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-
-import static com.fqf.mario_qua_mario.util.StatCategory.JUMPING_GRAVITY;
-import static com.fqf.mario_qua_mario.util.StatCategory.JUMP_VELOCITY;
 
 public class DuckFall extends Fall implements AirborneActionDefinition {
 	@Override public @NotNull Identifier getID() {

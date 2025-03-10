@@ -15,7 +15,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.Set;
 
 public class ParsedActionHelper {

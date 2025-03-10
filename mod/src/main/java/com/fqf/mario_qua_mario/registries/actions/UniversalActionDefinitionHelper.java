@@ -1,6 +1,5 @@
 package com.fqf.mario_qua_mario.registries.actions;
 
-import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.definitions.states.actions.*;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.IncompleteActionDefinition;

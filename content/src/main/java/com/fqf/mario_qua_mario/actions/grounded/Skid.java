@@ -1,7 +1,8 @@
 package com.fqf.mario_qua_mario.actions.grounded;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
-import com.fqf.mario_qua_mario.actions.airborne.*;
+import com.fqf.mario_qua_mario.actions.airborne.Fall;
+import com.fqf.mario_qua_mario.actions.airborne.Jump;
 import com.fqf.mario_qua_mario.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.*;
@@ -11,7 +12,6 @@ import com.fqf.mario_qua_mario.mariodata.IMarioData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.CharaStat;
-import com.fqf.mario_qua_mario.util.Easing;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

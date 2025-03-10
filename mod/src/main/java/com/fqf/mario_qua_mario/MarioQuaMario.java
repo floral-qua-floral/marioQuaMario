@@ -1,8 +1,8 @@
 package com.fqf.mario_qua_mario;
 
-import com.fqf.mario_qua_mario.util.MarioEventListeners;
 import com.fqf.mario_qua_mario.packets.MarioPackets;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
+import com.fqf.mario_qua_mario.util.MarioEventListeners;
 import com.fqf.mario_qua_mario.util.MarioGamerules;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;

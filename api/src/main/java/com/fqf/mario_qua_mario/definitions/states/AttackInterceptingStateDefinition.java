@@ -1,7 +1,10 @@
 package com.fqf.mario_qua_mario.definitions.states;
 
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.mario_qua_mario.mariodata.*;
+import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
+import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
+import com.fqf.mario_qua_mario.mariodata.IMarioReadableMotionData;
+import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;

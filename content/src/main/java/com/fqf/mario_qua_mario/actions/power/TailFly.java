@@ -5,7 +5,9 @@ import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.airborne.GroundPoundFlip;
 import com.fqf.mario_qua_mario.actions.airborne.PJump;
 import com.fqf.mario_qua_mario.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionDefinition;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.ProgressHandler;
@@ -24,7 +26,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import static com.fqf.mario_qua_mario.util.StatCategory.*;
+import static com.fqf.mario_qua_mario.util.StatCategory.JUMP_VELOCITY;
+import static com.fqf.mario_qua_mario.util.StatCategory.POWER_UP;
 
 public class TailFly extends PJump implements AirborneActionDefinition {
 	@Override public @NotNull Identifier getID() {

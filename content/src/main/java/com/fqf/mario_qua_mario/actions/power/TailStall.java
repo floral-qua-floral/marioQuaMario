@@ -3,7 +3,6 @@ package com.fqf.mario_qua_mario.actions.power;
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.airborne.GroundPoundFlip;
-import com.fqf.mario_qua_mario.actions.airborne.PJump;
 import com.fqf.mario_qua_mario.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.*;

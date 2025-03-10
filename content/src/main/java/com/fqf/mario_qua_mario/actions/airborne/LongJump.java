@@ -11,14 +11,14 @@ import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario.util.CharaStat;
 import com.fqf.mario_qua_mario.util.Easing;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.fqf.mario_qua_mario.util.StatCategory.*;
+import static com.fqf.mario_qua_mario.util.StatCategory.JUMP_VELOCITY;
+import static com.fqf.mario_qua_mario.util.StatCategory.THRESHOLD;
 
 public class LongJump extends Jump implements AirborneActionDefinition {
 	@Override public @NotNull Identifier getID() {

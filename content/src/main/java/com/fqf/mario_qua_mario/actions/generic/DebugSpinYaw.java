@@ -7,7 +7,6 @@ import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.Playerm
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.ProgressHandler;
 import com.fqf.mario_qua_mario.util.Easing;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

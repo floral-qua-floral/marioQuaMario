@@ -1,6 +1,9 @@
 package com.fqf.mario_qua_mario.mariodata;
 
-import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.*;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.Arrangement;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.LimbAnimation;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.ProgressHandler;
 import com.fqf.mario_qua_mario.util.Easing;
 import com.tom.cpl.math.Vec3f;
 import com.tom.cpm.client.CustomPlayerModelsClient;
@@ -21,13 +24,7 @@ import net.minecraft.util.math.RotationAxis;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
-import static net.minecraft.util.math.MathHelper.PI;
-import static net.minecraft.util.math.MathHelper.HALF_PI;
-import static net.minecraft.util.math.MathHelper.TAU;
-import static net.minecraft.util.math.MathHelper.RADIANS_PER_DEGREE;
-import static net.minecraft.util.math.MathHelper.DEGREES_PER_RADIAN;
-import static net.minecraft.util.math.MathHelper.sin;
-import static net.minecraft.util.math.MathHelper.lerp;
+import static net.minecraft.util.math.MathHelper.*;
 
 public class MarioAnimationData {
 	private @Nullable Pose prevTickPose = new Pose();

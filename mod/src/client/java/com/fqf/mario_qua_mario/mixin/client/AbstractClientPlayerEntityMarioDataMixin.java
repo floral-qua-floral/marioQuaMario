@@ -1,6 +1,5 @@
 package com.fqf.mario_qua_mario.mixin.client;
 
-import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.mariodata.MarioAnimationData;
 import com.fqf.mario_qua_mario.mariodata.injections.AdvMarioAbstractClientDataHolder;
 import com.fqf.mario_qua_mario.mariodata.injections.IMarioClientDataHolder;

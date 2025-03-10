@@ -4,7 +4,6 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Set;
 
 public record TransitionInjectionDefinition(
 		InjectionPlacement placement,

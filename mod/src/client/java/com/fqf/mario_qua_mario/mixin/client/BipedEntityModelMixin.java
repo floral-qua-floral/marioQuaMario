@@ -2,7 +2,6 @@ package com.fqf.mario_qua_mario.mixin.client;
 
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.LimbAnimation;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
-import com.fqf.mario_qua_mario.mariodata.MarioAnimationData;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -13,7 +12,6 @@ import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.math.MathHelper;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

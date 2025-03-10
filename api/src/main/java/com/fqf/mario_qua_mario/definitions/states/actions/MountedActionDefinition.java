@@ -4,9 +4,7 @@ import com.fqf.mario_qua_mario.definitions.states.actions.util.IncompleteActionD
 import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.mario_qua_mario.mariodata.IMarioReadableMotionData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
-import com.fqf.mario_qua_mario.util.CharaStat;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

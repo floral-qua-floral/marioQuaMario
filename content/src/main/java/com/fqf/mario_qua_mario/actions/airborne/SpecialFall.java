@@ -2,7 +2,8 @@ package com.fqf.mario_qua_mario.actions.airborne;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.ActionCategory;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.LimbAnimation;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;

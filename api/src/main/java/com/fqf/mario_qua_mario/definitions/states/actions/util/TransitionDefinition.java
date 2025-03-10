@@ -3,7 +3,6 @@ package com.fqf.mario_qua_mario.definitions.states.actions.util;
 import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.mariodata.IMarioReadableMotionData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
-import net.fabricmc.api.Environment;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

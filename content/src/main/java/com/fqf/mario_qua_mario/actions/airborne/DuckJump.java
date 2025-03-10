@@ -12,10 +12,8 @@ import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionDefinit
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.EntireBodyAnimation;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.ProgressHandler;
 import com.fqf.mario_qua_mario.util.Easing;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

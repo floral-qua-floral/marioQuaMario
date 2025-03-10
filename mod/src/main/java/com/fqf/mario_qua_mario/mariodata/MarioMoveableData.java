@@ -2,12 +2,8 @@ package com.fqf.mario_qua_mario.mariodata;
 
 import com.fqf.mario_qua_mario.definitions.states.actions.WallboundActionDefinition;
 import net.minecraft.entity.MovementType;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2d;
 

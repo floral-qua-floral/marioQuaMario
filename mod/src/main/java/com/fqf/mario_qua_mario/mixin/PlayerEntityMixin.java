@@ -6,8 +6,6 @@ import com.fqf.mario_qua_mario.definitions.states.actions.util.SneakingRule;
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
 import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
 import com.fqf.mario_qua_mario.mariodata.injections.AdvMarioDataHolder;
-import com.fqf.mario_qua_mario.registries.power_granting.ParsedCharacter;
-import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import com.fqf.mario_qua_mario.util.MarioGamerules;
 import com.fqf.mario_qua_mario.util.MarioNbtKeys;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;

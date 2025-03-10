@@ -2,10 +2,7 @@ package com.fqf.mario_qua_mario.util;
 
 import net.minecraft.util.math.MathHelper;
 
-import static net.minecraft.util.math.MathHelper.PI;
-import static net.minecraft.util.math.MathHelper.sin;
-import static net.minecraft.util.math.MathHelper.cos;
-import static net.minecraft.util.math.MathHelper.sqrt;
+import static net.minecraft.util.math.MathHelper.*;
 
 @FunctionalInterface
 public interface Easing {

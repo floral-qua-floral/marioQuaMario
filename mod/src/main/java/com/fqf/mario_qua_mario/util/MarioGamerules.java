@@ -1,13 +1,9 @@
 package com.fqf.mario_qua_mario.util;
 
-import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.packets.MarioPackets;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
 import net.fabricmc.fabric.api.gamerule.v1.rule.DoubleRule;
-import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.GameRules;
 
 public class MarioGamerules {

@@ -8,7 +8,9 @@ import com.fqf.mario_qua_mario.definitions.states.actions.util.EvaluatorEnvironm
 import com.fqf.mario_qua_mario.definitions.states.actions.util.SneakingRule;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.SprintingRule;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.*;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.LimbAnimation;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.mario_qua_mario.powerups.Raccoon;
 import com.fqf.mario_qua_mario.util.Powers;
 import net.minecraft.util.Identifier;

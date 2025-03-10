@@ -5,7 +5,6 @@ import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionDefinit
 import com.fqf.mario_qua_mario.mariodata.IMarioReadableMotionData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario.util.CharaStat;
-import net.minecraft.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
