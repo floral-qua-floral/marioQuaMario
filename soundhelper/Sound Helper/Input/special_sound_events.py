@@ -3,5 +3,5 @@ dupe_voicelines = {
 }
 
 dupe_sfx = {
-    "jump": ["mario_jump", "luigi_jump"]
+    "jump": ["mario_jump", "luigi_jump", "toad_jump", "toadette_jump"]
 }

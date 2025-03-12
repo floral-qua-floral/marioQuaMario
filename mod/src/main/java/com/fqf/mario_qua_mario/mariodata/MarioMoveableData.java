@@ -93,7 +93,7 @@ public abstract class MarioMoveableData extends MarioPlayerData implements IMari
 		this.VELOCITIES.ensureDirty().strafe = strafe;
 	}
 	@Override public void setYVel(double vertical) {
-		if(vertical > 0) this.getMario().fallDistance = 0;
+//		if(vertical > 0) this.getMario().fallDistance = 0;
 		if(this.VELOCITIES.isGenerated) this.VELOCITIES.ensureDirty().vertical = vertical;
 		else {
 			Vec3d oldVel = this.getMario().getVelocity();

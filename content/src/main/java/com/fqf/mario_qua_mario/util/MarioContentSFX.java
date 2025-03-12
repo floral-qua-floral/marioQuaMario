@@ -21,6 +21,8 @@ public class MarioContentSFX {
 	public static final SoundEvent FLIP = makeMovementSound("flip");
 	public static final SoundEvent MARIO_JUMP = makeMovementSound("mario_jump");
 	public static final SoundEvent LUIGI_JUMP = makeMovementSound("luigi_jump");
+	public static final SoundEvent TOAD_JUMP = makeMovementSound("toad_jump");
+	public static final SoundEvent TOADETTE_JUMP = makeMovementSound("toadette_jump");
 
 	public static final SoundEvent FIREBALL = makePowerUpSound("fireball");
 	public static final SoundEvent FIREBALL_ENEMY = makePowerUpSound("fireball_enemy");

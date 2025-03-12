@@ -21,8 +21,9 @@ import java.util.Set;
 import static com.fqf.mario_qua_mario.util.StatCategory.*;
 
 public class SubWalk implements GroundedActionDefinition {
+	public static final Identifier ID = MarioQuaMarioContent.makeID("sub_walk");
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("sub_walk");
+	    return ID;
 	}
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
@@ -162,7 +163,7 @@ public class SubWalk implements GroundedActionDefinition {
 					EvaluatorEnvironment.CLIENT_ONLY
 			)//,
 //			new TransitionDefinition(
-//					MarioQuaMarioContent.makeID("smb3_idle"),
+//					RetroIdle.ID,
 //					data -> data.hasPower(Powers.SMB3_IDLE) && isIdle(data),
 //					EvaluatorEnvironment.CLIENT_ONLY
 //			)

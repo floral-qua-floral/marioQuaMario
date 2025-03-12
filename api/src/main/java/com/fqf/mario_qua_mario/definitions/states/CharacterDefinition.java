@@ -6,6 +6,10 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 public interface CharacterDefinition extends StatAlteringStateDefinition {
+	default @NotNull String getVoiceName() {
+		return this.getID().getPath();
+	}
+
 	@NotNull Identifier getInitialAction();
 	@NotNull Identifier getInitialPowerUp();
 

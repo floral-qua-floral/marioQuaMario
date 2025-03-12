@@ -126,7 +126,7 @@ public class RegistryManager {
 				VOICE_LINES.put(voiceLine, new HashMap<>());
 				for (ParsedCharacter character : CHARACTERS) {
 					Identifier ID = Identifier.of(character.RESOURCE_ID.getNamespace(),
-							"voice." + character.RESOURCE_ID.getPath() + "." + voiceLine);
+							"voice." + character.VOICE_NAME + "." + voiceLine);
 					SoundEvent event = SoundEvent.of(ID);
 					Registry.register(Registries.SOUND_EVENT, ID, event);
 					VOICE_LINES.get(voiceLine).put(character, event);

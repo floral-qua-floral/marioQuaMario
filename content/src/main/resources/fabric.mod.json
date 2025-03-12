@@ -70,7 +70,9 @@
 
 		"mqm-characters": [
 			"com.fqf.mario_qua_mario.characters.Mario",
-			"com.fqf.mario_qua_mario.characters.Luigi"
+			"com.fqf.mario_qua_mario.characters.Luigi",
+			"com.fqf.mario_qua_mario.characters.BlueToad",
+			"com.fqf.mario_qua_mario.characters.Toadette"
 		],
 
 		"mqm-voicelines": [

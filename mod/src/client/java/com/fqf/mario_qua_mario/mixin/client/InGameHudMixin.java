@@ -86,10 +86,9 @@ public class InGameHudMixin {
 		renderText(context, 3, clientMario.getPose() + " (" + clientMario.getHeight() + ") VS "
 				+ serverMario.getPose() + " (" + serverMario.getHeight() + ")");
 
-		renderText(context, 6, clientData.getActionID() + " VS " + serverData.getActionID());
-		renderText(context, 5, clientMario.mqm$getAnimationData().isAnimating(clientMario) ? "Animating" : "Not Animating");
-
-//		renderText(context, 6, "cameraAnim: " + clientData.TEMPORARY2);
+		renderText(context, 7, clientData.getActionID() + " VS " + serverData.getActionID());
+		renderText(context, 6, clientMario.mqm$getAnimationData().isAnimating(clientMario) ? "Animating" : "Not Animating");
+		renderText(context, 5, "FallDistance (C, S): ", clientMario.fallDistance, serverMario.fallDistance);
 	}
 
 	@Unique

@@ -2,6 +2,9 @@ package com.fqf.mario_qua_mario.util;
 
 public class Powers {
 	public static final String LIGHTNING_SHRINKS = "Lightning causes Mini form";
+	public static final String CEILING_CLIPPING = "Clips past ceiling edges on ascent";
+
+	public static final String SLEEPY = "Falls asleep while idle";
 
 	public static final String SMB3_IDLE = "SMB3 Idle";
 	public static final String TAIL_ATTACK = "Tail Attack";

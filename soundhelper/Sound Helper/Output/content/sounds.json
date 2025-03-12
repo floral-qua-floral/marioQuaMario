@@ -77,6 +77,18 @@
 			"mario_qua_mario:sfx/movement/jump"
 		]
 	},
+	"sfx.movement.toad_jump": {
+		"subtitle": "subtitles.mario_qua_mario.movement.jump",
+		"sounds": [
+			"mario_qua_mario:sfx/movement/jump"
+		]
+	},
+	"sfx.movement.toadette_jump": {
+		"subtitle": "subtitles.mario_qua_mario.movement.jump",
+		"sounds": [
+			"mario_qua_mario:sfx/movement/jump"
+		]
+	},
 	"sfx.power_up.fireball": {
 		"subtitle": "subtitles.mario_qua_mario.power_up.fireball",
 		"sounds": [

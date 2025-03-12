@@ -92,6 +92,7 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 		private final float STORED_FALL_DISTANCE;
 		private FlipTimerVars(PlayerEntity mario) {
 			this.STORED_FALL_DISTANCE = mario.fallDistance;
+			MarioQuaMarioContent.LOGGER.info("FallDistance: {}", mario.fallDistance);
 		}
 	}
 	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
@@ -105,6 +106,7 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 	}
 	@Override public void travelHook(IMarioTravelData data, AirborneActionHelper helper) {
 		data.getVars(FlipTimerVars.class).actionTimer++;
+		data.setYVel(0.15);
 	}
 
 	public static final TransitionDefinition GROUND_POUND = new TransitionDefinition(
@@ -113,7 +115,7 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 			EvaluatorEnvironment.CLIENT_ONLY,
 			data -> {
 				data.setForwardStrafeVel(0, 0);
-				data.setYVel(0.15);
+//				data.setYVel(0.15);
 			},
 			(data, isSelf, seed) -> data.playSound(MarioContentSFX.GROUND_POUND_FLIP, seed)
 	);
@@ -127,11 +129,11 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 						data -> {
 							data.setYVel(GroundPoundDrop.GROUND_POUND_VEL.get(data));
 							data.getInputs().JUMP.isPressed();
-							data.getMario().fallDistance = data.getVars(FlipTimerVars.class).STORED_FALL_DISTANCE;
+							data.getMario().fallDistance = data.getVars(FlipTimerVars.class).STORED_FALL_DISTANCE * 0.6F;
 						},
 						(data, isSelf, seed) -> {
 							data.storeSound(data.playSound(MarioContentSFX.GROUND_POUND_DROP, seed));
-							data.getMario().fallDistance = data.getVars(FlipTimerVars.class).STORED_FALL_DISTANCE;
+							data.getMario().fallDistance = data.getVars(FlipTimerVars.class).STORED_FALL_DISTANCE * 0.6F;
 						}
 				)
 		);

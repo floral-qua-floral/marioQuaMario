@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.actions.power;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.grounded.SubWalk;
 import com.fqf.mario_qua_mario.actions.grounded.WalkRun;
 import com.fqf.mario_qua_mario.definitions.states.actions.GroundedActionDefinition;
@@ -10,6 +11,7 @@ import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.Animati
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.BodyPartAnimation;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.LimbAnimation;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.mario_qua_mario.util.AbstractIdleAction;
 import com.fqf.mario_qua_mario.util.Powers;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -17,10 +19,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class RetroIdle extends SubWalk implements GroundedActionDefinition {
-	@Override
-	public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("smb3_idle");
+public class RetroIdle extends AbstractIdleAction implements GroundedActionDefinition {
+	public static final Identifier ID = MarioQuaMarioContent.makeID("smb3_idle");
+	@Override public @NotNull Identifier getID() {
+		return ID;
 	}
 
 	private static LimbAnimation makeArmAnimation(AnimationHelper helper, int factor) {
@@ -33,29 +35,13 @@ public class RetroIdle extends SubWalk implements GroundedActionDefinition {
 					offset * 2.6F
 			);
 		});
-	}
-	private static LimbAnimation makeLegAnimation(AnimationHelper helper, int factor) {
-		return new LimbAnimation(true, (data, arrangement, progress) -> {
-
-		});
-	}
-
-	@Override
+	}@Override
 	public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
 		return new PlayermodelAnimation(
-				null,
-				null,
-				null,
-				new BodyPartAnimation((data, arrangement, progress) -> {
-
-				}),
-				new BodyPartAnimation((data, arrangement, progress) -> {
-
-				}),
-				makeArmAnimation(helper, 1),
-				makeArmAnimation(helper, -1),
-				makeLegAnimation(helper, 1),
-				makeLegAnimation(helper, -1),
+				null, null, null,
+				null, null,
+				makeArmAnimation(helper, 1), makeArmAnimation(helper, -1),
+				null, null,
 				new LimbAnimation(true, (data, arrangement, progress) -> {
 
 				})
@@ -63,18 +49,14 @@ public class RetroIdle extends SubWalk implements GroundedActionDefinition {
 	}
 
 	@Override
-	public @NotNull List<TransitionDefinition> getBasicTransitions(GroundedActionHelper helper) {
+	public @NotNull Identifier getWakeupID() {
+		return SubWalk.ID;
+	}
+
+	@Override
+	public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(GroundedActionHelper helper) {
 		return List.of(
-				new TransitionDefinition(
-						MarioQuaMarioContent.makeID("walk_run"),
-						WalkRun::meetsWalkRunRequirement,
-						EvaluatorEnvironment.CLIENT_ONLY
-				),
-				new TransitionDefinition(
-						MarioQuaMarioContent.makeID("sub_walk"),
-						data -> !data.hasPower(Powers.SMB3_IDLE) || !SubWalk.isIdle(data),
-						EvaluatorEnvironment.CLIENT_ONLY
-				)
+				Fall.FALL
 		);
 	}
 }

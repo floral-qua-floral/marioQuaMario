@@ -14,7 +14,7 @@ public interface IMarioTravelData extends IMarioReadableMotionData {
 	}
 	void setYVel(double vertical);
 
-	void approachAngleAndAccel(
+	void approachAngleAndAccel( // FIXME: Momentum not getting cancelled when clipping a wall in midair??? Investigate :(
 			double forwardAccel, double forwardTarget, double strafeAccel, double strafeTarget,
 			double forwardAngleContribution, double strafeAngleContribution, double redirectDelta
 	);

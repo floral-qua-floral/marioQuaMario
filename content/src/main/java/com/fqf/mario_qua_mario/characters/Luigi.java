@@ -11,17 +11,15 @@ import java.util.Set;
 
 import static com.fqf.mario_qua_mario.util.StatCategory.*;
 
-public class Luigi extends Mario implements CharacterDefinition {
+public class Luigi extends AbstractMario implements CharacterDefinition {
+	public static final Identifier ID = MarioQuaMarioContent.makeID("luigi");
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("luigi");
+	    return ID;
 	}
 
-	@Override public @NotNull SoundEvent getJumpSound() {
+	@Override
+	public @NotNull SoundEvent getJumpSound() {
 		return MarioContentSFX.LUIGI_JUMP;
-	}
-
-	@Override public float getHeightFactor() {
-		return 1;
 	}
 
 	@Override public Set<StatModifier> getStatModifiers() {

@@ -16,6 +16,7 @@ public class ParsedCharacter extends ParsedPowerGrantingState {
 	public final AbstractParsedAction INITIAL_ACTION;
 	public final ParsedPowerUp INITIAL_POWER_UP;
 	public final SoundEvent JUMP_SOUND;
+	public final String VOICE_NAME;
 
 	public final Map<ParsedPowerUp, ModelFile> MODELS;
 
@@ -29,6 +30,7 @@ public class ParsedCharacter extends ParsedPowerGrantingState {
 				definition.getID() + "'s initial power-up (" + definition.getInitialPowerUp() + ") doesn't exist!");
 
 		this.JUMP_SOUND = definition.getJumpSound();
+		this.VOICE_NAME = definition.getVoiceName();
 
 		this.MODELS = new HashMap<>();
 	}

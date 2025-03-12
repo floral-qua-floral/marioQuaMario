@@ -16,61 +16,27 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-public class Mario implements CharacterDefinition {
+public class Mario extends AbstractMario implements CharacterDefinition {
+	public static final Identifier ID = MarioQuaMarioContent.makeID("mario");
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("mario");
+	    return ID;
 	}
 
-	@Override public @NotNull Identifier getInitialAction() {
-		return MarioQuaMarioContent.makeID("fall");
-	}
-	@Override public @NotNull Identifier getInitialPowerUp() {
-		return MarioQuaMarioContent.makeID("super");
-	}
-
-	@Override public @NotNull Identifier getMountedAction(Entity vehicle) {
-		return MarioQuaMarioContent.makeID("mounted");
-	}
-	@Override public @NotNull SoundEvent getJumpSound() {
+	@Override
+	public @NotNull SoundEvent getJumpSound() {
 		return MarioContentSFX.MARIO_JUMP;
 	}
 
-	@Override public float getWidthFactor() {
-		return 1;
-	}
-	@Override public float getHeightFactor() {
-		return 0.97F;
-	}
-	@Override public float getAnimationWidthFactor() {
-		return 1;
-	}
-	@Override public float getAnimationHeightFactor() {
-		return 1;
-	}
-
-	@Override public int getBumpStrengthModifier() {
-		return 0;
-	}
-
-	@Override public Set<String> getPowers() {
-		return Set.of(
-				Powers.LIGHTNING_SHRINKS
-		);
-	}
-
-	@Override public Set<StatModifier> getStatModifiers() {
+	@Override
+	public Set<StatModifier> getStatModifiers() {
 		return Set.of();
 	}
 
-	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
-		return new MarioVars();
-	}
-	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
-		MarioVars.get(data).canDoubleJumpTicks--;
-		MarioVars.get(data).canTripleJumpTicks--;
-	}
-	@Override public void serverTick(IMarioAuthoritativeData data) {
-		MarioVars.get(data).canDoubleJumpTicks--;
-		MarioVars.get(data).canTripleJumpTicks--;
+	@Override
+	public Set<String> getPowers() {
+		return Set.of(
+				Powers.LIGHTNING_SHRINKS,
+				Powers.SLEEPY
+		);
 	}
 }
