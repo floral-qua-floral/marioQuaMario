@@ -1,10 +1,12 @@
 package com.fqf.mario_qua_mario.registries.power_granting;
 
 import com.fqf.mario_qua_mario.definitions.states.CharacterDefinition;
+import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.tom.cpm.shared.io.ModelFile;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.sound.SoundEvent;
 
 import java.util.HashMap;
@@ -37,5 +39,9 @@ public class ParsedCharacter extends ParsedPowerGrantingState {
 
 	public AbstractParsedAction getMountedAction(Entity mount) {
 		return RegistryManager.ACTIONS.get(this.CHARACTER_DEFINITION.getMountedAction(mount));
+	}
+
+	public float modifyIncomingDamage(IMarioAuthoritativeData data, DamageSource source, float amount) {
+		return this.CHARACTER_DEFINITION.modifyIncomingDamage(data, source, amount);
 	}
 }

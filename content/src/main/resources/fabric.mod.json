@@ -36,6 +36,7 @@
 		"mqm-airborne-actions": [
 			"com.fqf.mario_qua_mario.actions.airborne.Fall",
 			"com.fqf.mario_qua_mario.actions.airborne.SpecialFall",
+			"com.fqf.mario_qua_mario.actions.airborne.LavaBoost",
 			"com.fqf.mario_qua_mario.actions.airborne.Jump",
 			"com.fqf.mario_qua_mario.actions.airborne.PJump",
 			"com.fqf.mario_qua_mario.actions.airborne.DuckFall",
