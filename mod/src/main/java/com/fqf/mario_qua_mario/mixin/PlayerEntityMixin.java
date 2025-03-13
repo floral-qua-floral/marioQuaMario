@@ -71,14 +71,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 		};
 	}
 
-	@WrapMethod(method = "damage")
-	private boolean damageHook(DamageSource source, float amount, Operation<Boolean> original) {
-		float factor;
-		if(mqm$getMarioData().isEnabled()) factor = (float) getWorld().getGameRules().get(MarioGamerules.INCOMING_DAMAGE_MULTIPLIER).get();
-		else factor = 1F;
-		return original.call(source, amount * factor);
-	}
-
 	@Inject(method = "shouldSwimInFluids", at = @At("HEAD"), cancellable = true)
 	private void preventVanillaSwimming(CallbackInfoReturnable<Boolean> cir) {
 		if(mqm$getMarioData().doMarioTravel())
@@ -226,44 +218,5 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 		this.prevZ += fluidMotionVector.z;
 	}
 
-	@Unique
-	public final double CLIPPING_LENIENCY = 0.33;
 
-	@Override
-	public void move(MovementType movementType, Vec3d movement) {
-		if(movementType == MovementType.SELF || movementType == MovementType.PLAYER) {
-			if(movement.y > 0 && this.mqm$getMarioData().doMarioTravel()) {
-				// If Mario's horizontal velocity is responsible for him clipping a ceiling, then just cancel his horizontal movement
-				if(
-						(movement.x != 0 || movement.z != 0)
-						&& !getWorld().isSpaceEmpty(this, getBoundingBox().offset(movement)) // movement is blocked
-						&& getWorld().isSpaceEmpty(this, getBoundingBox().offset(0, movement.y, 0)) // can move straight up
-				) {
-					movement = new Vec3d(0, movement.y, 0);
-				}
-
-				else if(!getWorld().isSpaceEmpty(this, getBoundingBox().offset(0, movement.y, 0))) {
-					Box stretchedBox = getBoundingBox().stretch(0, movement.y, 0);
-					if(getWorld().isSpaceEmpty(this, stretchedBox.offset(CLIPPING_LENIENCY, 0, 0))) {
-						movement = new Vec3d(movement.x - CLIPPING_LENIENCY, movement.y, movement.z);
-						move(MovementType.SELF, new Vec3d(CLIPPING_LENIENCY, 0, 0));
-					}
-					else if(getWorld().isSpaceEmpty(this, stretchedBox.offset(-CLIPPING_LENIENCY, 0, 0))) {
-						movement = new Vec3d(movement.x + CLIPPING_LENIENCY, movement.y, movement.z);
-						move(MovementType.SELF, new Vec3d(-CLIPPING_LENIENCY, 0, 0));
-					}
-					if(getWorld().isSpaceEmpty(this, stretchedBox.offset(0, 0, CLIPPING_LENIENCY))) {
-						movement = new Vec3d(movement.x, movement.y, movement.z - CLIPPING_LENIENCY);
-						move(MovementType.SELF, new Vec3d(0, 0, CLIPPING_LENIENCY));
-					}
-					else if(getWorld().isSpaceEmpty(this, stretchedBox.offset(0, 0, -CLIPPING_LENIENCY))) {
-						movement = new Vec3d(movement.x, movement.y, movement.z + CLIPPING_LENIENCY);
-						move(MovementType.SELF, new Vec3d(0, 0, -CLIPPING_LENIENCY));
-					}
-				}
-			}
-		}
-
-		super.move(movementType, movement);
-	}
 }

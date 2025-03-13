@@ -1,6 +1,8 @@
 package com.fqf.mario_qua_mario.actions.generic;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario.Voicelines;
+import com.fqf.mario_qua_mario.actions.airborne.LavaBoost;
 import com.fqf.mario_qua_mario.definitions.states.actions.GenericActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.*;
@@ -22,8 +24,9 @@ import java.util.List;
 import java.util.Set;
 
 public class Debug implements GenericActionDefinition {
+	public static final Identifier ID = MarioQuaMarioContent.makeID("debug");
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("debug");
+	    return ID;
 	}
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
@@ -88,6 +91,18 @@ public class Debug implements GenericActionDefinition {
 						data -> data.getMario().isSprinting(), EvaluatorEnvironment.COMMON,
 						null,
 						(data, isSelf, seed) -> data.playSound(MarioContentSFX.FIREBALL, seed)
+				),
+				new TransitionDefinition(
+						LavaBoost.ID,
+						data -> false,
+						EvaluatorEnvironment.SERVER_ONLY,
+						data -> {
+							data.setYVel(LavaBoost.BOOST_VEL.get(data));
+							data.setForwardStrafeVel(0, 0);
+						},
+						(data, isSelf, seed) -> {
+							data.voice(Voicelines.BURNT, seed);
+						}
 				)
 		);
 	}

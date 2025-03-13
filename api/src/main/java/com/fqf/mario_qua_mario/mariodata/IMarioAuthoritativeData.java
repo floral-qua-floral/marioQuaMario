@@ -2,6 +2,7 @@ package com.fqf.mario_qua_mario.mariodata;
 
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface IMarioAuthoritativeData extends IMarioData {
@@ -9,8 +10,8 @@ public interface IMarioAuthoritativeData extends IMarioData {
 
 	void disable();
 
-	ActionTransitionResult transitionToAction(Identifier actionID);
-	ActionTransitionResult transitionToAction(String actionID);
+	ActionTransitionResult forceActionTransition(@Nullable Identifier fromID, @NotNull Identifier toID);
+	ActionTransitionResult forceActionTransition(@Nullable String fromID, @NotNull String toID);
 
 	ActionChangeOperationResult assignAction(Identifier actionID);
 	ActionChangeOperationResult assignAction(String actionID);

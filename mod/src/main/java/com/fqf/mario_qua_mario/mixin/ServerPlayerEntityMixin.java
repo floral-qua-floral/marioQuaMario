@@ -6,7 +6,10 @@ import com.fqf.mario_qua_mario.mariodata.injections.AdvMarioServerDataHolder;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedCharacter;
 import com.fqf.mario_qua_mario.util.MarioNbtKeys;
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.mojang.authlib.GameProfile;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -26,6 +29,12 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 
 	public ServerPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile gameProfile) {
 		super(world, pos, yaw, gameProfile);
+	}
+
+	@WrapMethod(method = "damage")
+	private boolean modifyIncomingDamage(DamageSource source, float amount, Operation<Boolean> original) {
+		float modifiedAmount = this.mqm$getMarioData().getCharacter().modifyIncomingDamage(this.mqm$getMarioData(), source, amount);
+		return modifiedAmount > 0 && original.call(source, modifiedAmount);
 	}
 
 	@Override

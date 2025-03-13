@@ -41,7 +41,7 @@ public record TransitionDefinition(
 				clientsExecutor == null ? this.clientsExecutor : clientsExecutor
 		);
 	}
-	public TransitionDefinition variate(@NotNull Identifier targetID, @Nullable Evaluator evaluator) {
+	public TransitionDefinition variate(@Nullable Identifier targetID, @Nullable Evaluator evaluator) {
 		return this.variate(targetID, evaluator, null, null, null);
 	}
 

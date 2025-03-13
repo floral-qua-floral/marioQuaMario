@@ -17,6 +17,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.random.RandomSeed;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
@@ -183,19 +184,26 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 		MarioDataPackets.disableMarioS2C(this.getMario());
 	}
 
-	@Override public ActionTransitionResult transitionToAction(Identifier actionID) {
+	@Override public ActionTransitionResult forceActionTransition(@Nullable Identifier fromID, @NotNull Identifier toID) {
 		if(!this.isEnabled()) return ActionTransitionResult.NOT_ENABLED;
 		long seed = RandomSeed.getSeed();
-		AbstractParsedAction toAction = Objects.requireNonNull(RegistryManager.ACTIONS.get(actionID),
-				"Target action (" + actionID + ") doesn't exist!");
-		if(this.setAction(this.getAction(), toAction, seed, false, false)) {
-			MarioDataPackets.transitionToActionS2C(this.getMario(), true, this.getAction(), toAction, seed);
+
+		AbstractParsedAction fromAction;
+		if(fromID == null) fromAction = this.getAction();
+		else fromAction = Objects.requireNonNull(RegistryManager.ACTIONS.get(fromID),
+				"Pre-transition action (" + toID + ") doesn't exist!");
+
+		AbstractParsedAction toAction = Objects.requireNonNull(RegistryManager.ACTIONS.get(toID),
+				"Target action (" + toID + ") doesn't exist!");
+
+		if(this.setAction(fromAction, toAction, seed, false, true)) {
+			MarioDataPackets.transitionToActionS2C(this.getMario(), true, fromAction, toAction, seed);
 			return ActionTransitionResult.SUCCESS;
 		}
 		return ActionTransitionResult.NO_SUCH_TRANSITION;
 	}
-	@Override public ActionTransitionResult transitionToAction(String actionID) {
-		return this.transitionToAction(Identifier.of(actionID));
+	@Override public ActionTransitionResult forceActionTransition(@Nullable String fromID, @NotNull String toID) {
+		return this.forceActionTransition(fromID == null ? null : Identifier.of(fromID), Identifier.of(toID));
 	}
 
 	@Override public ActionChangeOperationResult assignAction(Identifier actionID) {

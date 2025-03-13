@@ -36,6 +36,7 @@ public class Mario extends AbstractMario implements CharacterDefinition {
 	public Set<String> getPowers() {
 		return Set.of(
 				Powers.LIGHTNING_SHRINKS,
+				Powers.CEILING_CLIPPING,
 				Powers.SLEEPY
 		);
 	}

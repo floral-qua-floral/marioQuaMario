@@ -307,29 +307,42 @@ public class MarioCommand {
 		MarioServerPlayerData data = mario.mqm$getMarioData();
 		String name = mario.getName().getString();
 
-		if(!data.isEnabled())
-			return sendFeedback(context, name + " is not playing as a character, and as such cannot execute action transitions.", false);
-
 		AbstractParsedAction fromAction =
 				RegistryEntryReferenceArgumentType.getRegistryEntry(context, "from", RegistryManager.ACTIONS_KEY).value();
 		AbstractParsedAction toAction =
 				RegistryEntryReferenceArgumentType.getRegistryEntry(context, "to", RegistryManager.ACTIONS_KEY).value();
+		return switch(data.forceActionTransition(fromAction.ID, toAction.ID)) {
+			case SUCCESS ->
+					sendFeedback(context, "Made " + name + " execute transition \"" + fromAction.ID + "->" + toAction.ID + "\".", true);
+			case NOT_ENABLED ->
+					sendFeedback(context, name + " is not playing as a character, and as such cannot execute action transitions.", false);
+			case NO_SUCH_TRANSITION ->
+					sendFeedback(context, "No transition exists from " + fromAction.ID + " to " + toAction.ID + "! :(", false);
+		};
 
-		long seed = RandomSeed.getSeed();
-
-		boolean successful = mario.mqm$getMarioData().setAction(fromAction, toAction, seed, false, true);
-
-		if(successful) MarioDataPackets.transitionToActionS2C(
-				mario,
-				true,
-				fromAction,
-				toAction,
-				seed
-		);
-
-		return sendFeedback(context, successful ?
-				"Successfully made " + name + " execute transition \"" + fromAction.ID + "->" + toAction.ID + "\"."
-				: "No transition exists from " + fromAction.ID + " to " + toAction.ID + "! :(", successful);
+//		if(!data.isEnabled())
+//			return sendFeedback(context, name + " is not playing as a character, and as such cannot execute action transitions.", false);
+//
+//		AbstractParsedAction fromAction =
+//				RegistryEntryReferenceArgumentType.getRegistryEntry(context, "from", RegistryManager.ACTIONS_KEY).value();
+//		AbstractParsedAction toAction =
+//				RegistryEntryReferenceArgumentType.getRegistryEntry(context, "to", RegistryManager.ACTIONS_KEY).value();
+//
+//		long seed = RandomSeed.getSeed();
+//
+//		boolean successful = mario.mqm$getMarioData().setAction(fromAction, toAction, seed, false, true);
+//
+//		if(successful) MarioDataPackets.transitionToActionS2C(
+//				mario,
+//				true,
+//				fromAction,
+//				toAction,
+//				seed
+//		);
+//
+//		return sendFeedback(context, successful ?
+//				"Successfully made " + name + " execute transition \"" + fromAction.ID + "->" + toAction.ID + "\"."
+//				: "No transition exists from " + fromAction.ID + " to " + toAction.ID + "! :(", successful);
 	}
 
 	private static int executeReversion(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {

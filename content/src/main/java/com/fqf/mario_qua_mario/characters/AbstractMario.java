@@ -1,14 +1,20 @@
 package com.fqf.mario_qua_mario.characters;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario.actions.airborne.LavaBoost;
+import com.fqf.mario_qua_mario.actions.generic.Debug;
 import com.fqf.mario_qua_mario.definitions.states.CharacterDefinition;
 import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.mariodata.IMarioData;
+import com.fqf.mario_qua_mario.util.MarioContentGamerules;
 import com.fqf.mario_qua_mario.util.MarioContentSFX;
 import com.fqf.mario_qua_mario.util.MarioVars;
 import com.fqf.mario_qua_mario.util.Powers;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageTypes;
+import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +32,15 @@ public abstract class AbstractMario implements CharacterDefinition {
 
 	@Override public @NotNull Identifier getMountedAction(Entity vehicle) {
 		return MarioQuaMarioContent.makeID("mounted");
+	}
+
+	@Override
+	public float modifyIncomingDamage(IMarioAuthoritativeData data, DamageSource source, float amount) {
+		if(source.getTypeRegistryEntry().matchesKey(DamageTypes.LAVA)) {
+			data.forceActionTransition(Debug.ID, LavaBoost.ID);
+			return 10;
+		}
+		return amount * (float) data.getMario().getWorld().getGameRules().get(MarioContentGamerules.INCOMING_DAMAGE_MULTIPLIER).get();
 	}
 
 	@Override public float getWidthFactor() {
