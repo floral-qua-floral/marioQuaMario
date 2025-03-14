@@ -27,7 +27,7 @@ public class DuckJump extends Jump implements AirborneActionDefinition {
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
 		return DuckWaddle.makeDuckAnimation(false, true).variate(
 				null, null,
-				new EntireBodyAnimation(0.0F, (data, arrangement, progress) -> {
+				new EntireBodyAnimation(0.0F, true, (data, arrangement, progress) -> {
 					float tilt_progress = Easing.clampedRangeToProgress(data.getYVel(), -0.0, 0.4);
 					arrangement.pitch = (tilt_progress * 2 - 1) * 15F;
 				}),

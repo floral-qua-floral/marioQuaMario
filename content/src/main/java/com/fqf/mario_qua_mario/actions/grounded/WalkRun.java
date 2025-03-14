@@ -34,7 +34,7 @@ public class WalkRun extends SubWalk implements GroundedActionDefinition {
 								Easing.clampedRangeToProgress(data.getForwardVel(), SubWalk.WALK_SPEED.get(data), RUN_SPEED.get(data))
 				),
 
-				new EntireBodyAnimation(0.0F, (data, arrangement, progress) ->
+				new EntireBodyAnimation(0.0F, true, (data, arrangement, progress) ->
 						arrangement.roll = MathHelper.clamp((float) data.getDeltaYaw() * progress * -4F, -45F, 45F)),
 				null, null,
 

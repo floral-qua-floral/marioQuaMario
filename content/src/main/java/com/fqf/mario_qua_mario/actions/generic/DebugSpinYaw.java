@@ -21,7 +21,7 @@ public class DebugSpinYaw extends Debug {
 	public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
 		return new PlayermodelAnimation(
 				null, new ProgressHandler(80F, true, Easing.LINEAR),
-				new EntireBodyAnimation(0.5F, (data, arrangement, progress) ->
+				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) ->
 						arrangement.yaw = progress * 360),
 
 				null, null,

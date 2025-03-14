@@ -86,7 +86,7 @@ public class Backflip extends Jump implements AirborneActionDefinition {
 						(data, ticksPassed) -> helper.sequencedEase(helper.sequencedEase(ticksPassed / 4.4F,
 								Easing.LINEAR, Easing.LINEAR, Easing.LINEAR, Easing.LINEAR) / 3, Easing.LINEAR, Easing.LINEAR) * 3
 				),
-				new EntireBodyAnimation(0.5F, (data, arrangement, progress) -> {
+				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
 					arrangement.pitch += progress * 180;
 				}),
 	            null,
@@ -172,10 +172,14 @@ public class Backflip extends Jump implements AirborneActionDefinition {
 		);
 	}
 
+	protected double getJumpCap() {
+		return 0.765;
+	}
+
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {
 		return List.of(
 				GroundPoundFlip.GROUND_POUND,
-				helper.makeJumpCapTransition(this, 0.765)
+				helper.makeJumpCapTransition(this, this.getJumpCap())
 		);
 	}
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {

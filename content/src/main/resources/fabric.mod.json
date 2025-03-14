@@ -45,6 +45,7 @@
 			"com.fqf.mario_qua_mario.actions.airborne.TripleJump",
 			"com.fqf.mario_qua_mario.actions.airborne.LongJump",
 			"com.fqf.mario_qua_mario.actions.airborne.Backflip",
+			"com.fqf.mario_qua_mario.actions.airborne.Sideflip",
 			"com.fqf.mario_qua_mario.actions.airborne.GroundPoundFlip",
 			"com.fqf.mario_qua_mario.actions.airborne.GroundPoundDrop",
 			"com.fqf.mario_qua_mario.actions.power.TailStall",

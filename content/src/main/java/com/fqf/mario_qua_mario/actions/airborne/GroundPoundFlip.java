@@ -53,7 +53,7 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 		return new PlayermodelAnimation(
 				null,
 				new ProgressHandler((data, ticksPassed) -> Math.min(ticksPassed / FLIP_DURATION, 1)),
-				new EntireBodyAnimation(0.5F, (data, arrangement, progress) -> {
+				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
 					arrangement.pitch = progress * -360;
 					arrangement.y = progress * -8;
 				}),

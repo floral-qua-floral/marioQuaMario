@@ -153,7 +153,7 @@ public class Raccoon implements PowerUpDefinition {
 
 		@Override
 		public void executeClients(IMarioClientData data, ItemStack weapon, float attackCooldownProgress, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget, long seed) {
-			data.getMario().setBodyYaw(data.getMario().getHeadYaw());
+			data.forceBodyAlignment(false);
 			data.playSound(MarioContentSFX.TAIL_WHIP, seed);
 			if(this.ACTION_TARGET == null) {
 				data.voice(Voicelines.TAIL_WHIP, seed);
@@ -212,7 +212,7 @@ public class Raccoon implements PowerUpDefinition {
 				null,
 				new ProgressHandler(TAIL_WHIP_ANIMATION_DURATION, false, Easing.SINE_IN_OUT),
 
-				new EntireBodyAnimation(0.5F, (data, arrangement, progress) ->
+				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) ->
 						arrangement.yaw = progress * 360),
 				new BodyPartAnimation((data, arrangement, progress) -> {
 					float factor = progress < 0.5 ? progress * 2 : progress * -2 + 2;

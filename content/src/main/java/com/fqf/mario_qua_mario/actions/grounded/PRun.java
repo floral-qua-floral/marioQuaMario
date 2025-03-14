@@ -28,7 +28,7 @@ public class PRun implements GroundedActionDefinition {
 				null,
 				new ProgressHandler((data, ticksPassed) ->
 						Easing.clampedRangeToProgress(data.getDeltaYaw(), -1, 1) * 2 - 1),
-				new EntireBodyAnimation(0.5F, (data, arrangement, progress) ->
+				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) ->
 						arrangement.roll = progress * -5),
 				null, null,
 				new LimbAnimation(false, (data, arrangement, progress) ->

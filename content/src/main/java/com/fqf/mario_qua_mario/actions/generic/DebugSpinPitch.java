@@ -21,7 +21,7 @@ public class DebugSpinPitch extends Debug {
 	public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
 		return new PlayermodelAnimation(
 				null, new ProgressHandler((data, ticksPassed) -> ticksPassed / 40F),
-				new EntireBodyAnimation(0.5F, (data, arrangement, progress) ->
+				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) ->
 						arrangement.pitch = MathHelper.sin(progress) * 90),
 
 				null, null,

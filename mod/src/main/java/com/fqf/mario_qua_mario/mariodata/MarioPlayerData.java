@@ -233,6 +233,17 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 		return new Vec3d(velX, velY, velZ);
 	}
 
+	public HeadRestrictionType headRestricted;
+	public enum HeadRestrictionType {
+		NONE,
+		NORMAL,
+		URGENT
+	}
+	@Override
+	public void forceBodyAlignment(boolean urgent) {
+		this.headRestricted = urgent ? HeadRestrictionType.URGENT : HeadRestrictionType.NORMAL;
+	}
+
 	public DismountType attemptDismount;
 	public enum DismountType {
 		REMAIN_MOUNTED,

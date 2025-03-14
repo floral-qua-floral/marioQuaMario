@@ -50,7 +50,7 @@ public class GroundPoundLand implements GroundedActionDefinition {
 		return new PlayermodelAnimation(
 				null,
 				new ProgressHandler((data, ticksPassed) -> Math.min(ticksPassed / 10F, 1)),
-				new EntireBodyAnimation(0.5F, (data, arrangement, progress) -> {
+				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
 					arrangement.setPos(
 							0,
 							MathHelper.lerp(progress, -8, 0),

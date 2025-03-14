@@ -81,7 +81,7 @@ public class TripleJump extends Jump implements AirborneActionDefinition {
 						(data, ticksPassed) -> helper.sequencedEase(helper.sequencedEase(ticksPassed / 5F,
 								Easing.LINEAR, Easing.LINEAR, Easing.LINEAR, Easing.LINEAR, Easing.LINEAR) / 3, Easing.LINEAR, Easing.LINEAR) * 3
 				),
-				new EntireBodyAnimation(0.5F, (data, arrangement, progress) -> {
+				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
 					arrangement.pitch -= Math.min(progress, 4) * 180;
 				}),
 				new BodyPartAnimation((data, arrangement, progress) -> {

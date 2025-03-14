@@ -26,4 +26,6 @@ public interface IMarioData {
 	int getBumpStrengthModifier();
 
 	<T> T getVars(Class<T> clazz);
+
+	void forceBodyAlignment(boolean urgent);
 }

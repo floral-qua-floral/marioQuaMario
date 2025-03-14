@@ -1,7 +1,6 @@
 package com.fqf.mario_qua_mario.actions.airborne;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
-import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.*;
@@ -41,7 +40,7 @@ public class LavaBoost extends Fall implements AirborneActionDefinition {
 	    return new PlayermodelAnimation(
 	            null,
 	            new ProgressHandler((data, ticksPassed) -> ticksPassed / 2.2F),
-	            new EntireBodyAnimation(0.5F, (data, arrangement, progress) -> {
+	            new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
 					arrangement.pitch += 28.45F;
 					arrangement.y -= 6.75F;
 	            }),

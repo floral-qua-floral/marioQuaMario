@@ -1,8 +1,10 @@
 package com.fqf.mario_qua_mario.actions.grounded;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.airborne.Jump;
+import com.fqf.mario_qua_mario.actions.airborne.Sideflip;
 import com.fqf.mario_qua_mario.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.*;
@@ -12,6 +14,7 @@ import com.fqf.mario_qua_mario.mariodata.IMarioData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.CharaStat;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,9 +32,9 @@ public class Skid implements GroundedActionDefinition {
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
 		return new PlayermodelAnimation(
-				(data, rightArmBusy, leftArmBusy, headRelativeYaw) -> false,
+				null,
 				new ProgressHandler((data, ticksPassed) -> 1),
-				new EntireBodyAnimation(0.3F, (data, arrangement, progress) -> {
+				new EntireBodyAnimation(0.3F, true, (data, arrangement, progress) -> {
 					arrangement.y -= 4;
 					arrangement.setAngles(
 							0,
@@ -144,7 +147,7 @@ public class Skid implements GroundedActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(GroundedActionHelper helper) {
 		return List.of(
 				new TransitionDefinition(
-						MarioQuaMarioContent.makeID("sub_walk"),
+						SubWalk.ID,
 						data -> data.getHorizVelSquared() == 0 || data.getInputs().getForwardInput() >= 0,
 						EvaluatorEnvironment.CLIENT_ONLY
 				)
@@ -152,6 +155,22 @@ public class Skid implements GroundedActionDefinition {
 	}
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(GroundedActionHelper helper) {
 		return List.of(
+				new TransitionDefinition(
+						Sideflip.ID,
+						data -> data.getForwardVel() < Sideflip.SIDEFLIP_THRESHOLD.get(data) && data.getInputs().JUMP.isPressed(),
+						EvaluatorEnvironment.CLIENT_ONLY,
+						data -> {
+							helper.performJump(data, Sideflip.SIDEFLIP_VEL, null);
+							data.setForwardStrafeVel(Sideflip.SIDEFLIP_BACKWARDS_SPEED.get(data), 0);
+							PlayerEntity mario = data.getMario();
+							data.forceBodyAlignment(true);
+							mario.setYaw(mario.getYaw() - 179);
+						},
+						(data, isSelf, seed) -> {
+							data.playJumpSound(seed);
+							data.voice(Voicelines.SIDEFLIP, seed);
+						}
+				),
 				Jump.makeJumpTransition(helper)
 		);
 	}

@@ -19,6 +19,7 @@ import net.minecraft.entity.player.PlayerModelPart;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -218,5 +219,21 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 		this.prevZ += fluidMotionVector.z;
 	}
 
+	@Inject(method = "getMaxRelativeHeadRotation", at = @At("HEAD"), cancellable = true)
+	private void restrictHeadRotation(CallbackInfoReturnable<Float> cir) {
+		if(this.mqm$getMarioData().headRestricted == MarioPlayerData.HeadRestrictionType.URGENT) {
+			cir.setReturnValue(0F);
+			this.mqm$getMarioData().headRestricted = MarioPlayerData.HeadRestrictionType.NONE;
+		}
+	}
 
+	@Override
+	protected float turnHead(float bodyRotation, float headRotation) {
+		if(this.mqm$getMarioData().headRestricted == MarioPlayerData.HeadRestrictionType.NORMAL) {
+			if(MathHelper.abs(bodyRotation - this.getYaw()) <= 2.5F)
+				this.mqm$getMarioData().headRestricted = MarioPlayerData.HeadRestrictionType.NONE;
+			bodyRotation = this.getYaw();
+		}
+		return super.turnHead(bodyRotation, headRotation);
+	}
 }

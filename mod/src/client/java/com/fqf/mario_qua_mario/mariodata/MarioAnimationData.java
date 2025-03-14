@@ -363,8 +363,18 @@ public class MarioAnimationData {
 		float yaw = slerpRadians(tickDelta, prevTickArrangement.yaw, thisTickArrangement.yaw);
 		float roll = slerpRadians(tickDelta, prevTickArrangement.roll, thisTickArrangement.roll);
 
-		this.headCounterRotationPitch = thisTickArrangement.pitch;
-		this.headCounterRotationYaw = thisTickArrangement.yaw;
+		if(
+				this.currentAnim != null
+				&& this.currentAnim.entireBodyAnimation() != null
+				&& this.currentAnim.entireBodyAnimation().counterRotateHead()
+		) {
+			this.headCounterRotationPitch = thisTickArrangement.pitch;
+			this.headCounterRotationYaw = thisTickArrangement.yaw;
+		}
+		else {
+			this.headCounterRotationPitch = 0;
+			this.headCounterRotationYaw = 0;
+		}
 
 		matrixStack.translate(
 				MathHelper.lerp(tickDelta, prevTickArrangement.x, thisTickArrangement.x) / 16F,

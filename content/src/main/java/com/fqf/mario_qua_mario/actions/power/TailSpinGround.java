@@ -33,7 +33,7 @@ public class TailSpinGround implements GroundedActionDefinition {
 	public static final PlayermodelAnimation ANIMATION = DuckWaddle.makeDuckAnimation(false, true).variate(
 			null,
 			null,
-			new EntireBodyAnimation(0.5F, (data, arrangement, progress) -> {
+			new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
 				arrangement.yaw = Easing.LINEAR.ease((data.getVars(TailSpinActionTimerVars.class).actionTimer / TICKS_PER_REVOLUTION) % 1) * 360;
 			}),
 			null,
