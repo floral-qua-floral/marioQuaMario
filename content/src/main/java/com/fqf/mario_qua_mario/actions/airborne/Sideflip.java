@@ -33,13 +33,13 @@ public class Sideflip extends Backflip implements AirborneActionDefinition {
 				null,
 				new ProgressHandler((data, ticksPassed) -> Easing.LINEAR.ease(Math.min(ticksPassed / 20F, 1))),
 				new EntireBodyAnimation(0.5F, false, (data, arrangement, progress) -> {
-					arrangement.yaw = MathHelper.lerp(progress, -136.5F, 0);
-					arrangement.roll = Easing.mixedEase(Easing.LINEAR, Easing.QUAD_IN_OUT, progress, -342.5F, 0);
+					arrangement.yaw += MathHelper.lerp(progress, -136.5F, 0);
+					arrangement.roll += Easing.mixedEase(Easing.LINEAR, Easing.QUAD_IN_OUT, progress, -342.5F, 0);
 					arrangement.y -= MathHelper.lerp(progress, 4F, 0);
 				}),
 				new BodyPartAnimation((data, arrangement, progress) -> {
-					arrangement.yaw = MathHelper.lerp(Math.min(progress * 4, 1), 42.5F, 0F);
-					arrangement.roll = MathHelper.lerp(Math.min(progress * 4, 1), -17.5F, 0F);
+					arrangement.yaw += MathHelper.lerp(Math.min(progress * 4, 1), 42.5F, 0F);
+					arrangement.roll += MathHelper.lerp(Math.min(progress * 4, 1), -17.5F, 0F);
 				}),
 				null,
 				new LimbAnimation(false, (data, arrangement, progress) -> {
