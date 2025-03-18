@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.actions.airborne;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario.actions.grounded.PRun;
 import com.fqf.mario_qua_mario.actions.power.TailStall;
 import com.fqf.mario_qua_mario.definitions.states.actions.AirborneActionDefinition;
@@ -78,6 +79,7 @@ public class PJump extends Jump implements AirborneActionDefinition {
 	@Override
 	public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {
 		return List.of(
+				Submerged.SUBMERGE,
 				Jump.DOUBLE_JUMPABLE_LANDING.variate(MarioQuaMarioContent.makeID("p_run"), data ->
 						Fall.LANDING.evaluator().shouldTransition(data) && (data.isServer() || PRun.meetsPRunRequirements(data))),
 				Jump.DOUBLE_JUMPABLE_LANDING

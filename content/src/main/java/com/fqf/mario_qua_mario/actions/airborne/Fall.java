@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.actions.airborne;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.AnimationHelper;
@@ -21,8 +22,9 @@ import java.util.Set;
 import static com.fqf.mario_qua_mario.util.StatCategory.*;
 
 public class Fall implements AirborneActionDefinition {
+	public static final Identifier ID = MarioQuaMarioContent.makeID("fall");
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("fall");
+	    return ID;
 	}
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
@@ -96,7 +98,7 @@ public class Fall implements AirborneActionDefinition {
 		
 	}
 	@Override public void travelHook(IMarioTravelData data, AirborneActionHelper helper) {
-		helper.applyGravity(data, FALL_ACCEL, null, FALL_SPEED);
+		helper.applyComplexGravity(data, FALL_ACCEL, null, FALL_SPEED);
 		drift(data, helper);
 	}
 
@@ -114,9 +116,13 @@ public class Fall implements AirborneActionDefinition {
 				GroundPoundFlip.GROUND_POUND
 		);
 	}
+	protected TransitionDefinition getLandingTransition() {
+		return LANDING;
+	}
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {
 		return List.of(
-				LANDING
+				Submerged.SUBMERGE,
+				this.getLandingTransition()
 		);
 	}
 

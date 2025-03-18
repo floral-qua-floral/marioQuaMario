@@ -46,6 +46,7 @@
 			"com.fqf.mario_qua_mario.actions.airborne.LongJump",
 			"com.fqf.mario_qua_mario.actions.airborne.Backflip",
 			"com.fqf.mario_qua_mario.actions.airborne.Sideflip",
+			"com.fqf.mario_qua_mario.actions.airborne.WaterExitJump",
 			"com.fqf.mario_qua_mario.actions.airborne.GroundPoundFlip",
 			"com.fqf.mario_qua_mario.actions.airborne.GroundPoundDrop",
 			"com.fqf.mario_qua_mario.actions.power.TailStall",
@@ -55,6 +56,8 @@
 			"com.fqf.mario_qua_mario.actions.power.TailSpinJump"
 		],
 		"mqm-aquatic-actions": [
+			"com.fqf.mario_qua_mario.actions.aquatic.Submerged",
+			"com.fqf.mario_qua_mario.actions.aquatic.Swim"
 		],
 		"mqm-wallbound-actions": [
 		],

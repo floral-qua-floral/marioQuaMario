@@ -2,6 +2,7 @@ package com.fqf.mario_qua_mario.actions.airborne;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario.Voicelines;
+import com.fqf.mario_qua_mario.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
@@ -139,7 +140,7 @@ public class Backflip extends Jump implements AirborneActionDefinition {
 
 	}
 	@Override public void travelHook(IMarioTravelData data, AirborneActionHelper helper) {
-		helper.applyGravity(data, Fall.FALL_ACCEL, JUMP_GRAVITY, Fall.FALL_SPEED);
+		helper.applyComplexGravity(data, Fall.FALL_ACCEL, JUMP_GRAVITY, Fall.FALL_SPEED);
 		if(data.getYVel() < 0.1) Fall.drift(data, helper);
 		else helper.airborneAccel(
 				data,
@@ -180,11 +181,6 @@ public class Backflip extends Jump implements AirborneActionDefinition {
 		return List.of(
 				GroundPoundFlip.GROUND_POUND,
 				helper.makeJumpCapTransition(this, this.getJumpCap())
-		);
-	}
-	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {
-		return List.of(
-				Jump.DOUBLE_JUMPABLE_LANDING
 		);
 	}
 

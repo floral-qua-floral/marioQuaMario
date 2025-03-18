@@ -71,7 +71,7 @@ public class GroundPoundDrop implements AirborneActionDefinition {
 
 	}
 	@Override public void travelHook(IMarioTravelData data, AirborneActionHelper helper) {
-		helper.applyGravity(data, Fall.FALL_ACCEL, null, Fall.FALL_SPEED);
+		helper.applyComplexGravity(data, Fall.FALL_ACCEL, null, Fall.FALL_SPEED);
 		double strainVel = GROUND_POUND_STRAINING_VEL.get(data);
 		data.setForwardStrafeVel(strainVel * data.getInputs().getForwardInput(), strainVel * data.getInputs().getStrafeInput());
 	}

@@ -14,8 +14,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Set;
 
 public class SpecialFall extends Fall implements AirborneActionDefinition {
+	public static final Identifier ID = MarioQuaMarioContent.makeID("special_fall");
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("special_fall");
+	    return ID;
 	}
 
 	private static LimbAnimation makeArmAnimation(int factor) {

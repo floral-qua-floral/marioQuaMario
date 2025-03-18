@@ -107,10 +107,8 @@ public class TripleJump extends Jump implements AirborneActionDefinition {
 	@Override protected double getJumpCapThreshold() {
 		return 0.65;
 	}
-	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {
-		return List.of(
-				LANDING
-		);
+	@Override protected TransitionDefinition getLandingTransition() {
+		return Fall.LANDING;
 	}
 
 	private TransitionInjectionDefinition makeInjection(Identifier injectNearTransitionsTo) {

@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.actions.airborne;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.*;
@@ -96,7 +97,7 @@ public class LavaBoost extends Fall implements AirborneActionDefinition {
 
 	}
 	@Override public void travelHook(IMarioTravelData data, AirborneActionHelper helper) {
-		helper.applyGravity(data, FALL_ACCEL, null, FALL_SPEED);
+		helper.applyComplexGravity(data, FALL_ACCEL, null, FALL_SPEED);
 		data.getVars(LavaBoostVars.class).bounceVel = data.getYVel() * -0.6;
 		if(data.getYVel() < 0) Fall.drift(data, helper);
 		else helper.airborneAccel(
@@ -117,6 +118,7 @@ public class LavaBoost extends Fall implements AirborneActionDefinition {
 	}
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {
 		return List.of(
+				Submerged.SUBMERGE,
 				Fall.LANDING.variate(
 						ID,
 						data ->

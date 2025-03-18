@@ -74,7 +74,7 @@ public class Jump extends Fall implements AirborneActionDefinition {
 	public static final CharaStat JUMP_ADDEND = new CharaStat(0.3, JUMP_VELOCITY);
 
 	@Override public void travelHook(IMarioTravelData data, AirborneActionHelper helper) {
-		helper.applyGravity(data, Fall.FALL_ACCEL, JUMP_GRAVITY, Fall.FALL_SPEED);
+		helper.applyComplexGravity(data, Fall.FALL_ACCEL, JUMP_GRAVITY, Fall.FALL_SPEED);
 		Fall.drift(data, helper);
 	}
 
@@ -103,9 +103,7 @@ public class Jump extends Fall implements AirborneActionDefinition {
 				helper.makeJumpCapTransition(this, this.getJumpCapThreshold())
 		);
 	}
-	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {
-		return List.of(
-				DOUBLE_JUMPABLE_LANDING
-		);
+	@Override protected TransitionDefinition getLandingTransition() {
+		return DOUBLE_JUMPABLE_LANDING;
 	}
 }

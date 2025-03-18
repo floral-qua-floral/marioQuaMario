@@ -19,6 +19,8 @@ public enum StatCategory {
 	FORWARD,
 	BACKWARD,
 	STRAFE,
+	UP,
+	DOWN,
 
 	DRAG,
 	FRICTION, // Mostly for Luigi?

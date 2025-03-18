@@ -20,7 +20,7 @@ public interface AirborneActionDefinition extends IncompleteActionDefinition {
 	 * Contains a number of methods intended to help with the creation of Airborne Actions.
 	 */
 	interface AirborneActionHelper {
-		void applyGravity(
+		void applyComplexGravity(
 				IMarioTravelData data,
 				CharaStat gravity, @Nullable CharaStat jumpingGravity,
 				CharaStat terminalVelocity

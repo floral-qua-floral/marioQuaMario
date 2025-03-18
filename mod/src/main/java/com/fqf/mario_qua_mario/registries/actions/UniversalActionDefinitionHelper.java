@@ -13,6 +13,7 @@ import com.fqf.mario_qua_mario.util.CharaStat;
 import com.fqf.mario_qua_mario.util.StatCategory;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2d;
 
@@ -102,7 +103,7 @@ public class UniversalActionDefinitionHelper implements
 		return scaledForwardVel;
 	}
 
-	@Override public void applyGravity(
+	@Override public void applyComplexGravity(
 			IMarioTravelData data,
 			CharaStat gravity, @Nullable CharaStat jumpingGravity,
 			CharaStat terminalVelocity
@@ -118,7 +119,7 @@ public class UniversalActionDefinitionHelper implements
 			double forwardAngleContribution, double strafeAngleContribution, CharaStat redirectStat
 	) {
 		boolean forwards = data.getInputs().getForwardInput() >= 0;
-		airborneAccel(data,
+		driftingAccel(data,
 				forwards ? forwardAccelStat : backwardAccelStat,
 				forwards ? forwardSpeedStat : backwardSpeedStat,
 				strafeAccelStat, strafeSpeedStat,
@@ -126,7 +127,7 @@ public class UniversalActionDefinitionHelper implements
 		);
 	}
 
-	private void airborneAccel(
+	private void driftingAccel(
 			IMarioTravelData data,
 			CharaStat accelStat, CharaStat speedStat,
 			CharaStat strafeAccelStat, CharaStat strafeSpeedStat,
@@ -181,7 +182,25 @@ public class UniversalActionDefinitionHelper implements
 
 	@Override
 	public void applyWaterDrag(IMarioTravelData data, CharaStat drag, CharaStat dragMin) {
+		double dragValue = drag.get(data);
+		boolean dragInverted = dragValue < 0;
+		double slipFactor = 1.0;
+		double dragMinValue = dragMin.get(data) * slipFactor;
+		if(!dragInverted) dragValue *= slipFactor;
 
+
+		Vec3d deltaVelocities = new Vec3d(
+				-dragValue * data.getForwardVel(),
+				-dragValue * data.getYVel(),
+				-dragValue * data.getStrafeVel()
+		);
+		double dragVelocitySquared = deltaVelocities.lengthSquared();
+		if(dragVelocitySquared != 0 && dragVelocitySquared < dragMinValue * dragMinValue)
+			deltaVelocities = deltaVelocities.normalize().multiply(dragMinValue);
+
+		data.setForwardVel(data.getForwardVel() + deltaVelocities.x);
+		data.setYVel(data.getYVel() + deltaVelocities.y);
+		data.setStrafeVel(data.getStrafeVel() + deltaVelocities.z);
 	}
 
 	@Override
@@ -192,7 +211,13 @@ public class UniversalActionDefinitionHelper implements
 			CharaStat strafeAccelStat, CharaStat strafeSpeedStat,
 			double forwardAngleContribution, double strafeAngleContribution, CharaStat redirectStat
 	) {
-
+		boolean forwards = data.getInputs().getForwardInput() >= 0;
+		driftingAccel(data,
+				forwards ? forwardAccelStat : backwardAccelStat,
+				forwards ? forwardSpeedStat : backwardSpeedStat,
+				strafeAccelStat, strafeSpeedStat,
+				forwardAngleContribution, strafeAngleContribution, redirectStat
+		);
 	}
 
 	@Override

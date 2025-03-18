@@ -150,7 +150,7 @@ public class Sideflip extends Backflip implements AirborneActionDefinition {
 		commonTick(data);
 	}
 	@Override public void travelHook(IMarioTravelData data, AirborneActionHelper helper) {
-		helper.applyGravity(data, Fall.FALL_ACCEL, JUMP_GRAVITY, Fall.FALL_SPEED);
+		helper.applyComplexGravity(data, Fall.FALL_ACCEL, JUMP_GRAVITY, Fall.FALL_SPEED);
 		if(data.getYVel() < 0.1) Fall.drift(data, helper);
 	}
 

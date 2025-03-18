@@ -32,6 +32,7 @@ public class DuckFall extends Fall implements AirborneActionDefinition {
 	}
 
 	public static final TransitionDefinition DUCK_FALL = Fall.FALL.variate(MarioQuaMarioContent.makeID("duck_fall"), null);
+	public static final TransitionDefinition DUCK_LANDING = Fall.LANDING.variate(MarioQuaMarioContent.makeID("duck_waddle"), null);
 
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {
 		return List.of(
@@ -39,10 +40,7 @@ public class DuckFall extends Fall implements AirborneActionDefinition {
 		);
 	}
 
-	@Override
-	public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {
-		return List.of(
-				Fall.LANDING.variate(MarioQuaMarioContent.makeID("duck_waddle"), null)
-		);
+	@Override protected TransitionDefinition getLandingTransition() {
+		return DUCK_LANDING;
 	}
 }

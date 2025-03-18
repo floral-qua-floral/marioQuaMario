@@ -67,10 +67,7 @@ public class DuckJump extends Jump implements AirborneActionDefinition {
 		);
 	}
 
-	@Override
-	public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {
-		return List.of(
-				Fall.LANDING.variate(MarioQuaMarioContent.makeID("duck_waddle"), null)
-		);
+	@Override protected TransitionDefinition getLandingTransition() {
+		return DuckFall.DUCK_LANDING;
 	}
 }

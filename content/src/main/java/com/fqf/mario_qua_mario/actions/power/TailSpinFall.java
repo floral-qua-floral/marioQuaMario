@@ -2,6 +2,7 @@ package com.fqf.mario_qua_mario.actions.power;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
+import com.fqf.mario_qua_mario.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario.actions.grounded.DuckWaddle;
 import com.fqf.mario_qua_mario.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
@@ -73,7 +74,7 @@ public class TailSpinFall implements AirborneActionDefinition {
 		TailSpinGround.commonTick(data);
 	}
 	@Override public void travelHook(IMarioTravelData data, AirborneActionHelper helper) {
-		helper.applyGravity(data, FALL_ACCEL, null, FALL_SPEED);
+		helper.applyComplexGravity(data, FALL_ACCEL, null, FALL_SPEED);
 		helper.airborneAccel(data,
 				REDUCED_FORWARD_ACCEL, Fall.FORWARD_DRIFT_SPEED,
 				REDUCED_BACKWARD_ACCEL, Fall.BACKWARD_DRIFT_SPEED,
@@ -98,6 +99,7 @@ public class TailSpinFall implements AirborneActionDefinition {
 	}
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {
 		return List.of(
+				Submerged.SUBMERGE,
 				Fall.LANDING.variate(MarioQuaMarioContent.makeID("tail_spin_grounded"),
 						data -> !TailSpinGround.doneSpinning(data) && Fall.LANDING.evaluator().shouldTransition(data)),
 				Fall.LANDING.variate(MarioQuaMarioContent.makeID("duck_waddle"), null)

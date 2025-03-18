@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.actions.power;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario.actions.airborne.DuckFall;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.grounded.DuckWaddle;
 import com.fqf.mario_qua_mario.definitions.states.actions.AirborneActionDefinition;
@@ -58,9 +59,7 @@ public class TailStallDucking extends TailStall implements AirborneActionDefinit
 		);
 	}
 
-	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {
-		return List.of(
-				Fall.LANDING.variate(MarioQuaMarioContent.makeID("duck_waddle"), null)
-		);
+	@Override protected TransitionDefinition getLandingTransition() {
+		return DuckFall.DUCK_LANDING;
 	}
 }
