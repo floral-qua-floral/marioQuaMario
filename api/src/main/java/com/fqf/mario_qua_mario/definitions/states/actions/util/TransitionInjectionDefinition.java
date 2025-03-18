@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario.definitions.states.actions.util;
 
+import com.fqf.mario_qua_mario.definitions.states.actions.*;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +31,11 @@ public record TransitionInjectionDefinition(
 		TransitionDefinition makeTransition(TransitionDefinition nearbyTransition, CastableHelper castableHelper);
 
 		interface CastableHelper {
-
+			GroundedActionDefinition.GroundedActionHelper asGrounded();
+			AirborneActionDefinition.AirborneActionHelper asAirborne();
+			AquaticActionDefinition.AquaticActionHelper asAquatic();
+			WallboundActionDefinition.WallboundActionHelper asWallbound();
+			MountedActionDefinition.MountedActionHelper asMounted();
 		}
 	}
 

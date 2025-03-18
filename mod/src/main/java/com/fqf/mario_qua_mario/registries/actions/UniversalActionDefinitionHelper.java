@@ -255,4 +255,20 @@ public class UniversalActionDefinitionHelper implements
 	public double getSlipFactor(Entity mount) {
 		return mount.isOnGround() ? 1.0 : Math.pow(0.6 / getFloorSlipperiness(mount), 3);
 	}
+
+	@Override public GroundedActionDefinition.GroundedActionHelper asGrounded() {
+		return this;
+	}
+	@Override public AirborneActionDefinition.AirborneActionHelper asAirborne() {
+		return this;
+	}
+	@Override public AquaticActionDefinition.AquaticActionHelper asAquatic() {
+		return this;
+	}
+	@Override public WallboundActionDefinition.WallboundActionHelper asWallbound() {
+		return this;
+	}
+	@Override public MountedActionDefinition.MountedActionHelper asMounted() {
+		return this;
+	}
 }

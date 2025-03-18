@@ -15,6 +15,7 @@ import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario.util.CharaStat;
 import com.fqf.mario_qua_mario.util.Easing;
 import com.fqf.mario_qua_mario.util.MarioContentSFX;
+import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
