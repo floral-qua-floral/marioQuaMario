@@ -9,6 +9,7 @@ import com.fqf.mario_qua_mario.util.MarioNbtKeys;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.mojang.authlib.GameProfile;
+import net.minecraft.entity.MovementType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -17,6 +18,7 @@ import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -35,6 +37,15 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 	private boolean modifyIncomingDamage(DamageSource source, float amount, Operation<Boolean> original) {
 		float modifiedAmount = this.mqm$getMarioData().getCharacter().modifyIncomingDamage(this.mqm$getMarioData(), source, amount);
 		return modifiedAmount > 0 && original.call(source, modifiedAmount);
+	}
+
+	@Override
+	public void move(MovementType movementType, Vec3d movement) {
+		MarioServerPlayerData data = this.mqm$getMarioData();
+		if(data.isEnabled() && (movementType == MovementType.PLAYER || movementType == MovementType.SELF) && data.getAction().STOMP_TYPE != null)
+			movement = data.getAction().STOMP_TYPE.moveHook(data, movement);
+
+		super.move(movementType, movement);
 	}
 
 	@Override

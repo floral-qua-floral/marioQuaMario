@@ -14,7 +14,7 @@ import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 
 /**
- * An entity can implement this interface and override its methods to change Stomp attacks interact with it.
+ * An entity can implement this interface and override its methods to change how Stomp attacks interact with it.
  */
 public interface IStompableEntity {
 	default StompResult mqm$getStompResult(

@@ -100,23 +100,6 @@ public class Backflip extends Jump implements AirborneActionDefinition {
 	@Override public @Nullable CameraAnimationSet getCameraAnimations() {
 		return null;
 	}
-	@Override public @NotNull SlidingStatus getSlidingStatus() {
-		return SlidingStatus.NOT_SLIDING;
-	}
-
-	@Override public @NotNull SneakingRule getSneakingRule() {
-		return SneakingRule.PROHIBIT;
-	}
-	@Override public @NotNull SprintingRule getSprintingRule() {
-		return SprintingRule.IF_ALREADY_SPRINTING;
-	}
-
-	@Override public @Nullable BumpType getBumpType() {
-		return null;
-	}
-	@Override public @Nullable Identifier getStompTypeID() {
-		return null;
-	}
 
 	public static CharaStat BACKFLIP_VEL = new CharaStat(1.065, JUMP_VELOCITY);
 	public static CharaStat BACKFLIP_BACKWARDS_SPEED = new CharaStat(-0.16, DRIFTING, BACKWARD, SPEED);
@@ -130,15 +113,6 @@ public class Backflip extends Jump implements AirborneActionDefinition {
 
 	public static CharaStat BACKFLIP_REDIRECTION = new CharaStat(0, DRIFTING, REDIRECTION);
 
-	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
-		return null;
-	}
-	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
-
-	}
-	@Override public void serverTick(IMarioAuthoritativeData data) {
-
-	}
 	@Override public void travelHook(IMarioTravelData data, AirborneActionHelper helper) {
 		helper.applyComplexGravity(data, Fall.FALL_ACCEL, JUMP_GRAVITY, Fall.FALL_SPEED);
 		if(data.getYVel() < 0.1) Fall.drift(data, helper);
@@ -173,22 +147,7 @@ public class Backflip extends Jump implements AirborneActionDefinition {
 		);
 	}
 
-	protected double getJumpCap() {
+	@Override protected double getJumpCapThreshold() {
 		return 0.765;
-	}
-
-	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {
-		return List.of(
-				GroundPoundFlip.GROUND_POUND,
-				helper.makeJumpCapTransition(this, this.getJumpCap())
-		);
-	}
-
-	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
-		return Set.of();
-	}
-
-	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
-		return List.of();
 	}
 }

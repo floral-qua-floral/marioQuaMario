@@ -11,6 +11,7 @@ import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.mariodata.IMarioData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
+import com.fqf.mario_qua_mario.stomp_types.JumpStomp;
 import com.fqf.mario_qua_mario.util.CharaStat;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -55,7 +56,7 @@ public class Fall implements AirborneActionDefinition {
 		return null;
 	}
 	@Override public @Nullable Identifier getStompTypeID() {
-		return null;
+		return JumpStomp.ID;
 	}
 
 	public static final CharaStat FALL_ACCEL = new CharaStat(-0.115, NORMAL_GRAVITY);

@@ -91,23 +91,6 @@ public class Sideflip extends Backflip implements AirborneActionDefinition {
 	@Override public @Nullable CameraAnimationSet getCameraAnimations() {
 		return null;
 	}
-	@Override public @NotNull SlidingStatus getSlidingStatus() {
-		return SlidingStatus.NOT_SLIDING;
-	}
-
-	@Override public @NotNull SneakingRule getSneakingRule() {
-		return SneakingRule.PROHIBIT;
-	}
-	@Override public @NotNull SprintingRule getSprintingRule() {
-		return SprintingRule.IF_ALREADY_SPRINTING;
-	}
-
-	@Override public @Nullable BumpType getBumpType() {
-		return null;
-	}
-	@Override public @Nullable Identifier getStompTypeID() {
-		return null;
-	}
 
 	public static CharaStat SIDEFLIP_VEL = new CharaStat(1.065, JUMP_VELOCITY);
 	public static CharaStat SIDEFLIP_BACKWARDS_SPEED = new CharaStat(-0.375, DRIFTING, BACKWARD, SPEED);
@@ -154,7 +137,7 @@ public class Sideflip extends Backflip implements AirborneActionDefinition {
 		if(data.getYVel() < 0.1) Fall.drift(data, helper);
 	}
 
-	@Override protected double getJumpCap() {
+	@Override protected double getJumpCapThreshold() {
 		return 0.65;
 	}
 

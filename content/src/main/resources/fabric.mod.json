@@ -15,6 +15,10 @@
 	"icon": "assets/mario_qua_mario_content/icon.png",
 	"environment": "*",
 	"entrypoints": {
+		"mqm-stomp-types": [
+			"com.fqf.mario_qua_mario.stomp_types.JumpStomp"
+		],
+
 		"mqm-generic-actions": [
 			"com.fqf.mario_qua_mario.actions.generic.Debug",
 			"com.fqf.mario_qua_mario.actions.generic.DebugSprint",

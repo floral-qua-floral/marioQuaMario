@@ -8,6 +8,7 @@ import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.Playerm
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
 import com.fqf.mario_qua_mario.registries.ParsedAttackInterception;
 import com.fqf.mario_qua_mario.registries.ParsedMarioState;
+import com.fqf.mario_qua_mario.registries.ParsedStompType;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
@@ -26,7 +27,7 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 	public final SprintingRule SPRINTING_RULE;
 
 	public final @Nullable BumpType BUMP_TYPE;
-//	public final @Nullable ParsedStompType STOMP_TYPE;
+	public final @Nullable ParsedStompType STOMP_TYPE;
 
 	public final Map<AbstractParsedAction, ParsedTransition> TRANSITIONS_FROM_TARGETS;
 	public final EnumMap<TransitionPhase, List<ParsedTransition>> CLIENT_TRANSITIONS;
@@ -47,6 +48,7 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 		this.SPRINTING_RULE = definition.getSprintingRule();
 
 		this.BUMP_TYPE = definition.getBumpType();
+		this.STOMP_TYPE = RegistryManager.STOMP_TYPES.get(definition.getStompTypeID());
 
 		this.TRANSITIONS_FROM_TARGETS = new HashMap<>();
 		this.CLIENT_TRANSITIONS = new EnumMap<>(TransitionPhase.class);

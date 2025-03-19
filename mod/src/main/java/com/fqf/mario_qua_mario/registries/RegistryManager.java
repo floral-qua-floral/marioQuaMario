@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.registries;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.definitions.StompTypeDefinition;
 import com.fqf.mario_qua_mario.definitions.VoicelineSetDefinition;
 import com.fqf.mario_qua_mario.definitions.states.CharacterDefinition;
 import com.fqf.mario_qua_mario.definitions.states.PowerUpDefinition;
@@ -41,9 +42,9 @@ public class RegistryManager {
 
 	public static final Map<String, Map<ParsedCharacter, SoundEvent>> VOICE_LINES = new HashMap<>();
 
-	public static final RegistryKey<Registry<String>> STOMP_TYPES_KEY =
+	public static final RegistryKey<Registry<ParsedStompType>> STOMP_TYPES_KEY =
 			RegistryKey.ofRegistry(MarioQuaMario.makeID("stomp_types"));
-	public static final Registry<String> STOMP_TYPES = FabricRegistryBuilder.createSimple(STOMP_TYPES_KEY)
+	public static final Registry<ParsedStompType> STOMP_TYPES = FabricRegistryBuilder.createSimple(STOMP_TYPES_KEY)
 			.attribute(RegistryAttribute.SYNCED)
 			.buildAndRegister();
 
@@ -69,14 +70,17 @@ public class RegistryManager {
 		return FabricLoader.getInstance().getEntrypointContainers(key, clazz).stream().map(EntrypointContainer::getEntrypoint).toList();
 	}
 
-	public static <Thing extends ParsedMarioState> void registerThing(Registry<Thing> registry, Thing thing) {
+	public static <Thing extends ParsedMarioThing> void registerThing(Registry<Thing> registry, Thing thing) {
 		if(registry.containsId(thing.ID))
 			throw new IllegalStateException(thing.ID + " was registered twice as a " + thing.getClass().getName() + "!!!");
 		Registry.register(registry, thing.ID, thing);
 	}
 
 	private static void registerStompTypes() {
-
+		for(StompTypeDefinition definition : getEntrypoints("mqm-stomp-types", StompTypeDefinition.class)) {
+			registerThing(STOMP_TYPES, new ParsedStompType(definition));
+		}
+		STOMP_TYPES.freeze();
 	}
 
 	private static void registerActions() {
@@ -92,6 +96,7 @@ public class RegistryManager {
 		for(IncompleteActionDefinition definition : actionDefinitions) {
 			registerThing(ACTIONS, ParsedActionHelper.parseAction(definition, allInjections));
 		}
+		ACTIONS.freeze();
 
 		// Now all actions are registered; we need to parse their transitions
 		for(AbstractParsedAction action : ACTIONS) {
@@ -103,6 +108,7 @@ public class RegistryManager {
 		for(PowerUpDefinition definition : getEntrypoints("mqm-power-ups", PowerUpDefinition.class)) {
 			registerThing(POWER_UPS, new ParsedPowerUp(definition));
 		}
+		POWER_UPS.freeze();
 	}
 
 	private static void registerCharacters() {
@@ -112,6 +118,7 @@ public class RegistryManager {
 			registerThing(CHARACTERS, character);
 			characterNamespaces.add(character.RESOURCE_ID.getNamespace());
 		}
+		CHARACTERS.freeze();
 
 		for(String namespace : characterNamespaces) {
 			MarioQuaMario.LOGGER.info("Registering a playermodel resource listener {}...!", namespace);

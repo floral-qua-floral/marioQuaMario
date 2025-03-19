@@ -70,27 +70,6 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 		);
 	}
 
-	@Override public @Nullable CameraAnimationSet getCameraAnimations() {
-		return null;
-	}
-	@Override public @NotNull SlidingStatus getSlidingStatus() {
-		return SlidingStatus.NOT_SLIDING;
-	}
-
-	@Override public @NotNull SneakingRule getSneakingRule() {
-		return SneakingRule.PROHIBIT;
-	}
-	@Override public @NotNull SprintingRule getSprintingRule() {
-		return SprintingRule.IF_ALREADY_SPRINTING;
-	}
-
-	@Override public @Nullable BumpType getBumpType() {
-		return null;
-	}
-	@Override public @Nullable Identifier getStompTypeID() {
-		return null;
-	}
-
 	public static final CharaStat FALL_ACCEL = new CharaStat(-0.013775, NORMAL_GRAVITY, POWER_UP);
 	public static final CharaStat FALL_SPEED = new CharaStat(-0.445, TERMINAL_VELOCITY, POWER_UP);
 
@@ -197,9 +176,5 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 						(nearbyTransition, castableHelper) -> DUCK_STALL_TRANSITION
 				)
 		);
-	}
-
-	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
-		return List.of();
 	}
 }
