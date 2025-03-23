@@ -232,13 +232,13 @@ public abstract class MarioMoveableData extends MarioPlayerData implements IMari
 		return newDir; // Return the interpolated direction with original magnitude
 	}
 
-	protected void moveWithFluidPushing() {
-		this.getMario().move(MovementType.SELF, this.getMario().getVelocity().add(this.getFluidPushingVel()));
+	@Override
+	public void refreshJumpCapping() {
+		this.jumpCapped = false;
 	}
 
-	private final MarioTimers TIMERS = new MarioTimers();
-	@Override public @NotNull MarioTimers getTimers() {
-		return this.TIMERS;
+	protected void moveWithFluidPushing() {
+		this.getMario().move(MovementType.SELF, this.getMario().getVelocity().add(this.getFluidPushingVel()));
 	}
 
 	public WallboundActionDefinition.WallInfo getWallInfo() {

@@ -102,6 +102,11 @@ public class RegistryManager {
 		for(AbstractParsedAction action : ACTIONS) {
 			action.parseTransitions(allInjections);
 		}
+
+		// We can also register all Stomp Types' actions now. There's no reason to do this sooner since it uses a map; can't be final anyways
+		for(ParsedStompType stompType : STOMP_TYPES) {
+			stompType.populatePostStompActions();
+		}
 	}
 
 	private static void registerPowerUps() {

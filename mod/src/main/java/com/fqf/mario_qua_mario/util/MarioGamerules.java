@@ -13,7 +13,7 @@ public class MarioGamerules {
 			GameRuleRegistry.register("mqmUseCharacterStats", GameRules.Category.PLAYER,
 					GameRuleFactory.createBooleanRule(true, (server, booleanRule) -> {
 						useCharacterStats = booleanRule.get();
-						MarioPackets.syncUseCharacterStatsS2C(useCharacterStats);
+						MarioPackets.syncUseCharacterStatsS2C(server, useCharacterStats);
 					})
 			);
 

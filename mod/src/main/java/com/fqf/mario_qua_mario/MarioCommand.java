@@ -205,7 +205,7 @@ public class MarioCommand {
 //		ParsedStomp stompType = RegistryEntryReferenceArgumentType.getRegistryEntry(environment, "stomp", RegistryManager.STOMP_TYPES_KEY).value();
 //
 //		stomper.teleport((ServerWorld) target.getWorld(), target.getX(), target.getY() + target.getHeight(), target.getZ(), target.getPitch(), target.getYaw());
-//		stompType.executeServer((MarioServerData) MarioDataManager.getMarioData(stomper), target, true, RandomSeed.getSeed());
+//		stompType.executeServerAndGetTargetAction((MarioServerData) MarioDataManager.getMarioData(stomper), target, true, RandomSeed.getSeed());
 //
 //		return sendFeedback(environment, "Made " + stomper.getName().getString() + " perform a stomp of type " + stompType.ID + " on " + target.getName().getString());
 
@@ -323,26 +323,26 @@ public class MarioCommand {
 //		if(!data.isEnabled())
 //			return sendFeedback(context, name + " is not playing as a character, and as such cannot execute action transitions.", false);
 //
-//		AbstractParsedAction fromAction =
+//		AbstractParsedAction stompTypeID =
 //				RegistryEntryReferenceArgumentType.getRegistryEntry(context, "from", RegistryManager.ACTIONS_KEY).value();
 //		AbstractParsedAction toAction =
 //				RegistryEntryReferenceArgumentType.getRegistryEntry(context, "to", RegistryManager.ACTIONS_KEY).value();
 //
 //		long seed = RandomSeed.getSeed();
 //
-//		boolean successful = mario.mqm$getMarioData().setAction(fromAction, toAction, seed, false, true);
+//		boolean successful = mario.mqm$getMarioData().setAction(stompTypeID, toAction, seed, false, true);
 //
 //		if(successful) MarioDataPackets.transitionToActionS2C(
 //				mario,
 //				true,
-//				fromAction,
+//				stompTypeID,
 //				toAction,
 //				seed
 //		);
 //
 //		return sendFeedback(context, successful ?
-//				"Successfully made " + name + " execute transition \"" + fromAction.ID + "->" + toAction.ID + "\"."
-//				: "No transition exists from " + fromAction.ID + " to " + toAction.ID + "! :(", successful);
+//				"Successfully made " + name + " execute transition \"" + stompTypeID.ID + "->" + toAction.ID + "\"."
+//				: "No transition exists from " + stompTypeID.ID + " to " + toAction.ID + "! :(", successful);
 	}
 
 	private static int executeReversion(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {

@@ -1,10 +1,18 @@
 package com.fqf.mario_qua_mario.interfaces;
 
 public enum StompResult {
-	NORMAL,
+	MOUNT,
 	PAINFUL,
+	NORMAL,
 	GLANCING,
 	RESISTED,
-	FAIL,
-	MOUNT
+	FAIL;
+
+	public enum ExecutableResult {
+		MOUNT,
+		PAINFUL,
+		NORMAL,
+		GLANCING,
+		RESISTED
+	}
 }

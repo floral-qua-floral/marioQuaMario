@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario;
 
+import com.fqf.mario_qua_mario.util.MarioContentEventListeners;
 import com.fqf.mario_qua_mario.util.MarioContentGamerules;
 import com.fqf.mario_qua_mario.util.MarioContentSFX;
 import net.fabricmc.api.ModInitializer;
@@ -17,6 +18,7 @@ public class MarioQuaMarioContent implements ModInitializer {
 
 		MarioContentSFX.staticInitialize();
 		MarioContentGamerules.register();
+		MarioContentEventListeners.register();
 	}
 
 	public static Identifier makeID(String path) {

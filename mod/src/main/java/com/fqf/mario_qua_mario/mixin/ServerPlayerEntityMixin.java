@@ -22,6 +22,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 
 import java.util.Objects;
 
@@ -39,13 +40,27 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 		return modifiedAmount > 0 && original.call(source, modifiedAmount);
 	}
 
+	@Unique private long tickAfterStomp;
+
 	@Override
 	public void move(MovementType movementType, Vec3d movement) {
 		MarioServerPlayerData data = this.mqm$getMarioData();
-		if(data.isEnabled() && (movementType == MovementType.PLAYER || movementType == MovementType.SELF) && data.getAction().STOMP_TYPE != null)
+		Vec3d oldMovement = movement;
+		Vec3d oldPos = this.getPos();
+		// Only perform stomp checks on movement that comes from a player packet (as opposed to server-side travel).
+		// Should this change??
+		long time = this.getWorld().getTime();
+		if(data.isEnabled() && data.getAction().STOMP_TYPE != null && movementType == MovementType.PLAYER
+				&& time != this.tickAfterStomp && time != this.tickAfterStomp - 1)
 			movement = data.getAction().STOMP_TYPE.moveHook(data, movement);
 
 		super.move(movementType, movement);
+		if(!oldMovement.equals(movement)) {
+			MarioQuaMario.LOGGER.info("Server-sided stomp after move completion:\nTick: {}\tForbiddenTick: {}\tMovetype: {}\nOld position: {}\nMovement: {}\nNew position: {}\nDifference: {}",
+					this.getWorld().getTime(), this.tickAfterStomp, movementType, oldPos, movement, this.getPos(), this.getPos().subtract(oldPos));
+			this.tickAfterStomp = time + 1;
+		}
+//		else MarioQuaMario.LOGGER.info("Movement: {}->{}", oldPos, this.getPos());
 	}
 
 	@Override

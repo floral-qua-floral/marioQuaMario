@@ -236,4 +236,9 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 		}
 		return super.turnHead(bodyRotation, headRotation);
 	}
+
+	@Override
+	public boolean isPushable() {
+		return !this.mqm$getMarioData().isEnabled();
+	}
 }

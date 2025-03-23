@@ -1,23 +1,52 @@
 package com.fqf.mario_qua_mario.packets;
 
 import com.fqf.mario_qua_mario.MarioClientHelperManager;
-import com.fqf.mario_qua_mario.mariodata.MarioMainClientData;
-import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
+import com.fqf.mario_qua_mario.interfaces.StompResult;
+import com.fqf.mario_qua_mario.mariodata.*;
 import com.fqf.mario_qua_mario.registries.ParsedAttackInterception;
+import com.fqf.mario_qua_mario.registries.ParsedStompType;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
+import com.fqf.mario_qua_mario.util.MarioGamerules;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
 public class MarioClientPacketHelper implements MarioClientHelperManager.ClientPacketSender {
 	public static void registerClientReceivers() {
+		// SyncUseCharacterStatsS2CPayload Receiver
+		ClientPlayNetworking.registerGlobalReceiver(MarioPackets.SyncUseCharacterStatsS2CPayload.ID, (payload, context) ->
+				MarioGamerules.useCharacterStats = payload.shouldUse()
+		);
+
+		// StompS2CPayload Receiver
+		ClientPlayNetworking.registerGlobalReceiver(MarioPackets.StompS2CPayload.ID, (payload, context) -> {
+			PlayerEntity mario = getMarioFromID(context, payload.marioID());
+			MarioPlayerData data = mario.mqm$getMarioData();
+			Entity target = context.player().getWorld().getEntityById(payload.stompedEntityID());
+			StompResult.ExecutableResult result = StompResult.ExecutableResult.values()[payload.stompResultIndex()];
+			ParsedStompType stomp = Objects.requireNonNull(RegistryManager.STOMP_TYPES.get(payload.stompTypeID()));
+
+			if(payload.affectMario()) stomp.transitionAction(data, result);
+
+			stomp.executeClients((IMarioClientData) data, target, result, payload.affectMario(), payload.seed());
+
+			if(data instanceof MarioMoveableData moveableData) {
+				Vec3d targetPos = stomp.executeTravellersAndGetTargetPos(moveableData, target, result, mario.getPos(), payload.affectMario());
+				if(payload.affectMario() && targetPos != null) {
+					data.getMario().move(MovementType.SELF, targetPos.subtract(mario.getPos()));
+				}
+			}
+		});
+
 		// DisableMarioS2CPayload Receiver
 		ClientPlayNetworking.registerGlobalReceiver(MarioDataPackets.DisableMarioS2CPayload.ID, (payload, context) ->
 				getMarioFromID(context, payload.marioID()).mqm$getMarioData().disableInternal()
@@ -97,7 +126,7 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 
 	@Override
 	public void setActionC2S(AbstractParsedAction fromAction, AbstractParsedAction toAction, long seed) {
-//		MarioQuaMario.LOGGER.info("Sending setActionC2S Packet for {}->{}", fromAction.ID, toAction.ID);
+//		MarioQuaMario.LOGGER.info("Sending setActionC2S Packet for {}->{}", stompTypeID.ID, toAction.ID);
 		ClientPlayNetworking.send(new MarioDataPackets.SetActionC2SPayload(fromAction.getIntID(), toAction.getIntID(), seed));
 	}
 

@@ -36,5 +36,7 @@ public enum StatCategory {
 	AQUATIC_TERMINAL_VELOCITY,
 
 	STOMP,
-	POWER_UP
+	POWER_UP,
+
+	DAMAGE
 }

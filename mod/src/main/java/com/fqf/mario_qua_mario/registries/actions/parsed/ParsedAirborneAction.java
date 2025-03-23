@@ -24,6 +24,7 @@ public class ParsedAirborneAction extends AbstractParsedAction {
 	@Override
 	public boolean travelHook(MarioMoveableData data) {
 		this.AIRBORNE_DEFINITION.travelHook(data, UniversalActionDefinitionHelper.INSTANCE);
+		if(data.getYVel() > 0) data.getMario().fallDistance = 0;
 		return true;
 	}
 

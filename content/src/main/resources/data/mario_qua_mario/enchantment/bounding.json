@@ -1,0 +1,21 @@
+{
+  "description": {
+    "translate": "enchantment.mario_qua_mario.bounding"
+  },
+  "supported_items": "#minecraft:enchantable/foot_armor",
+  "primary_items": [],
+  "weight": 2,
+  "max_level": 2,
+  "min_cost": {
+    "base": 12,
+    "per_level_above_first": 20
+  },
+  "max_cost": {
+    "base": 37,
+    "per_level_above_first": 20
+  },
+  "anvil_cost": 2,
+  "slots": [
+    "feet"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "description": {
+    "translate": "enchantment.mario_qua_mario.pulverizing"
+  },
+  "exclusive_set": "#mario_qua_mario:exclusive_set/pulverizing",
+  "supported_items": "#mario_qua_mario:enchantable/pulverizing",
+  "primary_items": [],
+  "weight": 2,
+  "max_level": 5,
+  "min_cost": {
+    "base": 1,
+    "per_level_above_first": 11
+  },
+  "max_cost": {
+    "base": 21,
+    "per_level_above_first": 11
+  },
+  "anvil_cost": 4,
+  "slots": [
+    "feet",
+    "legs"
+  ]
+}

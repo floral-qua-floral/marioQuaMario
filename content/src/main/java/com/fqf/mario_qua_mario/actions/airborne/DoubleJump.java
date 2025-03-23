@@ -22,8 +22,9 @@ import java.util.Set;
 import static com.fqf.mario_qua_mario.util.StatCategory.*;
 
 public class DoubleJump extends Jump implements AirborneActionDefinition {
+	public static final Identifier ID = MarioQuaMarioContent.makeID("double_jump");
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("double_jump");
+	    return ID;
 	}
 
 	private static LimbAnimation makeArmAnimation(int factor) {

@@ -2,8 +2,11 @@ package com.fqf.mario_qua_mario.util;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
+import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
 import com.fqf.mario_qua_mario.mariodata.MarioServerPlayerData;
 import com.fqf.mario_qua_mario.packets.MarioDataPackets;
+import com.fqf.mario_qua_mario.packets.MarioPackets;
+import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -23,6 +26,9 @@ public class MarioEventListeners {
 			if(oldData.isEnabled()) data.assignCharacter(oldData.getCharacterID());
 		});
 
+		ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register(((player, origin, destination) ->
+				player.mqm$getMarioData().initialApply()));
+
 		ServerLivingEntityEvents.ALLOW_DEATH.register((livingEntity, damageSource, amount) -> {
 			if(damageSource.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY)) return true;
 
@@ -39,6 +45,7 @@ public class MarioEventListeners {
 		});
 
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+			MarioPackets.syncUseCharacterStatsS2C(handler.player, MarioGamerules.useCharacterStats);
 //			handler.player.mqm$getMarioData().initialApply();
 //			handler.player.mqm$getMarioData().updatePlayerModel();
 //			handler.player.mqm$getMarioData().syncToClient(handler.player);
