@@ -1,6 +1,9 @@
 package com.fqf.mario_qua_mario.actions.mounted;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario.actions.airborne.Backflip;
+import com.fqf.mario_qua_mario.actions.grounded.SubWalk;
+import com.fqf.mario_qua_mario.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.MountedActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.AnimationHelper;
@@ -11,11 +14,13 @@ import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.mariodata.IMarioData;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
 import net.minecraft.entity.Entity;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 public class Mounted implements MountedActionDefinition {
@@ -47,6 +52,10 @@ public class Mounted implements MountedActionDefinition {
 		return null;
 	}
 
+	@Override public @Nullable Text dismountingHint() {
+		return MarioQuaMarioContent.getClientHelper().getBackflipDismountText();
+	}
+
 	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
 		return null;
 	}
@@ -63,23 +72,24 @@ public class Mounted implements MountedActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(MountedActionHelper helper) {
 		return List.of(
 				new TransitionDefinition(
-						MarioQuaMarioContent.makeID("sub_walk"),
+						SubWalk.ID,
 						data -> helper.getMount(data) == null,
 						EvaluatorEnvironment.COMMON
 				)
 		);
 	}
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(MountedActionHelper helper) {
+		TransitionDefinition backflip = Backflip.makeBackflipTransition((GroundedActionDefinition.GroundedActionHelper) helper);
 		return List.of(
-				new TransitionDefinition(
-						MarioQuaMarioContent.makeID("walk_run"),
+				backflip.variate(
+						null,
 						data -> data.getInputs().DUCK.isHeld() && data.getInputs().JUMP.isPressed(),
-						EvaluatorEnvironment.CLIENT_ONLY,
+						null,
 						data -> {
-							data.setYVel(1);
 							helper.dismount(data, false);
+							Objects.requireNonNull(backflip.travelExecutor()).execute(data);
 						},
-						(data, isSelf, seed) -> data.playJumpSound(seed)
+						null
 				)
 		);
 	}

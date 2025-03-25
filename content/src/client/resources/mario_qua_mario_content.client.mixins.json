@@ -3,6 +3,10 @@
   "package": "com.fqf.mario_qua_mario.mixin.client",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "ClientPlayNetworkHandlerMixin",
+    "LivingEntityMixin",
+    "LivingEntityRendererMixin",
+    "PlayerCeilingClippingMixin"
   ],
   "injectors": {
     "defaultRequire": 1

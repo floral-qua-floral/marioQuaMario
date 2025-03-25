@@ -1,4 +1,4 @@
-package com.fqf.mario_qua_mario.mixins;
+package com.fqf.mario_qua_mario.mixin.client;
 
 import com.fqf.mario_qua_mario.util.Powers;
 import com.mojang.authlib.GameProfile;

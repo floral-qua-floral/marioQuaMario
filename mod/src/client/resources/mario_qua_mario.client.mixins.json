@@ -5,9 +5,9 @@
   "client": [
     "AbstractClientPlayerEntityMarioDataMixin",
     "BipedEntityModelMixin",
-    "CPMClientBaseMixin",
     "ClientPlayerEntityMarioDataMixin",
     "ClientPlayerEntityMixin",
+    "CPMClientBaseMixin",
     "GameRendererMixin",
     "InGameHudMixin",
     "MinecraftClientMixin",

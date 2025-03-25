@@ -111,7 +111,8 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 
 	public static final TransitionDefinition GROUND_POUND = new TransitionDefinition(
 			ID,
-			data -> data.getInputs().DUCK.isPressed(),
+//			data -> data.getInputs().DUCK.isPressed(),
+			data -> false, // Disabled for alpha
 			EvaluatorEnvironment.CLIENT_ONLY,
 			data -> {
 				data.setForwardStrafeVel(0, 0);

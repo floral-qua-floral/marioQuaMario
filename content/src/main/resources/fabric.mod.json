@@ -40,6 +40,7 @@
 		"mqm-airborne-actions": [
 			"com.fqf.mario_qua_mario.actions.airborne.Fall",
 			"com.fqf.mario_qua_mario.actions.airborne.SpecialFall",
+			"com.fqf.mario_qua_mario.actions.airborne.StompBounce",
 			"com.fqf.mario_qua_mario.actions.airborne.LavaBoost",
 			"com.fqf.mario_qua_mario.actions.airborne.Jump",
 			"com.fqf.mario_qua_mario.actions.airborne.PJump",
@@ -78,10 +79,7 @@
 		],
 
 		"mqm-characters": [
-			"com.fqf.mario_qua_mario.characters.Mario",
-			"com.fqf.mario_qua_mario.characters.Luigi",
-			"com.fqf.mario_qua_mario.characters.BlueToad",
-			"com.fqf.mario_qua_mario.characters.Toadette"
+			"com.fqf.mario_qua_mario.characters.Mario"
 		],
 
 		"mqm-voicelines": [

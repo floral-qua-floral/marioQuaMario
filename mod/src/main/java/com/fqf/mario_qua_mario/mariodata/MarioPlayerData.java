@@ -98,6 +98,7 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 		this.setupCustomVars(this.action, action);
 		this.action = action;
 		this.getMario().calculateDimensions();
+//		if(action.CATEGORY != ActionCategory.MOUNTED) this.getMario().dismountVehicle();
 	}
 
 	private ParsedPowerUp powerUp;
@@ -193,7 +194,7 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	}
 
 	public boolean doMarioTravel() {
-		return this.isEnabled() && !this.getMario().getAbilities().flying && !this.getMario().isFallFlying() && !this.getMario().isUsingRiptide();
+		return this.isEnabled() && !this.getMario().getAbilities().flying && !this.getMario().isFallFlying() && !this.getMario().isUsingRiptide() && !this.getMario().isClimbing();
 	}
 
 	public Vec3d getFluidPushingVel() {

@@ -4,6 +4,7 @@ import com.fqf.mario_qua_mario.util.MarioContentEventListeners;
 import com.fqf.mario_qua_mario.util.MarioContentGamerules;
 import com.fqf.mario_qua_mario.util.MarioContentSFX;
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,10 +12,14 @@ import org.slf4j.LoggerFactory;
 public class MarioQuaMarioContent implements ModInitializer {
 	public static final String MOD_ID = "mario_qua_mario_content";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+	protected static ContentClientHelper clientHelper;
+	public static ContentClientHelper getClientHelper() {
+		return clientHelper;
+	}
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Mario qua Mario Content intializing...");
+		LOGGER.info("Mario qua Mario Content initializing...");
 
 		MarioContentSFX.staticInitialize();
 		MarioContentGamerules.register();
@@ -26,5 +31,11 @@ public class MarioQuaMarioContent implements ModInitializer {
 	}
 	public static Identifier makeResID(String path) {
 		return Identifier.of("mario_qua_mario", path);
+	}
+
+	public static class ContentClientHelper {
+		public Text getBackflipDismountText() {
+			return Text.of("If you're seeing this, something's gone wrong! :(");
+		}
 	}
 }

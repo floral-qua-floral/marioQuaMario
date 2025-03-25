@@ -35,30 +35,31 @@ public class DoubleJump extends Jump implements AirborneActionDefinition {
 			arrangement.y += Easing.BACK_OUT.ease(progress, 1.1F, -2.333F);
 		});
 	}
+	public static final PlayermodelAnimation ANIMATION = new PlayermodelAnimation(
+			(data, rightArmBusy, leftArmBusy, headRelativeYaw) -> data.getMario().getRandom().nextBoolean(),
+			new ProgressHandler(
+					(data, ticksPassed) ->
+							Easing.EXPO_IN_OUT.ease(Easing.QUAD_IN.ease(Easing.clampedRangeToProgress(data.getYVel(), 0.87F, -0.85F)))
+			),
+			null,
+			new BodyPartAnimation((data, arrangement, progress) ->
+					arrangement.pitch += MathHelper.lerp(progress, -13, 27.5F)),
+			new BodyPartAnimation((data, arrangement, progress) ->
+					arrangement.yaw += progress * -10),
+			makeArmAnimation(1),
+			makeArmAnimation(-1),
+			new LimbAnimation(false, (data, arrangement, progress) -> {
+				arrangement.pitch += MathHelper.lerp(progress, 20, 9.1F);
+				arrangement.z -= progress * 4.25F;
+				arrangement.y -= progress * 4.5F;
+			}),
+			new LimbAnimation(false, (data, arrangement, progress) ->
+					arrangement.pitch += MathHelper.lerp(progress, 20, -9.5F)),
+			null
+	);
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return new PlayermodelAnimation(
-				(data, rightArmBusy, leftArmBusy, headRelativeYaw) -> data.getMario().getRandom().nextBoolean(),
-				new ProgressHandler(
-						(data, ticksPassed) ->
-								Easing.EXPO_IN_OUT.ease(Easing.QUAD_IN.ease(Easing.clampedRangeToProgress(data.getYVel(), 0.87F, -0.85F)))
-				),
-				null,
-				new BodyPartAnimation((data, arrangement, progress) ->
-						arrangement.pitch += MathHelper.lerp(progress, -13, 27.5F)),
-				new BodyPartAnimation((data, arrangement, progress) ->
-						arrangement.yaw += progress * -10),
-				makeArmAnimation(1),
-				makeArmAnimation(-1),
-				new LimbAnimation(false, (data, arrangement, progress) -> {
-					arrangement.pitch += MathHelper.lerp(progress, 20, 9.1F);
-					arrangement.z -= progress * 4.25F;
-					arrangement.y -= progress * 4.5F;
-				}),
-				new LimbAnimation(false, (data, arrangement, progress) ->
-						arrangement.pitch += MathHelper.lerp(progress, 20, -9.5F)),
-				null
-		);
+		return ANIMATION;
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations() {
 		return null;

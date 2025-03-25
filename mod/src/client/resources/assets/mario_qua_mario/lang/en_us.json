@@ -6,24 +6,8 @@
   "text.autoconfig.mario_qua_mario.option.spinputType": "Spin Input Type",
   "fabric.mods.mario_qua_mario.spin": "Spin",
 
-  "mount.onboard.mario": "Hold %s and press %s to Dismount",
-
-  "text.autoconfig.mario_qua_mario.option.sideflipAnimType": "Sideflip Camera Animation",
-  "text.autoconfig.mario_qua_mario.option.backflipAnimType": "Backflip Camera Animation",
-  "text.autoconfig.mario_qua_mario.option.tripleJumpAnimType": "Triple Jump Camera Animation",
-
-  "death.attack.marioStomp": "%s was stomped by %s",
-  "death.attack.marioStomp.item": "%s was stomped by %s using %s",
-  "death.attack.marioHipDrop": "%s was pounded flat by %s",
-  "death.attack.marioHipDrop.item": "%s was pounded flat by %s using %s",
-  "death.attack.marioKick": "%s was given the boot by %s",
-  "death.attack.marioKick.item": "%s was given the boot by %s using %s",
-
-  "death.attack.marioCeilingBonk": "%s was bonked from below by %s",
-  "death.attack.marioCeilingBonk.item": "%s was bonked from below by %s",
-
   "enchantment.mario_qua_mario.pulverizing": "Pulverizing",
-  "enchantment.mario_qua_mario.pulverizing.desc": "Increased damage from Stomps or Ground Pounds",
+  "enchantment.mario_qua_mario.pulverizing.desc": "Increased damage from Stomps",
   "enchantment.mario_qua_mario.bounding": "Bounding",
   "enchantment.mario_qua_mario.bounding.desc": "Higher bounce after a Stomp",
   "enchantment.mario_qua_mario.depth_charge": "Depth Charge",
