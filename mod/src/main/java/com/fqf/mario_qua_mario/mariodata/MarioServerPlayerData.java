@@ -58,7 +58,7 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 	public boolean setAction(@Nullable AbstractParsedAction fromAction, AbstractParsedAction toAction, long seed, boolean forced, boolean fromCommand) {
 		if(!forced && !fromCommand) {
 			if(!this.getAction().equals(fromAction)) {
-				// Check if we were recently in stompTypeID. If not, return false.
+				// Check if we were recently in fromAction. If not, return false.
 				if(fromAction == null || this.RECENT_ACTIONS.stream().noneMatch(pair -> pair.getLeft().ID.equals(fromAction.ID))) {
 					if (MarioQuaMario.LOGGER.isWarnEnabled()) {
 						Identifier fromActionID = fromAction == null ? null : fromAction.ID;
@@ -67,7 +67,7 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 							recentActionsString.append("\n").append(recentAction.getLeft().ID);
 						}
 						MarioQuaMario.LOGGER.warn(
-								"TRANSITION REJECTED: Not recently in stompTypeID.\nServer-sided action: {}\nAttempted {} -> {}\nRecent actions: {}",
+								"TRANSITION REJECTED: Not recently in fromAction.\nServer-sided action: {}\nAttempted {} -> {}\nRecent actions: {}",
 								this.getActionID(), fromActionID, toAction.ID, recentActionsString);
 					}
 					return false;

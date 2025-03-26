@@ -11,7 +11,11 @@ import com.fqf.mario_qua_mario.util.Easing;
 import com.fqf.mario_qua_mario.util.MarioContentSFX;
 import com.fqf.mario_qua_mario.util.Powers;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Hand;
@@ -164,7 +168,26 @@ public class Raccoon implements PowerUpDefinition {
 
 		@Override
 		public void executeServer(IMarioAuthoritativeData data, ItemStack weapon, float attackCooldownProgress, ServerWorld world, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget) {
-			data.getMario().setBodyYaw(data.getMario().getHeadYaw());
+			data.getMario().spawnSweepAttackParticles();
+			if(entityTarget != null) {
+				ServerPlayerEntity mario = data.getMario();
+				DamageSource damageSource = mario.getDamageSources().playerAttack(mario);
+				entityTarget.damage(damageSource, 5.75F);
+				List<LivingEntity> sweepTargets = mario.getWorld().getNonSpectatingEntities(LivingEntity.class, entityTarget.getBoundingBox().expand(1.0, 0.25, 1.0));
+				for(LivingEntity sweepTarget : sweepTargets) {
+					if(
+							sweepTarget != mario
+							&& sweepTarget != entityTarget
+							&& !mario.isTeammate(sweepTarget)
+							&& !(sweepTarget instanceof ArmorStandEntity stand && stand.isMarker())
+							&& mario.squaredDistanceTo(sweepTarget) < 9.0) {
+						sweepTarget.takeKnockback(
+								0.4F, MathHelper.sin(mario.getYaw() * (float) (Math.PI / 180.0)), -MathHelper.cos(mario.getYaw() * (float) (Math.PI / 180.0))
+						);
+						sweepTarget.damage(damageSource, 4);
+					}
+				}
+			}
 		}
 	}
 

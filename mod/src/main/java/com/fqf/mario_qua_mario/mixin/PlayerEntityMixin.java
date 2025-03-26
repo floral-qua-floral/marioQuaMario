@@ -124,30 +124,32 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 			strideDistance = prevStrideDistance * 0.6F;
 	}
 
-	@Override
-	public boolean startRiding(Entity entity, boolean force) {
-		MarioPlayerData data = mqm$getMarioData();
-		boolean mounted = data.getCharacter().getMountedAction(entity) != null && super.startRiding(entity, force);
-		if(mounted) {
-			data.setActionTransitionless(data.getCharacter().getMountedAction(entity));
-			data.attemptDismount = MarioPlayerData.DismountType.REMAIN_MOUNTED;
-		}
-		return mounted;
-	}
+	// TODO: Make Mounting actions and stuff work at some point
 
-	@Inject(method = "shouldDismount", at = @At("HEAD"), cancellable = true)
-	private void changeDismounting(CallbackInfoReturnable<Boolean> cir) {
-		MarioPlayerData data = mqm$getMarioData();
-		if(data.isEnabled()) cir.setReturnValue(data.attemptDismount != MarioPlayerData.DismountType.REMAIN_MOUNTED);
-	}
+//	@Override
+//	public boolean startRiding(Entity entity, boolean force) {
+//		MarioPlayerData data = mqm$getMarioData();
+//		boolean mounted = data.getCharacter().getMountedAction(entity) != null && super.startRiding(entity, force);
+//		if(mounted) {
+//			data.setActionTransitionless(data.getCharacter().getMountedAction(entity));
+//			data.attemptDismount = MarioPlayerData.DismountType.REMAIN_MOUNTED;
+//		}
+//		return mounted;
+//	}
 
-	@Override
-	protected void onDismounted(Entity vehicle) {
-		if(mqm$getMarioData().attemptDismount == MarioPlayerData.DismountType.DISMOUNT_IN_PLACE)
-			requestTeleportAndDismount(this.getX(), this.getY(), this.getZ());
-		else
-			super.onDismounted(vehicle);
-	}
+//	@Inject(method = "shouldDismount", at = @At("HEAD"), cancellable = true)
+//	private void changeDismounting(CallbackInfoReturnable<Boolean> cir) {
+//		MarioPlayerData data = mqm$getMarioData();
+//		if(data.isEnabled()) cir.setReturnValue(data.attemptDismount != MarioPlayerData.DismountType.REMAIN_MOUNTED);
+//	}
+
+//	@Override
+//	protected void onDismounted(Entity vehicle) {
+//		if(mqm$getMarioData().attemptDismount == MarioPlayerData.DismountType.DISMOUNT_IN_PLACE)
+//			requestTeleportAndDismount(this.getX(), this.getY(), this.getZ());
+//		else
+//			super.onDismounted(vehicle);
+//	}
 
 	@WrapWithCondition(method = "jump", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;jump()V"))
 	private boolean preventLivingEntityJump(LivingEntity instance) {

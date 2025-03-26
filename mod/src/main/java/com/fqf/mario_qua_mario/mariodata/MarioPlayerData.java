@@ -194,7 +194,7 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	}
 
 	public boolean doMarioTravel() {
-		return this.isEnabled() && !this.getMario().getAbilities().flying && !this.getMario().isFallFlying() && !this.getMario().isUsingRiptide() && !this.getMario().isClimbing();
+		return this.isEnabled() && !this.getMario().getAbilities().flying && !this.getMario().isFallFlying() && !this.getMario().isUsingRiptide() && !this.getMario().isClimbing() && !this.getMario().hasVehicle();
 	}
 
 	public Vec3d getFluidPushingVel() {

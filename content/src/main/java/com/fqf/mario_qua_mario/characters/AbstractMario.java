@@ -14,6 +14,7 @@ import com.fqf.mario_qua_mario.util.Powers;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageTypes;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
@@ -40,7 +41,15 @@ public abstract class AbstractMario implements CharacterDefinition {
 			data.forceActionTransition(Debug.ID, LavaBoost.ID);
 			return 10;
 		}
-		return amount * (float) data.getMario().getWorld().getGameRules().get(MarioContentGamerules.INCOMING_DAMAGE_MULTIPLIER).get();
+
+		// Awful hack to prevent Poison from being able to kill
+		float increasedAmount = amount * (float) data.getMario().getWorld().getGameRules().get(MarioContentGamerules.INCOMING_DAMAGE_MULTIPLIER).get();
+		boolean isProbablyPoison = (
+				amount == 1
+				&& source.isOf(DamageTypes.MAGIC)
+				&& data.getMario().hasStatusEffect(StatusEffects.POISON)
+		);
+		return (isProbablyPoison && increasedAmount > data.getMario().getHealth() ? 1 : increasedAmount);
 	}
 
 	@Override public float getWidthFactor() {

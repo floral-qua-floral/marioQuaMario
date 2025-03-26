@@ -18,13 +18,14 @@ public abstract class PlayerStruckByLightningMixin extends PlayerEntity implemen
 		throw new IllegalStateException();
 	}
 
-	@Override
-	public void onStruckByLightning(ServerWorld world, LightningEntity lightning) {
-		IMarioAuthoritativeData data = mqm$getIMarioAuthoritativeData();
-		if(data.isEnabled()) {
-			if(!data.getPowerUpID().toString().equals("mqm:mini"))
-				data.empowerTo("mqm:mini");
-		}
-		else super.onStruckByLightning(world, lightning);
-	}
+	// TODO: Uncomment once Mini form is available
+//	@Override
+//	public void onStruckByLightning(ServerWorld world, LightningEntity lightning) {
+//		IMarioAuthoritativeData data = mqm$getIMarioAuthoritativeData();
+//		if(data.isEnabled()) {
+//			if(!data.getPowerUpID().toString().equals("mqm:mini"))
+//				data.empowerTo("mqm:mini");
+//		}
+//		else super.onStruckByLightning(world, lightning);
+//	}
 }

@@ -1,7 +1,6 @@
 package com.fqf.mario_qua_mario.stomp_types;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
-import com.fqf.mario_qua_mario.actions.airborne.DoubleJump;
 import com.fqf.mario_qua_mario.actions.airborne.StompBounce;
 import com.fqf.mario_qua_mario.definitions.StompTypeDefinition;
 import com.fqf.mario_qua_mario.interfaces.StompResult;
@@ -13,13 +12,11 @@ import com.fqf.mario_qua_mario.util.CharaStat;
 import com.fqf.mario_qua_mario.util.MarioContentGamerules;
 import com.fqf.mario_qua_mario.util.MarioContentSFX;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.projectile.TridentEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -100,6 +97,7 @@ public class JumpStomp implements StompTypeDefinition {
 	@Override
 	public float calculateDamage(IMarioData data, ItemStack equipment, float equipmentArmor, float equipmentToughness) {
 		int pulverizingLevel = getEnchantmentLevel(equipment, data.getMario().getWorld(), PULVERIZING_ID);
+		MarioQuaMarioContent.LOGGER.info("Pulverizing level: {}", pulverizingLevel);
 		return ((float) BASE_DAMAGE.get(data)) + equipmentArmor * 2.25F + pulverizingLevel * 0.5F + (pulverizingLevel > 0 ? 0.5F : 0);
 	}
 
@@ -120,7 +118,7 @@ public class JumpStomp implements StompTypeDefinition {
 			case NORMAL, GLANCING, RESISTED -> {
 				if(affectMario) {
 					data.refreshJumpCapping();
-					data.setYVel(StompBounce.BOUNCE_VEL.get(data));
+					data.setYVel(StompBounce.BOUNCE_VEL.get(data) + 0.2F * getEnchantmentLevel(equipment, data.getMario().getWorld(), BOUNDING_ID));
 				}
 				yield movingToPos.withAxis(Direction.Axis.Y, target.getY() + target.getHeight());
 			}
