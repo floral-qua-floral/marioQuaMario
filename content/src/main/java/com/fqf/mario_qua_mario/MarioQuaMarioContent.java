@@ -1,9 +1,15 @@
 package com.fqf.mario_qua_mario;
 
+import com.fqf.mario_qua_mario.entities.MarioFireballEntity;
 import com.fqf.mario_qua_mario.util.MarioContentEventListeners;
 import com.fqf.mario_qua_mario.util.MarioContentGamerules;
 import com.fqf.mario_qua_mario.util.MarioContentSFX;
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnGroup;
+import net.minecraft.entity.projectile.SmallFireballEntity;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
@@ -16,6 +22,15 @@ public class MarioQuaMarioContent implements ModInitializer {
 	public static ContentClientHelper getClientHelper() {
 		return clientHelper;
 	}
+
+//	public static final EntityType<MarioFireballEntity> MARIO_FIREBALL = Registry.register(
+//			Registries.ENTITY_TYPE, makeID("mario_fireball"),
+//			EntityType.Builder.<MarioFireballEntity>create(MarioFireballEntity::new, SpawnGroup.MISC)
+//					.dimensions(0.3125F, 0.3125F)
+//					.maxTrackingRange(4)
+//					.trackingTickInterval(10)
+//					.build()
+//	);
 
 	@Override
 	public void onInitialize() {
