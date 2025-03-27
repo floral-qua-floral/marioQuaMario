@@ -14,6 +14,8 @@
 
   "death.attack.marioStomp": "%s was stomped by %s",
   "death.attack.marioStomp.item": "%s was stomped by %s using %s",
+  "death.attack.marioFireball": "%s was fireballed by %s",
+  "death.attack.marioFireball.item": "%s was fireballed by %s",
   "death.attack.marioHipDrop": "%s was pounded flat by %s",
   "death.attack.marioHipDrop.item": "%s was pounded flat by %s using %s",
   "death.attack.marioKick": "%s was given the boot by %s",

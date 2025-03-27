@@ -4,10 +4,12 @@ import com.fqf.mario_qua_mario.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.definitions.states.PowerUpDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.mario_qua_mario.entities.custom.MarioFireballProjectileEntity;
 import com.fqf.mario_qua_mario.mariodata.*;
 import com.fqf.mario_qua_mario.util.MarioContentSFX;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Hand;
@@ -129,7 +131,10 @@ public class Fire implements PowerUpDefinition {
 				IMarioAuthoritativeData data, ItemStack weapon, float attackCooldownProgress,
 				ServerWorld world, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget
 		) {
-
+			ServerPlayerEntity mario = data.getMario();
+			MarioFireballProjectileEntity tomahawk = new MarioFireballProjectileEntity(world, mario);
+//			tomahawk.setVelocity(mario, mario.getPitch(), mario.getYaw(), 0, FIREBALL_SPEED, 0);
+			world.spawnEntity(tomahawk);
 		}
 	}
 

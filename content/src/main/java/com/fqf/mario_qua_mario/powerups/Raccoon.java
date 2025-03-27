@@ -159,6 +159,7 @@ public class Raccoon implements PowerUpDefinition {
 		public void executeClients(IMarioClientData data, ItemStack weapon, float attackCooldownProgress, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget, long seed) {
 			data.forceBodyAlignment(false);
 			data.playSound(MarioContentSFX.TAIL_WHIP, seed);
+//			if(entityTarget != null) data.playSound(MarioContentSFX.KICK, seed);
 			if(this.ACTION_TARGET == null) {
 				data.voice(Voicelines.TAIL_WHIP, seed);
 				data.playAnimation(this.ANIMATION, TAIL_WHIP_ANIMATION_DURATION);

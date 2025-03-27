@@ -1,6 +1,11 @@
 package com.fqf.mario_qua_mario;
 
+import com.fqf.mario_qua_mario.entities.ModEntities;
+import com.fqf.mario_qua_mario.entity.MarioFireballModel;
+import com.fqf.mario_qua_mario.entity.MarioFireballRenderer;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.text.Text;
@@ -9,6 +14,9 @@ public class MarioQuaMarioContentClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		MarioQuaMarioContent.LOGGER.info("Mario qua Mario Content Client initializing...");
+
+		EntityModelLayerRegistry.registerModelLayer(MarioFireballModel.FIREBALL, MarioFireballModel::getTexturedModelData);
+		EntityRendererRegistry.register(ModEntities.MARIO_FIREBALL, MarioFireballRenderer::new);
 	}
 
 	public static class ContentClientHelperImplemented extends MarioQuaMarioContent.ContentClientHelper {

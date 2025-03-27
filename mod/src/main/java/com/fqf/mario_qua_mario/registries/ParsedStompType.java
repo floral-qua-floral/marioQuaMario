@@ -68,6 +68,7 @@ public class ParsedStompType extends ParsedMarioThing {
 		ServerPlayerEntity mario = data.getMario();
 
 		List<Entity> possibleTargets = mario.getWorld().getOtherEntities(mario, this.DEFINITION.tweakMarioBoundingBox(data, mario.getBoundingBox()).stretch(movement));
+		possibleTargets.removeIf(entity -> !entity.isAlive());
 		this.DEFINITION.filterPotentialTargets(possibleTargets, mario, movement);
 
 		if(possibleTargets.isEmpty()) return movement;
