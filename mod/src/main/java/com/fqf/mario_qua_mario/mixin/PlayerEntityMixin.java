@@ -156,10 +156,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 		return !mqm$getMarioData().doMarioTravel();
 	}
 
-	@Override
-	public void writeCustomDataToNbt(NbtCompound nbt) {
-		super.writeCustomDataToNbt(nbt);
-
+	@Inject(method = "writeCustomDataToNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;writeCustomDataToNbt(Lnet/minecraft/nbt/NbtCompound;)V", shift = At.Shift.AFTER))
+	private void writeMarioDataToNBT(NbtCompound nbt, CallbackInfo ci) {
 		NbtCompound persistentData = new NbtCompound();
 		MarioPlayerData data = mqm$getMarioData();
 

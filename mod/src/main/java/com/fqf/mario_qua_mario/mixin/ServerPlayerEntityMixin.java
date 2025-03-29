@@ -23,6 +23,9 @@ import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Objects;
 
@@ -63,8 +66,8 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 //		else MarioQuaMario.LOGGER.info("Movement: {}->{}", oldPos, this.getPos());
 	}
 
-	@Override
-	public void readCustomDataFromNbt(NbtCompound nbt) {
+	@Inject(method = "readCustomDataFromNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;readCustomDataFromNbt(Lnet/minecraft/nbt/NbtCompound;)V", shift = At.Shift.AFTER))
+	private void readMarioDataFromNbt(NbtCompound nbt, CallbackInfo ci) {
 		super.readCustomDataFromNbt(nbt);
 
 		if(nbt.contains(MarioNbtKeys.DATA, NbtElement.COMPOUND_TYPE)) {
