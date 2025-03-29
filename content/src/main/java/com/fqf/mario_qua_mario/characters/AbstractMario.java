@@ -71,6 +71,7 @@ public abstract class AbstractMario implements CharacterDefinition {
 
 	@Override public Set<String> getPowers() {
 		return Set.of(
+				Powers.DROP_COINS,
 				Powers.LIGHTNING_SHRINKS,
 				Powers.CEILING_CLIPPING
 		);

@@ -12,6 +12,11 @@
   "text.autoconfig.mario_qua_mario.option.backflipAnimType": "Backflip Camera Animation",
   "text.autoconfig.mario_qua_mario.option.tripleJumpAnimType": "Triple Jump Camera Animation",
 
+  "item.mario_qua_mario.coin": "Gold Coin",
+  "item.mario_qua_mario.super_mushroom": "Super Mushroom",
+  "item.mario_qua_mario.fire_flower": "Fire Flower",
+  "item.mario_qua_mario.super_leaf": "Super Leaf",
+
   "death.attack.marioStomp": "%s was stomped by %s",
   "death.attack.marioStomp.item": "%s was stomped by %s using %s",
   "death.attack.marioFireball": "%s was fireballed by %s",
@@ -36,6 +41,7 @@
   "subtitles.mario_qua_mario.movement.flip": "Aerial flip",
   "subtitles.mario_qua_mario.movement.jump": "Jumping",
 
+  "subtitles.mario_qua_mario.power_up.coin": "Coin spent",
   "subtitles.mario_qua_mario.power_up.fireball": "Fireball thrown",
   "subtitles.mario_qua_mario.power_up.fireball_enemy": "Fireball strikes",
   "subtitles.mario_qua_mario.power_up.fireball_wall": "Fireball impact",

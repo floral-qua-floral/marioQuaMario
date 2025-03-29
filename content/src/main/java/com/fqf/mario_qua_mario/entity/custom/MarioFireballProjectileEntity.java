@@ -1,11 +1,9 @@
-package com.fqf.mario_qua_mario.entities.custom;
+package com.fqf.mario_qua_mario.entity.custom;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
-import com.fqf.mario_qua_mario.entities.ModEntities;
+import com.fqf.mario_qua_mario.entity.ModEntities;
 import com.fqf.mario_qua_mario.util.MarioContentSFX;
-import net.minecraft.entity.EntityStatuses;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.MovementType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.entity.data.DataTracker;

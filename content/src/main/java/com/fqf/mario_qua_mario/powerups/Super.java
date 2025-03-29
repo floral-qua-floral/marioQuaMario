@@ -15,8 +15,9 @@ import java.util.List;
 import java.util.Set;
 
 public class Super implements PowerUpDefinition {
+	public static final Identifier ID = MarioQuaMarioContent.makeID("super");
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("super");
+	    return ID;
 	}
 
 	@Override public @Nullable Identifier getReversionTarget() {

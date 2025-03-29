@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.util;
 
 public class Powers {
+	public static final String DROP_COINS = "Drop coins";
 	public static final String LIGHTNING_SHRINKS = "Lightning causes Mini form";
 	public static final String CEILING_CLIPPING = "Clips past ceiling edges on ascent";
 

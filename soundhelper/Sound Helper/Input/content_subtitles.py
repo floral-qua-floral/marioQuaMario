@@ -36,6 +36,7 @@ sfx_movement = {
 }
 
 sfx_power_up = {
+  "coin": "Coin spent",
   "fireball": "Fireball thrown",
   "fireball_enemy": "Fireball strikes",
   "fireball_wall": "Fireball impact",

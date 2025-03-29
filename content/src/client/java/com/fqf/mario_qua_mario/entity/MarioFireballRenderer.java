@@ -1,7 +1,7 @@
 package com.fqf.mario_qua_mario.entity;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
-import com.fqf.mario_qua_mario.entities.custom.MarioFireballProjectileEntity;
+import com.fqf.mario_qua_mario.entity.custom.MarioFireballProjectileEntity;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;

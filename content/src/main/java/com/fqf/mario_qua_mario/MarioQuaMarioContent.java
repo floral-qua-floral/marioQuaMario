@@ -1,5 +1,7 @@
 package com.fqf.mario_qua_mario;
 
+import com.fqf.mario_qua_mario.entity.ModEntities;
+import com.fqf.mario_qua_mario.item.ModItems;
 import com.fqf.mario_qua_mario.util.MarioContentEventListeners;
 import com.fqf.mario_qua_mario.util.MarioContentGamerules;
 import com.fqf.mario_qua_mario.util.MarioContentSFX;
@@ -30,6 +32,8 @@ public class MarioQuaMarioContent implements ModInitializer {
 	public void onInitialize() {
 		LOGGER.info("Mario qua Mario Content initializing...");
 
+		ModEntities.registerModEntities();
+		ModItems.registerModItems();
 		MarioContentSFX.staticInitialize();
 		MarioContentGamerules.register();
 		MarioContentEventListeners.register();

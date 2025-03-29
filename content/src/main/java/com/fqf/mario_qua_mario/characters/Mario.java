@@ -35,6 +35,7 @@ public class Mario extends AbstractMario implements CharacterDefinition {
 	@Override
 	public Set<String> getPowers() {
 		return Set.of(
+				Powers.DROP_COINS,
 				Powers.LIGHTNING_SHRINKS,
 				Powers.CEILING_CLIPPING,
 				Powers.SLEEPY

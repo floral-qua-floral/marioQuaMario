@@ -31,8 +31,9 @@ import java.util.List;
 import java.util.Set;
 
 public class Raccoon implements PowerUpDefinition {
+	public static final Identifier ID = MarioQuaMarioContent.makeID("raccoon");
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("raccoon");
+	    return ID;
 	}
 
 	@Override public @Nullable Identifier getReversionTarget() {

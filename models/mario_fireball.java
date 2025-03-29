@@ -1,18 +1,9 @@
-package com.fqf.mario_qua_mario.entity;
-
-import com.fqf.mario_qua_mario.MarioQuaMarioContent;
-import com.fqf.mario_qua_mario.entity.custom.MarioFireballProjectileEntity;
-import net.minecraft.client.model.*;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.entity.model.EntityModel;
-import net.minecraft.client.render.entity.model.EntityModelLayer;
-import net.minecraft.client.util.math.MatrixStack;
-
-public class MarioFireballModel extends EntityModel<MarioFireballProjectileEntity> {
-	public static final EntityModelLayer FIREBALL = new EntityModelLayer(MarioQuaMarioContent.makeID("mario_fireball"), "main");
+// Made with Blockbench 4.12.3
+// Exported for Minecraft version 1.17+ for Yarn
+// Paste this class into your mod and generate all required imports
+public class mario_fireball extends EntityModel<Entity> {
 	private final ModelPart fireball;
-
-	public MarioFireballModel(ModelPart root) {
+	public mario_fireball(ModelPart root) {
 		this.fireball = root.getChild("fireball");
 	}
 	public static TexturedModelData getTexturedModelData() {
@@ -29,14 +20,11 @@ public class MarioFireballModel extends EntityModel<MarioFireballProjectileEntit
 		ModelPartData tail1_r1 = fireball.addChild("tail1_r1", ModelPartBuilder.create().uv(0, 12).cuboid(-3.0F, 0.0F, 0.0F, 6.0F, 0.0F, 6.0F, new Dilation(0.0F)), ModelTransform.of(0.0F, -3.0F, -3.0F, 0.1745F, 0.0F, 0.0F));
 		return TexturedModelData.of(modelData, 24, 18);
 	}
-
 	@Override
-	public void setAngles(MarioFireballProjectileEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-//		this.fireball.pitch = 45;
+	public void setAngles(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 	}
-
 	@Override
-	public void render(MatrixStack matrices, VertexConsumer vertexConsumer, int light, int overlay, int color) {
-		fireball.render(matrices, vertexConsumer, light, overlay, color);
+	public void render(MatrixStack matrices, VertexConsumer vertexConsumer, int light, int overlay, float red, float green, float blue, float alpha) {
+		fireball.render(matrices, vertexConsumer, light, overlay, red, green, blue, alpha);
 	}
 }

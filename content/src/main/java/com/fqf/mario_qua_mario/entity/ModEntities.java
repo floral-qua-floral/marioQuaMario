@@ -1,7 +1,7 @@
-package com.fqf.mario_qua_mario.entities;
+package com.fqf.mario_qua_mario.entity;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
-import com.fqf.mario_qua_mario.entities.custom.MarioFireballProjectileEntity;
+import com.fqf.mario_qua_mario.entity.custom.MarioFireballProjectileEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.registry.Registries;
@@ -14,4 +14,8 @@ public class ModEntities {
 			EntityType.Builder.<MarioFireballProjectileEntity>create(MarioFireballProjectileEntity::new, SpawnGroup.MISC)
 					.dimensions(0.5F, 0.5F).build()
 	);
+
+	public static void registerModEntities() {
+
+	}
 }

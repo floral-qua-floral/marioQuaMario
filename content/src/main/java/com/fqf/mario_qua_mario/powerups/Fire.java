@@ -4,7 +4,7 @@ import com.fqf.mario_qua_mario.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.definitions.states.PowerUpDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.mario_qua_mario.entities.custom.MarioFireballProjectileEntity;
+import com.fqf.mario_qua_mario.entity.custom.MarioFireballProjectileEntity;
 import com.fqf.mario_qua_mario.mariodata.*;
 import com.fqf.mario_qua_mario.util.MarioContentSFX;
 import net.minecraft.entity.Entity;
@@ -24,8 +24,9 @@ import java.util.List;
 import java.util.Set;
 
 public class Fire implements PowerUpDefinition {
+	public static final Identifier ID = MarioQuaMarioContent.makeID("fire");
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("fire");
+	    return ID;
 	}
 
 	@Override public @Nullable Identifier getReversionTarget() {

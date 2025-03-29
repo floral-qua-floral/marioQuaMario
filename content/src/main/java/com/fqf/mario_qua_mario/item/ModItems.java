@@ -1,0 +1,44 @@
+package com.fqf.mario_qua_mario.item;
+
+import com.fqf.mario_qua_mario.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario.item.custom.CoinItem;
+import com.fqf.mario_qua_mario.item.custom.PowerUpItem;
+import com.fqf.mario_qua_mario.powerups.Fire;
+import com.fqf.mario_qua_mario.powerups.Raccoon;
+import com.fqf.mario_qua_mario.powerups.Super;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.minecraft.component.type.FoodComponent;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroups;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.Rarity;
+
+public class ModItems {
+	public static final Item FIRE_FLOWER = registerPowerItem("fire_flower", Fire.ID, 1, 1);
+	public static final Item SUPER_LEAF = registerPowerItem("super_leaf", Raccoon.ID, 4, 0.4F);
+	public static final Item SUPER_MUSHROOM = registerItem("super_mushroom", new PowerUpItem(new Item.Settings().maxCount(4).food(
+			new FoodComponent.Builder().nutrition(6).saturationModifier(0.7F).alwaysEdible().snack().build()
+	), Super.ID));
+
+	public static final Item COIN = registerItem("coin", new CoinItem((new Item.Settings()).rarity(Rarity.UNCOMMON)));
+
+	private static Item registerItem(String name, Item item) {
+		return Registry.register(Registries.ITEM, MarioQuaMarioContent.makeResID(name), item);
+	}
+
+	private static Item registerPowerItem(String name, Identifier powerID, int nutrition, float saturation) {
+		return registerItem(name, new PowerUpItem(new Item.Settings().maxCount(1).food(new FoodComponent.Builder().nutrition(nutrition).saturationModifier(saturation).alwaysEdible().build()), powerID));
+	}
+
+	public static void registerModItems() {
+		ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(fabricItemGroupEntries ->
+				fabricItemGroupEntries.add(COIN));
+		ItemGroupEvents.modifyEntriesEvent(ItemGroups.FOOD_AND_DRINK).register(fabricItemGroupEntries -> {
+			fabricItemGroupEntries.add(SUPER_MUSHROOM);
+			fabricItemGroupEntries.add(FIRE_FLOWER);
+			fabricItemGroupEntries.add(SUPER_LEAF);
+		});
+	}
+}

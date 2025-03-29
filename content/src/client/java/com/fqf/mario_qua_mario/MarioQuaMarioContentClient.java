@@ -1,6 +1,6 @@
 package com.fqf.mario_qua_mario;
 
-import com.fqf.mario_qua_mario.entities.ModEntities;
+import com.fqf.mario_qua_mario.entity.ModEntities;
 import com.fqf.mario_qua_mario.entity.MarioFireballModel;
 import com.fqf.mario_qua_mario.entity.MarioFireballRenderer;
 import net.fabricmc.api.ClientModInitializer;

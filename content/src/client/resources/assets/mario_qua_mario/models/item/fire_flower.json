@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "mario_qua_mario:item/fire_flower"
+  }
+}
