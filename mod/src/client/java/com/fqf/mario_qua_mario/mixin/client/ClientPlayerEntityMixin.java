@@ -39,6 +39,11 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 		mqm$getMarioData().tickInputs();
 	}
 
+	@WrapOperation(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isTouchingWater()Z"))
+	private boolean allowSprintingInPartialWater(ClientPlayerEntity instance, Operation<Boolean> original) {
+		return !instance.mqm$getMarioData().isEnabled() && original.call(instance);
+	}
+
 	@WrapOperation(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isUsingItem()Z"))
 	private boolean moveFastWithItem(ClientPlayerEntity instance, Operation<Boolean> original) {
 		return (!mqm$getMarioData().doMarioTravel() || instance.isOnGround()) && original.call(instance);

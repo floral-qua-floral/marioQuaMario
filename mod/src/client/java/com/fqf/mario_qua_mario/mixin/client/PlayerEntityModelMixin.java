@@ -1,5 +1,7 @@
 package com.fqf.mario_qua_mario.mixin.client;
 
+import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.mariodata.MarioAnimationData;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.model.ModelTransform;

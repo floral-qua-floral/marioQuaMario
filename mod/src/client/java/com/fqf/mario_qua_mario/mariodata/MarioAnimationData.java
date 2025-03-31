@@ -43,6 +43,8 @@ public class MarioAnimationData {
 	public float headCounterRotationYaw;
 	public final Arrangement TAIL_ARRANGEMENT = new Arrangement();
 
+	public static boolean renderingFirstPersonArm = false;
+
 	public void replaceAnimation(MarioPlayerData data, PlayermodelAnimation newAnim, int ticksUntilAutoReplace) {
 		if(this.ticksUntilAutoReplaceAnimation > 0) return;
 		this.prevAnim = this.currentAnim;
@@ -114,7 +116,7 @@ public class MarioAnimationData {
 			ModelPart rightLeg, ModelPart leftLeg,
 			BipedEntityModel.ArmPose rightArmPose, BipedEntityModel.ArmPose leftArmPose
 	) {
-		if(this.isAnimating(mario)) {
+		if(this.isAnimating(mario) && !MarioAnimationData.renderingFirstPersonArm) {
 			if (this.reevaluateMirroring && this.currentAnim != null) {
 				this.reevaluateMirroring = false;
 				this.isMirrored = this.currentAnim.mirroringEvaluator() != null &&

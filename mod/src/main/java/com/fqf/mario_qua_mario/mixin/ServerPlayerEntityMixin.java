@@ -8,6 +8,7 @@ import com.fqf.mario_qua_mario.registries.power_granting.ParsedCharacter;
 import com.fqf.mario_qua_mario.util.MarioNbtKeys;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.damage.DamageSource;
@@ -37,10 +38,10 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 		super(world, pos, yaw, gameProfile);
 	}
 
-	@WrapMethod(method = "damage")
-	private boolean modifyIncomingDamage(DamageSource source, float amount, Operation<Boolean> original) {
-		float modifiedAmount = this.mqm$getMarioData().getCharacter().modifyIncomingDamage(this.mqm$getMarioData(), source, amount);
-		return modifiedAmount > 0 && original.call(source, modifiedAmount);
+	@WrapOperation(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"))
+	private boolean modifyIncomingDamage(ServerPlayerEntity instance, DamageSource source, float amount, Operation<Boolean> original) {
+		float modifiedAmount = instance.mqm$getMarioData().getCharacter().modifyIncomingDamage(this.mqm$getMarioData(), source, amount);
+		return modifiedAmount > 0 && original.call(instance, source, modifiedAmount);
 	}
 
 	@Unique private long tickAfterStomp;
@@ -53,7 +54,8 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 		// Only perform stomp checks on movement that comes from a player packet (as opposed to server-side travel).
 		// Should this change??
 		long time = this.getWorld().getTime();
-		if(data.isEnabled() && data.getAction().STOMP_TYPE != null && movementType == MovementType.PLAYER
+		if(data.isEnabled() && data.doMarioTravel() && data.getAction().STOMP_TYPE != null
+				&& (movementType == MovementType.PLAYER || movementType == MovementType.SELF)
 				&& time != this.tickAfterStomp && time != this.tickAfterStomp - 1)
 			movement = data.getAction().STOMP_TYPE.moveHook(data, movement);
 

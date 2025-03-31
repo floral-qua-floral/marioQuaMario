@@ -9,6 +9,7 @@
     "ClientPlayerEntityMixin",
     "CPMClientBaseMixin",
     "GameRendererMixin",
+    "HeldItemRendererMixin",
     "InGameHudMixin",
     "MinecraftClientMixin",
     "OtherClientPlayerEntityMarioDataMixin",
