@@ -8,6 +8,9 @@ import com.fqf.mario_qua_mario.definitions.states.actions.util.ActionCategory;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.*;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.camera.CameraAnimation;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.camera.CameraProgressHandler;
 import com.fqf.mario_qua_mario.util.CharaStat;
 import com.fqf.mario_qua_mario.util.Easing;
 import com.fqf.mario_qua_mario.util.MarioVars;
@@ -15,7 +18,6 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Set;
 
 import static com.fqf.mario_qua_mario.util.StatCategory.*;
@@ -97,8 +99,21 @@ public class TripleJump extends Jump implements AirborneActionDefinition {
 				null
 		);
 	}
-	@Override public @Nullable CameraAnimationSet getCameraAnimations() {
-		return null;
+	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
+		return new CameraAnimationSet(
+				MarioQuaMarioContent.CONFIG::getTripleJumpCameraAnim,
+				new CameraAnimation(
+					new CameraProgressHandler(2,
+							(data, ticksPassed) -> helper.sequencedEase(ticksPassed / 9.8F, Easing.mix(Easing.SINE_IN_OUT, Easing.LINEAR), Easing.SINE_OUT)
+					),
+					(data, arrangement, progress) -> arrangement.pitch += progress * 360
+				),
+				new CameraAnimation(
+						new CameraProgressHandler((data, ticksPassed) -> Easing.mixedEase(Easing.QUAD_IN_OUT, Easing.SINE_IN_OUT, Math.min(ticksPassed / 14, 1))),
+						(data, arrangement, progress) -> arrangement.pitch += progress * 360
+				),
+				null
+		);
 	}
 
 	public static final CharaStat TRIPLE_JUMP_VEL = new CharaStat(1.175, JUMP_VELOCITY);

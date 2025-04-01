@@ -1,13 +1,20 @@
 package com.fqf.mario_qua_mario.mariodata;
 
+import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.Arrangement;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.ProgressHandler;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.camera.CameraAnimation;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.camera.CameraProgressHandler;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
 import com.fqf.mario_qua_mario.registries.actions.TransitionPhase;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.input.Input;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,10 +34,48 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		return super.setPowerUp(newPowerUp, isReversion, seed);
 	}
 
+	private CameraAnimation currentCameraAnimation;
+	private float cameraAnimationTime;
+	private boolean attemptFinish;
+
 	@Override public void setActionTransitionless(AbstractParsedAction action) {
 		this.handleSlidingSound(action);
 		this.MARIO.mqm$getAnimationData().replaceAnimation(this, action.ANIMATION, -1);
+
+		if(action != this.getAction()) {
+			CameraAnimation newAnim = action.CAMERA_ANIMATIONS == null ? null : switch (action.CAMERA_ANIMATIONS.optionGetter().get()) {
+				case AUTHENTIC -> action.CAMERA_ANIMATIONS.authentic();
+				case GENTLE -> {
+					CameraAnimation gentleAnimation = action.CAMERA_ANIMATIONS.gentle();
+					yield gentleAnimation == null ? action.CAMERA_ANIMATIONS.authentic() : gentleAnimation;
+				}
+				case MINIMAL -> action.CAMERA_ANIMATIONS.minimal();
+			};
+
+			if(newAnim != null) {
+				this.currentCameraAnimation = newAnim;
+				this.cameraAnimationTime = 0;
+				this.attemptFinish = false;
+			}
+			else this.attemptFinish = true;
+		}
+
 		super.setActionTransitionless(action);
+	}
+
+	public boolean animatingCamera() {
+		return this.isEnabled() && this.currentCameraAnimation != null && !this.getMario().isSleeping();
+	}
+
+	public void mutateCamera(Arrangement cameraArrangement, float tickDelta) {
+		this.cameraAnimationTime += MinecraftClient.getInstance().getRenderTickCounter().getLastFrameDuration();
+		float progress = this.currentCameraAnimation.progressHandler().progressCalculator().calculateProgress(this, this.cameraAnimationTime);
+
+		if(this.attemptFinish && progress >= this.currentCameraAnimation.progressHandler().minProgressToFinish()) {
+			this.currentCameraAnimation = null;
+			this.attemptFinish = false;
+		}
+		else this.getMario().mqm$getAnimationData().mutate(cameraArrangement, this.currentCameraAnimation.mutator(), this, progress);
 	}
 
 	@Override public void tick() {

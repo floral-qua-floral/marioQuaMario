@@ -2,23 +2,19 @@ package com.fqf.mario_qua_mario.actions.airborne;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario.Voicelines;
-import com.fqf.mario_qua_mario.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.*;
-import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
-import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
-import com.fqf.mario_qua_mario.mariodata.IMarioData;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.camera.CameraAnimation;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.camera.CameraProgressHandler;
 import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario.util.CharaStat;
 import com.fqf.mario_qua_mario.util.Easing;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.Set;
 
 import static com.fqf.mario_qua_mario.util.StatCategory.*;
 
@@ -97,8 +93,21 @@ public class Backflip extends Jump implements AirborneActionDefinition {
 	            null
 	    );
 	}
-	@Override public @Nullable CameraAnimationSet getCameraAnimations() {
-		return null;
+	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
+		return new CameraAnimationSet(
+				MarioQuaMarioContent.CONFIG::getBackflipCameraAnim,
+				new CameraAnimation(
+					new CameraProgressHandler(2,
+							(data, ticksPassed) -> helper.sequencedEase(ticksPassed / 9.8F, Easing.mix(Easing.SINE_IN_OUT, Easing.LINEAR), Easing.SINE_OUT)
+					),
+					(data, arrangement, progress) -> arrangement.pitch += progress * -360
+				),
+				new CameraAnimation(
+						new CameraProgressHandler((data, ticksPassed) -> Easing.QUAD_IN_OUT.ease(Math.min(ticksPassed / 14, 1))),
+						(data, arrangement, progress) -> arrangement.pitch += progress * -360
+				),
+				null
+		);
 	}
 
 	public static CharaStat BACKFLIP_VEL = new CharaStat(1.065, JUMP_VELOCITY);

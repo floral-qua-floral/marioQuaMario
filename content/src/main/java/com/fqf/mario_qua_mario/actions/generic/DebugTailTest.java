@@ -4,6 +4,7 @@ import com.fqf.mario_qua_mario.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario.definitions.states.actions.GenericActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.*;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.mario_qua_mario.mariodata.*;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.MarioContentSFX;
@@ -49,7 +50,7 @@ public class DebugTailTest implements GenericActionDefinition {
 				new LimbAnimation(false, (data, arrangement, progress) -> arrangement.addAngles(0, 0, 0))
 		);
 	}
-	@Override public @Nullable CameraAnimationSet getCameraAnimations() {
+	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
 		return null;
 	}
 	@Override public @NotNull SlidingStatus getSlidingStatus() {

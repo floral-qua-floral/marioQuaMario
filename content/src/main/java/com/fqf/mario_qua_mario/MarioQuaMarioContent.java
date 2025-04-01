@@ -2,9 +2,12 @@ package com.fqf.mario_qua_mario;
 
 import com.fqf.mario_qua_mario.entity.ModEntities;
 import com.fqf.mario_qua_mario.item.ModItems;
+import com.fqf.mario_qua_mario.util.MQMContentConfig;
 import com.fqf.mario_qua_mario.util.MarioContentEventListeners;
 import com.fqf.mario_qua_mario.util.MarioContentGamerules;
 import com.fqf.mario_qua_mario.util.MarioContentSFX;
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -19,14 +22,11 @@ public class MarioQuaMarioContent implements ModInitializer {
 		return clientHelper;
 	}
 
-//	public static final EntityType<MarioFireballEntity> MARIO_FIREBALL = Registry.register(
-//			Registries.ENTITY_TYPE, makeID("mario_fireball"),
-//			EntityType.Builder.<MarioFireballEntity>create(MarioFireballEntity::new, SpawnGroup.MISC)
-//					.dimensions(0.3125F, 0.3125F)
-//					.maxTrackingRange(4)
-//					.trackingTickInterval(10)
-//					.build()
-//	);
+	public static final MQMContentConfig CONFIG;
+	static {
+		AutoConfig.register(MQMContentConfig.class, GsonConfigSerializer::new);
+		CONFIG = AutoConfig.getConfigHolder(MQMContentConfig.class).getConfig();
+	}
 
 	@Override
 	public void onInitialize() {

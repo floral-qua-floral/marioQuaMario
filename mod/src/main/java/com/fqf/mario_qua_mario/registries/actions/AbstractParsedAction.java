@@ -3,7 +3,7 @@ package com.fqf.mario_qua_mario.registries.actions;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.definitions.states.AttackInterceptingStateDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.CameraAnimationSet;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
 import com.fqf.mario_qua_mario.registries.ParsedAttackInterception;
@@ -41,7 +41,7 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 		this.CATEGORY = this.getCategory();
 
 		this.ANIMATION = definition.getAnimation(AnimationHelperImpl.INSTANCE);
-		this.CAMERA_ANIMATIONS = definition.getCameraAnimations();
+		this.CAMERA_ANIMATIONS = definition.getCameraAnimations(AnimationHelperImpl.INSTANCE);
 		this.SLIDING_STATUS = definition.getSlidingStatus();
 
 		this.SNEAKING_RULE = definition.getSneakingRule();

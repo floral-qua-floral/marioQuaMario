@@ -4,6 +4,9 @@ import com.fqf.mario_qua_mario.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.*;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.camera.CameraAnimation;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.camera.CameraProgressHandler;
 import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.mariodata.IMarioData;
@@ -88,8 +91,28 @@ public class Sideflip extends Backflip implements AirborneActionDefinition {
 				null
 		);
 	}
-	@Override public @Nullable CameraAnimationSet getCameraAnimations() {
-		return null;
+	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
+		return new CameraAnimationSet(
+				MarioQuaMarioContent.CONFIG::getSideflipCameraAnim,
+				new CameraAnimation(
+						new CameraProgressHandler((data, ticksPassed) -> Math.min(ticksPassed / 16, 1)),
+						(data, arrangement, progress) -> {
+							arrangement.yaw += MathHelper.lerp(Easing.SINE_IN_OUT.ease(progress), 180, 0);
+							arrangement.roll += Easing.QUAD_IN_OUT.ease(progress) * -360;
+						}
+				),
+				new CameraAnimation(
+						new CameraProgressHandler((data, ticksPassed) -> Easing.QUAD_IN_OUT.ease(Math.min(ticksPassed / 14, 1))),
+						(data, arrangement, progress) -> {
+							arrangement.pitch = MathHelper.lerp(progress, -180 - arrangement.pitch, arrangement.pitch);
+							arrangement.roll += MathHelper.lerp(progress, 180, 0);
+						}
+				),
+				new CameraAnimation(
+						new CameraProgressHandler((data, ticksPassed) -> Easing.SINE_IN_OUT.ease(Math.min(ticksPassed / 10, 1))),
+						(data, arrangement, progress) -> arrangement.yaw += MathHelper.lerp(progress, 180, 0)
+				)
+		);
 	}
 
 	public static CharaStat SIDEFLIP_VEL = new CharaStat(1.065, JUMP_VELOCITY);

@@ -286,7 +286,7 @@ public class MarioAnimationData {
 		Arrangement.Mutator mutator = container.mutator();
 		if(mutator != null) this.mutate(arrangement, mutator, data, progress);
 	}
-	private void mutate(Arrangement arrangement, Arrangement.Mutator mutator, MarioPlayerData data, float progress) {
+	public void mutate(Arrangement arrangement, Arrangement.Mutator mutator, MarioPlayerData data, float progress) {
 		// Convert arrangement to degrees
 		convertAngles(arrangement, true);
 

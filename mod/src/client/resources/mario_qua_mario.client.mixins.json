@@ -5,6 +5,7 @@
   "client": [
     "AbstractClientPlayerEntityMarioDataMixin",
     "BipedEntityModelMixin",
+    "CameraMixin",
     "ClientPlayerEntityMarioDataMixin",
     "ClientPlayerEntityMixin",
     "CPMClientBaseMixin",
