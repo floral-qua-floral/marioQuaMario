@@ -95,7 +95,7 @@
 			"com.fqf.mario_qua_mario.MarioQuaMarioContentDataGenerator"
 		],
 		"modmenu": [
-			"com.fqf.mario_qua_mario.util.ModMenuIntegration"
+			"com.fqf.mario_qua_mario.util.ContentModMenuIntegration"
 		]
 	},
 	"mixins": [

@@ -1,8 +1,10 @@
 package com.fqf.mario_qua_mario.mixin.client;
 
+import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.definitions.states.PowerUpDefinition;
 import com.fqf.mario_qua_mario.mariodata.MarioMainClientData;
 import com.fqf.mario_qua_mario.mariodata.MarioServerPlayerData;
+import com.fqf.mario_qua_mario.util.MQMConfig;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.MinecraftClient;
@@ -62,7 +64,7 @@ public class InGameHudMixin {
 
 	@Inject(method = "renderMainHud", at = @At("TAIL"))
 	public void renderSpeedometerWithServerData(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
-
+		if(!MarioQuaMario.CONFIG.isSpecialHUDEnabled()) return;
 
 		MinecraftClient client = MinecraftClient.getInstance();
 		ClientPlayerEntity clientMario = client.player;

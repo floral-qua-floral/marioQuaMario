@@ -27,6 +27,9 @@
 
 		"cpmapi": [
 			"com.fqf.mario_qua_mario.util.MarioCPMCompat"
+		],
+		"modmenu": [
+			"com.fqf.mario_qua_mario.util.MQMModMenuIntegration"
 		]
 	},
 	"mixins": [
