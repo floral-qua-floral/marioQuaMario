@@ -1,6 +1,16 @@
 {
   "fabric.mods.mario_qua_mario": "Mario qua Mario",
 
+  "messages.mario_qua_mario.welcome1": "Thank you for installing Mario qua Mario. To play as Mario, run ",
+  "messages.mario_qua_mario.welcome2": ". Have fun! <3",
+
+  "messages.mario_qua_mario.nag1": "Hello! This is the Mario mod speaking, very sorry to interrupt. Have you enjoyed the mod so far?\nIf you'd like to help me keep working on it, I'd be most sincerely grateful for any patronage on ",
+  "messages.mario_qua_mario.link1": "my ko-fi",
+  "messages.mario_qua_mario.link2": ", or ",
+  "messages.mario_qua_mario.link3": "by commissioning a custom mod",
+  "messages.mario_qua_mario.nag2": ".\nThat's all. I won't bother you again in this world, promise! To never see this message in any world, disable \"",
+  "messages.mario_qua_mario.nag3": "\" in the Mario qua Mario Content config.",
+
   "text.autoconfig.mario_qua_mario.title": "Mario qua Mario Options",
 
   "text.autoconfig.mario_qua_mario.option.spinputType": "Spin Input Type",
@@ -12,6 +22,8 @@
   "text.autoconfig.mario_qua_mario_content.option.sideflipCameraAnim": "Sideflip Camera Animation",
   "text.autoconfig.mario_qua_mario_content.option.backflipCameraAnim": "Backflip Camera Animation",
   "text.autoconfig.mario_qua_mario_content.option.tripleJumpCameraAnim": "Triple Jump Camera Animation",
+  "text.autoconfig.mario_qua_mario_content.option.welcomeMessage": "Welcome Message",
+  "text.autoconfig.mario_qua_mario_content.option.nagMessage": "One-Time Nag Message",
 
   "item.mario_qua_mario.coin": "Gold Coin",
   "item.mario_qua_mario.super_mushroom": "Super Mushroom",

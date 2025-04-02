@@ -13,8 +13,17 @@ public class MQMContentConfig implements ConfigData {
 	private CameraAnimationOption sideflipCameraAnim = CameraAnimationOption.AUTHENTIC;
 	private CameraAnimationOption tripleJumpCameraAnim = CameraAnimationOption.GENTLE;
 
+	private boolean welcomeMessage = true;
+	private boolean nagMessage = true;
+
 	public boolean getBackflipFromVehicles() {
 		return this.backflipFromVehicles;
+	}
+	public boolean isWelcomeMessageEnabled() {
+		return this.welcomeMessage;
+	}
+	public boolean isNagMessageEnabled() {
+		return this.nagMessage;
 	}
 	public CameraAnimationOption getBackflipCameraAnim() {
 		return this.backflipCameraAnim;

@@ -4,6 +4,7 @@ import com.fqf.mario_qua_mario.MarioQuaMarioAPI;
 import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.Saddleable;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
@@ -26,6 +27,11 @@ public interface Stompable {
 			if(thisEntity.getType().isIn(HURTS_TO_STOMP_ENTITIES)) {
 				MarioQuaMarioAPI.LOGGER.info("Hurts to stomp {}!", thisEntity.getName().getString());
 				return StompResult.PAINFUL;
+			}
+
+			if(this instanceof Saddleable thisSaddleable) {
+				if(thisSaddleable.isSaddled() && marioData.getMario().startRiding(thisEntity, false))
+					return StompResult.MOUNT;
 			}
 
 			boolean damaged = thisEntity.damage(damageSource, damageAmount);

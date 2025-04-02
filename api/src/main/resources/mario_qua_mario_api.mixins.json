@@ -1,11 +1,13 @@
 {
-	"required": true,
-	"package": "com.fqf.mario_qua_mario.mixin",
-	"compatibilityLevel": "JAVA_21",
-	"mixins": [
-		"EntityMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
+  "required": true,
+  "package": "com.fqf.mario_qua_mario.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "AbstractMinecartEntityMixin",
+    "EntityMixin",
+    "VehicleEntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
 	}
 }

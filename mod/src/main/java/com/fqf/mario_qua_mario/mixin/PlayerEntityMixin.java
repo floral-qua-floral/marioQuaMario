@@ -11,12 +11,14 @@ import com.fqf.mario_qua_mario.util.MarioNbtKeys;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerModelPart;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
@@ -65,10 +67,9 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 
 	@Override
 	protected void playStepSounds(BlockPos pos, BlockState state) {
-		if(!this.mqm$getMarioData().isEnabled()) return;
-		switch (this.mqm$getMarioData().getAction().SLIDING_STATUS) {
+		switch(this.mqm$getMarioData().isEnabled() ? this.mqm$getMarioData().getAction().SLIDING_STATUS : null) {
 			case SLIDING, SLIDING_SILENT, SKIDDING -> {}
-			default -> super.playStepSounds(pos, state);
+			case null, default -> super.playStepSounds(pos, state);
 		};
 	}
 
@@ -150,6 +151,15 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 //		else
 //			super.onDismounted(vehicle);
 //	}
+
+	@WrapOperation(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"))
+	private boolean modifyIncomingDamage(PlayerEntity instance, DamageSource source, float amount, Operation<Boolean> original) {
+		if(instance instanceof ServerPlayerEntity serverMario && serverMario.mqm$getMarioData().isEnabled()) {
+			float modifiedAmount = serverMario.mqm$getMarioData().getCharacter().modifyIncomingDamage(serverMario.mqm$getMarioData(), source, amount);
+			return modifiedAmount > 0 && original.call(instance, source, modifiedAmount);
+		}
+		return original.call(instance, source, amount);
+	}
 
 	@WrapWithCondition(method = "jump", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;jump()V"))
 	private boolean preventLivingEntityJump(LivingEntity instance) {

@@ -15,6 +15,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.stat.Stats;
 
 public class MarioEventListeners {
 	public static void register() {
@@ -46,9 +47,6 @@ public class MarioEventListeners {
 
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 			MarioPackets.syncUseCharacterStatsS2C(handler.player, MarioGamerules.useCharacterStats);
-//			handler.player.mqm$getMarioData().initialApply();
-//			handler.player.mqm$getMarioData().updatePlayerModel();
-//			handler.player.mqm$getMarioData().syncToClient(handler.player);
 		});
 	}
 }

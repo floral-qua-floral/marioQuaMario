@@ -38,12 +38,6 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 		super(world, pos, yaw, gameProfile);
 	}
 
-	@WrapOperation(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"))
-	private boolean modifyIncomingDamage(ServerPlayerEntity instance, DamageSource source, float amount, Operation<Boolean> original) {
-		float modifiedAmount = instance.mqm$getMarioData().getCharacter().modifyIncomingDamage(this.mqm$getMarioData(), source, amount);
-		return modifiedAmount > 0 && original.call(instance, source, modifiedAmount);
-	}
-
 	@Unique private long tickAfterStomp;
 
 	@Override
