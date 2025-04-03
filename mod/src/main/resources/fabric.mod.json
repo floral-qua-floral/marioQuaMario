@@ -43,7 +43,9 @@
 		"fabricloader": ">=0.16.9",
 		"minecraft": "~1.21",
 		"java": ">=21",
-		"fabric-api": "*"
+		"fabric-api": "*",
+		"cpm": "*",
+		"mario_qua_mario_api": "*"
 	},
 	"suggests": {
 		"another-mod": "*"
