@@ -7,7 +7,7 @@ version = project.content_version
 group = project.maven_group
 
 base {
-	archivesName = project.archives_base_name
+	archivesName = project.content_archives_name
 }
 
 repositories {
@@ -86,7 +86,7 @@ jar {
 publishing {
 	publications {
 		create("mavenJava", MavenPublication) {
-			artifactId = project.archives_base_name
+			artifactId = project.content_archives_name
 			from components.java
 		}
 	}
