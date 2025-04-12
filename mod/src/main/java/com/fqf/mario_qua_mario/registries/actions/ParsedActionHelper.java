@@ -2,10 +2,10 @@ package com.fqf.mario_qua_mario.registries.actions;
 
 import com.fqf.mario_qua_mario.MarioClientHelperManager;
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario.definitions.states.actions.*;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.IncompleteActionDefinition;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionInjectionDefinition;
-import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.*;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.IncompleteActionDefinition;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.TransitionInjectionDefinition;
+import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
 import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
 import com.fqf.mario_qua_mario.packets.MarioDataPackets;

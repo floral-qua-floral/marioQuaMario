@@ -1,13 +1,13 @@
 package com.fqf.mario_qua_mario.registries;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario.definitions.StompTypeDefinition;
-import com.fqf.mario_qua_mario.definitions.VoicelineSetDefinition;
-import com.fqf.mario_qua_mario.definitions.states.CharacterDefinition;
-import com.fqf.mario_qua_mario.definitions.states.PowerUpDefinition;
-import com.fqf.mario_qua_mario.definitions.states.actions.*;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.IncompleteActionDefinition;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionInjectionDefinition;
+import com.fqf.mario_qua_mario_api.definitions.StompTypeDefinition;
+import com.fqf.mario_qua_mario_api.definitions.VoicelineSetDefinition;
+import com.fqf.mario_qua_mario_api.definitions.states.CharacterDefinition;
+import com.fqf.mario_qua_mario_api.definitions.states.PowerUpDefinition;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.*;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.IncompleteActionDefinition;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedCharacter;

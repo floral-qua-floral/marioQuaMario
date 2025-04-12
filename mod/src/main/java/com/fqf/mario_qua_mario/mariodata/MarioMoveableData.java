@@ -1,10 +1,10 @@
 package com.fqf.mario_qua_mario.mariodata;
 
-import com.fqf.mario_qua_mario.definitions.states.actions.WallboundActionDefinition;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.WallboundActionDefinition;
+import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import net.minecraft.entity.MovementType;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2d;
 
 public abstract class MarioMoveableData extends MarioPlayerData implements IMarioTravelData {

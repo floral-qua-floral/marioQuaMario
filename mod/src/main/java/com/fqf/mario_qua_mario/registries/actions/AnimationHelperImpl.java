@@ -1,7 +1,7 @@
 package com.fqf.mario_qua_mario.registries.actions;
 
-import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.mario_qua_mario.util.Easing;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.mario_qua_mario_api.util.Easing;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.MathHelper;
 

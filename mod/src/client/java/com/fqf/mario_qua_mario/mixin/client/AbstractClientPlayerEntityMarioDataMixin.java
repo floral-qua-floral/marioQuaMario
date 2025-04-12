@@ -2,7 +2,7 @@ package com.fqf.mario_qua_mario.mixin.client;
 
 import com.fqf.mario_qua_mario.mariodata.MarioAnimationData;
 import com.fqf.mario_qua_mario.mariodata.injections.AdvMarioAbstractClientDataHolder;
-import com.fqf.mario_qua_mario.mariodata.injections.IMarioClientDataHolder;
+import com.fqf.mario_qua_mario_api.mariodata.injections.IMarioClientDataHolder;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;

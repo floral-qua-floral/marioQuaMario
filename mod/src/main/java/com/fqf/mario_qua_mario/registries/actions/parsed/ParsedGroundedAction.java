@@ -1,14 +1,14 @@
 package com.fqf.mario_qua_mario.registries.actions.parsed;
 
-import com.fqf.mario_qua_mario.definitions.states.actions.GroundedActionDefinition;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.ActionCategory;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionInjectionDefinition;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.GroundedActionDefinition;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.ActionCategory;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.TransitionDefinition;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.UniversalActionDefinitionHelper;
-import com.fqf.mario_qua_mario.util.CharaStat;
-import com.fqf.mario_qua_mario.util.StatCategory;
+import com.fqf.mario_qua_mario_api.util.CharaStat;
+import com.fqf.mario_qua_mario_api.util.StatCategory;
 import net.minecraft.util.Identifier;
 
 import java.util.HashMap;

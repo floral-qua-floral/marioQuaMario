@@ -1,7 +1,7 @@
 package com.fqf.mario_qua_mario.registries;
 
-import com.fqf.mario_qua_mario.definitions.states.MarioStateDefinition;
-import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
+import com.fqf.mario_qua_mario_api.definitions.states.MarioStateDefinition;
+import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
 import com.fqf.mario_qua_mario.mariodata.MarioServerPlayerData;
 import org.jetbrains.annotations.Nullable;

@@ -1,6 +1,6 @@
 package com.fqf.mario_qua_mario.mariodata.util;
 
-import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.Arrangement;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.Arrangement;
 
 public class ArrangementSet {
 	public final Arrangement EVERYTHING;

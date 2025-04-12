@@ -1,7 +1,7 @@
 package com.fqf.mario_qua_mario.packets;
 
 import com.fqf.mario_qua_mario.MarioClientHelperManager;
-import com.fqf.mario_qua_mario.interfaces.StompResult;
+import com.fqf.mario_qua_mario_api.interfaces.StompResult;
 import com.fqf.mario_qua_mario.mariodata.*;
 import com.fqf.mario_qua_mario.registries.ParsedAttackInterception;
 import com.fqf.mario_qua_mario.registries.ParsedStompType;
@@ -9,6 +9,7 @@ import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
 import com.fqf.mario_qua_mario.util.MarioGamerules;
+import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MovementType;

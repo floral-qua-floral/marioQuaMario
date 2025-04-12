@@ -1,6 +1,6 @@
 package com.fqf.mario_qua_mario.mixin.client;
 
-import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.Arrangement;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.Arrangement;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.Camera;

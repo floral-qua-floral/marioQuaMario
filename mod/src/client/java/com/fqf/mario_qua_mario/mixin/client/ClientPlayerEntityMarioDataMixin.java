@@ -1,12 +1,12 @@
 package com.fqf.mario_qua_mario.mixin.client;
 
-import com.fqf.mario_qua_mario.mariodata.IMarioClientData;
-import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
+import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
+import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario.mariodata.MarioMainClientData;
 import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
 import com.fqf.mario_qua_mario.mariodata.injections.AdvMarioMainClientDataHolder;
-import com.fqf.mario_qua_mario.mariodata.injections.IMarioClientDataHolder;
-import com.fqf.mario_qua_mario.mariodata.injections.IMarioTravelDataHolder;
+import com.fqf.mario_qua_mario_api.mariodata.injections.IMarioClientDataHolder;
+import com.fqf.mario_qua_mario_api.mariodata.injections.IMarioTravelDataHolder;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;

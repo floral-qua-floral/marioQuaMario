@@ -1,10 +1,10 @@
 package com.fqf.mario_qua_mario.registries.power_granting;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario.definitions.states.StatAlteringStateDefinition;
+import com.fqf.mario_qua_mario_api.definitions.states.StatAlteringStateDefinition;
 import com.fqf.mario_qua_mario.registries.ParsedMarioState;
-import com.fqf.mario_qua_mario.util.CharaStat;
-import com.fqf.mario_qua_mario.util.StatCategory;
+import com.fqf.mario_qua_mario_api.util.CharaStat;
+import com.fqf.mario_qua_mario_api.util.StatCategory;
 import net.minecraft.util.Identifier;
 
 import java.util.HashMap;

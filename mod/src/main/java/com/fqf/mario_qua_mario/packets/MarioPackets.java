@@ -1,7 +1,7 @@
 package com.fqf.mario_qua_mario.packets;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario.interfaces.StompResult;
+import com.fqf.mario_qua_mario_api.interfaces.StompResult;
 import com.fqf.mario_qua_mario.registries.ParsedStompType;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;

@@ -1,14 +1,14 @@
 package com.fqf.mario_qua_mario.registries;
 
-import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario.definitions.StompTypeDefinition;
-import com.fqf.mario_qua_mario.interfaces.StompResult;
-import com.fqf.mario_qua_mario.interfaces.Stompable;
+import com.fqf.mario_qua_mario_api.definitions.StompTypeDefinition;
+import com.fqf.mario_qua_mario_api.interfaces.StompResult;
+import com.fqf.mario_qua_mario_api.interfaces.Stompable;
 import com.fqf.mario_qua_mario.mariodata.*;
 import com.fqf.mario_qua_mario.packets.MarioPackets;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.util.ItemStackArmorReader;
 import com.fqf.mario_qua_mario.util.StompDamageSource;
+import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
 import it.unimi.dsi.fastutil.floats.FloatFloatImmutablePair;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
@@ -18,7 +18,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;

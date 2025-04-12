@@ -1,6 +1,6 @@
 package com.fqf.mario_qua_mario.registries.power_granting;
 
-import com.fqf.mario_qua_mario.definitions.states.PowerUpDefinition;
+import com.fqf.mario_qua_mario_api.definitions.states.PowerUpDefinition;
 import net.minecraft.util.Identifier;
 
 public class PowerHeartHelperImpl implements PowerUpDefinition.PowerHeartHelper {

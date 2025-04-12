@@ -1,16 +1,16 @@
 package com.fqf.mario_qua_mario.registries.actions;
 
-import com.fqf.mario_qua_mario.definitions.states.actions.*;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.IncompleteActionDefinition;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.TransitionInjectionDefinition;
-import com.fqf.mario_qua_mario.mariodata.IMarioReadableMotionData;
-import com.fqf.mario_qua_mario.mariodata.IMarioTravelData;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.*;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.IncompleteActionDefinition;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.TransitionDefinition;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.TransitionInjectionDefinition;
+import com.fqf.mario_qua_mario_api.mariodata.IMarioReadableMotionData;
+import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
 import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
-import com.fqf.mario_qua_mario.util.CharaStat;
-import com.fqf.mario_qua_mario.util.StatCategory;
+import com.fqf.mario_qua_mario_api.util.CharaStat;
+import com.fqf.mario_qua_mario_api.util.StatCategory;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;

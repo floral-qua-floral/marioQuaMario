@@ -1,10 +1,10 @@
 package com.fqf.mario_qua_mario.registries.actions;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario.definitions.states.AttackInterceptingStateDefinition;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.*;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.mario_qua_mario_api.definitions.states.AttackInterceptingStateDefinition;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.*;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
 import com.fqf.mario_qua_mario.registries.ParsedAttackInterception;
 import com.fqf.mario_qua_mario.registries.ParsedMarioState;

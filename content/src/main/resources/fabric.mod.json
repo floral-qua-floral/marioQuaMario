@@ -16,86 +16,86 @@
 	"environment": "*",
 	"entrypoints": {
 		"mqm-stomp-types": [
-			"com.fqf.mario_qua_mario.stomp_types.JumpStomp"
+			"com.fqf.mario_qua_mario_content.stomp_types.JumpStomp"
 		],
 
 		"mqm-generic-actions": [
-			"com.fqf.mario_qua_mario.actions.generic.Debug",
-			"com.fqf.mario_qua_mario.actions.generic.DebugSprint",
-			"com.fqf.mario_qua_mario.actions.generic.DebugSpinPitch",
-			"com.fqf.mario_qua_mario.actions.generic.DebugSpinYaw",
-			"com.fqf.mario_qua_mario.actions.generic.DebugSpinRoll"
+			"com.fqf.mario_qua_mario_content.actions.generic.Debug",
+			"com.fqf.mario_qua_mario_content.actions.generic.DebugSprint",
+			"com.fqf.mario_qua_mario_content.actions.generic.DebugSpinPitch",
+			"com.fqf.mario_qua_mario_content.actions.generic.DebugSpinYaw",
+			"com.fqf.mario_qua_mario_content.actions.generic.DebugSpinRoll"
 		],
 		"mqm-grounded-actions": [
-			"com.fqf.mario_qua_mario.actions.grounded.SubWalk",
-			"com.fqf.mario_qua_mario.actions.grounded.WalkRun",
-			"com.fqf.mario_qua_mario.actions.grounded.Skid",
-			"com.fqf.mario_qua_mario.actions.grounded.PRun",
-			"com.fqf.mario_qua_mario.actions.grounded.DuckWaddle",
-			"com.fqf.mario_qua_mario.actions.grounded.DuckSlide",
-			"com.fqf.mario_qua_mario.actions.grounded.GroundPoundLand",
-			"com.fqf.mario_qua_mario.actions.power.RetroIdle",
-			"com.fqf.mario_qua_mario.actions.power.TailSpinGround"
+			"com.fqf.mario_qua_mario_content.actions.grounded.SubWalk",
+			"com.fqf.mario_qua_mario_content.actions.grounded.WalkRun",
+			"com.fqf.mario_qua_mario_content.actions.grounded.Skid",
+			"com.fqf.mario_qua_mario_content.actions.grounded.PRun",
+			"com.fqf.mario_qua_mario_content.actions.grounded.DuckWaddle",
+			"com.fqf.mario_qua_mario_content.actions.grounded.DuckSlide",
+			"com.fqf.mario_qua_mario_content.actions.grounded.GroundPoundLand",
+			"com.fqf.mario_qua_mario_content.actions.power.RetroIdle",
+			"com.fqf.mario_qua_mario_content.actions.power.TailSpinGround"
 		],
 		"mqm-airborne-actions": [
-			"com.fqf.mario_qua_mario.actions.airborne.Fall",
-			"com.fqf.mario_qua_mario.actions.airborne.SpecialFall",
-			"com.fqf.mario_qua_mario.actions.airborne.StompBounce",
-			"com.fqf.mario_qua_mario.actions.airborne.LavaBoost",
-			"com.fqf.mario_qua_mario.actions.airborne.Jump",
-			"com.fqf.mario_qua_mario.actions.airborne.PJump",
-			"com.fqf.mario_qua_mario.actions.airborne.DuckFall",
-			"com.fqf.mario_qua_mario.actions.airborne.DuckJump",
-			"com.fqf.mario_qua_mario.actions.airborne.DoubleJump",
-			"com.fqf.mario_qua_mario.actions.airborne.TripleJump",
-			"com.fqf.mario_qua_mario.actions.airborne.LongJump",
-			"com.fqf.mario_qua_mario.actions.airborne.Backflip",
-			"com.fqf.mario_qua_mario.actions.airborne.Sideflip",
-			"com.fqf.mario_qua_mario.actions.airborne.WaterExitJump",
-			"com.fqf.mario_qua_mario.actions.airborne.GroundPoundFlip",
-			"com.fqf.mario_qua_mario.actions.airborne.GroundPoundDrop",
-			"com.fqf.mario_qua_mario.actions.power.TailStall",
-			"com.fqf.mario_qua_mario.actions.power.TailStallDucking",
-			"com.fqf.mario_qua_mario.actions.power.TailFly",
-			"com.fqf.mario_qua_mario.actions.power.TailSpinFall",
-			"com.fqf.mario_qua_mario.actions.power.TailSpinJump"
+			"com.fqf.mario_qua_mario_content.actions.airborne.Fall",
+			"com.fqf.mario_qua_mario_content.actions.airborne.SpecialFall",
+			"com.fqf.mario_qua_mario_content.actions.airborne.StompBounce",
+			"com.fqf.mario_qua_mario_content.actions.airborne.LavaBoost",
+			"com.fqf.mario_qua_mario_content.actions.airborne.Jump",
+			"com.fqf.mario_qua_mario_content.actions.airborne.PJump",
+			"com.fqf.mario_qua_mario_content.actions.airborne.DuckFall",
+			"com.fqf.mario_qua_mario_content.actions.airborne.DuckJump",
+			"com.fqf.mario_qua_mario_content.actions.airborne.DoubleJump",
+			"com.fqf.mario_qua_mario_content.actions.airborne.TripleJump",
+			"com.fqf.mario_qua_mario_content.actions.airborne.LongJump",
+			"com.fqf.mario_qua_mario_content.actions.airborne.Backflip",
+			"com.fqf.mario_qua_mario_content.actions.airborne.Sideflip",
+			"com.fqf.mario_qua_mario_content.actions.airborne.WaterExitJump",
+			"com.fqf.mario_qua_mario_content.actions.airborne.GroundPoundFlip",
+			"com.fqf.mario_qua_mario_content.actions.airborne.GroundPoundDrop",
+			"com.fqf.mario_qua_mario_content.actions.power.TailStall",
+			"com.fqf.mario_qua_mario_content.actions.power.TailStallDucking",
+			"com.fqf.mario_qua_mario_content.actions.power.TailFly",
+			"com.fqf.mario_qua_mario_content.actions.power.TailSpinFall",
+			"com.fqf.mario_qua_mario_content.actions.power.TailSpinJump"
 		],
 		"mqm-aquatic-actions": [
-			"com.fqf.mario_qua_mario.actions.aquatic.Submerged",
-			"com.fqf.mario_qua_mario.actions.aquatic.Swim"
+			"com.fqf.mario_qua_mario_content.actions.aquatic.Submerged",
+			"com.fqf.mario_qua_mario_content.actions.aquatic.Swim"
 		],
 		"mqm-wallbound-actions": [
 		],
 		"mqm-mounted-actions": [
-			"com.fqf.mario_qua_mario.actions.mounted.Mounted"
+			"com.fqf.mario_qua_mario_content.actions.mounted.Mounted"
 		],
 
 		"mqm-power-ups": [
-			"com.fqf.mario_qua_mario.powerups.Small",
-			"com.fqf.mario_qua_mario.powerups.Super",
-			"com.fqf.mario_qua_mario.powerups.Fire",
-			"com.fqf.mario_qua_mario.powerups.Raccoon"
+			"com.fqf.mario_qua_mario_content.powerups.Small",
+			"com.fqf.mario_qua_mario_content.powerups.Super",
+			"com.fqf.mario_qua_mario_content.powerups.Fire",
+			"com.fqf.mario_qua_mario_content.powerups.Raccoon"
 		],
 
 		"mqm-characters": [
-			"com.fqf.mario_qua_mario.characters.Mario"
+			"com.fqf.mario_qua_mario_content.characters.Mario"
 		],
 
 		"mqm-voicelines": [
-			"com.fqf.mario_qua_mario.Voicelines"
+			"com.fqf.mario_qua_mario_content.Voicelines"
 		],
 
 		"main": [
-			"com.fqf.mario_qua_mario.MarioQuaMarioContent"
+			"com.fqf.mario_qua_mario_content.MarioQuaMarioContent"
 		],
 		"client": [
-			"com.fqf.mario_qua_mario.MarioQuaMarioContentClient"
+          "com.fqf.mario_qua_mario_content.MarioQuaMarioContentClient"
 		],
 		"fabric-datagen": [
-			"com.fqf.mario_qua_mario.MarioQuaMarioContentDataGenerator"
+          "com.fqf.mario_qua_mario_content.MarioQuaMarioContentDataGenerator"
 		],
 		"modmenu": [
-			"com.fqf.mario_qua_mario.util.ContentModMenuIntegration"
+          "com.fqf.mario_qua_mario_content.util.ContentModMenuIntegration"
 		]
 	},
 	"mixins": [

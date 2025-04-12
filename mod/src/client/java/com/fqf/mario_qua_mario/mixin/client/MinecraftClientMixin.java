@@ -1,6 +1,6 @@
 package com.fqf.mario_qua_mario.mixin.client;
 
-import com.fqf.mario_qua_mario.definitions.states.AttackInterceptingStateDefinition.MiningHandling;
+import com.fqf.mario_qua_mario_api.definitions.states.AttackInterceptingStateDefinition.MiningHandling;
 import com.fqf.mario_qua_mario.mariodata.MarioMainClientData;
 import com.fqf.mario_qua_mario.packets.MarioClientPacketHelper;
 import com.fqf.mario_qua_mario.registries.ParsedAttackInterception;

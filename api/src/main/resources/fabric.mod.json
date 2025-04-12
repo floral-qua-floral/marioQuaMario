@@ -16,13 +16,13 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.fqf.mario_qua_mario.MarioQuaMarioAPI"
+			"com.fqf.mario_qua_mario_api.MarioQuaMarioAPI"
 		],
 		"client": [
-			"com.fqf.mario_qua_mario.MarioQuaMarioAPIClient"
+          "com.fqf.mario_qua_mario_api.MarioQuaMarioAPIClient"
 		],
 		"fabric-datagen": [
-			"com.fqf.mario_qua_mario.MarioQuaMarioAPIDataGenerator"
+          "com.fqf.mario_qua_mario_api.MarioQuaMarioAPIDataGenerator"
 		]
 	},
 	"mixins": [
@@ -44,18 +44,18 @@
 
 	"custom": {
 		"loom:injected_interfaces": {
-			"net/minecraft/class_1657": ["com/fqf/mario_qua_mario/mariodata/injections/IMarioDataHolder"],
+			"net/minecraft/class_1657": ["com/fqf/mario_qua_mario_api/mariodata/injections/IMarioDataHolder"],
 			"net/minecraft/class_3222": [
-				"com/fqf/mario_qua_mario/mariodata/injections/IMarioAuthoritativeDataHolder",
-				"com/fqf/mario_qua_mario/mariodata/injections/IMarioTravelDataHolder"
+				"com/fqf/mario_qua_mario_api/mariodata/injections/IMarioAuthoritativeDataHolder",
+				"com/fqf/mario_qua_mario_api/mariodata/injections/IMarioTravelDataHolder"
 			],
 
-			"net/minecraft/class_742": ["com/fqf/mario_qua_mario/mariodata/injections/IMarioClientDataHolder"],
+			"net/minecraft/class_742": ["com/fqf/mario_qua_mario_api/mariodata/injections/IMarioClientDataHolder"],
 			"net/minecraft/class_746": [
-				"com/fqf/mario_qua_mario/mariodata/injections/IMarioClientDataHolder",
-				"com/fqf/mario_qua_mario/mariodata/injections/IMarioTravelDataHolder"
+				"com/fqf/mario_qua_mario_api/mariodata/injections/IMarioClientDataHolder",
+				"com/fqf/mario_qua_mario_api/mariodata/injections/IMarioTravelDataHolder"
 			],
-			"net/minecraft/class_745": ["com/fqf/mario_qua_mario/mariodata/injections/IMarioClientDataHolder"]
+			"net/minecraft/class_745": ["com/fqf/mario_qua_mario_api/mariodata/injections/IMarioClientDataHolder"]
 		}
 	}
 }

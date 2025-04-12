@@ -1,10 +1,10 @@
 package com.fqf.mario_qua_mario.mariodata;
 
-import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.Arrangement;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.LimbAnimation;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.PlayermodelAnimation;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.ProgressHandler;
-import com.fqf.mario_qua_mario.util.Easing;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.Arrangement;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.LimbAnimation;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.ProgressHandler;
+import com.fqf.mario_qua_mario_api.util.Easing;
 import com.tom.cpl.math.Vec3f;
 import com.tom.cpm.client.CustomPlayerModelsClient;
 import com.tom.cpm.shared.config.Player;

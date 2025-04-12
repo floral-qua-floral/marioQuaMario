@@ -1,10 +1,13 @@
 package com.fqf.mario_qua_mario.registries;
 
-import com.fqf.mario_qua_mario.definitions.states.AttackInterceptingStateDefinition;
+import com.fqf.mario_qua_mario_api.definitions.states.AttackInterceptingStateDefinition;
 import com.fqf.mario_qua_mario.mariodata.*;
 import com.fqf.mario_qua_mario.packets.MarioAttackInterceptionPackets;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
+import com.fqf.mario_qua_mario_api.mariodata.IMarioAuthoritativeData;
+import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
+import com.fqf.mario_qua_mario_api.mariodata.IMarioReadableMotionData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;

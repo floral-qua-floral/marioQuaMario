@@ -1,8 +1,8 @@
 package com.fqf.mario_qua_mario.mixin;
 
-import com.fqf.mario_qua_mario.mariodata.IMarioData;
+import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
 import com.fqf.mario_qua_mario.mariodata.injections.AdvMarioDataHolder;
-import com.fqf.mario_qua_mario.mariodata.injections.IMarioDataHolder;
+import com.fqf.mario_qua_mario_api.mariodata.injections.IMarioDataHolder;
 import net.minecraft.entity.player.PlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
 

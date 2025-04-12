@@ -1,10 +1,7 @@
 package com.fqf.mario_qua_mario.mariodata;
 
-import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.Arrangement;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.ProgressHandler;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.camera.CameraAnimation;
-import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.camera.CameraProgressHandler;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.Arrangement;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimation;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
 import com.fqf.mario_qua_mario.registries.actions.TransitionPhase;
@@ -14,7 +11,6 @@ import net.minecraft.client.input.Input;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3d;
 
 import java.util.HashMap;
 import java.util.Map;

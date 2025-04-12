@@ -11,6 +11,7 @@ import com.fqf.mario_qua_mario.registries.power_granting.ParsedCharacter;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import com.fqf.mario_qua_mario.util.MarioCPMCompat;
 import com.fqf.mario_qua_mario.util.MarioGamerules;
+import com.fqf.mario_qua_mario_api.mariodata.IMarioAuthoritativeData;
 import com.tom.cpm.shared.io.ModelFile;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;

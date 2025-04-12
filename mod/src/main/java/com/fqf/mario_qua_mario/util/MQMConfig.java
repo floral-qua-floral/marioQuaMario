@@ -1,6 +1,5 @@
 package com.fqf.mario_qua_mario.util;
 
-import com.fqf.mario_qua_mario.definitions.states.actions.util.animation.camera.CameraAnimationOption;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 

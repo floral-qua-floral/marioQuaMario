@@ -1,7 +1,7 @@
 package com.fqf.mario_qua_mario.registries.power_granting;
 
-import com.fqf.mario_qua_mario.definitions.states.CharacterDefinition;
-import com.fqf.mario_qua_mario.mariodata.IMarioAuthoritativeData;
+import com.fqf.mario_qua_mario_api.definitions.states.CharacterDefinition;
+import com.fqf.mario_qua_mario_api.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.tom.cpm.shared.io.ModelFile;
