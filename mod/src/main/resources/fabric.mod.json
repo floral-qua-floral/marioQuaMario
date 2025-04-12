@@ -3,15 +3,16 @@
 	"id": "mario_qua_mario",
 	"version": "${version}",
 	"name": "Mario qua Mario",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "The engine that powers the MQM character-power-action framework under the hood. Separate from the API to keep things clean.",
 	"authors": [
-		"Me!"
+		"Floral qua Floral"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://modrinth.com/mod/mario-qua-mario",
+		"sources": "https://github.com/floral-qua-floral/marioQuaMario",
+		"issues": "https://github.com/floral-qua-floral/marioQuaMario/issues"
 	},
-	"license": "CC0-1.0",
+	"license": "GPL-3.0-only",
 	"icon": "assets/mario_qua_mario/icon.png",
 	"environment": "*",
 	"entrypoints": {
@@ -44,6 +45,7 @@
 		"minecraft": "~1.21",
 		"java": ">=21",
 		"fabric-api": "*",
+		"cloth-config": "*",
 		"cpm": "*",
 		"mario_qua_mario_api": "*"
 	},

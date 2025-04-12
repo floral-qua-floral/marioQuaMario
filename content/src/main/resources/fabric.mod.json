@@ -3,15 +3,16 @@
 	"id": "mario_qua_mario_content",
 	"version": "${version}",
 	"name": "Mario qua Mario Content",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "Mod that uses the MQM character-power-action framework to add Mario as a playable character.",
 	"authors": [
-		"Me!"
+		"Floral qua Floral"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://modrinth.com/mod/mario-qua-mario",
+		"sources": "https://github.com/floral-qua-floral/marioQuaMario",
+		"issues": "https://github.com/floral-qua-floral/marioQuaMario/issues"
 	},
-	"license": "CC0-1.0",
+	"license": "GPL-3.0-only",
 	"icon": "assets/mario_qua_mario_content/icon.png",
 	"environment": "*",
 	"entrypoints": {
@@ -110,6 +111,7 @@
 		"minecraft": "~1.21",
 		"java": ">=21",
 		"fabric-api": "*",
+		"cloth-config": "*",
 		"mario_qua_mario_api": "*"
 	},
 	"suggests": {
