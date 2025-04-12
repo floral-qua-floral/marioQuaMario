@@ -45,7 +45,9 @@ fabricApi {
 
 dependencies {
 	implementation(project(path: ':api', configuration: "namedElements"))
+	include(project(path: ':api'))
 	runtimeOnly(project(path: ':content', configuration: "namedElements"))
+	include(project(path: ':content'))
 
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
