@@ -35,11 +35,11 @@ public class MarioEventListeners {
 			return mario.mqm$getMarioData().executeReversion() != IMarioAuthoritativeData.ReversionResult.SUCCESS;
 		});
 
-		EntityTrackingEvents.START_TRACKING.register((trackedEntity, player) -> {
-			if(trackedEntity instanceof ServerPlayerEntity mario && mario.mqm$getMarioData().isEnabled()) {
-				MarioDataPackets.syncMarioDataToPlayerS2C(mario, player);
-			}
-		});
+//		EntityTrackingEvents.START_TRACKING.register((trackedEntity, player) -> {
+//			if(trackedEntity instanceof ServerPlayerEntity mario && mario.mqm$getMarioData().isEnabled()) {
+//				MarioDataPackets.syncMarioDataToPlayerS2C(mario, player);
+//			}
+//		});
 
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 			MarioPackets.syncUseCharacterStatsS2C(handler.player, MarioGamerules.useCharacterStats);

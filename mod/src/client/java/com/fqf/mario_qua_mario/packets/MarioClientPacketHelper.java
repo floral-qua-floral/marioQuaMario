@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.packets;
 
 import com.fqf.mario_qua_mario.MarioClientHelperManager;
+import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario_api.interfaces.StompResult;
 import com.fqf.mario_qua_mario.mariodata.*;
 import com.fqf.mario_qua_mario.registries.ParsedAttackInterception;
@@ -93,6 +94,7 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 		// SyncMarioDataS2CPayload Receiver
 		ClientPlayNetworking.registerGlobalReceiver(MarioDataPackets.SyncMarioDataS2CPayload.ID, (payload, context) -> {
 			MarioPlayerData data = getMarioFromID(context, payload.marioID()).mqm$getMarioData();
+			MarioQuaMario.LOGGER.info("CLIENT: Received payload to sync {}'s data!", data.getMario().getName().getString());
 			data.setCharacter(RegistryManager.CHARACTERS.get(payload.character()));
 			data.setPowerUpTransitionless(RegistryManager.POWER_UPS.get(payload.powerUp()));
 			data.setActionTransitionless(RegistryManager.ACTIONS.get(payload.action()));
