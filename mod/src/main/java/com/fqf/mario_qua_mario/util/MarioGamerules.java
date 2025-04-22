@@ -21,9 +21,13 @@ public class MarioGamerules {
 			GameRuleRegistry.register("mqmRejectInvalidActionTransitions", GameRules.Category.PLAYER,
 					GameRuleFactory.createBooleanRule(true));
 
-	public static final GameRules.Key<GameRules.BooleanRule> REQUIRE_PLAYERMODELS =
-			GameRuleRegistry.register("mqmRequirePlayermodels", GameRules.Category.PLAYER,
-					GameRuleFactory.createBooleanRule(true));
+	public static final GameRules.Key<GameRules.BooleanRule> DISABLE_CHARACTER_MOVEMENT_CHECK =
+			GameRuleRegistry.register("mqmDisableCharacterMovementCheck", GameRules.Category.PLAYER,
+					GameRuleFactory.createBooleanRule(false));
+
+//	public static final GameRules.Key<GameRules.BooleanRule> REQUIRE_PLAYERMODELS =
+//			GameRuleRegistry.register("mqmRequirePlayermodels", GameRules.Category.PLAYER,
+//					GameRuleFactory.createBooleanRule(true));
 
 	public static final GameRules.Key<GameRules.BooleanRule> REVERT_TO_SMALL =
 			GameRuleRegistry.register("mqmAlwaysRevertToWeakestForm", GameRules.Category.PLAYER,

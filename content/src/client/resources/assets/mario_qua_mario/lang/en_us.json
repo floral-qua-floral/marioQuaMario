@@ -25,6 +25,10 @@
   "text.autoconfig.mario_qua_mario_content.option.welcomeMessage": "Welcome Message",
   "text.autoconfig.mario_qua_mario_content.option.nagMessage": "One-Time Nag Message",
 
+  "gamerule.marioDoesRisingStomps": "Mario can stomp monsters while ascending",
+  "gamerule.marioIncomingDamageMultiplier": "Mario incoming damage multiplier",
+  "gamerule.marioOutgoingDamageMultiplier": "Mario outgoing damage multiplier",
+
   "item.mario_qua_mario.coin": "Gold Coin",
   "item.mario_qua_mario.super_mushroom": "Super Mushroom",
   "item.mario_qua_mario.fire_flower": "Fire Flower",

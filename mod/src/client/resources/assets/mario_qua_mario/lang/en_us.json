@@ -9,6 +9,12 @@
   "text.autoconfig.mario_qua_mario.option.spinputType": "Spin Input Type",
   "fabric.mods.mario_qua_mario.spin": "Spin",
 
+  "gamerule.mqmAlwaysRevertToWeakestForm": "Players revert to weakest possible form at 0 health",
+  "gamerule.mqmRejectInvalidActionTransitions": "Only allow legal action transitions",
+  "gamerule.mqmDisableCharacterMovementCheck": "Disable movement checks when playing as a character",
+  "gamerule.mqmRequirePlayermodels": "Only allow characters to enter power-up states that they have a playermodel for",
+  "gamerule.mqmUseCharacterStats": "Apply character-specific stat modifiers",
+
   "enchantment.mario_qua_mario.pulverizing": "Pulverizing",
   "enchantment.mario_qua_mario.pulverizing.desc": "Increased damage from Stomps",
   "enchantment.mario_qua_mario.bounding": "Bounding",

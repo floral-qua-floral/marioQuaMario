@@ -10,7 +10,8 @@
     "PlayerEntityMarioDataMixin",
     "PlayerEntityMixin",
     "ServerPlayerEntityMixin",
-    "ServerPlayerMarioDataMixin"
+    "ServerPlayerMarioDataMixin",
+    "ServerPlayNetworkHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
