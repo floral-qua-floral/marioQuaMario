@@ -165,7 +165,7 @@ public class Skid implements GroundedActionDefinition {
 							data.setForwardStrafeVel(Sideflip.SIDEFLIP_BACKWARDS_SPEED.get(data), 0);
 							PlayerEntity mario = data.getMario();
 							data.forceBodyAlignment(true);
-							mario.setYaw(mario.getYaw() - 179);
+							mario.setYaw(mario.getYaw() - 178);
 						},
 						(data, isSelf, seed) -> {
 							data.playJumpSound(seed);

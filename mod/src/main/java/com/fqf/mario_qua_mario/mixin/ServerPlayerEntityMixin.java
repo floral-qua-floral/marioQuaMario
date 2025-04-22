@@ -56,8 +56,8 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 
 		super.move(movementType, movement);
 		if(!oldMovement.equals(movement)) {
-			MarioQuaMario.LOGGER.info("Server-sided stomp after move completion:\nTick: {}\tForbiddenTick: {}\tMovetype: {}\nOld position: {}\nMovement: {}\nNew position: {}\nDifference: {}",
-					this.getWorld().getTime(), this.tickAfterStomp, movementType, oldPos, movement, this.getPos(), this.getPos().subtract(oldPos));
+//			MarioQuaMario.LOGGER.info("Server-sided stomp after move completion:\nTick: {}\tForbiddenTick: {}\tMovetype: {}\nOld position: {}\nMovement: {}\nNew position: {}\nDifference: {}",
+//					this.getWorld().getTime(), this.tickAfterStomp, movementType, oldPos, movement, this.getPos(), this.getPos().subtract(oldPos));
 			this.tickAfterStomp = time + 1;
 		}
 //		else MarioQuaMario.LOGGER.info("Movement: {}->{}", oldPos, this.getPos());

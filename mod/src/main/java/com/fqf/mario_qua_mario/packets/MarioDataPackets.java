@@ -80,6 +80,7 @@ public class MarioDataPackets {
 			ServerPlayerEntity mario, ServerPlayerEntity syncTo
 	) {
 		MarioServerPlayerData data = mario.mqm$getMarioData();
+		if(!data.isEnabled()) return;
 		ServerPlayNetworking.send(syncTo, new SyncMarioDataS2CPayload(
 				mario.getId(),
 				RegistryManager.CHARACTERS.getRawIdOrThrow(data.getCharacter()),

@@ -7,6 +7,9 @@ public class MarioVars {
 	public int canTripleJumpTicks = 0;
 	public double pSpeed = 0; // Range 0-1
 
+	public double stompGuardMinHeight;
+	public int stompGuardRemainingTicks;
+
 	public static MarioVars get(IMarioData data) {
 		return data.getVars(MarioVars.class);
 	}

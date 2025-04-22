@@ -11,6 +11,8 @@ import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.airborne.StompBounce;
 import com.fqf.mario_qua_mario_content.util.MarioContentGamerules;
 import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
+import com.fqf.mario_qua_mario_content.util.MarioVars;
+import com.fqf.mario_qua_mario_content.util.Powers;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
@@ -64,11 +66,10 @@ public class JumpStomp implements StompTypeDefinition {
 		return box.stretch(0, -0.05, 0);
 	}
 
-	public static boolean collidingFromTop(Entity entity, ServerPlayerEntity mario, Vec3d motion, boolean allowRisingStomp) {
-		double marioY = mario.getY();
+	public static boolean collidingFromTop(Entity entity, ServerPlayerEntity mario, double marioY, Vec3d motion, boolean allowRisingStomp) {
 		double entityHeadY = entity.getY() + entity.getHeight() - 0.026;
 
-		return mario.getY() > entityHeadY || (
+		return marioY > entityHeadY || (
 				allowRisingStomp
 				&& mario.getWorld().getGameRules().getBoolean(MarioContentGamerules.ALLOW_RISING_STOMPS)
 				&& marioY + motion.y > entityHeadY
@@ -79,7 +80,7 @@ public class JumpStomp implements StompTypeDefinition {
 	public void filterPotentialTargets(List<Entity> potentialTargets, ServerPlayerEntity mario, Vec3d motion) {
 		potentialTargets.removeIf(entity -> !(
 				(entity.canHit() || entity instanceof TridentEntity) // Mario can only stomp on things he can hit w/ crosshair (& Tridents)
-				&& collidingFromTop(entity, mario, motion, entity instanceof Monster) // Mario can do rising stomps against monsters
+				&& collidingFromTop(entity, mario, mario.getY(), motion, entity instanceof Monster) // Mario can do rising stomps against monsters
 		));
 	}
 
@@ -109,7 +110,10 @@ public class JumpStomp implements StompTypeDefinition {
 
 	@Override
 	public void executeServer(IMarioAuthoritativeData data, ItemStack equipment, Entity target, StompResult.ExecutableResult result, boolean affectMario) {
-
+		if(affectMario && data.hasPower(Powers.STOMP_GUARD)) {
+			data.getVars(MarioVars.class).stompGuardMinHeight = target.getY() + target.getHeight() + 0.15;
+			data.getVars(MarioVars.class).stompGuardRemainingTicks = 4;
+		}
 	}
 
 	@Override

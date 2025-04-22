@@ -164,6 +164,7 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	public void setupVariablesBeforeInitialApply(ParsedCharacter character, ParsedPowerUp powerUp) {
 		this.character = character;
 		this.powerUp = powerUp;
+		this.action = character.INITIAL_ACTION;
 	}
 	public void initialApply() {
 		this.disableInternal();
@@ -195,7 +196,7 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	}
 
 	public boolean doMarioTravel() {
-		return this.isEnabled() && !this.getMario().getAbilities().flying && !this.getMario().isFallFlying() && !this.getMario().isUsingRiptide() && !this.getMario().isClimbing() && !this.getMario().hasVehicle();
+		return this.isEnabled() && !this.getMario().getAbilities().flying && !this.getMario().isFallFlying() && !this.getMario().isUsingRiptide() && (!this.getMario().isClimbing() || this.getMario().isOnGround()) && !this.getMario().hasVehicle();
 	}
 
 	public Vec3d getFluidPushingVel() {

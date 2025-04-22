@@ -18,6 +18,8 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public abstract class AbstractMario implements CharacterDefinition {
@@ -71,7 +73,8 @@ public abstract class AbstractMario implements CharacterDefinition {
 		return Set.of(
 				Powers.DROP_COINS,
 				Powers.LIGHTNING_SHRINKS,
-				Powers.CEILING_CLIPPING
+				Powers.CEILING_CLIPPING,
+				Powers.STOMP_GUARD
 		);
 	}
 
@@ -100,5 +103,6 @@ public abstract class AbstractMario implements CharacterDefinition {
 	}
 	@Override public void serverTick(IMarioAuthoritativeData data) {
 		commonTick(data);
+		data.getVars(MarioVars.class).stompGuardRemainingTicks--;
 	}
 }

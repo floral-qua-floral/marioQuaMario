@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.command.EntityDataObject;
 import net.minecraft.entity.Entity;
+import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.Stats;
 import net.minecraft.text.ClickEvent;
@@ -22,14 +23,20 @@ public class MarioContentEventListeners {
 		ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
 			if(entity instanceof ServerPlayerEntity mario) {
 				IMarioData data = mario.mqm$getIMarioData();
-				if(data.isEnabled() && source.isDirect()) {
+				if(data.isEnabled() && data.hasPower(Powers.STOMP_GUARD) && source.isDirect() && !source.isIn(DamageTypeTags.IS_PLAYER_ATTACK)) {
 					Entity attacker = source.getAttacker();
 					if(attacker != null) {
-						if (JumpStomp.collidingFromTop(attacker, mario, null, false))
-							return false;
+						double marioY;
+						if(data.getVars(MarioVars.class).stompGuardRemainingTicks > 0)
+							marioY = Math.max(mario.getY(), data.getVars(MarioVars.class).stompGuardMinHeight);
 						else
-							MarioQuaMarioContent.LOGGER.info("Allowed Mario to take damage.\nMario Y: {}\nAttacker Top: {}",
-									mario.getY(), attacker.getY() + attacker.getHeight());
+							marioY = mario.getY();
+
+						if(JumpStomp.collidingFromTop(attacker, mario, marioY, null, false)) {
+							MarioQuaMarioContent.LOGGER.info("Prevented damage to {} from {} due to Stomp Guard.", mario, attacker);
+							return false;
+						}
+						else MarioQuaMarioContent.LOGGER.info("Allowed damage to Mario.\nmarioY:    {}\nthreshold: {}", marioY, attacker.getY() + attacker.getHeight());
 					}
 				}
 			}

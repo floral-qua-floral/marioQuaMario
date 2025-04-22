@@ -2,6 +2,7 @@ package com.fqf.mario_qua_mario.mariodata;
 
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.PlayermodelAnimation;
 import net.minecraft.client.network.OtherClientPlayerEntity;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.util.Identifier;
@@ -28,9 +29,14 @@ public class MarioOtherClientData extends MarioPlayerData implements IMarioClien
 		return super.setPowerUp(newPowerUp, isReversion, seed);
 	}
 
+	private boolean replaceAnimationNextTick;
+	private PlayermodelAnimation nextTickAnimation;
+	private boolean replaceAnimationNextNextTick;
+	private PlayermodelAnimation nextNextTickAnimation;
 	@Override public void setActionTransitionless(AbstractParsedAction action) {
 		this.handleSlidingSound(action);
-		this.MARIO.mqm$getAnimationData().replaceAnimation(this, action.ANIMATION, -1);
+		this.replaceAnimationNextNextTick = true;
+		this.nextNextTickAnimation = action.ANIMATION;
 		super.setActionTransitionless(action);
 	}
 
@@ -51,6 +57,16 @@ public class MarioOtherClientData extends MarioPlayerData implements IMarioClien
 		this.prevZ = pos.z;
 
 		this.VELOCITIES.invalidate();
+
+		if(this.replaceAnimationNextTick) {
+			this.replaceAnimationNextTick = false;
+			this.MARIO.mqm$getAnimationData().replaceAnimation(this, this.nextTickAnimation, -1);
+		}
+		if(this.replaceAnimationNextNextTick) {
+			this.replaceAnimationNextNextTick = false;
+			this.replaceAnimationNextTick = true;
+			this.nextTickAnimation = this.nextNextTickAnimation;
+		}
 	}
 
 	private final MarioInferredVelocities VELOCITIES = new MarioInferredVelocities();

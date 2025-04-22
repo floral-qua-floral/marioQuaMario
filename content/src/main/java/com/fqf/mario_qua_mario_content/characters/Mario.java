@@ -32,6 +32,8 @@ public class Mario extends AbstractMario implements CharacterDefinition {
 				Powers.DROP_COINS,
 				Powers.LIGHTNING_SHRINKS,
 				Powers.CEILING_CLIPPING,
+				Powers.STOMP_GUARD,
+
 				Powers.SLEEPY
 		);
 	}

@@ -16,7 +16,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 
 public class ModItems {
-	public static final Item FIRE_FLOWER = registerPowerItem("fire_flower", Fire.ID, 1, 1);
+	public static final Item FIRE_FLOWER = registerPowerItem("fire_flower", Fire.ID, 5, 0.3F);
 	public static final Item SUPER_LEAF = registerPowerItem("super_leaf", Raccoon.ID, 4, 0.4F);
 	public static final Item SUPER_MUSHROOM = registerItem("super_mushroom", new PowerUpItem(new Item.Settings().maxCount(4).food(
 			new FoodComponent.Builder().nutrition(6).saturationModifier(0.7F).alwaysEdible().snack().build()

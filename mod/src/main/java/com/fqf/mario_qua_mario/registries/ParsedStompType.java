@@ -92,7 +92,7 @@ public class ParsedStompType extends ParsedMarioThing {
 		DamageSource stompDamageSource = new StompDamageSource(mario.getServerWorld(), this.DAMAGE_TYPE, mario, stompDamagePiercing, stompEquipment);
 
 		EnumMap<StompResult.ExecutableResult, Set<Entity>> stompedEntities = new EnumMap<>(StompResult.ExecutableResult.class);
-		boolean canMount = this.MOUNTING;
+		boolean canMount = this.MOUNTING && !mario.isSneaking();
 		for(Entity target : entities) {
 			StompResult result = ((Stompable) target).mqm$stomp(data, canMount, stompDamageAmount, stompDamageSource);
 			if(result == StompResult.PAINFUL) {
