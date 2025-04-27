@@ -37,6 +37,9 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 
 	public AbstractParsedAction(IncompleteActionDefinition definition, HashMap<Identifier, Set<TransitionInjectionDefinition>> allInjections) {
 		super(definition);
+
+		MarioQuaMario.LOGGER.info("Parsing action {}...", this.ID);
+
 		this.ACTION_DEFINITION = definition;
 		this.CATEGORY = this.getCategory();
 
@@ -89,14 +92,14 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 
 			relevantInjections.removeIf(injection -> injection.predicate() != null && !injection.predicate().shouldInject(this.ID, this.CATEGORY, null));
 
-			MarioQuaMario.LOGGER.info("TRANSITION INJECTIONS RELEVANT TO {}:", definition.targetID());
+			MarioQuaMario.LOGGER.debug("TRANSITION INJECTIONS RELEVANT TO {}:", definition.targetID());
 			for (TransitionInjectionDefinition relevantInjection : relevantInjections) {
-				MarioQuaMario.LOGGER.info("This one: {}", relevantInjection);
+				MarioQuaMario.LOGGER.debug("This one: {}", relevantInjection);
 			}
 
 			this.conditionallyInjectTransitions(buildingClientList, buildingServerList, relevantInjections,
 					TransitionInjectionDefinition.InjectionPlacement.BEFORE, definition);
-			MarioQuaMario.LOGGER.info("Parsing transition into {}", definition.targetID());
+			MarioQuaMario.LOGGER.debug("Parsing transition into {}", definition.targetID());
 			addTransitionToLists(buildingClientList, buildingServerList, definition);
 			this.conditionallyInjectTransitions(buildingClientList, buildingServerList, relevantInjections,
 					TransitionInjectionDefinition.InjectionPlacement.AFTER, definition);

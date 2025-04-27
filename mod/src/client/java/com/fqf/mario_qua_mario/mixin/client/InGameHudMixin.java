@@ -87,7 +87,9 @@ public class InGameHudMixin {
 		renderText(context, 3, clientMario.getPose() + " (" + clientMario.getHeight() + ") VS "
 				+ serverMario.getPose() + " (" + serverMario.getHeight() + ")");
 
-		renderText(context, 7, clientData.getActionID() + " VS " + serverData.getActionID());
+
+		renderText(context, 7, clientData.getActionID() + " VS " + serverData.getActionID(),
+				clientData.getActionID().equals(serverData.getActionID()) ? Colors.WHITE : Colors.LIGHT_RED);
 		renderText(context, 6, clientMario.mqm$getAnimationData().isAnimating(clientMario) ? "Animating" : "Not Animating");
 		renderText(context, 5, "FallDistance (C, S): ", clientMario.fallDistance, serverMario.fallDistance);
 	}
@@ -103,15 +105,18 @@ public class InGameHudMixin {
 
 	@Unique
 	private void renderText(DrawContext context, int linesFromBottom, String text) {
+		this.renderText(context, linesFromBottom, text, Colors.WHITE);
+	}
+
+	@Unique
+	private void renderText(DrawContext context, int linesFromBottom, String text, int color) {
 		Window window = MinecraftClient.getInstance().getWindow();
 		TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-
-//		String text = String.format(label + "%.2f", value);
 
 		int length = textRenderer.getWidth(text);
 		int x = window.getScaledWidth() - length - 2;
 		int y = window.getScaledHeight() - (linesFromBottom + 1) * (textRenderer.fontHeight + 3);
 
-		context.drawTextWithShadow(textRenderer, text, x, y, Colors.WHITE);
+		context.drawTextWithShadow(textRenderer, text, x, y, color);
 	}
 }

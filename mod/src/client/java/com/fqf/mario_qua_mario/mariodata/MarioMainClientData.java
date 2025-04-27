@@ -79,6 +79,8 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		this.getAction().clientTick(this, true);
 		this.getPowerUp().clientTick(this, true);
 		this.getCharacter().clientTick(this, true);
+		if(!MinecraftClient.getInstance().options.getPerspective().isFirstPerson())
+			this.currentCameraAnimation = null;
 	}
 
 	public void tickInputs() {

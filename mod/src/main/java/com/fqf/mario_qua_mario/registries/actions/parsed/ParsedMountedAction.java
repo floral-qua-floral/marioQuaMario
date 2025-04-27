@@ -1,5 +1,7 @@
 package com.fqf.mario_qua_mario.registries.actions.parsed;
 
+import com.fqf.mario_qua_mario.MarioClientHelperManager;
+import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.MountedActionDefinition;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.TransitionDefinition;
@@ -7,6 +9,8 @@ import com.fqf.mario_qua_mario_api.definitions.states.actions.util.TransitionInj
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.UniversalActionDefinitionHelper;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
@@ -19,6 +23,11 @@ public class ParsedMountedAction extends AbstractParsedAction {
 	public ParsedMountedAction(MountedActionDefinition definition, HashMap<Identifier, Set<TransitionInjectionDefinition>> allInjections) {
 		super(definition, allInjections);
 		this.MOUNTED_DEFINITION = definition;
+		MarioQuaMario.LOGGER.info("\nClient Helper Manager: {}\nClient Packet Sender: {}", MarioClientHelperManager.helper, MarioClientHelperManager.packetSender);
+	}
+
+	public MutableText getDismountHint() {
+		return this.MOUNTED_DEFINITION.dismountingHint();
 	}
 
 	@Override

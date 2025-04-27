@@ -16,6 +16,7 @@ import com.fqf.mario_qua_mario_content.util.Powers;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.projectile.TridentEntity;
 import net.minecraft.item.ItemStack;
@@ -68,11 +69,12 @@ public class JumpStomp implements StompTypeDefinition {
 
 	public static boolean collidingFromTop(Entity entity, ServerPlayerEntity mario, double marioY, Vec3d motion, boolean allowRisingStomp) {
 		double entityHeadY = entity.getY() + entity.getHeight() - 0.026;
+		double marioDestinationY = marioY + motion.y;
 
-		return marioY > entityHeadY || (
+		return (marioY > entityHeadY && marioDestinationY < entityHeadY) || (
 				allowRisingStomp
 				&& mario.getWorld().getGameRules().getBoolean(MarioContentGamerules.ALLOW_RISING_STOMPS)
-				&& marioY + motion.y > entityHeadY
+				&& (marioY < entityHeadY && marioDestinationY > entityHeadY)
 		);
 	}
 
@@ -80,7 +82,11 @@ public class JumpStomp implements StompTypeDefinition {
 	public void filterPotentialTargets(List<Entity> potentialTargets, ServerPlayerEntity mario, Vec3d motion) {
 		potentialTargets.removeIf(entity -> !(
 				(entity.canHit() || entity instanceof TridentEntity) // Mario can only stomp on things he can hit w/ crosshair (& Tridents)
-				&& collidingFromTop(entity, mario, mario.getY(), motion, entity instanceof Monster) // Mario can do rising stomps against monsters
+				&& collidingFromTop(entity, mario, mario.getY(), motion,
+				(
+						entity instanceof Monster // Mario can do rising stomps against monsters
+						|| entity instanceof ArmorStandEntity // And off of armor stands
+				))
 		));
 	}
 

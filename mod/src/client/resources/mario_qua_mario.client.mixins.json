@@ -8,6 +8,7 @@
     "CameraMixin",
     "ClientPlayerEntityMarioDataMixin",
     "ClientPlayerEntityMixin",
+    "ClientPlayNetworkHandlerMixin",
     "CPMClientBaseMixin",
     "GameRendererMixin",
     "HeldItemRendererMixin",

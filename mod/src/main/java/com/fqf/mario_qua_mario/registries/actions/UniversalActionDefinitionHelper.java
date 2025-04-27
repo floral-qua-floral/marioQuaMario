@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario.registries.actions;
 
+import com.fqf.mario_qua_mario.mariodata.MarioServerPlayerData;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.*;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.IncompleteActionDefinition;
@@ -8,7 +9,6 @@ import com.fqf.mario_qua_mario_api.definitions.states.actions.util.TransitionInj
 import com.fqf.mario_qua_mario_api.mariodata.IMarioReadableMotionData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
-import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
 import com.fqf.mario_qua_mario_api.util.CharaStat;
 import com.fqf.mario_qua_mario_api.util.StatCategory;
 import net.minecraft.entity.Entity;
@@ -244,11 +244,15 @@ public class UniversalActionDefinitionHelper implements
 		return data.getMario().getVehicle();
 	}
 
+
 	@Override
 	public void dismount(IMarioTravelData data, boolean reposition) {
-		((MarioPlayerData) data).attemptDismount = reposition
-				? MarioPlayerData.DismountType.VANILLA_DISMOUNT
-				: MarioPlayerData.DismountType.DISMOUNT_IN_PLACE;
+		data.getMario().stopRiding();
+		if(!reposition && data instanceof MarioServerPlayerData serverData)
+			serverData.cancelNextRequestTeleportPacket = true;
+//		((MarioPlayerData) data).attemptDismount = reposition
+//				? MarioPlayerData.DismountType.VANILLA_DISMOUNT
+//				: MarioPlayerData.DismountType.DISMOUNT_IN_PLACE;
 	}
 
 	@Override

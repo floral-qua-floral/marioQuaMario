@@ -127,6 +127,11 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 		MarioDataPackets.syncMarioDataToPlayerS2C((ServerPlayerEntity) (Object) this, player);
 	}
 
+	@Inject(method = "requestTeleport", at = @At("HEAD"))
+	private void teleportHook(double destX, double destY, double destZ, CallbackInfo ci) {
+		MarioQuaMario.LOGGER.info("requestTeleport occurred!!!");
+	}
+
 	//	@Unique
 //	private static @NotNull <T extends ParsedMarioState> T getDataFromNbt(String ID, Identifier defaultID, Registry<T> registry) {
 //		@Nullable T attempted = registry.get(Identifier.of(ID));

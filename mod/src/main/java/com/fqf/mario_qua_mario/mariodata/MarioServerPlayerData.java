@@ -11,6 +11,7 @@ import com.fqf.mario_qua_mario.registries.power_granting.ParsedCharacter;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import com.fqf.mario_qua_mario.util.MarioCPMCompat;
 import com.fqf.mario_qua_mario.util.MarioGamerules;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioAuthoritativeData;
 import com.tom.cpm.shared.io.ModelFile;
 import net.minecraft.entity.player.PlayerEntity;
@@ -34,6 +35,8 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 	@Override public ServerPlayerEntity getMario() {
 		return this.MARIO;
 	}
+
+	public boolean cancelNextRequestTeleportPacket;
 
 	private final Set<Pair<AbstractParsedAction, Long>> RECENT_ACTIONS = new HashSet<>();
 
@@ -59,17 +62,33 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 	public boolean setAction(@Nullable AbstractParsedAction fromAction, AbstractParsedAction toAction, long seed, boolean forced, boolean fromCommand) {
 		if(!forced && !fromCommand) {
 			if(!this.getAction().equals(fromAction)) {
+				if(fromAction == null) {
+					MarioQuaMario.LOGGER.warn("TRANSITION REJECTED: fromAction is null. Trying to transition from null to {}",
+							toAction.ID);
+					return false;
+				}
+
+				// Check if our current action is a Mounted action and the fromAction isn't. If so, return false.
+				if(this.getActionCategory() == ActionCategory.MOUNTED && fromAction.CATEGORY != ActionCategory.MOUNTED) {
+					MarioQuaMario.LOGGER.warn("""
+							TRANSITION REJECTED: Trying to execute non-mounted transition while in mounted action.
+							Server-sided action: {}
+							Attempted: {} -> {}""", this.getActionID(), fromAction.ID, toAction.ID);
+					return false;
+				}
+
 				// Check if we were recently in fromAction. If not, return false.
-				if(fromAction == null || this.RECENT_ACTIONS.stream().noneMatch(pair -> pair.getLeft().ID.equals(fromAction.ID))) {
+				if(this.RECENT_ACTIONS.stream().noneMatch(pair -> pair.getLeft().ID.equals(fromAction.ID))) {
 					if (MarioQuaMario.LOGGER.isWarnEnabled()) {
-						Identifier fromActionID = fromAction == null ? null : fromAction.ID;
 						StringBuilder recentActionsString = new StringBuilder();
 						for (Pair<AbstractParsedAction, Long> recentAction : RECENT_ACTIONS) {
 							recentActionsString.append("\n").append(recentAction.getLeft().ID);
 						}
-						MarioQuaMario.LOGGER.warn(
-								"TRANSITION REJECTED: Not recently in fromAction.\nServer-sided action: {}\nAttempted {} -> {}\nRecent actions: {}",
-								this.getActionID(), fromActionID, toAction.ID, recentActionsString);
+						MarioQuaMario.LOGGER.warn("""
+								TRANSITION REJECTED: Not recently in fromAction.
+								Server-sided action: {}
+								Attempted {} -> {}
+								Recent actions: {}""", this.getActionID(), fromAction.ID, toAction.ID, recentActionsString);
 					}
 					return false;
 				}
@@ -77,8 +96,9 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 
 			@Nullable ParsedTransition transition = fromAction.TRANSITIONS_FROM_TARGETS.get(toAction);
 			if(transition != null && transition.serverChecked() && !transition.evaluator().shouldTransition(this)) {
-				MarioQuaMario.LOGGER.warn("TRANSITION REJECTED: Transition is server-checked and evaluator failed.\nAttempted {} -> {}",
-						fromAction.ID, toAction.ID);
+				MarioQuaMario.LOGGER.warn("""
+						TRANSITION REJECTED: Transition is server-checked and evaluator failed.
+						Attempted {} -> {}""", fromAction.ID, toAction.ID);
 				return false;
 			}
 		}

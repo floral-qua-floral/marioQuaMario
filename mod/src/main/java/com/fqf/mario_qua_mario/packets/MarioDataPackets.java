@@ -127,7 +127,7 @@ public class MarioDataPackets {
 				), false);
 			}
 			else {
-				// Reject the transition and instead tell Mario to go back to the state we think he's in
+				// Reject the transition and instead tell Mario to go back to the action we think he's in
 				ServerPlayNetworking.send(context.player(), new AssignActionS2CPayload(
 						context.player().getId(), context.player().mqm$getMarioData().getAction().getIntID()
 				));

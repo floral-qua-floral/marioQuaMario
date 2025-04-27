@@ -9,6 +9,7 @@ import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
@@ -46,9 +47,7 @@ public class MarioQuaMarioContent implements ModInitializer {
 		return Identifier.of("mario_qua_mario", path);
 	}
 
-	public static class ContentClientHelper {
-		public Text getBackflipDismountText() {
-			return Text.of("If you're seeing this, something's gone wrong! :(");
-		}
+	public static abstract class ContentClientHelper {
+		public abstract MutableText getBackflipDismountText();
 	}
 }

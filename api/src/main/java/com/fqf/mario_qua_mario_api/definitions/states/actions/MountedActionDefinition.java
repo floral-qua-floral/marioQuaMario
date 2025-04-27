@@ -5,14 +5,14 @@ import com.fqf.mario_qua_mario_api.definitions.states.actions.util.TransitionDef
 import com.fqf.mario_qua_mario_api.mariodata.IMarioReadableMotionData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import net.minecraft.entity.Entity;
-import net.minecraft.text.Text;
+import net.minecraft.text.MutableText;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public interface MountedActionDefinition extends IncompleteActionDefinition {
-	@Nullable Text dismountingHint();
+	@Nullable MutableText dismountingHint();
 
 	boolean travelHook(IMarioTravelData data, Entity mount, MountedActionHelper helper);
 

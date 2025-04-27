@@ -132,8 +132,8 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 		this.setupCustomVars(this.character, character);
 		this.character = character;
 		this.powerUp = character.INITIAL_POWER_UP;
-		this.action = character.INITIAL_ACTION;
-		this.setActionTransitionless(character.INITIAL_ACTION);
+		this.action = character.getInitialAction(this);
+		this.setActionTransitionless(this.action);
 		this.setPowerUpTransitionless(character.INITIAL_POWER_UP);
 		updateCharacterFormCombo();
 		this.updatePassiveUniversalTraits(true);
@@ -164,7 +164,7 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	public void setupVariablesBeforeInitialApply(ParsedCharacter character, ParsedPowerUp powerUp) {
 		this.character = character;
 		this.powerUp = powerUp;
-		this.action = character.INITIAL_ACTION;
+		this.action = character.getInitialAction(this);
 	}
 	public void initialApply() {
 		this.disableInternal();
@@ -196,7 +196,7 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	}
 
 	public boolean doMarioTravel() {
-		return this.isEnabled() && !this.getMario().getAbilities().flying && !this.getMario().isFallFlying() && !this.getMario().isUsingRiptide() && (!this.getMario().isClimbing() || this.getMario().isOnGround()) && !this.getMario().hasVehicle();
+		return this.isEnabled() && !this.getMario().getAbilities().flying && !this.getMario().isFallFlying() && !this.getMario().isUsingRiptide() && (!this.getMario().isClimbing() || this.getMario().isOnGround());
 	}
 
 	public Vec3d getFluidPushingVel() {
@@ -245,12 +245,5 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	@Override
 	public void forceBodyAlignment(boolean urgent) {
 		this.headRestricted = urgent ? HeadRestrictionType.URGENT : HeadRestrictionType.NORMAL;
-	}
-
-	public DismountType attemptDismount;
-	public enum DismountType {
-		REMAIN_MOUNTED,
-		DISMOUNT_IN_PLACE,
-		VANILLA_DISMOUNT
 	}
 }

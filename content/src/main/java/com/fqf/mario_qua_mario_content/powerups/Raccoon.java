@@ -44,7 +44,7 @@ public class Raccoon implements PowerUpDefinition {
 	}
 
 	@Override public @Nullable SoundEvent getAcquisitionSound() {
-		return null;
+		return MarioContentSFX.TAIL_EMPOWER;
 	}
 
 	@Override public float getWidthFactor() {

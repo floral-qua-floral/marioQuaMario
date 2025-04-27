@@ -3,7 +3,9 @@
   "package": "com.fqf.mario_qua_mario_api.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "AbstractHorseEntityMixin",
     "AbstractMinecartEntityMixin",
+    "CamelEntityMixin",
     "EntityMixin",
     "VehicleEntityMixin"
   ],

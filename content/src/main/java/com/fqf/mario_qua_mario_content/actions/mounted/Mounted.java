@@ -14,7 +14,7 @@ import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.airborne.Backflip;
 import com.fqf.mario_qua_mario_content.actions.grounded.SubWalk;
 import net.minecraft.entity.Entity;
-import net.minecraft.text.Text;
+import net.minecraft.text.MutableText;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,7 +39,7 @@ public class Mounted implements MountedActionDefinition {
 	}
 
 	@Override public @NotNull SneakingRule getSneakingRule() {
-		return SneakingRule.ALLOW;
+		return SneakingRule.PROHIBIT;
 	}
 	@Override public @NotNull SprintingRule getSprintingRule() {
 		return SprintingRule.ALLOW;
@@ -52,7 +52,7 @@ public class Mounted implements MountedActionDefinition {
 		return null;
 	}
 
-	@Override public @Nullable Text dismountingHint() {
+	@Override public @Nullable MutableText dismountingHint() {
 		return MarioQuaMarioContent.getClientHelper().getBackflipDismountText();
 	}
 
@@ -74,7 +74,11 @@ public class Mounted implements MountedActionDefinition {
 				new TransitionDefinition(
 						SubWalk.ID,
 						data -> helper.getMount(data) == null,
-						EvaluatorEnvironment.COMMON
+						EvaluatorEnvironment.COMMON,
+						data -> {
+							MarioQuaMarioContent.LOGGER.info("Transitioned to SubWalk because mount was null?");
+						},
+						(data, isSelf, seed) -> {}
 				)
 		);
 	}
@@ -88,6 +92,7 @@ public class Mounted implements MountedActionDefinition {
 						data -> {
 							helper.dismount(data, false);
 							Objects.requireNonNull(backflip.travelExecutor()).execute(data);
+							MarioQuaMarioContent.LOGGER.info("Backflip from Mount: Y vel = {}", data.getYVel());
 						},
 						null
 				)

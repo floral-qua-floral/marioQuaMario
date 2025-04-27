@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario.registries.power_granting;
 
+import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
 import com.fqf.mario_qua_mario_api.definitions.states.CharacterDefinition;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
@@ -43,5 +44,11 @@ public class ParsedCharacter extends ParsedPowerGrantingState {
 
 	public float modifyIncomingDamage(IMarioAuthoritativeData data, DamageSource source, float amount) {
 		return this.CHARACTER_DEFINITION.modifyIncomingDamage(data, source, amount);
+	}
+
+	public AbstractParsedAction getInitialAction(MarioPlayerData data) {
+		if(data.getMario().getVehicle() != null)
+			return this.getMountedAction(data.getMario().getVehicle());
+		return this.INITIAL_ACTION;
 	}
 }

@@ -1,6 +1,8 @@
 package com.fqf.mario_qua_mario.mixin;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
+import com.fqf.mario_qua_mario.registries.actions.UniversalActionDefinitionHelper;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.SlidingStatus;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.SneakingRule;
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
@@ -27,6 +29,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.Arrays;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity implements AdvMarioDataHolder {
@@ -123,22 +127,26 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 
 	// TODO: Make Mounting actions and stuff work at some point
 
-//	@Override
-//	public boolean startRiding(Entity entity, boolean force) {
-//		MarioPlayerData data = mqm$getMarioData();
-//		boolean mounted = data.getCharacter().getMountedAction(entity) != null && super.startRiding(entity, force);
-//		if(mounted) {
-//			data.setActionTransitionless(data.getCharacter().getMountedAction(entity));
-//			data.attemptDismount = MarioPlayerData.DismountType.REMAIN_MOUNTED;
-//		}
-//		return mounted;
-//	}
+	@Override
+	public boolean startRiding(Entity entity, boolean force) {
+		MarioQuaMario.LOGGER.info("Mounted on {}", (this.getWorld().isClient() ? "CLIENT" : "SERVER"));
+		MarioPlayerData data = mqm$getMarioData();
+		if(data.isEnabled()) {
+			AbstractParsedAction mountedAction = data.getCharacter().getMountedAction(entity);
+			boolean mounted = mountedAction != null && super.startRiding(entity, force);
+			if (mounted) {
+				data.setActionTransitionless(mountedAction);
+			}
+			return mounted;
+		}
+		return super.startRiding(entity, force);
+	}
 
-//	@Inject(method = "shouldDismount", at = @At("HEAD"), cancellable = true)
-//	private void changeDismounting(CallbackInfoReturnable<Boolean> cir) {
-//		MarioPlayerData data = mqm$getMarioData();
-//		if(data.isEnabled()) cir.setReturnValue(data.attemptDismount != MarioPlayerData.DismountType.REMAIN_MOUNTED);
-//	}
+	@Inject(method = "shouldDismount", at = @At("HEAD"), cancellable = true)
+	private void changeDismounting(CallbackInfoReturnable<Boolean> cir) {
+		MarioPlayerData data = mqm$getMarioData();
+		if(data.isEnabled()) cir.setReturnValue(false);
+	}
 
 //	@Override
 //	protected void onDismounted(Entity vehicle) {
@@ -236,7 +244,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 	@Override
 	protected float turnHead(float bodyRotation, float headRotation) {
 		if(this.mqm$getMarioData().headRestricted == MarioPlayerData.HeadRestrictionType.NORMAL) {
-			if(MathHelper.abs(bodyRotation - this.getYaw()) <= 2.5F)
+			if(MathHelper.abs(bodyRotation - this.getYaw()) <= 10)
 				this.mqm$getMarioData().headRestricted = MarioPlayerData.HeadRestrictionType.NONE;
 			bodyRotation = this.getYaw();
 		}

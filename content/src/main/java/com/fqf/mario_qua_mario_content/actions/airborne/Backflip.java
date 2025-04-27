@@ -143,12 +143,12 @@ public class Backflip extends Jump implements AirborneActionDefinition {
 						data.getForwardVel() < 0.0 && data.getInputs().getForwardInput() < -0.65 && data.getInputs().JUMP.isPressed(),
 				EvaluatorEnvironment.CLIENT_ONLY,
 				data -> {
-					helper.performJump(data, BACKFLIP_VEL, null);
-					data.getInputs().DUCK.isPressed(); // Unbuffer duck to prevent accidental buffered Ground Pound
-
 					double backflipBackwardsVel = Backflip.BACKFLIP_BACKWARDS_SPEED.get(data);
 					if(data.getForwardVel() > backflipBackwardsVel)
 						data.setForwardStrafeVel(backflipBackwardsVel, 0.0);
+
+					helper.performJump(data, BACKFLIP_VEL, null);
+					data.getInputs().DUCK.isPressed(); // Unbuffer duck to prevent accidental buffered Ground Pound
 				},
 				(data, isSelf, seed) -> {
 					data.playJumpSound(seed);
