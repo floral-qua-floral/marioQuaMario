@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario.mariodata;
 
+import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.Arrangement;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.LimbAnimation;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.PlayermodelAnimation;
@@ -45,6 +46,8 @@ public class MarioAnimationData {
 
 	public static boolean renderingFirstPersonArm = false;
 
+	public float everythingYawLerpDisplacement;
+
 	public void replaceAnimation(MarioPlayerData data, PlayermodelAnimation newAnim, int ticksUntilAutoReplace) {
 		if(this.ticksUntilAutoReplaceAnimation > 0) return;
 		this.prevAnim = this.currentAnim;
@@ -89,6 +92,11 @@ public class MarioAnimationData {
 					this.prevTickPose = new Pose(mario);
 				} else {
 					this.prevTickPose = this.thisTickPose; // Interpolation starts from 0
+				}
+
+				if(this.prevTickPose != null && this.everythingYawLerpDisplacement != 0) {
+					this.prevTickPose.EVERYTHING.yaw -= this.everythingYawLerpDisplacement;
+					this.everythingYawLerpDisplacement = 0;
 				}
 			}
 		}
@@ -429,6 +437,10 @@ public class MarioAnimationData {
 	private static float discontinuousSlerp(float delta, float start, float end, float hole) {
 		float offset = hole - PI;
 		return lerp(delta, wrapRadians(start - offset), wrapRadians(end - offset)) + offset;
+	}
+
+	public void stopEverythingLerp() {
+		this.thisTickPose.EVERYTHING.yaw -= HALF_PI;
 	}
 
 	private static PlayerEntityModel<AbstractClientPlayerEntity> getModel(AbstractClientPlayerEntity mario) {

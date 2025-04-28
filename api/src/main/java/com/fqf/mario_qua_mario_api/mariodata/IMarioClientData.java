@@ -27,6 +27,8 @@ public interface IMarioClientData extends IMarioData {
 	void storeSound(SoundInstanceWrapper instance);
 	void stopStoredSound(SoundEvent event);
 
+	void instantVisualRotate(float rotationDegrees, boolean counterRotateAnimation);
+
 	interface SoundInstanceWrapper {
 	}
 }

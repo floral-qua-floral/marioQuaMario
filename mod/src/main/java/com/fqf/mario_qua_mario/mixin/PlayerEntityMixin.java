@@ -125,8 +125,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 			strideDistance = prevStrideDistance * 0.6F;
 	}
 
-	// TODO: Make Mounting actions and stuff work at some point
-
 	@Override
 	public boolean startRiding(Entity entity, boolean force) {
 		MarioQuaMario.LOGGER.info("Mounted on {}", (this.getWorld().isClient() ? "CLIENT" : "SERVER"));

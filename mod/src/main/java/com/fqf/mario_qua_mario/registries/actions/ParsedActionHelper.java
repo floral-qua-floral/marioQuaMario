@@ -69,9 +69,6 @@ public class ParsedActionHelper {
 				data.getActionID(), transition.targetAction().ID
 		);
 
-		if(data.getActionID().equals(MarioQuaMario.makeID("mounted")) && transition.targetAction().ID.equals(MarioQuaMario.makeID("jump")))
-			MarioQuaMario.LOGGER.info("RUH ROH!");
-
 		if(data instanceof MarioMoveableData moveableData && transition.travelExecutor() != null)
 			transition.travelExecutor().execute(moveableData);
 		if(data instanceof IMarioClientData clientData && transition.clientsExecutor() != null)

@@ -35,8 +35,8 @@ public class MarioOtherClientData extends MarioPlayerData implements IMarioClien
 	private PlayermodelAnimation nextNextTickAnimation;
 	@Override public void setActionTransitionless(AbstractParsedAction action) {
 		this.handleSlidingSound(action);
-		this.replaceAnimationNextNextTick = true;
-		this.nextNextTickAnimation = action.ANIMATION;
+		this.replaceAnimationNextTick = true;
+		this.nextTickAnimation = action.ANIMATION;
 		super.setActionTransitionless(action);
 	}
 

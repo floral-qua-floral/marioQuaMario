@@ -15,6 +15,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 
@@ -143,6 +144,16 @@ public interface IMarioClientDataImpl extends IMarioClientData {
 	@Override
 	default void stopStoredSound(SoundEvent event) {
 		MinecraftClient.getInstance().getSoundManager().stop(this.getStoredSounds().get(event.getId()));
+	}
+
+	@Override
+	default void instantVisualRotate(float rotationDegrees, boolean counterRotateAnimation) {
+		if(!this.getMario().isMainPlayer())
+			this.getMario().setYaw(this.getMario().getYaw() + rotationDegrees);
+//		this.getMario().bodyYaw += 90;
+//		this.getMario().headYaw += 90;
+//		if(counterRotateAnimation)
+//			this.getMario().mqm$getAnimationData().everythingYawLerpDisplacement = rotationDegrees * MathHelper.RADIANS_PER_DEGREE * -1;
 	}
 
 	class SoundInstanceWrapperImpl implements SoundInstanceWrapper {
