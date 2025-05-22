@@ -10,6 +10,7 @@ import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 
@@ -27,9 +28,10 @@ public class MarioFireballRenderer extends EntityRenderer<MarioFireballProjectil
 					   VertexConsumerProvider vertexConsumers, int light) {
 		matrices.push();
 
-		matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(entity.getYaw()));
+		matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(entity.renderYaw));
+		matrices.translate(0, 0.25f, 0);
 		matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(MathHelper.lerp(tickDelta, entity.prevAngle, entity.angle)));
-		matrices.translate(0, -1.0f, 0);
+		matrices.translate(0, -1.25f, 0);
 
 		VertexConsumer vertexconsumer = ItemRenderer.getDirectItemGlintConsumer(vertexConsumers,
 				this.model.getLayer(TEXTURE_ID), false, false);
@@ -37,6 +39,11 @@ public class MarioFireballRenderer extends EntityRenderer<MarioFireballProjectil
 
 		matrices.pop();
 		super.render(entity, yaw, tickDelta, matrices, vertexConsumers, light);
+	}
+
+	@Override
+	protected int getBlockLight(MarioFireballProjectileEntity entity, BlockPos pos) {
+		return 15;
 	}
 
 	@Override

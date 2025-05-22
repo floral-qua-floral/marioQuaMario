@@ -4,6 +4,7 @@ import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.entity.ModEntities;
 import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.MovementType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.entity.data.DataTracker;
@@ -24,7 +25,9 @@ import net.minecraft.world.World;
 public class MarioFireballProjectileEntity extends ProjectileEntity {
 	private float rotation;
 	private int bounces;
+	private boolean prevTickWallUpped;
 	public float angle;
+	public float renderYaw;
 	public float prevAngle;
 
 	private static final float FIREBALL_SPEED = 0.7F;
@@ -48,12 +51,6 @@ public class MarioFireballProjectileEntity extends ProjectileEntity {
 				MathHelper.cos(-mario.getYaw() * MathHelper.RADIANS_PER_DEGREE) * FIREBALL_SPEED
 		);
 		this.setYaw(mario.getYaw());
-	}
-
-	public float getRenderingRotation() {
-		this.rotation += 0.5F;
-		if(this.rotation >= 360) this.rotation = 0;
-		return this.rotation;
 	}
 
 	@Override
@@ -111,35 +108,34 @@ public class MarioFireballProjectileEntity extends ProjectileEntity {
 
 	private static final double FIREBALL_STEP_HEIGHT = 1.2;
 
+	private void bounce() {
+		this.bounces--;
+		Vec3d velocity = this.getVelocity();
+		this.setVelocity(velocity.withAxis(Direction.Axis.Y, -0.475 * Math.signum(velocity.y)));
+		if(!this.getWorld().isClient) this.playSound(MarioContentSFX.FIREBALL_WALL, 0.233F, 0.75F);
+	}
+
 	@Override
 	protected void onBlockHit(BlockHitResult result) {
 		super.onBlockHit(result);
 
-//		if(isEmptyAtHeight(this.getY())) return;
+		boolean canBounce = this.bounces > 0;
 
-		double targetY = this.getY();
-		MarioQuaMarioContent.LOGGER.info("Collision at height {}", this.getWorld().getBlockState(result.getBlockPos()));
-		if(this.bounces > 0 && (
-				// FIXME fireballs shouldn't break when they hit the side of a block if they could instead hit the top of it and continue
-//				isEmptyAtHeight(this.getY())
-//				|| isEmptyAtHeight(this.getY() + FIREBALL_STEP_HEIGHT)
-				result.getSide().getAxis() == Direction.Axis.Y// ||
-				//this.getWorld().isSpaceEmpty(this, this.getBoundingBox().offset(0, targetY - this.getY(), 0))
-//				!testRaisedCollision()
-//				!this.getWorld().getBlockState(result.getBlockPos().offset(Direction.UP)).isSolidSurface(this.getWorld(), result.getBlockPos(), this, result.getSide())
-//				this.getWorld().isBlockSpaceEmpty(this, this.getBoundingBox().offset(0, 1, 0))
-		)) {
-			this.bounces--;
-			Vec3d velocity = this.getVelocity();
-			this.setVelocity(velocity.withAxis(Direction.Axis.Y, -0.4 * Math.signum(velocity.y)));
-//			this.setPosition(this.getX(), , this.getZ());
-//			this.move(MovementType.SELF, new Vec3d(0, -FIREBALL_STEP_HEIGHT, 0));
-			if(!this.getWorld().isClient) this.playSound(MarioContentSFX.FIREBALL_WALL, 0.233F, 0.75F);
+		if(canBounce && (result.getSide().getAxis() == Direction.Axis.Y)) {
+			this.bounce();
 		}
 		else {
-			MarioQuaMarioContent.LOGGER.info("Is not empty at height {}", targetY);
-			this.playSound(MarioContentSFX.FIREBALL_WALL, 0.45F, 1);
-			this.discard();
+			Vec3d velocity = this.getVelocity();
+			Vec3d checkAtOffset = new Vec3d(velocity.x * 0, FIREBALL_STEP_HEIGHT, velocity.z * 0);
+			if(canBounce && this.getWorld().isSpaceEmpty(this, this.getBoundingBox().offset(checkAtOffset))) {
+				this.setPosition(this.getPos().add(checkAtOffset));
+				this.move(MovementType.SELF, new Vec3d(0, -FIREBALL_STEP_HEIGHT, 0));
+				this.bounce();
+			}
+			else {
+				this.playSound(MarioContentSFX.FIREBALL_WALL, 0.45F, 1);
+				this.discard();
+			}
 		}
 	}
 
@@ -152,7 +148,7 @@ public class MarioFireballProjectileEntity extends ProjectileEntity {
 	public void onSpawnPacket(EntitySpawnS2CPacket packet) {
 		super.onSpawnPacket(packet);
 
-		this.setYaw(packet.getYaw());
+		this.renderYaw = -packet.getYaw();
 		this.setVelocity(packet.getVelocityX(), packet.getVelocityY(), packet.getVelocityZ());
 	}
 }
