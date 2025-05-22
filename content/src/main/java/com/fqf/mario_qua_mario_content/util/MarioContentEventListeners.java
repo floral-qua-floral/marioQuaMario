@@ -15,6 +15,7 @@ import net.minecraft.text.ClickEvent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.math.Vec3d;
 
 public class MarioContentEventListeners {
 	private static final String NAGGED_TAG = "mqm_nagged";
@@ -32,7 +33,7 @@ public class MarioContentEventListeners {
 						else
 							marioY = mario.getY();
 
-						if(JumpStomp.collidingFromTop(attacker, mario, marioY, null, false)) {
+						if(JumpStomp.collidingFromTop(attacker, mario, marioY, Vec3d.ZERO, false)) {
 							MarioQuaMarioContent.LOGGER.info("Prevented damage to {} from {} due to Stomp Guard.", mario, attacker);
 							return false;
 						}

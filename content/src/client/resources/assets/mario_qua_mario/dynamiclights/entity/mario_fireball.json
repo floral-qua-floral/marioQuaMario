@@ -1,0 +1,6 @@
+{
+  "match": {
+    "type": "mqm:mario_fireball"
+  },
+  "luminance": 10
+}
