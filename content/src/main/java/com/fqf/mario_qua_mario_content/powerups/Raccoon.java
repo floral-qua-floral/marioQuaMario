@@ -182,11 +182,13 @@ public class Raccoon implements PowerUpDefinition {
 							&& sweepTarget != entityTarget
 							&& !mario.isTeammate(sweepTarget)
 							&& !(sweepTarget instanceof ArmorStandEntity stand && stand.isMarker())
-							&& mario.squaredDistanceTo(sweepTarget) < 9.0) {
+							&& mario.squaredDistanceTo(sweepTarget) < 9.0
+							&& sweepTarget.damage(damageSource, 4)) {
+
 						sweepTarget.takeKnockback(
 								0.4F, MathHelper.sin(mario.getYaw() * (float) (Math.PI / 180.0)), -MathHelper.cos(mario.getYaw() * (float) (Math.PI / 180.0))
 						);
-						sweepTarget.damage(damageSource, 4);
+						mario.onAttacking(sweepTarget);
 					}
 				}
 			}
