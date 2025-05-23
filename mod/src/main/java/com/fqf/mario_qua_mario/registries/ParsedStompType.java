@@ -99,7 +99,13 @@ public class ParsedStompType extends ParsedMarioThing {
 				result = switch(this.PAINFUL_STOMP_RESPONSE) {
 					case INJURY -> StompResult.PAINFUL;
 					case BOUNCE -> StompResult.GLANCING;
-					case STOMP -> target.damage(stompDamageSource, stompDamageAmount) ? StompResult.NORMAL : StompResult.RESISTED;
+					case STOMP -> {
+						if(target.damage(stompDamageSource, stompDamageAmount)) {
+							mario.onAttacking(target);
+							yield StompResult.NORMAL;
+						}
+						else yield StompResult.RESISTED;
+					}
 				};
 			}
 
