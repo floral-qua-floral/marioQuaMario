@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario.registries;
 
+import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario_api.definitions.StompTypeDefinition;
 import com.fqf.mario_qua_mario_api.interfaces.StompResult;
 import com.fqf.mario_qua_mario_api.interfaces.Stompable;

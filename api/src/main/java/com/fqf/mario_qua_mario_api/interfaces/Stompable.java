@@ -35,7 +35,11 @@ public interface Stompable {
 			}
 
 			boolean damaged = thisEntity.damage(damageSource, damageAmount);
-			return damaged ? StompResult.NORMAL : StompResult.RESISTED;
+			if(damaged) {
+				marioData.getMario().onAttacking(thisEntity);
+				return StompResult.NORMAL;
+			}
+			else return StompResult.RESISTED;
 		}
 		else return StompResult.FAIL;
 	}
