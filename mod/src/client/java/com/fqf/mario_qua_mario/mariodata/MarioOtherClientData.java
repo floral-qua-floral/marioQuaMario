@@ -3,6 +3,7 @@ package com.fqf.mario_qua_mario.mariodata;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import net.minecraft.client.network.OtherClientPlayerEntity;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.util.Identifier;
@@ -70,6 +71,12 @@ public class MarioOtherClientData extends MarioPlayerData implements IMarioClien
 	}
 
 	private final MarioInferredVelocities VELOCITIES = new MarioInferredVelocities();
+
+	@Override
+	public void playCameraAnimation(CameraAnimationSet animationSet) {
+		// Do nothing
+	}
+
 	private class MarioInferredVelocities {
 		private double forward;
 		private double strafe;

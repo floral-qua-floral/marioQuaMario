@@ -13,6 +13,9 @@ public class MQMContentConfig implements ConfigData {
 	private CameraAnimationOption sideflipCameraAnim = CameraAnimationOption.AUTHENTIC;
 	private CameraAnimationOption tripleJumpCameraAnim = CameraAnimationOption.GENTLE;
 
+	private CameraAnimationOption tailWhipCameraAnim = CameraAnimationOption.GENTLE;
+	private CameraAnimationOption tailSpinCameraAnim = CameraAnimationOption.AUTHENTIC;
+
 	private boolean welcomeMessage = true;
 	private boolean nagMessage = true;
 
@@ -33,5 +36,11 @@ public class MQMContentConfig implements ConfigData {
 	}
 	public CameraAnimationOption getTripleJumpCameraAnim() {
 		return this.tripleJumpCameraAnim;
+	}
+	public CameraAnimationOption getTailWhipCameraAnim() {
+		return this.tailWhipCameraAnim;
+	}
+	public CameraAnimationOption getTailSpinCameraAnim() {
+		return this.tailSpinCameraAnim;
 	}
 }

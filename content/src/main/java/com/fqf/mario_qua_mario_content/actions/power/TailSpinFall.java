@@ -26,8 +26,9 @@ import java.util.Set;
 import static com.fqf.mario_qua_mario_api.util.StatCategory.*;
 
 public class TailSpinFall implements AirborneActionDefinition {
+	public static final Identifier ID = MarioQuaMarioContent.makeID("tail_spin_fall");
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("tail_spin_fall");
+	    return ID;
 	}
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
@@ -35,7 +36,7 @@ public class TailSpinFall implements AirborneActionDefinition {
 	}
 
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
-		return null;
+		return TailSpinGround.CAMERA_ANIMATIONS;
 	}
 	@Override public @NotNull SlidingStatus getSlidingStatus() {
 		return SlidingStatus.NOT_SLIDING;
@@ -100,9 +101,9 @@ public class TailSpinFall implements AirborneActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {
 		return List.of(
 				Submerged.SUBMERGE,
-				Fall.LANDING.variate(MarioQuaMarioContent.makeID("tail_spin_grounded"),
+				Fall.LANDING.variate(TailSpinGround.ID,
 						data -> !TailSpinGround.doneSpinning(data) && Fall.LANDING.evaluator().shouldTransition(data)),
-				Fall.LANDING.variate(MarioQuaMarioContent.makeID("duck_waddle"), null)
+				Fall.LANDING.variate(DuckWaddle.ID, null)
 		);
 	}
 

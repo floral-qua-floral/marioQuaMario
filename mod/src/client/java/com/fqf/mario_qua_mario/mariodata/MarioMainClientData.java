@@ -6,6 +6,7 @@ import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
 import com.fqf.mario_qua_mario.registries.actions.TransitionPhase;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.input.Input;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -33,30 +34,39 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 	private CameraAnimation currentCameraAnimation;
 	private float cameraAnimationTime;
 	private boolean attemptFinish;
+	private boolean readyForReplacement;
 
 	@Override public void setActionTransitionless(AbstractParsedAction action) {
 		this.handleSlidingSound(action);
 		this.MARIO.mqm$getAnimationData().replaceAnimation(this, action.ANIMATION, -1);
 
 		if(action != this.getAction()) {
-			CameraAnimation newAnim = action.CAMERA_ANIMATIONS == null ? null : switch (action.CAMERA_ANIMATIONS.optionGetter().get()) {
-				case AUTHENTIC -> action.CAMERA_ANIMATIONS.authentic();
-				case GENTLE -> {
-					CameraAnimation gentleAnimation = action.CAMERA_ANIMATIONS.gentle();
-					yield gentleAnimation == null ? action.CAMERA_ANIMATIONS.authentic() : gentleAnimation;
-				}
-				case MINIMAL -> action.CAMERA_ANIMATIONS.minimal();
-			};
-
-			if(newAnim != null) {
-				this.currentCameraAnimation = newAnim;
-				this.cameraAnimationTime = 0;
-				this.attemptFinish = false;
-			}
-			else this.attemptFinish = true;
+			this.playCameraAnimation(action.CAMERA_ANIMATIONS);
 		}
 
 		super.setActionTransitionless(action);
+	}
+
+	@Override
+	public void playCameraAnimation(CameraAnimationSet animationSet) {
+		CameraAnimation newAnim = animationSet == null ? null : switch (animationSet.optionGetter().get()) {
+			case AUTHENTIC -> animationSet.authentic();
+			case GENTLE -> {
+				CameraAnimation gentleAnimation = animationSet.gentle();
+				yield gentleAnimation == null ? animationSet.authentic() : gentleAnimation;
+			}
+			case MINIMAL -> animationSet.minimal();
+		};
+
+		if(newAnim == this.currentCameraAnimation && !this.readyForReplacement) return;
+
+		if(newAnim != null) {
+			this.currentCameraAnimation = newAnim;
+			this.cameraAnimationTime = 0;
+			this.attemptFinish = false;
+			this.readyForReplacement = false;
+		}
+		else this.attemptFinish = true;
 	}
 
 	public boolean animatingCamera() {
@@ -67,7 +77,9 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		this.cameraAnimationTime += MinecraftClient.getInstance().getRenderTickCounter().getLastFrameDuration();
 		float progress = this.currentCameraAnimation.progressHandler().progressCalculator().calculateProgress(this, this.cameraAnimationTime);
 
-		if(this.attemptFinish && progress >= this.currentCameraAnimation.progressHandler().minProgressToFinish()) {
+		this.readyForReplacement = progress >= this.currentCameraAnimation.progressHandler().minProgressToFinish();
+
+		if(this.attemptFinish && this.readyForReplacement) {
 			this.currentCameraAnimation = null;
 			this.attemptFinish = false;
 		}

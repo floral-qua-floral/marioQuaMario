@@ -3,10 +3,15 @@ package com.fqf.mario_qua_mario_content.powerups;
 import com.fqf.mario_qua_mario_api.definitions.states.PowerUpDefinition;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.*;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimation;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
 import com.fqf.mario_qua_mario_api.mariodata.*;
 import com.fqf.mario_qua_mario_api.util.Easing;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.Voicelines;
+import com.fqf.mario_qua_mario_content.actions.power.TailSpinFall;
+import com.fqf.mario_qua_mario_content.actions.power.TailSpinGround;
 import com.fqf.mario_qua_mario_content.actions.power.TailStall;
 import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
 import com.fqf.mario_qua_mario_content.util.Powers;
@@ -118,10 +123,12 @@ public class Raccoon implements PowerUpDefinition {
 	private abstract static class TailAttack implements AttackInterceptionDefinition {
 		private final Identifier ACTION_TARGET;
 		private final PlayermodelAnimation ANIMATION;
+		private final CameraAnimationSet CAMERA_ANIMATIONS;
 
-		private TailAttack(Identifier actionTarget, PlayermodelAnimation animation) {
+		private TailAttack(Identifier actionTarget, PlayermodelAnimation animation, CameraAnimationSet cameraAnimations) {
 			this.ACTION_TARGET = actionTarget;
 			this.ANIMATION = animation;
+			this.CAMERA_ANIMATIONS = cameraAnimations;
 		}
 
 		@Override
@@ -164,6 +171,7 @@ public class Raccoon implements PowerUpDefinition {
 			if(this.ACTION_TARGET == null) {
 				data.voice(Voicelines.TAIL_WHIP, seed);
 				data.playAnimation(this.ANIMATION, TAIL_WHIP_ANIMATION_DURATION);
+				data.playCameraAnimation(this.CAMERA_ANIMATIONS);
 			}
 			else data.voice(Voicelines.TAIL_SPIN, seed);
 		}
@@ -197,19 +205,20 @@ public class Raccoon implements PowerUpDefinition {
 
 	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
 		PlayermodelAnimation tailWhipAnimation = makeTailWhipAnimation(animationHelper);
+		CameraAnimationSet tailWhipCameraAnimation = makeTailWhipCameraAnimationSet();
 
 		return List.of(
-				new TailAttack(MarioQuaMarioContent.makeID("tail_spin_grounded"), null) {
+				new TailAttack(TailSpinGround.ID, null, null) {
 					@Override protected boolean testSwing(IMarioReadableMotionData data) {
 						return data.getMario().isOnGround() && data.getMario().isInSneakingPose();
 					}
 				},
-				new TailAttack(MarioQuaMarioContent.makeID("tail_spin_fall"), null) {
+				new TailAttack(TailSpinFall.ID, null, null) {
 					@Override protected boolean testSwing(IMarioReadableMotionData data) {
 						return !data.getMario().isOnGround() && data.getMario().isInSneakingPose();
 					}
 				},
-				new TailAttack(null, tailWhipAnimation) {
+				new TailAttack(null, tailWhipAnimation, tailWhipCameraAnimation) {
 					@Override protected boolean testSwing(IMarioReadableMotionData data) {
 						return true;
 					}
@@ -220,6 +229,24 @@ public class Raccoon implements PowerUpDefinition {
 						return weapon.isEmpty();
 					}
 				}
+		);
+	}
+
+	private static CameraAnimation makeTailWhipCameraAnimation(int addend, Easing easing) {
+		return new CameraAnimation(
+				new CameraProgressHandler(1, (data, ticksPassed) ->
+						Math.min(ticksPassed / (TAIL_WHIP_ANIMATION_DURATION + addend + 0.5F), 1)
+				),
+				(data, arrangement, progress) ->
+						arrangement.yaw += easing.ease(progress % 1) * -360
+		);
+	}
+	private static @NotNull CameraAnimationSet makeTailWhipCameraAnimationSet() {
+		return new CameraAnimationSet(
+				MarioQuaMarioContent.CONFIG::getTailWhipCameraAnim,
+				makeTailWhipCameraAnimation(2, Easing.mix(Easing.SINE_IN_OUT, Easing.QUART_IN_OUT)),
+				makeTailWhipCameraAnimation(-3, Easing.EXPO_IN_OUT),
+				null
 		);
 	}
 

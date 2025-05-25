@@ -6,7 +6,9 @@ import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.Ani
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.EntireBodyAnimation;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.LimbAnimation;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimation;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
@@ -29,8 +31,9 @@ import java.util.List;
 import java.util.Set;
 
 public class TailSpinGround implements GroundedActionDefinition {
+	public static final Identifier ID = MarioQuaMarioContent.makeID("tail_spin_grounded");
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("tail_spin_grounded");
+	    return ID;
 	}
 
 	private static final float TICKS_PER_REVOLUTION = 6;
@@ -50,13 +53,30 @@ public class TailSpinGround implements GroundedActionDefinition {
 				arrangement.pitch = MathHelper.clamp(data.getMario().getPitch() - 10, -80, 10);
 			})
 	);
+	private static CameraAnimation makeTailSpinCameraAnimation(float factor, Easing easing) {
+		return new CameraAnimation(
+				new CameraProgressHandler(2, (data, ticksPassed) ->
+				{
+					if(data.getVars(TailSpinActionTimerVars.class) == null) return 4;
+					return (ticksPassed / (TICKS_PER_REVOLUTION - 0.5F) * factor) % 1;
+				}),
+				(data, arrangement, progress) ->
+						arrangement.yaw += easing.ease(progress % 1) * -360
+		);
+	}
+	public static final CameraAnimationSet CAMERA_ANIMATIONS = new CameraAnimationSet(
+		MarioQuaMarioContent.CONFIG::getTailSpinCameraAnim,
+		makeTailSpinCameraAnimation(1, Easing.QUAD_IN_OUT),
+		makeTailSpinCameraAnimation(0.5F, Easing.SINE_IN_OUT),
+		null
+	);
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
 		return ANIMATION;
 	}
 
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
-		return null;
+		return CAMERA_ANIMATIONS;
 	}
 	@Override public @NotNull SlidingStatus getSlidingStatus() {
 		return SlidingStatus.NOT_SLIDING;
