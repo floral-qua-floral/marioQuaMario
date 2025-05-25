@@ -31,12 +31,12 @@ public class DuckFall extends Fall implements AirborneActionDefinition {
 		return SprintingRule.PROHIBIT;
 	}
 
-	public static final TransitionDefinition DUCK_FALL = Fall.FALL.variate(MarioQuaMarioContent.makeID("duck_fall"), null);
-	public static final TransitionDefinition DUCK_LANDING = Fall.LANDING.variate(MarioQuaMarioContent.makeID("duck_waddle"), null);
+	public static final TransitionDefinition DUCK_FALL = Fall.FALL.variate(DuckFall.ID, null);
+	public static final TransitionDefinition DUCK_LANDING = Fall.LANDING.variate(DuckWaddle.ID, null);
 
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {
 		return List.of(
-				DuckWaddle.UNDUCK.variate(MarioQuaMarioContent.makeID("fall"), null)
+				DuckWaddle.UNDUCK.variate(Fall.ID, null)
 		);
 	}
 

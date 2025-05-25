@@ -20,8 +20,9 @@ import java.util.List;
 import java.util.Set;
 
 public class GroundPoundLand implements GroundedActionDefinition {
+	public static final Identifier ID = MarioQuaMarioContent.makeID("ground_pound_land");
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("ground_pound_land");
+	    return ID;
 	}
 
 	private static LimbAnimation makeArmAnimation(AnimationHelper helper, int factor) {

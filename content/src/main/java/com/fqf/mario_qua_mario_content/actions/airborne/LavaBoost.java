@@ -126,7 +126,7 @@ public class LavaBoost extends Fall implements AirborneActionDefinition {
 								data.getYVel() <= 0
 								&& data.getVars(LavaBoostVars.class).bounceVel > 0.06
 								&& Fall.LANDING.evaluator().shouldTransition(data),
-						EvaluatorEnvironment.CLIENT_CHECKED,
+						null,
 						data -> {
 							data.setYVel(data.getVars(LavaBoostVars.class).bounceVel);
 							data.setForwardStrafeVel(data.getForwardVel() * 0.5, data.getStrafeVel() * 0.5);

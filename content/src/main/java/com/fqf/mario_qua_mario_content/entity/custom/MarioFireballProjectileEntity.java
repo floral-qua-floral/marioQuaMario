@@ -14,6 +14,7 @@ import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -83,27 +84,20 @@ public class MarioFireballProjectileEntity extends ProjectileEntity {
 	@Override
 	protected void onEntityHit(EntityHitResult entityHitResult) {
 		super.onEntityHit(entityHitResult);
-		entityHitResult.getEntity().damage(new DamageSource(
+		boolean damaged = entityHitResult.getEntity().damage(new DamageSource(
 				this.getWorld().getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(DAMAGE_TYPE),
 				this, this.getOwner()
 		), 5);
 
 		if(!this.getWorld().isClient()) {
-			this.playSound(entityHitResult.getEntity().isAlive() ? MarioContentSFX.FIREBALL_ENEMY : MarioContentSFX.KICK, 1, 1);
+			SoundEvent event;
+			if(!damaged) event = MarioContentSFX.FIREBALL_WALL;
+			else if(entityHitResult.getEntity().isAlive()) event = MarioContentSFX.FIREBALL_ENEMY;
+			else event = MarioContentSFX.KICK;
+			this.playSound(event, 1, 1);
+
 			this.discard();
 		}
-	}
-
-	private boolean testRaisedCollision() {
-		Vec3d pos = this.getPos();
-		this.setPosition(pos.offset(Direction.UP, 1));
-		HitResult result = ProjectileUtil.getCollision(this, this::canHit);
-		this.setPosition(pos);
-		return result instanceof BlockHitResult;
-	}
-
-	private boolean isEmptyAtHeight(double height) {
-		return this.getWorld().isSpaceEmpty(this, this.getBoundingBox().offset(0, height - this.getY(), 0));
 	}
 
 	private static final double FIREBALL_STEP_HEIGHT = 1.2;

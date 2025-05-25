@@ -106,7 +106,7 @@ public class Fall implements AirborneActionDefinition {
 	public static final TransitionDefinition LANDING = new TransitionDefinition(
 			MarioQuaMarioContent.makeID("sub_walk"),
 			data -> data.getMario().isOnGround(),
-			EvaluatorEnvironment.CLIENT_CHECKED
+			EvaluatorEnvironment.COMMON
 	);
 
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(AirborneActionHelper helper) {

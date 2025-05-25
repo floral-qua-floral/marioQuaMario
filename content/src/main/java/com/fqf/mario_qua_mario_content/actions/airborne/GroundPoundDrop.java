@@ -12,6 +12,7 @@ import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_api.util.CharaStat;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario_content.actions.grounded.GroundPoundLand;
 import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -91,7 +92,7 @@ public class GroundPoundDrop implements AirborneActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {
 		return List.of(
 				Fall.LANDING.variate(
-						MarioQuaMarioContent.makeID("ground_pound_land"),
+						GroundPoundLand.ID,
 						null, null,
 						data -> data.setForwardStrafeVel(0, 0),
 						(data, isSelf, seed) -> {

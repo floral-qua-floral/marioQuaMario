@@ -26,8 +26,9 @@ import java.util.Set;
 import static com.fqf.mario_qua_mario_api.util.StatCategory.*;
 
 public class DuckWaddle implements GroundedActionDefinition {
+	public static final Identifier ID = MarioQuaMarioContent.makeID("duck_waddle");
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("duck_waddle");
+	    return ID;
 	}
 
 	private static final LimbAnimation ARM = new LimbAnimation(false, (data, arrangement, progress) -> {
