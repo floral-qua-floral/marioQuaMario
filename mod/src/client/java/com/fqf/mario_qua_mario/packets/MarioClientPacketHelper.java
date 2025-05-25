@@ -2,6 +2,7 @@ package com.fqf.mario_qua_mario.packets;
 
 import com.fqf.mario_qua_mario.MarioClientHelperManager;
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.replaycompat.MarioReplayCompatibilityHelper;
 import com.fqf.mario_qua_mario_api.interfaces.StompResult;
 import com.fqf.mario_qua_mario.mariodata.*;
 import com.fqf.mario_qua_mario.registries.ParsedAttackInterception;
@@ -12,6 +13,8 @@ import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
 import com.fqf.mario_qua_mario.util.MarioGamerules;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -127,10 +130,17 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 		return (PlayerEntity) Objects.requireNonNull(context.player().getWorld().getEntityById(marioID));
 	}
 
+	private static final boolean REPLAY_MOD_PRESENT = FabricLoader.getInstance().isModLoaded("replaymod");
+
 	@Override
 	public void setActionC2S(AbstractParsedAction fromAction, AbstractParsedAction toAction, long seed) {
 //		MarioQuaMario.LOGGER.info("Sending setActionC2S Packet for {}->{}", stompTypeID.ID, toAction.ID);
 		ClientPlayNetworking.send(new MarioDataPackets.SetActionC2SPayload(fromAction.getIntID(), toAction.getIntID(), seed));
+		assert MinecraftClient.getInstance().player != null;
+		conditionallySaveReplayPacket(new MarioDataPackets.ActionTransitionS2CPayload(
+				MinecraftClient.getInstance().player.getId(),
+				fromAction.getIntID(), toAction.getIntID(), seed
+		));
 	}
 
 	public static void attackInterceptionC2S(
@@ -138,6 +148,7 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 			@Nullable Entity targetEntity, @Nullable BlockPos targetBlock, long seed
 	) {
 		CustomPayload packet;
+		CustomPayload replayPacket;
 		int interceptionSource;
 		int interceptionIndex;
 
@@ -150,16 +161,31 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 			interceptionIndex = data.getPowerUp().INTERCEPTIONS.indexOf(interception);
 		}
 
-		if(targetEntity != null)
+		int marioID = data.getMario().getId();
+		if(targetEntity != null) {
 			packet = new MarioAttackInterceptionPackets.EntityAttackInterceptedC2SPayload(
 					interception.IS_FROM_ACTION, interceptionSource, interceptionIndex, targetEntity.getId(), seed);
-		else if(targetBlock != null)
+			replayPacket = new MarioAttackInterceptionPackets.EntityAttackInterceptedS2CPayload(
+					marioID, interception.IS_FROM_ACTION, interceptionSource, interceptionIndex, targetEntity.getId(), seed);
+		}
+		else if(targetBlock != null) {
 			packet = new MarioAttackInterceptionPackets.BlockAttackInterceptedC2SPayload(
 					interception.IS_FROM_ACTION, interceptionSource, interceptionIndex, targetBlock, seed);
-		else
+			replayPacket = new MarioAttackInterceptionPackets.BlockAttackInterceptedS2CPayload(
+					marioID, interception.IS_FROM_ACTION, interceptionSource, interceptionIndex, targetBlock, seed);
+		}
+		else {
 			packet = new MarioAttackInterceptionPackets.MissedAttackInterceptedC2SPayload(
 					interception.IS_FROM_ACTION, interceptionSource, interceptionIndex, seed);
+			replayPacket = new MarioAttackInterceptionPackets.MissedAttackInterceptedS2CPayload(
+					marioID, interception.IS_FROM_ACTION, interceptionSource, interceptionIndex, seed);
+		}
 
 		ClientPlayNetworking.send(packet);
+		conditionallySaveReplayPacket(replayPacket);
+	}
+
+	private static void conditionallySaveReplayPacket(CustomPayload payload) {
+		if(REPLAY_MOD_PRESENT) MarioReplayCompatibilityHelper.saveS2CPacketToReplay(payload);
 	}
 }
