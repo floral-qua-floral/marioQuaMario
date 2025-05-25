@@ -136,6 +136,10 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 	public void setActionC2S(AbstractParsedAction fromAction, AbstractParsedAction toAction, long seed) {
 //		MarioQuaMario.LOGGER.info("Sending setActionC2S Packet for {}->{}", stompTypeID.ID, toAction.ID);
 		ClientPlayNetworking.send(new MarioDataPackets.SetActionC2SPayload(fromAction.getIntID(), toAction.getIntID(), seed));
+	}
+
+	@Override
+	public void conditionallySaveTransitionToReplayMod(AbstractParsedAction fromAction, AbstractParsedAction toAction, long seed) {
 		assert MinecraftClient.getInstance().player != null;
 		conditionallySaveReplayPacket(new MarioDataPackets.ActionTransitionS2CPayload(
 				MinecraftClient.getInstance().player.getId(),

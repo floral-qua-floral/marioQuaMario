@@ -45,8 +45,11 @@ public class ParsedActionHelper {
 					MarioDataPackets.transitionToActionS2C((ServerPlayerEntity) data.getMario(), transition.fullyNetworked(),
 							data.getAction(), transition.targetAction(), seed);
 				}
-				else if(transition.fullyNetworked()) {
-					MarioClientHelperManager.packetSender.setActionC2S(data.getAction(), transition.targetAction(), seed);
+				else {
+					MarioClientHelperManager.packetSender.conditionallySaveTransitionToReplayMod(data.getAction(), transition.targetAction(), seed);
+					if (transition.fullyNetworked()) {
+						MarioClientHelperManager.packetSender.setActionC2S(data.getAction(), transition.targetAction(), seed);
+					}
 				}
 
 				executeTransition(data, transition, seed);

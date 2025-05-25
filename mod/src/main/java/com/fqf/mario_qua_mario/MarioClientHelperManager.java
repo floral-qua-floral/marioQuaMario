@@ -11,5 +11,6 @@ public class MarioClientHelperManager {
 	}
 	public interface ClientPacketSender {
 		void setActionC2S(AbstractParsedAction fromAction, AbstractParsedAction toAction, long seed);
+		void conditionallySaveTransitionToReplayMod(AbstractParsedAction fromAction, AbstractParsedAction toAction, long seed);
 	}
 }
