@@ -15,8 +15,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class DuckFall extends Fall implements AirborneActionDefinition {
+	public static final Identifier ID = MarioQuaMarioContent.makeID("duck_fall");
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("duck_fall");
+	    return ID;
 	}
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {

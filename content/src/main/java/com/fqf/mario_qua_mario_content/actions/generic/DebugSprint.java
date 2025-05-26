@@ -23,8 +23,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class DebugSprint extends Debug {
+	public static final Identifier ID = MarioQuaMarioContent.makeID("debug_test");
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("debug_sprint");
+	    return ID;
 	}
 
 	@Override public boolean travelHook(IMarioTravelData data) {
@@ -39,7 +40,7 @@ public class DebugSprint extends Debug {
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions() {
 		return List.of(
 				new TransitionDefinition(
-						MarioQuaMarioContent.makeID("debug"),
+						Debug.ID,
 						data -> !data.getMario().isSprinting(), EvaluatorEnvironment.SERVER_ONLY,
 						null,
 						(data, isSelf, seed) -> data.playSound(MarioContentSFX.DUCK, seed)

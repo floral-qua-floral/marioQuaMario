@@ -25,8 +25,9 @@ import static com.fqf.mario_qua_mario_api.util.StatCategory.DRIFTING;
 import static com.fqf.mario_qua_mario_api.util.StatCategory.TERMINAL_VELOCITY;
 
 public class GroundPoundDrop implements AirborneActionDefinition {
+	public static final Identifier ID = MarioQuaMarioContent.makeID("ground_pound_drop");
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("ground_pound_drop");
+	    return ID;
 	}
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
@@ -80,7 +81,7 @@ public class GroundPoundDrop implements AirborneActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(AirborneActionHelper helper) {
 		return List.of(
 				new TransitionDefinition(
-						MarioQuaMarioContent.makeID("special_fall"),
+						SpecialFall.ID,
 						data -> data.getYVel() > 0 || data.getInputs().JUMP.isPressed(),
 						EvaluatorEnvironment.CLIENT_ONLY
 				)

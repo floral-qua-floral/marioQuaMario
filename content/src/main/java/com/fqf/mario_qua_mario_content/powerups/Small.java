@@ -15,8 +15,9 @@ import java.util.List;
 import java.util.Set;
 
 public class Small implements PowerUpDefinition {
+	public static final Identifier ID = MarioQuaMarioContent.makeID("small");
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("small");
+	    return ID;
 	}
 
 	@Override public @Nullable Identifier getReversionTarget() {

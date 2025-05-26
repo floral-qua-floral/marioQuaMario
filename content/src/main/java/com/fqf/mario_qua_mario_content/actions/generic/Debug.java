@@ -92,7 +92,7 @@ public class Debug implements GenericActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions() {
 		return List.of(
 				new TransitionDefinition(
-						MarioQuaMarioContent.makeID("debug_sprint"),
+						DebugSprint.ID,
 						data -> data.getMario().isSprinting(), EvaluatorEnvironment.COMMON,
 						null,
 						(data, isSelf, seed) -> data.playSound(MarioContentSFX.FIREBALL, seed)

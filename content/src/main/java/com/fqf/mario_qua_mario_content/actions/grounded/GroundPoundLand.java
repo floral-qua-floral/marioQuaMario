@@ -10,6 +10,7 @@ import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
+import com.fqf.mario_qua_mario_content.actions.airborne.GroundPoundDrop;
 import com.fqf.mario_qua_mario_content.util.ActionTimerVars;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -105,7 +106,7 @@ public class GroundPoundLand implements GroundedActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(GroundedActionHelper helper) {
 		return List.of(
 				new TransitionDefinition(
-						MarioQuaMarioContent.makeID("sub_walk"),
+						SubWalk.ID,
 						data -> ActionTimerVars.get(data).actionTimer > 10,
 						EvaluatorEnvironment.COMMON
 				)
@@ -117,7 +118,7 @@ public class GroundPoundLand implements GroundedActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(GroundedActionHelper helper) {
 		return List.of(
 				Fall.FALL.variate(
-						MarioQuaMarioContent.makeID("ground_pound_drop"),
+						GroundPoundDrop.ID,
 						data -> data.getInputs().DUCK.isHeld() && Fall.FALL.evaluator().shouldTransition(data)
 				),
 				Fall.FALL

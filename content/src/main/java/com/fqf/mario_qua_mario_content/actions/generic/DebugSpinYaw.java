@@ -13,8 +13,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class DebugSpinYaw extends Debug {
+	public static final Identifier ID = MarioQuaMarioContent.makeID("debug_spin_yaw");
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("debug_spin_yaw");
+	    return ID;
 	}
 
 	@Override

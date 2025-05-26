@@ -11,6 +11,7 @@ import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.Pla
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario_content.actions.grounded.PRun;
+import com.fqf.mario_qua_mario_content.actions.power.TailFly;
 import com.fqf.mario_qua_mario_content.actions.power.TailStall;
 import com.fqf.mario_qua_mario_content.powerups.Raccoon;
 import com.fqf.mario_qua_mario_content.util.Powers;
@@ -61,7 +62,7 @@ public class PJump extends Jump implements AirborneActionDefinition {
 	public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {
 		return List.of(
 				new TransitionDefinition(
-						MarioQuaMarioContent.makeID("tail_fly"),
+						TailFly.ID,
 						data ->
 								data.hasPower(Powers.TAIL_FLY)
 								&& data.getVars(Raccoon.RaccoonVars.class).flightTicks > 0
@@ -80,7 +81,7 @@ public class PJump extends Jump implements AirborneActionDefinition {
 	public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {
 		return List.of(
 				Submerged.SUBMERGE,
-				Jump.DOUBLE_JUMPABLE_LANDING.variate(MarioQuaMarioContent.makeID("p_run"), data ->
+				Jump.DOUBLE_JUMPABLE_LANDING.variate(PRun.ID, data ->
 						Fall.LANDING.evaluator().shouldTransition(data) && (data.isServer() || PRun.meetsPRunRequirements(data))),
 				Jump.DOUBLE_JUMPABLE_LANDING
 		);

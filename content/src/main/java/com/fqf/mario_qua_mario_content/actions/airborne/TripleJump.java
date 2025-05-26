@@ -23,8 +23,9 @@ import java.util.Set;
 import static com.fqf.mario_qua_mario_api.util.StatCategory.*;
 
 public class TripleJump extends Jump implements AirborneActionDefinition {
+	public static final Identifier ID = MarioQuaMarioContent.makeID("triple_jump");
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("triple_jump");
+	    return ID;
 	}
 
 	private static LimbAnimation makeArmAnimation(AnimationHelper helper, int factor) {
@@ -149,8 +150,8 @@ public class TripleJump extends Jump implements AirborneActionDefinition {
 	}
 	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
 		return Set.of(
-			this.makeInjection(MarioQuaMarioContent.makeID("jump")),
-			this.makeInjection(MarioQuaMarioContent.makeID("p_jump"))
+			this.makeInjection(Jump.ID),
+			this.makeInjection(PJump.ID)
 		);
 	}
 }

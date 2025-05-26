@@ -20,8 +20,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class DuckJump extends Jump implements AirborneActionDefinition {
+	public static final Identifier ID = MarioQuaMarioContent.makeID("duck_jump");
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("duck_jump");
+	    return ID;
 	}
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
@@ -46,7 +47,7 @@ public class DuckJump extends Jump implements AirborneActionDefinition {
 
 	public static TransitionDefinition makeDuckJumpTransition(GroundedActionDefinition.GroundedActionHelper helper) {
 		return new TransitionDefinition(
-				MarioQuaMarioContent.makeID("duck_jump"),
+				DuckJump.ID,
 				data -> data.getInputs().JUMP.isPressed(),
 				EvaluatorEnvironment.CLIENT_ONLY,
 				data -> helper.performJump(data, JUMP_VEL, JUMP_ADDEND),
@@ -63,7 +64,7 @@ public class DuckJump extends Jump implements AirborneActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {
 		return List.of(
 				helper.makeJumpCapTransition(this, this.getJumpCapThreshold()),
-				DuckWaddle.UNDUCK.variate(MarioQuaMarioContent.makeID("fall"), null)
+				DuckWaddle.UNDUCK.variate(Fall.ID, null)
 		);
 	}
 

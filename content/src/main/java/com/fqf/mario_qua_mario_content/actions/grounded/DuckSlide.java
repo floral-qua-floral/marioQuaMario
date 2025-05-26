@@ -27,8 +27,9 @@ import java.util.Set;
 import static com.fqf.mario_qua_mario_api.util.StatCategory.*;
 
 public class DuckSlide implements GroundedActionDefinition {
+	public static final Identifier ID = MarioQuaMarioContent.makeID("duck_slide");
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("duck_slide");
+	    return ID;
 	}
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
@@ -83,7 +84,7 @@ public class DuckSlide implements GroundedActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(GroundedActionHelper helper) {
 		return List.of(
 				new TransitionDefinition(
-						MarioQuaMarioContent.makeID("duck_waddle"),
+						DuckWaddle.ID,
 						data -> data.getHorizVelSquared() == 0,
 						EvaluatorEnvironment.CLIENT_ONLY
 				)
@@ -94,7 +95,7 @@ public class DuckSlide implements GroundedActionDefinition {
 				DuckWaddle.UNDUCK,
 				Backflip.makeBackflipTransition(helper),
 				new TransitionDefinition(
-						MarioQuaMarioContent.makeID("long_jump"),
+						LongJump.ID,
 						data ->
 								data.getInputs().getForwardInput() > 0.4
 								&& data.getVars(ActionTimerVars.class).actionTimer < 5
@@ -123,10 +124,10 @@ public class DuckSlide implements GroundedActionDefinition {
 		return Set.of(
 				new TransitionInjectionDefinition(
 						TransitionInjectionDefinition.InjectionPlacement.BEFORE,
-						MarioQuaMarioContent.makeID("duck_waddle"),
+						DuckWaddle.ID,
 						ActionCategory.GROUNDED,
 						(nearbyTransition, castableHelper) -> nearbyTransition.variate(
-								MarioQuaMarioContent.makeID("duck_slide"),
+								DuckSlide.ID,
 								data -> {
 									double threshold = SLIDE_THRESHOLD.get(data);
 									return data.getHorizVelSquared() > threshold * threshold
@@ -139,10 +140,10 @@ public class DuckSlide implements GroundedActionDefinition {
 
 				new TransitionInjectionDefinition(
 						TransitionInjectionDefinition.InjectionPlacement.BEFORE,
-						MarioQuaMarioContent.makeID("duck_waddle"),
+						DuckWaddle.ID,
 						ActionCategory.AIRBORNE,
 						(nearbyTransition, castableHelper) -> nearbyTransition.variate(
-								MarioQuaMarioContent.makeID("duck_slide"),
+								DuckSlide.ID,
 								data -> {
 									double threshold = SLIDE_THRESHOLD.get(data);
 									return (data.isServer() || (data.getHorizVelSquared() > threshold * threshold))

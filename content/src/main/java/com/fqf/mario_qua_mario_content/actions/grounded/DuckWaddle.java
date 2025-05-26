@@ -134,7 +134,7 @@ public class DuckWaddle implements GroundedActionDefinition {
 	}
 
 	public static final TransitionDefinition DUCK = new TransitionDefinition(
-			MarioQuaMarioContent.makeID("duck_waddle"),
+			DuckWaddle.ID,
 			data -> data.getInputs().DUCK.isHeld(),
 			EvaluatorEnvironment.CLIENT_ONLY,
 			null,
@@ -145,7 +145,7 @@ public class DuckWaddle implements GroundedActionDefinition {
 	);
 
 	public static final TransitionDefinition UNDUCK = new TransitionDefinition(
-			MarioQuaMarioContent.makeID("sub_walk"),
+			SubWalk.ID,
 			data -> !data.getInputs().DUCK.isHeld(),
 			EvaluatorEnvironment.CLIENT_ONLY,
 			null,

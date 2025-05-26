@@ -158,7 +158,7 @@ public class SubWalk implements GroundedActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(GroundedActionHelper helper) {
 		return List.of(
 			new TransitionDefinition(
-					MarioQuaMarioContent.makeID("walk_run"),
+					WalkRun.ID,
 					WalkRun::meetsWalkRunRequirement,
 					EvaluatorEnvironment.CLIENT_ONLY
 			)//,

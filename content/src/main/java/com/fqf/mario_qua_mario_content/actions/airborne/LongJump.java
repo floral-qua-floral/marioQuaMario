@@ -22,8 +22,9 @@ import static com.fqf.mario_qua_mario_api.util.StatCategory.JUMP_VELOCITY;
 import static com.fqf.mario_qua_mario_api.util.StatCategory.THRESHOLD;
 
 public class LongJump extends Jump implements AirborneActionDefinition {
+	public static final Identifier ID = MarioQuaMarioContent.makeID("long_jump");
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("long_jump");
+	    return ID;
 	}
 
 //	private static LimbAnimation makeArmAnimation(AnimationHelper helper, int factor) {
@@ -175,7 +176,7 @@ public class LongJump extends Jump implements AirborneActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {
 		return List.of(
 				Submerged.SUBMERGE,
-				Jump.DOUBLE_JUMPABLE_LANDING.variate(MarioQuaMarioContent.makeID("p_run"), data ->
+				Jump.DOUBLE_JUMPABLE_LANDING.variate(PRun.ID, data ->
 						Fall.LANDING.evaluator().shouldTransition(data) && (data.isServer() || PRun.meetsPRunRequirements(data))),
 				Jump.DOUBLE_JUMPABLE_LANDING
 		);

@@ -23,8 +23,9 @@ import static com.fqf.mario_qua_mario_api.util.StatCategory.JUMPING_GRAVITY;
 import static com.fqf.mario_qua_mario_api.util.StatCategory.JUMP_VELOCITY;
 
 public class Jump extends Fall implements AirborneActionDefinition {
+	public static final Identifier ID = MarioQuaMarioContent.makeID("jump");
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("jump");
+	    return ID;
 	}
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
@@ -80,7 +81,7 @@ public class Jump extends Fall implements AirborneActionDefinition {
 
 	public static TransitionDefinition makeJumpTransition(GroundedActionDefinition.GroundedActionHelper helper) {
 		return new TransitionDefinition(
-				MarioQuaMarioContent.makeID("jump"),
+				Jump.ID,
 				data -> data.getInputs().JUMP.isPressed(),
 				EvaluatorEnvironment.CLIENT_ONLY,
 				data -> helper.performJump(data, JUMP_VEL, JUMP_ADDEND),

@@ -47,7 +47,7 @@ public class SpecialFall extends Fall implements AirborneActionDefinition {
 		return Set.of(
 				new TransitionInjectionDefinition(
 						TransitionInjectionDefinition.InjectionPlacement.BEFORE,
-						MarioQuaMarioContent.makeID("fall"),
+						Fall.ID,
 						ActionCategory.GROUNDED,
 						(nearbyTransition, castableHelper) -> nearbyTransition.variate(this.getID(), data ->
 								data.getYVel() > 0 && nearbyTransition.evaluator().shouldTransition(data))

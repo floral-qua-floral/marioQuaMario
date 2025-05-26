@@ -26,7 +26,7 @@ import java.util.Set;
 import static com.fqf.mario_qua_mario_api.util.StatCategory.*;
 
 public class Skid implements GroundedActionDefinition {
-	public static Identifier ID = MarioQuaMarioContent.makeID("skid");
+	public static final Identifier ID = MarioQuaMarioContent.makeID("skid");
 	@Override public @NotNull Identifier getID() {
 		return ID;
 	}

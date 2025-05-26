@@ -105,8 +105,8 @@ public class DoubleJump extends Jump implements AirborneActionDefinition {
 	}
 	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
 		return Set.of(
-			this.makeInjection(MarioQuaMarioContent.makeID("jump")),
-			this.makeInjection(MarioQuaMarioContent.makeID("p_jump"))
+			this.makeInjection(Jump.ID),
+			this.makeInjection(Jump.ID)
 		);
 	}
 }

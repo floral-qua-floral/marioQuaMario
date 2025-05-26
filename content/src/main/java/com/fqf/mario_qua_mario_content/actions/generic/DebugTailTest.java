@@ -24,8 +24,9 @@ import java.util.List;
 import java.util.Set;
 
 public class DebugTailTest implements GenericActionDefinition {
+	public static final Identifier ID = MarioQuaMarioContent.makeID("debug_tail_test");
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("debug_tail_test");
+	    return ID;
 	}
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
@@ -90,7 +91,7 @@ public class DebugTailTest implements GenericActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions() {
 		return List.of(
 				new TransitionDefinition(
-						MarioQuaMarioContent.makeID("debug_sprint"),
+						DebugSprint.ID,
 						data -> data.getMario().isSprinting(), EvaluatorEnvironment.COMMON,
 						null,
 						(data, isSelf, seed) -> data.playSound(MarioContentSFX.FIREBALL, seed)

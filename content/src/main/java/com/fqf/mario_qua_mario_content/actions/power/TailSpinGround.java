@@ -120,7 +120,7 @@ public class TailSpinGround implements GroundedActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(GroundedActionHelper helper) {
 		return List.of(
 				new TransitionDefinition(
-						MarioQuaMarioContent.makeID("duck_waddle"),
+						DuckWaddle.ID,
 						data -> !data.hasPower(Powers.TAIL_ATTACK)
 								|| doneSpinning(data),
 						EvaluatorEnvironment.COMMON
@@ -131,7 +131,7 @@ public class TailSpinGround implements GroundedActionDefinition {
 		return List.of(
 				DuckWaddle.UNDUCK,
 				DuckJump.makeDuckJumpTransition(helper).variate(
-						MarioQuaMarioContent.makeID("tail_spin_jump"),
+						TailSpinJump.ID,
 						null, null,
 						data -> {
 							helper.performJump(data, TailSpinJump.JUMP_VEL, null);
@@ -144,7 +144,7 @@ public class TailSpinGround implements GroundedActionDefinition {
 	}
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(GroundedActionHelper helper) {
 		return List.of(
-				DuckFall.DUCK_FALL.variate(MarioQuaMarioContent.makeID("tail_spin_fall"), null)
+				DuckFall.DUCK_FALL.variate(TailSpinFall.ID, null)
 		);
 	}
 

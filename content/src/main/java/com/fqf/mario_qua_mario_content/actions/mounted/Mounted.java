@@ -24,8 +24,9 @@ import java.util.Objects;
 import java.util.Set;
 
 public class Mounted implements MountedActionDefinition {
+	public static final Identifier ID = MarioQuaMarioContent.makeID("mounted");
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("mounted");
+	    return ID;
 	}
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {

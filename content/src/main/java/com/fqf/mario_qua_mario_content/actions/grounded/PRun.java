@@ -10,6 +10,7 @@ import com.fqf.mario_qua_mario_api.util.Easing;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
 import com.fqf.mario_qua_mario_content.actions.airborne.Jump;
+import com.fqf.mario_qua_mario_content.actions.airborne.PJump;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,8 +21,9 @@ import java.util.Set;
 import static com.fqf.mario_qua_mario_api.util.StatCategory.*;
 
 public class PRun implements GroundedActionDefinition {
+	public static final Identifier ID = MarioQuaMarioContent.makeID("p_run");
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("p_run");
+	    return ID;
 	}
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
@@ -96,7 +98,7 @@ public class PRun implements GroundedActionDefinition {
 				DuckWaddle.DUCK,
 				Skid.SKID,
 				new TransitionDefinition(
-						MarioQuaMarioContent.makeID("sub_walk"),
+						SubWalk.ID,
 						data -> {
 							double threshold = WalkRun.RUN_SPEED.getAsThreshold(data);
 							return
@@ -110,7 +112,7 @@ public class PRun implements GroundedActionDefinition {
 	}
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(GroundedActionHelper helper) {
 		return List.of(
-				Jump.makeJumpTransition(helper).variate(MarioQuaMarioContent.makeID("p_jump"), null)
+				Jump.makeJumpTransition(helper).variate(PJump.ID, null)
 		);
 	}
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(GroundedActionHelper helper) {

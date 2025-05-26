@@ -17,6 +17,8 @@ import com.fqf.mario_qua_mario_api.util.CharaStat;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
 import com.fqf.mario_qua_mario_content.actions.airborne.GroundPoundFlip;
+import com.fqf.mario_qua_mario_content.actions.airborne.Jump;
+import com.fqf.mario_qua_mario_content.actions.airborne.SpecialFall;
 import com.fqf.mario_qua_mario_content.powerups.Raccoon;
 import com.fqf.mario_qua_mario_content.util.ActionTimerVars;
 import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
@@ -32,7 +34,7 @@ import java.util.Set;
 import static com.fqf.mario_qua_mario_api.util.StatCategory.*;
 
 public class TailStall extends Fall implements AirborneActionDefinition {
-	private static final Identifier ID = MarioQuaMarioContent.makeID("tail_stall");
+	public static final Identifier ID = MarioQuaMarioContent.makeID("tail_stall");
 	@Override public @NotNull Identifier getID() {
 		return ID;
 	}
@@ -98,7 +100,7 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 	}
 
 	protected static final TransitionDefinition END_STALLING = new TransitionDefinition(
-			MarioQuaMarioContent.makeID("fall"),
+			Fall.ID,
 			data -> !data.getInputs().JUMP.isHeld() || data.getYVel() > 0,
 			EvaluatorEnvironment.CLIENT_ONLY
 	);
@@ -106,7 +108,7 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(AirborneActionHelper helper) {
 		return List.of(
 				new TransitionDefinition(
-						MarioQuaMarioContent.makeID("special_fall"), // special fall coming in CLUTCH!
+						SpecialFall.ID, // special fall coming in CLUTCH!
 						data -> !data.hasPower(Powers.TAIL_STALL),
 						EvaluatorEnvironment.COMMON
 				)
@@ -121,7 +123,7 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 
 	public static final CharaStat STALL_THRESHOLD = new CharaStat(-0.31, THRESHOLD, POWER_UP);
 	private static final TransitionDefinition STALL_TRANSITION = new TransitionDefinition(
-			MarioQuaMarioContent.makeID("tail_stall"),
+			TailStall.ID,
 			data ->
 					data.hasPower(Powers.TAIL_STALL)
 					&& !data.getMario().isInSneakingPose()
@@ -145,7 +147,7 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 			},
 			null
 	);
-	private static final Identifier DUCK_STALL_ID = MarioQuaMarioContent.makeID("tail_stall_duck");
+	protected static final Identifier DUCK_STALL_ID = MarioQuaMarioContent.makeID("tail_stall_duck");
 	private static final TransitionDefinition DUCK_STALL_TRANSITION = STALL_TRANSITION.variate(
 			DUCK_STALL_ID,
 			data ->
@@ -165,19 +167,19 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 		return Set.of(
 				new TransitionInjectionDefinition(
 						TransitionInjectionDefinition.InjectionPlacement.AFTER,
-						MarioQuaMarioContent.makeID("ground_pound_flip"),
+						GroundPoundFlip.ID,
 						STALL_INJECTION_PREDICATE,
 						(nearbyTransition, castableHelper) -> STALL_TRANSITION
 				),
 				new TransitionInjectionDefinition(
 						TransitionInjectionDefinition.InjectionPlacement.AFTER,
-						MarioQuaMarioContent.makeID("fall"),
+						Fall.ID,
 						STALL_INJECTION_PREDICATE,
 						(nearbyTransition, castableHelper) -> DUCK_STALL_TRANSITION
 				),
 				new TransitionInjectionDefinition(
 						TransitionInjectionDefinition.InjectionPlacement.AFTER,
-						MarioQuaMarioContent.makeID("jump"),
+						Jump.ID,
 						STALL_INJECTION_PREDICATE,
 						(nearbyTransition, castableHelper) -> DUCK_STALL_TRANSITION
 				)

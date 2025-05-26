@@ -21,7 +21,7 @@ public class Super implements PowerUpDefinition {
 	}
 
 	@Override public @Nullable Identifier getReversionTarget() {
-		return MarioQuaMarioContent.makeID("small");
+		return Small.ID;
 	}
 	@Override public int getValue() {
 		return 1;

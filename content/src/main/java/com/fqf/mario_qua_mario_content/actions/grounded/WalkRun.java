@@ -21,8 +21,9 @@ import java.util.Set;
 import static com.fqf.mario_qua_mario_api.util.StatCategory.*;
 
 public class WalkRun extends SubWalk implements GroundedActionDefinition {
+	public static final Identifier ID = MarioQuaMarioContent.makeID("walk_run");
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("walk_run");
+	    return ID;
 	}
 
 	@Override
@@ -99,12 +100,12 @@ public class WalkRun extends SubWalk implements GroundedActionDefinition {
 				DuckWaddle.DUCK,
 				Skid.SKID,
 				new TransitionDefinition(
-						MarioQuaMarioContent.makeID("sub_walk"),
+						SubWalk.ID,
 						data -> !meetsWalkRunRequirement(data),
 						EvaluatorEnvironment.CLIENT_ONLY
 				),
 				new TransitionDefinition(
-						MarioQuaMarioContent.makeID("p_run"),
+						PRun.ID,
 						data -> PRun.meetsPRunRequirements(data) && ActionTimerVars.get(data).actionTimer > 20,
 						EvaluatorEnvironment.CLIENT_ONLY
 				)
@@ -115,7 +116,7 @@ public class WalkRun extends SubWalk implements GroundedActionDefinition {
 		return Set.of(
 				new TransitionInjectionDefinition(
 						TransitionInjectionDefinition.InjectionPlacement.BEFORE,
-						MarioQuaMarioContent.makeID("sub_walk"),
+						SubWalk.ID,
 						ActionCategory.AIRBORNE,
 						(nearbyTransition, castableHelper) -> nearbyTransition.variate(
 								this.getID(),
@@ -125,7 +126,7 @@ public class WalkRun extends SubWalk implements GroundedActionDefinition {
 				),
 				new TransitionInjectionDefinition(
 						TransitionInjectionDefinition.InjectionPlacement.BEFORE,
-						MarioQuaMarioContent.makeID("sub_walk"),
+						SubWalk.ID,
 						ActionCategory.GROUNDED,
 						(nearbyTransition, castableHelper) -> nearbyTransition.variate(
 								this.getID(),

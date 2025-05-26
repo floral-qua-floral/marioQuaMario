@@ -15,6 +15,7 @@ import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
 import com.fqf.mario_qua_mario_content.actions.airborne.GroundPoundFlip;
 import com.fqf.mario_qua_mario_content.actions.airborne.PJump;
+import com.fqf.mario_qua_mario_content.actions.airborne.SpecialFall;
 import com.fqf.mario_qua_mario_content.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario_content.powerups.Raccoon;
 import com.fqf.mario_qua_mario_content.util.ActionTimerVars;
@@ -31,8 +32,9 @@ import static com.fqf.mario_qua_mario_api.util.StatCategory.JUMP_VELOCITY;
 import static com.fqf.mario_qua_mario_api.util.StatCategory.POWER_UP;
 
 public class TailFly extends PJump implements AirborneActionDefinition {
+	public static final Identifier ID = MarioQuaMarioContent.makeID("tail_fly");
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("tail_fly");
+	    return ID;
 	}
 
 	@Override
@@ -64,7 +66,7 @@ public class TailFly extends PJump implements AirborneActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(AirborneActionHelper helper) {
 		return List.of(
 				new TransitionDefinition(
-						MarioQuaMarioContent.makeID("special_fall"),
+						SpecialFall.ID,
 						data -> !data.hasPower(Powers.TAIL_STALL) || data.getVars(Raccoon.RaccoonVars.class).flightTicks <= 0,
 						EvaluatorEnvironment.COMMON
 				)
@@ -74,7 +76,7 @@ public class TailFly extends PJump implements AirborneActionDefinition {
 		return List.of(
 				GroundPoundFlip.GROUND_POUND,
 				new TransitionDefinition(
-						MarioQuaMarioContent.makeID("p_jump"),
+						PJump.ID,
 						data -> !data.getInputs().JUMP.isHeld(),
 						EvaluatorEnvironment.CLIENT_ONLY
 				)

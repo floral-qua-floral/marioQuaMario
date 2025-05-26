@@ -12,6 +12,7 @@ import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_api.util.CharaStat;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.aquatic.Submerged;
+import com.fqf.mario_qua_mario_content.actions.grounded.SubWalk;
 import com.fqf.mario_qua_mario_content.stomp_types.JumpStomp;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -84,7 +85,7 @@ public class Fall implements AirborneActionDefinition {
 	}
 
 	public static final TransitionDefinition FALL = new TransitionDefinition(
-			MarioQuaMarioContent.makeID("fall"),
+			Fall.ID,
 			data -> !data.getMario().isOnGround(),
 			EvaluatorEnvironment.CLIENT_ONLY
 	);
@@ -104,7 +105,7 @@ public class Fall implements AirborneActionDefinition {
 	}
 
 	public static final TransitionDefinition LANDING = new TransitionDefinition(
-			MarioQuaMarioContent.makeID("sub_walk"),
+			SubWalk.ID,
 			data -> data.getMario().isOnGround(),
 			EvaluatorEnvironment.COMMON
 	);

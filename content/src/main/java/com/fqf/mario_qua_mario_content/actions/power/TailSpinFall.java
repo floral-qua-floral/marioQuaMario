@@ -11,6 +11,7 @@ import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_api.util.CharaStat;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario_content.actions.airborne.DuckFall;
 import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
 import com.fqf.mario_qua_mario_content.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario_content.actions.grounded.DuckWaddle;
@@ -87,7 +88,7 @@ public class TailSpinFall implements AirborneActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(AirborneActionHelper helper) {
 		return List.of(
 				new TransitionDefinition(
-						MarioQuaMarioContent.makeID("duck_fall"),
+						DuckFall.ID,
 						data -> !data.hasPower(Powers.TAIL_ATTACK),
 						EvaluatorEnvironment.COMMON
 				)
@@ -95,7 +96,7 @@ public class TailSpinFall implements AirborneActionDefinition {
 	}
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {
 		return List.of(
-				DuckWaddle.UNDUCK.variate(MarioQuaMarioContent.makeID("fall"), null)
+				DuckWaddle.UNDUCK.variate(Fall.ID, null)
 		);
 	}
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {

@@ -19,8 +19,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class TailStallDucking extends TailStall implements AirborneActionDefinition {
+	public static final Identifier ID = DUCK_STALL_ID; // prevents warnings from trying to access subclass field in TailStall transitions
 	@Override public @NotNull Identifier getID() {
-		return MarioQuaMarioContent.makeID("tail_stall_duck");
+	    return ID;
 	}
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
@@ -53,8 +54,8 @@ public class TailStallDucking extends TailStall implements AirborneActionDefinit
 
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {
 		return List.of(
-			END_STALLING.variate(MarioQuaMarioContent.makeID("duck_fall"), null),
-			DuckWaddle.UNDUCK.variate(MarioQuaMarioContent.makeID("tail_stall"), null)
+			END_STALLING.variate(DuckFall.ID, null),
+			DuckWaddle.UNDUCK.variate(TailStall.ID, null)
 		);
 	}
 

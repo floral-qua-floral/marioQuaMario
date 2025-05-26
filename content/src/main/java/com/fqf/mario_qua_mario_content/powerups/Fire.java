@@ -30,7 +30,7 @@ public class Fire implements PowerUpDefinition {
 	}
 
 	@Override public @Nullable Identifier getReversionTarget() {
-		return MarioQuaMarioContent.makeID("super");
+		return Super.ID;
 	}
 	@Override public int getValue() {
 		return 2;

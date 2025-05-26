@@ -125,7 +125,7 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(AirborneActionHelper helper) {
 		return List.of(
 				new TransitionDefinition(
-						MarioQuaMarioContent.makeID("ground_pound_drop"),
+						GroundPoundDrop.ID,
 						data -> data.getVars(FlipTimerVars.class).actionTimer >= FLIP_DURATION,
 						EvaluatorEnvironment.COMMON,
 						data -> {

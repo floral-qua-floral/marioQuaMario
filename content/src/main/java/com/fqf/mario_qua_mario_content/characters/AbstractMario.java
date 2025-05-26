@@ -5,8 +5,11 @@ import com.fqf.mario_qua_mario_api.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
 import com.fqf.mario_qua_mario_content.actions.airborne.LavaBoost;
 import com.fqf.mario_qua_mario_content.actions.generic.Debug;
+import com.fqf.mario_qua_mario_content.actions.mounted.Mounted;
+import com.fqf.mario_qua_mario_content.powerups.Super;
 import com.fqf.mario_qua_mario_content.util.MarioContentGamerules;
 import com.fqf.mario_qua_mario_content.util.MarioVars;
 import com.fqf.mario_qua_mario_content.util.Powers;
@@ -24,14 +27,14 @@ import java.util.Set;
 
 public abstract class AbstractMario implements CharacterDefinition {
 	@Override public @NotNull Identifier getInitialAction() {
-		return MarioQuaMarioContent.makeID("fall");
+		return Fall.ID;
 	}
 	@Override public @NotNull Identifier getInitialPowerUp() {
-		return MarioQuaMarioContent.makeID("super");
+		return Super.ID;
 	}
 
 	@Override public @NotNull Identifier getMountedAction(Entity vehicle) {
-		return MarioQuaMarioContent.makeID("mounted");
+		return Mounted.ID;
 	}
 
 	@Override
