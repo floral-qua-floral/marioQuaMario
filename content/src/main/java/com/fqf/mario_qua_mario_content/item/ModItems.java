@@ -20,7 +20,7 @@ public class ModItems {
 	public static final Item SUPER_LEAF = registerPowerItem("super_leaf", Raccoon.ID, 4, 0.4F);
 	public static final Item SUPER_MUSHROOM = registerItem("super_mushroom", new PowerUpItem(new Item.Settings().maxCount(4).food(
 			new FoodComponent.Builder().nutrition(6).saturationModifier(0.7F).alwaysEdible().snack().build()
-	), Super.ID));
+	), Super.ID, 1));
 
 	public static final Item COIN = registerItem("coin", new CoinItem((new Item.Settings()).rarity(Rarity.UNCOMMON)));
 
@@ -29,7 +29,7 @@ public class ModItems {
 	}
 
 	private static Item registerPowerItem(String name, Identifier powerID, int nutrition, float saturation) {
-		return registerItem(name, new PowerUpItem(new Item.Settings().maxCount(1).food(new FoodComponent.Builder().nutrition(nutrition).saturationModifier(saturation).alwaysEdible().build()), powerID));
+		return registerItem(name, new PowerUpItem(new Item.Settings().maxCount(1).food(new FoodComponent.Builder().nutrition(nutrition).saturationModifier(saturation).alwaysEdible().build()), powerID, 2));
 	}
 
 	public static void registerModItems() {

@@ -110,6 +110,11 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 		return this.isEnabled() ? this.getPowerUp().ID : null;
 	}
 
+	@Override
+	public int getPowerUpValue() {
+		return this.isEnabled() ? this.getPowerUp().VALUE : -1;
+	}
+
 	public boolean setPowerUp(ParsedPowerUp newPowerUp, boolean isReversion, long seed) {
 		return this.setPowerUpTransitionless(newPowerUp);
 	}

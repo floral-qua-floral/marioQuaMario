@@ -16,6 +16,7 @@ public interface IMarioData {
 	Identifier getActionID();
 	ActionCategory getActionCategory();
 	Identifier getPowerUpID();
+	int getPowerUpValue();
 	Identifier getCharacterID();
 
 	boolean hasPower(String power);
