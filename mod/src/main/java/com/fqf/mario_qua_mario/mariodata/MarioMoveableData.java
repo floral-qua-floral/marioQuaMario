@@ -3,6 +3,7 @@ package com.fqf.mario_qua_mario.mariodata;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import net.minecraft.entity.MovementType;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Vector2d;
@@ -238,7 +239,13 @@ public abstract class MarioMoveableData extends MarioPlayerData implements IMari
 	}
 
 	protected void moveWithFluidPushing() {
-		this.getMario().move(MovementType.SELF, this.getMario().getVelocity().add(this.getFluidPushingVel()));
+		Vec3d motion = this.getMario().getVelocity().add(this.getFluidPushingVel());
+		// isChunkLoaded is deprecated but what the HECK ELSE DO I USE INSTEAD??? LivingEntity.travel uses it???
+		if(!this.getMario().getWorld().isChunkLoaded(this.getMario().getVelocityAffectingPos())) {
+			motion = motion.withAxis(Direction.Axis.Y, 0);
+			this.getMario().setVelocity(this.getMario().getVelocity().withAxis(Direction.Axis.Y, 0));
+		}
+		this.getMario().move(MovementType.SELF, motion);
 	}
 
 	public WallboundActionDefinition.WallInfo getWallInfo() {
