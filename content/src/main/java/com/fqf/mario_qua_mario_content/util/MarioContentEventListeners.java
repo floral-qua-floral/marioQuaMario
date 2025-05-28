@@ -65,9 +65,9 @@ public class MarioContentEventListeners {
 						.styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://ko-fi.com/floralquafloral"))));
 
 				// Commission
-				nagMessage.append(Text.translatable("messages.mario_qua_mario.link2").append(Text.translatable("messages.mario_qua_mario.link3")
-						.formatted(Formatting.UNDERLINE) // TODO Insert real commission link
-						.styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://en.wikipedia.org/wiki/Sans_(Undertale)")))));
+//				nagMessage.append(Text.translatable("messages.mario_qua_mario.link2").append(Text.translatable("messages.mario_qua_mario.link3")
+//						.formatted(Formatting.UNDERLINE) // TODO Insert real commission link
+//						.styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://en.wikipedia.org/wiki/Sans_(Undertale)")))));
 
 				nagMessage.append(Text.translatable("messages.mario_qua_mario.nag2"));
 				nagMessage.append(Text.translatable("text.autoconfig.mario_qua_mario_content.option.nagMessage"));

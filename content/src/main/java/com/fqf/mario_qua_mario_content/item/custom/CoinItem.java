@@ -33,11 +33,13 @@ public class CoinItem extends Item {
 
 		if(!world.isClient()) {
 			Pair<Item, Integer> reward = COIN_REWARDS.get(user.getRandom().nextInt(COIN_REWARDS.size()));
-			user.giveItemStack(new ItemStack(reward.getLeft(), reward.getRight()));
+			if(user.giveItemStack(new ItemStack(reward.getLeft(), reward.getRight()))) {
+				user.incrementStat(Stats.USED.getOrCreateStat(this));
+				stack.decrementUnlessCreative(8, user);
+				return TypedActionResult.success(stack, true);
+			}
 		}
 
-		user.incrementStat(Stats.USED.getOrCreateStat(this));
-		stack.decrementUnlessCreative(8, user);
-		return TypedActionResult.success(stack, true);
+		return TypedActionResult.fail(stack);
 	}
 }
