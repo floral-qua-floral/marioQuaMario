@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario_content.actions.airborne;
 
 import com.fqf.mario_qua_mario_api.definitions.states.actions.AirborneActionDefinition;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.SneakingRule;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.SprintingRule;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.TransitionDefinition;
@@ -177,7 +178,8 @@ public class LongJump extends Jump implements AirborneActionDefinition {
 		return List.of(
 				Submerged.SUBMERGE,
 				Jump.DOUBLE_JUMPABLE_LANDING.variate(PRun.ID, data ->
-						Fall.LANDING.evaluator().shouldTransition(data) && (data.isServer() || PRun.meetsPRunRequirements(data))),
+						Fall.LANDING.evaluator().shouldTransition(data) && (data.isServer() || PRun.meetsPRunRequirements(data)),
+						EvaluatorEnvironment.CLIENT_CHECKED, null, null),
 				Jump.DOUBLE_JUMPABLE_LANDING
 		);
 	}

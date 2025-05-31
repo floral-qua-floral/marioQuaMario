@@ -17,6 +17,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MovementType;
+import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.math.BlockPos;
@@ -34,22 +35,24 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 
 		// StompS2CPayload Receiver
 		ClientPlayNetworking.registerGlobalReceiver(MarioPackets.StompS2CPayload.ID, (payload, context) -> {
-			PlayerEntity mario = getMarioFromID(context, payload.marioID());
-			MarioPlayerData data = mario.mqm$getMarioData();
 			Entity target = context.player().getWorld().getEntityById(payload.stompedEntityID());
-			StompResult.ExecutableResult result = StompResult.ExecutableResult.values()[payload.stompResultIndex()];
-			ParsedStompType stomp = Objects.requireNonNull(RegistryManager.STOMP_TYPES.get(payload.stompTypeID()));
+			packetAgnosticStompHandling(context, payload.marioID(), target, payload.stompTypeID(), payload.stompResultIndex(), payload.affectMario(), payload.seed());
+		});
 
-			if(payload.affectMario()) stomp.transitionAction(data, result);
+		// StompDragonPartAffectMarioS2CPayload Receiver
+		ClientPlayNetworking.registerGlobalReceiver(MarioPackets.StompDragonPartAffectMarioS2CPayload.ID, (payload, context) -> {
+			EnderDragonEntity dragon = (EnderDragonEntity) context.player().getWorld().getEntityById(payload.dragonID());
+			assert dragon != null;
+			Entity target = dragon.getBodyParts()[payload.partIndex()];
+			packetAgnosticStompHandling(context, payload.marioID(), target, payload.stompTypeID(), payload.stompResultIndex(), true, payload.seed());
+		});
 
-			stomp.executeClients((IMarioClientData) data, target, result, payload.affectMario(), payload.seed());
-
-			if(data instanceof MarioMoveableData moveableData) {
-				Vec3d targetPos = stomp.executeTravellersAndGetTargetPos(moveableData, target, result, mario.getPos(), payload.affectMario());
-				if(payload.affectMario() && targetPos != null) {
-					data.getMario().move(MovementType.SELF, targetPos.subtract(mario.getPos()));
-				}
-			}
+		// StompDragonPartNoAffectMarioS2CPayload Receiver
+		ClientPlayNetworking.registerGlobalReceiver(MarioPackets.StompDragonPartNoAffectMarioS2CPayload.ID, (payload, context) -> {
+			EnderDragonEntity dragon = (EnderDragonEntity) context.player().getWorld().getEntityById(payload.dragonID());
+			assert dragon != null;
+			Entity target = dragon.getBodyParts()[payload.partIndex()];
+			packetAgnosticStompHandling(context, payload.marioID(), target, payload.stompTypeID(), payload.stompResultIndex(), false, payload.seed());
 		});
 
 		// DisableMarioS2CPayload Receiver
@@ -191,5 +194,28 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 
 	private static void conditionallySaveReplayPacket(CustomPayload payload) {
 		if(REPLAY_MOD_PRESENT) MarioReplayCompatibilityHelper.saveS2CPacketToReplay(payload);
+	}
+
+	private static void packetAgnosticStompHandling(
+			ClientPlayNetworking.Context context,
+			int marioID, Entity target,
+			int stompTypeID, int stompResultIndex, boolean affectMario, long seed
+	) {
+		MarioQuaMario.LOGGER.info("Stomping target: {}", target);
+		PlayerEntity mario = getMarioFromID(context, marioID);
+		MarioPlayerData data = mario.mqm$getMarioData();
+		StompResult.ExecutableResult result = StompResult.ExecutableResult.values()[stompResultIndex];
+		ParsedStompType stomp = Objects.requireNonNull(RegistryManager.STOMP_TYPES.get(stompTypeID));
+
+		if(affectMario) stomp.transitionAction(data, result);
+
+		stomp.executeClients((IMarioClientData) data, target, result, affectMario, seed);
+
+		if(data instanceof MarioMoveableData moveableData) {
+			Vec3d targetPos = stomp.executeTravellersAndGetTargetPos(moveableData, target, result, mario.getPos(), affectMario);
+			if(affectMario && targetPos != null) {
+				data.getMario().move(MovementType.SELF, targetPos.subtract(mario.getPos()));
+			}
+		}
 	}
 }

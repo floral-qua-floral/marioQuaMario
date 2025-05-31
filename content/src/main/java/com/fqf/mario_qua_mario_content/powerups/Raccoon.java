@@ -226,7 +226,7 @@ public class Raccoon implements PowerUpDefinition {
 				new PreventAttack() {
 					@Override
 					public boolean shouldInterceptAttack(IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
-						return weapon.isEmpty();
+						return weapon.isEmpty() && blockHitResult == null;
 					}
 				}
 		);

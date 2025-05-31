@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.command.EntityDataObject;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.Stats;
@@ -33,11 +34,12 @@ public class MarioContentEventListeners {
 						else
 							marioY = mario.getY();
 
-						if(JumpStomp.collidingFromTop(attacker, mario, marioY, Vec3d.ZERO, false)) {
+						if(JumpStomp.collidingFromTop(attacker, mario, marioY, Vec3d.ZERO, false)
+								|| attacker instanceof EnderDragonEntity && mario.getY() > attacker.getY() + attacker.getHeight() / 2) {
 							MarioQuaMarioContent.LOGGER.info("Prevented damage to {} from {} due to Stomp Guard.", mario, attacker);
 							return false;
 						}
-						else MarioQuaMarioContent.LOGGER.info("Allowed damage to Mario.\nmarioY:    {}\nthreshold: {}", marioY, attacker.getY() + attacker.getHeight());
+//						else MarioQuaMarioContent.LOGGER.info("Allowed damage to Mario.\nmarioY:    {}\nthreshold: {}", marioY, attacker.getY() + attacker.getHeight());
 					}
 				}
 			}

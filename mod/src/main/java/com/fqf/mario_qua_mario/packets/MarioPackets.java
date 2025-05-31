@@ -8,12 +8,15 @@ import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.boss.dragon.EnderDragonPart;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+
+import java.util.Arrays;
 
 public class MarioPackets {
 	public static void register() {
@@ -34,6 +37,8 @@ public class MarioPackets {
 		SyncUseCharacterStatsS2CPayload.register();
 
 		StompS2CPayload.register();
+		StompDragonPartAffectMarioS2CPayload.register();
+		StompDragonPartNoAffectMarioS2CPayload.register();
 
 		MarioAttackInterceptionPackets.MissedAttackInterceptedC2SPayload.register();
 		MarioAttackInterceptionPackets.EntityAttackInterceptedC2SPayload.register();
@@ -56,14 +61,44 @@ public class MarioPackets {
 	}
 
 	public static void stompS2C(ServerPlayerEntity mario, ParsedStompType stompType, Entity stompedEntity, StompResult.ExecutableResult result, boolean affectMario) {
-		sendToTrackers(mario, new StompS2CPayload(
+		MarioQuaMario.LOGGER.info("Sending stomp packet to clients.\nTarget: {}\nTarget ID: {}", stompedEntity, stompedEntity.getId());
+		sendToTrackers(mario, makeStompS2CPayload(mario, stompType, stompedEntity, result, affectMario), true);
+	}
+	private static CustomPayload makeStompS2CPayload(ServerPlayerEntity mario, ParsedStompType stompType, Entity stompedEntity, StompResult.ExecutableResult result, boolean affectMario) {
+		if(stompedEntity instanceof EnderDragonPart stompedDragonPart) {
+			// oh my god ender dragon parts are HORRIFIC
+			// this is a dumb way to handle it but i don't wanna have to figure out how to cram more variables into a payload
+			// >:(
+
+			int partIndex = Arrays.asList(stompedDragonPart.owner.getBodyParts()).indexOf(stompedDragonPart);
+			// ^ probably slow but only runs when stomping an ender dragon part so literally who cares
+
+			if(affectMario) return new StompDragonPartAffectMarioS2CPayload(
+					mario.getId(),
+					RegistryManager.STOMP_TYPES.getRawIdOrThrow(stompType),
+					stompedDragonPart.owner.getId(),
+					partIndex,
+					result.ordinal(),
+					mario.getRandom().nextLong()
+			);
+			else return new StompDragonPartNoAffectMarioS2CPayload(
+					mario.getId(),
+					RegistryManager.STOMP_TYPES.getRawIdOrThrow(stompType),
+					stompedDragonPart.owner.getId(),
+					partIndex,
+					result.ordinal(),
+					mario.getRandom().nextLong()
+			);
+		}
+
+		return new StompS2CPayload(
 				mario.getId(),
 				RegistryManager.STOMP_TYPES.getRawIdOrThrow(stompType),
 				stompedEntity.getId(),
 				result.ordinal(),
 				affectMario,
 				mario.getRandom().nextLong()
-		), true);
+		);
 	}
 
 	public static void sendToTrackers(ServerPlayerEntity mario, CustomPayload packet, boolean includeMario) {
@@ -102,6 +137,46 @@ public class MarioPackets {
 				PacketCodecs.BOOL, StompS2CPayload::affectMario,
 				PacketCodecs.VAR_LONG, StompS2CPayload::seed,
 				StompS2CPayload::new
+		);
+
+		@Override public Id<? extends CustomPayload> getId() {
+			return ID;
+		}
+		public static void register() {
+			PayloadTypeRegistry.playS2C().register(ID, CODEC);
+		}
+	}
+
+	protected record StompDragonPartAffectMarioS2CPayload(int marioID, int stompTypeID, int dragonID, int partIndex, int stompResultIndex, long seed) implements CustomPayload {
+		public static final Id<StompDragonPartAffectMarioS2CPayload> ID = MarioPackets.makeID("stomp_dragon_part_s2c");
+		public static final PacketCodec<RegistryByteBuf, StompDragonPartAffectMarioS2CPayload> CODEC = PacketCodec.tuple(
+				PacketCodecs.INTEGER, StompDragonPartAffectMarioS2CPayload::marioID,
+				PacketCodecs.INTEGER, StompDragonPartAffectMarioS2CPayload::stompTypeID,
+				PacketCodecs.INTEGER, StompDragonPartAffectMarioS2CPayload::dragonID,
+				PacketCodecs.INTEGER, StompDragonPartAffectMarioS2CPayload::partIndex,
+				PacketCodecs.INTEGER, StompDragonPartAffectMarioS2CPayload::stompResultIndex,
+				PacketCodecs.VAR_LONG, StompDragonPartAffectMarioS2CPayload::seed,
+				StompDragonPartAffectMarioS2CPayload::new
+		);
+
+		@Override public Id<? extends CustomPayload> getId() {
+			return ID;
+		}
+		public static void register() {
+			PayloadTypeRegistry.playS2C().register(ID, CODEC);
+		}
+	}
+
+	protected record StompDragonPartNoAffectMarioS2CPayload(int marioID, int stompTypeID, int dragonID, int partIndex, int stompResultIndex, long seed) implements CustomPayload {
+		public static final Id<StompDragonPartNoAffectMarioS2CPayload> ID = MarioPackets.makeID("stomp_dragon_part_no_affect_s2c");
+		public static final PacketCodec<RegistryByteBuf, StompDragonPartNoAffectMarioS2CPayload> CODEC = PacketCodec.tuple(
+				PacketCodecs.INTEGER, StompDragonPartNoAffectMarioS2CPayload::marioID,
+				PacketCodecs.INTEGER, StompDragonPartNoAffectMarioS2CPayload::stompTypeID,
+				PacketCodecs.INTEGER, StompDragonPartNoAffectMarioS2CPayload::dragonID,
+				PacketCodecs.INTEGER, StompDragonPartNoAffectMarioS2CPayload::partIndex,
+				PacketCodecs.INTEGER, StompDragonPartNoAffectMarioS2CPayload::stompResultIndex,
+				PacketCodecs.VAR_LONG, StompDragonPartNoAffectMarioS2CPayload::seed,
+				StompDragonPartNoAffectMarioS2CPayload::new
 		);
 
 		@Override public Id<? extends CustomPayload> getId() {

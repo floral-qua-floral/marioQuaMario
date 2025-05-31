@@ -6,6 +6,8 @@
     "AbstractHorseEntityMixin",
     "AbstractMinecartEntityMixin",
     "CamelEntityMixin",
+    "EnderDragonEntityMixin",
+    "EnderDragonPartMixin",
     "EntityMixin",
     "VehicleEntityMixin"
   ],
