@@ -7,11 +7,10 @@
     "AbstractMinecartEntityMixin",
     "CamelEntityMixin",
     "EnderDragonEntityMixin",
-    "EnderDragonPartMixin",
     "EntityMixin",
     "VehicleEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-	}
+  }
 }
