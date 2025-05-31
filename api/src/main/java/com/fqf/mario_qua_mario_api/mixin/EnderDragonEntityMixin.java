@@ -13,7 +13,6 @@ import org.spongepowered.asm.mixin.Mixin;
 public class EnderDragonEntityMixin implements Stompable {
 	@Override
 	public @NotNull StompResult mqm$stomp(IMarioAuthoritativeData marioData, boolean attemptMount, float damageAmount, DamageSource damageSource) {
-		MarioQuaMarioAPI.LOGGER.info("Attempting stomp on EnderDragonEntity...?");
-		return StompResult.FAIL; // Rely on the EnderDragonPart hitboxes for stomping!
+		return StompResult.FAIL; // EnderDragonPart should be stomped instead!
 	}
 }
