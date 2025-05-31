@@ -201,7 +201,7 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 			int marioID, Entity target,
 			int stompTypeID, int stompResultIndex, boolean affectMario, long seed
 	) {
-		MarioQuaMario.LOGGER.info("Stomping target: {}", target);
+//		MarioQuaMario.LOGGER.info("Stomping target: {}", target);
 		PlayerEntity mario = getMarioFromID(context, marioID);
 		MarioPlayerData data = mario.mqm$getMarioData();
 		StompResult.ExecutableResult result = StompResult.ExecutableResult.values()[stompResultIndex];

@@ -61,7 +61,7 @@ public class MarioPackets {
 	}
 
 	public static void stompS2C(ServerPlayerEntity mario, ParsedStompType stompType, Entity stompedEntity, StompResult.ExecutableResult result, boolean affectMario) {
-		MarioQuaMario.LOGGER.info("Sending stomp packet to clients.\nTarget: {}\nTarget ID: {}", stompedEntity, stompedEntity.getId());
+//		MarioQuaMario.LOGGER.info("Sending stomp packet to clients.\nTarget: {}\nTarget ID: {}", stompedEntity, stompedEntity.getId());
 		sendToTrackers(mario, makeStompS2CPayload(mario, stompType, stompedEntity, result, affectMario), true);
 	}
 	private static CustomPayload makeStompS2CPayload(ServerPlayerEntity mario, ParsedStompType stompType, Entity stompedEntity, StompResult.ExecutableResult result, boolean affectMario) {

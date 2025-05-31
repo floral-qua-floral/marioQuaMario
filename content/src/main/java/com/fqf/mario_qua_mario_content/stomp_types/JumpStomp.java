@@ -116,6 +116,7 @@ public class JumpStomp implements StompTypeDefinition {
 
 	@Override
 	public void executeServer(IMarioAuthoritativeData data, ItemStack equipment, Entity target, StompResult.ExecutableResult result, boolean affectMario) {
+		MarioQuaMarioContent.LOGGER.info("Applying Stomp Guard");
 		if(affectMario && data.hasPower(Powers.STOMP_GUARD)) {
 			data.getVars(MarioVars.class).stompGuardMinHeight = target.getY() + target.getHeight() + 0.15;
 			data.getVars(MarioVars.class).stompGuardRemainingTicks = 4;

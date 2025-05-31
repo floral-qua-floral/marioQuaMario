@@ -25,7 +25,7 @@ public class MarioContentEventListeners {
 		ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
 			if(entity instanceof ServerPlayerEntity mario) {
 				IMarioData data = mario.mqm$getIMarioData();
-				if(data.isEnabled() && data.hasPower(Powers.STOMP_GUARD) && source.isDirect() && !source.isIn(DamageTypeTags.IS_PLAYER_ATTACK)) {
+				if(data.isEnabled() && data.hasPower(Powers.STOMP_GUARD) && source.isDirect() && !source.isIn(DamageTypeTags.IS_PLAYER_ATTACK) && !source.isIn(DamageTypeTags.IS_EXPLOSION)) {
 					Entity attacker = source.getAttacker();
 					if(attacker != null) {
 						double marioY;
@@ -34,12 +34,14 @@ public class MarioContentEventListeners {
 						else
 							marioY = mario.getY();
 
-						if(JumpStomp.collidingFromTop(attacker, mario, marioY, Vec3d.ZERO, false)
-								|| attacker instanceof EnderDragonEntity && mario.getY() > attacker.getY() + attacker.getHeight() / 2) {
+						if(JumpStomp.collidingFromTop(attacker, mario, marioY, new Vec3d(0, -1, 0), false)
+								|| (attacker instanceof EnderDragonEntity && mario.getY() > attacker.getY() + attacker.getHeight() / 2)) {
 							MarioQuaMarioContent.LOGGER.info("Prevented damage to {} from {} due to Stomp Guard.", mario, attacker);
 							return false;
 						}
-//						else MarioQuaMarioContent.LOGGER.info("Allowed damage to Mario.\nmarioY:    {}\nthreshold: {}", marioY, attacker.getY() + attacker.getHeight());
+						else MarioQuaMarioContent.LOGGER.info("Allowed damage to Mario.\nmarioY:    {}\nthreshold: {}\nm > t: {}\ncFT: {}",
+								marioY, attacker.getY() + attacker.getHeight(), marioY > attacker.getY() + attacker.getHeight(),
+								JumpStomp.collidingFromTop(attacker, mario, marioY, Vec3d.ZERO, false));
 					}
 				}
 			}
