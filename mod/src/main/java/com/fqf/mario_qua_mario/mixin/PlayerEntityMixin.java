@@ -51,27 +51,28 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 
 	@Inject(method = "travel", at = @At("HEAD"), cancellable = true)
 	private void travelHook(Vec3d movementInput, CallbackInfo ci) {
+		if(this.getWorld().isClient) MarioQuaMario.LOGGER.info("distanceTraveled: {}", this.distanceTraveled);
 		if(this.mqm$getMarioData() instanceof MarioMoveableData moveableData
 				&& moveableData.doMarioTravel()
 				&& moveableData.travelHook(movementInput.z, movementInput.x))
 			ci.cancel();
 	}
 
-	@Override
-	protected boolean stepOnBlock(BlockPos pos, BlockState state, boolean playSound, boolean emitEvent, Vec3d movement) {
-		return switch(this.mqm$getMarioData().isEnabled() ? this.mqm$getMarioData().getAction().SLIDING_STATUS : null) {
-			case SLIDING, SLIDING_SILENT, SKIDDING -> false;
-			case null, default -> super.stepOnBlock(pos, state, playSound, emitEvent, movement);
-		};
-	}
-
-	@Override
-	protected void playStepSounds(BlockPos pos, BlockState state) {
-		switch(this.mqm$getMarioData().isEnabled() ? this.mqm$getMarioData().getAction().SLIDING_STATUS : null) {
-			case SLIDING, SLIDING_SILENT, SKIDDING -> {}
-			case null, default -> super.playStepSounds(pos, state);
-		};
-	}
+//	@Override
+//	protected boolean stepOnBlock(BlockPos pos, BlockState state, boolean playSound, boolean emitEvent, Vec3d movement) {
+//		return switch(this.mqm$getMarioData().isEnabled() ? this.mqm$getMarioData().getAction().SLIDING_STATUS : null) {
+//			case SLIDING, SLIDING_SILENT, SKIDDING -> false;
+//			case null, default -> super.stepOnBlock(pos, state, playSound, emitEvent, movement);
+//		};
+//	}
+//
+//	@Override
+//	protected void playStepSounds(BlockPos pos, BlockState state) {
+//		switch(this.mqm$getMarioData().isEnabled() ? this.mqm$getMarioData().getAction().SLIDING_STATUS : null) {
+//			case SLIDING, SLIDING_SILENT, SKIDDING -> {}
+//			case null, default -> super.playStepSounds(pos, state);
+//		};
+//	}
 
 	@Inject(method = "shouldSwimInFluids", at = @At("HEAD"), cancellable = true)
 	private void preventVanillaSwimming(CallbackInfoReturnable<Boolean> cir) {
@@ -118,12 +119,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 			cir.setReturnValue(false);
 	}
 
-	@Inject(method = "tickMovement", at = @At("TAIL"))
-	private void preventViewBobbing(CallbackInfo ci) {
-		MarioPlayerData data = mqm$getMarioData();
-		if(data.isClient() && data.isEnabled() && data.getAction().SLIDING_STATUS != SlidingStatus.NOT_SLIDING)
-			strideDistance = prevStrideDistance * 0.6F;
-	}
+//	@Inject(method = "tickMovement", at = @At("TAIL"))
+//	private void preventViewBobbing(CallbackInfo ci) {
+//		MarioPlayerData data = mqm$getMarioData();
+//		if(data.isClient() && data.isEnabled() && data.getAction().SLIDING_STATUS != SlidingStatus.NOT_SLIDING)
+//			strideDistance = prevStrideDistance * 0.6F;
+//	}
 
 	@Override
 	public boolean startRiding(Entity entity, boolean force) {

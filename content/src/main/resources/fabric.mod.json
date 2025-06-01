@@ -26,7 +26,8 @@
 			"com.fqf.mario_qua_mario_content.actions.generic.DebugSpinPitch",
 			"com.fqf.mario_qua_mario_content.actions.generic.DebugSpinYaw",
 			"com.fqf.mario_qua_mario_content.actions.generic.DebugSpinRoll",
-			"com.fqf.mario_qua_mario_content.actions.generic.DebugSideTurn"
+			"com.fqf.mario_qua_mario_content.actions.generic.DebugSideTurn",
+			"com.fqf.mario_qua_mario_content.actions.generic.DebugVanillaTravel"
 		],
 		"mqm-grounded-actions": [
 			"com.fqf.mario_qua_mario_content.actions.grounded.SubWalk",

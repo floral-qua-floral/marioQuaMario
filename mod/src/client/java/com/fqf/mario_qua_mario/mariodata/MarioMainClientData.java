@@ -11,6 +11,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.input.Input;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.sound.SoundInstance;
+import net.minecraft.entity.MovementType;
 import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
@@ -110,8 +111,9 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.INPUT);
 
 		this.applyModifiedVelocity();
-		this.moveWithFluidPushing();
-//		this.getMario().move(MovementType.SELF, this.getMario().getVelocity());
+
+//		if(true) return false; // <- Last line at which travelHook can be stopped before Presence Footsteps breaks.
+		this.moveWithFluidPushing(); // <- This method contains a `move` call (movementType is SELF).
 
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
 		this.applyModifiedVelocity();
