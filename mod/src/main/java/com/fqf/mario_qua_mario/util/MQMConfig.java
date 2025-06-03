@@ -7,10 +7,14 @@ import me.shedaniel.autoconfig.annotation.Config;
 @Config(name = "mario_qua_mario")
 public class MQMConfig implements ConfigData {
 	private boolean logAllActionTransitions = false;
+	private boolean logNBTReadWrite = false;
 	private boolean specialHUD = false;
 
 	public boolean logAllActionTransitions() {
 		return this.logAllActionTransitions;
+	}
+	public boolean logNBTReadWrite() {
+		return this.logNBTReadWrite;
 	}
 	public boolean isSpecialHUDEnabled() {
 		return this.specialHUD;

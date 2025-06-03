@@ -5,6 +5,7 @@
 
   "text.autoconfig.mario_qua_mario.option.specialHUD": "Debugging HUD",
   "text.autoconfig.mario_qua_mario.option.logAllActionTransitions": "Log all Action Transitions",
+  "text.autoconfig.mario_qua_mario.option.logNBTReadWrite": "Log reads & writes to NBT",
 
   "text.autoconfig.mario_qua_mario.option.spinputType": "Spin Input Type",
   "fabric.mods.mario_qua_mario.spin": "Spin",

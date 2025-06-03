@@ -31,6 +31,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity implements AdvMarioDataHolder {
@@ -51,28 +52,27 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 
 	@Inject(method = "travel", at = @At("HEAD"), cancellable = true)
 	private void travelHook(Vec3d movementInput, CallbackInfo ci) {
-		if(this.getWorld().isClient) MarioQuaMario.LOGGER.info("distanceTraveled: {}", this.distanceTraveled);
 		if(this.mqm$getMarioData() instanceof MarioMoveableData moveableData
 				&& moveableData.doMarioTravel()
 				&& moveableData.travelHook(movementInput.z, movementInput.x))
 			ci.cancel();
 	}
 
-//	@Override
-//	protected boolean stepOnBlock(BlockPos pos, BlockState state, boolean playSound, boolean emitEvent, Vec3d movement) {
-//		return switch(this.mqm$getMarioData().isEnabled() ? this.mqm$getMarioData().getAction().SLIDING_STATUS : null) {
-//			case SLIDING, SLIDING_SILENT, SKIDDING -> false;
-//			case null, default -> super.stepOnBlock(pos, state, playSound, emitEvent, movement);
-//		};
-//	}
-//
-//	@Override
-//	protected void playStepSounds(BlockPos pos, BlockState state) {
-//		switch(this.mqm$getMarioData().isEnabled() ? this.mqm$getMarioData().getAction().SLIDING_STATUS : null) {
-//			case SLIDING, SLIDING_SILENT, SKIDDING -> {}
-//			case null, default -> super.playStepSounds(pos, state);
-//		};
-//	}
+	@Override
+	protected boolean stepOnBlock(BlockPos pos, BlockState state, boolean playSound, boolean emitEvent, Vec3d movement) {
+		return switch(this.mqm$getMarioData().isEnabled() ? this.mqm$getMarioData().getAction().SLIDING_STATUS : null) {
+			case SLIDING, SLIDING_SILENT, SKIDDING -> false;
+			case null, default -> super.stepOnBlock(pos, state, playSound, emitEvent, movement);
+		};
+	}
+
+	@Override
+	protected void playStepSounds(BlockPos pos, BlockState state) {
+		switch(this.mqm$getMarioData().isEnabled() ? this.mqm$getMarioData().getAction().SLIDING_STATUS : null) {
+			case SLIDING, SLIDING_SILENT, SKIDDING -> {}
+			case null, default -> super.playStepSounds(pos, state);
+		};
+	}
 
 	@Inject(method = "shouldSwimInFluids", at = @At("HEAD"), cancellable = true)
 	private void preventVanillaSwimming(CallbackInfoReturnable<Boolean> cir) {
@@ -181,7 +181,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 			persistentData.putString(MarioNbtKeys.POWER_UP, data.getPowerUpID().toString());
 		}
 
-		MarioQuaMario.LOGGER.info("Writing player NBT:\nEnabled: {}\nCharacter: {}\nPower-up: {}",
+		if(MarioQuaMario.CONFIG.logNBTReadWrite()) MarioQuaMario.LOGGER.info("Writing player NBT:\nEnabled: {}\nCharacter: {}\nPower-up: {}",
 				persistentData.getBoolean(MarioNbtKeys.ENABLED),
 				persistentData.getString(MarioNbtKeys.CHARACTER),
 				persistentData.getString(MarioNbtKeys.POWER_UP));

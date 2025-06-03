@@ -70,7 +70,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 		if(nbt.contains(MarioNbtKeys.DATA, NbtElement.COMPOUND_TYPE)) {
 			NbtCompound persistentMarioData = nbt.getCompound(MarioNbtKeys.DATA);
 
-			MarioQuaMario.LOGGER.info("Reading player NBT:\nEnabled: {}\nCharacter: {}\nPower-up: {}",
+			if(MarioQuaMario.CONFIG.logNBTReadWrite()) MarioQuaMario.LOGGER.info("Reading player NBT:\nEnabled: {}\nCharacter: {}\nPower-up: {}",
 					persistentMarioData.getBoolean(MarioNbtKeys.ENABLED),
 					persistentMarioData.getString(MarioNbtKeys.CHARACTER),
 					persistentMarioData.getString(MarioNbtKeys.POWER_UP));
@@ -98,7 +98,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 						if(this.networkHandler == null) {
 							MarioQuaMario.LOGGER.info("Player is not yet ready for networking. Assigning silently for later synchronization...");
 							data.setupVariablesBeforeInitialApply(
-									RegistryManager.CHARACTERS.get(Identifier.of(storedCharacterID)),
+									storedCharacter,
 									RegistryManager.POWER_UPS.get(Identifier.of(storedPowerUpID))
 							);
 						}
