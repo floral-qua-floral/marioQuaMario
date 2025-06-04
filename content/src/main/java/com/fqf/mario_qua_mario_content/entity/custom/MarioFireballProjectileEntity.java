@@ -3,6 +3,7 @@ package com.fqf.mario_qua_mario_content.entity.custom;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.entity.ModEntities;
 import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.damage.DamageSource;
@@ -81,23 +82,27 @@ public class MarioFireballProjectileEntity extends ProjectileEntity {
 
 	private static final RegistryKey<DamageType> DAMAGE_TYPE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, MarioQuaMarioContent.makeResID("mario_fireball"));
 
+	public static boolean hitEntity(Entity target, Entity source, Entity attacker, Entity soundPlayer) {
+		boolean damaged = target.damage(new DamageSource(
+				source.getWorld().getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(DAMAGE_TYPE),
+				source, attacker
+		), 5);
+
+		if(!source.getWorld().isClient()) {
+			SoundEvent event;
+			if(!damaged) event = MarioContentSFX.FIREBALL_WALL;
+			else if(target.isAlive()) event = MarioContentSFX.FIREBALL_ENEMY;
+			else event = MarioContentSFX.KICK;
+			soundPlayer.playSound(event, 1, 1);
+		}
+
+		return damaged;
+	}
+
 	@Override
 	protected void onEntityHit(EntityHitResult entityHitResult) {
 		super.onEntityHit(entityHitResult);
-		boolean damaged = entityHitResult.getEntity().damage(new DamageSource(
-				this.getWorld().getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(DAMAGE_TYPE),
-				this, this.getOwner()
-		), 5);
-
-		if(!this.getWorld().isClient()) {
-			SoundEvent event;
-			if(!damaged) event = MarioContentSFX.FIREBALL_WALL;
-			else if(entityHitResult.getEntity().isAlive()) event = MarioContentSFX.FIREBALL_ENEMY;
-			else event = MarioContentSFX.KICK;
-			this.playSound(event, 1, 1);
-
-			this.discard();
-		}
+		hitEntity(entityHitResult.getEntity(), this, this.getOwner(), this);
 	}
 
 	private static final double FIREBALL_STEP_HEIGHT = 1.2;

@@ -133,9 +133,15 @@ public class Fire implements PowerUpDefinition {
 				ServerWorld world, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget
 		) {
 			ServerPlayerEntity mario = data.getMario();
-			MarioFireballProjectileEntity tomahawk = new MarioFireballProjectileEntity(world, mario);
-//			tomahawk.setVelocity(mario, mario.getPitch(), mario.getYaw(), 0, FIREBALL_SPEED, 0);
-			world.spawnEntity(tomahawk);
+			if(entityTarget != null) {
+				// Directly apply damage as if from a fireball, so that the Fire Flower can't outright prevent an
+				// attack from hitting due to projectile awkwardness
+				MarioFireballProjectileEntity.hitEntity(entityTarget, mario, mario, entityTarget);
+			}
+			else {
+				MarioFireballProjectileEntity fireball = new MarioFireballProjectileEntity(world, mario);
+				world.spawnEntity(fireball);
+			}
 		}
 	}
 
