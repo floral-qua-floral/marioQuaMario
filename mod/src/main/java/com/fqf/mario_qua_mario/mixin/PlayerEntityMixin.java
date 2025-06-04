@@ -119,12 +119,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 			cir.setReturnValue(false);
 	}
 
-//	@Inject(method = "tickMovement", at = @At("TAIL"))
-//	private void preventViewBobbing(CallbackInfo ci) {
-//		MarioPlayerData data = mqm$getMarioData();
-//		if(data.isClient() && data.isEnabled() && data.getAction().SLIDING_STATUS != SlidingStatus.NOT_SLIDING)
-//			strideDistance = prevStrideDistance * 0.6F;
-//	}
+	@Inject(method = "tickMovement", at = @At("TAIL"))
+	private void preventViewBobbing(CallbackInfo ci) {
+		MarioPlayerData data = mqm$getMarioData();
+		if(data.isClient() && data.isEnabled() && data.getAction().SLIDING_STATUS != SlidingStatus.NOT_SLIDING)
+			strideDistance = prevStrideDistance * 0.6F;
+	}
 
 	@Override
 	public boolean startRiding(Entity entity, boolean force) {
