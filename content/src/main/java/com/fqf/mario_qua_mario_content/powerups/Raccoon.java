@@ -281,6 +281,7 @@ public class Raccoon implements PowerUpDefinition {
 				legAnimation, legAnimation,
 				new LimbAnimation(false, (data, arrangement, progress) -> {
 					arrangement.pitch = helper.interpolateKeyframes(progress * 2, 0, MathHelper.clamp(data.getMario().getPitch() - 30, -80, 75), 20);
+					arrangement.yaw = helper.interpolateKeyframes(progress * 2, 0, 85, 0);
 				})
 		);
 	}

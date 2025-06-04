@@ -242,7 +242,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 	@Override
 	protected float turnHead(float bodyRotation, float headRotation) {
 		if(this.mqm$getMarioData().headRestricted == MarioPlayerData.HeadRestrictionType.NORMAL) {
-			if(MathHelper.abs(bodyRotation - this.getYaw()) <= 10)
+			if(MathHelper.abs((bodyRotation % 360) - (this.getYaw() % 360)) <= 10)
 				this.mqm$getMarioData().headRestricted = MarioPlayerData.HeadRestrictionType.NONE;
 			bodyRotation = this.getYaw();
 		}
