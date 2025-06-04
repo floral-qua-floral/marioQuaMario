@@ -32,7 +32,7 @@ public class ParsedGroundedAction extends AbstractParsedAction {
 		this.GROUNDED_DEFINITION.travelHook(data, UniversalActionDefinitionHelper.INSTANCE);
 		if(data.isClient())
 			UniversalActionDefinitionHelper.INSTANCE.applyGravity(data, GROUNDED_GRAVITY, GROUNDED_TERMINAL_VELOCITY);
-		else data.setYVel(-0.1);
+		else if(data.getYVel() <= 0) data.setYVel(-0.1);
 		return true;
 	}
 

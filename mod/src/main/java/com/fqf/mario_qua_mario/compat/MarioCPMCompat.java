@@ -1,4 +1,4 @@
-package com.fqf.mario_qua_mario.util;
+package com.fqf.mario_qua_mario.compat;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.tom.cpm.api.CommonApi;

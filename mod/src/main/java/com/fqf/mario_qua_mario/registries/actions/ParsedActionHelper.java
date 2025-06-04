@@ -1,6 +1,6 @@
 package com.fqf.mario_qua_mario.registries.actions;
 
-import com.fqf.mario_qua_mario.MarioClientHelperManager;
+import com.fqf.mario_qua_mario.util.MarioClientHelperManager;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.*;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.IncompleteActionDefinition;

@@ -1,4 +1,4 @@
-package com.fqf.mario_qua_mario.util;
+package com.fqf.mario_qua_mario;
 
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;

@@ -1,7 +1,7 @@
 package com.fqf.mario_qua_mario.mixin;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario.util.MarioCPMCompat;
+import com.fqf.mario_qua_mario.compat.MarioCPMCompat;
 import com.tom.cpm.CommonBase;
 import com.tom.cpm.api.CPMApiManager;
 import org.spongepowered.asm.mixin.Mixin;

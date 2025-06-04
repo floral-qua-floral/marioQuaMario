@@ -9,7 +9,7 @@ import com.fqf.mario_qua_mario.registries.actions.ParsedTransition;
 import com.fqf.mario_qua_mario.registries.actions.TransitionPhase;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedCharacter;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
-import com.fqf.mario_qua_mario.util.MarioCPMCompat;
+import com.fqf.mario_qua_mario.compat.MarioCPMCompat;
 import com.fqf.mario_qua_mario.util.MarioGamerules;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioAuthoritativeData;

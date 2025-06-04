@@ -1,5 +1,7 @@
 package com.fqf.mario_qua_mario.mariodata;
 
+import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.Arrangement;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimation;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
@@ -13,6 +15,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.entity.MovementType;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Direction;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -112,13 +115,18 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 
 		this.applyModifiedVelocity();
 
-//		if(true) return false; // <- Last line at which travelHook can be stopped before Presence Footsteps breaks.
-		this.moveWithFluidPushing(); // <- This method contains a `move` call (movementType is SELF).
+		this.moveWithFluidPushing();
 
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
 		this.applyModifiedVelocity();
 
 		this.getMario().updateLimbs(false);
+
+		if(this.getActionCategory() == ActionCategory.GROUNDED && this.getMario().isOnGround() && this.getYVel() == 0.0)
+			this.getMario().setVelocity(this.getMario().getVelocity().withAxis(Direction.Axis.Y, -0.1));
+		// ^ Needed for Presence Footsteps compatibility
+		// TODO: Prevent Presence Footsteps steps while in a Sliding action.
+
 		return cancelVanillaTravel;
 	}
 

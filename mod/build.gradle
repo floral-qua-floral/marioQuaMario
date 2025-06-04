@@ -70,6 +70,8 @@ dependencies {
 	modImplementation "com.tom5454.cpm:CustomPlayerModels-Fabric-${project.cpm_mc_version}:${project.cpm_runtime_version}"
 
 	modCompileOnly "maven.modrinth:replaymod:${replaymod_version}"
+	modCompileOnly "maven.modrinth:presence-footsteps:${presence_footsteps_version}"
+	modCompileOnly "maven.modrinth:flashback:${flashback_version}"
 }
 
 processResources {

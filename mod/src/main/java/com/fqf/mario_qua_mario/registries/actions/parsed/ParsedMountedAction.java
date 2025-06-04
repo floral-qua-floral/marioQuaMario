@@ -1,6 +1,6 @@
 package com.fqf.mario_qua_mario.registries.actions.parsed;
 
-import com.fqf.mario_qua_mario.MarioClientHelperManager;
+import com.fqf.mario_qua_mario.util.MarioClientHelperManager;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.MountedActionDefinition;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.ActionCategory;
@@ -10,7 +10,6 @@ import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.UniversalActionDefinitionHelper;
 import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 import java.util.HashMap;

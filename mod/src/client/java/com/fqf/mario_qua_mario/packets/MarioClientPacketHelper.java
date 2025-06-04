@@ -1,8 +1,8 @@
 package com.fqf.mario_qua_mario.packets;
 
-import com.fqf.mario_qua_mario.MarioClientHelperManager;
+import com.fqf.mario_qua_mario.compat.RecordingModsCompatSafe;
+import com.fqf.mario_qua_mario.util.MarioClientHelperManager;
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario.replaycompat.MarioReplayCompatibilityHelper;
 import com.fqf.mario_qua_mario_api.interfaces.StompResult;
 import com.fqf.mario_qua_mario.mariodata.*;
 import com.fqf.mario_qua_mario.registries.ParsedAttackInterception;
@@ -13,7 +13,6 @@ import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
 import com.fqf.mario_qua_mario.util.MarioGamerules;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MovementType;
@@ -133,8 +132,6 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 		return (PlayerEntity) Objects.requireNonNull(context.player().getWorld().getEntityById(marioID));
 	}
 
-	private static final boolean REPLAY_MOD_PRESENT = FabricLoader.getInstance().isModLoaded("replaymod");
-
 	@Override
 	public void setActionC2S(AbstractParsedAction fromAction, AbstractParsedAction toAction, long seed) {
 //		MarioQuaMario.LOGGER.info("Sending setActionC2S Packet for {}->{}", stompTypeID.ID, toAction.ID);
@@ -144,7 +141,7 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 	@Override
 	public void conditionallySaveTransitionToReplayMod(AbstractParsedAction fromAction, AbstractParsedAction toAction, long seed) {
 		assert MinecraftClient.getInstance().player != null;
-		conditionallySaveReplayPacket(new MarioDataPackets.ActionTransitionS2CPayload(
+		RecordingModsCompatSafe.conditionallySaveReplayPacket(new MarioDataPackets.ActionTransitionS2CPayload(
 				MinecraftClient.getInstance().player.getId(),
 				fromAction.getIntID(), toAction.getIntID(), seed
 		));
@@ -189,11 +186,7 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 		}
 
 		ClientPlayNetworking.send(packet);
-		conditionallySaveReplayPacket(replayPacket);
-	}
-
-	private static void conditionallySaveReplayPacket(CustomPayload payload) {
-		if(REPLAY_MOD_PRESENT) MarioReplayCompatibilityHelper.saveS2CPacketToReplay(payload);
+		RecordingModsCompatSafe.conditionallySaveReplayPacket(replayPacket);
 	}
 
 	private static void packetAgnosticStompHandling(

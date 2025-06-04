@@ -1,4 +1,4 @@
-package com.fqf.mario_qua_mario;
+package com.fqf.mario_qua_mario.util;
 
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 
