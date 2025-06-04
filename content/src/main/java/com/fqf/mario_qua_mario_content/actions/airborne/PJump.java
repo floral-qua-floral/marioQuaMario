@@ -82,7 +82,10 @@ public class PJump extends Jump implements AirborneActionDefinition {
 		return List.of(
 				Submerged.SUBMERGE,
 				Jump.DOUBLE_JUMPABLE_LANDING.variate(PRun.ID, data ->
-						Fall.LANDING.evaluator().shouldTransition(data) && (data.isServer() || PRun.meetsPRunRequirements(data))),
+						Fall.LANDING.evaluator().shouldTransition(data) && (data.isServer() || PRun.meetsPRunRequirements(data)),
+						EvaluatorEnvironment.CLIENT_CHECKED,
+						null,
+						null),
 				Jump.DOUBLE_JUMPABLE_LANDING
 		);
 	}

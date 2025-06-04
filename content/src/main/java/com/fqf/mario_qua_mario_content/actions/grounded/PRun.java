@@ -39,7 +39,7 @@ public class PRun implements GroundedActionDefinition {
 				new LimbAnimation(false, (data, arrangement, progress) ->
 						arrangement.roll += -90 - progress * 10),
 				null, null,
-				null
+				new LimbAnimation(false, null)
 		);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
