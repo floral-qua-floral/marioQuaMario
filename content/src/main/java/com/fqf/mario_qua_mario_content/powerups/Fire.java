@@ -8,7 +8,10 @@ import com.fqf.mario_qua_mario_content.Voicelines;
 import com.fqf.mario_qua_mario_content.entity.custom.MarioFireballProjectileEntity;
 import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
@@ -86,6 +89,9 @@ public class Fire implements PowerUpDefinition {
 
 	}
 
+	private static final TagKey<EntityType<?>> FIRE_MARIO_PUNCH_TARGETS =
+			TagKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of("mario_qua_mario:fire_mario_punch_targets"));
+
 	private abstract static class FireballDefinition implements AttackInterceptionDefinition {
 		private final Hand HAND;
 		private FireballDefinition(Hand hand) {
@@ -101,6 +107,22 @@ public class Fire implements PowerUpDefinition {
 		@Override public boolean shouldTriggerAttackCooldown() {
 			return this.HAND == Hand.MAIN_HAND;
 		}
+
+		@Override public boolean shouldInterceptAttack(
+				IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
+				@Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult
+		) {
+			return (
+					entityHitResult == null || !(
+							entityHitResult.getEntity().isFireImmune()
+							|| entityHitResult.getEntity().getType().isIn(FIRE_MARIO_PUNCH_TARGETS)
+			)) && this.canThrowFireball(data, weapon, attackCooldownProgress, entityHitResult, blockHitResult);
+		}
+
+		protected abstract boolean canThrowFireball(
+				IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
+				@Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult
+		);
 
 		@Override public void executeTravellers(
 				IMarioTravelData data, ItemStack weapon, float attackCooldownProgress,
@@ -149,9 +171,9 @@ public class Fire implements PowerUpDefinition {
 		return List.of(
 				new FireballDefinition(Hand.MAIN_HAND) {
 					@Override
-					public boolean shouldInterceptAttack(IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
+					public boolean canThrowFireball(IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
 						return weapon.isEmpty() && data.getMario().getWorld().getTime() > data.getVars(FireFlowerData.class).noMainFireballsUntil
-								&& attackCooldownProgress >= 1 && (entityHitResult == null || !entityHitResult.getEntity().isFireImmune());
+								&& attackCooldownProgress >= 1;
 					}
 
 					@Override
@@ -161,8 +183,7 @@ public class Fire implements PowerUpDefinition {
 				},
 				new FireballDefinition(Hand.OFF_HAND) {
 					@Override
-					public boolean shouldInterceptAttack(IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
-						MarioQuaMarioContent.LOGGER.info("Attempting offhand fireball toss?");
+					public boolean canThrowFireball(IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
 						long time = data.getMario().getWorld().getTime();
 						return time > data.getVars(FireFlowerData.class).noSecondaryFireballsUntil
 								// Only after throwing a first fireball, or any time if holding an item
