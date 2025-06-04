@@ -92,6 +92,13 @@ public class Fire implements PowerUpDefinition {
 	private static final TagKey<EntityType<?>> FIRE_MARIO_PUNCH_TARGETS =
 			TagKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of("mario_qua_mario:fire_mario_punch_targets"));
 
+	private static boolean canFireballEntity(EntityHitResult entityHitResult) {
+		return entityHitResult == null || !(
+				entityHitResult.getEntity().isFireImmune()
+				|| entityHitResult.getEntity().getType().isIn(FIRE_MARIO_PUNCH_TARGETS)
+		);
+	}
+
 	private abstract static class FireballDefinition implements AttackInterceptionDefinition {
 		private final Hand HAND;
 		private FireballDefinition(Hand hand) {
@@ -112,11 +119,8 @@ public class Fire implements PowerUpDefinition {
 				IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
 				@Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult
 		) {
-			return (
-					entityHitResult == null || !(
-							entityHitResult.getEntity().isFireImmune()
-							|| entityHitResult.getEntity().getType().isIn(FIRE_MARIO_PUNCH_TARGETS)
-			)) && this.canThrowFireball(data, weapon, attackCooldownProgress, entityHitResult, blockHitResult);
+			return canFireballEntity(entityHitResult)
+					&& this.canThrowFireball(data, weapon, attackCooldownProgress, entityHitResult, blockHitResult);
 		}
 
 		protected abstract boolean canThrowFireball(
@@ -201,7 +205,7 @@ public class Fire implements PowerUpDefinition {
 					@Override
 					public boolean shouldInterceptAttack(IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
 						long time = data.getMario().getWorld().getTime();
-						return attackCooldownProgress < 1 && weapon.isEmpty()
+						return attackCooldownProgress < 1 && weapon.isEmpty() && canFireballEntity(entityHitResult)
 								&& (time < data.getVars(FireFlowerData.class).noSecondaryFireballsUntil || time > data.getVars(FireFlowerData.class).noMainFireballsUntil);
 					}
 				}
