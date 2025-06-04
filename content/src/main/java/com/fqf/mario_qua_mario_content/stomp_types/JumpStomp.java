@@ -15,6 +15,7 @@ import com.fqf.mario_qua_mario_content.util.MarioVars;
 import com.fqf.mario_qua_mario_content.util.Powers;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.mob.Monster;
@@ -22,6 +23,7 @@ import net.minecraft.entity.projectile.TridentEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
@@ -78,6 +80,9 @@ public class JumpStomp implements StompTypeDefinition {
 		);
 	}
 
+	private static final TagKey<EntityType<?>> RISING_STOMPABLE_NONMONSTERS =
+			TagKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of("mario_qua_mario:rising_stompable_nonmonsters"));
+
 	@Override
 	public void filterPotentialTargets(List<Entity> potentialTargets, ServerPlayerEntity mario, Vec3d motion) {
 		potentialTargets.removeIf(entity -> !(
@@ -85,7 +90,7 @@ public class JumpStomp implements StompTypeDefinition {
 				&& collidingFromTop(entity, mario, mario.getY(), motion,
 				(
 						entity instanceof Monster // Mario can do rising stomps against monsters
-						|| entity instanceof ArmorStandEntity // And off of armor stands
+						|| entity.getType().isIn(RISING_STOMPABLE_NONMONSTERS) // And off of armor stands
 				))
 		));
 	}
