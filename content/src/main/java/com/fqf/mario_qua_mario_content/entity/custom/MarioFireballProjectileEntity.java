@@ -103,6 +103,7 @@ public class MarioFireballProjectileEntity extends ProjectileEntity {
 	protected void onEntityHit(EntityHitResult entityHitResult) {
 		super.onEntityHit(entityHitResult);
 		hitEntity(entityHitResult.getEntity(), this, this.getOwner(), this);
+		if(!this.getWorld().isClient()) this.discard();
 	}
 
 	private static final double FIREBALL_STEP_HEIGHT = 1.2;
