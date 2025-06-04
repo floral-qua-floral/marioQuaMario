@@ -128,7 +128,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 
 	@Override
 	public boolean startRiding(Entity entity, boolean force) {
-		MarioQuaMario.LOGGER.info("Mounted on {}", (this.getWorld().isClient() ? "CLIENT" : "SERVER"));
 		MarioPlayerData data = mqm$getMarioData();
 		if(data.isEnabled()) {
 			AbstractParsedAction mountedAction = data.getCharacter().getMountedAction(entity);

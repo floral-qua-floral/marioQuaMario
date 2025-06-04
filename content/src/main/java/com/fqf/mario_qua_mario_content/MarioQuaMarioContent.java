@@ -2,7 +2,6 @@ package com.fqf.mario_qua_mario_content;
 
 import com.fqf.mario_qua_mario_content.entity.ModEntities;
 import com.fqf.mario_qua_mario_content.item.ModItems;
-import com.fqf.mario_qua_mario_content.util.MQMContentConfig;
 import com.fqf.mario_qua_mario_content.util.MarioContentEventListeners;
 import com.fqf.mario_qua_mario_content.util.MarioContentGamerules;
 import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
@@ -10,7 +9,6 @@ import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

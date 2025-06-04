@@ -7,12 +7,8 @@ import com.fqf.mario_qua_mario.packets.MarioDataPackets;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedCharacter;
 import com.fqf.mario_qua_mario.util.MarioNbtKeys;
-import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.MovementType;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -70,7 +66,8 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 		if(nbt.contains(MarioNbtKeys.DATA, NbtElement.COMPOUND_TYPE)) {
 			NbtCompound persistentMarioData = nbt.getCompound(MarioNbtKeys.DATA);
 
-			if(MarioQuaMario.CONFIG.logNBTReadWrite()) MarioQuaMario.LOGGER.info("Reading player NBT:\nEnabled: {}\nCharacter: {}\nPower-up: {}",
+			boolean extraLogging = MarioQuaMario.CONFIG.logNBTReadWrite();
+			if(extraLogging) MarioQuaMario.LOGGER.info("Reading player NBT:\nEnabled: {}\nCharacter: {}\nPower-up: {}",
 					persistentMarioData.getBoolean(MarioNbtKeys.ENABLED),
 					persistentMarioData.getString(MarioNbtKeys.CHARACTER),
 					persistentMarioData.getString(MarioNbtKeys.POWER_UP));
@@ -93,17 +90,20 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 							storedPowerUpID = storedCharacter.INITIAL_POWER_UP.ID.toString();
 						}
 
-						MarioQuaMario.LOGGER.info("Loaded a full set of Mario Data from NBT. This is {} in {} form.", storedCharacterID, storedPowerUpID);
+						if(extraLogging)
+							MarioQuaMario.LOGGER.info("Loaded a full set of Mario Data from NBT. This is {} in {} form.", storedCharacterID, storedPowerUpID);
+
 						MarioServerPlayerData data = this.mqm$getMarioData();
 						if(this.networkHandler == null) {
-							MarioQuaMario.LOGGER.info("Player is not yet ready for networking. Assigning silently for later synchronization...");
+							if(extraLogging)
+								MarioQuaMario.LOGGER.info("Player is not yet ready for networking. Assigning silently for later synchronization...");
 							data.setupVariablesBeforeInitialApply(
 									storedCharacter,
 									RegistryManager.POWER_UPS.get(Identifier.of(storedPowerUpID))
 							);
 						}
 						else {
-							MarioQuaMario.LOGGER.info("Syncing data from NBT...");
+							if(extraLogging) MarioQuaMario.LOGGER.info("Syncing data from NBT...");
 							data.assignCharacter(storedCharacterID);
 							data.assignPowerUp(storedPowerUpID);
 						}
@@ -126,15 +126,4 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 		super.onStartedTrackingBy(player);
 		MarioDataPackets.syncMarioDataToPlayerS2C((ServerPlayerEntity) (Object) this, player);
 	}
-
-	@Inject(method = "requestTeleport", at = @At("HEAD"))
-	private void teleportHook(double destX, double destY, double destZ, CallbackInfo ci) {
-		MarioQuaMario.LOGGER.info("requestTeleport occurred!!!");
-	}
-
-	//	@Unique
-//	private static @NotNull <T extends ParsedMarioState> T getDataFromNbt(String ID, Identifier defaultID, Registry<T> registry) {
-//		@Nullable T attempted = registry.get(Identifier.of(ID));
-//		return attempted == null ? Objects.requireNonNull(registry.get(defaultID)) : attempted;
-//	}
 }

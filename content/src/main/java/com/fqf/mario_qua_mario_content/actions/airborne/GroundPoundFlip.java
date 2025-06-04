@@ -93,7 +93,6 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 		private final float STORED_FALL_DISTANCE;
 		private FlipTimerVars(PlayerEntity mario) {
 			this.STORED_FALL_DISTANCE = mario.fallDistance;
-			MarioQuaMarioContent.LOGGER.info("FallDistance: {}", mario.fallDistance);
 		}
 	}
 	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {

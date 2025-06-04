@@ -34,14 +34,11 @@ public class MarioContentEventListeners {
 						else
 							marioY = mario.getY();
 
+						//noinspection RedundantIfStatement
 						if(JumpStomp.collidingFromTop(attacker, mario, marioY, new Vec3d(0, -1, 0), false)
 								|| (attacker instanceof EnderDragonEntity && mario.getY() > attacker.getY() + attacker.getHeight() / 2)) {
-							MarioQuaMarioContent.LOGGER.info("Prevented damage to {} from {} due to Stomp Guard.", mario, attacker);
 							return false;
 						}
-						else MarioQuaMarioContent.LOGGER.info("Allowed damage to Mario.\nmarioY:    {}\nthreshold: {}\nm > t: {}\ncFT: {}",
-								marioY, attacker.getY() + attacker.getHeight(), marioY > attacker.getY() + attacker.getHeight(),
-								JumpStomp.collidingFromTop(attacker, mario, marioY, Vec3d.ZERO, false));
 					}
 				}
 			}
@@ -50,7 +47,6 @@ public class MarioContentEventListeners {
 
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 			int timesDisconnected = handler.player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.LEAVE_GAME));
-			MarioQuaMarioContent.LOGGER.info("\nPlaytime: {}\nDisconnected: {}\nEnabled: {}", handler.player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_TIME)), timesDisconnected, isPlayerEnabledInNBT(handler.player));
 			if(timesDisconnected == 0 && MarioQuaMarioContent.CONFIG.isWelcomeMessageEnabled()) {
 				// Player joined for the first time; say hi and tell them how to enable the mod
 				String marioCommand = "/mario set character " + Mario.ID;

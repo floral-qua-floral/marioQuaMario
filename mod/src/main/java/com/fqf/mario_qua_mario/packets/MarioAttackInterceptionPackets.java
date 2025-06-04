@@ -39,8 +39,6 @@ public class MarioAttackInterceptionPackets {
 			ServerPlayerEntity mario, AttackInterceptionPayload payload,
 			@Nullable Entity targetEntity, @Nullable BlockPos targetBlock, long seed
 	) {
-		MarioQuaMario.LOGGER.info("Received attack interception payload!\nTarget Entity: {}", targetEntity);
-
 		ParsedAttackInterception.getInterception(payload)
 				.execute(mario.mqm$getMarioData(), targetEntity, targetBlock, seed);
 

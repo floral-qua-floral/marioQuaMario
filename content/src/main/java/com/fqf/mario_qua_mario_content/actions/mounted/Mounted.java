@@ -93,7 +93,6 @@ public class Mounted implements MountedActionDefinition {
 						data -> {
 							helper.dismount(data, false);
 							Objects.requireNonNull(backflip.travelExecutor()).execute(data);
-							MarioQuaMarioContent.LOGGER.info("Backflip from Mount: Y vel = {}", data.getYVel());
 						},
 						null
 				)

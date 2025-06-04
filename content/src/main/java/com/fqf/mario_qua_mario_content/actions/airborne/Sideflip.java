@@ -120,40 +120,13 @@ public class Sideflip extends Backflip implements AirborneActionDefinition {
 	public static CharaStat SIDEFLIP_THRESHOLD = new CharaStat(0.2, WALKING, FRICTION, THRESHOLD);
 
 	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
-		return new ActionTimerVars();
-	}
-	private void commonTick(IMarioData data) {
-		if(data.getVars(ActionTimerVars.class).actionTimer++ == 0) {
-			PlayerEntity mario = data.getMario();
-//			float bodyYawOffset = mario.getYaw() - mario.getBodyYaw();
-//			mario.setYaw(mario.getYaw() - 90);
-//			MarioQuaMarioContent.LOGGER.info("\nYaw: {}\nBody Yaw: {}",);
-//			mario.setBodyYaw(mario.getYaw() + bodyYawOffset);
-//			mario.prevBodyYaw -= 90;
-
-//			mario.prevBodyYaw = mario.getYaw
-//			mario.setHeadYaw(mario.getYaw());
-//			mario.setBodyYaw(mario.getYaw());
-//			mario.prevHeadYaw = mario.getYaw() + 90;
-
-//			mario.prevBodyYaw = mario.getYaw();
-//			mario.bodyYaw = mario.getYaw();
-//			mario.prevHeadYaw = mario.getYaw();
-//			mario.headYaw = mario.getYaw();
-//			mario.prevYaw = mario.getYaw() + 90;
-//			mario.changeLookDirection();
-
-//			mario.setYaw(mario.getYaw() - 90);
-
-//			mario.swingHand(Hand.MAIN_HAND);
-			MarioQuaMarioContent.LOGGER.info("Rotate Mario's true yaw");
-		}
+		return null;
 	}
 	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
-		commonTick(data);
+
 	}
 	@Override public void serverTick(IMarioAuthoritativeData data) {
-		commonTick(data);
+
 	}
 	@Override public void travelHook(IMarioTravelData data, AirborneActionHelper helper) {
 		helper.applyComplexGravity(data, Fall.FALL_ACCEL, JUMP_GRAVITY, Fall.FALL_SPEED);

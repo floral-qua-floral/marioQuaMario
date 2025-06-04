@@ -70,7 +70,7 @@ public class PlayermodelListener implements SimpleSynchronousResourceReloadListe
 						if(!character.ID.getNamespace().equals(powerUp.ID.getNamespace()))
 							MarioQuaMario.LOGGER.info("They have different namespaces too! Look at you, being so compatible!");
 					}
-					else MarioQuaMario.LOGGER.info("Ignoring model for character {} in unregistered power-up form {}.",
+					else MarioQuaMario.LOGGER.warn("Ignoring model for character {} in unregistered power-up form {}.",
 							character.ID, powerUpID);
 				}
 				catch(Exception exception) {

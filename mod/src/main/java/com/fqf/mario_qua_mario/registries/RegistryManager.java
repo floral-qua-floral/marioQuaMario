@@ -83,6 +83,11 @@ public class RegistryManager {
 		STOMP_TYPES.freeze();
 	}
 
+	private static int totalActionTransitions;
+	public static void incrementTransitionCount() {
+		totalActionTransitions++;
+	}
+
 	private static void registerActions() {
 		List<IncompleteActionDefinition> actionDefinitions = new ArrayList<>();
 		actionDefinitions.addAll(getEntrypoints("mqm-generic-actions", GenericActionDefinition.class));
@@ -102,6 +107,9 @@ public class RegistryManager {
 		for(AbstractParsedAction action : ACTIONS) {
 			action.parseTransitions(allInjections);
 		}
+
+		MarioQuaMario.LOGGER.info("Registered {} actions, with {} transitions connecting them.",
+				ACTIONS.size(), totalActionTransitions);
 
 		// We can also register all Stomp Types' actions now. There's no reason to do this sooner since it uses a map; can't be final anyways
 		for(ParsedStompType stompType : STOMP_TYPES) {
@@ -126,7 +134,7 @@ public class RegistryManager {
 		CHARACTERS.freeze();
 
 		for(String namespace : characterNamespaces) {
-			MarioQuaMario.LOGGER.info("Registering a playermodel resource listener {}...!", namespace);
+			MarioQuaMario.LOGGER.info("Registering a playermodel resource listener for namespace \"{}\"...", namespace);
 			ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new PlayermodelListener(namespace));
 		}
 	}

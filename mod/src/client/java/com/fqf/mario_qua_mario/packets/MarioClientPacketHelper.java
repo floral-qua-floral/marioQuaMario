@@ -99,7 +99,6 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 		// SyncMarioDataS2CPayload Receiver
 		ClientPlayNetworking.registerGlobalReceiver(MarioDataPackets.SyncMarioDataS2CPayload.ID, (payload, context) -> {
 			MarioPlayerData data = getMarioFromID(context, payload.marioID()).mqm$getMarioData();
-			MarioQuaMario.LOGGER.info("CLIENT: Received payload to sync {}'s data!", data.getMario().getName().getString());
 			data.setCharacter(RegistryManager.CHARACTERS.get(payload.character()));
 			data.setPowerUpTransitionless(RegistryManager.POWER_UPS.get(payload.powerUp()));
 			data.setActionTransitionless(RegistryManager.ACTIONS.get(payload.action()));

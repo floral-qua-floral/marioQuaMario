@@ -120,8 +120,11 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 
 	private boolean updatePlayerModel(ParsedPowerUp newPowerUp) {
 		ModelFile newModel = this.getCharacter().MODELS.get(newPowerUp);
-		MarioQuaMario.LOGGER.info("Changing to model for combination ({}, {})", this.getCharacterID(), newPowerUp.ID);
-		if(newModel == null) return false;
+		if(newModel == null) {
+			MarioQuaMario.LOGGER.error("Attempting to set {}'s power-up, however there is no model for combination {} + {}!",
+					this.getMario().getName().getString(), this.getCharacterID(), newPowerUp.ID);
+			return false;
+		}
 		if(this.getMario().networkHandler != null)
 			MarioCPMCompat.getCommonAPI().setPlayerModel(PlayerEntity.class, this.getMario(), newModel, true);
 		return true;

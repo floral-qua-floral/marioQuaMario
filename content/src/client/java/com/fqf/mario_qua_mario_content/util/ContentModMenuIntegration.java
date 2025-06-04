@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario_content.util;
 
+import com.fqf.mario_qua_mario_content.MQMContentConfig;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 import me.shedaniel.autoconfig.AutoConfig;

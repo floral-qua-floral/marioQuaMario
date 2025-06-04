@@ -7,6 +7,7 @@ import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_api.util.CharaStat;
+import com.fqf.mario_qua_mario_content.MQMContentConfig;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.airborne.StompBounce;
 import com.fqf.mario_qua_mario_content.util.MarioContentGamerules;
@@ -110,7 +111,6 @@ public class JumpStomp implements StompTypeDefinition {
 	@Override
 	public float calculateDamage(IMarioData data, ItemStack equipment, float equipmentArmor, float equipmentToughness) {
 		int pulverizingLevel = getEnchantmentLevel(equipment, data.getMario().getWorld(), PULVERIZING_ID);
-		MarioQuaMarioContent.LOGGER.info("Pulverizing level: {}", pulverizingLevel);
 		return ((float) BASE_DAMAGE.get(data)) + equipmentArmor * 2.25F + pulverizingLevel * 0.5F + (pulverizingLevel > 0 ? 0.5F : 0);
 	}
 
@@ -121,7 +121,6 @@ public class JumpStomp implements StompTypeDefinition {
 
 	@Override
 	public void executeServer(IMarioAuthoritativeData data, ItemStack equipment, Entity target, StompResult.ExecutableResult result, boolean affectMario) {
-		MarioQuaMarioContent.LOGGER.info("Applying Stomp Guard");
 		if(affectMario && data.hasPower(Powers.STOMP_GUARD)) {
 			data.getVars(MarioVars.class).stompGuardMinHeight = target.getY() + target.getHeight() + 0.15;
 			data.getVars(MarioVars.class).stompGuardRemainingTicks = 4;

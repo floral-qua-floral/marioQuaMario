@@ -35,6 +35,8 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 
 	public final List<ParsedAttackInterception> INTERCEPTIONS;
 
+	private static final boolean LOG_TRANSITION_INJECTIONS = MarioQuaMario.CONFIG.logActionTransitionInjections();
+
 	public AbstractParsedAction(IncompleteActionDefinition definition, HashMap<Identifier, Set<TransitionInjectionDefinition>> allInjections) {
 		super(definition);
 
@@ -92,11 +94,6 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 
 			relevantInjections.removeIf(injection -> injection.predicate() != null && !injection.predicate().shouldInject(this.ID, this.CATEGORY, null));
 
-			MarioQuaMario.LOGGER.debug("TRANSITION INJECTIONS RELEVANT TO {}:", definition.targetID());
-			for (TransitionInjectionDefinition relevantInjection : relevantInjections) {
-				MarioQuaMario.LOGGER.debug("This one: {}", relevantInjection);
-			}
-
 			this.conditionallyInjectTransitions(buildingClientList, buildingServerList, relevantInjections,
 					TransitionInjectionDefinition.InjectionPlacement.BEFORE, definition);
 			MarioQuaMario.LOGGER.debug("Parsing transition into {}", definition.targetID());
@@ -114,7 +111,10 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 	) {
 		for(TransitionInjectionDefinition injection : relevantInjections) {
 			if(injection.placement() == placement) {
-				addTransitionToLists(buildingClientList, buildingServerList, injection.injectedTransitionCreator().makeTransition(originalTransition, UniversalActionDefinitionHelper.INSTANCE));
+				TransitionDefinition injectTransition = injection.injectedTransitionCreator().makeTransition(originalTransition, UniversalActionDefinitionHelper.INSTANCE);
+				if(LOG_TRANSITION_INJECTIONS) MarioQuaMario.LOGGER.info("Injecting transition: {}->{}",
+						this.ID, injectTransition.targetID());
+				addTransitionToLists(buildingClientList, buildingServerList, injectTransition);
 			}
 		}
 	}
@@ -123,6 +123,7 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 			List<ParsedTransition> client, List<ParsedTransition> server,
 			TransitionDefinition definition
 	) {
+		RegistryManager.incrementTransitionCount();
 		ParsedTransition transition = new ParsedTransition(definition);
 		if(this.TRANSITIONS_FROM_TARGETS.containsKey(transition.targetAction()))
 			MarioQuaMario.LOGGER.warn("Action {} has multiple transitions into {}! This is likely to cause issues!",

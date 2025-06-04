@@ -22,19 +22,10 @@ public class MarioCPMCompat implements ICPMPlugin {
 	}
 
 	public static IClientAPI getClientAPI() {
-		return clientAPI;
+		return Objects.requireNonNull(clientAPI, "Client API is null; Mario qua Mario CPM Plugin not registered?!");
 	}
 	public static @NotNull ICommonAPI getCommonAPI() {
-//		if(commonAPI == null) {
-//			MarioQuaMario.LOGGER.error("Common API is null; Mario qua Mario CPM Plugin not registered?!");
-//			return new CPMCommonApiExtender(); // this is SO DUMB >:(
-//		}
-
 		return Objects.requireNonNull(commonAPI, "Common API is null; Mario qua Mario CPM Plugin not registered?!");
-	}
-
-	private static class CPMCommonApiExtender extends CommonApi {
-
 	}
 
 	@Override public String getOwnerModId() {
@@ -45,10 +36,5 @@ public class MarioCPMCompat implements ICPMPlugin {
 	}
 	@Override public void initCommon(ICommonAPI iCommonAPI) {
 		commonAPI = iCommonAPI;
-		MarioQuaMario.LOGGER.info("CPM API received by Mario qua Mario!");
-	}
-
-	public static void ensureAPI() {
-
 	}
 }
