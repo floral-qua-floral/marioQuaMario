@@ -14,6 +14,7 @@ import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.fluid.FluidState;
+import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -250,5 +251,15 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	@Override
 	public void forceBodyAlignment(boolean urgent) {
 		this.headRestricted = urgent ? HeadRestrictionType.URGENT : HeadRestrictionType.NORMAL;
+	}
+
+	@Override
+	public double getImmersionLevel() {
+		return Math.max(this.getMario().getFluidHeight(FluidTags.WATER), this.getMario().getFluidHeight(FluidTags.LAVA));
+	}
+
+	@Override
+	public double getImmersionPercent() {
+		return this.getImmersionLevel() / this.getMario().getHeight();
 	}
 }

@@ -11,6 +11,7 @@ import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
 import com.fqf.mario_qua_mario_content.actions.airborne.Jump;
 import com.fqf.mario_qua_mario_content.actions.airborne.PJump;
+import com.fqf.mario_qua_mario_content.actions.aquatic.UnderwaterWalk;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -117,7 +118,8 @@ public class PRun implements GroundedActionDefinition {
 	}
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(GroundedActionHelper helper) {
 		return List.of(
-				Fall.FALL
+				Fall.FALL,
+				UnderwaterWalk.SUBMERGE
 		);
 	}
 

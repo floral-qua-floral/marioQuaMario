@@ -65,7 +65,9 @@
 		],
 		"mqm-aquatic-actions": [
 			"com.fqf.mario_qua_mario_content.actions.aquatic.Submerged",
-			"com.fqf.mario_qua_mario_content.actions.aquatic.Swim"
+			"com.fqf.mario_qua_mario_content.actions.aquatic.Swim",
+			"com.fqf.mario_qua_mario_content.actions.aquatic.UnderwaterWalk",
+			"com.fqf.mario_qua_mario_content.actions.aquatic.UnderwaterDuck"
 		],
 		"mqm-wallbound-actions": [
 		],

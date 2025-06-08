@@ -29,4 +29,7 @@ public interface IMarioData {
 	<T> T getVars(Class<T> clazz);
 
 	void forceBodyAlignment(boolean urgent);
+
+	double getImmersionLevel();
+	double getImmersionPercent();
 }

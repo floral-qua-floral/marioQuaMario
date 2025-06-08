@@ -25,7 +25,7 @@ public class Swim extends Submerged {
 
 	@Override
 	public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return Objects.requireNonNull(super.getAnimation(helper)).variate(
+		return Objects.requireNonNull(Submerged.makeAnimation(helper).variate(
 				null,
 				new ProgressHandler(
 						null,
@@ -35,7 +35,7 @@ public class Swim extends Submerged {
 				null, null, null,
 				null, null, null, null,
 				null
-		);
+		));
 	}
 
 	public static final CharaStat SWIM_ACCEL = new CharaStat(0.4, SWIMMING, UP, ACCELERATION);
@@ -43,7 +43,10 @@ public class Swim extends Submerged {
 
 	public static final TransitionDefinition SWIM = new TransitionDefinition(
 			ID,
-			data -> data.getVars(ActionTimerVars.class).actionTimer > 2 && data.getInputs().JUMP.isPressed(),
+			data -> {
+				ActionTimerVars vars = data.getVars(ActionTimerVars.class);
+				return (vars == null || vars.actionTimer > 2) && data.getInputs().JUMP.isPressed();
+			},
 			EvaluatorEnvironment.CLIENT_ONLY,
 			data -> {
 				data.setYVel(Math.min(SWIM_MAX_ASCENSION_SPEED.get(data), data.getYVel() + SWIM_ACCEL.get(data)));

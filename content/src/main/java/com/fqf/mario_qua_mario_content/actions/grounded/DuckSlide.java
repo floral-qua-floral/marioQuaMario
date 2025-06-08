@@ -16,6 +16,8 @@ import com.fqf.mario_qua_mario_content.actions.airborne.Backflip;
 import com.fqf.mario_qua_mario_content.actions.airborne.DuckFall;
 import com.fqf.mario_qua_mario_content.actions.airborne.DuckJump;
 import com.fqf.mario_qua_mario_content.actions.airborne.LongJump;
+import com.fqf.mario_qua_mario_content.actions.aquatic.UnderwaterDuck;
+import com.fqf.mario_qua_mario_content.actions.aquatic.UnderwaterWalk;
 import com.fqf.mario_qua_mario_content.util.ActionTimerVars;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -116,7 +118,8 @@ public class DuckSlide implements GroundedActionDefinition {
 	}
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(GroundedActionHelper helper) {
 		return List.of(
-				DuckFall.DUCK_FALL
+				DuckFall.DUCK_FALL,
+				UnderwaterDuck.DUCK_SUBMERGE
 		);
 	}
 

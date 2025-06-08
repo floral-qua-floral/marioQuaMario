@@ -10,6 +10,7 @@ import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_api.util.CharaStat;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
 import com.fqf.mario_qua_mario_content.actions.airborne.SpecialFall;
 import com.fqf.mario_qua_mario_content.util.ActionTimerVars;
 import net.minecraft.registry.tag.FluidTags;
@@ -31,27 +32,7 @@ public class Submerged implements AquaticActionDefinition {
 	private static LimbAnimation makeArmAnimation(int factor, AnimationHelper helper) {
 		return new LimbAnimation(false, (data, arrangement, progress) -> {
 			arrangement.roll *= -1;
-//			switch((int) Math.floor(progress * 3)) {
-//				case 0, 1 -> arrangement.addAngles(
-//						-75,
-//						factor * 5,
-//						factor * 125
-//				);
-//
-//				case 2 -> arrangement.addAngles(
-//						-75,
-//						factor * -137.75F,
-//						factor * 100
-//				);
-//
-//				default -> arrangement.addAngles(
-//						-50,
-//						factor * -40,
-//						factor * 60
-//				);
-//			}
 			float threeProgress = progress * 3;
-//			threeProgress = 2;
 			arrangement.addAngles(
 					helper.interpolateKeyframes(threeProgress,
 							-75,
@@ -72,21 +53,6 @@ public class Submerged implements AquaticActionDefinition {
 							factor * 60
 					)
 			);
-////					helper.interpolateKeyframes(twoProgress,
-////							-76.5F,
-////							50,
-////							-50
-////					),
-////					helper.interpolateKeyframes(twoProgress,
-////							factor * -10,
-////							factor * -20,
-////							factor * -40
-////					),
-////					helper.interpolateKeyframes(twoProgress,
-////							factor * 180,
-////							factor * 20,
-////							factor * 60
-////					)
 		});
 	}
 	private static LimbAnimation makeLegAnimation(int factor) {
@@ -104,7 +70,7 @@ public class Submerged implements AquaticActionDefinition {
 			);
 		});
 	}
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
+	public static PlayermodelAnimation makeAnimation(AnimationHelper helper) {
 		return new PlayermodelAnimation(
 				null,
 				null,
@@ -119,6 +85,10 @@ public class Submerged implements AquaticActionDefinition {
 				makeLegAnimation(1), makeLegAnimation(-1),
 				null
 		);
+	}
+
+	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
+		return makeAnimation(helper);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
 		return null;
@@ -158,6 +128,11 @@ public class Submerged implements AquaticActionDefinition {
 
 	public static final CharaStat SWIM_REDIRECTION = new CharaStat(2.0, SWIMMING, REDIRECTION);
 
+	public static void waterMove(IMarioTravelData data, AquaticActionHelper helper) {
+		helper.applyGravity(data, FALL_ACCEL, FALL_SPEED);
+		helper.applyWaterDrag(data, DRAG, DRAG_MIN);
+	}
+
 	public static void drift(IMarioTravelData data, AquaticActionHelper helper) {
 		helper.aquaticAccel(data,
 				FORWARD_SWIM_ACCEL, FORWARD_SWIM_SPEED,
@@ -169,7 +144,7 @@ public class Submerged implements AquaticActionDefinition {
 	}
 
 	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
-		return new ActionTimerVars();
+		return null;
 	}
 	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
 
@@ -178,23 +153,21 @@ public class Submerged implements AquaticActionDefinition {
 
 	}
 	@Override public void travelHook(IMarioTravelData data, AquaticActionHelper helper) {
-		data.getVars(ActionTimerVars.class).actionTimer++;
-		helper.applyGravity(data, FALL_ACCEL, FALL_SPEED);
-		helper.applyWaterDrag(data, DRAG, DRAG_MIN);
+		waterMove(data, helper);
 		drift(data, helper);
 	}
 
-	public static final TransitionDefinition SUBMERGE = new TransitionDefinition(
+	public static final TransitionDefinition SUBMERGE = UnderwaterWalk.SUBMERGE.variate(
 			ID,
-			data -> data.getMario().getFluidHeight(FluidTags.WATER) / data.getMario().getHeight() > 0.5,
-			EvaluatorEnvironment.COMMON,
+			null,
+			null,
 			data -> data.setYVel(data.getYVel() * 0.225),
-			(data, isSelf, seed) -> {}
+			null
 	);
 
 	public static final TransitionDefinition EXIT_WATER = new TransitionDefinition(
 			SpecialFall.ID,
-			data -> data.getMario().getFluidHeight(FluidTags.WATER) / data.getMario().getHeight() <= 0.3,
+			data -> data.getImmersionPercent() <= 0.3,
 			EvaluatorEnvironment.COMMON
 	);
 
@@ -208,7 +181,8 @@ public class Submerged implements AquaticActionDefinition {
 	}
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AquaticActionHelper helper) {
 		return List.of(
-			EXIT_WATER
+			EXIT_WATER,
+			Fall.LANDING.variate(UnderwaterWalk.ID, null)
 		);
 	}
 
