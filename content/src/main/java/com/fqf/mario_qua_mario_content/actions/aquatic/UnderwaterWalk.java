@@ -127,7 +127,7 @@ public class UnderwaterWalk implements AquaticActionDefinition {
 
 	public static final TransitionDefinition EXIT_WATER = new TransitionDefinition(
 			SubWalk.ID,
-			data -> data.getImmersionPercent() <= 0.3,
+			data -> data.getImmersionPercent() < 0.5,
 			EvaluatorEnvironment.COMMON
 	);
 

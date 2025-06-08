@@ -106,7 +106,7 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 	@Override public boolean travelHook(double forwardInput, double strafeInput) {
 		this.INPUTS.updateAnalog(forwardInput, strafeInput);
 
-		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
+//		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.BASIC);
 
 		boolean cancelVanillaTravel = this.getAction().travelHook(this);
