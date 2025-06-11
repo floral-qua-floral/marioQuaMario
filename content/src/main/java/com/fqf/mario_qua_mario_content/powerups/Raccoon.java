@@ -120,6 +120,8 @@ public class Raccoon implements PowerUpDefinition {
 		tick(data);
 	}
 
+	public static final float TAIL_STRIKE_DAMAGE = 5.75F;
+
 	private abstract static class TailAttack implements AttackInterceptionDefinition {
 		private final Identifier ACTION_TARGET;
 		private final PlayermodelAnimation ANIMATION;
@@ -182,7 +184,7 @@ public class Raccoon implements PowerUpDefinition {
 			if(entityTarget != null) {
 				ServerPlayerEntity mario = data.getMario();
 				DamageSource damageSource = mario.getDamageSources().playerAttack(mario);
-				entityTarget.damage(damageSource, 5.75F);
+				entityTarget.damage(damageSource, TAIL_STRIKE_DAMAGE);
 				List<LivingEntity> sweepTargets = mario.getWorld().getNonSpectatingEntities(LivingEntity.class, entityTarget.getBoundingBox().expand(1.0, 0.25, 1.0));
 				for(LivingEntity sweepTarget : sweepTargets) {
 					if(
@@ -191,7 +193,7 @@ public class Raccoon implements PowerUpDefinition {
 							&& !mario.isTeammate(sweepTarget)
 							&& !(sweepTarget instanceof ArmorStandEntity stand && stand.isMarker())
 							&& mario.squaredDistanceTo(sweepTarget) < 9.0
-							&& sweepTarget.damage(damageSource, 4)) {
+							&& sweepTarget.damage(damageSource, TAIL_STRIKE_DAMAGE)) {
 
 						sweepTarget.takeKnockback(
 								0.4F, MathHelper.sin(mario.getYaw() * (float) (Math.PI / 180.0)), -MathHelper.cos(mario.getYaw() * (float) (Math.PI / 180.0))

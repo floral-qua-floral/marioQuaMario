@@ -74,6 +74,7 @@ public class TailSpinFall implements AirborneActionDefinition {
 	}
 	@Override public void serverTick(IMarioAuthoritativeData data) {
 		TailSpinGround.commonTick(data);
+		TailSpinGround.attemptTailStrike(data);
 	}
 	@Override public void travelHook(IMarioTravelData data, AirborneActionHelper helper) {
 		helper.applyComplexGravity(data, FALL_ACCEL, null, FALL_SPEED);

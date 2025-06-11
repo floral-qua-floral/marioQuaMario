@@ -20,8 +20,12 @@ import com.fqf.mario_qua_mario_content.actions.airborne.DuckFall;
 import com.fqf.mario_qua_mario_content.actions.airborne.DuckJump;
 import com.fqf.mario_qua_mario_content.actions.grounded.DuckSlide;
 import com.fqf.mario_qua_mario_content.actions.grounded.DuckWaddle;
+import com.fqf.mario_qua_mario_content.powerups.Raccoon;
 import com.fqf.mario_qua_mario_content.util.Powers;
 import com.fqf.mario_qua_mario_content.util.TailSpinActionTimerVars;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
@@ -96,6 +100,21 @@ public class TailSpinGround implements GroundedActionDefinition {
 		return null;
 	}
 
+	public static void attemptTailStrike(IMarioAuthoritativeData data) {
+		if(data.getVars(TailSpinActionTimerVars.class).actionTimer % 3 == 0) {
+			ServerPlayerEntity mario = data.getMario();
+			List<Entity> strikeTargets = mario.getServerWorld().getOtherEntities(
+					mario, mario.getBoundingBox().expand(1, 0.5, 1));
+
+			strikeTargets.removeIf(entity -> !entity.canHit());
+
+			DamageSource source = mario.getDamageSources().playerAttack(mario);
+			for(Entity strikeTarget : strikeTargets) {
+				strikeTarget.damage(source, Raccoon.TAIL_STRIKE_DAMAGE);
+			}
+		}
+	}
+
 	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
 		return new TailSpinActionTimerVars(data);
 	}
@@ -107,6 +126,7 @@ public class TailSpinGround implements GroundedActionDefinition {
 	}
 	@Override public void serverTick(IMarioAuthoritativeData data) {
 		commonTick(data);
+		attemptTailStrike(data);
 	}
 	@Override public void travelHook(IMarioTravelData data, GroundedActionHelper helper) {
 		helper.applyDrag(data, CharaStat.ZERO, CharaStat.ZERO,
