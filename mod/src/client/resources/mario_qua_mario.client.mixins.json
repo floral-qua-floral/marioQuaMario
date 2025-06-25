@@ -18,8 +18,7 @@
     "MinecraftClientMixin",
     "OtherClientPlayerEntityMarioDataMixin",
     "PlayerEntityModelMixin",
-    "PlayerEntityRendererMixin",
-    "WorldRendererMixin"
+    "PlayerEntityRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

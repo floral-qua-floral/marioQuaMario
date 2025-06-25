@@ -108,7 +108,7 @@ public class BlockBappingUtil {
 	}
 
 	private static final Set<AbstractBapInfo> REPLACEMENT_BAPS = new HashSet<>();
-	public static void commonWorldTick(World world) { // on integrated client, will client & server be accessing same lists????
+	public static void commonWorldTick(World world) {
 		Map<BlockPos, AbstractBapInfo> bapsInWorld = ALL_BAPPED_BLOCKS.get(world);
 		if(bapsInWorld == null) return;
 		final Iterator<Map.Entry<BlockPos, AbstractBapInfo>> each = bapsInWorld.entrySet().iterator();

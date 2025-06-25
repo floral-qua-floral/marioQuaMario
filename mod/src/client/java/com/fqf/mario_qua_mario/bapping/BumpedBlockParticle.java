@@ -49,6 +49,11 @@ public class BumpedBlockParticle extends Particle {
 		super.tick();
 	}
 
+	@Override
+	public void markDead() {
+		super.markDead();
+	}
+
 	private static final float SCALE = 1.005F;
 	private static final float MINI_OFFSET = (1.0F - SCALE) / 2.0F;
 
