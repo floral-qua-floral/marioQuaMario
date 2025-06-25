@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario.packets;
 
+import com.fqf.mario_qua_mario.bapping.BlockBappingUtil;
 import com.fqf.mario_qua_mario.compat.RecordingModsCompatSafe;
 import com.fqf.mario_qua_mario.util.MarioClientHelperManager;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -20,6 +21,7 @@ import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
@@ -182,6 +184,11 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 					interception.IS_FROM_ACTION, interceptionSource, interceptionIndex, seed);
 			replayPacket = new MarioAttackInterceptionPackets.MissedAttackInterceptedS2CPayload(
 					marioID, interception.IS_FROM_ACTION, interceptionSource, interceptionIndex, seed);
+		}
+
+		if(targetBlock != null) {
+			MarioQuaMario.LOGGER.info("Bapping block @ {} due to an Attack Interception occurring", targetBlock);
+			BlockBappingUtil.attemptBap(data, data.getMario().getWorld(), targetBlock, Direction.UP, 10000);
 		}
 
 		ClientPlayNetworking.send(packet);

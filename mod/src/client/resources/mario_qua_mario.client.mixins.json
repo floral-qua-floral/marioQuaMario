@@ -5,7 +5,9 @@
   "client": [
     "AbstractClientPlayerEntityMarioDataMixin",
     "BipedEntityModelMixin",
+    "SodiumLevelSliceMixin",
     "CameraMixin",
+    "ChunkRendererRegionMixin",
     "ClientPlayerEntityMarioDataMixin",
     "ClientPlayerEntityMixin",
     "ClientPlayNetworkHandlerMixin",
@@ -16,7 +18,8 @@
     "MinecraftClientMixin",
     "OtherClientPlayerEntityMarioDataMixin",
     "PlayerEntityModelMixin",
-    "PlayerEntityRendererMixin"
+    "PlayerEntityRendererMixin",
+    "WorldRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

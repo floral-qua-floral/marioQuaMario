@@ -54,7 +54,7 @@ public class Fall implements AirborneActionDefinition {
 	}
 
 	@Override public @Nullable BumpType getBumpType() {
-		return null;
+		return BumpType.FALLING;
 	}
 	@Override public @Nullable Identifier getStompTypeID() {
 		return JumpStomp.ID;

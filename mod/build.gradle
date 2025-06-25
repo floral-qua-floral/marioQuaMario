@@ -72,6 +72,7 @@ dependencies {
 	modCompileOnly "maven.modrinth:replaymod:${replaymod_version}"
 	modCompileOnly "maven.modrinth:presence-footsteps:${presence_footsteps_version}"
 	modCompileOnly "maven.modrinth:flashback:${flashback_version}"
+	modCompileOnly "maven.modrinth:sodium:${sodium_version}"
 }
 
 processResources {

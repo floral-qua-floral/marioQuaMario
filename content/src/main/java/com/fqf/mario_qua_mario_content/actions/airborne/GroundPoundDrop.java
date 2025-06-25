@@ -54,7 +54,7 @@ public class GroundPoundDrop implements AirborneActionDefinition {
 	}
 
 	@Override public @Nullable BumpType getBumpType() {
-		return null;
+		return BumpType.GROUND_POUND;
 	}
 	@Override public @Nullable Identifier getStompTypeID() {
 		return null;

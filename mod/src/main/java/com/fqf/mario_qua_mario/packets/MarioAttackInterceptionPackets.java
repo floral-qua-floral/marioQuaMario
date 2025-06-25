@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.packets;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.bapping.BlockBappingUtil;
 import com.fqf.mario_qua_mario.registries.ParsedAttackInterception;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
@@ -14,6 +15,7 @@ import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import org.jetbrains.annotations.Nullable;
 
 public class MarioAttackInterceptionPackets {
@@ -41,6 +43,11 @@ public class MarioAttackInterceptionPackets {
 	) {
 		ParsedAttackInterception.getInterception(payload)
 				.execute(mario.mqm$getMarioData(), targetEntity, targetBlock, seed);
+
+		if(targetBlock != null) {
+			MarioQuaMario.LOGGER.info("Bapping block @ {} due to an Attack Interception occurring", targetBlock);
+			BlockBappingUtil.attemptBap(mario.mqm$getMarioData(), mario.getWorld(), targetBlock, Direction.UP, 10000);
+		}
 
 		MarioPackets.sendToTrackers(mario, convertPayloadToS2C(mario, payload, targetEntity, targetBlock), false);
 	}

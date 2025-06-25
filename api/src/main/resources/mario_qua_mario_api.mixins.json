@@ -5,6 +5,7 @@
   "mixins": [
     "AbstractHorseEntityMixin",
     "AbstractMinecartEntityMixin",
+    "BlockMixin",
     "CamelEntityMixin",
     "EnderDragonEntityMixin",
     "EntityMixin",
