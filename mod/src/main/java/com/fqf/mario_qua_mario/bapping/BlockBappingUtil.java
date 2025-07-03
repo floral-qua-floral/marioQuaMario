@@ -2,14 +2,17 @@ package com.fqf.mario_qua_mario.bapping;
 
 import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
 import com.fqf.mario_qua_mario.util.MarioClientHelperManager;
+import com.fqf.mario_qua_mario.util.MarioSFX;
 import com.fqf.mario_qua_mario_api.interfaces.BapResult;
 import com.fqf.mario_qua_mario_api.interfaces.Bappable;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.BlockSoundGroup;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
@@ -36,21 +39,29 @@ public class BlockBappingUtil {
 	public static BapResult attemptBap(MarioPlayerData data, World world, BlockPos pos, Direction direction, int strength) {
 		BlockState blockState = world.getBlockState(pos);
 		BapResult result = ((Bappable) blockState.getBlock()).mqm$getBapResult(data, world, blockState, direction, strength);
-		AbstractBapInfo info = makeBapInfo(world, pos, direction, data.getMario(), result);
+		AbstractBapInfo info = makeBapInfo(world, pos, direction, strength, data.getMario(), result);
 
 		if(info != null)
-			bap(info);
+			storeBap(info);
 
 		return result;
 	}
 
-	public static AbstractBapInfo makeBapInfo(World world, BlockPos pos, Direction direction, @Nullable Entity bapper, BapResult result) {
+	public static AbstractBapInfo makeBapInfo(World world, BlockPos pos, Direction direction, int strength, @Nullable Entity bapper, BapResult result) {
+		BlockState blockState = world.getBlockState(pos);
+		world.playSound(bapper, pos, MarioSFX.BUMP, SoundCategory.BLOCKS, 0.4F, 1.0F);
+		BlockSoundGroup group = blockState.getSoundGroup();
+		world.playSound(bapper, pos, group.getPlaceSound(), SoundCategory.BLOCKS, group.pitch * 0.8F, group.volume);
+		((Bappable) blockState.getBlock()).mqm$onBapped(
+				bapper instanceof PlayerEntity mario ? mario.mqm$getMarioData() : null,
+				world, blockState, direction, strength, result
+		);
 		switch(result) {
 			case BUMP -> {
-				return new BumpingBlockInfo(world, pos, direction);
+				return new BumpingBlockInfo(world, pos, direction, bapper);
 			}
 			case BUMP_EMBRITTLE -> {
-				return new BumpingEmbrittlingBlockInfo(world, pos, direction);
+				return new BumpingEmbrittlingBlockInfo(world, pos, direction, bapper);
 			}
 			case BREAK -> {
 				return new BapBreakingBlockInfo(world, pos, direction, bapper);
@@ -65,12 +76,12 @@ public class BlockBappingUtil {
 		}
 	}
 
-	public static void bap(AbstractBapInfo info) {
+	private static void storeBap(AbstractBapInfo info) {
 		if(info.WORLD.isClient()) MarioClientHelperManager.helper.clientBap(info);
 
 		ALL_BAPPED_BLOCKS.putIfAbsent(info.WORLD, new HashMap<>());
 		AbstractBapInfo prevInfo = ALL_BAPPED_BLOCKS.get(info.WORLD).put(info.POS, info);
-		if(prevInfo != null) prevInfo.finish();
+		if(prevInfo != null) prevInfo.finish(); // discard new AbstractBapInfo if provided
 		switch(info.RESULT) {
 			case BUMP_EMBRITTLE -> {
 				getCertain(BRITTLE_BLOCK_POSITIONS, info.WORLD).add(info.POS);
@@ -126,7 +137,7 @@ public class BlockBappingUtil {
 		}
 
 		if(!REPLACEMENT_BAPS.isEmpty()) {
-			REPLACEMENT_BAPS.forEach(BlockBappingUtil::bap);
+			REPLACEMENT_BAPS.forEach(BlockBappingUtil::storeBap);
 			REPLACEMENT_BAPS.clear();
 		}
 	}

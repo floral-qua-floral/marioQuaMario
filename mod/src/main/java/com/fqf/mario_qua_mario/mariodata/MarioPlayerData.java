@@ -16,10 +16,7 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -191,8 +188,14 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 		return this.isEnabled() ? this.getPowerUp().HEIGHT_FACTOR * this.getCharacter().HEIGHT_FACTOR : 1;
 	}
 
-	@Override public int getBumpStrengthModifier() {
-		return this.getPowerUp().BUMP_STRENGTH_MODIFIER + this.getCharacter().BUMP_STRENGTH_MODIFIER;
+	@Override public int getBapStrength(Direction direction) {
+		int actionBapStrength = switch(direction) {
+			case DOWN -> this.getAction().BUMP_TYPE.floorBumpStrength();
+			case UP -> this.getAction().BUMP_TYPE.ceilingBumpStrength();
+			case NORTH, SOUTH, WEST, EAST -> this.getAction().BUMP_TYPE.wallBumpStrength();
+		};
+		if(actionBapStrength <= 1) return Math.max(0, actionBapStrength);
+		return Math.max(1, actionBapStrength + this.getCharacter().BUMP_STRENGTH_MODIFIER + this.getPowerUp().BUMP_STRENGTH_MODIFIER);
 	}
 
 	private final Map<Class<?>, Object> customVars = new HashMap<>();

@@ -5,20 +5,21 @@
   "client": [
     "AbstractClientPlayerEntityMarioDataMixin",
     "BipedEntityModelMixin",
-    "SodiumLevelSliceMixin",
     "CameraMixin",
     "ChunkRendererRegionMixin",
     "ClientPlayerEntityMarioDataMixin",
     "ClientPlayerEntityMixin",
     "ClientPlayNetworkHandlerMixin",
     "CPMClientBaseMixin",
+    "EntityBlockCollisionMixin",
     "GameRendererMixin",
     "HeldItemRendererMixin",
     "InGameHudMixin",
     "MinecraftClientMixin",
     "OtherClientPlayerEntityMarioDataMixin",
     "PlayerEntityModelMixin",
-    "PlayerEntityRendererMixin"
+    "PlayerEntityRendererMixin",
+    "SodiumLevelSliceMixin"
   ],
   "injectors": {
     "defaultRequire": 1

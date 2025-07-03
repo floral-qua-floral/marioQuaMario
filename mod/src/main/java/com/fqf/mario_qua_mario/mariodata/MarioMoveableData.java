@@ -238,7 +238,7 @@ public abstract class MarioMoveableData extends MarioPlayerData implements IMari
 		this.jumpCapped = false;
 	}
 
-	protected void moveWithFluidPushing() {
+	protected Vec3d moveWithFluidPushing() {
 		Vec3d motion = this.getMario().getVelocity().add(this.getFluidPushingVel());
 		// isChunkLoaded is deprecated but what the HECK ELSE DO I USE INSTEAD??? LivingEntity.travel uses it???
 		if(!this.getMario().getWorld().isChunkLoaded(this.getMario().getVelocityAffectingPos())) {
@@ -246,6 +246,7 @@ public abstract class MarioMoveableData extends MarioPlayerData implements IMari
 			this.getMario().setVelocity(this.getMario().getVelocity().withAxis(Direction.Axis.Y, 0));
 		}
 		this.getMario().move(MovementType.SELF, motion);
+		return motion;
 	}
 
 	public WallboundActionDefinition.WallInfo getWallInfo() {

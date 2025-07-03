@@ -14,8 +14,11 @@ public record BumpType(int ceilingBumpStrength, int floorBumpStrength, int wallB
 	 * A strength of 2 represents Super Mario being able to shatter a Flip Block, and Small Mario having no effect on it.
 	 * (Example: Spin Jump)
 	 * <p>
-	 * A strength of 1 represents Mario landing on a block and having no effect on it.
+	 * A strength of 1 represents Mario having no effect on a block, but still imparting some nonzero force.
 	 * (Example: Regular jump)
+	 * <p>
+	 * A strength of 0 represents no special collision at all. This will never trigger even an attempted bap.
+	 * (Example: Standing on a block)
 	 */
 	public static final BumpType GROUNDED = new BumpType(0, 0);
 	public static final BumpType JUMPING = new BumpType(4, 1);

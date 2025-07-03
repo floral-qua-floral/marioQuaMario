@@ -11,6 +11,7 @@ import com.fqf.mario_qua_mario.registries.ParsedMarioState;
 import com.fqf.mario_qua_mario.registries.ParsedStompType;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -26,7 +27,7 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 	public final SneakingRule SNEAKING_RULE;
 	public final SprintingRule SPRINTING_RULE;
 
-	public final @Nullable BumpType BUMP_TYPE;
+	public final @NotNull BumpType BUMP_TYPE;
 	public final @Nullable ParsedStompType STOMP_TYPE;
 
 	public final Map<AbstractParsedAction, ParsedTransition> TRANSITIONS_FROM_TARGETS;
@@ -36,6 +37,8 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 	public final List<ParsedAttackInterception> INTERCEPTIONS;
 
 	private static final boolean LOG_TRANSITION_INJECTIONS = MarioQuaMario.CONFIG.logActionTransitionInjections();
+
+	private static final BumpType NULL_EQUIVALENT = new BumpType(0, 0);
 
 	public AbstractParsedAction(IncompleteActionDefinition definition, HashMap<Identifier, Set<TransitionInjectionDefinition>> allInjections) {
 		super(definition);
@@ -52,7 +55,8 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 		this.SNEAKING_RULE = definition.getSneakingRule();
 		this.SPRINTING_RULE = definition.getSprintingRule();
 
-		this.BUMP_TYPE = definition.getBumpType();
+		BumpType bumpType = definition.getBumpType();
+		this.BUMP_TYPE = bumpType == null ? NULL_EQUIVALENT : bumpType;
 		this.STOMP_TYPE = RegistryManager.STOMP_TYPES.get(definition.getStompTypeID());
 
 		this.TRANSITIONS_FROM_TARGETS = new HashMap<>();

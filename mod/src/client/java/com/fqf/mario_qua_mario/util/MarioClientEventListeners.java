@@ -22,7 +22,7 @@ public class MarioClientEventListeners {
 	public static void register() {
 		ClientTickEvents.START_WORLD_TICK.register(BlockBappingClientUtil::clientWorldTick);
 
-		WorldRenderEvents.BEFORE_BLOCK_OUTLINE.register((worldRenderContext, hitResult) -> {
+		WorldRenderEvents.AFTER_ENTITIES.register((worldRenderContext) -> {
 			ClientWorld world = worldRenderContext.world();
 			MatrixStack matrixStack = worldRenderContext.matrixStack();
 			assert matrixStack != null;
@@ -40,7 +40,6 @@ public class MarioClientEventListeners {
 				if(diffX * diffX + diffY * diffY + diffZ * diffZ < 1024) {
 					matrixStack.push();
 					matrixStack.translate(diffX, diffY, diffZ);
-					matrixStack.translate(0, 0.2, 0);
 					MatrixStack.Entry entry3 = matrixStack.peek();
 
 					VertexConsumer vertexConsumer2 = new OverlayVertexConsumer(
@@ -57,7 +56,7 @@ public class MarioClientEventListeners {
 				}
 			}
 
-			return true;
+//			return true;
 		});
 
 

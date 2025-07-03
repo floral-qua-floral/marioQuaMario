@@ -2,6 +2,8 @@ package com.fqf.mario_qua_mario.bapping;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario_api.interfaces.BapResult;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
@@ -15,12 +17,12 @@ public class BumpingBlockInfo extends AbstractBapInfo {
 	protected final long FINISH_TIME;
 	public final Direction DISPLACEMENT_DIRECTION;
 
-	public BumpingBlockInfo(World world, BlockPos pos, Direction direction) {
-		this(world, pos, direction, BapResult.BUMP);
+	public BumpingBlockInfo(World world, BlockPos pos, Direction direction, Entity bapper) {
+		this(world, pos, direction, bapper, BapResult.BUMP);
 	}
 
-	protected BumpingBlockInfo(World world, BlockPos pos, Direction direction, BapResult result) {
-		super(world, pos, result);
+	protected BumpingBlockInfo(World world, BlockPos pos, Direction direction, Entity bapper, BapResult result) {
+		super(world, pos, result, bapper);
 		this.FINISH_TIME = this.getFinishTime(world);
 		this.DISPLACEMENT_DIRECTION = direction;
 	}

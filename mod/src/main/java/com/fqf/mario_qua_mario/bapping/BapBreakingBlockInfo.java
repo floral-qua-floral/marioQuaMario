@@ -10,11 +10,10 @@ import java.util.Map;
 import java.util.Set;
 
 public class BapBreakingBlockInfo extends BumpingBlockInfo {
-	private final Entity BAPPER;
+
 
 	public BapBreakingBlockInfo(World world, BlockPos pos, Direction direction, Entity bapper) {
-		super(world, pos, direction, BapResult.BREAK);
-		this.BAPPER = bapper;
+		super(world, pos, direction, bapper, BapResult.BREAK);
 	}
 
 	@Override
