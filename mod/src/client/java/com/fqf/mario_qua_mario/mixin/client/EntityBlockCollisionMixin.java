@@ -24,7 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Mixin(Entity.class) // FIXME Not registered, seems like an infeasible implementation; remove after first commit that includes it
+@Mixin(Entity.class)
 public abstract class EntityBlockCollisionMixin {
 //	@WrapMethod(method = "adjustMovementForCollisions(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/util/math/Box;Lnet/minecraft/world/World;Ljava/util/List;)Lnet/minecraft/util/math/Vec3d;")
 //	private static Vec3d marioBlockCollision(@Nullable Entity entity, Vec3d movement, Box entityBoundingBox, World world, List<VoxelShape> collisions, Operation<Vec3d> original) {
