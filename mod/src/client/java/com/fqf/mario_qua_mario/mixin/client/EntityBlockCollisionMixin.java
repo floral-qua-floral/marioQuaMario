@@ -26,20 +26,16 @@ import java.util.Set;
 
 @Mixin(Entity.class)
 public abstract class EntityBlockCollisionMixin {
-//	@WrapMethod(method = "adjustMovementForCollisions(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/util/math/Box;Lnet/minecraft/world/World;Ljava/util/List;)Lnet/minecraft/util/math/Vec3d;")
-//	private static Vec3d marioBlockCollision(@Nullable Entity entity, Vec3d movement, Box entityBoundingBox, World world, List<VoxelShape> collisions, Operation<Vec3d> original) {
-//		if(entity instanceof PlayerEntity mario) {
-//			MarioQuaMario.LOGGER.info("adjustMovementForCollisions Mario on {}!", mario.getWorld().isClient() ? "CLIENT" : "SERVER");
-//		}
-////		MarioQuaMario.LOGGER.info("adjustMovementForCollisions on {}", entity);
-//
-//		return original.call(entity, movement, entityBoundingBox, world, collisions);
-//	}
-
 	@Shadow private static List<VoxelShape> findCollisionsForMovement(@Nullable Entity entity, World world, List<VoxelShape> regularCollisions, Box movingEntityBoundingBox) {
 		return null;
 	}
 
+	// Predict which blocks Mario is about to collide with and bap them.
+	// This is MASSIVELY easier than hooking directly into the collision logic and probably doesn't cost too much in
+	// performance since it only runs on the main client player entity.
+	// This will also hopefully make it so the BUST bap result will work super easily by just smashing the blocks before
+	// movement-collision even occurs :)
+	// TODO: Consider moving into MainClientPlayerEntity? Would need to duplicate or AW findCollisionsForMovement though :/
 	@Inject(method = "adjustMovementForCollisions(Lnet/minecraft/util/math/Vec3d;)Lnet/minecraft/util/math/Vec3d;", at = @At("HEAD"))
 	private void preemptiveBapCheck(Vec3d movement, CallbackInfoReturnable<Vec3d> cir) {
 		if((Entity) (Object) this instanceof ClientPlayerEntity mario) {
