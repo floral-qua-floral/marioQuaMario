@@ -78,7 +78,7 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 				}
 
 				// Check if we were recently in fromAction. If not, return false.
-				if(this.RECENT_ACTIONS.stream().noneMatch(pair -> pair.getLeft().ID.equals(fromAction.ID))) {
+				if(!this.recentlyInAction(fromAction)) {
 					if (MarioQuaMario.LOGGER.isWarnEnabled()) {
 						StringBuilder recentActionsString = new StringBuilder();
 						for (Pair<AbstractParsedAction, Long> recentAction : RECENT_ACTIONS) {
@@ -104,6 +104,10 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 		}
 
 		return super.setAction(fromAction, toAction, seed, forced, fromCommand);
+	}
+
+	public boolean recentlyInAction(AbstractParsedAction checkAction) {
+		return this.getAction() == checkAction || this.RECENT_ACTIONS.stream().anyMatch(pair -> pair.getLeft().ID.equals(checkAction.ID));
 	}
 
 	@Override

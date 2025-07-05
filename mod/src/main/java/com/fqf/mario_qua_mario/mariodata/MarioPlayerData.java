@@ -189,10 +189,14 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	}
 
 	@Override public int getBapStrength(Direction direction) {
+		return this.getBapStrength(this.getAction(), direction);
+	}
+
+	public int getBapStrength(AbstractParsedAction action, Direction direction) {
 		int actionBapStrength = switch(direction) {
-			case DOWN -> this.getAction().BUMP_TYPE.floorBumpStrength();
-			case UP -> this.getAction().BUMP_TYPE.ceilingBumpStrength();
-			case NORTH, SOUTH, WEST, EAST -> this.getAction().BUMP_TYPE.wallBumpStrength();
+			case DOWN -> action.BAPPING_RULE.floorBumpStrength();
+			case UP -> action.BAPPING_RULE.ceilingBumpStrength();
+			case NORTH, SOUTH, WEST, EAST -> action.BAPPING_RULE.wallBumpStrength();
 		};
 		if(actionBapStrength <= 1) return Math.max(0, actionBapStrength);
 		return Math.max(1, actionBapStrength + this.getCharacter().BUMP_STRENGTH_MODIFIER + this.getPowerUp().BUMP_STRENGTH_MODIFIER);

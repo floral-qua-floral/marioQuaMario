@@ -53,8 +53,8 @@ public class GroundPoundDrop implements AirborneActionDefinition {
 		return SprintingRule.PROHIBIT;
 	}
 
-	@Override public @Nullable BumpType getBumpType() {
-		return BumpType.GROUND_POUND;
+	@Override public @Nullable BappingRule getBappingRule() {
+		return BappingRule.GROUND_POUND;
 	}
 	@Override public @Nullable Identifier getStompTypeID() {
 		return null;

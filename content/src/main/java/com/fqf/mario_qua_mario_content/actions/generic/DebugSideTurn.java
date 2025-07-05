@@ -10,7 +10,6 @@ import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_content.util.ActionTimerVars;
-import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
@@ -59,7 +58,7 @@ public class DebugSideTurn implements GenericActionDefinition {
 		return SprintingRule.PROHIBIT;
 	}
 
-	@Override public @Nullable BumpType getBumpType() {
+	@Override public @Nullable BappingRule getBappingRule() {
 		return null;
 	}
 	@Override public @Nullable Identifier getStompTypeID() {

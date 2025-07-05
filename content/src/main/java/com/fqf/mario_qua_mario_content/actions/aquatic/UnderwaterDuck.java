@@ -10,7 +10,6 @@ import com.fqf.mario_qua_mario_api.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
-import com.fqf.mario_qua_mario_api.util.CharaStat;
 import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
 import com.fqf.mario_qua_mario_content.actions.grounded.DuckWaddle;
 import net.minecraft.util.Identifier;
@@ -19,8 +18,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Set;
-
-import static com.fqf.mario_qua_mario_api.util.StatCategory.*;
 
 public class UnderwaterDuck implements AquaticActionDefinition {
 	public static final Identifier ID = MarioQuaMarioContent.makeID("underwater_duck");
@@ -46,7 +43,7 @@ public class UnderwaterDuck implements AquaticActionDefinition {
 		return SprintingRule.PROHIBIT;
 	}
 
-	@Override public @Nullable BumpType getBumpType() {
+	@Override public @Nullable BappingRule getBappingRule() {
 		return null;
 	}
 	@Override public @Nullable Identifier getStompTypeID() {

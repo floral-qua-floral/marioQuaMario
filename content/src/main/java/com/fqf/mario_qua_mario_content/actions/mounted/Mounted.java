@@ -46,7 +46,7 @@ public class Mounted implements MountedActionDefinition {
 		return SprintingRule.ALLOW;
 	}
 
-	@Override public @Nullable BumpType getBumpType() {
+	@Override public @Nullable BappingRule getBappingRule() {
 		return null;
 	}
 	@Override public @Nullable Identifier getStompTypeID() {

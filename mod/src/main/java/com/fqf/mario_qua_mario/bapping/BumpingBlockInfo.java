@@ -50,7 +50,8 @@ public class BumpingBlockInfo extends AbstractBapInfo {
 	@Override
 	public AbstractBapInfo finish() {
 		BlockBappingUtil.HIDDEN_BLOCK_POSITIONS.get(this.WORLD).remove(this.POS);
-		BlockBappingUtil.POWERED_BLOCK_POSITIONS.get(this.WORLD).remove(this.POS);
+		Set<BlockPos> poweredBlocksInWorld = BlockBappingUtil.POWERED_BLOCK_POSITIONS.get(this.WORLD);
+		if(poweredBlocksInWorld != null) poweredBlocksInWorld.remove(this.POS);
 		this.WORLD.updateNeighbor(this.POS, this.WORLD.getBlockState(this.POS).getBlock(), this.POS);
 		BlockBappingUtil.reRenderPos(this);
 		return null;

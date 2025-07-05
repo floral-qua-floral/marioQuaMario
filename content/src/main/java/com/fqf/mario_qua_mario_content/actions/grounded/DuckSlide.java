@@ -17,7 +17,6 @@ import com.fqf.mario_qua_mario_content.actions.airborne.DuckFall;
 import com.fqf.mario_qua_mario_content.actions.airborne.DuckJump;
 import com.fqf.mario_qua_mario_content.actions.airborne.LongJump;
 import com.fqf.mario_qua_mario_content.actions.aquatic.UnderwaterDuck;
-import com.fqf.mario_qua_mario_content.actions.aquatic.UnderwaterWalk;
 import com.fqf.mario_qua_mario_content.util.ActionTimerVars;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -51,8 +50,8 @@ public class DuckSlide implements GroundedActionDefinition {
 		return SprintingRule.PROHIBIT;
 	}
 
-	@Override public @Nullable BumpType getBumpType() {
-		return null;
+	@Override public @Nullable BappingRule getBappingRule() {
+		return BappingRule.ROLLING;
 	}
 	@Override public @Nullable Identifier getStompTypeID() {
 		return null;

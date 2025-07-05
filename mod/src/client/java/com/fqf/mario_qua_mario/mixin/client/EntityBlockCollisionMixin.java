@@ -42,14 +42,14 @@ public abstract class EntityBlockCollisionMixin {
 			MarioMainClientData data = mario.mqm$getMarioData();
 			if(!data.isEnabled()) return;
 
-			int floorStrength = 0; // TODO: Use actual bap strengths (should add to Action data first)
-			int ceilingStrength = 10;
-			int wallStrength = 10;
+			int floorStrength = data.getBapStrength(Direction.DOWN);
+			int ceilingStrength = data.getBapStrength(Direction.UP);
+			int wallStrength = data.getBapStrength(Direction.NORTH);
 
 			boolean bapFloors = floorStrength > 0;
 			boolean bapCeilings = ceilingStrength > 0;
 			double wallSpeedThreshold;
-			if(wallStrength > 0) wallSpeedThreshold = data.getAction().BUMP_TYPE.wallBumpSpeedThreshold().getAsThreshold(data);
+			if(wallStrength > 0) wallSpeedThreshold = data.getAction().BAPPING_RULE.wallBumpSpeedThreshold().getAsThreshold(data);
 			else wallSpeedThreshold = 0.5;
 			boolean bapWalls = wallStrength > 0 && movement.horizontalLengthSquared() > wallSpeedThreshold * wallSpeedThreshold;
 			boolean bapOnXAxis = bapWalls && Math.abs(movement.x) > wallSpeedThreshold * 0.5;
@@ -102,18 +102,11 @@ public abstract class EntityBlockCollisionMixin {
 				bapPositions.add(positionedShape.pos());
 				absSmallestOffsetFound = Math.abs(maxDist);
 			}
-
-			MarioQuaMario.LOGGER.info("Tested collision w/ {}:\n\tBlock: {}\n\t\tMax Offset: {}\n\t\tMovement: {}",
-					positionedShape.pos(), mario.getWorld().getBlockState(positionedShape.pos()).getBlock(), maxDist, movement);
 		}
 
 		if(!bapPositions.isEmpty()) {
-			MarioQuaMario.LOGGER.info("Selected baps w/ max offset {}", absSmallestOffsetFound);
 			for(BlockPos pos : bapPositions) {
 				BlockBappingUtil.attemptBap(data, mario.clientWorld, pos, dir, strength);
-				MarioQuaMario.LOGGER.info("Bap {} @ ({}, {}, {}); dir={}, str={}",
-						mario.getWorld().getBlockState(pos).getBlock().getName().toString(),
-						pos.getX(), pos.getY(), pos.getZ(), dir, strength);
 			}
 		}
 

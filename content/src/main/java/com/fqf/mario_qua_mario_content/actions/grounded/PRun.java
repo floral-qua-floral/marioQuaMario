@@ -61,7 +61,7 @@ public class PRun implements GroundedActionDefinition {
 	public static final CharaStat P_ACCEL = new CharaStat(0.13, P_RUNNING, FORWARD, ACCELERATION);
 	public static final CharaStat P_REDIRECTION = new CharaStat(6.0, P_RUNNING, FORWARD, REDIRECTION);
 
-	@Override public @Nullable BumpType getBumpType() {
+	@Override public @Nullable BappingRule getBappingRule() {
 		return null;
 	}
 	@Override public @Nullable Identifier getStompTypeID() {

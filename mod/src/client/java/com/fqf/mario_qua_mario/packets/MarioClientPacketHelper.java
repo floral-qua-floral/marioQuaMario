@@ -3,7 +3,7 @@ package com.fqf.mario_qua_mario.packets;
 import com.fqf.mario_qua_mario.bapping.BlockBappingUtil;
 import com.fqf.mario_qua_mario.compat.RecordingModsCompatSafe;
 import com.fqf.mario_qua_mario.util.MarioClientHelperManager;
-import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario_api.interfaces.BapResult;
 import com.fqf.mario_qua_mario_api.interfaces.StompResult;
 import com.fqf.mario_qua_mario.mariodata.*;
 import com.fqf.mario_qua_mario.registries.ParsedAttackInterception;
@@ -127,6 +127,18 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 						null, payload.targetBlock(), payload.seed()
 				)
 		);
+
+		// BapBlockS2CPayload Receiver
+		ClientPlayNetworking.registerGlobalReceiver(MarioBappingPackets.BapBlockS2CPayload.ID, (payload, context) -> {
+			BlockBappingUtil.storeBapInfo(Objects.requireNonNull(BlockBappingUtil.makeBapInfo(
+					context.player().clientWorld,
+					payload.pos(),
+					Direction.values()[payload.direction()],
+					payload.strength(),
+					context.player().clientWorld.getEntityById(payload.bapperID()),
+					BapResult.values()[payload.result()]
+			), "Received payload for a bap that shouldn't trigger bap packet sending??"), false);
+		});
 	}
 
 	public static PlayerEntity getMarioFromID(ClientPlayNetworking.Context context, int marioID) {
@@ -186,11 +198,6 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 					marioID, interception.IS_FROM_ACTION, interceptionSource, interceptionIndex, seed);
 		}
 
-		if(targetBlock != null) {
-			MarioQuaMario.LOGGER.info("Bapping block @ {} due to an Attack Interception occurring", targetBlock);
-			BlockBappingUtil.attemptBap(data, data.getMario().getWorld(), targetBlock, Direction.UP, 10000);
-		}
-
 		ClientPlayNetworking.send(packet);
 		RecordingModsCompatSafe.conditionallySaveReplayPacket(replayPacket);
 	}
@@ -216,5 +223,17 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 				data.getMario().move(MovementType.SELF, targetPos.subtract(mario.getPos()));
 			}
 		}
+	}
+
+	@Override
+	public void bapBlockC2S(BlockPos pos, Direction direction, AbstractParsedAction action) {
+		ClientPlayNetworking.send(new MarioBappingPackets.BapBlockC2SPayload(pos, direction.ordinal(), action.getIntID()));
+	}
+
+	@Override
+	public void conditionallySaveBapToReplayMod(BlockPos pos, Direction direction, int strength, BapResult result, Entity bapper) {
+		RecordingModsCompatSafe.conditionallySaveReplayPacket(new MarioBappingPackets.BapBlockS2CPayload(
+				pos, direction.ordinal(), strength, result.ordinal(), bapper.getId()
+		));
 	}
 }

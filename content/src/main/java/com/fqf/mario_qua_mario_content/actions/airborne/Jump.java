@@ -2,7 +2,7 @@ package com.fqf.mario_qua_mario_content.actions.airborne;
 
 import com.fqf.mario_qua_mario_api.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.GroundedActionDefinition;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.BumpType;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.BappingRule;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.AnimationHelper;
@@ -70,8 +70,8 @@ public class Jump extends Fall implements AirborneActionDefinition {
 		);
 	}
 
-	@Override public @Nullable BumpType getBumpType() {
-		return BumpType.JUMPING;
+	@Override public @Nullable BappingRule getBappingRule() {
+		return BappingRule.JUMPING;
 	}
 
 	public static final CharaStat JUMP_GRAVITY = new CharaStat(-0.095, JUMPING_GRAVITY);

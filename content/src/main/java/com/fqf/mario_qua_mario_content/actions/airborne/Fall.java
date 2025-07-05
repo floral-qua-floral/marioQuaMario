@@ -53,8 +53,8 @@ public class Fall implements AirborneActionDefinition {
 		return SprintingRule.IF_ALREADY_SPRINTING;
 	}
 
-	@Override public @Nullable BumpType getBumpType() {
-		return BumpType.FALLING;
+	@Override public @Nullable BappingRule getBappingRule() {
+		return BappingRule.FALLING;
 	}
 	@Override public @Nullable Identifier getStompTypeID() {
 		return JumpStomp.ID;

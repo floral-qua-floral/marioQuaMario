@@ -82,7 +82,7 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 		return SprintingRule.PROHIBIT;
 	}
 
-	@Override public @Nullable BumpType getBumpType() {
+	@Override public @Nullable BappingRule getBappingRule() {
 		return null;
 	}
 	@Override public @Nullable Identifier getStompTypeID() {
@@ -111,8 +111,7 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 
 	public static final TransitionDefinition GROUND_POUND = new TransitionDefinition(
 			ID,
-//			data -> data.getInputs().DUCK.isPressed(),
-			data -> false, // Disabled for alpha
+			data -> data.getInputs().DUCK.isPressed(),
 			EvaluatorEnvironment.CLIENT_ONLY,
 			data -> {
 				data.setForwardStrafeVel(0, 0);

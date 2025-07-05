@@ -65,7 +65,7 @@ public class DebugTailTest implements GenericActionDefinition {
 		return SprintingRule.ALLOW;
 	}
 
-	@Override public @Nullable BumpType getBumpType() {
+	@Override public @Nullable BappingRule getBappingRule() {
 		return null;
 	}
 	@Override public @Nullable Identifier getStompTypeID() {

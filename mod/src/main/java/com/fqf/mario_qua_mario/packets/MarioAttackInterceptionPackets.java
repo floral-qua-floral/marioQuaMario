@@ -44,11 +44,6 @@ public class MarioAttackInterceptionPackets {
 		ParsedAttackInterception.getInterception(payload)
 				.execute(mario.mqm$getMarioData(), targetEntity, targetBlock, seed);
 
-		if(targetBlock != null) {
-			MarioQuaMario.LOGGER.info("Bapping block @ {} due to an Attack Interception occurring", targetBlock);
-			BlockBappingUtil.attemptBap(mario.mqm$getMarioData(), mario.getWorld(), targetBlock, Direction.UP, 10000);
-		}
-
 		MarioPackets.sendToTrackers(mario, convertPayloadToS2C(mario, payload, targetEntity, targetBlock), false);
 	}
 	private static CustomPayload convertPayloadToS2C(

@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.bapping;
 
 import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
+import com.fqf.mario_qua_mario.packets.MarioBappingPackets;
 import com.fqf.mario_qua_mario.util.MarioClientHelperManager;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import com.fqf.mario_qua_mario_api.interfaces.BapResult;
@@ -38,24 +39,41 @@ public class BlockBappingUtil {
 	@SuppressWarnings("UnusedReturnValue") // TODO: check for BUST, if so player keeps moving through broken block
 	public static BapResult attemptBap(MarioPlayerData data, World world, BlockPos pos, Direction direction, int strength) {
 		BlockState blockState = world.getBlockState(pos);
-		BapResult result = ((Bappable) blockState.getBlock()).mqm$getBapResult(data, world, blockState, direction, strength);
+		BapResult result = ((Bappable) blockState.getBlock()).mqm$getBapResult(data, world, pos, blockState, direction, strength);
 		AbstractBapInfo info = makeBapInfo(world, pos, direction, strength, data.getMario(), result);
 
-		if(info != null)
-			storeBap(info);
+		if(data.getMario().isMainPlayer() && result != BapResult.FAIL) {
+			MarioClientHelperManager.packetSender.bapBlockC2S(pos, direction, data.getAction());
+			MarioClientHelperManager.packetSender.conditionallySaveBapToReplayMod(pos, direction, strength, result, data.getMario());
+		}
+
+		if(info != null) {
+			storeBapInfo(info, true);
+			if(data.isServer()) {
+				MarioBappingPackets.bapS2C(
+						(ServerWorld) world, pos,
+						direction, strength, result,
+						data.getMario(), false
+				);
+			}
+		}
 
 		return result;
 	}
 
-	public static AbstractBapInfo makeBapInfo(World world, BlockPos pos, Direction direction, int strength, @Nullable Entity bapper, BapResult result) {
+	public static @Nullable AbstractBapInfo makeBapInfo(World world, BlockPos pos, Direction direction, int strength, @Nullable Entity bapper, BapResult result) {
 		BlockState blockState = world.getBlockState(pos);
-		world.playSound(bapper, pos, MarioSFX.BUMP, SoundCategory.BLOCKS, 0.4F, 1.0F);
-		BlockSoundGroup group = blockState.getSoundGroup();
-		world.playSound(bapper, pos, group.getPlaceSound(), SoundCategory.BLOCKS, group.pitch * 0.8F, group.volume);
 		((Bappable) blockState.getBlock()).mqm$onBapped(
 				bapper instanceof PlayerEntity mario ? mario.mqm$getMarioData() : null,
 				world, blockState, direction, strength, result
 		);
+		switch(result) {
+			case BUMP, BUMP_EMBRITTLE, BREAK -> {
+				world.playSound(bapper, pos, MarioSFX.BUMP, SoundCategory.BLOCKS, 0.4F, 1.0F);
+				BlockSoundGroup group = blockState.getSoundGroup();
+				world.playSound(bapper, pos, group.getPlaceSound(), SoundCategory.BLOCKS, group.pitch * 0.8F, group.volume);
+			}
+		}
 		switch(result) {
 			case BUMP -> {
 				return new BumpingBlockInfo(world, pos, direction, bapper);
@@ -76,8 +94,9 @@ public class BlockBappingUtil {
 		}
 	}
 
-	private static void storeBap(AbstractBapInfo info) {
-		if(info.WORLD.isClient()) MarioClientHelperManager.helper.clientBap(info);
+	public static void storeBapInfo(AbstractBapInfo info, boolean networkFromClient) {
+		if(info.WORLD.isClient())
+			MarioClientHelperManager.helper.clientBap(info);
 
 		ALL_BAPPED_BLOCKS.putIfAbsent(info.WORLD, new HashMap<>());
 		AbstractBapInfo prevInfo = ALL_BAPPED_BLOCKS.get(info.WORLD).put(info.POS, info);
@@ -137,7 +156,7 @@ public class BlockBappingUtil {
 		}
 
 		if(!REPLACEMENT_BAPS.isEmpty()) {
-			REPLACEMENT_BAPS.forEach(BlockBappingUtil::storeBap);
+			REPLACEMENT_BAPS.forEach(info -> storeBapInfo(info, false));
 			REPLACEMENT_BAPS.clear();
 		}
 	}

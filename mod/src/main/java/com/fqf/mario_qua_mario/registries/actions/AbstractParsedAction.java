@@ -27,7 +27,7 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 	public final SneakingRule SNEAKING_RULE;
 	public final SprintingRule SPRINTING_RULE;
 
-	public final @NotNull BumpType BUMP_TYPE;
+	public final @NotNull BappingRule BAPPING_RULE;
 	public final @Nullable ParsedStompType STOMP_TYPE;
 
 	public final Map<AbstractParsedAction, ParsedTransition> TRANSITIONS_FROM_TARGETS;
@@ -38,7 +38,7 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 
 	private static final boolean LOG_TRANSITION_INJECTIONS = MarioQuaMario.CONFIG.logActionTransitionInjections();
 
-	private static final BumpType NULL_EQUIVALENT = new BumpType(0, 0);
+	private static final BappingRule NULL_EQUIVALENT = new BappingRule(0, 0);
 
 	public AbstractParsedAction(IncompleteActionDefinition definition, HashMap<Identifier, Set<TransitionInjectionDefinition>> allInjections) {
 		super(definition);
@@ -55,8 +55,8 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 		this.SNEAKING_RULE = definition.getSneakingRule();
 		this.SPRINTING_RULE = definition.getSprintingRule();
 
-		BumpType bumpType = definition.getBumpType();
-		this.BUMP_TYPE = bumpType == null ? NULL_EQUIVALENT : bumpType;
+		BappingRule bappingRule = definition.getBappingRule();
+		this.BAPPING_RULE = bappingRule == null ? NULL_EQUIVALENT : bappingRule;
 		this.STOMP_TYPE = RegistryManager.STOMP_TYPES.get(definition.getStompTypeID());
 
 		this.TRANSITIONS_FROM_TARGETS = new HashMap<>();

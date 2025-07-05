@@ -47,6 +47,9 @@ public class MarioPackets {
 		MarioAttackInterceptionPackets.MissedAttackInterceptedS2CPayload.register();
 		MarioAttackInterceptionPackets.EntityAttackInterceptedS2CPayload.register();
 		MarioAttackInterceptionPackets.BlockAttackInterceptedS2CPayload.register();
+
+		MarioBappingPackets.BapBlockC2SPayload.register();
+		MarioBappingPackets.BapBlockS2CPayload.register();
 	}
 
 	public static void syncUseCharacterStatsS2C(MinecraftServer server, boolean shouldUse) {

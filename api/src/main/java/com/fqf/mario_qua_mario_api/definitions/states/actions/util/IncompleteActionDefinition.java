@@ -18,7 +18,7 @@ public interface IncompleteActionDefinition extends AttackInterceptingStateDefin
 	@NotNull SneakingRule getSneakingRule();
 	@NotNull SprintingRule getSprintingRule();
 	
-	@Nullable BumpType getBumpType();
+	@Nullable BappingRule getBappingRule();
 	@Nullable Identifier getStompTypeID();
 
 	@NotNull Set<TransitionInjectionDefinition> getTransitionInjections();

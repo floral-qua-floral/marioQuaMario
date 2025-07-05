@@ -108,8 +108,8 @@ public class Skid implements GroundedActionDefinition {
 		return SprintingRule.PROHIBIT;
 	}
 
-	@Override public @Nullable BumpType getBumpType() {
-		return null;
+	@Override public @Nullable BappingRule getBappingRule() {
+		return new BappingRule(0, 0, 3, new CharaStat(0, THRESHOLD));
 	}
 	@Override public @Nullable Identifier getStompTypeID() {
 		return null;

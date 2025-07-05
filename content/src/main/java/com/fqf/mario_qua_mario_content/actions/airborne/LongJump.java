@@ -1,14 +1,12 @@
 package com.fqf.mario_qua_mario_content.actions.airborne;
 
 import com.fqf.mario_qua_mario_api.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.SneakingRule;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.SprintingRule;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.TransitionDefinition;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.*;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_api.util.CharaStat;
 import com.fqf.mario_qua_mario_api.util.Easing;
+import com.fqf.mario_qua_mario_api.util.StatCategory;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario_content.actions.grounded.PRun;
@@ -142,6 +140,11 @@ public class LongJump extends Jump implements AirborneActionDefinition {
 	}
 	@Override public @NotNull SprintingRule getSprintingRule() {
 		return SprintingRule.ALLOW;
+	}
+
+	@Override
+	public @Nullable BappingRule getBappingRule() {
+		return BappingRule.ROLLING.variate(4, 1, null, null);
 	}
 
 	public static final CharaStat FALL_ACCEL = Fall.FALL_ACCEL.variate(0.575);
