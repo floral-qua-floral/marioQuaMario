@@ -3,6 +3,7 @@ package com.fqf.mario_qua_mario.util;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.bapping.BlockBappingClientUtil;
 import com.fqf.mario_qua_mario.bapping.BlockBappingUtil;
+import com.fqf.mario_qua_mario.bapping.WorldBapsInfo;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.block.BlockState;
@@ -24,12 +25,14 @@ public class MarioClientEventListeners {
 
 		WorldRenderEvents.AFTER_ENTITIES.register((worldRenderContext) -> {
 			ClientWorld world = worldRenderContext.world();
+			WorldBapsInfo worldBaps = BlockBappingUtil.getBapsInfoNullable(world);
+			if(worldBaps == null) return;
 			MatrixStack matrixStack = worldRenderContext.matrixStack();
 			assert matrixStack != null;
 			Vec3d cameraPos = worldRenderContext.camera().getPos();
 
-			for(BlockPos pos : BlockBappingUtil.getCertain(BlockBappingUtil.BRITTLE_BLOCK_POSITIONS, world)) {
-				if(BlockBappingUtil.HIDDEN_BLOCK_POSITIONS.getOrDefault(world, Set.of()).contains(pos)) {
+			for(BlockPos pos : worldBaps.BRITTLE) {
+				if(worldBaps.HIDDEN.contains(pos)) {
 					continue;
 				}
 

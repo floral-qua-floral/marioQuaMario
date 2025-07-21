@@ -6,19 +6,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
-import java.util.Map;
-import java.util.Set;
-
 public class BapBreakingBlockInfo extends BumpingBlockInfo {
-
-
-	public BapBreakingBlockInfo(World world, BlockPos pos, Direction direction, Entity bapper) {
-		super(world, pos, direction, bapper, BapResult.BREAK);
-	}
-
-	@Override
-	public Set<Map<World, Set<BlockPos>>> getFastLists(boolean isAdding) {
-		return Set.of(BlockBappingUtil.HIDDEN_BLOCK_POSITIONS);
+	public BapBreakingBlockInfo(World world, BlockPos pos, BapResult result, Direction direction, Entity bapper) {
+		super(world, pos, result, direction, bapper);
 	}
 
 	@Override
@@ -27,8 +17,8 @@ public class BapBreakingBlockInfo extends BumpingBlockInfo {
 	}
 
 	@Override
-	public AbstractBapInfo finish() {
-		super.finish();
+	public AbstractBapInfo finishAndGetReplacement() {
+		super.finishAndGetReplacement();
 		this.WORLD.breakBlock(this.POS, true, this.BAPPER);
 		return null;
 	}

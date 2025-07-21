@@ -137,7 +137,7 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 					payload.strength(),
 					context.player().clientWorld.getEntityById(payload.bapperID()),
 					BapResult.values()[payload.result()]
-			), "Received payload for a bap that shouldn't trigger bap packet sending??"), false);
+			), "Received payload for a bap that shouldn't trigger bap packet sending??"));
 		});
 	}
 

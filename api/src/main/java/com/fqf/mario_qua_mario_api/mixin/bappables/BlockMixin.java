@@ -1,7 +1,6 @@
-package com.fqf.mario_qua_mario_api.mixin;
+package com.fqf.mario_qua_mario_api.mixin.bappables;
 
 import com.fqf.mario_qua_mario_api.interfaces.Bappable;
-import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import org.spongepowered.asm.mixin.Mixin;
 

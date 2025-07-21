@@ -1,4 +1,4 @@
-package com.fqf.mario_qua_mario_api.mixin;
+package com.fqf.mario_qua_mario_api.mixin.stompables;
 
 import com.fqf.mario_qua_mario_api.interfaces.StompResult;
 import com.fqf.mario_qua_mario_api.interfaces.Stompable;

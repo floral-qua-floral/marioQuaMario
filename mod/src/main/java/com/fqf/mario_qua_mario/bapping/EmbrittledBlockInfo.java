@@ -5,19 +5,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import java.util.Map;
-import java.util.Set;
-
 public class EmbrittledBlockInfo extends AbstractBapInfo {
 	protected final long FINISH_TIME;
 	public EmbrittledBlockInfo(World world, BlockPos pos, Entity bapper) {
 		super(world, pos, BapResult.EMBRITTLE, bapper);
 		this.FINISH_TIME = this.WORLD.getTime() + 40;
-	}
-
-	@Override
-	public Set<Map<World, Set<BlockPos>>> getFastLists(boolean isAdding) {
-		return Set.of(BlockBappingUtil.BRITTLE_BLOCK_POSITIONS);
 	}
 
 	@Override
@@ -31,8 +23,7 @@ public class EmbrittledBlockInfo extends AbstractBapInfo {
 	}
 
 	@Override
-	public AbstractBapInfo finish() {
-		BlockBappingUtil.BRITTLE_BLOCK_POSITIONS.get(this.WORLD).remove(this.POS);
+	public AbstractBapInfo finishAndGetReplacement() {
 		return null;
 	}
 }

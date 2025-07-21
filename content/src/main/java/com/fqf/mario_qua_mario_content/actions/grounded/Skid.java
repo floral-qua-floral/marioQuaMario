@@ -116,7 +116,6 @@ public class Skid implements GroundedActionDefinition {
 	}
 
 	public static final CharaStat SKID_THRESHOLD = new CharaStat(0.285, RUNNING, THRESHOLD);
-	public static final CharaStat SKID_BOOST = new CharaStat(-0.15);
 
 	public static final CharaStat SKID_DRAG = new CharaStat(0.185, RUNNING, DRAG);
 	public static final CharaStat SKID_DRAG_MIN = new CharaStat(0.045, RUNNING, DRAG);

@@ -23,23 +23,40 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.*;
 
 public class BlockBappingUtil {
-	public static final Map<World, Map<BlockPos, AbstractBapInfo>> ALL_BAPPED_BLOCKS = new HashMap<>();
-	public static final Map<World, Set<BlockPos>> HIDDEN_BLOCK_POSITIONS = new HashMap<>();
-	public static final Map<World, Set<BlockPos>> BRITTLE_BLOCK_POSITIONS = new HashMap<>(); // consider: object2int map
-	public static final Map<World, Set<BlockPos>> POWERED_BLOCK_POSITIONS = new HashMap<>();
+	private static final Map<World, WorldBapsInfo> PER_WORLD_BAP_STORAGE = new HashMap<>();
+	public static @Nullable WorldBapsInfo getBapsInfoNullable(World world) {
+		return PER_WORLD_BAP_STORAGE.get(world);
+	}
 
 	private static final BlockState EMPTY_BLOCK = Blocks.VOID_AIR.getDefaultState();
 	public static void conditionallyHideBlockPos(World world, BlockPos pos, CallbackInfoReturnable<BlockState> cir) {
 		if(cir.getReturnValue() == null) return;
-		Set<BlockPos> hiddenBlocksInWorld = HIDDEN_BLOCK_POSITIONS.get(world);
-		if(hiddenBlocksInWorld == null) return;
-		if(hiddenBlocksInWorld.contains(pos)) cir.setReturnValue(EMPTY_BLOCK);
+		WorldBapsInfo worldBaps = getBapsInfoNullable(world);
+		if(worldBaps == null) return;
+		if(worldBaps.HIDDEN.contains(pos)) cir.setReturnValue(EMPTY_BLOCK);
+	}
+
+	private static boolean forcingVanillaHardnessCheck = false;
+	public static boolean shouldApplyHardnessMixin() {
+		return !forcingVanillaHardnessCheck;
+	}
+	private static float getVanillaHardness(World world, BlockPos pos, BlockState state) {
+		forcingVanillaHardnessCheck = true;
+		float hardness = state.getHardness(world, pos);
+		forcingVanillaHardnessCheck = false;
+		return hardness;
 	}
 
 	@SuppressWarnings("UnusedReturnValue") // TODO: check for BUST, if so player keeps moving through broken block
 	public static BapResult attemptBap(MarioPlayerData data, World world, BlockPos pos, Direction direction, int strength) {
 		BlockState blockState = world.getBlockState(pos);
-		BapResult result = ((Bappable) blockState.getBlock()).mqm$getBapResult(data, world, pos, blockState, direction, strength);
+
+		BapResult result = ((Bappable) blockState.getBlock()).mqm$getBapResult(
+				data, world,
+				pos, blockState, getVanillaHardness(world, pos, blockState),
+				direction, strength
+		);
+
 		AbstractBapInfo info = makeBapInfo(world, pos, direction, strength, data.getMario(), result);
 
 		if(data.getMario().isMainPlayer() && result != BapResult.FAIL) {
@@ -48,7 +65,7 @@ public class BlockBappingUtil {
 		}
 
 		if(info != null) {
-			storeBapInfo(info, true);
+			storeBapInfo(info);
 			if(data.isServer()) {
 				MarioBappingPackets.bapS2C(
 						(ServerWorld) world, pos,
@@ -65,24 +82,24 @@ public class BlockBappingUtil {
 		BlockState blockState = world.getBlockState(pos);
 		((Bappable) blockState.getBlock()).mqm$onBapped(
 				bapper instanceof PlayerEntity mario ? mario.mqm$getMarioData() : null,
-				world, blockState, direction, strength, result
-		);
+				world, pos, blockState, direction, strength,
+				result);
 		switch(result) {
-			case BUMP, BUMP_EMBRITTLE, BREAK -> {
+			case BUMP, BUMP_NO_POWER, BUMP_EMBRITTLE, BUMP_EMBRITTLE_NO_POWER, BREAK, BREAK_NO_POWER -> {
 				world.playSound(bapper, pos, MarioSFX.BUMP, SoundCategory.BLOCKS, 0.4F, 1.0F);
 				BlockSoundGroup group = blockState.getSoundGroup();
 				world.playSound(bapper, pos, group.getPlaceSound(), SoundCategory.BLOCKS, group.pitch * 0.8F, group.volume);
 			}
 		}
 		switch(result) {
-			case BUMP -> {
-				return new BumpingBlockInfo(world, pos, direction, bapper);
+			case BUMP, BUMP_NO_POWER -> {
+				return new BumpingBlockInfo(world, pos, result, direction, bapper);
 			}
-			case BUMP_EMBRITTLE -> {
-				return new BumpingEmbrittlingBlockInfo(world, pos, direction, bapper);
+			case BUMP_EMBRITTLE, BUMP_EMBRITTLE_NO_POWER -> {
+				return new BumpingEmbrittlingBlockInfo(world, pos, result, direction, bapper);
 			}
-			case BREAK -> {
-				return new BapBreakingBlockInfo(world, pos, direction, bapper);
+			case BREAK, BREAK_NO_POWER -> {
+				return new BapBreakingBlockInfo(world, pos, result, direction, bapper);
 			}
 			case BUST -> {
 				world.breakBlock(pos, true, bapper);
@@ -94,39 +111,46 @@ public class BlockBappingUtil {
 		}
 	}
 
-	public static void storeBapInfo(AbstractBapInfo info, boolean networkFromClient) {
+	public static void storeBapInfo(AbstractBapInfo info) {
 		if(info.WORLD.isClient())
 			MarioClientHelperManager.helper.clientBap(info);
 
-		ALL_BAPPED_BLOCKS.putIfAbsent(info.WORLD, new HashMap<>());
-		AbstractBapInfo prevInfo = ALL_BAPPED_BLOCKS.get(info.WORLD).put(info.POS, info);
-		if(prevInfo != null) prevInfo.finish(); // discard new AbstractBapInfo if provided
-		switch(info.RESULT) {
-			case BUMP_EMBRITTLE -> {
-				getCertain(BRITTLE_BLOCK_POSITIONS, info.WORLD).add(info.POS);
-				getCertain(HIDDEN_BLOCK_POSITIONS, info.WORLD).add(info.POS);
-				getCertain(POWERED_BLOCK_POSITIONS, info.WORLD).add(info.POS);
-				info.WORLD.updateNeighbor(info.POS, info.WORLD.getBlockState(info.POS).getBlock(), info.POS);
-				reRenderPos(info);
-			}
-			case EMBRITTLE -> {
-				getCertain(BRITTLE_BLOCK_POSITIONS, info.WORLD).add(info.POS);
-			}
-			case BUMP -> {
-				getCertain(HIDDEN_BLOCK_POSITIONS, info.WORLD).add(info.POS);
-				getCertain(POWERED_BLOCK_POSITIONS, info.WORLD).add(info.POS);
-				reRenderPos(info);
-			}
-			case BREAK -> {
-				getCertain(HIDDEN_BLOCK_POSITIONS, info.WORLD).add(info.POS);
-				reRenderPos(info);
-			}
+		WorldBapsInfo worldBaps = getBapsInfoNullable(info.WORLD);
+		if(worldBaps == null) {
+			worldBaps = new WorldBapsInfo();
+			PER_WORLD_BAP_STORAGE.put(info.WORLD, worldBaps);
 		}
+
+		addOrRemoveFromSets(info, worldBaps, true);
 	}
 
-	public static <setContents> Set<setContents> getCertain(Map<World, Set<setContents>> map, World world) {
-		map.putIfAbsent(world, new HashSet<>());
-		return map.get(world);
+	public static void addOrRemoveFromSets(AbstractBapInfo info, WorldBapsInfo world, boolean adding) {
+		List<Set<BlockPos>> sets = switch(info.RESULT) {
+			case BUMP, BREAK -> List.of(world.HIDDEN, world.POWERED);
+			case BUMP_NO_POWER, BREAK_NO_POWER -> List.of(world.HIDDEN);
+			case BUMP_EMBRITTLE -> List.of(world.HIDDEN, world.POWERED, world.BRITTLE);
+			case BUMP_EMBRITTLE_NO_POWER -> List.of(world.HIDDEN, world.BRITTLE);
+			case EMBRITTLE -> List.of(world.BRITTLE);
+			case BUST, FAIL -> throw new IllegalStateException("BapInfo with BUST or FAIL result shouldn't be possible!");
+		};
+
+		if(adding) {
+			AbstractBapInfo prevInfo = world.ALL_BAPS.put(info.POS, info);
+			if(prevInfo != null) addOrRemoveFromSets(prevInfo, world, false);
+
+			for(Set<BlockPos> set : sets) {
+				set.add(info.POS);
+			}
+		}
+		else {
+//			world.ALL_BAPS.remove(info.POS); // DON'T ACTUALLY REMOVE IT!!! By now it's already been replaced or removed!
+			for(Set<BlockPos> set : sets) {
+				set.remove(info.POS);
+			}
+			info.finishAndGetReplacement();
+		}
+		if(sets.contains(world.HIDDEN)) reRenderPos(info);
+		if(sets.contains(world.POWERED)) info.WORLD.updateNeighbor(info.POS, info.WORLD.getBlockState(info.POS).getBlock(), info.POS);
 	}
 
 	public static void reRenderPos(AbstractBapInfo info) {
@@ -137,27 +161,30 @@ public class BlockBappingUtil {
 		if(world.isClient()) world.updateListeners(pos, state, state, Block.NOTIFY_ALL);
 	}
 
-	private static final Set<AbstractBapInfo> REPLACEMENT_BAPS = new HashSet<>();
 	public static void commonWorldTick(World world) {
-		Map<BlockPos, AbstractBapInfo> bapsInWorld = ALL_BAPPED_BLOCKS.get(world);
-		if(bapsInWorld == null) return;
-		final Iterator<Map.Entry<BlockPos, AbstractBapInfo>> each = bapsInWorld.entrySet().iterator();
+		WorldBapsInfo worldBaps = getBapsInfoNullable(world);
+		if(worldBaps == null) return;
 
-		// kinda clueless
-		while(each.hasNext()) {
-			AbstractBapInfo next = each.next().getValue();
+		Set<AbstractBapInfo> replacementBaps = null;
 
-			next.tick();
-			if(next.isDone()) {
-				AbstractBapInfo replacement = next.finish();
-				if(replacement != null) REPLACEMENT_BAPS.add(replacement);
-				each.remove();
+		Iterator<AbstractBapInfo> iterator = worldBaps.ALL_BAPS.values().iterator();
+		while(iterator.hasNext()) {
+			AbstractBapInfo tickBap = iterator.next();
+
+			tickBap.tick();
+			if(tickBap.isDone()) {
+				AbstractBapInfo replacement = tickBap.finishAndGetReplacement();
+				if(replacement != null) {
+					if(replacementBaps == null) replacementBaps = new HashSet<>();
+					replacementBaps.add(replacement);
+				}
+				iterator.remove();
+				addOrRemoveFromSets(tickBap, worldBaps, false);
 			}
 		}
 
-		if(!REPLACEMENT_BAPS.isEmpty()) {
-			REPLACEMENT_BAPS.forEach(info -> storeBapInfo(info, false));
-			REPLACEMENT_BAPS.clear();
+		if(replacementBaps != null) for(AbstractBapInfo replacementBap : replacementBaps) {
+			storeBapInfo(replacementBap);
 		}
 	}
 
