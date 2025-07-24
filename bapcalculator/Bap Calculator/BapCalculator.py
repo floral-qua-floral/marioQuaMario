@@ -24,6 +24,8 @@ def get_bap_result(hardness, blast_resistance, strength):
 
     return NO_SELL
 
+# Editable code ends here!
+
 NO_SELL, BUMP, CRACK, BREAK, THRU = range(5)
 bapResultNames = ["NO-SELL", "BUMP", "CRACK", "BREAK", "GO-THRU"]
 
@@ -59,8 +61,11 @@ if __name__ == "__main__":
     test_bap("Super Pound on Moss Block", THRU, get_bap_result(0.1, 0.1, SUPER_MARIO_COLLISION_STRENGTH))
     test_bap("Small Pound on Moss Block", (BREAK, THRU), get_bap_result(0.1, 0.1, 3))
 
-    test_bap("Super Pound on Leaves", (BREAK, THRU), get_bap_result(0.2, 0.2, SUPER_MARIO_COLLISION_STRENGTH))  # Always passes
+    test_bap("Super Pound on Leaves", (BREAK, THRU), get_bap_result(0.2, 0.2, SUPER_MARIO_COLLISION_STRENGTH))
     test_bap("Small Pound on Leaves", BREAK, get_bap_result(0.2, 0.2, SMALL_MARIO_COLLISION_STRENGTH))
+
+    test_bap("Super Pound on Glass", BREAK, get_bap_result(0.3, 0.3, SUPER_MARIO_COLLISION_STRENGTH))
+    test_bap("Small Pound on Glass", BREAK, get_bap_result(0.3, 0.3, SMALL_MARIO_COLLISION_STRENGTH))
 
     test_bap("Elephant Pound on Netherrack", THRU, get_bap_result(0.4, 0.4, ELEPHANT_MARIO_COLLISION_STRENGTH))
     test_bap("Super Pound on Netherrack", BREAK, get_bap_result(0.4, 0.4, SUPER_MARIO_COLLISION_STRENGTH))
@@ -69,6 +74,7 @@ if __name__ == "__main__":
     test_bap("Super Pound on Dirt", BREAK, get_bap_result(0.5, 0.5, SUPER_MARIO_COLLISION_STRENGTH))
     test_bap("Small Pound on Dirt", (CRACK, BUMP), get_bap_result(0.5, 0.5, SMALL_MARIO_COLLISION_STRENGTH))
 
+    test_bap("Elephant Pound on Grass Block", (BREAK, CRACK), get_bap_result(0.6, 0.6, ELEPHANT_MARIO_COLLISION_STRENGTH))
     test_bap("Super Pound on Grass Block", CRACK, get_bap_result(0.6, 0.6, SUPER_MARIO_COLLISION_STRENGTH))
     test_bap("Small Pound on Grass Block", BUMP, get_bap_result(0.6, 0.6, SMALL_MARIO_COLLISION_STRENGTH))
 
