@@ -1,0 +1,48 @@
+Testing the collision response function:
+
+Test 1, Super Pound on Moss Block, PASSED (Got expected GO-THRU)
+
+Test 2, Small Pound on Moss Block, PASSED (Got GO-THRU, which is OK)
+
+Test 3, Super Pound on Leaves, PASSED (Got GO-THRU, which is OK)
+
+* Test 4, Small Pound on Leaves, FAILED
+        Got GO-THRU, expected BREAK
+
+* Test 5, Super Pound on Glass, FAILED
+        Got GO-THRU, expected BREAK
+
+Test 6, Small Pound on Glass, PASSED (Got expected BREAK)
+
+Test 7, Elephant Pound on Netherrack, PASSED (Got expected GO-THRU)
+
+Test 8, Super Pound on Netherrack, PASSED (Got expected BREAK)
+
+Test 9, Small Pound on Netherrack, PASSED (Got expected CRACK)
+
+* Test 10, Super Pound on Dirt, FAILED
+        Got CRACK, expected BREAK
+
+Test 11, Small Pound on Dirt, PASSED (Got CRACK, which is OK)
+
+Test 12, Elephant Pound on Grass Block, PASSED (Got BREAK, which is OK)
+
+Test 13, Super Pound on Grass Block, PASSED (Got expected CRACK)
+
+* Test 14, Small Pound on Grass Block, FAILED
+        Got CRACK, expected BUMP
+
+Test 15, Super pound on Stone, PASSED (Got BUMP, which is OK)
+
+* Test 16, Small pound on Stone, FAILED
+        Got BUMP, expected NO-SELL
+
+Test 17, Super Pound on Wooden Planks, PASSED (Got expected BUMP)
+
+Test 18, Small Pound on Wooden Planks, PASSED (Got expected BUMP)
+
+Test 19, Super Pound on Iron Block, PASSED (Got expected NO-SELL)
+
+FINAL RESULTS:
+        14/19 passed (73.7%)
+        5 failed

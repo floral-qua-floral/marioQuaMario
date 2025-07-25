@@ -38,25 +38,56 @@ public interface Bappable {
 		if(blockState.isIn(MQMTags.USES_HALF_HARDNESS_WHEN_BAPPED))
 			hardness *= 0.5F;
 
-		float bustThreshold = strength * 0.1F;
+		float bustThreshold;
+		float breakThreshold;
+		float embrittleThreshold;
+		float bumpThreshold;
+
+		switch(strength) {
+			case 1 -> {
+				return BapResult.FAIL;
+			}
+
+			case 2 -> {
+				// Small Mario minor bap
+				bustThreshold = 0.2F;
+				breakThreshold = 0.3F;
+				embrittleThreshold = 0.4F;
+				bumpThreshold = 1.1F;
+			}
+
+			case 3 -> {
+				// Small Mario major bap
+				// Super Mario minor bap
+				bustThreshold = 0.2F;
+				breakThreshold = 0.4F;
+				embrittleThreshold = 0.6F;
+				bumpThreshold = 2.6F;
+			}
+
+			case 4 -> {
+				// Super Mario major bap
+				// Elephant Mario minor bap???
+				bustThreshold = 0.25F;
+				breakThreshold = 0.6F;
+				embrittleThreshold = 1.55F;
+				bumpThreshold = 3.5F;
+			}
+
+			default -> throw new IllegalStateException("Unexpected bap strength value: " + strength);
+		}
+
 		if(hardness < bustThreshold)
 			return BapResult.BUST;
 
 		boolean shouldPower = !blockState.isIn(MQMTags.NOT_POWERED_WHEN_BAPPED);
 
-		float breakThreshold = strength * 0.125F;
 		if(hardness < breakThreshold)
 			return shouldPower ? BapResult.BREAK : BapResult.BREAK_NO_POWER;
 
-		float embrittleThreshold = strength * 0.375F;
 		if(hardness < embrittleThreshold)
 			return shouldPower ? BapResult.BUMP_EMBRITTLE : BapResult.BUMP_EMBRITTLE_NO_POWER;
 
-		float bumpThreshold = switch(strength) {
-			case 1, 2 -> 0;
-			case 3 -> 3;
-			default -> 1 + strength * 0.5F;
-		};
 		if(hardness < bumpThreshold)
 			return shouldPower ? BapResult.BUMP : BapResult.BUMP_NO_POWER;
 

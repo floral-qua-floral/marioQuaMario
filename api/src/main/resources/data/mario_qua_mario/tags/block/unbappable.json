@@ -1,6 +1,8 @@
 {
   "values": [
     "minecraft:comparator",
-    "minecraft:repeater"
+    "minecraft:repeater",
+    "minecraft:slime_block",
+    "minecraft:honey_block"
   ]
 }
