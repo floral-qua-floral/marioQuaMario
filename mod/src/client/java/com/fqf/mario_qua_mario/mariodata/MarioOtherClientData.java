@@ -4,14 +4,17 @@ import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.mario_qua_mario_api.mariodata.util.RecordedCollision;
 import net.minecraft.client.network.OtherClientPlayerEntity;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2d;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class MarioOtherClientData extends MarioPlayerData implements IMarioClientDataImpl {
 	public boolean jumpCapped;
@@ -133,6 +136,16 @@ public class MarioOtherClientData extends MarioPlayerData implements IMarioClien
 	@Override
 	public double getHorizVelSquared() {
 		return Vector2d.lengthSquared(this.deltaX, this.deltaZ);
+	}
+
+	@Override
+	public Vec3d getVelocity() {
+		return new Vec3d(this.deltaX, this.deltaY, this.deltaZ);
+	}
+
+	@Override
+	public @Nullable Set<RecordedCollision> getLastTickCollisions() {
+		return Set.of();
 	}
 
 	@Override

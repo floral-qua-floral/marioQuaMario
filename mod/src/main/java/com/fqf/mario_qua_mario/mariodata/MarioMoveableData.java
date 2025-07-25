@@ -2,11 +2,15 @@ package com.fqf.mario_qua_mario.mariodata;
 
 import com.fqf.mario_qua_mario_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
+import com.fqf.mario_qua_mario_api.mariodata.util.RecordedCollision;
 import net.minecraft.entity.MovementType;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2d;
+
+import java.util.Set;
 
 public abstract class MarioMoveableData extends MarioPlayerData implements IMarioTravelData {
 	public boolean jumpCapped;
@@ -100,6 +104,16 @@ public abstract class MarioMoveableData extends MarioPlayerData implements IMari
 			Vec3d oldVel = this.getMario().getVelocity();
 			this.getMario().setVelocity(oldVel.x, vertical, oldVel.z);
 		}
+	}
+	@Override public void setMotion(Vec3d motion) {
+		this.applyModifiedVelocity();
+		this.getMario().setVelocity(motion);
+	}
+
+	@Override
+	public Vec3d getVelocity() {
+		this.applyModifiedVelocity();
+		return this.getMario().getVelocity();
 	}
 
 	public void applyModifiedVelocity() {
@@ -254,4 +268,9 @@ public abstract class MarioMoveableData extends MarioPlayerData implements IMari
 	}
 
 	public abstract boolean travelHook(double forwardInput, double strafeInput);
+
+	@Override
+	public @Nullable Set<RecordedCollision> getLastTickCollisions() {
+		return Set.of();
+	}
 }

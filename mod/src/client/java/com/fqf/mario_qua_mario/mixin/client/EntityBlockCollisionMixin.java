@@ -1,7 +1,5 @@
 package com.fqf.mario_qua_mario.mixin.client;
 
-import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario.bapping.BlockBappingUtil;
 import com.fqf.mario_qua_mario.mariodata.MarioMainClientData;
 import com.fqf.mario_qua_mario.util.VoxelShapeWithBlockPos;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -39,44 +37,64 @@ public abstract class EntityBlockCollisionMixin {
 	@Inject(method = "adjustMovementForCollisions(Lnet/minecraft/util/math/Vec3d;)Lnet/minecraft/util/math/Vec3d;", at = @At("HEAD"))
 	private void preemptiveBapCheck(Vec3d movement, CallbackInfoReturnable<Vec3d> cir) {
 		if((Entity) (Object) this instanceof ClientPlayerEntity mario) {
-			MarioMainClientData data = mario.mqm$getMarioData();
-			if(!data.isEnabled()) return;
-
-			int floorStrength = data.getBapStrength(Direction.DOWN);
-			int ceilingStrength = data.getBapStrength(Direction.UP);
-			int wallStrength = data.getBapStrength(Direction.NORTH);
-
-			boolean bapFloors = floorStrength > 0;
-			boolean bapCeilings = ceilingStrength > 0;
-			double wallSpeedThreshold;
-			if(wallStrength > 0) wallSpeedThreshold = data.getAction().BAPPING_RULE.wallBumpSpeedThreshold().getAsThreshold(data);
-			else wallSpeedThreshold = 0.5;
-			boolean bapWalls = wallStrength > 0 && movement.horizontalLengthSquared() > wallSpeedThreshold * wallSpeedThreshold;
-			boolean bapOnXAxis = bapWalls && Math.abs(movement.x) > wallSpeedThreshold * 0.5;
-			boolean bapOnZAxis = bapWalls && Math.abs(movement.z) > wallSpeedThreshold * 0.5;
-
-			if(!bapFloors && !bapCeilings && !bapOnXAxis && !bapOnZAxis) return;
-
-			Box movedBox = mario.getBoundingBox();
-
-			boolean movingUp = movement.y > 0;
-			movedBox = bapAlongAxis(mario, data, movedBox, movement, Direction.Axis.Y, movingUp ? ceilingStrength : floorStrength);
-
-			boolean doXFirst = Math.abs(movement.x) > Math.abs(movement.z);
-			if(doXFirst) movedBox = bapAlongAxis(mario, data, movedBox, movement, Direction.Axis.X, bapOnXAxis ? wallStrength : 0);
-			movedBox = bapAlongAxis(mario, data, movedBox, movement, Direction.Axis.Z, bapOnZAxis ? wallStrength : 0);
-			if(!doXFirst) bapAlongAxis(mario, data, movedBox, movement, Direction.Axis.X, bapOnXAxis ? wallStrength : 0);
+			boolean shouldRecalculate;
+			do {
+				shouldRecalculate = preemptMovementAndOptionallyRecalculate(mario, movement);
+			}
+			while(shouldRecalculate);
 		}
 	}
 
 	@Unique
-	private static Box bapAlongAxis(ClientPlayerEntity mario, MarioMainClientData data, Box box, Vec3d movement, Direction.Axis axis, int strength) {
+	private static boolean preemptMovementAndOptionallyRecalculate(ClientPlayerEntity mario, Vec3d movement) {
+		MarioMainClientData data = mario.mqm$getMarioData();
+		if(!data.isEnabled()) return false;
+
+		int floorStrength = data.getBapStrength(Direction.DOWN);
+		int ceilingStrength = data.getBapStrength(Direction.UP);
+		int wallStrength = data.getBapStrength(Direction.NORTH);
+
+		boolean bapFloors = floorStrength > 0;
+		boolean bapCeilings = ceilingStrength > 0;
+		double wallSpeedThreshold;
+		if(wallStrength > 0) wallSpeedThreshold = data.getAction().BAPPING_RULE.wallBumpSpeedThreshold().getAsThreshold(data);
+		else wallSpeedThreshold = 0.5;
+		boolean bapWalls = wallStrength > 0 && movement.horizontalLengthSquared() > wallSpeedThreshold * wallSpeedThreshold;
+		boolean bapOnXAxis = bapWalls && Math.abs(movement.x) > wallSpeedThreshold * 0.5;
+		boolean bapOnZAxis = bapWalls && Math.abs(movement.z) > wallSpeedThreshold * 0.5;
+
+		boolean requireCollisionRecording = false;
+
+		if(!bapFloors && !bapCeilings && !bapOnXAxis && !bapOnZAxis && !requireCollisionRecording) return false;
+
+		Box movedBox = mario.getBoundingBox();
+
+		boolean movingUp = movement.y > 0;
+		movedBox = bapAlongAxis(mario, data, movedBox, movement, Direction.Axis.Y, (movingUp ? ceilingStrength : floorStrength) == 0 && !requireCollisionRecording);
+		if(movedBox == null) return true;
+
+		boolean doXFirst = Math.abs(movement.x) > Math.abs(movement.z);
+		if(doXFirst) {
+			movedBox = bapAlongAxis(mario, data, movedBox, movement, Direction.Axis.X, !bapOnXAxis && !requireCollisionRecording);
+			if(movedBox == null) return true;
+		}
+		movedBox = bapAlongAxis(mario, data, movedBox, movement, Direction.Axis.Z, !bapOnZAxis && !requireCollisionRecording);
+		if(movedBox == null) return true;
+		if(!doXFirst) {
+			movedBox = bapAlongAxis(mario, data, movedBox, movement, Direction.Axis.X, !bapOnXAxis && !requireCollisionRecording);
+			return movedBox == null;
+		}
+		return false;
+	}
+
+	@Unique
+	private static Box bapAlongAxis(ClientPlayerEntity mario, MarioMainClientData data, Box box, Vec3d movement, Direction.Axis axis, boolean shortcut) {
 		double motion = movement.getComponentAlongAxis(axis);
 		if(Math.abs(motion) < 1.0E-7) return box;
 
 		Box stretchedBox = box.stretch(Vec3d.ZERO.withAxis(axis, motion));
 
-		if(strength <= 0) {
+		if(shortcut) {
 			List<VoxelShape> list = findCollisionsForMovement(mario, mario.getWorld(), List.of(), stretchedBox);
 			assert list != null;
 			return box.offset(Vec3d.ZERO.withAxis(axis, VoxelShapes.calculateMaxOffset(axis, box, list, motion)));
@@ -86,7 +104,7 @@ public abstract class EntityBlockCollisionMixin {
 
 		Iterable<VoxelShapeWithBlockPos> collideBlocks = getBlockCollisionsWithPositions( mario.getWorld(), mario, stretchedBox);
 
-		Set<BlockPos> bapPositions = new HashSet<>();
+		Set<BlockPos> collideWithBlockPositions = new HashSet<>();
 		double absSmallestOffsetFound = Math.abs(motion);
 
 		Box bumpingBox;
@@ -96,17 +114,18 @@ public abstract class EntityBlockCollisionMixin {
 		for(VoxelShapeWithBlockPos positionedShape : collideBlocks) {
 			double maxDist = positionedShape.shape().calculateMaxDistance(axis, bumpingBox, motion);
 
-			if(Math.abs(maxDist) == absSmallestOffsetFound && maxDist != motion) bapPositions.add(positionedShape.pos());
+			if(Math.abs(maxDist) == absSmallestOffsetFound && maxDist != motion) collideWithBlockPositions.add(positionedShape.pos());
 			else if(Math.abs(maxDist) < absSmallestOffsetFound) {
-				bapPositions.clear();
-				bapPositions.add(positionedShape.pos());
+				collideWithBlockPositions.clear();
+				collideWithBlockPositions.add(positionedShape.pos());
 				absSmallestOffsetFound = Math.abs(maxDist);
 			}
 		}
 
-		if(!bapPositions.isEmpty()) {
-			for(BlockPos pos : bapPositions) {
-				BlockBappingUtil.attemptBap(data, mario.clientWorld, pos, dir, strength);
+		if(!collideWithBlockPositions.isEmpty()) {
+			for(BlockPos pos : collideWithBlockPositions) {
+				if(data.collideWithBlockAndOptionallyRecalculate(pos, dir))
+					return null; // Force recalculation from the beginning
 			}
 		}
 

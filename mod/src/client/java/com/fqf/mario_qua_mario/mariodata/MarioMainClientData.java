@@ -1,8 +1,6 @@
 package com.fqf.mario_qua_mario.mariodata;
 
-import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.bapping.BlockBappingUtil;
-import com.fqf.mario_qua_mario.util.VoxelShapeWithBlockPos;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.Arrangement;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimation;
@@ -11,23 +9,22 @@ import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
 import com.fqf.mario_qua_mario.registries.actions.TransitionPhase;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
+import com.fqf.mario_qua_mario_api.interfaces.BapResult;
+import com.fqf.mario_qua_mario_api.mariodata.util.RecordedCollision;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.input.Input;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.sound.SoundInstance;
-import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockCollisionSpliterator;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class MarioMainClientData extends MarioMoveableData implements IMarioClientDataImpl {
 	private final ClientPlayerEntity MARIO;
@@ -124,8 +121,8 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 
 		this.applyModifiedVelocity();
 
+		this.RECORDED_COLLISIONS.clear();
 		this.moveWithFluidPushing();
-//		this.attemptBaps(this.getMario().getPos(), this.getMario().getBoundingBox(), this.moveWithFluidPushing());
 
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
 		this.applyModifiedVelocity();
@@ -229,98 +226,39 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		}
 	}
 
-	private void attemptBaps(Vec3d prevPos, Box prevBoundingBox, Vec3d motion) {
-		int ceilingBapStrength = 10;
-		int wallBapStrength = 10;
-		int floorBapStrength = 10;
+	@Override
+	public int getBapStrength(AbstractParsedAction action, Direction direction) {
+		int strength = super.getBapStrength(action, direction);
 
-		ClientPlayerEntity mario = this.getMario();
+		if(strength != 0 && direction.getAxis().isHorizontal()) {
+			Vec3d marioVel = this.getMario().getVelocity();
 
-		if(ceilingBapStrength <= 0 && wallBapStrength <= 0 && floorBapStrength <= 0) return;
-
-		if(mario.verticalCollision) {
-			if(motion.y > 0) {
-				if(ceilingBapStrength > 0) {
-					this.getCollidedBlocks(prevBoundingBox, Direction.Axis.Y, 2).forEach(blockPos ->
-							BlockBappingUtil.attemptBap(this, mario.getWorld(), blockPos, Direction.UP, ceilingBapStrength));
-				}
-			}
-			else {
-				if(floorBapStrength > 0) {
-
-				}
-			}
+			double wallSpeedThreshold = this.getAction().BAPPING_RULE.wallBumpSpeedThreshold().getAsThreshold(this);
+			if(marioVel.horizontalLengthSquared() < wallSpeedThreshold * wallSpeedThreshold)
+				return 0;
+			if(Math.abs(marioVel.getComponentAlongAxis(direction.getAxis())) < wallSpeedThreshold * 0.5)
+				return 0;
 		}
-		double bapSpeedThreshold = 0;
-		if(mario.horizontalCollision && wallBapStrength > 0 && motion.horizontalLengthSquared() > bapSpeedThreshold * bapSpeedThreshold) {
-			boolean bapped = false;
-			boolean processXFirst = Math.abs(motion.x) > Math.abs(motion.z);
-			if(processXFirst && Math.abs(motion.x) > bapSpeedThreshold) {
-				bapped = this.attemptHorizontalBapping(motion.x, wallBapStrength, prevBoundingBox, Direction.Axis.X);
-			}
-			if(!bapped && Math.abs(motion.z) > bapSpeedThreshold) {
-				bapped = this.attemptHorizontalBapping(motion.z, wallBapStrength, prevBoundingBox, Direction.Axis.Z);
-			}
-			if(!bapped) {
-				this.attemptHorizontalBapping(motion.x, wallBapStrength, prevBoundingBox, Direction.Axis.X);
-			}
-		}
+
+		return strength;
 	}
 
-	private boolean attemptHorizontalBapping(double speed, int strength, Box prevBoundingBox, Direction.Axis axis) {
-		boolean bapped = false;
-		Direction dir = Direction.from(axis, speed > 0 ? Direction.AxisDirection.POSITIVE : Direction.AxisDirection.NEGATIVE);
-		for (BlockPos collidedBlock : this.getCollidedBlocks(prevBoundingBox, axis, speed)) {
-			bapped = true;
-			BlockBappingUtil.attemptBap(this, this.getMario().getWorld(), collidedBlock, dir, strength);
-		}
-		return bapped;
+	private final Set<RecordedCollision> RECORDED_COLLISIONS = new HashSet<>();
+
+	@Override
+	public @Nullable Set<RecordedCollision> getLastTickCollisions() {
+		return this.RECORDED_COLLISIONS;
 	}
 
-	private Iterable<BlockPos> getCollidedBlocks(Box initialBoundingBox, Direction.Axis axis, double distance) {
-		return () -> new BlockCollisionSpliterator<>(this.getMario().getWorld(), this.getMario(),
-				this.getMario().getBoundingBox().stretch(Vec3d.ZERO.withAxis(axis, 0.2 * Math.signum(distance))), false,
-				(mutable, voxelShape) -> mutable.toImmutable());
+	public boolean collideWithBlockAndOptionallyRecalculate(BlockPos pos, Direction direction) {
+		BapResult bapResult;
+		int bapStrength = this.getBapStrength(direction);
+		if(bapStrength == 0)
+			bapResult = null;
+		else
+			bapResult = BlockBappingUtil.attemptBap(this, this.getMario().clientWorld, pos, direction, bapStrength);
+
+		this.RECORDED_COLLISIONS.add(new RecordedCollision(pos, direction, this.getMario().getVelocity(), bapResult));
+		return bapResult == BapResult.BUST;
 	}
-
-//	private Iterable<BlockPos> getCollidedBlocks(Box initialBoundingBox, Direction.Axis axis, double distance) {
-//		ImmutableCollection.Builder<BlockPos> builder = ImmutableList.builderWithExpectedSize(1);
-//
-//
-//		Box stretchedBox = initialBoundingBox.stretch(new Vec3d(0, 2, 0));
-//		Iterable<PositionedVoxelShape> positionedShapes = this.getBlockCollisionsWithPositions(stretchedBox);
-//
-//		double smallestValue = distance;
-//		for(PositionedVoxelShape positionedShape : positionedShapes) {
-//			positionedShape.value = positionedShape.SHAPE.calculateMaxDistance(axis, stretchedBox, 0.3);
-//			if(Math.abs(positionedShape.value) < Math.abs(smallestValue)) smallestValue = positionedShape.value;
-//			MarioQuaMario.LOGGER.info("COLLISION CHECKING\nValue for {}:\n\t{}",
-//					this.getMario().getWorld().getBlockState(positionedShape.POS), positionedShape.value);
-//		}
-//
-//		MarioQuaMario.LOGGER.info("Smallest value gotten was {}", smallestValue);
-//
-//		return builder.build();
-//	}
-//
-//	private Iterable<PositionedVoxelShape> getBlockCollisionsWithPositions(
-//			Box box
-//	) {
-//		return () -> new BlockCollisionSpliterator<>(this.getMario().getWorld(), this.getMario(), box, false, PositionedVoxelShape::new);
-//	}
-
-	public boolean doBappingCollisions() {
-		return this.isEnabled() && this.getMario().getWeaponStack().isOf(Items.TRIDENT);
-	}
-
-//	private static class PositionedVoxelShape {
-//		private final BlockPos POS;
-//		private final VoxelShape SHAPE;
-//		private double value;
-//
-//		private PositionedVoxelShape(BlockPos.Mutable pos, VoxelShape shape) {
-//			this.POS = pos.toImmutable();
-//			this.SHAPE = shape;
-//		}
-//	}
 }

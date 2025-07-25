@@ -4,6 +4,7 @@ import com.fqf.mario_qua_mario_api.definitions.states.actions.AirborneActionDefi
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.*;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
+import com.fqf.mario_qua_mario_api.mariodata.util.RecordedCollision;
 import com.fqf.mario_qua_mario_api.util.CharaStat;
 import com.fqf.mario_qua_mario_api.util.Easing;
 import com.fqf.mario_qua_mario_api.util.StatCategory;
@@ -16,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.fqf.mario_qua_mario_api.util.StatCategory.JUMP_VELOCITY;
 import static com.fqf.mario_qua_mario_api.util.StatCategory.THRESHOLD;
@@ -180,6 +182,17 @@ public class LongJump extends Jump implements AirborneActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {
 		return List.of(
 				Submerged.SUBMERGE,
+				new TransitionDefinition(
+						LavaBoost.ID,
+						data -> !data.getLastTickCollisions().isEmpty(),
+						EvaluatorEnvironment.CLIENT_ONLY,
+						data -> {
+							data.setYVel(2);
+//							Optional<RecordedCollision> collision = data.getLastTickCollisions().stream().findAny();
+//							collision.ifPresent(recordedCollision -> data.setMotion(recordedCollision.getReflectedMotion()));
+						},
+						null
+				),
 				Jump.DOUBLE_JUMPABLE_LANDING.variate(PRun.ID, data ->
 						Fall.LANDING.evaluator().shouldTransition(data) && (data.isServer() || PRun.meetsPRunRequirements(data)),
 						EvaluatorEnvironment.CLIENT_CHECKED, null, null),
