@@ -6,7 +6,6 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.*;
 import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockCollisionSpliterator;
 import net.minecraft.world.CollisionView;
 import net.minecraft.world.World;
@@ -50,55 +49,29 @@ public abstract class EntityBlockCollisionMixin {
 		MarioMainClientData data = mario.mqm$getMarioData();
 		if(!data.isEnabled()) return false;
 
-		int floorStrength = data.getBapStrength(Direction.DOWN);
-		int ceilingStrength = data.getBapStrength(Direction.UP);
-		int wallStrength = data.getBapStrength(Direction.NORTH);
-
-		boolean bapFloors = floorStrength > 0;
-		boolean bapCeilings = ceilingStrength > 0;
-		double wallSpeedThreshold;
-		if(wallStrength > 0) wallSpeedThreshold = data.getAction().BAPPING_RULE.wallBumpSpeedThreshold().getAsThreshold(data);
-		else wallSpeedThreshold = 0.5;
-		boolean bapWalls = wallStrength > 0 && movement.horizontalLengthSquared() > wallSpeedThreshold * wallSpeedThreshold;
-		boolean bapOnXAxis = bapWalls && Math.abs(movement.x) > wallSpeedThreshold * 0.5;
-		boolean bapOnZAxis = bapWalls && Math.abs(movement.z) > wallSpeedThreshold * 0.5;
-
-		boolean requireCollisionRecording = false;
-
-		if(!bapFloors && !bapCeilings && !bapOnXAxis && !bapOnZAxis && !requireCollisionRecording) return false;
-
-		Box movedBox = mario.getBoundingBox();
-
-		boolean movingUp = movement.y > 0;
-		movedBox = bapAlongAxis(mario, data, movedBox, movement, Direction.Axis.Y, (movingUp ? ceilingStrength : floorStrength) == 0 && !requireCollisionRecording);
+		Box movedBox = bapAlongAxis(mario, data, mario.getBoundingBox(), movement, Direction.Axis.Y);
 		if(movedBox == null) return true;
 
 		boolean doXFirst = Math.abs(movement.x) > Math.abs(movement.z);
 		if(doXFirst) {
-			movedBox = bapAlongAxis(mario, data, movedBox, movement, Direction.Axis.X, !bapOnXAxis && !requireCollisionRecording);
+			movedBox = bapAlongAxis(mario, data, movedBox, movement, Direction.Axis.X);
 			if(movedBox == null) return true;
 		}
-		movedBox = bapAlongAxis(mario, data, movedBox, movement, Direction.Axis.Z, !bapOnZAxis && !requireCollisionRecording);
+		movedBox = bapAlongAxis(mario, data, movedBox, movement, Direction.Axis.Z);
 		if(movedBox == null) return true;
 		if(!doXFirst) {
-			movedBox = bapAlongAxis(mario, data, movedBox, movement, Direction.Axis.X, !bapOnXAxis && !requireCollisionRecording);
+			movedBox = bapAlongAxis(mario, data, movedBox, movement, Direction.Axis.X);
 			return movedBox == null;
 		}
 		return false;
 	}
 
 	@Unique
-	private static Box bapAlongAxis(ClientPlayerEntity mario, MarioMainClientData data, Box box, Vec3d movement, Direction.Axis axis, boolean shortcut) {
+	private static Box bapAlongAxis(ClientPlayerEntity mario, MarioMainClientData data, Box box, Vec3d movement, Direction.Axis axis) {
 		double motion = movement.getComponentAlongAxis(axis);
 		if(Math.abs(motion) < 1.0E-7) return box;
 
 		Box stretchedBox = box.stretch(Vec3d.ZERO.withAxis(axis, motion));
-
-		if(shortcut) {
-			List<VoxelShape> list = findCollisionsForMovement(mario, mario.getWorld(), List.of(), stretchedBox);
-			assert list != null;
-			return box.offset(Vec3d.ZERO.withAxis(axis, VoxelShapes.calculateMaxOffset(axis, box, list, motion)));
-		}
 
 		Direction dir = Direction.from(axis, motion > 0 ? Direction.AxisDirection.POSITIVE : Direction.AxisDirection.NEGATIVE);
 

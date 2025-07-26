@@ -11,6 +11,7 @@ import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.mario_qua_mario_api.interfaces.BapResult;
 import com.fqf.mario_qua_mario_api.mariodata.util.RecordedCollision;
+import com.fqf.mario_qua_mario_api.mariodata.util.RecordedCollisionSet;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.input.Input;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -18,13 +19,12 @@ import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 public class MarioMainClientData extends MarioMoveableData implements IMarioClientDataImpl {
 	private final ClientPlayerEntity MARIO;
@@ -96,6 +96,11 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		else this.getMario().mqm$getAnimationData().mutate(cameraArrangement, this.currentCameraAnimation.mutator(), this, progress);
 	}
 
+	private float clampYawAround = 0;
+	private float prevClampYawAround = 0;
+	private float clampYawHeadRange = 360;
+	private float prevClampYawHeadRange = 360;
+
 	@Override public void tick() {
 		super.tick();
 		this.getAction().clientTick(this, true);
@@ -103,6 +108,11 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		this.getCharacter().clientTick(this, true);
 		if(!MinecraftClient.getInstance().options.getPerspective().isFirstPerson())
 			this.currentCameraAnimation = null;
+
+		this.prevClampYawAround = this.clampYawAround;
+		this.prevClampYawHeadRange = this.clampYawHeadRange;
+		this.clampYawAround = this.getMario().getWorld().getTime();
+		this.clampYawHeadRange = this.getMario().isSneaking() ? 40 : 360;
 	}
 
 	public void tickInputs() {
@@ -122,17 +132,21 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		this.applyModifiedVelocity();
 
 		this.RECORDED_COLLISIONS.clear();
+		this.RECORDED_COLLISIONS.storedVelocity = this.getMario().getVelocity();
+		this.RECORDED_COLLISIONS.COLLIDED[0] = false; this.RECORDED_COLLISIONS.REFLECTS[0] = false;
+		this.RECORDED_COLLISIONS.COLLIDED[1] = false; this.RECORDED_COLLISIONS.REFLECTS[1] = false;
+		this.RECORDED_COLLISIONS.COLLIDED[2] = false; this.RECORDED_COLLISIONS.REFLECTS[2] = false;
 		this.moveWithFluidPushing();
 
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
 		this.applyModifiedVelocity();
 
-		this.getMario().updateLimbs(false);
-
 		if(this.getActionCategory() == ActionCategory.GROUNDED && this.getMario().isOnGround() && this.getYVel() == 0.0)
 			this.getMario().setVelocity(this.getMario().getVelocity().withAxis(Direction.Axis.Y, -0.1));
 		// ^ Needed for Presence Footsteps compatibility
 		// TODO: Prevent Presence Footsteps steps while in a Sliding action.
+
+		this.getMario().updateLimbs(false);
 
 		return cancelVanillaTravel;
 	}
@@ -243,10 +257,47 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		return strength;
 	}
 
-	private final Set<RecordedCollision> RECORDED_COLLISIONS = new HashSet<>();
+	private static class MainClientRecordedCollisions extends HashSet<RecordedCollision> implements RecordedCollisionSet {
+		private Vec3d storedVelocity;
+		private final boolean[] COLLIDED = new boolean[3];
+		private final boolean[] REFLECTS = new boolean[3];
+
+		@Override
+		public boolean collidedOnAxis(Direction.Axis axis) {
+			return this.COLLIDED[axis.ordinal()];
+		}
+		private boolean shouldReflectOnAxis(Direction.Axis axis) {
+			return this.REFLECTS[axis.ordinal()];
+		}
+
+		@Override
+		public Vec3d getPreCollisionVelocity() {
+			return this.storedVelocity;
+		}
+
+		@Override
+		public Vec3d getReflectedVelocity() {
+			return this.storedVelocity.multiply(
+					shouldReflectOnAxis(Direction.Axis.X) ? -1 : 1,
+					shouldReflectOnAxis(Direction.Axis.Y) ? -1 : 1,
+					shouldReflectOnAxis(Direction.Axis.Z) ? -1 : 1
+			);
+		}
+
+		@Override
+		public Vec3d getHorizontallyReflectedVelocity() {
+			return this.storedVelocity.multiply(
+					shouldReflectOnAxis(Direction.Axis.X) ? -1 : 1,
+					1,
+					shouldReflectOnAxis(Direction.Axis.Z) ? -1 : 1
+			);
+		}
+	}
+
+	private final MainClientRecordedCollisions RECORDED_COLLISIONS = new MainClientRecordedCollisions();
 
 	@Override
-	public @Nullable Set<RecordedCollision> getLastTickCollisions() {
+	public RecordedCollisionSet getLastTickCollisions() {
 		return this.RECORDED_COLLISIONS;
 	}
 
@@ -258,7 +309,28 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		else
 			bapResult = BlockBappingUtil.attemptBap(this, this.getMario().clientWorld, pos, direction, bapStrength);
 
-		this.RECORDED_COLLISIONS.add(new RecordedCollision(pos, direction, this.getMario().getVelocity(), bapResult));
+		if(bapResult != BapResult.BUST)
+			this.RECORDED_COLLISIONS.REFLECTS[direction.getAxis().ordinal()] = true;
+		this.RECORDED_COLLISIONS.COLLIDED[direction.getAxis().ordinal()] = true;
+		this.RECORDED_COLLISIONS.add(new RecordedCollision(pos, direction, bapResult));
 		return bapResult == BapResult.BUST;
+	}
+
+	public void onMarioLookAround() {
+		ClientPlayerEntity mario = this.getMario();
+
+		if(!mario.isSneaking()) return;
+
+		float aroundYaw = 0;
+		float maximumHeadDifference = 45;
+
+		mario.setBodyYaw(aroundYaw);
+
+		float headDifference = MathHelper.wrapDegrees(mario.getYaw() - aroundYaw);
+		float clampedHeadYawDifference = MathHelper.clamp(headDifference, -maximumHeadDifference, maximumHeadDifference);
+		mario.prevYaw += clampedHeadYawDifference - headDifference;
+		mario.setYaw(mario.getYaw() + clampedHeadYawDifference - headDifference);
+
+		mario.setHeadYaw(mario.getYaw());
 	}
 }

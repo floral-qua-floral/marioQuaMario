@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario_api.mariodata;
 
 import com.fqf.mario_qua_mario_api.mariodata.util.RecordedCollision;
+import com.fqf.mario_qua_mario_api.mariodata.util.RecordedCollisionSet;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,7 +20,7 @@ public interface IMarioReadableMotionData extends IMarioData {
 
 	MarioInputs getInputs();
 
-	Set<RecordedCollision> getLastTickCollisions();
+	RecordedCollisionSet getLastTickCollisions();
 
 	abstract class MarioInputs {
 		public final MarioButton JUMP;

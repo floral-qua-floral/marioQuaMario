@@ -5,6 +5,7 @@ import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.mario_qua_mario_api.mariodata.util.RecordedCollision;
+import com.fqf.mario_qua_mario_api.mariodata.util.RecordedCollisionSet;
 import net.minecraft.client.network.OtherClientPlayerEntity;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.util.Identifier;
@@ -144,8 +145,8 @@ public class MarioOtherClientData extends MarioPlayerData implements IMarioClien
 	}
 
 	@Override
-	public @Nullable Set<RecordedCollision> getLastTickCollisions() {
-		return Set.of();
+	public RecordedCollisionSet getLastTickCollisions() {
+		return MarioMoveableData.EMPTY_RECORDED_COLLISION_SET;
 	}
 
 	@Override

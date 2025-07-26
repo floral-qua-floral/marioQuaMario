@@ -4,20 +4,19 @@ import com.fqf.mario_qua_mario_api.definitions.states.actions.AirborneActionDefi
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.*;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
-import com.fqf.mario_qua_mario_api.mariodata.util.RecordedCollision;
 import com.fqf.mario_qua_mario_api.util.CharaStat;
 import com.fqf.mario_qua_mario_api.util.Easing;
-import com.fqf.mario_qua_mario_api.util.StatCategory;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario_content.Voicelines;
 import com.fqf.mario_qua_mario_content.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario_content.actions.grounded.PRun;
+import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.fqf.mario_qua_mario_api.util.StatCategory.JUMP_VELOCITY;
 import static com.fqf.mario_qua_mario_api.util.StatCategory.THRESHOLD;
@@ -184,14 +183,15 @@ public class LongJump extends Jump implements AirborneActionDefinition {
 				Submerged.SUBMERGE,
 				new TransitionDefinition(
 						LavaBoost.ID,
-						data -> !data.getLastTickCollisions().isEmpty(),
+						data -> data.getLastTickCollisions().collidedHorizontally(),
 						EvaluatorEnvironment.CLIENT_ONLY,
 						data -> {
-							data.setYVel(2);
-//							Optional<RecordedCollision> collision = data.getLastTickCollisions().stream().findAny();
-//							collision.ifPresent(recordedCollision -> data.setMotion(recordedCollision.getReflectedMotion()));
+							data.setVelocity(data.getLastTickCollisions().getHorizontallyReflectedVelocity().multiply(0.7));
 						},
-						null
+						(data, isSelf, seed) -> {
+							data.playSound(MarioContentSFX.BONK, seed);
+							data.voice(Voicelines.BONK, seed);
+						}
 				),
 				Jump.DOUBLE_JUMPABLE_LANDING.variate(PRun.ID, data ->
 						Fall.LANDING.evaluator().shouldTransition(data) && (data.isServer() || PRun.meetsPRunRequirements(data)),

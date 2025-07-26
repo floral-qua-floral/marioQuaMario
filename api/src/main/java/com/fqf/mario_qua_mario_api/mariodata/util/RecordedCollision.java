@@ -6,9 +6,5 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
-public record RecordedCollision(BlockPos pos, Direction direction, Vec3d preCollisionMotion, @Nullable BapResult bapResult) {
-	public Vec3d getReflectedMotion() {
-		Direction.Axis flipOnAxis = this.direction.getAxis();
-		return this.preCollisionMotion.withAxis(flipOnAxis, this.preCollisionMotion.getComponentAlongAxis(flipOnAxis));
-	}
+public record RecordedCollision(BlockPos pos, Direction direction, @Nullable BapResult bapResult) {
 }

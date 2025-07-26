@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario.mixin.client;
 
+import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.mariodata.MarioMainClientData;
 import com.fqf.mario_qua_mario.mariodata.injections.AdvMarioMainClientDataHolder;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -8,6 +9,7 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -67,4 +69,11 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 			case FORCE -> cir.setReturnValue(true);
 		}
 	}
+
+//	@Override
+//	public void changeLookDirection(double cursorDeltaX, double cursorDeltaY) {
+//		super.changeLookDirection(cursorDeltaX, cursorDeltaY);
+//		if(this.mqm$getMarioData().isEnabled())
+//			this.mqm$getMarioData().onMarioLookAround();
+//	}
 }

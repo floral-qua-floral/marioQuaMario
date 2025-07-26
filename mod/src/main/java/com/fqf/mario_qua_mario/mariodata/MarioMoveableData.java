@@ -3,14 +3,14 @@ package com.fqf.mario_qua_mario.mariodata;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_api.mariodata.util.RecordedCollision;
+import com.fqf.mario_qua_mario_api.mariodata.util.RecordedCollisionSet;
 import net.minecraft.entity.MovementType;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2d;
 
-import java.util.Set;
+import java.util.HashSet;
 
 public abstract class MarioMoveableData extends MarioPlayerData implements IMarioTravelData {
 	public boolean jumpCapped;
@@ -105,9 +105,9 @@ public abstract class MarioMoveableData extends MarioPlayerData implements IMari
 			this.getMario().setVelocity(oldVel.x, vertical, oldVel.z);
 		}
 	}
-	@Override public void setMotion(Vec3d motion) {
+	@Override public void setVelocity(Vec3d velocity) {
 		this.applyModifiedVelocity();
-		this.getMario().setVelocity(motion);
+		this.getMario().setVelocity(velocity);
 	}
 
 	@Override
@@ -252,7 +252,7 @@ public abstract class MarioMoveableData extends MarioPlayerData implements IMari
 		this.jumpCapped = false;
 	}
 
-	protected Vec3d moveWithFluidPushing() {
+	protected void moveWithFluidPushing() {
 		Vec3d motion = this.getMario().getVelocity().add(this.getFluidPushingVel());
 		// isChunkLoaded is deprecated but what the HECK ELSE DO I USE INSTEAD??? LivingEntity.travel uses it???
 		if(!this.getMario().getWorld().isChunkLoaded(this.getMario().getVelocityAffectingPos())) {
@@ -260,7 +260,6 @@ public abstract class MarioMoveableData extends MarioPlayerData implements IMari
 			this.getMario().setVelocity(this.getMario().getVelocity().withAxis(Direction.Axis.Y, 0));
 		}
 		this.getMario().move(MovementType.SELF, motion);
-		return motion;
 	}
 
 	public WallboundActionDefinition.WallInfo getWallInfo() {
@@ -269,8 +268,28 @@ public abstract class MarioMoveableData extends MarioPlayerData implements IMari
 
 	public abstract boolean travelHook(double forwardInput, double strafeInput);
 
+	private static class EmptyRecordedCollisionSet extends HashSet<RecordedCollision> implements RecordedCollisionSet {
+		@Override public boolean collidedOnAxis(Direction.Axis axis) {
+			return false;
+		}
+		@Override public Vec3d getPreCollisionVelocity() {
+			return Vec3d.ZERO;
+		}
+		@Override public Vec3d getReflectedVelocity() {
+			return Vec3d.ZERO;
+		}
+		@Override public Vec3d getHorizontallyReflectedVelocity() {
+			return Vec3d.ZERO;
+		}
+
+		@Override public boolean add(RecordedCollision recordedCollision) {
+			throw new IllegalStateException("Trying to add an entry to a fake RecordedCollisionSet?!?!?!");
+		}
+	}
+	public static final RecordedCollisionSet EMPTY_RECORDED_COLLISION_SET = new EmptyRecordedCollisionSet();
+
 	@Override
-	public @Nullable Set<RecordedCollision> getLastTickCollisions() {
-		return Set.of();
+	public RecordedCollisionSet getLastTickCollisions() {
+		return EMPTY_RECORDED_COLLISION_SET;
 	}
 }

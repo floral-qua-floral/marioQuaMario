@@ -11,7 +11,7 @@ public interface IMarioTravelData extends IMarioReadableMotionData {
 	}
 	void setYVel(double vertical);
 
-	void setMotion(Vec3d motion);
+	void setVelocity(Vec3d velocity);
 
 	void approachAngleAndAccel(
 			double forwardAccel, double forwardTarget, double strafeAccel, double strafeTarget,

@@ -13,6 +13,7 @@ import com.fqf.mario_qua_mario_api.util.CharaStat;
 import com.fqf.mario_qua_mario_api.util.StatCategory;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2d;
@@ -223,6 +224,11 @@ public class UniversalActionDefinitionHelper implements
 	@Override
 	public WallboundActionDefinition.WallInfo getWallInfo(IMarioReadableMotionData data) {
 		return ((MarioMoveableData) data).getWallInfo();
+	}
+
+	@Override
+	public float getAngleDifference(float alfa, float bravo) {
+		return MathHelper.subtractAngles(alfa, bravo);
 	}
 
 	@Override public void climbWall(

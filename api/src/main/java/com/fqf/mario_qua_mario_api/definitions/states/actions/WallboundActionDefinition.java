@@ -22,11 +22,12 @@ public interface WallboundActionDefinition extends IncompleteActionDefinition {
 	 */
 	interface WallInfo {
 		Vec3d getWallNormal();
-		double getNormalYaw();
+		float getNormalYaw();
 
 		double getTowardsWallInput();
 		double getSidleInput();
 
+		double getTowardsWallVel();
 		double getSidleVel();
 	}
 
@@ -35,6 +36,8 @@ public interface WallboundActionDefinition extends IncompleteActionDefinition {
 	 */
 	interface WallboundActionHelper {
 		WallInfo getWallInfo(IMarioReadableMotionData data);
+
+		float getAngleDifference(float alfa, float bravo);
 
 		void applyGravity(IMarioTravelData data, CharaStat gravity, CharaStat terminalVelocity);
 
