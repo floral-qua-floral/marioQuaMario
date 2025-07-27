@@ -27,47 +27,8 @@ public class GroundPoundLand implements GroundedActionDefinition {
 	    return ID;
 	}
 
-	private static LimbAnimation makeArmAnimation(AnimationHelper helper, int factor) {
-		return new LimbAnimation(false, (data, arrangement, progress) -> {
-			arrangement.addAngles(
-					MathHelper.lerp(progress, -67.75F, 0),
-					0,
-					MathHelper.lerp(progress, factor * -20, 0)
-			);
-			arrangement.addPos(
-					0,
-					MathHelper.lerp(progress, 1, 0),
-					MathHelper.lerp(progress, 2.5F, 0)
-			);
-		});
-	}
-	private static LimbAnimation makeLegAnimation(AnimationHelper helper, int factor) {
-		return new LimbAnimation(false, (data, arrangement, progress) -> {
-			arrangement.addAngles(
-					MathHelper.lerp(progress, -90, 0),
-					MathHelper.lerp(progress, factor * 16.75F, 0),
-					0
-			);
-		});
-	}
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return new PlayermodelAnimation(
-				null,
-				new ProgressHandler((data, ticksPassed) -> Math.min(ticksPassed / 10F, 1)),
-				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
-					arrangement.setPos(
-							0,
-							MathHelper.lerp(progress, -8, 0),
-							0
-					);
-					arrangement.pitch = helper.interpolateKeyframes(progress * 2, 0, -70, 0);
-				}),
-				null,
-				null,
-				makeArmAnimation(helper, 1), makeArmAnimation(helper, -1),
-				makeLegAnimation(helper, 1), makeLegAnimation(helper, -1),
-				null
-		);
+		return BonkGroundBackward.makeBonkStandupAnimation(helper, (data, ticksPassed) -> ticksPassed / 10F);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
 		return null;

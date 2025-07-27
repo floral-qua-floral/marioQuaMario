@@ -22,6 +22,7 @@
   "text.autoconfig.mario_qua_mario_content.option.sideflipCameraAnim": "Sideflip Camera Animation",
   "text.autoconfig.mario_qua_mario_content.option.backflipCameraAnim": "Backflip Camera Animation",
   "text.autoconfig.mario_qua_mario_content.option.tripleJumpCameraAnim": "Triple Jump Camera Animation",
+  "text.autoconfig.mario_qua_mario_content.option.groundPoundCameraAnim": "Ground Pound Camera Animation",
   "text.autoconfig.mario_qua_mario_content.option.tailWhipCameraAnim": "Tail Whip Camera Animation",
   "text.autoconfig.mario_qua_mario_content.option.tailSpinCameraAnim": "Tail Spin Camera Animation",
   "text.autoconfig.mario_qua_mario_content.option.welcomeMessage": "Welcome Message",

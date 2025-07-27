@@ -3,11 +3,14 @@ package com.fqf.mario_qua_mario_content.actions.airborne;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.*;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimation;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
+import com.fqf.mario_qua_mario_api.util.Easing;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.util.ActionTimerVars;
 import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
@@ -69,7 +72,18 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 		return makeAnimation(helper);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
-		return null;
+		return new CameraAnimationSet(
+				MarioQuaMarioContent.CONFIG::getGroundPoundCameraAnim,
+				new CameraAnimation(
+						new CameraProgressHandler((data, ticksPassed) -> Easing.mixedEase(Easing.SINE_IN_OUT, Easing.SINE_IN_OUT, Math.min(ticksPassed / (FLIP_DURATION + 2.5F), 1))),
+						(data, arrangement, progress) -> arrangement.pitch += progress * 360
+				),
+				new CameraAnimation(
+						new CameraProgressHandler((data, ticksPassed) -> Easing.EXPO_IN_OUT.ease(Math.min(ticksPassed / (FLIP_DURATION + 2.5F), 1))),
+						(data, arrangement, progress) -> arrangement.pitch += progress * 360
+				),
+				null
+		);
 	}
 	@Override public @NotNull SlidingStatus getSlidingStatus() {
 		return SlidingStatus.NOT_SLIDING;
