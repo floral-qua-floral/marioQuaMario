@@ -37,6 +37,9 @@
 			"com.fqf.mario_qua_mario_content.actions.grounded.DuckWaddle",
 			"com.fqf.mario_qua_mario_content.actions.grounded.DuckSlide",
 			"com.fqf.mario_qua_mario_content.actions.grounded.GroundPoundLand",
+			"com.fqf.mario_qua_mario_content.actions.grounded.BonkGroundBackward",
+			"com.fqf.mario_qua_mario_content.actions.grounded.BonkGroundForward",
+
 			"com.fqf.mario_qua_mario_content.actions.power.RetroIdle",
 			"com.fqf.mario_qua_mario_content.actions.power.TailSpinGround"
 		],
@@ -57,6 +60,8 @@
 			"com.fqf.mario_qua_mario_content.actions.airborne.WaterExitJump",
 			"com.fqf.mario_qua_mario_content.actions.airborne.GroundPoundFlip",
 			"com.fqf.mario_qua_mario_content.actions.airborne.GroundPoundDrop",
+			"com.fqf.mario_qua_mario_content.actions.airborne.BonkAir",
+
 			"com.fqf.mario_qua_mario_content.actions.power.TailStall",
 			"com.fqf.mario_qua_mario_content.actions.power.TailStallDucking",
 			"com.fqf.mario_qua_mario_content.actions.power.TailFly",

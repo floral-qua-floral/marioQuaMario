@@ -11,6 +11,7 @@ import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_api.util.CharaStat;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.Voicelines;
+import com.fqf.mario_qua_mario_content.actions.airborne.BonkAir;
 import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
 import com.fqf.mario_qua_mario_content.actions.airborne.Jump;
 import com.fqf.mario_qua_mario_content.actions.airborne.Sideflip;
@@ -180,7 +181,16 @@ public class Skid implements GroundedActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(GroundedActionHelper helper) {
 		return List.of(
 				Fall.FALL,
-				UnderwaterWalk.SUBMERGE
+				UnderwaterWalk.SUBMERGE,
+				BonkAir.BONK.variate(
+						BonkGroundBackward.ID,
+						null,
+						null,
+						data -> {
+							data.setVelocity(data.getLastTickCollisions().getHorizontallyReflectedVelocity().multiply(1.25));
+						},
+						null
+				)
 		);
 	}
 

@@ -22,11 +22,11 @@ import static com.fqf.mario_qua_mario_api.util.StatCategory.*;
 public class Backflip extends Jump implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMarioContent.makeID("backflip");
 	@Override public @NotNull Identifier getID() {
-	    return ID;
+		return ID;
 	}
 
 	private static LimbAnimation makeArmAnimation(AnimationHelper helper, int factor) {
-	    return new LimbAnimation(false, (data, arrangement, progress) -> {
+		return new LimbAnimation(false, (data, arrangement, progress) -> {
 			arrangement.pitch += helper.interpolateKeyframes(progress,
 					-70.5F,
 					-100,
@@ -50,10 +50,10 @@ public class Backflip extends Jump implements AirborneActionDefinition {
 			);
 			arrangement.y += helper.interpolateKeyframes(progress, 0, 0, 1, 0);
 			arrangement.z += helper.interpolateKeyframes(progress, 0, 0, -1, 0);
-	    });
+		});
 	}
 	private static LimbAnimation makeLegAnimation(AnimationHelper helper, int offsetFactor) {
-	    return new LimbAnimation(false, (data, arrangement, progress) -> {
+		return new LimbAnimation(false, (data, arrangement, progress) -> {
 			arrangement.pitch += helper.interpolateKeyframes(progress,
 					0,
 					48,
@@ -75,11 +75,11 @@ public class Backflip extends Jump implements AirborneActionDefinition {
 					-2 + offsetFactor * -1.8F,
 					offsetFactor * -4.25F
 			);
-	    });
+		});
 	}
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-	    return new PlayermodelAnimation(
-	            (data, rightArmBusy, leftArmBusy, headRelativeYaw) -> data.getMario().getRandom().nextBoolean(),
+		return new PlayermodelAnimation(
+				(data, rightArmBusy, leftArmBusy, headRelativeYaw) -> data.getMario().getRandom().nextBoolean(),
 				new ProgressHandler(
 						(data, ticksPassed) -> helper.sequencedEase(helper.sequencedEase(ticksPassed / 4.4F,
 								Easing.LINEAR, Easing.LINEAR, Easing.LINEAR, Easing.LINEAR) / 3, Easing.LINEAR, Easing.LINEAR) * 3
@@ -87,12 +87,12 @@ public class Backflip extends Jump implements AirborneActionDefinition {
 				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
 					arrangement.pitch += progress * 180;
 				}),
-	            null,
-	            null,
-	            makeArmAnimation(helper, 1), makeArmAnimation(helper, -1),
-	            makeLegAnimation(helper, 0), makeLegAnimation(helper, 1),
-	            null
-	    );
+				null,
+				null,
+				makeArmAnimation(helper, 1), makeArmAnimation(helper, -1),
+				makeLegAnimation(helper, 0), makeLegAnimation(helper, 1),
+				null
+		);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
 		return new CameraAnimationSet(

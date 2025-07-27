@@ -211,7 +211,7 @@ public abstract class MarioMoveableData extends MarioPlayerData implements IMari
 		// Convert turnSpeed to radians
 		double turnSpeedRadians = Math.toRadians(turnSpeedDegrees);
 
-		// Normalize the input vectors (slerp typically operates on normalized vectors)
+		// Normalize the input vectors
 		Vector2d currentDir = new Vector2d(currentVelocity).normalize();
 		Vector2d intendedDir = new Vector2d(intendedAngle).normalize();
 

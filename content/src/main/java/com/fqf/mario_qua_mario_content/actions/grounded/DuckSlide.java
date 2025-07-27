@@ -51,7 +51,7 @@ public class DuckSlide implements GroundedActionDefinition {
 	}
 
 	@Override public @Nullable BappingRule getBappingRule() {
-		return BappingRule.ROLLING;
+		return null;
 	}
 	@Override public @Nullable Identifier getStompTypeID() {
 		return null;

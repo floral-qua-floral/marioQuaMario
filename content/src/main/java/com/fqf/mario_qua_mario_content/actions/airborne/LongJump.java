@@ -181,18 +181,7 @@ public class LongJump extends Jump implements AirborneActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {
 		return List.of(
 				Submerged.SUBMERGE,
-				new TransitionDefinition(
-						LavaBoost.ID,
-						data -> data.getLastTickCollisions().collidedHorizontally(),
-						EvaluatorEnvironment.CLIENT_ONLY,
-						data -> {
-							data.setVelocity(data.getLastTickCollisions().getHorizontallyReflectedVelocity().multiply(0.7));
-						},
-						(data, isSelf, seed) -> {
-							data.playSound(MarioContentSFX.BONK, seed);
-							data.voice(Voicelines.BONK, seed);
-						}
-				),
+				BonkAir.BONK,
 				Jump.DOUBLE_JUMPABLE_LANDING.variate(PRun.ID, data ->
 						Fall.LANDING.evaluator().shouldTransition(data) && (data.isServer() || PRun.meetsPRunRequirements(data)),
 						EvaluatorEnvironment.CLIENT_CHECKED, null, null),
