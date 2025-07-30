@@ -54,7 +54,7 @@
   "enchantment.mario_qua_mario.bounding": "Bounding",
   "enchantment.mario_qua_mario.bounding.desc": "Higher bounce after a Stomp",
   "enchantment.mario_qua_mario.depth_charge": "Depth Charge",
-  "enchantment.mario_qua_mario.depth_charge.desc": "Ground Pounds retain their momentum for longer underwater",
+  "enchantment.mario_qua_mario.depth_charge.desc": "Ground Pounds go further and deal more damage underwater",
 
   "tag.item.mario_qua_mario.enchantable.pulverizing": "Enchantable with Pulverizing",
 

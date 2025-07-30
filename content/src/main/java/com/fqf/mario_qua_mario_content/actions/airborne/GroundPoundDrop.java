@@ -12,7 +12,10 @@ import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_api.util.CharaStat;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario_content.actions.aquatic.AquaticPoundDrop;
+import com.fqf.mario_qua_mario_content.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario_content.actions.grounded.GroundPoundLand;
+import com.fqf.mario_qua_mario_content.stomp_types.GroundPound;
 import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +33,7 @@ public class GroundPoundDrop implements AirborneActionDefinition {
 	    return ID;
 	}
 
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
+	public static PlayermodelAnimation makeAnimation(AnimationHelper helper) {
 		return GroundPoundFlip.makeAnimation(helper).variate(
 				null,
 				new ProgressHandler((data, ticksPassed) -> 1),
@@ -38,6 +41,10 @@ public class GroundPoundDrop implements AirborneActionDefinition {
 				null, null, null, null,
 				null
 		);
+	}
+
+	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
+		return makeAnimation(helper);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
 		return null;
@@ -57,7 +64,7 @@ public class GroundPoundDrop implements AirborneActionDefinition {
 		return BappingRule.GROUND_POUND;
 	}
 	@Override public @Nullable Identifier getStompTypeID() {
-		return null;
+		return GroundPound.ID;
 	}
 
 	public static final CharaStat GROUND_POUND_VEL = new CharaStat(-1.5, TERMINAL_VELOCITY);
@@ -94,11 +101,19 @@ public class GroundPoundDrop implements AirborneActionDefinition {
 		return List.of(
 				Fall.LANDING.variate(
 						GroundPoundLand.ID,
-						null, null,
+						null, EvaluatorEnvironment.CLIENT_ONLY,
 						data -> data.setForwardStrafeVel(0, 0),
 						(data, isSelf, seed) -> {
 							data.stopStoredSound(MarioContentSFX.GROUND_POUND_DROP);
 							data.playSound(MarioContentSFX.GROUND_POUND_LAND, seed);
+						}
+				),
+				Submerged.SUBMERGE.variate(
+						AquaticPoundDrop.ID,
+						null, null,
+						null,
+						(data, isSelf, seed) -> {
+							data.stopStoredSound(MarioContentSFX.GROUND_POUND_DROP);
 						}
 				)
 		);

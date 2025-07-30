@@ -9,7 +9,6 @@ import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_api.util.CharaStat;
-import com.fqf.mario_qua_mario_api.util.Easing;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.airborne.BonkAir;
 import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
@@ -17,7 +16,6 @@ import com.fqf.mario_qua_mario_content.actions.aquatic.UnderwaterWalk;
 import com.fqf.mario_qua_mario_content.util.ActionTimerVars;
 import com.fqf.mario_qua_mario_content.util.StandUpWithKneeAnimation;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +33,7 @@ public class BonkGroundBackward implements GroundedActionDefinition {
 	public static PlayermodelAnimation makeBonkStandupAnimation(
 			AnimationHelper helper, ProgressHandler.ProgressCalculator progressCalculator
 	) {
-		return StandUpWithKneeAnimation.getAnimation(
+		return StandUpWithKneeAnimation.makeAnimation(
 				helper, progressCalculator,
 				1.75F, 10,
 				22.5F, -20, 0, 2,

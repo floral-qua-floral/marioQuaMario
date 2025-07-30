@@ -13,7 +13,7 @@ public class BapBreakingBlockInfo extends BumpingBlockInfo {
 
 	@Override
 	protected long getFinishTime(World world) {
-		return world.getTime() + (BumpingBlockInfo.BUMP_DURATION / 2);
+		return world.getTime() + (BumpingBlockInfo.BUMP_DURATION / 2) + (world.isClient() ? 0 : -1);
 	}
 
 	@Override

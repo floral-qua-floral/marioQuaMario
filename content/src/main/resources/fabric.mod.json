@@ -17,7 +17,9 @@
 	"environment": "*",
 	"entrypoints": {
 		"mqm-stomp-types": [
-			"com.fqf.mario_qua_mario_content.stomp_types.JumpStomp"
+			"com.fqf.mario_qua_mario_content.stomp_types.JumpStomp",
+			"com.fqf.mario_qua_mario_content.stomp_types.GroundPound",
+			"com.fqf.mario_qua_mario_content.stomp_types.AquaticGroundPound"
 		],
 
 		"mqm-generic-actions": [
@@ -72,7 +74,10 @@
 			"com.fqf.mario_qua_mario_content.actions.aquatic.Submerged",
 			"com.fqf.mario_qua_mario_content.actions.aquatic.Swim",
 			"com.fqf.mario_qua_mario_content.actions.aquatic.UnderwaterWalk",
-			"com.fqf.mario_qua_mario_content.actions.aquatic.UnderwaterDuck"
+			"com.fqf.mario_qua_mario_content.actions.aquatic.UnderwaterDuck",
+			"com.fqf.mario_qua_mario_content.actions.aquatic.AquaticPoundFlip",
+			"com.fqf.mario_qua_mario_content.actions.aquatic.AquaticPoundDrop",
+			"com.fqf.mario_qua_mario_content.actions.aquatic.AquaticPoundLand"
 		],
 		"mqm-wallbound-actions": [
 		],

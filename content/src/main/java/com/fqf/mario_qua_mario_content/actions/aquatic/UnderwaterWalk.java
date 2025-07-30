@@ -13,6 +13,7 @@ import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
 import com.fqf.mario_qua_mario_content.actions.grounded.DuckWaddle;
 import com.fqf.mario_qua_mario_content.actions.grounded.SubWalk;
+import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,7 +27,7 @@ public class UnderwaterWalk implements AquaticActionDefinition {
 		return ID;
 	}
 
-	private static final float LEG_HEIGHT_OFFSET = -1.8F;
+	public static final float LEG_HEIGHT_OFFSET = -1.8F;
 	private static LimbAnimation makeArmAnimation(int factor) {
 		return new LimbAnimation(true, (data, arrangement, progress) -> {
 			arrangement.roll *= -1;
@@ -137,7 +138,12 @@ public class UnderwaterWalk implements AquaticActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AquaticActionHelper helper) {
 		return List.of(
 				Swim.SWIM,
-				DuckWaddle.DUCK.variate(UnderwaterDuck.ID, null)
+				DuckWaddle.DUCK.variate(
+						UnderwaterDuck.ID,
+						null, null,
+						null,
+						(data, isSelf, seed) -> data.playSound(MarioContentSFX.DUCK, seed)
+				)
 		);
 	}
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AquaticActionHelper helper) {

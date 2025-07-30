@@ -11,6 +11,7 @@ import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_api.util.CharaStat;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
+import com.fqf.mario_qua_mario_content.actions.airborne.GroundPoundFlip;
 import com.fqf.mario_qua_mario_content.actions.airborne.SpecialFall;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -103,7 +104,7 @@ public class Submerged implements AquaticActionDefinition {
 	}
 
 	@Override public @Nullable BappingRule getBappingRule() {
-		return null;
+		return new BappingRule(3, 0);
 	}
 	@Override public @Nullable Identifier getStompTypeID() {
 		return null;
@@ -174,7 +175,8 @@ public class Submerged implements AquaticActionDefinition {
 	}
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AquaticActionHelper helper) {
 		return List.of(
-				Swim.SWIM
+				Swim.SWIM,
+				GroundPoundFlip.GROUND_POUND.variate(AquaticPoundFlip.ID, null)
 		);
 	}
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AquaticActionHelper helper) {

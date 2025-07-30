@@ -7,7 +7,6 @@ import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_api.util.CharaStat;
-import com.fqf.mario_qua_mario_content.MQMContentConfig;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.airborne.StompBounce;
 import com.fqf.mario_qua_mario_content.util.MarioContentGamerules;
@@ -18,7 +17,6 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.projectile.TridentEntity;
 import net.minecraft.item.ItemStack;
@@ -84,22 +82,30 @@ public class JumpStomp implements StompTypeDefinition {
 	private static final TagKey<EntityType<?>> RISING_STOMPABLE_NONMONSTERS =
 			TagKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of("mario_qua_mario:rising_stompable_nonmonsters"));
 
-	@Override
-	public void filterPotentialTargets(List<Entity> potentialTargets, ServerPlayerEntity mario, Vec3d motion) {
+	public static void filterStompTargets(List<Entity> potentialTargets, ServerPlayerEntity mario, Vec3d motion) {
 		potentialTargets.removeIf(entity -> !(
 				(entity.canHit() || entity instanceof TridentEntity) // Mario can only stomp on things he can hit w/ crosshair (& Tridents)
-				&& collidingFromTop(entity, mario, mario.getY(), motion,
-				(
-						entity instanceof Monster // Mario can do rising stomps against monsters
-						|| entity.getType().isIn(RISING_STOMPABLE_NONMONSTERS) // And off of armor stands
-				))
+						&& collidingFromTop(entity, mario, mario.getY(), motion,
+						(
+								entity instanceof Monster // Mario can do rising stomps against monsters
+										|| entity.getType().isIn(RISING_STOMPABLE_NONMONSTERS) // And off of armor stands
+						))
 		));
+	}
+
+	@Override
+	public void filterPotentialTargets(List<Entity> potentialTargets, ServerPlayerEntity mario, Vec3d motion) {
+		filterStompTargets(potentialTargets, mario, motion);
 	}
 
 	public static final CharaStat BASE_DAMAGE = new CharaStat(4.5, STOMP, DAMAGE);
 
 	public static final Identifier PULVERIZING_ID = MarioQuaMarioContent.makeResID("pulverizing");
 	public static final Identifier BOUNDING_ID = MarioQuaMarioContent.makeResID("bounding");
+
+	public static int getPulverizingLevel(ItemStack item, IMarioData data) {
+		return getEnchantmentLevel(item, data.getMario().getWorld(), PULVERIZING_ID);
+	}
 
 	public static int getEnchantmentLevel(ItemStack item, World world, Identifier enchantmentID) {
 		Optional<RegistryEntry.Reference<Enchantment>> pulverizingEntry =
@@ -110,7 +116,7 @@ public class JumpStomp implements StompTypeDefinition {
 
 	@Override
 	public float calculateDamage(IMarioData data, ItemStack equipment, float equipmentArmor, float equipmentToughness) {
-		int pulverizingLevel = getEnchantmentLevel(equipment, data.getMario().getWorld(), PULVERIZING_ID);
+		int pulverizingLevel = JumpStomp.getPulverizingLevel(equipment, data);
 		return ((float) BASE_DAMAGE.get(data)) + equipmentArmor * 2.25F + pulverizingLevel * 0.5F + (pulverizingLevel > 0 ? 0.5F : 0);
 	}
 
@@ -127,8 +133,7 @@ public class JumpStomp implements StompTypeDefinition {
 		}
 	}
 
-	@Override
-	public @Nullable Vec3d executeTravellersAndModifyTargetPos(IMarioTravelData data, ItemStack equipment, Entity target, StompResult.ExecutableResult result, Vec3d movingToPos, boolean affectMario) {
+	public static Vec3d stompETAMTS(IMarioTravelData data, ItemStack equipment, Entity target, StompResult.ExecutableResult result, Vec3d movingToPos, boolean affectMario) {
 		return switch(result) {
 			case PAINFUL -> null; // Replace once Bonk implemented: Give Mario backwards momentum
 			case NORMAL, GLANCING, RESISTED -> {
@@ -140,6 +145,11 @@ public class JumpStomp implements StompTypeDefinition {
 			}
 			default -> null;
 		};
+	}
+
+	@Override
+	public @Nullable Vec3d executeTravellersAndModifyTargetPos(IMarioTravelData data, ItemStack equipment, Entity target, StompResult.ExecutableResult result, Vec3d movingToPos, boolean affectMario) {
+		return stompETAMTS(data, equipment, target, result, movingToPos, affectMario);
 	}
 
 	@Override

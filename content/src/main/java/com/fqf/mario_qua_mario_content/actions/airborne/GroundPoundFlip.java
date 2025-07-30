@@ -12,9 +12,11 @@ import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_api.util.Easing;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario_content.actions.aquatic.AquaticPoundFlip;
+import com.fqf.mario_qua_mario_content.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario_content.util.ActionTimerVars;
 import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
@@ -71,19 +73,24 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
 		return makeAnimation(helper);
 	}
-	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
+
+	public static CameraAnimationSet makeCameraAnimations(float flipAnimationDuration) {
 		return new CameraAnimationSet(
 				MarioQuaMarioContent.CONFIG::getGroundPoundCameraAnim,
 				new CameraAnimation(
-						new CameraProgressHandler((data, ticksPassed) -> Easing.mixedEase(Easing.SINE_IN_OUT, Easing.SINE_IN_OUT, Math.min(ticksPassed / (FLIP_DURATION + 2.5F), 1))),
+						new CameraProgressHandler((data, ticksPassed) -> Easing.mixedEase(Easing.SINE_IN_OUT, Easing.SINE_IN_OUT, Math.min(ticksPassed / flipAnimationDuration, 1))),
 						(data, arrangement, progress) -> arrangement.pitch += progress * 360
 				),
 				new CameraAnimation(
-						new CameraProgressHandler((data, ticksPassed) -> Easing.EXPO_IN_OUT.ease(Math.min(ticksPassed / (FLIP_DURATION + 2.5F), 1))),
+						new CameraProgressHandler((data, ticksPassed) -> Easing.EXPO_IN_OUT.ease(Math.min(ticksPassed / flipAnimationDuration, 1))),
 						(data, arrangement, progress) -> arrangement.pitch += progress * 360
 				),
 				null
 		);
+	}
+
+	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
+		return makeCameraAnimations(FLIP_DURATION + 2.5F);
 	}
 	@Override public @NotNull SlidingStatus getSlidingStatus() {
 		return SlidingStatus.NOT_SLIDING;
@@ -103,14 +110,17 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 		return null;
 	}
 
-	private static class FlipTimerVars extends ActionTimerVars {
+	public static class FlipTimerVars extends ActionTimerVars {
 		private final float STORED_FALL_DISTANCE;
-		private FlipTimerVars(PlayerEntity mario) {
-			this.STORED_FALL_DISTANCE = mario.fallDistance;
+		public FlipTimerVars(IMarioData data) {
+			this.STORED_FALL_DISTANCE = data.getMario().fallDistance;
+
+			FlipTimerVars existingVars = data.getVars(FlipTimerVars.class);
+			if(existingVars != null) this.actionTimer = existingVars.actionTimer;
 		}
 	}
 	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
-		return new FlipTimerVars(data.getMario());
+		return new FlipTimerVars(data);
 	}
 	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
 
@@ -134,29 +144,35 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 			(data, isSelf, seed) -> data.playSound(MarioContentSFX.GROUND_POUND_FLIP, seed)
 	);
 
+	public static TransitionDefinition makeDropTransition(Identifier targetAction, float flipDuration, SoundEvent sfx) {
+		return new TransitionDefinition(
+				targetAction,
+				data -> data.getVars(FlipTimerVars.class).actionTimer >= flipDuration,
+				EvaluatorEnvironment.COMMON,
+				data -> {
+					data.setYVel(GroundPoundDrop.GROUND_POUND_VEL.get(data));
+					data.getInputs().JUMP.isPressed(); // Unbuffer jump to make Ground Pound stalling harder
+					data.getMario().fallDistance = data.getVars(FlipTimerVars.class).STORED_FALL_DISTANCE * 0.6F;
+				},
+				(data, isSelf, seed) -> {
+					data.storeSound(data.playSound(sfx, seed));
+					data.getMario().fallDistance = data.getVars(FlipTimerVars.class).STORED_FALL_DISTANCE * 0.6F;
+				}
+		);
+	}
+
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(AirborneActionHelper helper) {
 		return List.of(
-				new TransitionDefinition(
-						GroundPoundDrop.ID,
-						data -> data.getVars(FlipTimerVars.class).actionTimer >= FLIP_DURATION,
-						EvaluatorEnvironment.COMMON,
-						data -> {
-							data.setYVel(GroundPoundDrop.GROUND_POUND_VEL.get(data));
-							data.getInputs().JUMP.isPressed();
-							data.getMario().fallDistance = data.getVars(FlipTimerVars.class).STORED_FALL_DISTANCE * 0.6F;
-						},
-						(data, isSelf, seed) -> {
-							data.storeSound(data.playSound(MarioContentSFX.GROUND_POUND_DROP, seed));
-							data.getMario().fallDistance = data.getVars(FlipTimerVars.class).STORED_FALL_DISTANCE * 0.6F;
-						}
-				)
+				makeDropTransition(GroundPoundDrop.ID, FLIP_DURATION, MarioContentSFX.GROUND_POUND_DROP)
 		);
 	}
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {
 		return List.of();
 	}
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {
-		return List.of();
+		return List.of(
+				Submerged.SUBMERGE.variate(AquaticPoundFlip.ID, null)
+		);
 	}
 
 	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {

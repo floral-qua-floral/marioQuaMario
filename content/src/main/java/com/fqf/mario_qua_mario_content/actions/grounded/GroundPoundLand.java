@@ -11,6 +11,7 @@ import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
 import com.fqf.mario_qua_mario_content.actions.airborne.GroundPoundDrop;
+import com.fqf.mario_qua_mario_content.actions.aquatic.AquaticPoundLand;
 import com.fqf.mario_qua_mario_content.actions.aquatic.UnderwaterWalk;
 import com.fqf.mario_qua_mario_content.util.ActionTimerVars;
 import net.minecraft.util.Identifier;
@@ -27,8 +28,10 @@ public class GroundPoundLand implements GroundedActionDefinition {
 	    return ID;
 	}
 
+	private static final float STANDUP_TICKS = 10;
+
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return BonkGroundBackward.makeBonkStandupAnimation(helper, (data, ticksPassed) -> ticksPassed / 10F);
+		return BonkGroundBackward.makeBonkStandupAnimation(helper, (data, ticksPassed) -> ticksPassed / STANDUP_TICKS);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
 		return null;
@@ -69,7 +72,7 @@ public class GroundPoundLand implements GroundedActionDefinition {
 		return List.of(
 				new TransitionDefinition(
 						SubWalk.ID,
-						data -> ActionTimerVars.get(data).actionTimer > 10,
+						data -> ActionTimerVars.get(data).actionTimer > STANDUP_TICKS,
 						EvaluatorEnvironment.COMMON
 				)
 		);
@@ -84,7 +87,7 @@ public class GroundPoundLand implements GroundedActionDefinition {
 						data -> data.getInputs().DUCK.isHeld() && Fall.FALL.evaluator().shouldTransition(data)
 				),
 				Fall.FALL,
-				UnderwaterWalk.SUBMERGE
+				UnderwaterWalk.SUBMERGE.variate(AquaticPoundLand.ID, null)
 		);
 	}
 

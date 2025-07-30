@@ -2,12 +2,10 @@ package com.fqf.mario_qua_mario_content.actions.grounded;
 
 import com.fqf.mario_qua_mario_api.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.*;
-import com.fqf.mario_qua_mario_api.util.Easing;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.util.ActionTimerVars;
 import com.fqf.mario_qua_mario_content.util.StandUpWithKneeAnimation;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,7 +16,7 @@ public class BonkGroundForward extends BonkGroundBackward implements GroundedAct
 	}
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return StandUpWithKneeAnimation.getAnimation(
+		return StandUpWithKneeAnimation.makeAnimation(
 				helper, (data, ticksPassed) -> data.getVars(ActionTimerVars.class).actionTimer / (float) STANDUP_TICKS,
 				-3.25F, 40,
 				-80, -80, 90, 1.25F,
