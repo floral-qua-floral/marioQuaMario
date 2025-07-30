@@ -70,9 +70,4 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 			case FORCE -> cir.setReturnValue(true);
 		}
 	}
-
-	@Override
-	public void setVelocity(Vec3d velocity) {
-		super.setVelocity(velocity);
-	}
 }

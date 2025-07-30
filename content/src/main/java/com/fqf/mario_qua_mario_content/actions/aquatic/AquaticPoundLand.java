@@ -101,9 +101,7 @@ public class AquaticPoundLand implements AquaticActionDefinition {
 						AquaticPoundDrop.ID,
 						data -> data.getInputs().DUCK.isHeld() && Fall.FALL.evaluator().shouldTransition(data),
 						null,
-						data -> {
-							data.setYVel(-0.6);
-						},
+						data -> data.setYVel(-0.6),
 						(data, isSelf, seed) -> data.storeSound(data.playSound(MarioContentSFX.AQUATIC_GROUND_POUND_DROP, seed))
 				),
 				Fall.FALL.variate(Submerged.ID, null),
