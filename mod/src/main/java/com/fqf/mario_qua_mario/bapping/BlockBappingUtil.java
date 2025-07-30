@@ -6,11 +6,15 @@ import com.fqf.mario_qua_mario.util.MarioClientHelperManager;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import com.fqf.mario_qua_mario_api.interfaces.BapResult;
 import com.fqf.mario_qua_mario_api.interfaces.Bappable;
+import it.unimi.dsi.fastutil.objects.Object2ByteArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundCategory;
@@ -29,11 +33,30 @@ public class BlockBappingUtil {
 	}
 
 	private static final BlockState EMPTY_BLOCK = Blocks.VOID_AIR.getDefaultState();
+	private static FluidState getFluidIntoPos(World world, BlockPos pos, Direction direction) {
+		return world.getFluidState(pos.offset(direction));
+	}
+
+	private static Fluid getFluidIntoPos(World world, BlockPos pos) {
+		// This is ugly and bad but I can't think of a cleaner solution >:(
+		FluidState fluid = getFluidIntoPos(world, pos, Direction.UP);
+		if(!fluid.isEmpty()) return fluid.getFluid();
+		fluid = getFluidIntoPos(world, pos, Direction.NORTH);
+		if(!fluid.isEmpty()) return fluid.getFluid();
+		fluid = getFluidIntoPos(world, pos, Direction.EAST);
+		if(!fluid.isEmpty()) return fluid.getFluid();
+		fluid = getFluidIntoPos(world, pos, Direction.SOUTH);
+		if(!fluid.isEmpty()) return fluid.getFluid();
+		return getFluidIntoPos(world, pos, Direction.WEST).getFluid();
+	}
+	private static BlockState getEmptyBlockAt(World world, BlockPos pos) {
+		return getFluidIntoPos(world, pos).getDefaultState().getBlockState();
+	}
 	public static void conditionallyHideBlockPos(World world, BlockPos pos, CallbackInfoReturnable<BlockState> cir) {
 		if(cir.getReturnValue() == null) return;
 		WorldBapsInfo worldBaps = getBapsInfoNullable(world);
 		if(worldBaps == null) return;
-		if(worldBaps.HIDDEN.contains(pos)) cir.setReturnValue(EMPTY_BLOCK);
+		if(worldBaps.HIDDEN.contains(pos)) cir.setReturnValue(getEmptyBlockAt(world, pos));
 	}
 
 	private static boolean forcingVanillaHardnessCheck = false;
