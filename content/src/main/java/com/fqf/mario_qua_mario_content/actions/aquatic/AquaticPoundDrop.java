@@ -70,17 +70,11 @@ public class AquaticPoundDrop implements AquaticActionDefinition {
 	}
 	@Override public void travelHook(IMarioTravelData data, AquaticActionHelper helper) {
 		int depthChargeLevel = AquaticGroundPound.getDepthChargeLevel(data.getMario().getEquippedStack(EquipmentSlot.LEGS), data);
-		CharaStat drag, dragMin;
-		if(depthChargeLevel == 0) {
-			drag = AQUATIC_GROUND_POUND_DRAG;
-			dragMin = AQUATIC_GROUND_POUND_DRAG_MIN;
-		}
-		else {
-			drag = AQUATIC_GROUND_POUND_DRAG.variate(1.0 / depthChargeLevel);
-			dragMin = AQUATIC_GROUND_POUND_DRAG_MIN.variate(1.0 / depthChargeLevel);
-		}
+		CharaStat drag;
+		if(depthChargeLevel == 0) drag = AQUATIC_GROUND_POUND_DRAG;
+		else drag = AQUATIC_GROUND_POUND_DRAG.variate(1.0 / (depthChargeLevel + 1));
 
-		helper.applyWaterDrag(data, drag, dragMin);
+		helper.applyWaterDrag(data, drag, AQUATIC_GROUND_POUND_DRAG_MIN);
 	}
 
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(AquaticActionHelper helper) {

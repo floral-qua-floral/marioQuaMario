@@ -246,7 +246,7 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 			velZ /= fluidsCount;
 		}
 
-		return new Vec3d(velX, velY, velZ);
+		return new Vec3d(velX, Math.max(velY, -0.15), velZ);
 	}
 
 	public HeadRestrictionType headRestricted;

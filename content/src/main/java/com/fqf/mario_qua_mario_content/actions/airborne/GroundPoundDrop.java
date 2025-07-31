@@ -111,9 +111,10 @@ public class GroundPoundDrop implements AirborneActionDefinition {
 				Submerged.SUBMERGE.variate(
 						AquaticPoundDrop.ID,
 						null, null,
-						null,
+						data -> {},
 						(data, isSelf, seed) -> {
 							data.stopStoredSound(MarioContentSFX.GROUND_POUND_DROP);
+							data.storeSound(data.playSound(MarioContentSFX.AQUATIC_GROUND_POUND_DROP, seed));
 						}
 				)
 		);
