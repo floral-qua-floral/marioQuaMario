@@ -9,12 +9,22 @@ import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.Ani
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.LimbAnimation;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.ProgressHandler;
+import com.fqf.mario_qua_mario_api.mariodata.IMarioReadableMotionData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_api.util.CharaStat;
 import com.fqf.mario_qua_mario_api.util.Easing;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario_content.Voicelines;
+import com.fqf.mario_qua_mario_content.util.ClimbTransitions;
+import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
 import com.fqf.mario_qua_mario_content.util.MarioVars;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.HorizontalFacingBlock;
+import net.minecraft.block.ShapeContext;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -106,7 +116,9 @@ public class Jump extends Fall implements AirborneActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {
 		return List.of(
 				GroundPoundFlip.GROUND_POUND,
-				helper.makeJumpCapTransition(this, this.getJumpCapThreshold())
+				helper.makeJumpCapTransition(this, this.getJumpCapThreshold()),
+				ClimbTransitions.CLIMB_NON_SOLID_DIRECTIONAL,
+				ClimbTransitions.CLIMB_NON_SOLID_NON_DIRECTIONAL
 		);
 	}
 	@Override protected TransitionDefinition getLandingTransition() {

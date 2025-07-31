@@ -23,6 +23,8 @@
 		],
 
 		"mqm-generic-actions": [
+			"com.fqf.mario_qua_mario_content.actions.generic.ClimbPole",
+
 			"com.fqf.mario_qua_mario_content.actions.generic.Debug",
 			"com.fqf.mario_qua_mario_content.actions.generic.DebugSprint",
 			"com.fqf.mario_qua_mario_content.actions.generic.DebugSpinPitch",

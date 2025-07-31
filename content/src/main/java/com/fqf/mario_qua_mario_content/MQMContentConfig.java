@@ -8,6 +8,7 @@ import me.shedaniel.autoconfig.annotation.Config;
 @Config(name = "mario_qua_mario_content")
 public class MQMContentConfig implements ConfigData {
 	private boolean backflipFromVehicles = true;
+	private boolean autoLadder = true;
 
 	private CameraAnimationOption backflipCameraAnim = CameraAnimationOption.GENTLE;
 	private CameraAnimationOption sideflipCameraAnim = CameraAnimationOption.AUTHENTIC;
@@ -21,8 +22,11 @@ public class MQMContentConfig implements ConfigData {
 	private boolean welcomeMessage = true;
 	private boolean nagMessage = true;
 
-	public boolean getBackflipFromVehicles() {
+	public boolean doBackflipFromVehicles() {
 		return this.backflipFromVehicles;
+	}
+	public boolean doAutoLadder() {
+		return this.autoLadder;
 	}
 
 	public CameraAnimationOption getBackflipCameraAnim() {

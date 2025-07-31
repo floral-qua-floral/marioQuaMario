@@ -1,25 +1,27 @@
 package com.fqf.mario_qua_mario.mixin.client;
 
-import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.mariodata.MarioMainClientData;
 import com.fqf.mario_qua_mario.mariodata.injections.AdvMarioMainClientDataHolder;
+import com.fqf.mario_qua_mario.util.MarioPositionSettable;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ClientPlayerEntity.class)
-public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity implements AdvMarioMainClientDataHolder {
+public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity implements AdvMarioMainClientDataHolder, MarioPositionSettable {
+	@Shadow private double lastX, lastBaseY, lastZ;
+
 	public ClientPlayerEntityMixin(ClientWorld world, GameProfile profile) {
 		super(world, profile);
 		throw new AssertionError("Mixin constructor?!");
@@ -69,5 +71,13 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 			case PROHIBIT -> cir.setReturnValue(false);
 			case FORCE -> cir.setReturnValue(true);
 		}
+	}
+
+	@Override
+	public void mqm$setPos(Vec3d pos) {
+		// will this fix it please
+		this.lastX = pos.x;
+		this.lastBaseY = pos.y;
+		this.lastZ = pos.z;
 	}
 }

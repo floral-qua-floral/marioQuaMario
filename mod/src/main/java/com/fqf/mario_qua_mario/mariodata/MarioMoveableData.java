@@ -1,10 +1,12 @@
 package com.fqf.mario_qua_mario.mariodata;
 
+import com.fqf.mario_qua_mario.util.MarioPositionSettable;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_api.mariodata.util.RecordedCollision;
 import com.fqf.mario_qua_mario_api.mariodata.util.RecordedCollisionSet;
 import net.minecraft.entity.MovementType;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -108,6 +110,13 @@ public abstract class MarioMoveableData extends MarioPlayerData implements IMari
 	@Override public void setVelocity(Vec3d velocity) {
 		this.applyModifiedVelocity();
 		this.getMario().setVelocity(velocity);
+	}
+
+	@Override
+	public void goTo(Vec3d pos) {
+		if(this.getMario() instanceof MarioPositionSettable mainClientMario) mainClientMario.mqm$setPos(pos);
+		else if(this.getMario() instanceof ServerPlayerEntity serverMario) ((MarioPositionSettable) serverMario.networkHandler).mqm$setPos(pos);
+		this.getMario().setPos(pos.x, pos.y, pos.z);
 	}
 
 	@Override
@@ -262,9 +271,7 @@ public abstract class MarioMoveableData extends MarioPlayerData implements IMari
 		this.getMario().move(MovementType.SELF, motion);
 	}
 
-	public WallboundActionDefinition.WallInfo getWallInfo() {
-		return null;
-	}
+	public abstract WallboundActionDefinition.WallInfo getWallInfo();
 
 	public abstract boolean travelHook(double forwardInput, double strafeInput);
 

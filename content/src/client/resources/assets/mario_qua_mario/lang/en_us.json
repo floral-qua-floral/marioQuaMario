@@ -19,6 +19,7 @@
   "mount.onboard.mario": "Hold %s and press %s to Dismount",
 
   "text.autoconfig.mario_qua_mario_content.option.backflipFromVehicles": "Dismount Backflips",
+  "text.autoconfig.mario_qua_mario_content.option.autoLadder": "Automatically grab ladders",
   "text.autoconfig.mario_qua_mario_content.option.sideflipCameraAnim": "Sideflip Camera Animation",
   "text.autoconfig.mario_qua_mario_content.option.backflipCameraAnim": "Backflip Camera Animation",
   "text.autoconfig.mario_qua_mario_content.option.tripleJumpCameraAnim": "Triple Jump Camera Animation",

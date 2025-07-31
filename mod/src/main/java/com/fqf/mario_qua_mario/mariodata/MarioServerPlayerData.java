@@ -11,6 +11,7 @@ import com.fqf.mario_qua_mario.registries.power_granting.ParsedCharacter;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import com.fqf.mario_qua_mario.compat.MarioCPMCompat;
 import com.fqf.mario_qua_mario.util.MarioGamerules;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioAuthoritativeData;
 import com.tom.cpm.shared.io.ModelFile;
@@ -151,6 +152,11 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 
 		long worldTime = this.getMario().getWorld().getTime();
 		this.RECENT_ACTIONS.removeIf(pair -> worldTime > pair.getRight());
+	}
+
+	@Override
+	public WallboundActionDefinition.WallInfo getWallInfo() {
+		return null;
 	}
 
 	@Override

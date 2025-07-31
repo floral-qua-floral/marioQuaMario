@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.mariodata;
 
 import com.fqf.mario_qua_mario.bapping.BlockBappingUtil;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.Arrangement;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimation;
@@ -113,6 +114,11 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		this.prevClampYawHeadRange = this.clampYawHeadRange;
 		this.clampYawAround = this.getMario().getWorld().getTime();
 		this.clampYawHeadRange = this.getMario().isSneaking() ? 40 : 360;
+	}
+
+	@Override
+	public WallboundActionDefinition.WallInfo getWallInfo() {
+		return null;
 	}
 
 	public void tickInputs() {
