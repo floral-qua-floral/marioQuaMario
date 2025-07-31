@@ -5,6 +5,8 @@ import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.cam
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimationOption;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
+import com.fqf.mario_qua_mario_api.util.CharaStat;
+import com.fqf.mario_qua_mario_api.util.StatCategory;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.GenericActionDefinition;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.*;
@@ -17,8 +19,8 @@ import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
 import com.fqf.mario_qua_mario_content.actions.airborne.Jump;
 import com.fqf.mario_qua_mario_content.actions.airborne.SpecialFall;
 import com.fqf.mario_qua_mario_content.actions.grounded.SubWalk;
-import com.fqf.mario_qua_mario_content.util.ActionTimerVars;
 import com.fqf.mario_qua_mario_content.util.ClimbTransitions;
+import com.fqf.mario_qua_mario_content.util.ClimbVars;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
@@ -37,17 +39,16 @@ public class ClimbPole implements GenericActionDefinition {
 		return ID;
 	}
 
-	private static Vec3d getMaximumOffset(IMarioData data, double contraction, boolean invertYaw) {
-		float yawMultiplier = invertYaw ? -1 : 1;
+	private static Vec3d getMaximumOffset(IMarioData data, double contraction) {
 		Box cameraBox = data.getMario().getBoundingBox().contract(contraction, 0, contraction);
-		Vec3d offset = Vec3d.fromPolar(0, yawMultiplier * data.getMario().getBodyYaw()).multiply(-0.7);
+		Vec3d offset = Vec3d.fromPolar(0, data.getMario().getYaw()).multiply(-0.7);
 		return Entity.adjustMovementForCollisions(data.getMario(), offset, cameraBox, data.getMario().getWorld(), List.of());
 	}
 
-	private static LimbAnimation makeArmAnimation(int factor) {
+	private static LimbAnimation makeArmAnimation(int factor, float armYaw) {
 	    return new LimbAnimation(false, (data, arrangement, progress) -> {
 			arrangement.pitch -= 140 + progress * -20 * factor;
-			arrangement.yaw -= 20 * factor;
+			arrangement.yaw += armYaw * factor;
 			arrangement.y += progress * 1.9F * factor;
 	    });
 	}
@@ -58,28 +59,39 @@ public class ClimbPole implements GenericActionDefinition {
 			arrangement.z -= 3.7F;
 	    });
 	}
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-	    return new PlayermodelAnimation(
-	            null,
-	            new ProgressHandler((data, ticksPassed) -> MathHelper.sin(data.getVars(ClimbVars.class).progress)),
-	            new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
-					Vec3d offset = getMaximumOffset(data, 0.1, false).multiply(16);
-					arrangement.z += (float) offset.horizontalLength();
-				}),
-	            null,
-	            new BodyPartAnimation((data, arrangement, progress) -> {
+
+	public static <T extends ClimbVars> PlayermodelAnimation makeAnimation(float armYaw, Class<T> clazz) {
+		return new PlayermodelAnimation(
+				null,
+				new ProgressHandler((data, ticksPassed) -> MathHelper.sin(data.getVars(clazz).progress)),
+				null,
+				null,
+				new BodyPartAnimation((data, arrangement, progress) -> {
 					arrangement.yaw += progress * -15;
 				}),
-	            makeArmAnimation(1), makeArmAnimation(-1),
-	            makeLegAnimation(1), makeLegAnimation(-1),
-	            null
-	    );
+				makeArmAnimation(1, armYaw), makeArmAnimation(-1, armYaw),
+				makeLegAnimation(1), makeLegAnimation(-1),
+				new LimbAnimation(true, (data, arrangement, progress) -> arrangement.pitch = 70)
+		);
+	}
+
+	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
+	    return makeAnimation(-20, ClimbVars.class).variate(
+				null, null,
+				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
+					Vec3d offset = getMaximumOffset(data, 0.1).multiply(16);
+					arrangement.z += (float) offset.horizontalLength();
+				}),
+				null, null,
+				null, null,
+				null, null, null
+		);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
 		return new CameraAnimationSet(
 				() -> CameraAnimationOption.AUTHENTIC,
 				new CameraAnimation(new CameraProgressHandler((data, ticksPassed) -> ticksPassed), (data, arrangement, progress) -> {
-					Vec3d collOffset = getMaximumOffset(data, 0.2, false);
+					Vec3d collOffset = getMaximumOffset(data, 0.2);
 					arrangement.addPos((float) collOffset.x, (float) collOffset.y, (float) collOffset.z);
 				}),
 				null,
@@ -104,9 +116,7 @@ public class ClimbPole implements GenericActionDefinition {
 		return null;
 	}
 
-	private static class ClimbVars {
-		private float progress;
-	}
+	public static final CharaStat CLIMB_SPEED = new CharaStat(0.3, StatCategory.UP, StatCategory.SPEED, StatCategory.CLIMBING);
 
 	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
 		return new ClimbVars();
@@ -119,7 +129,7 @@ public class ClimbPole implements GenericActionDefinition {
 	}
 	@Override public boolean travelHook(IMarioTravelData data) {
 		double forwardInput = data.getInputs().getForwardInput() * (data.getInputs().DUCK.isHeld() ? 0.3 : 1);
-		data.setYVel(forwardInput * 0.31);
+		data.setYVel(forwardInput * CLIMB_SPEED.get(data));
 		data.getVars(ClimbVars.class).progress += (float) forwardInput;
 		data.goTo(data.getMario().getBlockPos().toCenterPos().withAxis(Direction.Axis.Y, data.getMario().getY()));
 		data.setForwardStrafeVel(0, 0);
@@ -128,7 +138,7 @@ public class ClimbPole implements GenericActionDefinition {
 	}
 
 	private static void releasePole(IMarioTravelData data) {
-		data.goTo(data.getMario().getPos().add(getMaximumOffset(data, 0, false)));
+		data.goTo(data.getMario().getPos().add(getMaximumOffset(data, 0)));
 	}
 
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions() {
@@ -153,7 +163,10 @@ public class ClimbPole implements GenericActionDefinition {
 						Fall.ID,
 						data -> data.getInputs().DUCK.isHeld() && data.getInputs().JUMP.isPressed(),
 						EvaluatorEnvironment.CLIENT_ONLY,
-						ClimbPole::releasePole,
+						data -> {
+							releasePole(data);
+							data.getInputs().DUCK.isPressed(); // Unbuffer Duck
+						},
 						null
 				),
 				new TransitionDefinition(
@@ -175,7 +188,7 @@ public class ClimbPole implements GenericActionDefinition {
 				new TransitionDefinition(
 						SpecialFall.ID,
 						data -> !ClimbTransitions.inNonSolidClimbable(data, false),
-						EvaluatorEnvironment.CLIENT_ONLY,
+						EvaluatorEnvironment.COMMON,
 						ClimbPole::releasePole,
 						null
 				),

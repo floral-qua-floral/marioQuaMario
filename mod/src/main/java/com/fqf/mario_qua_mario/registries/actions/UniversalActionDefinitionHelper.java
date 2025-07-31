@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.registries.actions;
 
 import com.fqf.mario_qua_mario.mariodata.MarioServerPlayerData;
+import com.fqf.mario_qua_mario.util.WallInfoWithMove;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.*;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.IncompleteActionDefinition;
@@ -225,16 +226,11 @@ public class UniversalActionDefinitionHelper implements
 	@Override
 	public void assignWallDirection(IMarioTravelData data, Direction direction) {
 		if(data instanceof MarioMoveableData moveableData)
-			moveableData.getMario();
+			moveableData.assignWallDirection(direction);
 	}
 
 	@Override
-	public WallboundActionDefinition.WallInfo getWallInfo(IMarioReadableMotionData data) {
-		return((MarioMoveableData) data).getWallInfo();
-	}
-
-	@Override
-	public WallboundActionDefinition.WallInfoWithMove getWallInfo(IMarioTravelData data) {
+	public WallInfoWithMove getWallInfo(IMarioReadableMotionData data) {
 		return((MarioMoveableData) data).getWallInfo();
 	}
 
@@ -245,16 +241,49 @@ public class UniversalActionDefinitionHelper implements
 
 	@Override public void climbWall(
 			IMarioTravelData data,
-			CharaStat ascendSpeedStat,CharaStat ascendAccelStat,
+			CharaStat ascendSpeedStat, CharaStat ascendAccelStat,
 			CharaStat descendSpeedStat, CharaStat descendAccelStat,
 			CharaStat sidleSpeedStat, CharaStat sidleAccelStat
 	) {
+		WallInfoWithMove wall = this.getWallInfo(data);
+		if(wall == null) return;
+		double climbInput = wall.getTowardsWallInput();
 
+		if(climbInput == 0) data.setYVel(0);
+		else {
+			double yVel = data.getYVel();
+			double accel, target;
+			if(climbInput > 0) {
+				accel = ascendAccelStat.get(data);
+				target = ascendSpeedStat.get(data) * Math.abs(climbInput);
+
+				yVel = Math.min(yVel + accel, target);
+			}
+			else {
+				accel = descendAccelStat.get(data);
+				target = descendSpeedStat.get(data) * Math.abs(climbInput);
+
+				yVel = Math.max(yVel + accel, target);
+
+			}
+
+			data.setYVel(yVel);
+		}
+
+		double sidleInput = wall.getSidleInput();
+		if(sidleInput == 0) wall.setSidleVel(0);
+		else {
+			double sidleVel = wall.getSidleVel();
+
+		}
+
+		wall.setTowardsWallVel(0.2);
 	}
 
 	@Override
 	public void setSidleVel(IMarioTravelData data, double sidleVel) {
-
+		WallInfoWithMove wall = this.getWallInfo(data);
+		if(wall != null) wall.setSidleVel(sidleVel);
 	}
 
 	@Override

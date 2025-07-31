@@ -33,18 +33,12 @@ public interface WallboundActionDefinition extends IncompleteActionDefinition {
 		double getSidleVel();
 	}
 
-	interface WallInfoWithMove extends WallInfo {
-		void setTowardsWallVel(double velocity);
-		void setSidleVel(double velocity);
-	}
-
 	/**
 	 * Contains a number of methods intended to help with the creation of Wallbound Actions.
 	 */
 	interface WallboundActionHelper {
 		void assignWallDirection(IMarioTravelData data, Direction direction);
 		@Nullable WallInfo getWallInfo(IMarioReadableMotionData data);
-		@Nullable WallInfoWithMove getWallInfo(IMarioTravelData data);
 
 		float getAngleDifference(float alfa, float bravo);
 

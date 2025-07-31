@@ -3,6 +3,7 @@
     "minecraft:comparator",
     "minecraft:repeater",
     "minecraft:slime_block",
-    "minecraft:honey_block"
+    "minecraft:honey_block",
+    "minecraft:scaffolding"
   ]
 }

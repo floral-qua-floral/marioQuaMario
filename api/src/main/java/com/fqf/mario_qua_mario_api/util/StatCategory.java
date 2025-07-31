@@ -10,6 +10,8 @@ public enum StatCategory {
 
 	SWIMMING, // Aquatic
 
+	CLIMBING,
+
 	ACCELERATION,
 	OVERSPEED_CORRECTION, // Used INSTEAD OF acceleration for overwalk, overrun, etc. type stats.
 	SPEED,

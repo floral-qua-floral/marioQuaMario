@@ -11,10 +11,8 @@ import com.fqf.mario_qua_mario_content.actions.generic.ClimbPole;
 import com.fqf.mario_qua_mario_content.actions.generic.Debug;
 import com.fqf.mario_qua_mario_content.actions.generic.DebugSpinPitch;
 import com.fqf.mario_qua_mario_content.actions.generic.DebugSpinRoll;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.HorizontalFacingBlock;
-import net.minecraft.block.MultifaceGrowthBlock;
-import net.minecraft.block.ShapeContext;
+import com.fqf.mario_qua_mario_content.actions.wallbound.ClimbIntangibleDirectional;
+import net.minecraft.block.*;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.tag.BlockTags;
@@ -27,11 +25,11 @@ import java.util.Optional;
 
 public class ClimbTransitions {
 	private static boolean canClimbBlock(BlockState state) {
-		return state.isIn(BlockTags.CLIMBABLE);
+		return state.isIn(BlockTags.CLIMBABLE) && !state.isOf(Blocks.SCAFFOLDING);
 	}
-	private static @Nullable Direction hasDirectionality(BlockState state) {
+	public static @Nullable Direction hasDirectionality(BlockState state) {
 		Optional<Direction> facing = state.getOrEmpty(HorizontalFacingBlock.FACING);
-		if(facing.isPresent()) return facing.get();
+		if(facing.isPresent()) return facing.get().getOpposite();
 
 		// this is dumb
 		if(MultifaceGrowthBlock.hasDirection(state, Direction.SOUTH)) return Direction.SOUTH;
@@ -74,7 +72,7 @@ public class ClimbTransitions {
 	public static final CharaStat CLIMB_JUMP_OFF_VEL = new CharaStat(0.8, StatCategory.JUMP_VELOCITY);
 	public static final CharaStat CLIMB_JUMP_OFF_HORIZ_VEL = new CharaStat(0.8, StatCategory.BACKWARD);
 
-	public static final TransitionDefinition CLIMB_NON_SOLID_DIRECTIONAL = makeNonSolidClimbingTransition(Debug.ID, true);
+	public static final TransitionDefinition CLIMB_NON_SOLID_DIRECTIONAL = makeNonSolidClimbingTransition(ClimbIntangibleDirectional.ID, true);
 	public static final TransitionDefinition CLIMB_NON_SOLID_NON_DIRECTIONAL = makeNonSolidClimbingTransition(ClimbPole.ID, false);
 	public static final TransitionDefinition CLIMB_SOLID = new TransitionDefinition(
 			DebugSpinPitch.ID,
@@ -88,4 +86,14 @@ public class ClimbTransitions {
 				data.voice(Voicelines.DUCK_JUMP, seed);
 			}
 	);
+
+	public static float getDirectionYaw(Direction direction) {
+		return switch(direction) {
+			case NORTH -> 180;
+			case SOUTH -> 0;
+			case WEST -> 90;
+			case EAST -> -90;
+			default -> throw new IllegalStateException("Illegal wall direction: " + direction + " :(");
+		};
+	}
 }

@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.mariodata;
 
 import com.fqf.mario_qua_mario.bapping.BlockBappingUtil;
+import com.fqf.mario_qua_mario.util.WallInfoWithMove;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.Arrangement;
@@ -117,7 +118,7 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 	}
 
 	private final WallInfoFromCollisions WALL_INFO = new WallInfoFromCollisions(this);
-	private static class WallInfoFromCollisions implements WallboundActionDefinition.WallInfoWithMove {
+	private static class WallInfoFromCollisions implements WallInfoWithMove {
 		private final MarioMainClientData OWNER;
 		private @Nullable Direction wallDirection = null;
 		private double towardsWallInput;
@@ -252,7 +253,7 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 	}
 
 	@Override
-	public WallboundActionDefinition.@Nullable WallInfoWithMove getWallInfo() {
+	public @Nullable WallInfoWithMove getWallInfo() {
 		return this.WALL_INFO.wallDirection == null ? null : this.WALL_INFO;
 	}
 

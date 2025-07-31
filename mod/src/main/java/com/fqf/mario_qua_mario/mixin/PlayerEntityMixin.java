@@ -3,6 +3,9 @@ package com.fqf.mario_qua_mario.mixin;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.UniversalActionDefinitionHelper;
+import com.fqf.mario_qua_mario.registries.actions.parsed.ParsedWallboundAction;
+import com.fqf.mario_qua_mario.util.WallInfoWithMove;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.SlidingStatus;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.SneakingRule;
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
@@ -233,9 +236,15 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 
 	@Inject(method = "getMaxRelativeHeadRotation", at = @At("HEAD"), cancellable = true)
 	private void restrictHeadRotation(CallbackInfoReturnable<Float> cir) {
-		if(this.mqm$getMarioData().headRestricted == MarioPlayerData.HeadRestrictionType.URGENT) {
-			cir.setReturnValue(0F);
-			this.mqm$getMarioData().headRestricted = MarioPlayerData.HeadRestrictionType.NONE;
+		MarioPlayerData data = this.mqm$getMarioData();
+		if(data.isEnabled()) {
+			if(data.headRestricted == MarioPlayerData.HeadRestrictionType.URGENT) {
+				cir.setReturnValue(0F);
+				data.headRestricted = MarioPlayerData.HeadRestrictionType.NONE;
+			}
+			else if(data.getActionCategory() == ActionCategory.WALLBOUND) {
+				cir.setReturnValue(Float.MAX_VALUE);
+			}
 		}
 	}
 
