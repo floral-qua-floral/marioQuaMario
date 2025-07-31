@@ -12,6 +12,8 @@ import com.fqf.mario_qua_mario_api.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
+import com.fqf.mario_qua_mario_content.actions.airborne.Backflip;
+import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
 import com.fqf.mario_qua_mario_content.actions.airborne.Jump;
 import com.fqf.mario_qua_mario_content.actions.airborne.SpecialFall;
 import com.fqf.mario_qua_mario_content.actions.grounded.SubWalk;
@@ -135,6 +137,26 @@ public class ClimbPole implements GenericActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions() {
 		return List.of(
 				new TransitionDefinition(
+						Backflip.ID,
+						data -> data.getInputs().getForwardInput() < 0 && data.getInputs().JUMP.isPressed(),
+						EvaluatorEnvironment.CLIENT_ONLY,
+						data -> {
+							releasePole(data);
+							data.setYVel(0.8);
+							data.setForwardVel(-0.4);
+						},
+						(data, isSelf, seed) -> {
+							data.playJumpSound(seed);
+						}
+				),
+				new TransitionDefinition(
+						Fall.ID,
+						data -> data.getInputs().DUCK.isHeld() && data.getInputs().JUMP.isPressed(),
+						EvaluatorEnvironment.CLIENT_ONLY,
+						ClimbPole::releasePole,
+						null
+				),
+				new TransitionDefinition(
 						Jump.ID,
 						data -> data.getInputs().JUMP.isPressed(),
 						EvaluatorEnvironment.CLIENT_ONLY,
@@ -160,7 +182,9 @@ public class ClimbPole implements GenericActionDefinition {
 				new TransitionDefinition(
 						SubWalk.ID,
 						data -> data.getMario().isOnGround(),
-						EvaluatorEnvironment.CLIENT_ONLY
+						EvaluatorEnvironment.CLIENT_ONLY,
+						ClimbPole::releasePole,
+						null
 				)
 		);
 	}

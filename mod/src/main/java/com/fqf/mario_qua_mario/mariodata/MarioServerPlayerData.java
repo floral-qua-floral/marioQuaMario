@@ -19,6 +19,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.random.RandomSeed;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -155,7 +156,12 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 	}
 
 	@Override
-	public WallboundActionDefinition.WallInfo getWallInfo() {
+	public void assignWallDirection(Direction direction) {
+
+	}
+
+	@Override
+	public WallboundActionDefinition.@Nullable WallInfoWithMove getWallInfo() {
 		return null;
 	}
 

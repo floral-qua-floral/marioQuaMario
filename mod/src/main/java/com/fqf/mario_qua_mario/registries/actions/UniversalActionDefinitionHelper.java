@@ -13,6 +13,7 @@ import com.fqf.mario_qua_mario_api.util.CharaStat;
 import com.fqf.mario_qua_mario_api.util.StatCategory;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
@@ -222,8 +223,19 @@ public class UniversalActionDefinitionHelper implements
 	}
 
 	@Override
+	public void assignWallDirection(IMarioTravelData data, Direction direction) {
+		if(data instanceof MarioMoveableData moveableData)
+			moveableData.getMario();
+	}
+
+	@Override
 	public WallboundActionDefinition.WallInfo getWallInfo(IMarioReadableMotionData data) {
-		return ((MarioMoveableData) data).getWallInfo();
+		return((MarioMoveableData) data).getWallInfo();
+	}
+
+	@Override
+	public WallboundActionDefinition.WallInfoWithMove getWallInfo(IMarioTravelData data) {
+		return((MarioMoveableData) data).getWallInfo();
 	}
 
 	@Override

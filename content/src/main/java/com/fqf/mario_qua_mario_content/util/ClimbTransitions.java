@@ -74,7 +74,7 @@ public class ClimbTransitions {
 	public static final CharaStat CLIMB_JUMP_OFF_VEL = new CharaStat(0.8, StatCategory.JUMP_VELOCITY);
 	public static final CharaStat CLIMB_JUMP_OFF_HORIZ_VEL = new CharaStat(0.8, StatCategory.BACKWARD);
 
-	public static final TransitionDefinition CLIMB_NON_SOLID_DIRECTIONAL = makeNonSolidClimbingTransition(ClimbPole.ID, true);
+	public static final TransitionDefinition CLIMB_NON_SOLID_DIRECTIONAL = makeNonSolidClimbingTransition(Debug.ID, true);
 	public static final TransitionDefinition CLIMB_NON_SOLID_NON_DIRECTIONAL = makeNonSolidClimbingTransition(ClimbPole.ID, false);
 	public static final TransitionDefinition CLIMB_SOLID = new TransitionDefinition(
 			DebugSpinPitch.ID,

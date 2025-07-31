@@ -111,8 +111,10 @@ public class MarioAttackInterceptionPackets {
 		);
 
 		public static void receive(EntityAttackInterceptedC2SPayload payload, ServerPlayNetworking.Context context) {
+			//noinspection deprecation
 			handleAttackInterception(context.player(), payload,
 					context.player().getServerWorld().getDragonPart(payload.targetID), null, payload.seed);
+			// vanilla code uses getDragonPart, why is it deprecated?????????
 		}
 
 		@Override public Id<? extends CustomPayload> getId() {

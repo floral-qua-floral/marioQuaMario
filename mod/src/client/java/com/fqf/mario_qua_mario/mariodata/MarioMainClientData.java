@@ -22,10 +22,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 public class MarioMainClientData extends MarioMoveableData implements IMarioClientDataImpl {
 	private final ClientPlayerEntity MARIO;
@@ -116,9 +116,144 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		this.clampYawHeadRange = this.getMario().isSneaking() ? 40 : 360;
 	}
 
+	private final WallInfoFromCollisions WALL_INFO = new WallInfoFromCollisions(this);
+	private static class WallInfoFromCollisions implements WallboundActionDefinition.WallInfoWithMove {
+		private final MarioMainClientData OWNER;
+		private @Nullable Direction wallDirection = null;
+		private double towardsWallInput;
+		private double sidleInput;
+		private boolean calculatedInputs;
+
+		private WallInfoFromCollisions(MarioMainClientData owner) {
+			OWNER = owner;
+		}
+
+		private void update() {
+			this.calculatedInputs = false;
+			if(this.OWNER.RECORDED_COLLISIONS.isEmpty()) {
+				wallDirection = null;
+				return;
+			}
+
+			Direction.Axis biggestAxis;
+			Vec3d storedVelocity = this.OWNER.RECORDED_COLLISIONS.storedVelocity;
+
+			if(
+					this.wallDirection != null && this.OWNER.RECORDED_COLLISIONS.collidedOnAxis(this.wallDirection.getAxis())
+					&& Math.signum(storedVelocity.getComponentAlongAxis(this.wallDirection.getAxis())) != wallDirection.getDirection().offset()
+			) {
+				biggestAxis = this.wallDirection.getAxis();
+			}
+			else if(this.OWNER.RECORDED_COLLISIONS.collidedOnAxis(Direction.Axis.X) && this.OWNER.RECORDED_COLLISIONS.collidedOnAxis(Direction.Axis.Z)) {
+				if(Math.abs(storedVelocity.x) > Math.abs(storedVelocity.z))
+					biggestAxis = Direction.Axis.X;
+				else
+					biggestAxis = Direction.Axis.Z;
+			}
+			else if(this.OWNER.RECORDED_COLLISIONS.collidedOnAxis(Direction.Axis.X))
+				biggestAxis = Direction.Axis.X;
+			else if(this.OWNER.RECORDED_COLLISIONS.collidedOnAxis(Direction.Axis.Z))
+				biggestAxis = Direction.Axis.Z;
+			else
+				biggestAxis = null;
+
+			if(biggestAxis == null) this.wallDirection = null;
+			else this.wallDirection = Direction.from(biggestAxis, // Direction is pointing towards the wall
+					storedVelocity.getComponentAlongAxis(biggestAxis) > 0 ? Direction.AxisDirection.POSITIVE : Direction.AxisDirection.NEGATIVE);
+		}
+
+		private void assignDirection(Direction direction) {
+			this.calculatedInputs = false;
+			this.wallDirection = direction;
+		}
+
+		@Override
+		public Vec3d getWallNormal() {
+			assert this.wallDirection != null;
+			return new Vec3d(this.wallDirection.getOpposite().getUnitVector());
+		}
+
+		@Override
+		public float getWallYaw() {
+			assert this.wallDirection != null;
+			return switch(this.wallDirection.getOpposite()) {
+				case NORTH -> 180;
+				case SOUTH -> 0;
+				case WEST -> 90;
+				case EAST -> -90;
+				default -> throw new IllegalStateException("Illegal wall direction: " + this.wallDirection + " :(");
+			};
+		}
+
+		private void calculateInputs() {
+			assert this.wallDirection != null;
+
+			if(this.calculatedInputs) return;
+			this.calculatedInputs = true; // Only calculate once per tick
+
+			float yawRadians = this.OWNER.getMario().getYaw() * MathHelper.RADIANS_PER_DEGREE;
+			float sinYaw = MathHelper.sin(yawRadians);
+			float cosYaw = MathHelper.cos(yawRadians);
+			Vector3f forwardDir = new Vector3f(-sinYaw, 0, cosYaw);
+			Vector3f rightDir = new Vector3f(cosYaw, 0, sinYaw);
+
+			// Raw input vector in world space
+			Vector3f worldSpaceInputs = forwardDir.mul((float) this.OWNER.getInputs().getForwardInput())
+					.add(rightDir.mul((float) this.OWNER.getInputs().getStrafeInput()));
+//			MarioQuaMario.LOGGER.info("Worldspace inputs: ({}, {}, {})", worldSpaceInputs.x, worldSpaceInputs.y, worldSpaceInputs.z);
+
+			this.towardsWallInput = worldSpaceInputs.dot(this.wallDirection.getUnitVector());
+			this.sidleInput = worldSpaceInputs.dot(this.wallDirection.rotateYClockwise().getUnitVector());
+		}
+
+		@Override
+		public double getTowardsWallInput() {
+			this.calculateInputs();
+			assert this.wallDirection != null;
+			return this.towardsWallInput;
+		}
+
+		@Override
+		public double getSidleInput() {
+			assert this.wallDirection != null;
+			return this.sidleInput;
+		}
+
+		@Override
+		public double getTowardsWallVel() {
+			assert this.wallDirection != null;
+			return this.OWNER.getVelocity().getComponentAlongAxis(this.wallDirection.getAxis()) * this.wallDirection.getDirection().offset();
+		}
+
+		@Override
+		public double getSidleVel() {
+			assert this.wallDirection != null;
+			Direction sidleDirection = this.wallDirection.rotateYClockwise();
+			return this.OWNER.getVelocity().getComponentAlongAxis(sidleDirection.getAxis()) * sidleDirection.getDirection().offset();
+		}
+
+		@Override
+		public void setTowardsWallVel(double velocity) {
+			assert this.wallDirection != null;
+			this.OWNER.setVelocity(this.OWNER.getVelocity().withAxis(this.wallDirection.getAxis(), velocity * this.wallDirection.getDirection().offset()));
+		}
+
+		@Override
+		public void setSidleVel(double velocity) {
+			assert this.wallDirection != null;
+			Direction sidleDirection = this.wallDirection.rotateYClockwise();
+			this.OWNER.setVelocity(this.OWNER.getVelocity().withAxis(sidleDirection.getAxis(), velocity * sidleDirection.getDirection().offset()));
+		}
+	}
+
 	@Override
-	public WallboundActionDefinition.WallInfo getWallInfo() {
-		return null;
+	public void assignWallDirection(Direction direction) {
+		this.WALL_INFO.assignDirection(direction);
+	}
+
+	@Override
+	public WallboundActionDefinition.@Nullable WallInfoWithMove getWallInfo() {
+		return this.WALL_INFO.wallDirection == null ? null : this.WALL_INFO;
 	}
 
 	public void tickInputs() {
@@ -143,6 +278,14 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		this.RECORDED_COLLISIONS.COLLIDED[1] = false; this.RECORDED_COLLISIONS.REFLECTS[1] = false;
 		this.RECORDED_COLLISIONS.COLLIDED[2] = false; this.RECORDED_COLLISIONS.REFLECTS[2] = false;
 		this.moveWithFluidPushing();
+
+		this.WALL_INFO.update();
+
+//		if(this.getWallInfo() != null) {
+//			if(this.getMario().isSneaking()) this.getWallInfo().setTowardsWallVel(1);
+//			MarioQuaMario.LOGGER.info("Wall input testing.\n\tTowards: {}\n\tSidle: {}",
+//					this.getWallInfo().getTowardsWallInput(), this.getWallInfo().getSidleInput());
+//		}
 
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
 		this.applyModifiedVelocity();

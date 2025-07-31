@@ -10,6 +10,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2d;
 
 import java.util.HashSet;
@@ -271,7 +272,9 @@ public abstract class MarioMoveableData extends MarioPlayerData implements IMari
 		this.getMario().move(MovementType.SELF, motion);
 	}
 
-	public abstract WallboundActionDefinition.WallInfo getWallInfo();
+	public abstract void assignWallDirection(Direction direction);
+
+	public abstract WallboundActionDefinition.@Nullable WallInfoWithMove getWallInfo();
 
 	public abstract boolean travelHook(double forwardInput, double strafeInput);
 

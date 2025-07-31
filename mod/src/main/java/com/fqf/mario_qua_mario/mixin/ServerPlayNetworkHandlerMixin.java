@@ -32,22 +32,13 @@ public class ServerPlayNetworkHandlerMixin implements MarioPositionSettable {
 		return (instance.getServerWorld().getGameRules().getBoolean(MarioGamerules.DISABLE_CHARACTER_MOVEMENT_CHECK) && instance.mqm$getIMarioData().isEnabled()) || original.call(instance);
 	}
 
-	@Inject(method = "onPlayerMove", at = @At(value = "INVOKE", target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;Ljava/lang/Object;)V"))
-	private void uwu(PlayerMoveC2SPacket packet, CallbackInfo ci) {
-		// The problem is,
-		// Mario snaps position to block center on client
-		// Mario snaps position to block center on server
-		// Mario sends server packet about where he's moving
-		// Server calculates difference between Mario's last position and block center
-		// Server applies that difference as motion (But it ALREADY APPLIED this motion during the Transition Executor)
-		// New server-sided position is PAST block center
-		// Server sees that packet is trying to move TO block center, which doesn't match, causing Moved Wrongly.
-		//
-		MarioQuaMario.LOGGER.info("Moved wrongly. Information:\n\tLast tick: ({}, {}, {})\n\tPlayer position: ({}, {}, {})\n\tPacket target: ({}, {}, {})",
-				this.lastTickX, this.lastTickY, this.lastTickZ,
-				player.getX(), player.getY(), player.getZ(),
-				packet.getX(0), packet.getY(0), packet.getZ(0));
-	}
+//	@Inject(method = "onPlayerMove", at = @At(value = "INVOKE", target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;Ljava/lang/Object;)V"))
+//	private void uwu(PlayerMoveC2SPacket packet, CallbackInfo ci) {
+//		MarioQuaMario.LOGGER.info("Moved wrongly. Information:\n\tLast tick: ({}, {}, {})\n\tPlayer position: ({}, {}, {})\n\tPacket target: ({}, {}, {})",
+//				this.lastTickX, this.lastTickY, this.lastTickZ,
+//				player.getX(), player.getY(), player.getZ(),
+//				packet.getX(0), packet.getY(0), packet.getZ(0));
+//	}
 
 
 	@WrapMethod(method = "requestTeleport(DDDFFLjava/util/Set;)V")

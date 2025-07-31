@@ -5,13 +5,15 @@ import com.fqf.mario_qua_mario_api.definitions.states.actions.util.TransitionDef
 import com.fqf.mario_qua_mario_api.mariodata.IMarioReadableMotionData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_api.util.CharaStat;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public interface WallboundActionDefinition extends IncompleteActionDefinition {
-	void travelHook(IMarioTravelData data, WallInfo wall, WallboundActionHelper helper);
+	void travelHook(IMarioTravelData data, @Nullable WallInfo wall, WallboundActionHelper helper);
 
 	@NotNull List<TransitionDefinition> getBasicTransitions(WallboundActionHelper helper);
 	@NotNull List<TransitionDefinition> getInputTransitions(WallboundActionHelper helper);
@@ -22,7 +24,7 @@ public interface WallboundActionDefinition extends IncompleteActionDefinition {
 	 */
 	interface WallInfo {
 		Vec3d getWallNormal();
-		float getNormalYaw();
+		float getWallYaw();
 
 		double getTowardsWallInput();
 		double getSidleInput();
@@ -31,11 +33,18 @@ public interface WallboundActionDefinition extends IncompleteActionDefinition {
 		double getSidleVel();
 	}
 
+	interface WallInfoWithMove extends WallInfo {
+		void setTowardsWallVel(double velocity);
+		void setSidleVel(double velocity);
+	}
+
 	/**
 	 * Contains a number of methods intended to help with the creation of Wallbound Actions.
 	 */
 	interface WallboundActionHelper {
-		WallInfo getWallInfo(IMarioReadableMotionData data);
+		void assignWallDirection(IMarioTravelData data, Direction direction);
+		@Nullable WallInfo getWallInfo(IMarioReadableMotionData data);
+		@Nullable WallInfoWithMove getWallInfo(IMarioTravelData data);
 
 		float getAngleDifference(float alfa, float bravo);
 
