@@ -16,8 +16,10 @@ import net.minecraft.server.network.ServerPlayerEntity;
 
 public class MarioEventListeners {
 	public static void register() {
-		ServerLifecycleEvents.SERVER_STARTED.register(server ->
-				MarioGamerules.useCharacterStats = server.getGameRules().getBoolean(MarioGamerules.USE_CHARACTER_STATS));
+		ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+			MarioGamerules.useCharacterStats = server.getGameRules().getBoolean(MarioGamerules.USE_CHARACTER_STATS);
+			MarioGamerules.restrictAdventureBapping = server.getGameRules().getBoolean(MarioGamerules.RESTRICT_ADVENTURE_BAPPING);
+		});
 
 		ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
 			MarioServerPlayerData data = newPlayer.mqm$getMarioData();
@@ -44,6 +46,7 @@ public class MarioEventListeners {
 
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 			MarioPackets.syncUseCharacterStatsS2C(handler.player, MarioGamerules.useCharacterStats);
+			MarioPackets.syncRestrictAdventureBapsS2C(handler.player, MarioGamerules.restrictAdventureBapping);
 		});
 
 		ServerTickEvents.START_WORLD_TICK.register(BlockBappingUtil::serverWorldTick);

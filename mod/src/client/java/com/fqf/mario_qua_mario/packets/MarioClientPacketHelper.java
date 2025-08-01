@@ -34,6 +34,11 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 				MarioGamerules.useCharacterStats = payload.shouldUse()
 		);
 
+		// SyncRestrictAdventureBappingS2CPayload Receiver
+		ClientPlayNetworking.registerGlobalReceiver(MarioPackets.SyncRestrictAdventureBappingS2CPayload.ID, (payload, context) ->
+				MarioGamerules.restrictAdventureBapping = payload.isRestricted()
+		);
+
 		// StompS2CPayload Receiver
 		ClientPlayNetworking.registerGlobalReceiver(MarioPackets.StompS2CPayload.ID, (payload, context) -> {
 			Entity target = context.player().getWorld().getEntityById(payload.stompedEntityID());

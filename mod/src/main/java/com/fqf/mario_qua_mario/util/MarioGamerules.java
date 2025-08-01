@@ -8,12 +8,21 @@ import net.minecraft.world.GameRules;
 
 public class MarioGamerules {
 	public static boolean useCharacterStats;
+	public static boolean restrictAdventureBapping;
 
 	public static final GameRules.Key<GameRules.BooleanRule> USE_CHARACTER_STATS =
 			GameRuleRegistry.register("mqmUseCharacterStats", GameRules.Category.PLAYER,
 					GameRuleFactory.createBooleanRule(true, (server, booleanRule) -> {
 						useCharacterStats = booleanRule.get();
 						MarioPackets.syncUseCharacterStatsS2C(server, useCharacterStats);
+					})
+			);
+
+	public static final GameRules.Key<GameRules.BooleanRule> RESTRICT_ADVENTURE_BAPPING =
+			GameRuleRegistry.register("mqmRestrictBapsInAdventureMode", GameRules.Category.PLAYER,
+					GameRuleFactory.createBooleanRule(true, (server, booleanRule) -> {
+						restrictAdventureBapping = booleanRule.get();
+						MarioPackets.syncRestrictAdventureBapsS2C(server, restrictAdventureBapping);
 					})
 			);
 

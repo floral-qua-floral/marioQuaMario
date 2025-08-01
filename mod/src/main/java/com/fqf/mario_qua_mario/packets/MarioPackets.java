@@ -35,6 +35,7 @@ public class MarioPackets {
 		MarioDataPackets.SyncMarioDataS2CPayload.register();
 
 		SyncUseCharacterStatsS2CPayload.register();
+		SyncRestrictAdventureBappingS2CPayload.register();
 
 		StompS2CPayload.register();
 		StompDragonPartAffectMarioS2CPayload.register();
@@ -61,6 +62,17 @@ public class MarioPackets {
 
 	public static void syncUseCharacterStatsS2C(ServerPlayerEntity player, boolean shouldUse) {
 		ServerPlayNetworking.send(player, new SyncUseCharacterStatsS2CPayload(shouldUse));
+	}
+
+	public static void syncRestrictAdventureBapsS2C(MinecraftServer server, boolean isRestricted) {
+		CustomPayload packet = new SyncRestrictAdventureBappingS2CPayload(isRestricted);
+		for(ServerPlayerEntity player : PlayerLookup.all(server)) {
+			ServerPlayNetworking.send(player, packet);
+		}
+	}
+
+	public static void syncRestrictAdventureBapsS2C(ServerPlayerEntity player, boolean isRestricted) {
+		ServerPlayNetworking.send(player, new SyncRestrictAdventureBappingS2CPayload(isRestricted));
 	}
 
 	public static void stompS2C(ServerPlayerEntity mario, ParsedStompType stompType, Entity stompedEntity, StompResult.ExecutableResult result, boolean affectMario) {
@@ -120,6 +132,21 @@ public class MarioPackets {
 		public static final PacketCodec<RegistryByteBuf, SyncUseCharacterStatsS2CPayload> CODEC = PacketCodec.tuple(
 				PacketCodecs.BOOL, SyncUseCharacterStatsS2CPayload::shouldUse,
 				SyncUseCharacterStatsS2CPayload::new
+		);
+
+		@Override public Id<? extends CustomPayload> getId() {
+			return ID;
+		}
+		public static void register() {
+			PayloadTypeRegistry.playS2C().register(ID, CODEC);
+		}
+	}
+
+	protected record SyncRestrictAdventureBappingS2CPayload(boolean isRestricted) implements CustomPayload {
+		public static final Id<SyncRestrictAdventureBappingS2CPayload> ID = MarioPackets.makeID("sync_restrict_adventure_bapping_s2c");
+		public static final PacketCodec<RegistryByteBuf, SyncRestrictAdventureBappingS2CPayload> CODEC = PacketCodec.tuple(
+				PacketCodecs.BOOL, SyncRestrictAdventureBappingS2CPayload::isRestricted,
+				SyncRestrictAdventureBappingS2CPayload::new
 		);
 
 		@Override public Id<? extends CustomPayload> getId() {

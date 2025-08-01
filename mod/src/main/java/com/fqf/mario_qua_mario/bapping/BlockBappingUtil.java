@@ -1,11 +1,14 @@
 package com.fqf.mario_qua_mario.bapping;
 
+import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
 import com.fqf.mario_qua_mario.packets.MarioBappingPackets;
 import com.fqf.mario_qua_mario.util.MarioClientHelperManager;
+import com.fqf.mario_qua_mario.util.MarioGamerules;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import com.fqf.mario_qua_mario_api.interfaces.BapResult;
 import com.fqf.mario_qua_mario_api.interfaces.Bappable;
+import com.fqf.mario_qua_mario_api.util.MQMTags;
 import it.unimi.dsi.fastutil.objects.Object2ByteArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import net.minecraft.block.Block;
@@ -70,15 +73,26 @@ public class BlockBappingUtil {
 		return hardness;
 	}
 
-	@SuppressWarnings("UnusedReturnValue") // TODO: check for BUST, if so player keeps moving through broken block
+	private static BapResult handleBapResultForAdventureMode(BapResult original, BlockState state, PlayerEntity bapper) {
+		if(bapper.getAbilities().allowModifyWorld || !MarioGamerules.restrictAdventureBapping) return original;
+
+		return switch(original) {
+			case BREAK -> BapResult.BUMP_EMBRITTLE;
+			case BREAK_NO_POWER -> BapResult.BUMP_EMBRITTLE_NO_POWER;
+			case BUST -> state.isIn(MQMTags.NOT_POWERED_WHEN_BAPPED) ? BapResult.BUMP_EMBRITTLE : BapResult.BUMP_EMBRITTLE_NO_POWER;
+			default -> original;
+		};
+	}
+
+	@SuppressWarnings("UnusedReturnValue")
 	public static BapResult attemptBap(MarioPlayerData data, World world, BlockPos pos, Direction direction, int strength) {
 		BlockState blockState = world.getBlockState(pos);
 
-		BapResult result = ((Bappable) blockState.getBlock()).mqm$getBapResult(
+		BapResult result = handleBapResultForAdventureMode(((Bappable) blockState.getBlock()).mqm$getBapResult(
 				data, world,
 				pos, blockState, getVanillaHardness(world, pos, blockState),
 				direction, strength
-		);
+		), blockState, data.getMario());
 
 		AbstractBapInfo info = makeBapInfo(world, pos, direction, strength, data.getMario(), result);
 
