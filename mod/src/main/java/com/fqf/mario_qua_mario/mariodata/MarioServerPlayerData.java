@@ -15,6 +15,7 @@ import com.fqf.mario_qua_mario.util.MarioGamerules;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioAuthoritativeData;
 import com.tom.cpm.shared.io.ModelFile;
+import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
@@ -204,7 +205,7 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.INPUT);
 
 		this.applyModifiedVelocity();
-		this.moveWithFluidPushing();
+		this.getMario().move(MovementType.SELF, this.getMovementWithFluidPushing());
 
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
 

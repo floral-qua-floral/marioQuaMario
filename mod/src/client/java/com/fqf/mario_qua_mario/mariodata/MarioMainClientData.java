@@ -1,8 +1,7 @@
 package com.fqf.mario_qua_mario.mariodata;
 
 import com.fqf.mario_qua_mario.bapping.BlockBappingUtil;
-import com.fqf.mario_qua_mario.packets.MarioClientPacketHelper;
-import com.fqf.mario_qua_mario.registries.actions.parsed.ParsedWallboundAction;
+import com.fqf.mario_qua_mario.util.BlockCollisionFinder;
 import com.fqf.mario_qua_mario.util.DirectionBasedWallInfo;
 import com.fqf.mario_qua_mario.util.AdvancedWallInfo;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.ActionCategory;
@@ -16,15 +15,14 @@ import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.cam
 import com.fqf.mario_qua_mario_api.interfaces.BapResult;
 import com.fqf.mario_qua_mario_api.mariodata.util.RecordedCollision;
 import com.fqf.mario_qua_mario_api.mariodata.util.RecordedCollisionSet;
+import it.unimi.dsi.fastutil.objects.ObjectDoublePair;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.input.Input;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.sound.SoundInstance;
+import net.minecraft.entity.MovementType;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import org.joml.Vector3f;
 
 import java.util.*;
@@ -186,7 +184,9 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		this.RECORDED_COLLISIONS.COLLIDED[0] = false; this.RECORDED_COLLISIONS.REFLECTS[0] = false;
 		this.RECORDED_COLLISIONS.COLLIDED[1] = false; this.RECORDED_COLLISIONS.REFLECTS[1] = false;
 		this.RECORDED_COLLISIONS.COLLIDED[2] = false; this.RECORDED_COLLISIONS.REFLECTS[2] = false;
-		this.moveWithFluidPushing();
+		Vec3d movement = this.getMovementWithFluidPushing();
+		this.preemptMovement(movement);
+		this.getMario().move(MovementType.SELF, movement);
 
 		this.WALL_INFO.calculatedInputs = false;
 
@@ -357,6 +357,52 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 	@Override
 	public RecordedCollisionSet getLastTickCollisions() {
 		return this.RECORDED_COLLISIONS;
+	}
+
+	private void preemptMovement(Vec3d movement) {
+		boolean shouldRecalculate;
+		do {
+			shouldRecalculate = preemptMovementAndOptionallyRecalculate(movement);
+		}
+		while(shouldRecalculate);
+	}
+
+	private boolean preemptMovementAndOptionallyRecalculate(Vec3d movement) {
+		Box movedBox = bapAlongAxis(this.getMario().getBoundingBox(), movement, Direction.Axis.Y);
+		if(movedBox == null) return true;
+
+		boolean doXFirst = Math.abs(movement.x) > Math.abs(movement.z);
+		if(doXFirst) {
+			movedBox = bapAlongAxis(movedBox, movement, Direction.Axis.X);
+			if(movedBox == null) return true;
+		}
+		movedBox = bapAlongAxis(movedBox, movement, Direction.Axis.Z);
+		if(movedBox == null) return true;
+		if(!doXFirst) {
+			movedBox = bapAlongAxis(movedBox, movement, Direction.Axis.X);
+			return movedBox == null;
+		}
+		return false;
+	}
+
+	private Box bapAlongAxis(Box box, Vec3d movement, Direction.Axis axis) {
+		double motion = movement.getComponentAlongAxis(axis);
+		if(Math.abs(motion) < 1.0E-7) return box;
+
+		Direction dir = Direction.from(axis, motion > 0 ? Direction.AxisDirection.POSITIVE : Direction.AxisDirection.NEGATIVE);
+
+		ObjectDoublePair<Set<BlockPos>> pair = BlockCollisionFinder.getCollidedBlockPositions(this.getMario(), box, motion, axis);
+		Set<BlockPos> collideWithBlockPositions = pair.left();
+		double absSmallestOffsetFound = pair.rightDouble();
+
+		if(!collideWithBlockPositions.isEmpty()) {
+			for(BlockPos pos : collideWithBlockPositions) {
+				if(this.collideWithBlockAndOptionallyRecalculate(pos, dir))
+					return null; // Force recalculation from the beginning
+			}
+		}
+
+		return box.offset(Vec3d.ZERO.withAxis(axis, absSmallestOffsetFound * Math.signum(motion)));
 	}
 
 	public boolean collideWithBlockAndOptionallyRecalculate(BlockPos pos, Direction direction) {

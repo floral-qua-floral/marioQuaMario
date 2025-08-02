@@ -4,7 +4,6 @@ import com.fqf.mario_qua_mario.util.MarioPositionSettable;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_api.mariodata.util.RecordedCollision;
 import com.fqf.mario_qua_mario_api.mariodata.util.RecordedCollisionSet;
-import net.minecraft.entity.MovementType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
@@ -260,14 +259,14 @@ public abstract class MarioMoveableData extends MarioPlayerData implements IMari
 		this.jumpCapped = false;
 	}
 
-	protected void moveWithFluidPushing() {
+	protected Vec3d getMovementWithFluidPushing() {
 		Vec3d motion = this.getMario().getVelocity().add(this.getFluidPushingVel());
 		// isChunkLoaded is deprecated but what the HECK ELSE DO I USE INSTEAD??? LivingEntity.travel uses it???
 		if(!this.getMario().getWorld().isChunkLoaded(this.getMario().getVelocityAffectingPos())) {
 			motion = motion.withAxis(Direction.Axis.Y, 0);
 			this.getMario().setVelocity(this.getMario().getVelocity().withAxis(Direction.Axis.Y, 0));
 		}
-		this.getMario().move(MovementType.SELF, motion);
+		return motion;
 	}
 
 	public abstract boolean travelHook(double forwardInput, double strafeInput);
