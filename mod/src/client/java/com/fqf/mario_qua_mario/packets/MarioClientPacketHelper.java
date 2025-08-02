@@ -111,6 +111,12 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 			data.setActionTransitionless(RegistryManager.ACTIONS.get(payload.action()));
 		});
 
+		// TransmitWallYawS2CPayload Receiver
+		ClientPlayNetworking.registerGlobalReceiver(MarioDataPackets.TransmitWallYawS2CPayload.ID, (payload, context) -> {
+			MarioPlayerData data = getMarioFromID(context, payload.marioID()).mqm$getMarioData();
+			data.getWallInfo().setYaw(payload.yaw());
+		});
+
 		// MissedAttackInterceptedS2CPayload Receiver
 		ClientPlayNetworking.registerGlobalReceiver(MarioAttackInterceptionPackets.MissedAttackInterceptedS2CPayload.ID, (payload, context) ->
 				ParsedAttackInterception.getInterception(payload).execute(
@@ -205,6 +211,13 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 
 		ClientPlayNetworking.send(packet);
 		RecordingModsCompatSafe.conditionallySaveReplayPacket(replayPacket);
+	}
+
+	public void transmitWallYawC2S(MarioMoveableData data, float wallYaw) {
+		ClientPlayNetworking.send(new MarioDataPackets.TransmitWallYawC2SPayload(wallYaw));
+
+		RecordingModsCompatSafe.conditionallySaveReplayPacket(
+				new MarioDataPackets.TransmitWallYawS2CPayload(data.getMario().getId(), wallYaw));
 	}
 
 	private static void packetAgnosticStompHandling(

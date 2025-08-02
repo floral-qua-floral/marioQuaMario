@@ -60,10 +60,10 @@ public class ClimbPole implements GenericActionDefinition {
 	    });
 	}
 
-	public static <T extends ClimbVars> PlayermodelAnimation makeAnimation(float armYaw, Class<T> clazz) {
+	public static PlayermodelAnimation makeAnimation(float armYaw) {
 		return new PlayermodelAnimation(
 				null,
-				new ProgressHandler((data, ticksPassed) -> MathHelper.sin(data.getVars(clazz).progress)),
+				new ProgressHandler((data, ticksPassed) -> MathHelper.sin(data.getVars(ClimbVars.class).progress)),
 				null,
 				null,
 				new BodyPartAnimation((data, arrangement, progress) -> {
@@ -76,7 +76,7 @@ public class ClimbPole implements GenericActionDefinition {
 	}
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-	    return makeAnimation(-20, ClimbVars.class).variate(
+	    return makeAnimation(-20).variate(
 				null, null,
 				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
 					Vec3d offset = getMaximumOffset(data, 0.1).multiply(16);

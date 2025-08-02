@@ -1,15 +1,12 @@
 package com.fqf.mario_qua_mario_content.actions.wallbound;
 
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.mario_qua_mario_api.mariodata.*;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.PlayermodelAnimation;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioAuthoritativeData;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_content.actions.airborne.Backflip;
 import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
 import com.fqf.mario_qua_mario_content.actions.airborne.Jump;
@@ -34,7 +31,7 @@ public class ClimbIntangibleDirectional implements WallboundActionDefinition {
 	}
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return ClimbPole.makeAnimation(0, ClimbWallVars.class);
+		return ClimbPole.makeAnimation(0);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
 		return null;
@@ -57,36 +54,29 @@ public class ClimbIntangibleDirectional implements WallboundActionDefinition {
 		return null;
 	}
 
-	private static class ClimbWallVars extends ClimbVars {
-		private final Direction WALL_DIRECTION;
-		private final float WALL_YAW;
-
-		private ClimbWallVars(IMarioData data) {
-			this.WALL_DIRECTION = ClimbTransitions.hasDirectionality(data.getMario().getBlockStateAtPos());
-			this.WALL_YAW = switch(this.WALL_DIRECTION) {
-				case NORTH -> 180;
-				case SOUTH -> 0;
-				case WEST -> 90;
-				case EAST -> -90;
-				case null, default -> throw new IllegalStateException("Illegal wall direction: " + this.WALL_DIRECTION + " :(");
-			};
-		}
-	}
-
 	private static final boolean SIDLE_ENABLED = false;
 
+	@Override
+	public float getWallYaw(IMarioReadableMotionData data) {
+		return ClimbTransitions.yawOf(ClimbTransitions.hasDirectionality(data.getMario().getBlockStateAtPos()));
+	}
 	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
-		return new ClimbWallVars(data);
+		return new ClimbVars();
 	}
 	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
-		data.getMario().setBodyYaw(data.getVars(ClimbWallVars.class).WALL_YAW);
+
 	}
 	@Override public void serverTick(IMarioAuthoritativeData data) {
 
 	}
+	@Override public boolean checkServerSidedLegality(IMarioReadableMotionData data, WallInfo wall) {
+		MarioQuaMarioContent.LOGGER.info("Checking server-side legality of ClimbIntangibleDirectional! Uwu!");
+		return true;
+	}
+
 	@Override public void travelHook(IMarioTravelData data, WallInfo wall, WallboundActionHelper helper) {
 		data.getMario().fallDistance = 0;
-		helper.assignWallDirection(data, data.getVars(ClimbWallVars.class).WALL_DIRECTION);
+//		helper.assignWallDirection(data, data.getVars(ClimbWallVars.class).WALL_DIRECTION);
 		data.goTo(data.getMario().getBlockPos().toCenterPos().withAxis(Direction.Axis.Y, data.getMario().getY()));
 		wall = helper.getWallInfo(data);
 		if(wall == null) {
@@ -95,7 +85,7 @@ public class ClimbIntangibleDirectional implements WallboundActionDefinition {
 		else {
 			double forwardInput = wall.getTowardsWallInput() * (data.getInputs().DUCK.isHeld() ? 0.3 : 1);
 			data.setYVel(wall.getTowardsWallInput() * ClimbPole.CLIMB_SPEED.get(data));
-			data.getVars(ClimbWallVars.class).progress += (float) forwardInput;
+			data.getVars(ClimbVars.class).progress += (float) forwardInput;
 			helper.setSidleVel(data, SIDLE_ENABLED && Math.abs(wall.getSidleInput()) > 0.15 ? wall.getSidleInput() * 0.1 : 0);
 		}
 	}
@@ -137,8 +127,14 @@ public class ClimbIntangibleDirectional implements WallboundActionDefinition {
 		return List.of(
 				new TransitionDefinition(
 						SpecialFall.ID,
-						data -> !ClimbTransitions.inNonSolidClimbable(data, true)
-								|| !data.getVars(ClimbWallVars.class).WALL_DIRECTION.equals(ClimbTransitions.hasDirectionality(data.getMario().getBlockStateAtPos())),
+						data -> {
+							MarioQuaMarioContent.LOGGER.info("In non-solid directional climbable: {}", ClimbTransitions.inNonSolidClimbable(data, true));
+							MarioQuaMarioContent.LOGGER.info("Directionality: {}", ClimbTransitions.hasDirectionality(data.getMario().getBlockStateAtPos()));
+							MarioQuaMarioContent.LOGGER.info("Yaw of directionality: {}", ClimbTransitions.yawOf(ClimbTransitions.hasDirectionality(data.getMario().getBlockStateAtPos())));
+							MarioQuaMarioContent.LOGGER.info("Yaw of current wall: {}", helper.getWallInfo(data).getWallYaw());
+							return !ClimbTransitions.inNonSolidClimbable(data, true)
+									|| helper.getWallInfo(data).getWallYaw() != ClimbTransitions.yawOf(ClimbTransitions.hasDirectionality(data.getMario().getBlockStateAtPos()));
+						},
 						EvaluatorEnvironment.COMMON
 				),
 				new TransitionDefinition(

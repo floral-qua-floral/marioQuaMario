@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario.registries.actions.parsed;
 
+import com.fqf.mario_qua_mario.mariodata.MarioServerPlayerData;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.TransitionDefinition;
@@ -19,6 +20,14 @@ public class ParsedWallboundAction extends AbstractParsedAction {
 	public ParsedWallboundAction(WallboundActionDefinition definition, HashMap<Identifier, Set<TransitionInjectionDefinition>> allInjections) {
 		super(definition, allInjections);
 		this.WALLBOUND_DEFINITION = definition;
+	}
+
+	public float getWallYaw(MarioMoveableData data) {
+		return this.WALLBOUND_DEFINITION.getWallYaw(data);
+	}
+
+	public boolean verifyWallLegality(MarioServerPlayerData data) {
+		return this.WALLBOUND_DEFINITION.checkServerSidedLegality(data, data.getWallInfo());
 	}
 
 	@Override

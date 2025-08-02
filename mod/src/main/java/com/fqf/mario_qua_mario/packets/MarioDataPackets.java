@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario.packets;
 
+import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.mariodata.MarioServerPlayerData;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
@@ -87,6 +88,12 @@ public class MarioDataPackets {
 				RegistryManager.POWER_UPS.getRawIdOrThrow(data.getPowerUp()),
 				RegistryManager.ACTIONS.getRawIdOrThrow(data.getAction())
 		));
+	}
+
+	public static void transmitWallYawS2C(
+			ServerPlayerEntity mario, float wallYaw
+	) {
+		MarioPackets.sendToTrackers(mario, new TransmitWallYawS2CPayload(mario.getId(), wallYaw), false);
 	}
 
 	protected record DisableMarioS2CPayload(int marioID) implements CustomPayload {
@@ -235,6 +242,43 @@ public class MarioDataPackets {
 				PacketCodecs.INTEGER, SyncMarioDataS2CPayload::powerUp,
 				PacketCodecs.INTEGER, SyncMarioDataS2CPayload::action,
 				SyncMarioDataS2CPayload::new
+		);
+
+		@Override public Id<? extends CustomPayload> getId() {
+			return ID;
+		}
+		public static void register() {
+			PayloadTypeRegistry.playS2C().register(ID, CODEC);
+		}
+	}
+
+	protected record TransmitWallYawC2SPayload(float yaw) implements CustomPayload {
+		public static final Id<TransmitWallYawC2SPayload> ID = MarioPackets.makeID("transmit_wall_yaw_c2s");
+		public static final PacketCodec<RegistryByteBuf, TransmitWallYawC2SPayload> CODEC = PacketCodec.tuple(
+				PacketCodecs.FLOAT, TransmitWallYawC2SPayload::yaw,
+				TransmitWallYawC2SPayload::new
+		);
+
+		public static void receive(TransmitWallYawC2SPayload payload, ServerPlayNetworking.Context context) {
+			MarioQuaMario.LOGGER.info("RECEIVED WALL YAW FROM CLIENT!!!!!: {}", payload.yaw());
+			context.player().mqm$getMarioData().receiveWallYaw(payload.yaw());
+		}
+
+		@Override public Id<? extends CustomPayload> getId() {
+			return ID;
+		}
+		public static void register() {
+			PayloadTypeRegistry.playC2S().register(ID, CODEC);
+			ServerPlayNetworking.registerGlobalReceiver(ID, TransmitWallYawC2SPayload::receive);
+		}
+	}
+
+	protected record TransmitWallYawS2CPayload(int marioID, float yaw) implements CustomPayload {
+		public static final Id<TransmitWallYawS2CPayload> ID = MarioPackets.makeID("transmit_wall_yaw_s2c");
+		public static final PacketCodec<RegistryByteBuf, TransmitWallYawS2CPayload> CODEC = PacketCodec.tuple(
+				PacketCodecs.INTEGER, TransmitWallYawS2CPayload::marioID,
+				PacketCodecs.FLOAT, TransmitWallYawS2CPayload::yaw,
+				TransmitWallYawS2CPayload::new
 		);
 
 		@Override public Id<? extends CustomPayload> getId() {

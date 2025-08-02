@@ -7,12 +7,11 @@ import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
 import com.fqf.mario_qua_mario.registries.actions.ParsedTransition;
 import com.fqf.mario_qua_mario.registries.actions.TransitionPhase;
+import com.fqf.mario_qua_mario.registries.actions.parsed.ParsedWallboundAction;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedCharacter;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import com.fqf.mario_qua_mario.compat.MarioCPMCompat;
 import com.fqf.mario_qua_mario.util.MarioGamerules;
-import com.fqf.mario_qua_mario.util.WallInfoWithMove;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioAuthoritativeData;
 import com.tom.cpm.shared.io.ModelFile;
@@ -71,18 +70,9 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 					return false;
 				}
 
-				// Check if our current action is a Mounted action and the fromAction isn't. If so, return false.
-				if(this.getActionCategory() == ActionCategory.MOUNTED && fromAction.CATEGORY != ActionCategory.MOUNTED) {
-					MarioQuaMario.LOGGER.warn("""
-							TRANSITION REJECTED: Trying to execute non-mounted transition while in mounted action.
-							Server-sided action: {}
-							Attempted: {} -> {}""", this.getActionID(), fromAction.ID, toAction.ID);
-					return false;
-				}
-
 				// Check if we were recently in fromAction. If not, return false.
 				if(!this.recentlyInAction(fromAction)) {
-					if (MarioQuaMario.LOGGER.isWarnEnabled()) {
+					if (MarioQuaMario.LOGGER.isWarnEnabled()) { // is there a reason to bother checking this????
 						StringBuilder recentActionsString = new StringBuilder();
 						for (Pair<AbstractParsedAction, Long> recentAction : RECENT_ACTIONS) {
 							recentActionsString.append("\n").append(recentAction.getLeft().ID);
@@ -95,6 +85,47 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 					}
 					return false;
 				}
+			}
+
+			// Check if our current action is a Mounted action and the fromAction isn't. If so, return false.
+			if(this.getActionCategory() == ActionCategory.MOUNTED && fromAction.CATEGORY != ActionCategory.MOUNTED) {
+				MarioQuaMario.LOGGER.warn("""
+							TRANSITION REJECTED: Trying to execute non-mounted transition while in mounted action.
+							Server-sided action: {}
+							Attempted: {} -> {}""", this.getActionID(), fromAction.ID, toAction.ID);
+				return false;
+			}
+
+			// Check if we're trying to transition into a Wallbound action.
+			if(toAction.CATEGORY == ActionCategory.WALLBOUND) {
+				ParsedWallboundAction wallAction = (ParsedWallboundAction) toAction;
+
+				// If last received wall yaw packet was too long ago, reject
+				if(this.getMario().getWorld().getTime() > this.lastReceivedWallYawTime + 60L) {
+					MarioQuaMario.LOGGER.warn("""
+							TRANSITION REJECTED: Trying to enter Wallbound Action, but last wall yaw packet was\
+							 received too long ago.
+							Server-sided action: {}
+							Attempted: {} -> {}
+							Last wall yaw given was {}
+							Last wall yaw packet received at {}""",
+							this.getActionID(), fromAction.ID, toAction.ID, this.lastReceivedWallYaw, this.lastReceivedWallYawTime);
+					return false;
+				}
+
+				// Else, assign the new yaw:
+				this.getWallInfo().setYaw(this.lastReceivedWallYaw);
+				// And if legality check fails, REJECT
+				if(!wallAction.verifyWallLegality(this)) {
+					MarioQuaMario.LOGGER.warn("""
+							TRANSITION REJECTED: Trying to enter Wallbound Action, but legality check failed.
+							Server-sided action: {}
+							Attempted: {} -> {}""", this.getActionID(), fromAction.ID, toAction.ID);
+					return false;
+				}
+
+				// Else, broadcast wall yaw to clients:
+
 			}
 
 			@Nullable ParsedTransition transition = fromAction.TRANSITIONS_FROM_TARGETS.get(toAction);
@@ -156,14 +187,11 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 		this.RECENT_ACTIONS.removeIf(pair -> worldTime > pair.getRight());
 	}
 
-	@Override
-	public void assignWallDirection(Direction direction) {
-
-	}
-
-	@Override
-	public @Nullable WallInfoWithMove getWallInfo() {
-		return null;
+	private float lastReceivedWallYaw = Float.NaN;
+	private long lastReceivedWallYawTime = Long.MIN_VALUE;
+	public void receiveWallYaw(float wallYaw) {
+		this.lastReceivedWallYaw = wallYaw;
+		this.lastReceivedWallYawTime = this.getMario().getWorld().getTime();
 	}
 
 	@Override

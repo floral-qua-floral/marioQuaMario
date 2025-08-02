@@ -1,7 +1,8 @@
 package com.fqf.mario_qua_mario.registries.actions;
 
+import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
 import com.fqf.mario_qua_mario.mariodata.MarioServerPlayerData;
-import com.fqf.mario_qua_mario.util.WallInfoWithMove;
+import com.fqf.mario_qua_mario.util.AdvancedWallInfo;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.*;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.IncompleteActionDefinition;
@@ -14,7 +15,6 @@ import com.fqf.mario_qua_mario_api.util.CharaStat;
 import com.fqf.mario_qua_mario_api.util.StatCategory;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
@@ -224,14 +224,8 @@ public class UniversalActionDefinitionHelper implements
 	}
 
 	@Override
-	public void assignWallDirection(IMarioTravelData data, Direction direction) {
-		if(data instanceof MarioMoveableData moveableData)
-			moveableData.assignWallDirection(direction);
-	}
-
-	@Override
-	public WallInfoWithMove getWallInfo(IMarioReadableMotionData data) {
-		return((MarioMoveableData) data).getWallInfo();
+	public AdvancedWallInfo getWallInfo(IMarioReadableMotionData data) {
+		return((MarioPlayerData) data).getWallInfo();
 	}
 
 	@Override
@@ -245,7 +239,7 @@ public class UniversalActionDefinitionHelper implements
 			CharaStat descendSpeedStat, CharaStat descendAccelStat,
 			CharaStat sidleSpeedStat, CharaStat sidleAccelStat
 	) {
-		WallInfoWithMove wall = this.getWallInfo(data);
+		AdvancedWallInfo wall = this.getWallInfo(data);
 		if(wall == null) return;
 		double climbInput = wall.getTowardsWallInput();
 
@@ -282,7 +276,7 @@ public class UniversalActionDefinitionHelper implements
 
 	@Override
 	public void setSidleVel(IMarioTravelData data, double sidleVel) {
-		WallInfoWithMove wall = this.getWallInfo(data);
+		AdvancedWallInfo wall = this.getWallInfo(data);
 		if(wall != null) wall.setSidleVel(sidleVel);
 	}
 

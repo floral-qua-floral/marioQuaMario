@@ -1,6 +1,8 @@
 package com.fqf.mario_qua_mario.mariodata;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.util.DirectionBasedWallInfo;
+import com.fqf.mario_qua_mario.util.AdvancedWallInfo;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.mario_qua_mario.registries.ParsedMarioState;
@@ -250,6 +252,19 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	}
 
 	public HeadRestrictionType headRestricted;
+
+	protected final DirectionBasedWallInfo INPUTLESS_WALL_INFO = new DirectionBasedWallInfo(this) {
+		@Override public double getTowardsWallInput() {
+			return 0;
+		}
+		@Override public double getSidleInput() {
+			return 0;
+		}
+	};
+	public AdvancedWallInfo getWallInfo() {
+		return this.INPUTLESS_WALL_INFO;
+	}
+
 	public enum HeadRestrictionType {
 		NONE,
 		NORMAL,
@@ -269,4 +284,6 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	public double getImmersionPercent() {
 		return this.getImmersionLevel() / this.getMario().getHeight();
 	}
+
+
 }

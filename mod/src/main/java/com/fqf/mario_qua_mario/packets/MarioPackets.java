@@ -34,6 +34,9 @@ public class MarioPackets {
 
 		MarioDataPackets.SyncMarioDataS2CPayload.register();
 
+		MarioDataPackets.TransmitWallYawC2SPayload.register();
+		MarioDataPackets.TransmitWallYawS2CPayload.register();
+
 		SyncUseCharacterStatsS2CPayload.register();
 		SyncRestrictAdventureBappingS2CPayload.register();
 

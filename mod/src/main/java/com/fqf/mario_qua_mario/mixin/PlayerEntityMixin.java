@@ -2,9 +2,6 @@ package com.fqf.mario_qua_mario.mixin;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
-import com.fqf.mario_qua_mario.registries.actions.UniversalActionDefinitionHelper;
-import com.fqf.mario_qua_mario.registries.actions.parsed.ParsedWallboundAction;
-import com.fqf.mario_qua_mario.util.WallInfoWithMove;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.SlidingStatus;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.SneakingRule;
@@ -32,9 +29,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.util.Arrays;
-import java.util.Objects;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity implements AdvMarioDataHolder {

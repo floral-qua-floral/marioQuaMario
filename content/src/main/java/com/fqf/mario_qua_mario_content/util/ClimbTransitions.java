@@ -8,17 +8,13 @@ import com.fqf.mario_qua_mario_api.util.StatCategory;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.Voicelines;
 import com.fqf.mario_qua_mario_content.actions.generic.ClimbPole;
-import com.fqf.mario_qua_mario_content.actions.generic.Debug;
 import com.fqf.mario_qua_mario_content.actions.generic.DebugSpinPitch;
-import com.fqf.mario_qua_mario_content.actions.generic.DebugSpinRoll;
 import com.fqf.mario_qua_mario_content.actions.wallbound.ClimbIntangibleDirectional;
 import net.minecraft.block.*;
-import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -87,13 +83,14 @@ public class ClimbTransitions {
 			}
 	);
 
-	public static float getDirectionYaw(Direction direction) {
+	public static float yawOf(@Nullable Direction direction) {
+		if(direction == null) return Float.NaN;
 		return switch(direction) {
 			case NORTH -> 180;
 			case SOUTH -> 0;
 			case WEST -> 90;
 			case EAST -> -90;
-			default -> throw new IllegalStateException("Illegal wall direction: " + direction + " :(");
+			default -> throw new IllegalStateException("Direction has no yaw: " + direction + " :(");
 		};
 	}
 }

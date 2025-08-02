@@ -5,15 +5,32 @@ import com.fqf.mario_qua_mario_api.definitions.states.actions.util.TransitionDef
 import com.fqf.mario_qua_mario_api.mariodata.IMarioReadableMotionData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_api.util.CharaStat;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public interface WallboundActionDefinition extends IncompleteActionDefinition {
-	void travelHook(IMarioTravelData data, @Nullable WallInfo wall, WallboundActionHelper helper);
+	/**
+	 * Called on the client the instant Mario transitions into this action. The result is networked to the server
+	 * and then to other clients without checking.
+	 * @param data
+	 * @return
+	 */
+	float getWallYaw(IMarioReadableMotionData data);
+
+	/**
+	 * Called on the server to validate whether transitioning into this action is allowed. This is never called if
+	 * the gamerule mqmRejectIllegalActionTransitions is set to false!
+	 *
+	 * @param data Mario's data (server-sided)
+	 * @param wall Information about the wall, as claimed by the client.
+	 * @return Whether the transition is allowed. If false, it is rejected and Mario is forced back into his previous
+	 * action.
+	 */
+	boolean checkServerSidedLegality(IMarioReadableMotionData data, WallInfo wall);
+
+	void travelHook(IMarioTravelData data, WallInfo wall, WallboundActionHelper helper);
 
 	@NotNull List<TransitionDefinition> getBasicTransitions(WallboundActionHelper helper);
 	@NotNull List<TransitionDefinition> getInputTransitions(WallboundActionHelper helper);
@@ -31,14 +48,16 @@ public interface WallboundActionDefinition extends IncompleteActionDefinition {
 
 		double getTowardsWallVel();
 		double getSidleVel();
+
+		float getYawDeviation();
+		double getDistanceFromWall(double maxDistance);
 	}
 
 	/**
 	 * Contains a number of methods intended to help with the creation of Wallbound Actions.
 	 */
 	interface WallboundActionHelper {
-		void assignWallDirection(IMarioTravelData data, Direction direction);
-		@Nullable WallInfo getWallInfo(IMarioReadableMotionData data);
+		WallInfo getWallInfo(IMarioReadableMotionData data);
 
 		float getAngleDifference(float alfa, float bravo);
 

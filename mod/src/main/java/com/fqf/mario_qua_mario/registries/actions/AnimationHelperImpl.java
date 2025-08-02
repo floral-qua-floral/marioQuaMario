@@ -1,9 +1,13 @@
 package com.fqf.mario_qua_mario.registries.actions;
 
+import com.fqf.mario_qua_mario_api.definitions.states.actions.WallboundActionDefinition;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.mario_qua_mario_api.mariodata.IMarioReadableMotionData;
 import com.fqf.mario_qua_mario_api.util.Easing;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.MathHelper;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,5 +55,11 @@ public class AnimationHelperImpl implements AnimationHelper {
 //		MarioQuaMario.LOGGER.info("Sequenced Ease:\nProgress: {}\nEasing Index: {}\nPre-post:\n{}\n{}",
 //				progress, easingIndex, progress % 1, useEase.ease(progress % 1));
 		return easingIndex + useEase.ease(progress % 1);
+	}
+
+	@Override
+	public @Nullable WallboundActionDefinition.WallInfo getWallInfo(IMarioReadableMotionData data) {
+		if(data.getActionCategory() != ActionCategory.WALLBOUND) return null;
+		return UniversalActionDefinitionHelper.INSTANCE.getWallInfo(data);
 	}
 }

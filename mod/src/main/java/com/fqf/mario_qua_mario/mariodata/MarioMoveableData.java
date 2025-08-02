@@ -1,8 +1,6 @@
 package com.fqf.mario_qua_mario.mariodata;
 
 import com.fqf.mario_qua_mario.util.MarioPositionSettable;
-import com.fqf.mario_qua_mario.util.WallInfoWithMove;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_api.mariodata.util.RecordedCollision;
 import com.fqf.mario_qua_mario_api.mariodata.util.RecordedCollisionSet;
@@ -11,7 +9,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2d;
 
 import java.util.HashSet;
@@ -272,10 +269,6 @@ public abstract class MarioMoveableData extends MarioPlayerData implements IMari
 		}
 		this.getMario().move(MovementType.SELF, motion);
 	}
-
-	public abstract void assignWallDirection(Direction direction);
-
-	public abstract @Nullable WallInfoWithMove getWallInfo();
 
 	public abstract boolean travelHook(double forwardInput, double strafeInput);
 

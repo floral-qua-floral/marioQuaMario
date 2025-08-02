@@ -3,6 +3,7 @@ package com.fqf.mario_qua_mario.registries.actions;
 import com.fqf.mario_qua_mario.util.MarioClientHelperManager;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.*;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.IncompleteActionDefinition;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
@@ -46,6 +47,13 @@ public class ParsedActionHelper {
 							data.getAction(), transition.targetAction(), seed);
 				}
 				else {
+					if(transition.targetAction().CATEGORY == ActionCategory.WALLBOUND) {
+						ParsedWallboundAction wallAction = (ParsedWallboundAction) transition.targetAction();
+						float wallYaw = wallAction.getWallYaw(data);
+						data.getWallInfo().setYaw(wallYaw);
+						MarioClientHelperManager.packetSender.transmitWallYawC2S(data, wallYaw);
+					}
+
 					MarioClientHelperManager.packetSender.conditionallySaveTransitionToReplayMod(data.getAction(), transition.targetAction(), seed);
 					if (transition.fullyNetworked()) {
 						MarioClientHelperManager.packetSender.setActionC2S(data.getAction(), transition.targetAction(), seed);
