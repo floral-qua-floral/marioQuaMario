@@ -64,7 +64,7 @@ public class ClimbIntangibleDirectional implements WallboundActionDefinition {
 
 	private static final boolean SIDLE_ENABLED = false;
 
-	private static float currentBlockYaw(IMarioReadableMotionData data) {
+	protected static float currentBlockYaw(IMarioReadableMotionData data) {
 		return ClimbTransitions.yawOf(ClimbTransitions.hasDirectionality(data.getMario().getBlockStateAtPos()));
 	}
 	private static boolean isInAcceptableBlock(IMarioReadableMotionData data, WallInfo wall) {
@@ -102,7 +102,7 @@ public class ClimbIntangibleDirectional implements WallboundActionDefinition {
 						ClimbIntangibleSideHang.ID,
 						data -> Math.abs(helper.getWallInfo(data).getYawDeviation()) > 99,
 						EvaluatorEnvironment.CLIENT_ONLY,
-						data -> data.setVelocity(Vec3d.ZERO),
+						data -> data.setYVel(Math.min(0, data.getYVel())),
 						null
 				)
 		);
