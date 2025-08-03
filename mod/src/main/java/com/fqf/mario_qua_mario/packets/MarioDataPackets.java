@@ -260,7 +260,6 @@ public class MarioDataPackets {
 		);
 
 		public static void receive(TransmitWallYawC2SPayload payload, ServerPlayNetworking.Context context) {
-			MarioQuaMario.LOGGER.info("RECEIVED WALL YAW FROM CLIENT!!!!!: {}", payload.yaw());
 			context.player().mqm$getMarioData().receiveWallYaw(payload.yaw());
 		}
 

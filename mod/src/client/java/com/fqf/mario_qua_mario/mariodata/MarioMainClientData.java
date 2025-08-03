@@ -1,10 +1,12 @@
 package com.fqf.mario_qua_mario.mariodata;
 
 import com.fqf.mario_qua_mario.bapping.BlockBappingUtil;
+import com.fqf.mario_qua_mario.registries.actions.parsed.ParsedWallboundAction;
 import com.fqf.mario_qua_mario.util.BlockCollisionFinder;
 import com.fqf.mario_qua_mario.util.DirectionBasedWallInfo;
 import com.fqf.mario_qua_mario.util.AdvancedWallInfo;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.ActionCategory;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.WallBodyAlignment;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.Arrangement;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimation;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
@@ -21,6 +23,7 @@ import net.minecraft.client.input.Input;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.entity.MovementType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.*;
 import org.joml.Vector3f;
@@ -97,11 +100,6 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		else this.getMario().mqm$getAnimationData().mutate(cameraArrangement, this.currentCameraAnimation.mutator(), this, progress);
 	}
 
-	private float clampYawAround = 0;
-	private float prevClampYawAround = 0;
-	private float clampYawHeadRange = 360;
-	private float prevClampYawHeadRange = 360;
-
 	@Override public void tick() {
 		super.tick();
 		this.getAction().clientTick(this, true);
@@ -109,11 +107,6 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		this.getCharacter().clientTick(this, true);
 		if(!MinecraftClient.getInstance().options.getPerspective().isFirstPerson())
 			this.currentCameraAnimation = null;
-
-		this.prevClampYawAround = this.clampYawAround;
-		this.prevClampYawHeadRange = this.clampYawHeadRange;
-		this.clampYawAround = this.getMario().getWorld().getTime();
-		this.clampYawHeadRange = this.getMario().isSneaking() ? 40 : 360;
 	}
 
 	private final WallInfoWithInputs WALL_INFO = new WallInfoWithInputs(this);
@@ -141,8 +134,8 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 					.add(rightDir.mul((float) this.OWNER.getInputs().getStrafeInput()));
 //			MarioQuaMario.LOGGER.info("World-space inputs: ({}, {}, {})", worldSpaceInputs.x, worldSpaceInputs.y, worldSpaceInputs.z);
 
-			this.towardsWallInput = worldSpaceInputs.dot(this.wallDirection.getUnitVector());
-			this.sidleInput = worldSpaceInputs.dot(this.wallDirection.rotateYClockwise().getUnitVector());
+			this.towardsWallInput = MathHelper.clamp(worldSpaceInputs.dot(this.wallDirection.getUnitVector()), -1, 1);
+			this.sidleInput = MathHelper.clamp(worldSpaceInputs.dot(this.wallDirection.rotateYClockwise().getUnitVector()), -1, 1);
 		}
 
 		@Override
@@ -418,23 +411,5 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		this.RECORDED_COLLISIONS.COLLIDED[direction.getAxis().ordinal()] = true;
 		this.RECORDED_COLLISIONS.add(new RecordedCollision(pos, direction, bapResult));
 		return bapResult == BapResult.BUST;
-	}
-
-	public void onMarioLookAround() {
-		ClientPlayerEntity mario = this.getMario();
-
-		if(!mario.isSneaking()) return;
-
-		float aroundYaw = 0;
-		float maximumHeadDifference = 45;
-
-		mario.setBodyYaw(aroundYaw);
-
-		float headDifference = MathHelper.wrapDegrees(mario.getYaw() - aroundYaw);
-		float clampedHeadYawDifference = MathHelper.clamp(headDifference, -maximumHeadDifference, maximumHeadDifference);
-		mario.prevYaw += clampedHeadYawDifference - headDifference;
-		mario.setYaw(mario.getYaw() + clampedHeadYawDifference - headDifference);
-
-		mario.setHeadYaw(mario.getYaw());
 	}
 }

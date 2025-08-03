@@ -2,6 +2,7 @@ package com.fqf.mario_qua_mario.mixin;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
+import com.fqf.mario_qua_mario.registries.actions.parsed.ParsedWallboundAction;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.SlidingStatus;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.SneakingRule;
@@ -9,6 +10,7 @@ import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
 import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
 import com.fqf.mario_qua_mario.mariodata.injections.AdvMarioDataHolder;
 import com.fqf.mario_qua_mario.util.MarioNbtKeys;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.WallBodyAlignment;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -236,9 +238,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 				cir.setReturnValue(0F);
 				data.headRestricted = MarioPlayerData.HeadRestrictionType.NONE;
 			}
-			else if(data.getActionCategory() == ActionCategory.WALLBOUND) {
-				cir.setReturnValue(Float.MAX_VALUE);
-			}
+			else if(data.getActionCategory() == ActionCategory.WALLBOUND && ((ParsedWallboundAction) data.getAction()).ALIGNMENT != WallBodyAlignment.ANY)
+				cir.setReturnValue(Float.MAX_VALUE); // Prevent head rotation from affecting body rotation
 		}
 	}
 
@@ -255,5 +256,11 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 	@Override
 	public boolean isPushable() {
 		return !this.mqm$getMarioData().isEnabled();
+	}
+
+	@Override
+	public void changeLookDirection(double cursorDeltaX, double cursorDeltaY) {
+		super.changeLookDirection(cursorDeltaX, cursorDeltaY);
+		if(this.mqm$getMarioData().isEnabled()) this.mqm$getMarioData().onMarioLookAround();
 	}
 }

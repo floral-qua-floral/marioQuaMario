@@ -270,14 +270,18 @@ public class UniversalActionDefinitionHelper implements
 			double sidleVel = wall.getSidleVel();
 
 		}
-
-		wall.setTowardsWallVel(0.2);
 	}
 
 	@Override
 	public void setSidleVel(IMarioTravelData data, double sidleVel) {
 		AdvancedWallInfo wall = this.getWallInfo(data);
 		if(wall != null) wall.setSidleVel(sidleVel);
+	}
+
+	@Override
+	public void setTowardsWallVel(IMarioTravelData data, double towardsWallVel) {
+		AdvancedWallInfo wall = this.getWallInfo(data);
+		if(wall != null) wall.setTowardsWallVel(towardsWallVel);
 	}
 
 	@Override

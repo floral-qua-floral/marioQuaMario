@@ -1,9 +1,11 @@
 package com.fqf.mario_qua_mario.mariodata;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.registries.actions.parsed.ParsedWallboundAction;
 import com.fqf.mario_qua_mario.util.DirectionBasedWallInfo;
 import com.fqf.mario_qua_mario.util.AdvancedWallInfo;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.ActionCategory;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.WallBodyAlignment;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.mario_qua_mario.registries.ParsedMarioState;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
@@ -15,6 +17,7 @@ import com.fqf.mario_qua_mario_api.util.CharaStat;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.util.Identifier;
@@ -177,6 +180,7 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 
 	public void tick() {
 		this.tickAnimation = true;
+		this.onMarioLookAround();
 	}
 
 	@Override public double getStat(CharaStat stat) {
@@ -285,5 +289,32 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 		return this.getImmersionLevel() / this.getMario().getHeight();
 	}
 
+	public void onMarioLookAround() {
+		if(this.getActionCategory() != ActionCategory.WALLBOUND) return;
 
+		PlayerEntity mario = this.getMario();
+		ParsedWallboundAction wallAction = (ParsedWallboundAction) this.getAction();
+
+		if(wallAction.ALIGNMENT == WallBodyAlignment.ANY) return;
+
+		float wallYaw = this.getWallInfo().getWallYaw();
+
+		float bodyYaw = wallYaw + switch (wallAction.ALIGNMENT) {
+			case TOWARDS -> 0;
+			case AWAY -> 180;
+			case SIDEWAYS -> this.getWallInfo().getYawDeviation() > 0 ? -90 : 90;
+			default -> throw new IllegalStateException("Unexpected value: " + wallAction.ALIGNMENT);
+		};
+
+		mario.setBodyYaw(bodyYaw);
+
+		if(wallAction.HEAD_RANGE >= 360) return;
+
+		float headDifference = MathHelper.wrapDegrees(mario.getYaw() - bodyYaw);
+		float clampedHeadYawDifference = MathHelper.clamp(headDifference, -wallAction.HEAD_RANGE, wallAction.HEAD_RANGE);
+		mario.prevYaw += clampedHeadYawDifference - headDifference;
+		mario.setYaw(mario.getYaw() + clampedHeadYawDifference - headDifference);
+
+		mario.setHeadYaw(mario.getYaw());
+	}
 }

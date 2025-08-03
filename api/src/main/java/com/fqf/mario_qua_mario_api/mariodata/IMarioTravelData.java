@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario_api.mariodata;
 
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 
 public interface IMarioTravelData extends IMarioReadableMotionData {
@@ -13,6 +14,9 @@ public interface IMarioTravelData extends IMarioReadableMotionData {
 
 	void setVelocity(Vec3d velocity);
 	void goTo(Vec3d pos);
+	default void centerLaterally() {
+		this.goTo(this.getMario().getBlockPos().toCenterPos().withAxis(Direction.Axis.Y, this.getMario().getY()));
+	}
 
 	void approachAngleAndAccel(
 			double forwardAccel, double forwardTarget, double strafeAccel, double strafeTarget,

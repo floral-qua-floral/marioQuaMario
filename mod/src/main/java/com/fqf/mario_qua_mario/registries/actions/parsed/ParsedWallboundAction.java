@@ -8,6 +8,7 @@ import com.fqf.mario_qua_mario_api.definitions.states.actions.util.TransitionInj
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.UniversalActionDefinitionHelper;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.WallBodyAlignment;
 import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
@@ -17,9 +18,15 @@ import java.util.Set;
 public class ParsedWallboundAction extends AbstractParsedAction {
 	private final WallboundActionDefinition WALLBOUND_DEFINITION;
 
+	public final WallBodyAlignment ALIGNMENT;
+	public final float HEAD_RANGE;
+
 	public ParsedWallboundAction(WallboundActionDefinition definition, HashMap<Identifier, Set<TransitionInjectionDefinition>> allInjections) {
 		super(definition, allInjections);
 		this.WALLBOUND_DEFINITION = definition;
+
+		this.ALIGNMENT = definition.getBodyAlignment();
+		this.HEAD_RANGE = definition.getHeadYawRange();
 	}
 
 	public float getWallYaw(MarioMoveableData data) {

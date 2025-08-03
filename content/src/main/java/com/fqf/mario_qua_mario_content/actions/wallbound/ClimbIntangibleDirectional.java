@@ -17,6 +17,7 @@ import com.fqf.mario_qua_mario_content.util.ClimbTransitions;
 import com.fqf.mario_qua_mario_content.util.ClimbVars;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,11 +55,25 @@ public class ClimbIntangibleDirectional implements WallboundActionDefinition {
 		return null;
 	}
 
+	@Override public @NotNull WallBodyAlignment getBodyAlignment() {
+		return WallBodyAlignment.TOWARDS;
+	}
+	@Override public float getHeadYawRange() {
+		return 360;
+	}
+
 	private static final boolean SIDLE_ENABLED = false;
+
+	private static float currentBlockYaw(IMarioReadableMotionData data) {
+		return ClimbTransitions.yawOf(ClimbTransitions.hasDirectionality(data.getMario().getBlockStateAtPos()));
+	}
+	private static boolean isInAcceptableBlock(IMarioReadableMotionData data, WallInfo wall) {
+		return ClimbTransitions.inNonSolidClimbable(data, true) && wall.getWallYaw() == currentBlockYaw(data);
+	}
 
 	@Override
 	public float getWallYaw(IMarioReadableMotionData data) {
-		return ClimbTransitions.yawOf(ClimbTransitions.hasDirectionality(data.getMario().getBlockStateAtPos()));
+		return currentBlockYaw(data);
 	}
 	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
 		return new ClimbVars();
@@ -70,40 +85,39 @@ public class ClimbIntangibleDirectional implements WallboundActionDefinition {
 
 	}
 	@Override public boolean checkServerSidedLegality(IMarioReadableMotionData data, WallInfo wall) {
-		MarioQuaMarioContent.LOGGER.info("Checking server-side legality of ClimbIntangibleDirectional! Uwu!");
-		return true;
+		return isInAcceptableBlock(data, wall);
 	}
 
 	@Override public void travelHook(IMarioTravelData data, WallInfo wall, WallboundActionHelper helper) {
 		data.getMario().fallDistance = 0;
-//		helper.assignWallDirection(data, data.getVars(ClimbWallVars.class).WALL_DIRECTION);
-		data.goTo(data.getMario().getBlockPos().toCenterPos().withAxis(Direction.Axis.Y, data.getMario().getY()));
-		wall = helper.getWallInfo(data);
-		if(wall == null) {
-			data.setYVel(0);
-		}
-		else {
-			double forwardInput = wall.getTowardsWallInput() * (data.getInputs().DUCK.isHeld() ? 0.3 : 1);
-			data.setYVel(wall.getTowardsWallInput() * ClimbPole.CLIMB_SPEED.get(data));
-			data.getVars(ClimbVars.class).progress += (float) forwardInput;
-			helper.setSidleVel(data, SIDLE_ENABLED && Math.abs(wall.getSidleInput()) > 0.15 ? wall.getSidleInput() * 0.1 : 0);
-		}
+		double forwardInput = wall.getTowardsWallInput() * (data.getInputs().DUCK.isHeld() ? 0.3 : 1);
+		data.setYVel(forwardInput * ClimbPole.CLIMB_SPEED.get(data));
+		data.getVars(ClimbVars.class).progress += (float) forwardInput;
+		helper.setSidleVel(data, SIDLE_ENABLED && Math.abs(wall.getSidleInput()) > 0.15 ? wall.getSidleInput() * 0.1 : 0);
 	}
 
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(WallboundActionHelper helper) {
-		return List.of();
+		return List.of(
+				new TransitionDefinition(
+						ClimbIntangibleSideHang.ID,
+						data -> Math.abs(helper.getWallInfo(data).getYawDeviation()) > 99,
+						EvaluatorEnvironment.CLIENT_ONLY,
+						data -> data.setVelocity(Vec3d.ZERO),
+						null
+				)
+		);
 	}
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(WallboundActionHelper helper) {
 		return List.of(
 				new TransitionDefinition(
 						Backflip.ID,
 						data -> helper.getWallInfo(data) != null
-								&& Objects.requireNonNull(helper.getWallInfo(data)).getTowardsWallInput() < 0
+								&& Objects.requireNonNull(helper.getWallInfo(data)).getTowardsWallInput() < -0.45
 								&& data.getInputs().JUMP.isPressed(),
 						EvaluatorEnvironment.CLIENT_ONLY,
 						data -> {
 							data.setYVel(Backflip.BACKFLIP_VEL.get(data));
-							data.setForwardVel(Backflip.BACKFLIP_BACKWARDS_SPEED.get(data));
+							helper.setTowardsWallVel(data, Backflip.BACKFLIP_BACKWARDS_SPEED.get(data));
 						},
 						(data, isSelf, seed) -> data.playJumpSound(seed)
 				),
@@ -127,14 +141,7 @@ public class ClimbIntangibleDirectional implements WallboundActionDefinition {
 		return List.of(
 				new TransitionDefinition(
 						SpecialFall.ID,
-						data -> {
-							MarioQuaMarioContent.LOGGER.info("In non-solid directional climbable: {}", ClimbTransitions.inNonSolidClimbable(data, true));
-							MarioQuaMarioContent.LOGGER.info("Directionality: {}", ClimbTransitions.hasDirectionality(data.getMario().getBlockStateAtPos()));
-							MarioQuaMarioContent.LOGGER.info("Yaw of directionality: {}", ClimbTransitions.yawOf(ClimbTransitions.hasDirectionality(data.getMario().getBlockStateAtPos())));
-							MarioQuaMarioContent.LOGGER.info("Yaw of current wall: {}", helper.getWallInfo(data).getWallYaw());
-							return !ClimbTransitions.inNonSolidClimbable(data, true)
-									|| helper.getWallInfo(data).getWallYaw() != ClimbTransitions.yawOf(ClimbTransitions.hasDirectionality(data.getMario().getBlockStateAtPos()));
-						},
+						data -> !isInAcceptableBlock(data, helper.getWallInfo(data)),
 						EvaluatorEnvironment.COMMON
 				),
 				new TransitionDefinition(

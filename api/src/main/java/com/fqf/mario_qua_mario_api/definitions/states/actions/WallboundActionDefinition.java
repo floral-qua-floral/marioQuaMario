@@ -2,15 +2,22 @@ package com.fqf.mario_qua_mario_api.definitions.states.actions;
 
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.IncompleteActionDefinition;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.TransitionDefinition;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.WallBodyAlignment;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioReadableMotionData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_api.util.CharaStat;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Set;
 
 public interface WallboundActionDefinition extends IncompleteActionDefinition {
+	@NotNull WallBodyAlignment getBodyAlignment();
+
+	float getHeadYawRange();
+
 	/**
 	 * Called on the client the instant Mario transitions into this action. The result is networked to the server
 	 * and then to other clients without checking.
@@ -51,6 +58,7 @@ public interface WallboundActionDefinition extends IncompleteActionDefinition {
 
 		float getYawDeviation();
 		double getDistanceFromWall(double maxDistance);
+		Set<BlockPos> getWallBlocks(double maxDistance);
 	}
 
 	/**
@@ -71,5 +79,7 @@ public interface WallboundActionDefinition extends IncompleteActionDefinition {
 		);
 
 		void setSidleVel(IMarioTravelData data, double sidleVel);
+
+		void setTowardsWallVel(IMarioTravelData data, double towardsWallVel);
 	}
 }

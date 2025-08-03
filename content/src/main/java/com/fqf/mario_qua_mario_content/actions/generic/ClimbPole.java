@@ -131,7 +131,7 @@ public class ClimbPole implements GenericActionDefinition {
 		double forwardInput = data.getInputs().getForwardInput() * (data.getInputs().DUCK.isHeld() ? 0.3 : 1);
 		data.setYVel(forwardInput * CLIMB_SPEED.get(data));
 		data.getVars(ClimbVars.class).progress += (float) forwardInput;
-		data.goTo(data.getMario().getBlockPos().toCenterPos().withAxis(Direction.Axis.Y, data.getMario().getY()));
+		data.centerLaterally();
 		data.setForwardStrafeVel(0, 0);
 		data.getMario().fallDistance = 0;
 		return true;

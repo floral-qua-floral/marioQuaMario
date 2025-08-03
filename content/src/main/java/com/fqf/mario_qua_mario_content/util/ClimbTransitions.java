@@ -53,7 +53,7 @@ public class ClimbTransitions {
 				data -> inNonSolidClimbable(data, directionality) && (data.isServer() || tryingToStartClimbingIntangible(data)),
 				EvaluatorEnvironment.CLIENT_CHECKED,
 				data -> {
-					data.goTo(data.getMario().getBlockPos().toCenterPos().withAxis(Direction.Axis.Y, data.getMario().getY()));
+					data.centerLaterally();
 					data.setForwardStrafeVel(0, 0);
 				},
 				(data, isSelf, seed) -> {

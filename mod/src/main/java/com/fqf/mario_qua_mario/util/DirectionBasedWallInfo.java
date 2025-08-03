@@ -5,10 +5,12 @@ import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
 import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
 import com.fqf.mario_qua_mario.registries.actions.UniversalActionDefinitionHelper;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.List;
+import java.util.Set;
 
 public abstract class DirectionBasedWallInfo implements AdvancedWallInfo {
 	public final MarioPlayerData OWNER;
@@ -20,7 +22,6 @@ public abstract class DirectionBasedWallInfo implements AdvancedWallInfo {
 
 	@Override
 	public void setYaw(float yaw) {
-		MarioQuaMario.LOGGER.info("Setting wall yaw!!\n\tYaw: {}\n\tDirection: {}", yaw, Direction.fromRotation(yaw));
 		this.setDirection(Direction.fromRotation(yaw));
 	}
 
@@ -74,6 +75,12 @@ public abstract class DirectionBasedWallInfo implements AdvancedWallInfo {
 				this.OWNER.getMario().getWorld(),
 				List.of()
 		).getComponentAlongAxis(this.wallDirection.getAxis()));
+	}
+
+	@Override
+	public Set<BlockPos> getWallBlocks(double maxDistance) {
+		return BlockCollisionFinder.getCollidedBlockPositions(this.OWNER.getMario(),
+				maxDistance * this.wallDirection.getDirection().offset(), this.wallDirection.getAxis());
 	}
 
 	private void setDirectionVel(Direction direction, double velocity) {
