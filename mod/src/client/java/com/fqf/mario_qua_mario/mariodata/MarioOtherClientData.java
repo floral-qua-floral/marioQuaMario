@@ -145,7 +145,7 @@ public class MarioOtherClientData extends MarioPlayerData implements IMarioClien
 	}
 
 	@Override
-	public RecordedCollisionSet getLastTickCollisions() {
+	public RecordedCollisionSet getRecordedCollisions() {
 		return MarioMoveableData.EMPTY_RECORDED_COLLISION_SET;
 	}
 

@@ -163,10 +163,10 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 
 	public static final TransitionDefinition BONK = new TransitionDefinition(
 			BonkAir.ID,
-			data -> data.getLastTickCollisions().collidedHorizontally(),
+			data -> data.getRecordedCollisions().collidedHorizontally(),
 			EvaluatorEnvironment.CLIENT_ONLY,
 			data -> {
-				data.setVelocity(data.getLastTickCollisions().getHorizontallyReflectedVelocity().multiply(0.7));
+				data.setVelocity(data.getRecordedCollisions().getHorizontallyReflectedVelocity().multiply(0.7));
 			},
 			(data, isSelf, seed) -> {
 				data.playSound(MarioContentSFX.BONK, seed);

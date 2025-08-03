@@ -45,7 +45,7 @@ public class ClimbTransitions {
 	}
 	private static boolean tryingToStartClimbingIntangible(IMarioReadableMotionData data) {
 		if(data.getInputs().JUMP.isPressed()) return true;
-		return MarioQuaMarioContent.CONFIG.doAutoLadder() && data.getLastTickCollisions().collidedHorizontally();
+		return MarioQuaMarioContent.CONFIG.doAutoLadder() && data.getRecordedCollisions().collidedHorizontally();
 	}
 	private static TransitionDefinition makeNonSolidClimbingTransition(Identifier targetActionID, boolean directionality) {
 		return new TransitionDefinition(

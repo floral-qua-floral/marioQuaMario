@@ -1,12 +1,11 @@
 package com.fqf.mario_qua_mario.mariodata;
 
+import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.bapping.BlockBappingUtil;
-import com.fqf.mario_qua_mario.registries.actions.parsed.ParsedWallboundAction;
 import com.fqf.mario_qua_mario.util.BlockCollisionFinder;
 import com.fqf.mario_qua_mario.util.DirectionBasedWallInfo;
 import com.fqf.mario_qua_mario.util.AdvancedWallInfo;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.ActionCategory;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.WallBodyAlignment;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.Arrangement;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimation;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
@@ -23,9 +22,11 @@ import net.minecraft.client.input.Input;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.entity.MovementType;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 import java.util.*;
@@ -183,12 +184,6 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 
 		this.WALL_INFO.calculatedInputs = false;
 
-//		if(this.getWallInfo() != null) {
-//			if(this.getMario().isSneaking()) this.getWallInfo().setTowardsWallVel(1);
-//			MarioQuaMario.LOGGER.info("Wall input testing.\n\tTowards: {}\n\tSidle: {}",
-//					this.getWallInfo().getTowardsWallInput(), this.getWallInfo().getSidleInput());
-//		}
-
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
 		this.applyModifiedVelocity();
 
@@ -309,9 +304,14 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 	}
 
 	private static class MainClientRecordedCollisions extends HashSet<RecordedCollision> implements RecordedCollisionSet {
+		private final MarioMainClientData OWNER;
 		private Vec3d storedVelocity;
 		private final boolean[] COLLIDED = new boolean[3];
 		private final boolean[] REFLECTS = new boolean[3];
+
+		private MainClientRecordedCollisions(MarioMainClientData owner) {
+			OWNER = owner;
+		}
 
 		@Override
 		public boolean collidedOnAxis(Direction.Axis axis) {
@@ -343,12 +343,49 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 					shouldReflectOnAxis(Direction.Axis.Z) ? -1 : 1
 			);
 		}
+
+		private double absSpeedOnAxis(@NotNull Direction.Axis axis) {
+			return Math.abs(this.storedVelocity.getComponentAlongAxis(axis));
+		}
+
+		private Direction.Axis chooseGreaterAxis(@Nullable Direction.Axis alfa, @Nullable Direction.Axis bravo) {
+			if(alfa == null) return bravo;
+			if(bravo == null) return alfa;
+			return absSpeedOnAxis(alfa) > absSpeedOnAxis(bravo) ? alfa : bravo;
+		}
+
+		@Override
+		public @Nullable Direction getDirectionOfCollisionsWith(CollisionMatcher matcher, boolean allowVertical) {
+			boolean onXAxis = false;
+			boolean onYAxis = false;
+			boolean onZAxis = false;
+
+			for(RecordedCollision recordedCollision : this) {
+				if(switch(recordedCollision.direction().getAxis()) {
+					case X -> onXAxis;
+					case Y -> onYAxis || !allowVertical;
+					case Z -> onZAxis;
+				}) continue;
+
+				if(matcher.test(recordedCollision.pos(), this.OWNER.getMario().getWorld().getBlockState(recordedCollision.pos()))) {
+					switch(recordedCollision.direction().getAxis()) {
+						case X -> onXAxis = true;
+						case Y -> onYAxis = true;
+						case Z -> onZAxis = true;
+					}
+				}
+			}
+
+			Direction.Axis greatestAxis = this.chooseGreaterAxis(onXAxis ? Direction.Axis.X : null, this.chooseGreaterAxis(onYAxis ? Direction.Axis.Y : null, onZAxis ? Direction.Axis.Z : null));
+
+			return greatestAxis == null ? null : Direction.from(greatestAxis, this.storedVelocity.getComponentAlongAxis(greatestAxis) > 0 ? Direction.AxisDirection.POSITIVE : Direction.AxisDirection.NEGATIVE);
+		}
 	}
 
-	private final MainClientRecordedCollisions RECORDED_COLLISIONS = new MainClientRecordedCollisions();
+	private final MainClientRecordedCollisions RECORDED_COLLISIONS = new MainClientRecordedCollisions(this);
 
 	@Override
-	public RecordedCollisionSet getLastTickCollisions() {
+	public RecordedCollisionSet getRecordedCollisions() {
 		return this.RECORDED_COLLISIONS;
 	}
 

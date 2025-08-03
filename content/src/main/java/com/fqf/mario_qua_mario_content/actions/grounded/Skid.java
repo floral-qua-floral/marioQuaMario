@@ -187,7 +187,7 @@ public class Skid implements GroundedActionDefinition {
 						null,
 						null,
 						data -> {
-							data.setVelocity(data.getLastTickCollisions().getHorizontallyReflectedVelocity().multiply(1.25));
+							data.setVelocity(data.getRecordedCollisions().getHorizontallyReflectedVelocity().multiply(1.25));
 						},
 						null
 				)
