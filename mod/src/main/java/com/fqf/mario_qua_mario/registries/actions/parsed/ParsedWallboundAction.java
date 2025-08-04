@@ -10,6 +10,7 @@ import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.UniversalActionDefinitionHelper;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.WallBodyAlignment;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,8 +34,8 @@ public class ParsedWallboundAction extends AbstractParsedAction {
 		return this.WALLBOUND_DEFINITION.getWallYaw(data);
 	}
 
-	public boolean verifyWallLegality(MarioPlayerData data) {
-		return this.WALLBOUND_DEFINITION.checkLegality(data, data.getWallInfo());
+	public boolean verifyWallLegality(MarioPlayerData data, Vec3d offset) {
+		return this.WALLBOUND_DEFINITION.checkLegality(data, data.getWallInfo(), offset);
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package com.fqf.mario_qua_mario_content.actions.wallbound;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.*;
+import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioReadableMotionData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
@@ -23,51 +24,9 @@ public class ClimbIntangibleSideHang extends ClimbIntangibleDirectional implemen
 	    return ID;
 	}
 
-	private static LimbAnimation makeArmAnimation(int factor) {
-	    return new LimbAnimation(false, (data, arrangement, progress) -> {
-			boolean isWallSide = progress == factor;
-
-			arrangement.roll += factor * (isWallSide ? 140 : 12.5F);
-			arrangement.pitch += isWallSide ? -25 : 0;
-	    });
-	}
-	private static LimbAnimation makeLegAnimation(int factor) {
-	    return new LimbAnimation(false, (data, arrangement, progress) -> {
-			boolean isWallSide = progress == factor;
-			if(isWallSide) {
-				arrangement.addPos(factor * -0.5F, -3.75F, -4);
-				arrangement.addAngles(4, 0, factor * -2);
-			}
-			else {
-				arrangement.pitch += 17.5F;
-				arrangement.roll += factor * -30;
-			}
-	    });
-	}
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-	    return new PlayermodelAnimation(
-	            null,
-	            new ProgressHandler((data, ticksPassed) -> Math.signum(Objects.requireNonNull(helper.getWallInfo(data)).getYawDeviation())),
-	            new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
-					arrangement.x += progress * 1;
-					arrangement.roll = progress * 12.5F;
-	            }),
-	            null,
-	            null,
-	            makeArmAnimation(1), makeArmAnimation(-1),
-	            makeLegAnimation(1), makeLegAnimation(-1),
-	            null
-	    );
-	}
-
 	@Override
-	public @Nullable Object setupCustomMarioVars(IMarioData data) {
-		return null;
-	}
-
-	@Override
-	public boolean checkLegality(IMarioReadableMotionData data, WallInfo wall) {
-		return super.checkLegality(data, wall);
+	public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
+		return ClimbWallSideHang.makeAnimation(helper, 1);
 	}
 
 	@Override
@@ -76,22 +35,34 @@ public class ClimbIntangibleSideHang extends ClimbIntangibleDirectional implemen
 	}
 
 	@Override
+	public float getHeadYawRange() {
+		return 360;
+	}
+
+	@Override
+	public @Nullable Object setupCustomMarioVars(IMarioData data) {
+		return null;
+	}
+
+	@Override
+	public void clientTick(IMarioClientData data, boolean isSelf) {
+
+	}
+
+	@Override
 	public void travelHook(IMarioTravelData data, WallInfo wall, WallboundActionHelper helper) {
-		if(data.getYVel() < 0) {
-			data.setYVel(data.getYVel() * 0.775);
-		}
-		else data.setYVel(0);
+		ClimbWallSideHang.sideHangTravelHook(data, wall, helper, this);
 	}
 
 	@Override
 	public @NotNull List<TransitionDefinition> getBasicTransitions(WallboundActionHelper helper) {
 		return List.of(
-				new TransitionDefinition(
+				ClimbWallSideHang.RETURN_TO_NORMAL_CLIMB.variate(
 						ClimbIntangibleDirectional.ID,
-						data -> Math.abs(helper.getWallInfo(data).getYawDeviation()) < 80,
-						EvaluatorEnvironment.CLIENT_ONLY,
-						data -> data.setVelocity(Vec3d.ZERO),
-						null
+						null,
+						null,
+						null,
+						this.makeSideHangTransitionClientsExecutor()
 				)
 		);
 	}
@@ -99,16 +70,7 @@ public class ClimbIntangibleSideHang extends ClimbIntangibleDirectional implemen
 	@Override
 	public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
 		return Set.of(
-				new TransitionInjectionDefinition(
-						TransitionInjectionDefinition.InjectionPlacement.BEFORE,
-						ClimbIntangibleDirectional.ID,
-						(fromAction, fromCategory, existingTransitions) -> fromCategory != ActionCategory.WALLBOUND,
-						(nearbyTransition, castableHelper) -> nearbyTransition.variate(
-								ClimbIntangibleSideHang.ID,
-								data -> MathHelper.angleBetween(data.getMario().getYaw(), currentBlockYaw(data)) > 90
-										&& nearbyTransition.evaluator().shouldTransition(data)
-						)
-				)
+				ClimbWallSideHang.makeTransitionInjection(ClimbIntangibleDirectional.ID, this, ID)
 		);
 	}
 }

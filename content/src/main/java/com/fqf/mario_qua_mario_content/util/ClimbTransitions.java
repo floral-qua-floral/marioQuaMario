@@ -22,6 +22,7 @@ import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import org.jetbrains.annotations.Nullable;
 
@@ -63,13 +64,15 @@ public class ClimbTransitions {
 
 		return null;
 	}
-	public static boolean inNonSolidClimbable(IMarioReadableMotionData data, boolean directionality) {
+	public static boolean isNonSolidClimbable(IMarioReadableMotionData data, BlockState state, boolean directionality) {
 		PlayerEntity mario = data.getMario();
-		BlockState state = mario.getBlockStateAtPos();
 		return
 				canClimbBlock(state)
-				&& (hasDirectionality(state) == null) != directionality
-				&& state.getCollisionShape(mario.getWorld(), mario.getBlockPos(), ShapeContext.of(mario)).isEmpty();
+						&& (hasDirectionality(state) == null) != directionality
+						&& state.getCollisionShape(mario.getWorld(), mario.getBlockPos(), ShapeContext.of(mario)).isEmpty();
+	}
+	public static boolean inNonSolidClimbable(IMarioReadableMotionData data, boolean directionality) {
+		return isNonSolidClimbable(data, data.getMario().getBlockStateAtPos(), directionality);
 	}
 	private static boolean tryingToStartClimbingIntangible(IMarioReadableMotionData data) {
 		if(data.getInputs().JUMP.isPressed()) return true;

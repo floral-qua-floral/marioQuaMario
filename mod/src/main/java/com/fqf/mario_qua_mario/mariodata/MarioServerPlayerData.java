@@ -20,7 +20,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
-import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.RandomSeed;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -117,7 +117,7 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 				// Else, assign the new yaw:
 				this.getWallInfo().setYaw(this.lastReceivedWallYaw);
 				// And if legality check fails, REJECT
-				if(!wallAction.verifyWallLegality(this)) {
+				if(!wallAction.verifyWallLegality(this, Vec3d.ZERO)) {
 					MarioQuaMario.LOGGER.warn("""
 							TRANSITION REJECTED: Trying to enter Wallbound Action, but server-sided legality check failed.
 							Server-sided action: {}

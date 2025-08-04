@@ -4,11 +4,9 @@ import com.fqf.mario_qua_mario_api.HelperGetter;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.*;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.mario_qua_mario_api.mariodata.*;
-import com.fqf.mario_qua_mario_api.mariodata.util.RecordedCollisionSet;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.*;
-import com.fqf.mario_qua_mario_api.util.CharaStat;
 import com.fqf.mario_qua_mario_content.actions.airborne.Backflip;
 import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
 import com.fqf.mario_qua_mario_content.actions.airborne.Jump;
@@ -21,6 +19,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,8 +28,6 @@ import org.joml.Vector2d;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-
-import static com.fqf.mario_qua_mario_api.util.StatCategory.*;
 
 public class ClimbWall implements WallboundActionDefinition {
 	public static final Identifier ID = MarioQuaMarioContent.makeID("climb_wall");
@@ -120,7 +117,7 @@ public class ClimbWall implements WallboundActionDefinition {
 	}
 
 	@Override
-	public boolean checkLegality(IMarioReadableMotionData data, WallInfo wall) {
+	public boolean checkLegality(IMarioReadableMotionData data, WallInfo wall, Vec3d checkOffset) {
 		World world = data.getMario().getWorld();
 		for(BlockPos wallBlock : wall.getWallBlocks(0.4)) {
 			if(ClimbTransitions.canClimbBlock(world.getBlockState(wallBlock), Direction.fromRotation(wall.getWallYaw())))
@@ -183,7 +180,7 @@ public class ClimbWall implements WallboundActionDefinition {
 
 	public static final float MIN_DEVIATION_TO_SIDE_HANG = 99;
 
-	protected TransitionDefinition.ClientsExecutor makeSideHangTransitionExecutor() {
+	protected TransitionDefinition.ClientsExecutor makeSideHangTransitionClientsExecutor() {
 		return null;
 	}
 
@@ -194,7 +191,7 @@ public class ClimbWall implements WallboundActionDefinition {
 						data -> Math.abs(helper.getWallInfo(data).getYawDeviation()) > MIN_DEVIATION_TO_SIDE_HANG,
 						EvaluatorEnvironment.CLIENT_ONLY,
 						data -> data.setYVel(Math.min(0, data.getYVel())),
-						this.makeSideHangTransitionExecutor()
+						this.makeSideHangTransitionClientsExecutor()
 				)
 		);
 	}

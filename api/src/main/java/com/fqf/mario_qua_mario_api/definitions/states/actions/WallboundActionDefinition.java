@@ -30,12 +30,13 @@ public interface WallboundActionDefinition extends IncompleteActionDefinition {
 	 * Called on the server to validate whether transitioning into this action is allowed. This is never called if
 	 * the gamerule mqmRejectIllegalActionTransitions is set to false!
 	 *
-	 * @param data Mario's data (server-sided)
-	 * @param wall Information about the wall, as claimed by the client.
+	 * @param data        Mario's data (server-sided)
+	 * @param wall        Information about the wall, as claimed by the client.
+	 * @param checkOffset
 	 * @return Whether the transition is allowed. If false, it is rejected and Mario is forced back into his previous
 	 * action.
 	 */
-	boolean checkLegality(IMarioReadableMotionData data, WallInfo wall);
+	boolean checkLegality(IMarioReadableMotionData data, WallInfo wall, Vec3d checkOffset);
 
 	void travelHook(IMarioTravelData data, WallInfo wall, WallboundActionHelper helper);
 

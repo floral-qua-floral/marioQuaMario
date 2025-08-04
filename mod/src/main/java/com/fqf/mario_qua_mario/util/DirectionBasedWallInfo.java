@@ -1,6 +1,5 @@
 package com.fqf.mario_qua_mario.util;
 
-import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
 import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
 import com.fqf.mario_qua_mario.registries.actions.UniversalActionDefinitionHelper;
@@ -112,7 +111,7 @@ public abstract class DirectionBasedWallInfo implements AdvancedWallInfo {
 
 	@Override
 	public boolean isLegal() {
-		return ((ParsedWallboundAction) this.OWNER.getAction()).verifyWallLegality(this.OWNER);
+		return ((ParsedWallboundAction) this.OWNER.getAction()).verifyWallLegality(this.OWNER, this.legalityCheckOffset);
 	}
 
 	@Override
