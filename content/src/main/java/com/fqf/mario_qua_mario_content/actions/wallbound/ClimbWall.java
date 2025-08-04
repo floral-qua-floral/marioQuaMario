@@ -9,8 +9,12 @@ import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario_api.util.CharaStat;
+import com.fqf.mario_qua_mario_content.actions.airborne.Backflip;
+import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
+import com.fqf.mario_qua_mario_content.actions.airborne.Jump;
 import com.fqf.mario_qua_mario_content.actions.airborne.SpecialFall;
 import com.fqf.mario_qua_mario_content.actions.generic.ClimbPole;
+import com.fqf.mario_qua_mario_content.actions.grounded.SubWalk;
 import com.fqf.mario_qua_mario_content.util.ClimbTransitions;
 import com.fqf.mario_qua_mario_content.util.ClimbVars;
 import net.minecraft.util.Identifier;
@@ -23,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2d;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import static com.fqf.mario_qua_mario_api.util.StatCategory.*;
@@ -129,6 +134,11 @@ public class ClimbWall implements WallboundActionDefinition {
 		float yComponent = 0.45F;
 	}
 
+	protected double getConstantTowardsWallVel() {
+		return 0.2;
+	}
+	protected final double TOWARDS_WALL_VEL = this.getConstantTowardsWallVel();
+
 	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
 		return new ClimbOmniDirectionalVars();
 	}
@@ -139,7 +149,8 @@ public class ClimbWall implements WallboundActionDefinition {
 
 	}
 	@Override public void travelHook(IMarioTravelData data, WallInfo wall, WallboundActionHelper helper) {
-		helper.setTowardsWallVel(data, 0.3);
+		helper.setTowardsWallVel(data, TOWARDS_WALL_VEL);
+		data.getMario().fallDistance = 0;
 		double climbInput = wall.getTowardsWallInput() * (data.getInputs().DUCK.isHeld() ? 0.3 : 1);
 		double sidleInput = wall.getSidleInput();
 		if(sidleInput != 0 && !wall.wouldBeLegalWithOffset(0, Math.signum(sidleInput) * 0.8)) {
@@ -166,14 +177,61 @@ public class ClimbWall implements WallboundActionDefinition {
 		}
 	}
 
+	protected Identifier getSideHangActionID() {
+		return ClimbWallSideHang.ID;
+	}
+
+	public static final float MIN_DEVIATION_TO_SIDE_HANG = 99;
+
+	protected TransitionDefinition.ClientsExecutor makeSideHangTransitionExecutor() {
+		return null;
+	}
+
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(WallboundActionHelper helper) {
-		return List.of();
+		return List.of(
+				new TransitionDefinition(
+						this.getSideHangActionID(),
+						data -> Math.abs(helper.getWallInfo(data).getYawDeviation()) > MIN_DEVIATION_TO_SIDE_HANG,
+						EvaluatorEnvironment.CLIENT_ONLY,
+						data -> data.setYVel(Math.min(0, data.getYVel())),
+						this.makeSideHangTransitionExecutor()
+				)
+		);
 	}
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(WallboundActionHelper helper) {
 		return List.of(
-				ClimbIntangibleDirectional.BACKFLIP_OFF_LADDER,
-				ClimbIntangibleDirectional.DROP_OFF_LADDER,
-				ClimbIntangibleDirectional.JUMP_OFF_LADDER
+				new TransitionDefinition(
+						Backflip.ID,
+						data -> helper.getWallInfo(data) != null
+								&& Objects.requireNonNull(helper.getWallInfo(data)).getTowardsWallInput() < -0.45
+								&& data.getInputs().JUMP.isPressed(),
+						EvaluatorEnvironment.CLIENT_ONLY,
+						data -> {
+							data.setYVel(Backflip.BACKFLIP_VEL.get(data));
+							helper.setTowardsWallVel(data, Backflip.BACKFLIP_BACKWARDS_SPEED.get(data));
+						},
+						(data, isSelf, seed) -> data.playJumpSound(seed)
+				),
+				new TransitionDefinition(
+						Fall.ID,
+						data -> data.getInputs().DUCK.isHeld() && data.getInputs().JUMP.isPressed(),
+						EvaluatorEnvironment.CLIENT_ONLY,
+						data -> {
+							helper.setTowardsWallVel(data, 0);
+							data.getInputs().DUCK.isPressed(); // Unbuffer Duck
+						},
+						null
+				),
+				new TransitionDefinition(
+						Jump.ID,
+						data -> data.getInputs().JUMP.isPressed(),
+						EvaluatorEnvironment.CLIENT_ONLY,
+						data -> {
+							helper.setTowardsWallVel(data, 0);
+							data.setYVel(Jump.JUMP_VEL.get(data));
+						},
+						(data, isSelf, seed) -> data.playJumpSound(seed)
+				)
 		);
 	}
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(WallboundActionHelper helper) {
@@ -184,6 +242,11 @@ public class ClimbWall implements WallboundActionDefinition {
 						EvaluatorEnvironment.COMMON,
 						data -> helper.setTowardsWallVel(data, 0),
 						null
+				),
+				new TransitionDefinition(
+						SubWalk.ID,
+						data -> data.getMario().isOnGround(),
+						EvaluatorEnvironment.CLIENT_ONLY
 				)
 		);
 	}
