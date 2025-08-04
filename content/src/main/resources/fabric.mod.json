@@ -83,7 +83,8 @@
 		],
 		"mqm-wallbound-actions": [
 			"com.fqf.mario_qua_mario_content.actions.wallbound.ClimbIntangibleDirectional",
-			"com.fqf.mario_qua_mario_content.actions.wallbound.ClimbIntangibleSideHang"
+			"com.fqf.mario_qua_mario_content.actions.wallbound.ClimbIntangibleSideHang",
+			"com.fqf.mario_qua_mario_content.actions.wallbound.ClimbWall"
 		],
 		"mqm-mounted-actions": [
 			"com.fqf.mario_qua_mario_content.actions.mounted.Mounted"

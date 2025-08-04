@@ -119,7 +119,7 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 				// And if legality check fails, REJECT
 				if(!wallAction.verifyWallLegality(this)) {
 					MarioQuaMario.LOGGER.warn("""
-							TRANSITION REJECTED: Trying to enter Wallbound Action, but legality check failed.
+							TRANSITION REJECTED: Trying to enter Wallbound Action, but server-sided legality check failed.
 							Server-sided action: {}
 							Attempted: {} -> {}""", this.getActionID(), fromAction.ID, toAction.ID);
 					return false;

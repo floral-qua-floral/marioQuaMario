@@ -35,7 +35,7 @@ public interface WallboundActionDefinition extends IncompleteActionDefinition {
 	 * @return Whether the transition is allowed. If false, it is rejected and Mario is forced back into his previous
 	 * action.
 	 */
-	boolean checkServerSidedLegality(IMarioReadableMotionData data, WallInfo wall);
+	boolean checkLegality(IMarioReadableMotionData data, WallInfo wall);
 
 	void travelHook(IMarioTravelData data, WallInfo wall, WallboundActionHelper helper);
 
@@ -59,6 +59,9 @@ public interface WallboundActionDefinition extends IncompleteActionDefinition {
 		float getYawDeviation();
 		double getDistanceFromWall(double maxDistance);
 		Set<BlockPos> getWallBlocks(double maxDistance);
+
+		boolean isLegal();
+		boolean wouldBeLegalWithOffset(double yOffset, double sidleOffset);
 	}
 
 	/**

@@ -15,10 +15,11 @@ public interface RecordedCollisionSet extends Set<RecordedCollision> {
 	Vec3d getHorizontallyReflectedVelocity();
 
 	@Nullable Direction getDirectionOfCollisionsWith(CollisionMatcher matcher, boolean allowVertical);
+	@Nullable RecordedCollision getAnyMatch(CollisionMatcher matcher);
 
 	@FunctionalInterface
 	interface CollisionMatcher {
-		boolean test(BlockPos pos, BlockState block);
+		boolean test(RecordedCollision collision, BlockState block);
 	}
 
 	default boolean collidedHorizontally() {

@@ -2,6 +2,7 @@ package com.fqf.mario_qua_mario;
 
 import com.fqf.mario_qua_mario.packets.MarioPackets;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
+import com.fqf.mario_qua_mario.util.HelperGetterImplementation;
 import com.fqf.mario_qua_mario.util.MarioEventListeners;
 import com.fqf.mario_qua_mario.util.MarioGamerules;
 import me.shedaniel.autoconfig.AutoConfig;
@@ -25,7 +26,7 @@ public class MarioQuaMario implements ModInitializer {
 	public void onInitialize() {
 		LOGGER.info("Mario qua Mario initializing...");
 
-//		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new PlayermodelListener());
+		HelperGetterImplementation.staticInitialize(); // Make sure the helpers are ready for action registration
 
 		RegistryManager.registerAll();
 
@@ -35,6 +36,7 @@ public class MarioQuaMario implements ModInitializer {
 
 		MarioGamerules.register();
 		MarioEventListeners.register();
+
 	}
 
 	public static Identifier makeID(String path) {

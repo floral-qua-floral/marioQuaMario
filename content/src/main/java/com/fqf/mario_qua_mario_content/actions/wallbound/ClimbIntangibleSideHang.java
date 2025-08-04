@@ -7,7 +7,6 @@ import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioReadableMotionData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
-import com.fqf.mario_qua_mario_content.util.ClimbTransitions;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -67,8 +66,8 @@ public class ClimbIntangibleSideHang extends ClimbIntangibleDirectional implemen
 	}
 
 	@Override
-	public boolean checkServerSidedLegality(IMarioReadableMotionData data, WallInfo wall) {
-		return super.checkServerSidedLegality(data, wall);
+	public boolean checkLegality(IMarioReadableMotionData data, WallInfo wall) {
+		return super.checkLegality(data, wall);
 	}
 
 	@Override

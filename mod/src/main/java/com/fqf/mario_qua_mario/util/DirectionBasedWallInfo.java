@@ -4,6 +4,7 @@ import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
 import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
 import com.fqf.mario_qua_mario.registries.actions.UniversalActionDefinitionHelper;
+import com.fqf.mario_qua_mario.registries.actions.parsed.ParsedWallboundAction;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -15,6 +16,7 @@ import java.util.Set;
 public abstract class DirectionBasedWallInfo implements AdvancedWallInfo {
 	public final MarioPlayerData OWNER;
 	protected Direction wallDirection = Direction.NORTH;
+	private Vec3d legalityCheckOffset = Vec3d.ZERO;
 
 	protected DirectionBasedWallInfo(MarioPlayerData owner) {
 		OWNER = owner;
@@ -71,16 +73,24 @@ public abstract class DirectionBasedWallInfo implements AdvancedWallInfo {
 		return Math.abs(Entity.adjustMovementForCollisions(
 				this.OWNER.getMario(),
 				Vec3d.ZERO.withAxis(this.wallDirection.getAxis(), maxDistance * axisDir.offset()),
-				this.OWNER.getMario().getBoundingBox(),
+				this.OWNER.getMario().getBoundingBox().offset(this.legalityCheckOffset),
 				this.OWNER.getMario().getWorld(),
 				List.of()
 		).getComponentAlongAxis(this.wallDirection.getAxis()));
 	}
 
+//	private double getDistanceFromWall() {
+//
+//	}
+
 	@Override
 	public Set<BlockPos> getWallBlocks(double maxDistance) {
-		return BlockCollisionFinder.getCollidedBlockPositions(this.OWNER.getMario(),
-				maxDistance * this.wallDirection.getDirection().offset(), this.wallDirection.getAxis());
+		return BlockCollisionFinder.getCollidedBlockPositions(
+				this.OWNER.getMario(),
+				this.OWNER.getMario().getBoundingBox().offset(this.legalityCheckOffset),
+				maxDistance * this.wallDirection.getDirection().offset(),
+				this.wallDirection.getAxis()
+		).left();
 	}
 
 	private void setDirectionVel(Direction direction, double velocity) {
@@ -98,5 +108,21 @@ public abstract class DirectionBasedWallInfo implements AdvancedWallInfo {
 	@Override
 	public void setSidleVel(double velocity) {
 		this.setDirectionVel(this.wallDirection.rotateYClockwise(), velocity);
+	}
+
+	@Override
+	public boolean isLegal() {
+		return ((ParsedWallboundAction) this.OWNER.getAction()).verifyWallLegality(this.OWNER);
+	}
+
+	@Override
+	public boolean wouldBeLegalWithOffset(double yOffset, double sidleOffset) {
+		Direction sidleDir = this.wallDirection.rotateYClockwise();
+		this.legalityCheckOffset = new Vec3d(0, yOffset, 0).withAxis(sidleDir.getAxis(),
+				sidleOffset * sidleDir.getDirection().offset());
+		boolean legality = this.isLegal();
+		this.legalityCheckOffset = Vec3d.ZERO;
+
+		return legality;
 	}
 }

@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario_content.actions.wallbound;
 
+import com.fqf.mario_qua_mario_api.HelperGetter;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.mario_qua_mario_api.mariodata.*;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
@@ -84,7 +85,7 @@ public class ClimbIntangibleDirectional implements WallboundActionDefinition {
 	@Override public void serverTick(IMarioAuthoritativeData data) {
 
 	}
-	@Override public boolean checkServerSidedLegality(IMarioReadableMotionData data, WallInfo wall) {
+	@Override public boolean checkLegality(IMarioReadableMotionData data, WallInfo wall) {
 		return isInAcceptableBlock(data, wall);
 	}
 
@@ -95,6 +96,40 @@ public class ClimbIntangibleDirectional implements WallboundActionDefinition {
 		data.getVars(ClimbVars.class).progress += (float) forwardInput;
 		helper.setSidleVel(data, SIDLE_ENABLED && Math.abs(wall.getSidleInput()) > 0.15 ? wall.getSidleInput() * 0.1 : 0);
 	}
+
+	private static final WallboundActionHelper HELPER = HelperGetter.getWallboundActionHelper();
+	public static final TransitionDefinition BACKFLIP_OFF_LADDER = new TransitionDefinition(
+			Backflip.ID,
+			data -> HELPER.getWallInfo(data) != null
+					&& Objects.requireNonNull(HELPER.getWallInfo(data)).getTowardsWallInput() < -0.45
+					&& data.getInputs().JUMP.isPressed(),
+			EvaluatorEnvironment.CLIENT_ONLY,
+			data -> {
+				data.setYVel(Backflip.BACKFLIP_VEL.get(data));
+				HELPER.setTowardsWallVel(data, Backflip.BACKFLIP_BACKWARDS_SPEED.get(data));
+			},
+			(data, isSelf, seed) -> data.playJumpSound(seed)
+	);
+	public static final TransitionDefinition DROP_OFF_LADDER = new TransitionDefinition(
+			Fall.ID,
+			data -> data.getInputs().DUCK.isHeld() && data.getInputs().JUMP.isPressed(),
+			EvaluatorEnvironment.CLIENT_ONLY,
+			data -> {
+				HELPER.setTowardsWallVel(data, 0);
+				data.getInputs().DUCK.isPressed(); // Unbuffer Duck
+			},
+			null
+	);
+	public static final TransitionDefinition JUMP_OFF_LADDER = new TransitionDefinition(
+			Jump.ID,
+			data -> data.getInputs().JUMP.isPressed(),
+			EvaluatorEnvironment.CLIENT_ONLY,
+			data -> {
+				HELPER.setTowardsWallVel(data, 0);
+				data.setYVel(Jump.JUMP_VEL.get(data));
+			},
+			(data, isSelf, seed) -> data.playJumpSound(seed)
+	);
 
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(WallboundActionHelper helper) {
 		return List.of(
@@ -109,32 +144,9 @@ public class ClimbIntangibleDirectional implements WallboundActionDefinition {
 	}
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(WallboundActionHelper helper) {
 		return List.of(
-				new TransitionDefinition(
-						Backflip.ID,
-						data -> helper.getWallInfo(data) != null
-								&& Objects.requireNonNull(helper.getWallInfo(data)).getTowardsWallInput() < -0.45
-								&& data.getInputs().JUMP.isPressed(),
-						EvaluatorEnvironment.CLIENT_ONLY,
-						data -> {
-							data.setYVel(Backflip.BACKFLIP_VEL.get(data));
-							helper.setTowardsWallVel(data, Backflip.BACKFLIP_BACKWARDS_SPEED.get(data));
-						},
-						(data, isSelf, seed) -> data.playJumpSound(seed)
-				),
-				new TransitionDefinition(
-						Fall.ID,
-						data -> data.getInputs().DUCK.isHeld() && data.getInputs().JUMP.isPressed(),
-						EvaluatorEnvironment.CLIENT_ONLY,
-						data -> data.getInputs().DUCK.isPressed(), // Unbuffer Duck
-						null
-				),
-				new TransitionDefinition(
-						Jump.ID,
-						data -> data.getInputs().JUMP.isPressed(),
-						EvaluatorEnvironment.CLIENT_ONLY,
-						data -> data.setYVel(Jump.JUMP_VEL.get(data)),
-						(data, isSelf, seed) -> data.playJumpSound(seed)
-				)
+				BACKFLIP_OFF_LADDER,
+				DROP_OFF_LADDER,
+				JUMP_OFF_LADDER
 		);
 	}
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(WallboundActionHelper helper) {

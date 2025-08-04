@@ -367,7 +367,7 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 					case Z -> onZAxis;
 				}) continue;
 
-				if(matcher.test(recordedCollision.pos(), this.OWNER.getMario().getWorld().getBlockState(recordedCollision.pos()))) {
+				if(matcher.test(recordedCollision, this.OWNER.getMario().getWorld().getBlockState(recordedCollision.pos()))) {
 					switch(recordedCollision.direction().getAxis()) {
 						case X -> onXAxis = true;
 						case Y -> onYAxis = true;
@@ -379,6 +379,15 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 			Direction.Axis greatestAxis = this.chooseGreaterAxis(onXAxis ? Direction.Axis.X : null, this.chooseGreaterAxis(onYAxis ? Direction.Axis.Y : null, onZAxis ? Direction.Axis.Z : null));
 
 			return greatestAxis == null ? null : Direction.from(greatestAxis, this.storedVelocity.getComponentAlongAxis(greatestAxis) > 0 ? Direction.AxisDirection.POSITIVE : Direction.AxisDirection.NEGATIVE);
+		}
+
+		@Override
+		public @Nullable RecordedCollision getAnyMatch(CollisionMatcher matcher) {
+			for(RecordedCollision recordedCollision : this) {
+				if(matcher.test(recordedCollision, this.OWNER.getMario().getWorld().getBlockState(recordedCollision.pos())))
+					return recordedCollision;
+			}
+			return null;
 		}
 	}
 
@@ -446,7 +455,7 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		if(bapResult != BapResult.BUST)
 			this.RECORDED_COLLISIONS.REFLECTS[direction.getAxis().ordinal()] = true;
 		this.RECORDED_COLLISIONS.COLLIDED[direction.getAxis().ordinal()] = true;
-		this.RECORDED_COLLISIONS.add(new RecordedCollision(pos, direction, bapResult));
+		this.RECORDED_COLLISIONS.add(new RecordedCollision(pos, this.getMario().clientWorld.getBlockState(pos), direction, bapResult));
 		return bapResult == BapResult.BUST;
 	}
 }

@@ -288,6 +288,9 @@ public abstract class MarioMoveableData extends MarioPlayerData implements IMari
 		@Override public @Nullable Direction getDirectionOfCollisionsWith(CollisionMatcher matcher, boolean allowVertical) {
 			return null;
 		}
+		@Override public @Nullable RecordedCollision getAnyMatch(CollisionMatcher matcher) {
+			return null;
+		}
 
 		@Override public boolean add(RecordedCollision recordedCollision) {
 			throw new IllegalStateException("Trying to add an entry to a fake RecordedCollisionSet?!?!?!");

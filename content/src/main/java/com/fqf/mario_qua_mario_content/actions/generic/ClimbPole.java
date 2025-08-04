@@ -116,7 +116,7 @@ public class ClimbPole implements GenericActionDefinition {
 		return null;
 	}
 
-	public static final CharaStat CLIMB_SPEED = new CharaStat(0.3, StatCategory.UP, StatCategory.SPEED, StatCategory.CLIMBING);
+	public static final CharaStat CLIMB_SPEED = new CharaStat(0.2, StatCategory.UP, StatCategory.SPEED, StatCategory.CLIMBING);
 
 	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
 		return new ClimbVars();

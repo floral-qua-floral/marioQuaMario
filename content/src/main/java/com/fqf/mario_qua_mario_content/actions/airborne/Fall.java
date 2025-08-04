@@ -13,6 +13,7 @@ import com.fqf.mario_qua_mario_content.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario_content.actions.generic.Debug;
 import com.fqf.mario_qua_mario_content.actions.grounded.SubWalk;
 import com.fqf.mario_qua_mario_content.stomp_types.JumpStomp;
+import com.fqf.mario_qua_mario_content.util.ClimbTransitions;
 import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.Identifier;
@@ -126,7 +127,8 @@ public class Fall implements AirborneActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {
 		return List.of(
 				Submerged.SUBMERGE,
-				this.getLandingTransition()
+				this.getLandingTransition(),
+				ClimbTransitions.CLIMB_SOLID
 		);
 	}
 

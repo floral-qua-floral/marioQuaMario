@@ -1,27 +1,55 @@
 package com.fqf.mario_qua_mario_content.util;
 
+import com.fqf.mario_qua_mario_api.HelperGetter;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioReadableMotionData;
+import com.fqf.mario_qua_mario_api.mariodata.util.RecordedCollisionSet;
 import com.fqf.mario_qua_mario_api.util.CharaStat;
 import com.fqf.mario_qua_mario_api.util.StatCategory;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.Voicelines;
+import com.fqf.mario_qua_mario_content.actions.airborne.LavaBoost;
 import com.fqf.mario_qua_mario_content.actions.generic.ClimbPole;
 import com.fqf.mario_qua_mario_content.actions.generic.DebugSpinPitch;
 import com.fqf.mario_qua_mario_content.actions.wallbound.ClimbIntangibleDirectional;
+import com.fqf.mario_qua_mario_content.actions.wallbound.ClimbWall;
 import net.minecraft.block.*;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.registry.tag.TagKey;
+import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public class ClimbTransitions {
+	private static final TagKey<Block> MARIO_CLIMBABLE =
+			TagKey.of(RegistryKeys.BLOCK, Identifier.of("mario_qua_mario:mario_climbable"));
+	private static final TagKey<Block> MARIO_CLIMBABLE_PANES =
+			TagKey.of(RegistryKeys.BLOCK, Identifier.of("mario_qua_mario:mario_climbable_panes"));
+
+	public static boolean canClimbBlock(BlockState state, Direction direction) {
+		if(direction.getAxis().isHorizontal() && canClimbBlock(state)) {
+			Optional<Direction> facing = state.getOrEmpty(HorizontalFacingBlock.FACING);
+			if(facing.isPresent())
+				return facing.get().getAxis() == direction.getAxis(); // can climb the back face of ladders because why not
+
+			if(state.isIn(MARIO_CLIMBABLE_PANES))
+				return MultifaceGrowthBlock.hasDirection(state, direction.rotateYClockwise())
+						|| MultifaceGrowthBlock.hasDirection(state, direction.rotateYCounterclockwise());
+
+			return true;
+		}
+		return false;
+	}
 	private static boolean canClimbBlock(BlockState state) {
-		return state.isIn(BlockTags.CLIMBABLE) && !state.isOf(Blocks.SCAFFOLDING);
+		return state.isIn(MARIO_CLIMBABLE) && !state.isOf(Blocks.SCAFFOLDING);
 	}
 	public static @Nullable Direction hasDirectionality(BlockState state) {
 		Optional<Direction> facing = state.getOrEmpty(HorizontalFacingBlock.FACING);
@@ -40,8 +68,8 @@ public class ClimbTransitions {
 		BlockState state = mario.getBlockStateAtPos();
 		return
 				canClimbBlock(state)
-				&& (hasDirectionality(state) == null) != directionality;
-//				&& state.getCollisionShape(mario.getWorld(), mario.getBlockPos(), ShapeContext.of(mario)).isEmpty(); // TODO: Uncomment
+				&& (hasDirectionality(state) == null) != directionality
+				&& state.getCollisionShape(mario.getWorld(), mario.getBlockPos(), ShapeContext.of(mario)).isEmpty();
 	}
 	private static boolean tryingToStartClimbingIntangible(IMarioReadableMotionData data) {
 		if(data.getInputs().JUMP.isPressed()) return true;
@@ -57,8 +85,9 @@ public class ClimbTransitions {
 					data.setForwardStrafeVel(0, 0);
 				},
 				(data, isSelf, seed) -> {
-					data.playSound(MarioContentSFX.YOSHI, seed);
 					data.voice(Voicelines.DUCK_JUMP, seed);
+					BlockSoundGroup group = data.getMario().getBlockStateAtPos().getSoundGroup();
+					data.playSound(group.getStepSound(), group.getPitch(), 1, seed);
 				}
 		);
 	}
@@ -70,15 +99,16 @@ public class ClimbTransitions {
 
 	public static final TransitionDefinition CLIMB_NON_SOLID_DIRECTIONAL = makeNonSolidClimbingTransition(ClimbIntangibleDirectional.ID, true);
 	public static final TransitionDefinition CLIMB_NON_SOLID_NON_DIRECTIONAL = makeNonSolidClimbingTransition(ClimbPole.ID, false);
+	private static final RecordedCollisionSet.CollisionMatcher climbSolidMatcher = (collision, block) -> canClimbBlock(block, collision.direction());
 	public static final TransitionDefinition CLIMB_SOLID = new TransitionDefinition(
-			DebugSpinPitch.ID,
-			data -> {
-				return false;
-			},
+			ClimbWall.ID,
+			data -> data.getRecordedCollisions().getAnyMatch((collision, block) ->
+					collision.direction().getAxis().isHorizontal() && canClimbBlock(block, collision.direction())) != null,
 			EvaluatorEnvironment.CLIENT_ONLY,
-			data -> {},
+			data -> {
+				data.setForwardStrafeVel(0, 0);
+			},
 			(data, isSelf, seed) -> {
-				data.playSound(MarioContentSFX.YOSHI, seed);
 				data.voice(Voicelines.DUCK_JUMP, seed);
 			}
 	);

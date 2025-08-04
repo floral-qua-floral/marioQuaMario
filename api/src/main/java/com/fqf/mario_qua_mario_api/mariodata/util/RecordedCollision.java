@@ -1,10 +1,11 @@
 package com.fqf.mario_qua_mario_api.mariodata.util;
 
 import com.fqf.mario_qua_mario_api.interfaces.BapResult;
+import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
-public record RecordedCollision(BlockPos pos, Direction direction, @Nullable BapResult bapResult) {
+public record RecordedCollision(BlockPos pos, BlockState state, Direction direction, @Nullable BapResult bapResult) {
 }
