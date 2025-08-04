@@ -61,12 +61,15 @@ public class ClimbWall implements WallboundActionDefinition {
 			arrangement.z -= 3.7F;
 	    });
 	}
+	protected float getEntireBodyZOffset(IMarioReadableMotionData data) {
+		return 2.25F;
+	}
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
 	    return new PlayermodelAnimation(
 	            null,
 	            new ProgressHandler((data, ticksPassed) -> MathHelper.sin(data.getVars(ClimbOmniDirectionalVars.class).progress)),
 	            new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
-					arrangement.z += 2.25F;
+					arrangement.z += this.getEntireBodyZOffset(data);
 	            }),
 	            null,
 				new BodyPartAnimation((data, arrangement, progress) -> {
@@ -126,9 +129,14 @@ public class ClimbWall implements WallboundActionDefinition {
 		return false;
 	}
 
-	private static class ClimbOmniDirectionalVars extends ClimbVars {
-		float xComponent = 0.75F;
-		float yComponent = 0.45F;
+	protected static class ClimbOmniDirectionalVars extends ClimbVars {
+		private float xComponent = 0.75F;
+		private float yComponent = 0.45F;
+		public final boolean ALTERNATE_OFFSET;
+
+		private ClimbOmniDirectionalVars(boolean alternateOffset) {
+			this.ALTERNATE_OFFSET = alternateOffset;
+		}
 	}
 
 	protected double getConstantTowardsWallVel() {
@@ -136,8 +144,12 @@ public class ClimbWall implements WallboundActionDefinition {
 	}
 	protected final double TOWARDS_WALL_VEL = this.getConstantTowardsWallVel();
 
+	protected boolean useAlternateOffset(IMarioData data) {
+		return false;
+	}
+
 	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
-		return new ClimbOmniDirectionalVars();
+		return new ClimbOmniDirectionalVars(this.useAlternateOffset(data));
 	}
 	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
 		data.getVars(ClimbOmniDirectionalVars.class).clientTick(data);
@@ -180,7 +192,7 @@ public class ClimbWall implements WallboundActionDefinition {
 
 	public static final float MIN_DEVIATION_TO_SIDE_HANG = 99;
 
-	protected TransitionDefinition.ClientsExecutor makeSideHangTransitionClientsExecutor() {
+	protected TransitionDefinition.ClientsExecutor getSideHangTransitionClientsExecutor() {
 		return null;
 	}
 
@@ -191,7 +203,7 @@ public class ClimbWall implements WallboundActionDefinition {
 						data -> Math.abs(helper.getWallInfo(data).getYawDeviation()) > MIN_DEVIATION_TO_SIDE_HANG,
 						EvaluatorEnvironment.CLIENT_ONLY,
 						data -> data.setYVel(Math.min(0, data.getYVel())),
-						this.makeSideHangTransitionClientsExecutor()
+						this.getSideHangTransitionClientsExecutor()
 				)
 		);
 	}

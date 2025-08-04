@@ -1,9 +1,9 @@
 package com.fqf.mario_qua_mario_content.actions.wallbound;
 
-import com.fqf.mario_qua_mario_api.HelperGetter;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.*;
+import com.fqf.mario_qua_mario_api.mariodata.IMarioReadableMotionData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import net.minecraft.util.Identifier;
@@ -43,12 +43,15 @@ public class ClimbWallSideHang extends ClimbWall implements WallboundActionDefin
 			}
 	    });
 	}
-	public static PlayermodelAnimation makeAnimation(AnimationHelper helper, float entireBodyXOffset) {
+	protected float getEntireBodyXOffset(IMarioReadableMotionData data) {
+		return -1.25F;
+	}
+	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
 		return new PlayermodelAnimation(
 				null,
 				new ProgressHandler((data, ticksPassed) -> Math.signum(Objects.requireNonNull(helper.getWallInfo(data)).getYawDeviation())),
 				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
-					arrangement.x += progress * entireBodyXOffset;
+					arrangement.x += progress * this.getEntireBodyXOffset(data);
 					arrangement.roll = progress * 12.5F;
 				}),
 				null,
@@ -58,9 +61,6 @@ public class ClimbWallSideHang extends ClimbWall implements WallboundActionDefin
 				null
 		);
 	}
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-	    return makeAnimation(helper, -1.25F);
-	}
 
 	@Override
 	public @NotNull WallBodyAlignment getBodyAlignment() {
@@ -69,10 +69,13 @@ public class ClimbWallSideHang extends ClimbWall implements WallboundActionDefin
 
 	public static void sideHangTravelHook(IMarioTravelData data, WallInfo wall, WallboundActionHelper helper, ClimbWall baseAction) {
 		helper.setTowardsWallVel(data, baseAction.TOWARDS_WALL_VEL);
-		if(data.getYVel() < 0) {
+		if(data.getYVel() < -0.05) {
 			data.setYVel(data.getYVel() * 0.775);
 		}
-		else data.setYVel(0);
+		else {
+			data.getMario().fallDistance = 0;
+			data.setYVel(0);
+		}
 	}
 
 	@Override
@@ -80,31 +83,19 @@ public class ClimbWallSideHang extends ClimbWall implements WallboundActionDefin
 		sideHangTravelHook(data, wall, helper, this);
 	}
 
-	private static final WallboundActionHelper HELPER = HelperGetter.getWallboundActionHelper();
-	public static final TransitionDefinition RETURN_TO_NORMAL_CLIMB = new TransitionDefinition(
-			ClimbWall.ID,
-			data -> Math.abs(HELPER.getWallInfo(data).getYawDeviation()) < 80,
-			EvaluatorEnvironment.CLIENT_ONLY,
-			data -> data.setVelocity(Vec3d.ZERO),
-			null
-	);
+	protected Identifier getClimbingActionID() {
+		return ClimbWall.ID;
+	}
 
 	@Override
 	public @NotNull List<TransitionDefinition> getBasicTransitions(WallboundActionHelper helper) {
 		return List.of(
-				RETURN_TO_NORMAL_CLIMB
-		);
-	}
-
-	public static TransitionInjectionDefinition makeTransitionInjection(Identifier baseActionID, ClimbWall thisAction, Identifier thisActionID) {
-		return new TransitionInjectionDefinition(
-				TransitionInjectionDefinition.InjectionPlacement.BEFORE,
-				baseActionID,
-				(fromAction, fromCategory, existingTransitions) -> fromCategory != ActionCategory.WALLBOUND,
-				(nearbyTransition, castableHelper) -> nearbyTransition.variate(
-						thisActionID,
-						data -> (data.isServer() || MathHelper.angleBetween(data.getMario().getYaw(), thisAction.getWallYaw(data)) > ClimbWall.MIN_DEVIATION_TO_SIDE_HANG)
-								&& nearbyTransition.evaluator().shouldTransition(data)
+				new TransitionDefinition(
+						this.getClimbingActionID(),
+						data -> Math.abs(helper.getWallInfo(data).getYawDeviation()) < 80,
+						EvaluatorEnvironment.CLIENT_ONLY,
+						data -> data.setVelocity(Vec3d.ZERO),
+						this.getSideHangTransitionClientsExecutor()
 				)
 		);
 	}
@@ -112,7 +103,16 @@ public class ClimbWallSideHang extends ClimbWall implements WallboundActionDefin
 	@Override
 	public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
 		return Set.of(
-			makeTransitionInjection(ClimbWall.ID, this, ID)
+				new TransitionInjectionDefinition(
+						TransitionInjectionDefinition.InjectionPlacement.BEFORE,
+						this.getClimbingActionID(),
+						(fromAction, fromCategory, existingTransitions) -> fromCategory != ActionCategory.WALLBOUND,
+						(nearbyTransition, castableHelper) -> nearbyTransition.variate(
+								this.getID(),
+								data -> (data.isServer() || MathHelper.angleBetween(data.getMario().getYaw(), this.getWallYaw(data)) > ClimbWall.MIN_DEVIATION_TO_SIDE_HANG)
+										&& nearbyTransition.evaluator().shouldTransition(data)
+						)
+				)
 		);
 	}
 }

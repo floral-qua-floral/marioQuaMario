@@ -18,30 +18,25 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-public class ClimbIntangibleSideHang extends ClimbIntangibleDirectional implements WallboundActionDefinition {
+public class ClimbIntangibleSideHang extends ClimbWallSideHang implements WallboundActionDefinition {
 	public static final Identifier ID = MarioQuaMarioContent.makeID("climb_intangible_side_hang");
 	@Override public @NotNull Identifier getID() {
 	    return ID;
 	}
 
 	@Override
-	public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return ClimbWallSideHang.makeAnimation(helper, 1);
+	protected float getEntireBodyXOffset(IMarioReadableMotionData data) {
+		return data.getVars(ClimbOmniDirectionalVars.class).ALTERNATE_OFFSET ? 2.75F : 1;
 	}
 
 	@Override
-	public @NotNull WallBodyAlignment getBodyAlignment() {
-		return WallBodyAlignment.SIDEWAYS;
+	public float getWallYaw(IMarioReadableMotionData data) {
+		return ClimbIntangibleDirectional.currentBlockYaw(data);
 	}
 
 	@Override
-	public float getHeadYawRange() {
-		return 360;
-	}
-
-	@Override
-	public @Nullable Object setupCustomMarioVars(IMarioData data) {
-		return null;
+	public boolean checkLegality(IMarioReadableMotionData data, WallInfo wall, Vec3d checkOffset) {
+		return ClimbIntangibleDirectional.checkLegalityStatic(data, wall, checkOffset);
 	}
 
 	@Override
@@ -50,27 +45,22 @@ public class ClimbIntangibleSideHang extends ClimbIntangibleDirectional implemen
 	}
 
 	@Override
-	public void travelHook(IMarioTravelData data, WallInfo wall, WallboundActionHelper helper) {
-		ClimbWallSideHang.sideHangTravelHook(data, wall, helper, this);
+	protected double getConstantTowardsWallVel() {
+		return 0;
 	}
 
 	@Override
-	public @NotNull List<TransitionDefinition> getBasicTransitions(WallboundActionHelper helper) {
-		return List.of(
-				ClimbWallSideHang.RETURN_TO_NORMAL_CLIMB.variate(
-						ClimbIntangibleDirectional.ID,
-						null,
-						null,
-						null,
-						this.makeSideHangTransitionClientsExecutor()
-				)
-		);
+	protected Identifier getClimbingActionID() {
+		return ClimbIntangibleDirectional.ID;
 	}
 
 	@Override
-	public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
-		return Set.of(
-				ClimbWallSideHang.makeTransitionInjection(ClimbIntangibleDirectional.ID, this, ID)
-		);
+	protected boolean useAlternateOffset(IMarioData data) {
+		return ClimbIntangibleDirectional.useAlternateOffset((IMarioReadableMotionData) data);
+	}
+
+	@Override
+	protected TransitionDefinition.ClientsExecutor getSideHangTransitionClientsExecutor() {
+		return ClimbIntangibleDirectional.SIDE_HANG_CLIENTS_EXECUTOR;
 	}
 }
