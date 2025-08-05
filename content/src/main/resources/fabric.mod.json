@@ -65,6 +65,7 @@
 			"com.fqf.mario_qua_mario_content.actions.airborne.GroundPoundFlip",
 			"com.fqf.mario_qua_mario_content.actions.airborne.GroundPoundDrop",
 			"com.fqf.mario_qua_mario_content.actions.airborne.BonkAir",
+			"com.fqf.mario_qua_mario_content.actions.airborne.WallJump",
 
 			"com.fqf.mario_qua_mario_content.actions.power.TailStall",
 			"com.fqf.mario_qua_mario_content.actions.power.TailStallDucking",

@@ -7,10 +7,8 @@ import com.fqf.mario_qua_mario_api.mariodata.*;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.*;
-import com.fqf.mario_qua_mario_content.actions.airborne.Backflip;
-import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
-import com.fqf.mario_qua_mario_content.actions.airborne.Jump;
-import com.fqf.mario_qua_mario_content.actions.airborne.SpecialFall;
+import com.fqf.mario_qua_mario_content.Voicelines;
+import com.fqf.mario_qua_mario_content.actions.airborne.*;
 import com.fqf.mario_qua_mario_content.actions.generic.ClimbPole;
 import com.fqf.mario_qua_mario_content.actions.grounded.SubWalk;
 import com.fqf.mario_qua_mario_content.util.ClimbTransitions;
@@ -77,7 +75,11 @@ public class ClimbWall implements WallboundActionDefinition {
 				}),
 	            makeArmAnimation(1), makeArmAnimation(-1),
 	            makeLegAnimation(1), makeLegAnimation(-1),
-	            null
+	            new LimbAnimation(true, (data, arrangement, progress) -> {
+					arrangement.pitch = 60;
+					if(data.getVelocity().lengthSquared() > 0.1)
+						arrangement.roll -= progress * 30;
+				})
 	    );
 	}
 
@@ -210,16 +212,21 @@ public class ClimbWall implements WallboundActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(WallboundActionHelper helper) {
 		return List.of(
 				new TransitionDefinition(
-						Backflip.ID,
+						WallJump.ID,
 						data -> helper.getWallInfo(data) != null
 								&& Objects.requireNonNull(helper.getWallInfo(data)).getTowardsWallInput() < -0.45
 								&& data.getInputs().JUMP.isPressed(),
 						EvaluatorEnvironment.CLIENT_ONLY,
 						data -> {
-							data.setYVel(Backflip.BACKFLIP_VEL.get(data));
-							helper.setTowardsWallVel(data, Backflip.BACKFLIP_BACKWARDS_SPEED.get(data));
+							data.setYVel(WallJump.WALL_JUMP_VEL.get(data));
+							double speed = WallJump.WALL_JUMP_SPEED.get(data);
+							data.setForwardStrafeVel(data.getInputs().getForwardInput() * speed,
+									data.getInputs().getStrafeInput() * speed);
 						},
-						(data, isSelf, seed) -> data.playJumpSound(seed)
+						(data, isSelf, seed) -> {
+							data.voice(Voicelines.WALL_JUMP, seed);
+							data.playJumpSound(seed);
+						}
 				),
 				new TransitionDefinition(
 						Fall.ID,

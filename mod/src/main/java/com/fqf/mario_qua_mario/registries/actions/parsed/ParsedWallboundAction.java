@@ -40,6 +40,7 @@ public class ParsedWallboundAction extends AbstractParsedAction {
 
 	@Override
 	public boolean travelHook(MarioMoveableData data) {
+		data.jumpCapped = false;
 		UniversalActionDefinitionHelper helper = UniversalActionDefinitionHelper.INSTANCE;
 		this.WALLBOUND_DEFINITION.travelHook(data, helper.getWallInfo(data), helper);
 		return true;

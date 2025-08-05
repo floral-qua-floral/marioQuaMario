@@ -14,17 +14,14 @@ import com.fqf.mario_qua_mario_api.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
-import com.fqf.mario_qua_mario_content.actions.airborne.Backflip;
-import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
-import com.fqf.mario_qua_mario_content.actions.airborne.Jump;
-import com.fqf.mario_qua_mario_content.actions.airborne.SpecialFall;
+import com.fqf.mario_qua_mario_content.Voicelines;
+import com.fqf.mario_qua_mario_content.actions.airborne.*;
 import com.fqf.mario_qua_mario_content.actions.grounded.SubWalk;
 import com.fqf.mario_qua_mario_content.util.ClimbTransitions;
 import com.fqf.mario_qua_mario_content.util.ClimbVars;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
@@ -45,10 +42,10 @@ public class ClimbPole implements GenericActionDefinition {
 		return Entity.adjustMovementForCollisions(data.getMario(), offset, cameraBox, data.getMario().getWorld(), List.of());
 	}
 
-	private static LimbAnimation makeArmAnimation(int factor, float armYaw) {
+	private static LimbAnimation makeArmAnimation(int factor) {
 	    return new LimbAnimation(false, (data, arrangement, progress) -> {
 			arrangement.pitch -= 140 + progress * -20 * factor;
-			arrangement.yaw += armYaw * factor;
+			arrangement.yaw -= 20 * factor;
 			arrangement.y += progress * 1.9F * factor;
 	    });
 	}
@@ -60,31 +57,25 @@ public class ClimbPole implements GenericActionDefinition {
 	    });
 	}
 
-	public static PlayermodelAnimation makeAnimation(float armYaw) {
+	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
 		return new PlayermodelAnimation(
 				null,
-				new ProgressHandler((data, ticksPassed) -> MathHelper.sin(data.getVars(ClimbVars.class).progress)),
-				null,
-				null,
-				new BodyPartAnimation((data, arrangement, progress) -> {
-					arrangement.yaw += progress * -15;
-				}),
-				makeArmAnimation(1, armYaw), makeArmAnimation(-1, armYaw),
-				makeLegAnimation(1), makeLegAnimation(-1),
-				new LimbAnimation(true, (data, arrangement, progress) -> arrangement.pitch = 70)
-		);
-	}
-
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-	    return makeAnimation(-20).variate(
-				null, null,
+				new ProgressHandler((data1, ticksPassed) -> MathHelper.sin(data1.getVars(ClimbVars.class).progress)),
 				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
 					Vec3d offset = getMaximumOffset(data, 0.1).multiply(16);
 					arrangement.z += (float) offset.horizontalLength();
 				}),
-				null, null,
-				null, null,
-				null, null, null
+				null,
+				new BodyPartAnimation((data1, arrangement1, progress1) -> {
+					arrangement1.yaw += progress1 * -15;
+				}),
+				makeArmAnimation(1), makeArmAnimation(-1),
+				makeLegAnimation(1), makeLegAnimation(-1),
+				new LimbAnimation(true, (data, arrangement, progress) -> {
+					arrangement.pitch = 60;
+					if(data.getVelocity().lengthSquared() > 0.1)
+						arrangement.roll += progress * 30;
+				})
 		);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
@@ -147,15 +138,19 @@ public class ClimbPole implements GenericActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions() {
 		return List.of(
 				new TransitionDefinition(
-						Backflip.ID,
-						data -> data.getInputs().getForwardInput() < 0 && data.getInputs().JUMP.isPressed(),
+						WallJump.ID,
+						data -> (data.getInputs().getForwardInput() < -0.25 || Math.abs(data.getInputs().getStrafeInput()) > 0.25)
+								&& data.getInputs().JUMP.isPressed(),
 						EvaluatorEnvironment.CLIENT_ONLY,
 						data -> {
 							releasePole(data);
-							data.setYVel(0.8);
-							data.setForwardVel(-0.4);
+							data.setYVel(WallJump.WALL_JUMP_VEL.get(data));
+							double speed = WallJump.WALL_JUMP_SPEED.get(data);
+							data.setForwardStrafeVel(data.getInputs().getForwardInput() * speed,
+									data.getInputs().getStrafeInput() * speed);
 						},
 						(data, isSelf, seed) -> {
+							data.voice(Voicelines.WALL_JUMP, seed);
 							data.playJumpSound(seed);
 						}
 				),

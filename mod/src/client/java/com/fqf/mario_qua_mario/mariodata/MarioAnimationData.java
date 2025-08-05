@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.mariodata;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.Arrangement;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.LimbAnimation;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.PlayermodelAnimation;
@@ -244,7 +245,7 @@ public class MarioAnimationData {
 				if(this.currentAnim == null || this.currentAnim.tailAnimation() == null || this.currentAnim.tailAnimation().shouldSwingWithMovement()) {
 					float swing = leftLegPitch - rightLegPitch;
 					float lift;
-					if (data.getMario().isOnGround()) {
+					if (data.getMario().isOnGround() || data.getActionCategory() == ActionCategory.WALLBOUND) {
 						lift = Easing.SINE_IN_OUT.ease(Easing.clampedRangeToProgress(data.getForwardVel(), 0, 0.55));
 						swing += sin(data.getMario().age / 17F) * 0.5F * Math.max(0F, HALF_PI * 0.5F - Math.abs(swing));
 					}

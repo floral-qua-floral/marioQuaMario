@@ -126,7 +126,7 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 				}
 
 				// Else, broadcast wall yaw to clients:
-
+				MarioDataPackets.transmitWallYawS2C(this.getMario(), this.lastReceivedWallYaw);
 			}
 
 			@Nullable ParsedTransition transition = fromAction.TRANSITIONS_FROM_TARGETS.get(toAction);
@@ -192,7 +192,8 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 	private long lastReceivedWallYawTime = Long.MIN_VALUE;
 	public void receiveWallYaw(float wallYaw) {
 		this.lastReceivedWallYaw = wallYaw;
-		this.lastReceivedWallYawTime = this.getMario().getWorld().getTime();
+		// NaN yaws will never be checked
+		this.lastReceivedWallYawTime = Float.isNaN(wallYaw) ? Long.MIN_VALUE : this.getMario().getWorld().getTime();
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package com.fqf.mario_qua_mario_content.util;
 
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.*;
 import com.fqf.mario_qua_mario_api.util.Easing;
+import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 
 public class StandUpWithKneeAnimation {
 
@@ -114,7 +115,11 @@ public class StandUpWithKneeAnimation {
 			float legPitch3, float legRoll3, float legX3, float legY3, float legZ3
 	) {
 		return new PlayermodelAnimation(
-				null,
+				(data, rightArmBusy, leftArmBusy, headRelativeYaw) -> {
+					if(rightArmBusy && !leftArmBusy) return false;
+					if(leftArmBusy && !rightArmBusy) return true;
+					return data.getMario().getRandom().nextBoolean();
+				},
 				new ProgressHandler((data, ticksPassed) -> 2 * Easing.SINE_IN_OUT.ease(Math.min(1, progressCalculator.calculateProgress(data, ticksPassed)))),
 				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
 					arrangement.y += helper.interpolateKeyframes(progress,
@@ -142,7 +147,9 @@ public class StandUpWithKneeAnimation {
 				makeArmAnimation(helper, -1, armPitch1, armYaw1, armRoll1, armZ1, armPitch3, armYaw3, armRoll3),
 				makeLegAnimation(helper, 1, legPitch1, legYaw1, legZ1, legRightPitch2, legRightYaw2, legRightY2, legRightZ2, legPitch3, legRoll3, legX3, legY3, legZ3),
 				makeLegAnimation(helper, -1, legPitch1, legYaw1, legZ1, legRightPitch2, legRightYaw2, legRightY2, legRightZ2, legPitch3, legRoll3, legX3, legY3, legZ3),
-				null
+				new LimbAnimation(true, (data, arrangement, progress) -> {
+					arrangement.pitch *= progress / 2;
+				})
 		);
 	}
 

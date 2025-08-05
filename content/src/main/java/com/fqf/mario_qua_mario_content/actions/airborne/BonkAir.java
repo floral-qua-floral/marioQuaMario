@@ -28,9 +28,8 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 
 	private static LimbAnimation makeArmAnimation(AnimationHelper helper, int factor) {
 		return new LimbAnimation(false, (data, arrangement, progress) -> {
-			float deviation = MathHelper.subtractAngles(data.getMario().bodyYaw, data.getVars(BonkVars.class).BONK_YAW);
-			float poseProgress = Math.abs(deviation / 180 * 2);
-			float inversion = Math.signum(deviation);
+			float poseProgress = Math.abs(progress);
+			float inversion = Math.signum(progress);
 			boolean isTrailingLimb = inversion == factor;
 
 			arrangement.pitch += helper.interpolateKeyframes(poseProgress,
@@ -63,9 +62,8 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 	}
 	private static LimbAnimation makeLegAnimation(AnimationHelper helper, int factor) {
 		return new LimbAnimation(false, (data, arrangement, progress) -> {
-			float deviation = MathHelper.subtractAngles(data.getMario().bodyYaw, data.getVars(BonkVars.class).BONK_YAW);
-			float poseProgress = Math.abs(deviation / 180 * 2);
-			float inversion = Math.signum(deviation);
+			float poseProgress = Math.abs(progress);
+			float inversion = Math.signum(progress);
 			boolean isTrailingLimb = inversion == factor;
 
 			arrangement.pitch += helper.interpolateKeyframes(poseProgress,
@@ -103,11 +101,13 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
 		return new PlayermodelAnimation(
 				null,
-				new ProgressHandler((data, ticksPassed) -> 1),
-				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
+				new ProgressHandler((data, ticksPassed) -> {
 					float deviation = MathHelper.subtractAngles(data.getMario().bodyYaw, data.getVars(BonkVars.class).BONK_YAW);
-					float poseProgress = Math.abs(deviation / 180 * 2);
-					float inversion = Math.signum(deviation);
+					return deviation / 180 * 2;
+				}),
+				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
+					float poseProgress = Math.abs(progress);
+					float inversion = Math.signum(progress);
 
 					arrangement.x += helper.interpolateKeyframes(poseProgress,
 							0,
@@ -122,9 +122,8 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 				}),
 				null,
 				new BodyPartAnimation((data, arrangement, progress) -> {
-					float deviation = MathHelper.subtractAngles(data.getMario().bodyYaw, data.getVars(BonkVars.class).BONK_YAW);
-					float poseProgress = Math.abs(deviation / 180 * 2);
-					float inversion = Math.signum(deviation);
+					float poseProgress = Math.abs(progress);
+					float inversion = Math.signum(progress);
 
 					arrangement.pitch += helper.interpolateKeyframes(poseProgress,
 							12.5F,
