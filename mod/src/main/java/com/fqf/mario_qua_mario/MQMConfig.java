@@ -11,6 +11,7 @@ public class MQMConfig implements ConfigData {
 	private boolean logNBTReadWrite = false;
 	private boolean logActionTransitionInjections = false;
 	private boolean specialHUD = false;
+	private boolean allowIllegalTransitionsInSingleplayer = true;
 
 	public boolean logAllActionTransitions() {
 		return this.logAllActionTransitions;
@@ -26,5 +27,8 @@ public class MQMConfig implements ConfigData {
 	}
 	public int getBufferLength() {
 		return this.bufferLength;
+	}
+	public boolean shouldAllowIllegalTransitionsInSingleplayer() {
+		return this.allowIllegalTransitionsInSingleplayer;
 	}
 }

@@ -61,6 +61,7 @@
 
   "subtitles.mario_qua_mario.movement.flip": "Aerial flip",
   "subtitles.mario_qua_mario.movement.jump": "Jumping",
+  "subtitles.mario_qua_mario.movement.wall_jump": "Wall jumping",
 
   "subtitles.mario_qua_mario.power_up.coin": "Coin spent",
   "subtitles.mario_qua_mario.power_up.fireball": "Fireball thrown",

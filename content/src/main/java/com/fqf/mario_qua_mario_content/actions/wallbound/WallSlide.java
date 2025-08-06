@@ -187,7 +187,7 @@ public class WallSlide implements WallboundActionDefinition {
 		return null;
 	}
 	@Override public @NotNull SlidingStatus getSlidingStatus() {
-		return SlidingStatus.NOT_SLIDING;
+		return SlidingStatus.WALL_SLIDING;
 	}
 
 	@Override public @NotNull SneakingRule getSneakingRule() {
@@ -224,6 +224,8 @@ public class WallSlide implements WallboundActionDefinition {
 
 	@Override
 	public boolean checkLegality(IMarioReadableMotionData data, WallInfo wall, Vec3d checkOffset) {
+		if(!data.getActionID().equals(WallSlide.ID) && data.isClient() && wall.getTowardsWallInput() < 0.3)
+			return false; // Yay!
 		World world = data.getMario().getWorld();
 		for(BlockPos wallBlock : wall.getWallBlocks(0.4)) {
 			if(canSlideDownBlock(world.getBlockState(wallBlock))) return true;
@@ -246,7 +248,7 @@ public class WallSlide implements WallboundActionDefinition {
 	@Override public void travelHook(IMarioTravelData data, WallInfo wall, WallboundActionHelper helper) {
 		if(data.isClient()) {
 			if(wall.getTowardsWallInput() < -0.05)
-				data.getVars(WallSlideVars.class).holdAwayFromWallTicks += 2;
+				data.getVars(WallSlideVars.class).holdAwayFromWallTicks += 3;
 			else if(wall.getTowardsWallInput() < 0.05)
 				data.getVars(WallSlideVars.class).holdAwayFromWallTicks++;
 			else
@@ -268,7 +270,7 @@ public class WallSlide implements WallboundActionDefinition {
 				data.setYVel(0);
 				if(data.isServer()) data.setForwardStrafeVel(0, 0);
 			},
-			(data, isSelf, seed) -> data.playSound(MarioContentSFX.KICK, seed)
+			null
 	);
 
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(WallboundActionHelper helper) {
@@ -287,13 +289,14 @@ public class WallSlide implements WallboundActionDefinition {
 							helper.setTowardsWallVel(data, -WallJump.WALL_JUMP_SPEED.get(data));
 						},
 						(data, isSelf, seed) -> {
+							data.playSound(MarioContentSFX.WALL_JUMP, seed);
 							data.playJumpSound(seed);
 							data.voice(Voicelines.WALL_JUMP, seed);
 						}
 				),
 				new TransitionDefinition(
 						Fall.ID,
-						data -> data.getInputs().DUCK.isPressed() || data.getVars(WallSlideVars.class).holdAwayFromWallTicks > 4,
+						data -> data.getInputs().DUCK.isPressed() || data.getVars(WallSlideVars.class).holdAwayFromWallTicks > 6,
 						EvaluatorEnvironment.CLIENT_ONLY,
 						data -> helper.setTowardsWallVel(data, 0),
 						null

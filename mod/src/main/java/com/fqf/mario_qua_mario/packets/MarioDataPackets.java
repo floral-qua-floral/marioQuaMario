@@ -14,7 +14,10 @@ import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+
+import java.util.Objects;
 
 public class MarioDataPackets {
 	public static void disableMarioS2C(ServerPlayerEntity mario) {
@@ -124,7 +127,8 @@ public class MarioDataPackets {
 			AbstractParsedAction fromAction = ParsedActionHelper.get(payload.fromAction());
 			AbstractParsedAction toAction = ParsedActionHelper.get(payload.toAction());
 //			MarioQuaMario.LOGGER.info("Received setActionC2S: {}->{}", stompTypeID.ID, toAction.ID);
-			boolean rejectInvalid = context.player().getWorld().getGameRules().getBoolean(MarioGamerules.REJECT_INVALID_ACTION_TRANSITIONS);
+			boolean rejectInvalid = context.player().getWorld().getGameRules().getBoolean(MarioGamerules.REJECT_INVALID_ACTION_TRANSITIONS)
+					&& !(MarioQuaMario.CONFIG.shouldAllowIllegalTransitionsInSingleplayer() && Objects.requireNonNull(context.player().getServer()).isHost(context.player().getGameProfile()));
 			if(context.player().mqm$getMarioData().setAction(fromAction, toAction, payload.seed, !rejectInvalid, false)) {
 				MarioPackets.sendToTrackers(context.player(), new ActionTransitionS2CPayload(
 						context.player().getId(),

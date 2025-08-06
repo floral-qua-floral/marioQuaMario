@@ -1,6 +1,6 @@
-package com.fqf.mario_qua_mario.util;
+package com.fqf.mario_qua_mario_content.util;
 
-import com.fqf.mario_qua_mario.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundEvent;

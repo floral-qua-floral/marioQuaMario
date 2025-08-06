@@ -213,11 +213,11 @@ def handle_sound_set(
 
 def get_sounds_dot_json_location(module):
     return f"../../{module}/src/client/resources/assets/mario_qua_mario/"
-def get_java_file_location(module, addend):
-    return f"../../{module}/src/main/java/com/fqf/mario_qua_mario/util/Mario{addend}SFX.java"
+def get_java_file_location(module, addend, package_addend):
+    return f"../../{module}/src/main/java/com/fqf/mario_qua_mario{package_addend}/util/Mario{addend}SFX.java"
 
 if __name__ == "__main__":
     handle_sound_set(True, content_subtitles, "Output/content/", "Input/MarioContentSfxClass.txt", "Output/content/MarioTestSFX.java.txt",
             old_lang_file = "Input/testInput.json")
-    handle_sound_set(True, content_subtitles, get_sounds_dot_json_location("content"), "Input/MarioContentSfxClass.txt", get_java_file_location("content", "Content"))
-    handle_sound_set(False, mod_subtitles, get_sounds_dot_json_location("mod"), "Input/MarioModSfxClass.txt", get_java_file_location("mod", ""))
+    handle_sound_set(True, content_subtitles, get_sounds_dot_json_location("content"), "Input/MarioContentSfxClass.txt", get_java_file_location("content", "Content", "_content"))
+    handle_sound_set(False, mod_subtitles, get_sounds_dot_json_location("mod"), "Input/MarioModSfxClass.txt", get_java_file_location("mod", "", ""))

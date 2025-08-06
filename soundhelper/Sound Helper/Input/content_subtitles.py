@@ -33,6 +33,7 @@ voicelines = {
 sfx_movement = {
   "jump": "Jumping",
   "flip": "Aerial flip",
+  "wall_jump": "Wall jumping"
 }
 
 sfx_power_up = {

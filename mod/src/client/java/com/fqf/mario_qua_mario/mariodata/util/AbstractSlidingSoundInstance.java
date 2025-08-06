@@ -15,7 +15,7 @@ public abstract class AbstractSlidingSoundInstance extends MovingSoundInstance {
 	public AbstractSlidingSoundInstance(SoundEvent soundEvent, IMarioClientDataImpl data) {
 		super(soundEvent, SoundCategory.PLAYERS, data.getMario().getRandom());
 		this.DATA = data;
-		this.MARIO = (AbstractClientPlayerEntity) data.getMario();
+		this.MARIO = data.getMario();
 		this.SOUND_EVENT = soundEvent;
 		this.repeat = true;
 		this.ticks = 0;

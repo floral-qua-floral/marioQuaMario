@@ -13,6 +13,7 @@ import com.fqf.mario_qua_mario_content.actions.generic.ClimbPole;
 import com.fqf.mario_qua_mario_content.actions.grounded.SubWalk;
 import com.fqf.mario_qua_mario_content.util.ClimbTransitions;
 import com.fqf.mario_qua_mario_content.util.ClimbVars;
+import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -204,7 +205,10 @@ public class ClimbWall implements WallboundActionDefinition {
 						this.getSideHangActionID(),
 						data -> Math.abs(helper.getWallInfo(data).getYawDeviation()) > MIN_DEVIATION_TO_SIDE_HANG,
 						EvaluatorEnvironment.CLIENT_ONLY,
-						data -> data.setYVel(Math.min(0, data.getYVel())),
+						data -> {
+							data.setForwardStrafeVel(0, 0);
+							data.setYVel(Math.min(0, data.getYVel()));
+						},
 						this.getSideHangTransitionClientsExecutor()
 				)
 		);

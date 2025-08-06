@@ -54,8 +54,8 @@ public class ParsedActionHelper {
 						data.getWallInfo().setYaw(wallYaw);
 
 						if(!wallAction.verifyWallLegality(data, Vec3d.ZERO)) {
-							MarioQuaMario.LOGGER.info("Client is cancelling successful wallbound transition without networking " +
-									"because legality check failed ({} -> {})", data.getActionID(), wallAction.ID);
+//							MarioQuaMario.LOGGER.info("Client is cancelling successful wallbound transition without networking " +
+//									"because legality check failed ({} -> {})", data.getActionID(), wallAction.ID);
 							continue;
 						}
 
