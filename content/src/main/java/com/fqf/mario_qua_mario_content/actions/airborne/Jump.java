@@ -107,8 +107,6 @@ public class Jump extends Fall implements AirborneActionDefinition {
 	}
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {
 		return List.of(
-				ClimbTransitions.CLIMB_NON_SOLID_DIRECTIONAL,
-				ClimbTransitions.CLIMB_NON_SOLID_NON_DIRECTIONAL,
 				GroundPoundFlip.GROUND_POUND,
 				helper.makeJumpCapTransition(this, this.getJumpCapThreshold())
 		);

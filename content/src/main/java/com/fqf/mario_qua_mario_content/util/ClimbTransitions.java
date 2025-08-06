@@ -166,7 +166,8 @@ public class ClimbTransitions {
 	public static final TransitionDefinition CLIMB_NON_SOLID_NON_DIRECTIONAL = makeNonSolidClimbingTransition(ClimbPole.ID, false);
 	public static final TransitionDefinition CLIMB_SOLID = new TransitionDefinition(
 			ClimbWall.ID,
-			data -> data.getRecordedCollisions().getAnyMatch((collision, block) ->
+			data -> (MarioQuaMarioContent.CONFIG.doAutoLadder() || data.getInputs().JUMP.isPressed()) &&
+					data.getRecordedCollisions().getAnyMatch((collision, block) ->
 					collision.direction().getAxis().isHorizontal() && canClimbBlock(block, collision.direction())) != null,
 			EvaluatorEnvironment.CLIENT_ONLY,
 			data -> {

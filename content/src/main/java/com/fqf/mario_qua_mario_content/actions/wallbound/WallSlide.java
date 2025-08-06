@@ -260,6 +260,7 @@ public class WallSlide implements WallboundActionDefinition {
 			helper.setSidleVel(data, wall.getSidleVel() * 0.8);
 		else
 			helper.setSidleVel(data, wall.getSidleInput() * 0.065);
+		helper.setTowardsWallVel(data, 0.2);
 	}
 
 	public static final TransitionDefinition WALL_SLIDE = new TransitionDefinition(
@@ -305,6 +306,10 @@ public class WallSlide implements WallboundActionDefinition {
 	}
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(WallboundActionHelper helper) {
 		return List.of(
+				ClimbTransitions.CLIMB_SOLID.variate(
+						null,
+						data -> helper.getWallInfo(data).getTowardsWallInput() > 0.3 && ClimbTransitions.CLIMB_SOLID.evaluator().shouldTransition(data)
+				),
 				new TransitionDefinition(
 						SpecialFall.ID,
 						data -> !helper.getWallInfo(data).isLegal(),

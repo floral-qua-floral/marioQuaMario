@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "#c:glazed_terracottas"
+    "#c:glazed_terracottas",
+    "minecraft:honey_block"
   ]
 }

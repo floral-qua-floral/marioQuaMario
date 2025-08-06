@@ -124,6 +124,8 @@ public class Fall implements AirborneActionDefinition {
 		return List.of(
 				Submerged.SUBMERGE,
 				this.getLandingTransition(),
+				ClimbTransitions.CLIMB_NON_SOLID_DIRECTIONAL,
+				ClimbTransitions.CLIMB_NON_SOLID_NON_DIRECTIONAL,
 				ClimbTransitions.CLIMB_SOLID,
 				WallSlide.WALL_SLIDE
 		);

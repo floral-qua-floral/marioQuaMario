@@ -182,7 +182,7 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 		public int noInputTicks;
 
 		public BonkVars(IMarioData data) {
-			this.noInputTicks = 1;
+			this.noInputTicks = 2;
 			BonkVars oldVars = data.getVars(BonkVars.class);
 			if(oldVars != null)
 				this.BONK_YAW = oldVars.BONK_YAW;
