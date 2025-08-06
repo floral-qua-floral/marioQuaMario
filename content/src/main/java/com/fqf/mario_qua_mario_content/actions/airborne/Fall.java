@@ -13,7 +13,6 @@ import com.fqf.mario_qua_mario_content.actions.grounded.SubWalk;
 import com.fqf.mario_qua_mario_content.actions.wallbound.WallSlide;
 import com.fqf.mario_qua_mario_content.stomp_types.JumpStomp;
 import com.fqf.mario_qua_mario_content.util.ClimbTransitions;
-import com.fqf.mario_qua_mario_content.util.WallSlideableVars;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -91,7 +90,7 @@ public class Fall implements AirborneActionDefinition {
 	);
 
 	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
-		return new WallSlideableVars();
+		return null;
 	}
 	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
 

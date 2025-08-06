@@ -113,8 +113,4 @@ public interface Bappable {
 	) {
 
 	}
-
-	private static TagKey<Block> getBlockTag(String name) {
-		return TagKey.of(RegistryKeys.BLOCK, Identifier.of("mario_qua_mario", name));
-	}
 }

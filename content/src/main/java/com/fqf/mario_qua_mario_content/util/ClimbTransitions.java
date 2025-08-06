@@ -13,8 +13,6 @@ import com.fqf.mario_qua_mario_content.actions.wallbound.ClimbIntangibleDirectio
 import com.fqf.mario_qua_mario_content.actions.wallbound.ClimbWall;
 import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.tag.TagKey;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -24,18 +22,13 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 
 public class ClimbTransitions {
-	private static final TagKey<Block> MARIO_CLIMBABLE =
-			TagKey.of(RegistryKeys.BLOCK, Identifier.of("mario_qua_mario:mario_climbable"));
-	private static final TagKey<Block> MARIO_CLIMBABLE_PANES =
-			TagKey.of(RegistryKeys.BLOCK, Identifier.of("mario_qua_mario:mario_climbable_panes"));
-
 	public static boolean canClimbBlock(BlockState state, Direction direction) {
 		if(direction.getAxis().isHorizontal() && canClimbBlock(state)) {
 			Optional<Direction> facing = state.getOrEmpty(HorizontalFacingBlock.FACING);
 			if(facing.isPresent())
 				return facing.get().getAxis() == direction.getAxis(); // can climb the back face of ladders because why not
 
-			if(state.isIn(MARIO_CLIMBABLE_PANES))
+			if(state.isIn(MQMContentTags.CLIMBABLE_PANES))
 				return MultifaceGrowthBlock.hasDirection(state, direction.rotateYClockwise())
 						|| MultifaceGrowthBlock.hasDirection(state, direction.rotateYCounterclockwise());
 
@@ -47,7 +40,7 @@ public class ClimbTransitions {
 		return canClimbBlock(state) && state.getCollisionShape(mario.getWorld(), pos, ShapeContext.of(mario)).isEmpty();
 	}
 	private static boolean canClimbBlock(BlockState state) {
-		return state.isIn(MARIO_CLIMBABLE) && !state.isOf(Blocks.SCAFFOLDING);
+		return state.isIn(MQMContentTags.CLIMBABLE) && !state.isOf(Blocks.SCAFFOLDING);
 	}
 
 	private static boolean testBackFaceClimbability(PlayerEntity mario, BlockPos pos, Direction inDirection) {

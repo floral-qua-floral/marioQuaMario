@@ -90,7 +90,9 @@ public class GroundPoundDrop implements AirborneActionDefinition {
 				new TransitionDefinition(
 						SpecialFall.ID,
 						data -> data.getYVel() > 0 || data.getInputs().JUMP.isPressed(),
-						EvaluatorEnvironment.CLIENT_ONLY
+						EvaluatorEnvironment.CLIENT_ONLY,
+						data -> data.getInputs().DUCK.isPressed(), // Unbuffer duck to make Ground Pound stalling harder
+						(data, isSelf, seed) -> data.stopStoredSound(MarioContentSFX.GROUND_POUND_DROP)
 				)
 		);
 	}

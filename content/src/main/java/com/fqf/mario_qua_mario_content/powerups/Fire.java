@@ -6,12 +6,10 @@ import com.fqf.mario_qua_mario_api.mariodata.*;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.Voicelines;
 import com.fqf.mario_qua_mario_content.entity.custom.MarioFireballProjectileEntity;
+import com.fqf.mario_qua_mario_content.util.MQMContentTags;
 import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
@@ -89,13 +87,10 @@ public class Fire implements PowerUpDefinition {
 
 	}
 
-	private static final TagKey<EntityType<?>> FIRE_MARIO_PUNCH_TARGETS =
-			TagKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of("mario_qua_mario:fire_mario_punch_targets"));
-
 	private static boolean canFireballEntity(EntityHitResult entityHitResult) {
 		return entityHitResult == null || !(
 				entityHitResult.getEntity().isFireImmune()
-				|| entityHitResult.getEntity().getType().isIn(FIRE_MARIO_PUNCH_TARGETS)
+				|| entityHitResult.getEntity().getType().isIn(MQMContentTags.FIRE_MARIO_PUNCH_TARGETS)
 		);
 	}
 

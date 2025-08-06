@@ -9,10 +9,10 @@ import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.Ani
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
 import com.fqf.mario_qua_mario_content.actions.airborne.SpecialFall;
-import com.fqf.mario_qua_mario_content.util.WallSlideableVars;
 import com.fqf.mario_qua_mario_content.actions.grounded.SubWalk;
 import com.fqf.mario_qua_mario_content.util.ClimbTransitions;
 import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
+import com.fqf.mario_qua_mario_content.util.MarioVars;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -105,7 +105,7 @@ public class WallSlide implements WallboundActionDefinition {
 
 	public static final TransitionDefinition WALL_SLIDE = new TransitionDefinition(
 			WallSlide.ID,
-			data -> WallSlideableVars.check(data, true),
+			MarioVars::checkWallSlide,
 			EvaluatorEnvironment.CLIENT_ONLY,
 			null,
 			(data, isSelf, seed) -> data.playSound(MarioContentSFX.KICK, seed)
