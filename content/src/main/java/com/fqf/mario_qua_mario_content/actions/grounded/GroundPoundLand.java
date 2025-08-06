@@ -31,7 +31,7 @@ public class GroundPoundLand implements GroundedActionDefinition {
 	private static final float STANDUP_TICKS = 10;
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return BonkGroundBackward.makeBonkStandupAnimation(helper, (data, ticksPassed) -> ticksPassed / STANDUP_TICKS);
+		return BonkGroundBackward.makeBonkStandupAnimation(helper, (data, ticksPassed) -> ActionTimerVars.get(data).actionTimer / STANDUP_TICKS);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
 		return null;
@@ -65,7 +65,8 @@ public class GroundPoundLand implements GroundedActionDefinition {
 	}
 	@Override public void travelHook(IMarioTravelData data, GroundedActionHelper helper) {
 		data.setForwardStrafeVel(0, 0);
-		ActionTimerVars.get(data).actionTimer++;
+		ActionTimerVars vars = data.getVars(ActionTimerVars.class);
+		if(vars.actionTimer > 0 || !data.getInputs().DUCK.isHeld()) vars.actionTimer++;
 	}
 
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(GroundedActionHelper helper) {
@@ -73,7 +74,7 @@ public class GroundPoundLand implements GroundedActionDefinition {
 				new TransitionDefinition(
 						SubWalk.ID,
 						data -> ActionTimerVars.get(data).actionTimer > STANDUP_TICKS,
-						EvaluatorEnvironment.COMMON
+						EvaluatorEnvironment.CLIENT_ONLY
 				)
 		);
 	}
