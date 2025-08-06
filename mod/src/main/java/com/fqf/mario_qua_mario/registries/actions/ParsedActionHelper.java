@@ -14,6 +14,7 @@ import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.parsed.*;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -51,6 +52,13 @@ public class ParsedActionHelper {
 						ParsedWallboundAction wallAction = (ParsedWallboundAction) transition.targetAction();
 						float wallYaw = wallAction.getWallYaw(data);
 						data.getWallInfo().setYaw(wallYaw);
+
+						if(!wallAction.verifyWallLegality(data, Vec3d.ZERO)) {
+							MarioQuaMario.LOGGER.info("Client is cancelling successful wallbound transition without networking " +
+									"because legality check failed ({} -> {})", data.getActionID(), wallAction.ID);
+							continue;
+						}
+
 						MarioClientHelperManager.packetSender.transmitWallYawC2S(data, wallYaw);
 					}
 

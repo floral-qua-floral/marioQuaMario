@@ -147,7 +147,7 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 	public static TransitionDefinition makeDropTransition(Identifier targetAction, float flipDuration, SoundEvent sfx) {
 		return new TransitionDefinition(
 				targetAction,
-				data -> data.getVars(FlipTimerVars.class).actionTimer >= flipDuration,
+				data -> data.getVars(FlipTimerVars.class).actionTimer >= flipDuration - (data.isServer() ? 1 : 0),
 				EvaluatorEnvironment.COMMON,
 				data -> {
 					data.setYVel(GroundPoundDrop.GROUND_POUND_VEL.get(data));
