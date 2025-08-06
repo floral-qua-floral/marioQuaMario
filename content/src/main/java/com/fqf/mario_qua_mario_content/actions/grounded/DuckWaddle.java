@@ -154,11 +154,12 @@ public class DuckWaddle implements GroundedActionDefinition {
 	);
 
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(GroundedActionHelper helper) {
-		return List.of();
+		return List.of(
+				UNDUCK
+		);
 	}
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(GroundedActionHelper helper) {
 		return List.of(
-				UNDUCK,
 				Backflip.makeBackflipTransition(helper),
 				DuckJump.makeDuckJumpTransition(helper)
 		);

@@ -8,16 +8,13 @@ import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.cam
 import com.fqf.mario_qua_mario_api.mariodata.*;
 import com.fqf.mario_qua_mario_api.util.CharaStat;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
-import com.fqf.mario_qua_mario_content.Voicelines;
 import com.fqf.mario_qua_mario_content.actions.aquatic.Submerged;
-import com.fqf.mario_qua_mario_content.actions.generic.Debug;
 import com.fqf.mario_qua_mario_content.actions.grounded.SubWalk;
+import com.fqf.mario_qua_mario_content.actions.wallbound.WallSlide;
 import com.fqf.mario_qua_mario_content.stomp_types.JumpStomp;
 import com.fqf.mario_qua_mario_content.util.ClimbTransitions;
-import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
-import net.minecraft.registry.tag.BlockTags;
+import com.fqf.mario_qua_mario_content.util.WallSlideableVars;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -94,7 +91,7 @@ public class Fall implements AirborneActionDefinition {
 	);
 
 	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
-		return null;
+		return new WallSlideableVars();
 	}
 	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
 
@@ -128,7 +125,8 @@ public class Fall implements AirborneActionDefinition {
 		return List.of(
 				Submerged.SUBMERGE,
 				this.getLandingTransition(),
-				ClimbTransitions.CLIMB_SOLID
+				ClimbTransitions.CLIMB_SOLID,
+				WallSlide.WALL_SLIDE
 		);
 	}
 

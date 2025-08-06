@@ -66,12 +66,13 @@ public class UnderwaterDuck implements AquaticActionDefinition {
 	public static final TransitionDefinition DUCK_SUBMERGE = UnderwaterWalk.SUBMERGE.variate(UnderwaterDuck.ID, null);
 
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(AquaticActionHelper helper) {
-		return List.of();
+		return List.of(
+				DuckWaddle.UNDUCK.variate(UnderwaterWalk.ID, null)
+		);
 	}
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AquaticActionHelper helper) {
 		return List.of(
-				Swim.SWIM,
-				DuckWaddle.UNDUCK.variate(UnderwaterWalk.ID, null)
+				Swim.SWIM
 		);
 	}
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AquaticActionHelper helper) {

@@ -139,6 +139,7 @@ public class TailSpinGround implements GroundedActionDefinition {
 
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(GroundedActionHelper helper) {
 		return List.of(
+				DuckWaddle.UNDUCK,
 				new TransitionDefinition(
 						DuckWaddle.ID,
 						data -> !data.hasPower(Powers.TAIL_ATTACK)
@@ -149,7 +150,6 @@ public class TailSpinGround implements GroundedActionDefinition {
 	}
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(GroundedActionHelper helper) {
 		return List.of(
-				DuckWaddle.UNDUCK,
 				DuckJump.makeDuckJumpTransition(helper).variate(
 						TailSpinJump.ID,
 						null, null,

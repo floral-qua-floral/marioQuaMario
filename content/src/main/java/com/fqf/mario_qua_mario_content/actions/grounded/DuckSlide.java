@@ -84,6 +84,7 @@ public class DuckSlide implements GroundedActionDefinition {
 
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(GroundedActionHelper helper) {
 		return List.of(
+				DuckWaddle.UNDUCK,
 				new TransitionDefinition(
 						DuckWaddle.ID,
 						data -> data.getHorizVelSquared() == 0,
@@ -93,7 +94,6 @@ public class DuckSlide implements GroundedActionDefinition {
 	}
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(GroundedActionHelper helper) {
 		return List.of(
-				DuckWaddle.UNDUCK,
 				Backflip.makeBackflipTransition(helper),
 				new TransitionDefinition(
 						LongJump.ID,

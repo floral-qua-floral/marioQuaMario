@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario_content.actions.power;
 
 import com.fqf.mario_qua_mario_api.definitions.states.actions.AirborneActionDefinition;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.SneakingRule;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.SprintingRule;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.TransitionDefinition;
@@ -10,8 +11,10 @@ import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.airborne.DuckFall;
+import com.fqf.mario_qua_mario_content.actions.airborne.SpecialFall;
 import com.fqf.mario_qua_mario_content.actions.grounded.DuckWaddle;
 import com.fqf.mario_qua_mario_content.util.ActionTimerVars;
+import com.fqf.mario_qua_mario_content.util.Powers;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,13 +52,19 @@ public class TailStallDucking extends TailStall implements AirborneActionDefinit
 	}
 
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(AirborneActionHelper helper) {
-		return super.getBasicTransitions(helper);
+		return List.of(
+				new TransitionDefinition(
+						DuckFall.ID,
+						data -> !data.hasPower(Powers.TAIL_STALL),
+						EvaluatorEnvironment.COMMON
+				),
+				DuckWaddle.UNDUCK.variate(TailStall.ID, null)
+		);
 	}
 
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {
 		return List.of(
-			END_STALLING.variate(DuckFall.ID, null),
-			DuckWaddle.UNDUCK.variate(TailStall.ID, null)
+			END_STALLING.variate(DuckFall.ID, null)
 		);
 	}
 

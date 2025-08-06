@@ -119,9 +119,6 @@ public class Sideflip extends Backflip implements AirborneActionDefinition {
 	public static CharaStat SIDEFLIP_BACKWARDS_SPEED = new CharaStat(-0.375, DRIFTING, BACKWARD, SPEED);
 	public static CharaStat SIDEFLIP_THRESHOLD = new CharaStat(0.2, WALKING, FRICTION, THRESHOLD);
 
-	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
-		return null;
-	}
 	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
 
 	}

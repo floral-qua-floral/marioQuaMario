@@ -35,10 +35,14 @@ public class DuckFall extends Fall implements AirborneActionDefinition {
 	public static final TransitionDefinition DUCK_FALL = Fall.FALL.variate(DuckFall.ID, null);
 	public static final TransitionDefinition DUCK_LANDING = Fall.LANDING.variate(DuckWaddle.ID, null);
 
-	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {
+	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(AirborneActionHelper helper) {
 		return List.of(
 				DuckWaddle.UNDUCK.variate(Fall.ID, null)
 		);
+	}
+
+	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {
+		return List.of();
 	}
 
 	@Override protected TransitionDefinition getLandingTransition() {

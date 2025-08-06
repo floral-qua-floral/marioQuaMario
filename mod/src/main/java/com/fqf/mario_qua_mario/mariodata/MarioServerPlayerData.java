@@ -198,8 +198,8 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 
 	@Override
 	public boolean travelHook(double forwardInput, double strafeInput) {
-		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.BASIC);
+		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
 
 		boolean cancelVanillaTravel = this.getAction().travelHook(this);
 

@@ -158,21 +158,21 @@ public class SubWalk implements GroundedActionDefinition {
 
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(GroundedActionHelper helper) {
 		return List.of(
-			new TransitionDefinition(
-					WalkRun.ID,
-					WalkRun::meetsWalkRunRequirement,
-					EvaluatorEnvironment.CLIENT_ONLY
-			)//,
-//			new TransitionDefinition(
-//					RetroIdle.ID,
-//					data -> data.hasPower(Powers.SMB3_IDLE) && isIdle(data),
-//					EvaluatorEnvironment.CLIENT_ONLY
-//			)
+				DuckWaddle.DUCK,
+				new TransitionDefinition(
+						WalkRun.ID,
+						WalkRun::meetsWalkRunRequirement,
+						EvaluatorEnvironment.CLIENT_ONLY
+				)//,
+//				new TransitionDefinition(
+//						RetroIdle.ID,
+//						data -> data.hasPower(Powers.SMB3_IDLE) && isIdle(data),
+//						EvaluatorEnvironment.CLIENT_ONLY
+//				)
 		);
 	}
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(GroundedActionHelper helper) {
 		return List.of(
-				DuckWaddle.DUCK,
 				Skid.SKID,
 				Jump.makeJumpTransition(helper)
 		);

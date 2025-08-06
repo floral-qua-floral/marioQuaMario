@@ -133,17 +133,18 @@ public class UnderwaterWalk implements AquaticActionDefinition {
 	);
 
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(AquaticActionHelper helper) {
-		return List.of();
-	}
-	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AquaticActionHelper helper) {
 		return List.of(
-				Swim.SWIM,
 				DuckWaddle.DUCK.variate(
 						UnderwaterDuck.ID,
 						null, null,
 						null,
 						(data, isSelf, seed) -> data.playSound(MarioContentSFX.DUCK, seed)
 				)
+		);
+	}
+	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AquaticActionHelper helper) {
+		return List.of(
+				Swim.SWIM
 		);
 	}
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AquaticActionHelper helper) {

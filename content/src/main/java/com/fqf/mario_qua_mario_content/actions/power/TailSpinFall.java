@@ -88,6 +88,7 @@ public class TailSpinFall implements AirborneActionDefinition {
 
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(AirborneActionHelper helper) {
 		return List.of(
+				DuckWaddle.UNDUCK.variate(Fall.ID, null),
 				new TransitionDefinition(
 						DuckFall.ID,
 						data -> !data.hasPower(Powers.TAIL_ATTACK),
@@ -96,9 +97,7 @@ public class TailSpinFall implements AirborneActionDefinition {
 		);
 	}
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {
-		return List.of(
-				DuckWaddle.UNDUCK.variate(Fall.ID, null)
-		);
+		return List.of();
 	}
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {
 		return List.of(

@@ -164,8 +164,8 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 	@Override public boolean travelHook(double forwardInput, double strafeInput) {
 		this.INPUTS.updateAnalog(forwardInput, strafeInput);
 
-//		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.BASIC);
+		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
 
 		boolean cancelVanillaTravel = this.getAction().travelHook(this);
 
@@ -249,7 +249,7 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 			}
 			private void update(boolean isHeld, boolean isPressed) {
 				if(isHeld && isPressed && !this.isHeld)
-					this.pressBuffer = 3;
+					this.pressBuffer = MarioQuaMario.CONFIG.getBufferLength();
 				else
 					this.pressBuffer--;
 				this.isHeld = isHeld;
