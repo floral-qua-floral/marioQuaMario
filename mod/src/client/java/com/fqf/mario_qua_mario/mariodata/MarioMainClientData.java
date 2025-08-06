@@ -22,7 +22,6 @@ import net.minecraft.client.input.Input;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.entity.MovementType;
-import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.*;
 import org.jetbrains.annotations.NotNull;
@@ -197,6 +196,11 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		return cancelVanillaTravel;
 	}
 
+	@Override
+	public void unbufferInputsOnTransition() {
+		this.INPUTS.conditionallyUnbufferAll();
+	}
+
 	private final RealInputs INPUTS = new RealInputs();
 	@Override public MarioInputs getInputs() {
 		return this.INPUTS;
@@ -228,26 +232,29 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		private static class ClientButton implements MarioButton {
 			private boolean isHeld = false;
 			private int pressBuffer = 0;
+			private boolean shouldUnbuffer = false;
 
 			@Override public boolean isHeld() {
 				return isHeld;
 			}
 			@Override public boolean isPressed() {
-				return this.isPressedNoUnbuffer() && this.unbuffer();
+				this.shouldUnbuffer = true;
+				return this.isPressedNoUnbuffer();
 			}
 			public boolean isPressedNoUnbuffer() {
 				return this.pressBuffer > 0;
 			}
 
-			private boolean unbuffer() {
-				this.pressBuffer = 0;
-				return true;
+			private void conditionallyUnbuffer() {
+				if(this.shouldUnbuffer)
+					this.pressBuffer = 0;
 			}
 
 			private void update(boolean isHeld) {
 				this.update(isHeld, isHeld);
 			}
 			private void update(boolean isHeld, boolean isPressed) {
+				this.shouldUnbuffer = false;
 				if(isHeld && isPressed && !this.isHeld)
 					this.pressBuffer = MarioQuaMario.CONFIG.getBufferLength();
 				else
@@ -283,6 +290,12 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		private void updateAnalog(double forwardInput, double strafeInput) {
 			this.forwardInput = forwardInput;
 			this.strafeInput = strafeInput;
+		}
+
+		private void conditionallyUnbufferAll() {
+			this.JUMP_CLIENT.conditionallyUnbuffer();
+			this.DUCK_CLIENT.conditionallyUnbuffer();
+			this.SPIN_CLIENT.conditionallyUnbuffer();
 		}
 	}
 

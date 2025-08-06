@@ -214,6 +214,11 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 		return cancelVanillaTravel;
 	}
 
+	@Override
+	public void unbufferInputsOnTransition() {
+
+	}
+
 	@Override public MarioInputs getInputs() {
 		return PHONY_INPUTS;
 	}

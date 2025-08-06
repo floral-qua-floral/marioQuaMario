@@ -61,6 +61,7 @@ public class ParsedActionHelper {
 				}
 
 				executeTransition(data, transition, seed);
+				data.unbufferInputsOnTransition();
 				return;
 			}
 		}
