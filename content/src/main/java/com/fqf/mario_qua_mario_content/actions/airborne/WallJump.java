@@ -32,20 +32,22 @@ public class WallJump extends Jump implements AirborneActionDefinition {
 			float inversion = Math.signum(progress);
 			boolean isTrailingLimb = inversion == factor;
 
-			arrangement.pitch += helper.interpolateKeyframes(poseProgress,
-					-56.675F,
-					isTrailingLimb ? -20 : -39,
-					44
-			);
-			arrangement.yaw += helper.interpolateKeyframes(poseProgress,
-					factor * 5,
-					0,
-					0
-			);
-			arrangement.roll += helper.interpolateKeyframes(poseProgress,
-					factor * 12,
-					inversion * (isTrailingLimb ? 46 : 9.2F),
-					0
+			arrangement.addAngles(
+					helper.interpolateKeyframes(poseProgress,
+							-56.675F,
+							isTrailingLimb ? -20 : -39,
+							44
+					),
+					helper.interpolateKeyframes(poseProgress,
+							factor * 5,
+							0,
+							0
+					),
+					helper.interpolateKeyframes(poseProgress,
+							factor * 12,
+							inversion * (isTrailingLimb ? 46 : 9.2F),
+							0
+					)
 			);
 
 			arrangement.x += helper.interpolateKeyframes(poseProgress,
@@ -67,35 +69,39 @@ public class WallJump extends Jump implements AirborneActionDefinition {
 			boolean isTrailingLimb = inversion == factor;
 			boolean isRight = factor == 1;
 
-			arrangement.pitch += helper.interpolateKeyframes(poseProgress,
-					isRight ? -10 : -67.75F,
-					isTrailingLimb ? 0 : 30,
-					38.865F
+			arrangement.addAngles(
+					helper.interpolateKeyframes(poseProgress,
+							isRight ? -10 : -67.75F,
+							isTrailingLimb ? 0 : 30,
+							38.865F
+					),
+					helper.interpolateKeyframes(poseProgress,
+							0,
+							inversion * (isTrailingLimb ? 0 : -17.5F),
+							factor * 1.25F
+					),
+					helper.interpolateKeyframes(poseProgress,
+							0,
+							inversion * (isTrailingLimb ? 40 : 20),
+							0
+					)
 			);
-			arrangement.yaw += helper.interpolateKeyframes(poseProgress,
-					0,
-					inversion * (isTrailingLimb ? 0 : -17.5F),
-					factor * 1.25F
-			);
-			arrangement.roll += helper.interpolateKeyframes(poseProgress,
-					0,
-					inversion * (isTrailingLimb ? 40 : 20),
-					0
-			);
-			arrangement.x += helper.interpolateKeyframes(poseProgress,
-					0,
-					inversion * (isTrailingLimb ? -3 : -2),
-					0
-			);
-			arrangement.y += helper.interpolateKeyframes(poseProgress,
-					isRight ? -4.2F : -1,
-					isTrailingLimb ? -2 : -1,
-					-0.75F
-			);
-			arrangement.z += helper.interpolateKeyframes(poseProgress,
-					 isRight ? -6 : -3,
-					isTrailingLimb ? 0 : -4,
-					1.5F
+			arrangement.addPos(
+					helper.interpolateKeyframes(poseProgress,
+							0,
+							inversion * (isTrailingLimb ? -3 : -2),
+							0
+					),
+					helper.interpolateKeyframes(poseProgress,
+							isRight ? -4.2F : -1,
+							isTrailingLimb ? -2 : -1,
+							-0.75F
+					),
+					helper.interpolateKeyframes(poseProgress,
+							isRight ? -6 : -3,
+							isTrailingLimb ? 0 : -4,
+							1.5F
+					)
 			);
 		});
 	}
@@ -143,12 +149,19 @@ public class WallJump extends Jump implements AirborneActionDefinition {
 		);
 	}
 
-	public static final CharaStat WALL_JUMP_VEL = new CharaStat(0.768, JUMP_VELOCITY, CLIMBING);
-	public static final CharaStat WALL_JUMP_SPEED = new CharaStat(0.31, DRIFTING);
+	public static final CharaStat WALL_JUMP_VEL = new CharaStat(0.78, JUMP_VELOCITY, CLIMBING);
+	public static final CharaStat WALL_JUMP_SPEED = new CharaStat(0.4, DRIFTING);
 
 	@Override
 	public void clientTick(IMarioClientData data, boolean isSelf) {
 		data.forceBodyAlignment(true);
+	}
+
+	@Override
+	public void travelHook(IMarioTravelData data, AirborneActionHelper helper) {
+		helper.applyComplexGravity(data, Fall.FALL_ACCEL, JUMP_GRAVITY, Fall.FALL_SPEED);
+		BonkAir.BonkVars vars = data.getVars(BonkAir.BonkVars.class);
+		if(vars.noInputTicks-- <= 0) Fall.drift(data, helper);
 	}
 
 	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {

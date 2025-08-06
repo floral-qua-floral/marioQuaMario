@@ -179,12 +179,17 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 
 	protected static class BonkVars {
 		public final float BONK_YAW;
+		public int noInputTicks;
 
 		public BonkVars(IMarioData data) {
-			if(data instanceof IMarioReadableMotionData motionData) {
+			this.noInputTicks = 1;
+			BonkVars oldVars = data.getVars(BonkVars.class);
+			if(oldVars != null)
+				this.BONK_YAW = oldVars.BONK_YAW;
+			else if(data instanceof IMarioReadableMotionData motionData)
 				this.BONK_YAW = yawFromVec3d(motionData.getVelocity());
-			}
-			else this.BONK_YAW = data.getMario().bodyYaw;
+			else
+				this.BONK_YAW = data.getMario().bodyYaw;
 		}
 	}
 

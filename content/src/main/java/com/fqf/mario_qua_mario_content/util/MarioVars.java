@@ -22,6 +22,8 @@ public class MarioVars {
 	}
 
 	public static boolean checkWallSlide(IMarioReadableMotionData data) {
+		if(data.getYVel() > 0) return false;
+
 		long worldTime = data.getMario().getWorld().getTime();
 		MarioVars vars = data.getVars(MarioVars.class);
 
@@ -46,6 +48,6 @@ public class MarioVars {
 			}
 		}
 
-		return vars.wallSlidingTicks > 3;
+		return vars.wallSlidingTicks >= 2;
 	}
 }
