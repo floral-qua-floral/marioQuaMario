@@ -25,6 +25,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -245,12 +246,21 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 
 	@Override
 	protected float turnHead(float bodyRotation, float headRotation) {
-		if(this.mqm$getMarioData().headRestricted == MarioPlayerData.HeadRestrictionType.NORMAL) {
-			if(MathHelper.abs((bodyRotation % 360) - (this.getYaw() % 360)) <= 10)
-				this.mqm$getMarioData().headRestricted = MarioPlayerData.HeadRestrictionType.NONE;
-			bodyRotation = this.getYaw();
+		@NotNull MarioPlayerData data = this.mqm$getMarioData();
+		boolean rotateBody;
+
+		if(data.isEnabled()) {
+			if(data.headRestricted == MarioPlayerData.HeadRestrictionType.NORMAL) {
+				if(MathHelper.abs((bodyRotation % 360) - (this.getYaw() % 360)) <= 10)
+					data.headRestricted = MarioPlayerData.HeadRestrictionType.NONE;
+				bodyRotation = this.getYaw();
+			}
+
+			rotateBody = data.getActionCategory() != ActionCategory.WALLBOUND || ((ParsedWallboundAction) data.getAction()).ALIGNMENT == WallBodyAlignment.ANY;
 		}
-		return super.turnHead(bodyRotation, headRotation);
+		else rotateBody = true;
+
+		return super.turnHead(rotateBody ? bodyRotation : this.bodyYaw, headRotation);
 	}
 
 	@Override

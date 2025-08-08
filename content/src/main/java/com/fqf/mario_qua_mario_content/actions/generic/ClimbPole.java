@@ -60,7 +60,12 @@ public class ClimbPole implements GenericActionDefinition {
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
 		return new PlayermodelAnimation(
 				null,
-				new ProgressHandler((data1, ticksPassed) -> MathHelper.sin(data1.getVars(ClimbVars.class).progress)),
+				new ProgressHandler((data, ticksPassed) -> {
+					ClimbVars vars = data.getVars(ClimbVars.class);
+					double factorForInput = 1 / ClimbPole.CLIMB_SPEED.get(data);
+					vars.progress += (float) (data.getYVel() * factorForInput) / 2;
+					return MathHelper.sin(vars.progress);
+				}),
 				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
 					Vec3d offset = getMaximumOffset(data, 0.1).multiply(16);
 					arrangement.z += (float) offset.horizontalLength();
@@ -121,7 +126,6 @@ public class ClimbPole implements GenericActionDefinition {
 	@Override public boolean travelHook(IMarioTravelData data) {
 		double forwardInput = data.getInputs().getForwardInput() * (data.getInputs().DUCK.isHeld() ? 0.3 : 1);
 		data.setYVel(forwardInput * CLIMB_SPEED.get(data));
-		data.getVars(ClimbVars.class).progress += (float) forwardInput;
 		data.centerLaterally();
 		data.setForwardStrafeVel(0, 0);
 		data.getMario().fallDistance = 0;

@@ -66,7 +66,24 @@ public class ClimbWall implements WallboundActionDefinition {
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
 	    return new PlayermodelAnimation(
 	            null,
-	            new ProgressHandler((data, ticksPassed) -> MathHelper.sin(data.getVars(ClimbOmniDirectionalVars.class).progress)),
+	            new ProgressHandler((data, ticksPassed) -> {
+					ClimbOmniDirectionalVars vars = data.getVars(ClimbOmniDirectionalVars.class);
+					WallInfo wall = helper.getWallInfo(data);
+					assert wall != null;
+
+					if(data.getYVel() != 0 || wall.getSidleVel() != 0) {
+						double factorForInput = 1 / ClimbPole.CLIMB_SPEED.get(data);
+						double climbInput = data.getYVel() * factorForInput;
+						double sidleInput = wall.getSidleVel() * factorForInput;
+
+						vars.progress += Math.min(1, (float) Vector2d.length(climbInput, sidleInput)) / 2;
+						float denominator = (float) Math.max(Math.abs(climbInput), Math.abs(sidleInput));
+						vars.xComponent = (float) sidleInput / denominator;
+						vars.yComponent = (float) climbInput / denominator;
+					}
+
+					return MathHelper.sin(data.getVars(ClimbOmniDirectionalVars.class).progress);
+				}),
 	            new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
 					arrangement.z += this.getEntireBodyZOffset(data);
 	            }),
@@ -179,14 +196,6 @@ public class ClimbWall implements WallboundActionDefinition {
 		double sidleVel = sidleInput * climbSpeed;
 		data.setYVel(yVel);
 		helper.setSidleVel(data, sidleVel);
-
-		if(climbInput != 0 || sidleInput != 0) {
-			ClimbOmniDirectionalVars vars = data.getVars(ClimbOmniDirectionalVars.class);
-			vars.progress += Math.min(1, (float) Vector2d.length(climbInput, sidleInput));
-			float denominator = (float) Math.max(Math.abs(climbInput), Math.abs(sidleInput));
-			vars.xComponent = (float) sidleInput / denominator;
-			vars.yComponent = (float) climbInput / denominator;
-		}
 	}
 
 	protected Identifier getSideHangActionID() {

@@ -25,6 +25,8 @@ public class FlashbackSyncOnRecordingStartMixin {
 //		if(!pause) MarioClientPacketHelper.syncMarioDatasToReplay();
 //	}
 
+	// TODO: Figure out what to do about the player model :/
+
 	@Inject(method = "writeSnapshot", at = @At("RETURN"))
 	private void syncAfterSnapshot(boolean asActualSnapshot, CallbackInfo ci) {
 		MarioQuaMario.LOGGER.info("Syncing MarioData of tracked players after snapshot recorded...");
