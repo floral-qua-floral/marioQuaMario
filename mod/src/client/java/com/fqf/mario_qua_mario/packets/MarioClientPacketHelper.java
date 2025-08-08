@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario.packets;
 
+import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.bapping.BlockBappingUtil;
 import com.fqf.mario_qua_mario.compat.RecordingModsCompatSafe;
 import com.fqf.mario_qua_mario.util.MarioClientHelperManager;
@@ -253,5 +254,21 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 		RecordingModsCompatSafe.conditionallySaveReplayPacket(new MarioBappingPackets.BapBlockS2CPayload(
 				pos, direction.ordinal(), strength, result.ordinal(), bapper.getId()
 		));
+	}
+
+	public static void syncMarioDatasToReplay() {
+		// Known issue - might not include players in other dimensions being tracked through Immersive Portals?
+		// WHO CARES!!!!!!!
+		for(PlayerEntity player : Objects.requireNonNull(MinecraftClient.getInstance().player).getWorld().getPlayers()) {
+			MarioPlayerData data = player.mqm$getMarioData();
+			if(data.isEnabled()) {
+				RecordingModsCompatSafe.conditionallySaveReplayPacket(new MarioDataPackets.SyncMarioDataS2CPayload(
+						player.getId(),
+						RegistryManager.CHARACTERS.getRawIdOrThrow(data.getCharacter()),
+						RegistryManager.POWER_UPS.getRawIdOrThrow(data.getPowerUp()),
+						data.getAction().getIntID()
+				));
+			}
+		}
 	}
 }

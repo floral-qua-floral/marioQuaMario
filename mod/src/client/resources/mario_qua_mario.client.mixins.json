@@ -18,7 +18,8 @@
     "OtherClientPlayerEntityMarioDataMixin",
     "PlayerEntityModelMixin",
     "PlayerEntityRendererMixin",
-    "SodiumLevelSliceMixin"
+    "compat.SodiumLevelSliceMixin",
+    "compat.FlashbackSyncOnRecordingStartMixin"
   ],
   "injectors": {
     "defaultRequire": 1

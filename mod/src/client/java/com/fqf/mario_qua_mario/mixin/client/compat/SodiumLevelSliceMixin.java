@@ -1,4 +1,4 @@
-package com.fqf.mario_qua_mario.mixin.client;
+package com.fqf.mario_qua_mario.mixin.client.compat;
 
 import com.fqf.mario_qua_mario.bapping.BlockBappingUtil;
 import net.caffeinemc.mods.sodium.client.world.LevelSlice;
@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Pseudo
-@Mixin(LevelSlice.class)
+@Mixin(value = LevelSlice.class, remap = false)
 public class SodiumLevelSliceMixin {
 	@Shadow @Final private ClientWorld level;
 
