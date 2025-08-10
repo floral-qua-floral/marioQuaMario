@@ -2,6 +2,10 @@
   "replace": false,
   "values": [
     "#minecraft:fences",
-    "minecraft:iron_bars"
+    "minecraft:iron_bars",
+    {
+      "id": "#chipped:iron_bars",
+      "required": false
+    }
   ]
 }

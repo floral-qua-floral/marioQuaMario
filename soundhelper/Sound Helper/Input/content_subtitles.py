@@ -41,6 +41,7 @@ sfx_power_up = {
   "fireball": "Fireball thrown",
   "fireball_enemy": "Fireball strikes",
   "fireball_wall": "Fireball impact",
+  "burn_object": "Fireball incinerates",
   "tail_fly": "Tail waggles",
   "tail_whip": "Tail whips",
   "tail_empower": "Powering up"

@@ -12,6 +12,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
@@ -158,6 +159,10 @@ public class Fire implements PowerUpDefinition {
 				// Directly apply damage as if from a fireball, so that the Fire Flower can't outright prevent an
 				// attack from hitting due to projectile awkwardness
 				MarioFireballProjectileEntity.hitEntity(entityTarget, mario, mario, entityTarget);
+			}
+			else if(blockTarget != null && world.getBlockState(blockTarget).isIn(MQMContentTags.DESTROYED_BY_FIREBALL)) {
+				world.removeBlock(blockTarget, false);
+				world.playSound(null, blockTarget, MarioContentSFX.BURN_OBJECT, SoundCategory.BLOCKS, 1, 1);
 			}
 			else {
 				MarioFireballProjectileEntity fireball = new MarioFireballProjectileEntity(world, mario);

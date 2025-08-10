@@ -21,6 +21,7 @@ public interface MQMContentTags {
 	TagKey<Block> CLIMBABLE = getTag(BLOCK, "mario_climbable");
 	TagKey<Block> CLIMBABLE_PANES = getTag(BLOCK, "mario_climbable_panes");
 	TagKey<Block> UNSLIDEABLE_WALLS = getTag(BLOCK, "mario_unslideable_walls");
+	TagKey<Block> DESTROYED_BY_FIREBALL = getTag(BLOCK, "destroyed_by_mario_fireball");
 
 	private static <T> TagKey<T> getTag(RegistryKey<Registry<T>> key, String name) {
 		return TagKey.of(key, Identifier.of("mario_qua_mario", name));

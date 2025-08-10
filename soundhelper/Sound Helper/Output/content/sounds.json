@@ -95,6 +95,12 @@
 			"mario_qua_mario:sfx/movement/wall_jump"
 		]
 	},
+	"sfx.power_up.burn_object": {
+		"subtitle": "subtitles.mario_qua_mario.power_up.burn_object",
+		"sounds": [
+			"mario_qua_mario:sfx/power_up/burn_object"
+		]
+	},
 	"sfx.power_up.coin": {
 		"subtitle": "subtitles.mario_qua_mario.power_up.coin",
 		"sounds": [

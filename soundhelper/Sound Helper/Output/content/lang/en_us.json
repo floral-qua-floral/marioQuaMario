@@ -35,6 +35,7 @@
   "subtitles.mario_qua_mario.movement.jump": "Jumping",
   "subtitles.mario_qua_mario.movement.wall_jump": "Wall jumping",
 
+  "subtitles.mario_qua_mario.power_up.burn_object": "Fireball incinerates",
   "subtitles.mario_qua_mario.power_up.coin": "Coin spent",
   "subtitles.mario_qua_mario.power_up.fireball": "Fireball thrown",
   "subtitles.mario_qua_mario.power_up.fireball_enemy": "Fireball strikes",

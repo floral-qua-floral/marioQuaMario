@@ -25,6 +25,7 @@ public class MarioContentSFX {
 	public static final SoundEvent TOADETTE_JUMP = makeMovementSound("toadette_jump");
 	public static final SoundEvent WALL_JUMP = makeMovementSound("wall_jump");
 
+	public static final SoundEvent BURN_OBJECT = makePowerUpSound("burn_object");
 	public static final SoundEvent COIN = makePowerUpSound("coin");
 	public static final SoundEvent FIREBALL = makePowerUpSound("fireball");
 	public static final SoundEvent FIREBALL_ENEMY = makePowerUpSound("fireball_enemy");

@@ -2,6 +2,7 @@ package com.fqf.mario_qua_mario_content.entity.custom;
 
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.entity.ModEntities;
+import com.fqf.mario_qua_mario_content.util.MQMContentTags;
 import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -15,6 +16,7 @@ import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
@@ -22,6 +24,7 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 
 public class MarioFireballProjectileEntity extends ProjectileEntity {
@@ -65,14 +68,23 @@ public class MarioFireballProjectileEntity extends ProjectileEntity {
 		super.tick();
 		this.prevAngle = this.angle;
 		this.angle += 28F;
-		HitResult hitResult = ProjectileUtil.getCollision(this, this::canHit);
-		this.hitOrDeflect(hitResult);
+
+		if(!this.getWorld().isClient() && ProjectileUtil.getCollision(this, this::canHit, RaycastContext.ShapeType.OUTLINE) instanceof BlockHitResult blockHitResult) {
+			if(this.getWorld().getBlockState(blockHitResult.getBlockPos()).isIn(MQMContentTags.DESTROYED_BY_FIREBALL)) {
+				this.getWorld().removeBlock(blockHitResult.getBlockPos(), false);
+				this.getWorld().playSound(null, blockHitResult.getBlockPos(), MarioContentSFX.BURN_OBJECT, SoundCategory.BLOCKS, 1, 1);
+//				this.playSound(MarioContentSFX.BURN_OBJECT, 1, 1);
+				this.discard();
+			}
+		}
+		this.hitOrDeflect(ProjectileUtil.getCollision(this, this::canHit));
 
 		this.updateRotation();
 
-		if (this.getWorld().isOutOfHeightLimit((int) this.getY())) {
+		if(this.getY() < this.getWorld().getBottomY()) {
 			this.discard();
-		} else {
+		}
+		else {
 			Vec3d vec3d = this.getVelocity();
 			this.setVelocity(vec3d.multiply(0.99F));
 			this.applyGravity();
