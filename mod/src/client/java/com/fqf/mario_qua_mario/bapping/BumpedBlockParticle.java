@@ -14,6 +14,7 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
@@ -22,6 +23,7 @@ import static net.minecraft.client.render.RenderPhase.*;
 
 public class BumpedBlockParticle extends Particle {
 	private final BlockPos POSITION;
+	public final Direction DIRECTION;
 	public final Vector3f BUMP_UNIT_VECTOR;
 	private final BlockRenderManager RENDERER;
 
@@ -32,6 +34,7 @@ public class BumpedBlockParticle extends Particle {
 		super(world, blockPos.getX(), blockPos.getY(), blockPos.getZ());
 
 		this.POSITION = blockPos;
+		this.DIRECTION = direction;
 		this.BUMP_UNIT_VECTOR = direction.getUnitVector();
 		this.RENDERER = MinecraftClient.getInstance().getBlockRenderManager();
 
@@ -51,6 +54,7 @@ public class BumpedBlockParticle extends Particle {
 
 	@Override
 	public void markDead() {
+		BlockBappingClientUtil.PARTICLES.get(this.world).remove(this.POSITION, this);
 		super.markDead();
 	}
 
@@ -135,9 +139,17 @@ public class BumpedBlockParticle extends Particle {
 //					.build(false)
 //	);
 
-	public void applyOffset(MatrixStack matrices, float tickDelta) {
+	public float calculateOffset(float tickDelta) {
 		float progress = Math.min(1, (tickDelta + this.age) / BumpingBlockInfo.BUMP_DURATION);
-		float offset = 0.5F * (1 - (2 * ((progress - 1) * (progress - 1)) - 1) * (2 * ((progress - 1) * (progress - 1)) - 1));
+		return 0.5F * (1 - (2 * ((progress - 1) * (progress - 1)) - 1) * (2 * ((progress - 1) * (progress - 1)) - 1));
+	}
+
+	public Vec3d applyOffset(Vec3d vector, float tickDelta) {
+		return vector.offset(this.DIRECTION, this.calculateOffset(tickDelta));
+	}
+
+	public void applyOffset(MatrixStack matrices, float tickDelta) {
+		float offset = this.calculateOffset(tickDelta);
 		matrices.translate(offset * this.BUMP_UNIT_VECTOR.x, offset * this.BUMP_UNIT_VECTOR.y, offset * this.BUMP_UNIT_VECTOR.z);
 //		this.lastOffset = offset;
 	}

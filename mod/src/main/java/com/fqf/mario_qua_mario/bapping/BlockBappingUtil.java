@@ -35,31 +35,18 @@ public class BlockBappingUtil {
 		return PER_WORLD_BAP_STORAGE.get(world);
 	}
 
-	private static final BlockState EMPTY_BLOCK = Blocks.VOID_AIR.getDefaultState();
-	private static FluidState getFluidIntoPos(World world, BlockPos pos, Direction direction) {
-		return world.getFluidState(pos.offset(direction));
-	}
-
-	private static Fluid getFluidIntoPos(World world, BlockPos pos) {
-		// This is ugly and bad but I can't think of a cleaner solution >:(
-		FluidState fluid = getFluidIntoPos(world, pos, Direction.UP);
-		if(!fluid.isEmpty()) return fluid.getFluid();
-		fluid = getFluidIntoPos(world, pos, Direction.NORTH);
-		if(!fluid.isEmpty()) return fluid.getFluid();
-		fluid = getFluidIntoPos(world, pos, Direction.EAST);
-		if(!fluid.isEmpty()) return fluid.getFluid();
-		fluid = getFluidIntoPos(world, pos, Direction.SOUTH);
-		if(!fluid.isEmpty()) return fluid.getFluid();
-		return getFluidIntoPos(world, pos, Direction.WEST).getFluid();
-	}
-	private static BlockState getEmptyBlockAt(World world, BlockPos pos) {
-		return getFluidIntoPos(world, pos).getDefaultState().getBlockState();
-	}
 	public static void conditionallyHideBlockPos(World world, BlockPos pos, CallbackInfoReturnable<BlockState> cir) {
 		if(cir.getReturnValue() == null) return;
 		WorldBapsInfo worldBaps = getBapsInfoNullable(world);
 		if(worldBaps == null) return;
-		if(worldBaps.HIDDEN.contains(pos)) cir.setReturnValue(getEmptyBlockAt(world, pos));
+		if(worldBaps.HIDDEN.contains(pos)) {
+			Direction direction;
+			if(worldBaps.ALL_BAPS.get(pos) instanceof BumpingBlockInfo bump) {
+				direction = bump.DISPLACEMENT_DIRECTION.getOpposite();
+			}
+			else direction = Direction.DOWN;
+			cir.setReturnValue(world.getFluidState(pos.offset(direction)).getFluid().getDefaultState().getBlockState());
+		}
 	}
 
 	private static boolean forcingVanillaHardnessCheck = false;

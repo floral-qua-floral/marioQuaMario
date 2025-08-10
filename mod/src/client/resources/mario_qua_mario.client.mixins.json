@@ -10,7 +10,7 @@
     "ClientPlayerEntityMarioDataMixin",
     "ClientPlayerEntityMixin",
     "ClientPlayNetworkHandlerMixin",
-    "compat.CPMClientBaseMixin",
+    "EntityRenderDispatcherMixin",
     "GameRendererMixin",
     "HeldItemRendererMixin",
     "InGameHudMixin",
@@ -18,8 +18,9 @@
     "OtherClientPlayerEntityMarioDataMixin",
     "PlayerEntityModelMixin",
     "PlayerEntityRendererMixin",
-    "compat.SodiumLevelSliceMixin",
-    "compat.FlashbackSyncOnRecordingStartMixin"
+    "compat.CPMClientBaseMixin",
+    "compat.FlashbackSyncOnRecordingStartMixin",
+    "compat.SodiumLevelSliceMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -31,4 +31,14 @@ public class BlockBappingClientUtil {
 			MinecraftClient.getInstance().particleManager.addParticle(newParticle);
 		}
 	}
+
+	public static BumpedBlockParticle getBumpedBlockUnder(Entity entity) {
+		if(entity.isOnGround()) {
+			Map<BlockPos, BumpedBlockParticle> map = BlockBappingClientUtil.PARTICLES.get((ClientWorld) entity.getWorld());
+			if(map != null) {
+				return map.get(entity.getVelocityAffectingPos());
+			}
+		}
+		return null;
+	}
 }

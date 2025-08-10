@@ -1,10 +1,17 @@
 package com.fqf.mario_qua_mario.mixin.client;
 
+import com.fqf.mario_qua_mario.bapping.BlockBappingClientUtil;
+import com.fqf.mario_qua_mario.bapping.BumpedBlockParticle;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.Arrangement;
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.Camera;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.BlockView;
@@ -17,6 +24,8 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.Map;
 
 @Mixin(Camera.class)
 public abstract class CameraMixin {
@@ -37,10 +46,11 @@ public abstract class CameraMixin {
 	@Shadow @Final private Vector3f diagonalPlane;
 	@Shadow @Final private Vector3f verticalPlane;
 	@Shadow @Final private Vector3f horizontalPlane;
+	@Shadow private Entity focusedEntity;
 	@Unique private final Arrangement CAMERA_ARRANGEMENT = new Arrangement();
 
 	// This is a bit of a weird way to do things, but I dunno, maybe it'll work better with other mods or something ???
-	@Inject(method = "update", at = @At(value = "RETURN", target = "Lnet/minecraft/client/render/Camera;setRotation(FF)V"))
+	@Inject(method = "update", at = @At("RETURN"))
 	private void prepareCameraAnimations(
 			BlockView area,
 			Entity focusedEntity,
@@ -59,6 +69,11 @@ public abstract class CameraMixin {
 			mario.mqm$getMarioData().mutateCamera(this.CAMERA_ARRANGEMENT, tickDelta);
 			this.setPos(marioPos.add(this.CAMERA_ARRANGEMENT.x, this.CAMERA_ARRANGEMENT.y, this.CAMERA_ARRANGEMENT.z));
 			this.setRotationRads(this.CAMERA_ARRANGEMENT.pitch, MathHelper.PI + this.CAMERA_ARRANGEMENT.yaw, this.CAMERA_ARRANGEMENT.roll);
+			MinecraftClient.getInstance().worldRenderer.scheduleTerrainUpdate();
+		}
+		BumpedBlockParticle particle = BlockBappingClientUtil.getBumpedBlockUnder(focusedEntity);
+		if(particle != null) {
+			this.setPos(particle.applyOffset(this.getPos(), tickDelta));
 			MinecraftClient.getInstance().worldRenderer.scheduleTerrainUpdate();
 		}
 	}
