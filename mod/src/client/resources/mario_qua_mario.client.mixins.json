@@ -10,7 +10,7 @@
     "ClientPlayerEntityMarioDataMixin",
     "ClientPlayerEntityMixin",
     "ClientPlayNetworkHandlerMixin",
-    "CPMClientBaseMixin",
+    "compat.CPMClientBaseMixin",
     "GameRendererMixin",
     "HeldItemRendererMixin",
     "InGameHudMixin",

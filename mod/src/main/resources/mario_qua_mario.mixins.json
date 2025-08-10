@@ -4,8 +4,8 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "AbstractBlockStateMixin",
-    "CPMCommonBaseMixin",
-    "CPMNetHandlerMixin",
+    "compat.CPMCommonBaseMixin",
+    "compat.CPMNetHandlerMixin",
     "DamageSourceMixin",
     "EntityStompabilityMixin",
     "PlayerEntityMarioDataMixin",

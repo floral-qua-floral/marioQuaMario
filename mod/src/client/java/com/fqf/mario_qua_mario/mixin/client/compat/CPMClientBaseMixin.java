@@ -1,4 +1,4 @@
-package com.fqf.mario_qua_mario.mixin.client;
+package com.fqf.mario_qua_mario.mixin.client.compat;
 
 import com.tom.cpm.client.ClientBase;
 import com.tom.cpm.shared.definition.ModelDefinition;

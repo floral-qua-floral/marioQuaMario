@@ -1,4 +1,4 @@
-package com.fqf.mario_qua_mario.mixin;
+package com.fqf.mario_qua_mario.mixin.compat;
 
 import com.tom.cpm.shared.network.NetHandler;
 import net.minecraft.server.network.ServerPlayerEntity;

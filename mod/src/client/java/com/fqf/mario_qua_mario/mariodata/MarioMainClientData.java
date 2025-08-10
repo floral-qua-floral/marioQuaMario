@@ -235,7 +235,7 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 			private boolean shouldUnbuffer = false;
 
 			@Override public boolean isHeld() {
-				return isHeld;
+				return this.isHeld;
 			}
 			@Override public boolean isPressed() {
 				return this.isPressedNoUnbuffer() && this.planUnbuffer();

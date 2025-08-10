@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Pseudo
-@Mixin(value = LevelSlice.class, remap = false)
+@Mixin(value = LevelSlice.class)
 public class SodiumLevelSliceMixin {
 	@Shadow @Final private ClientWorld level;
 
