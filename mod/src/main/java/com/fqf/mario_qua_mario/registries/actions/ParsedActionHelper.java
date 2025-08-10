@@ -69,9 +69,11 @@ public class ParsedActionHelper {
 				}
 
 				executeTransition(data, transition, seed);
-				data.unbufferInputsOnTransition();
+				data.handleInputUnbuffering(true);
 				return;
 			}
+			else
+				data.handleInputUnbuffering(false);
 		}
 	}
 

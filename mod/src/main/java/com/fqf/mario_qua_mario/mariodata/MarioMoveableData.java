@@ -272,7 +272,7 @@ public abstract class MarioMoveableData extends MarioPlayerData implements IMari
 
 	public abstract boolean travelHook(double forwardInput, double strafeInput);
 
-	public abstract void unbufferInputsOnTransition();
+	public abstract void handleInputUnbuffering(boolean transitionSuccessful);
 
 	private static class EmptyRecordedCollisionSet extends HashSet<RecordedCollision> implements RecordedCollisionSet {
 		@Override public boolean collidedOnAxis(Direction.Axis axis) {

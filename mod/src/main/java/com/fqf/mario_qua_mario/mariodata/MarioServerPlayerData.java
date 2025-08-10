@@ -215,7 +215,7 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 	}
 
 	@Override
-	public void unbufferInputsOnTransition() {
+	public void handleInputUnbuffering(boolean transitionSuccessful) {
 
 	}
 

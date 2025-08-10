@@ -197,8 +197,9 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 	}
 
 	@Override
-	public void unbufferInputsOnTransition() {
-		this.INPUTS.conditionallyUnbufferAll();
+	public void handleInputUnbuffering(boolean transitionSuccessful) {
+		if(transitionSuccessful) this.INPUTS.conditionallyUnbufferAll();
+		else this.INPUTS.cancelUnbuffers();
 	}
 
 	private final RealInputs INPUTS = new RealInputs();
@@ -249,15 +250,19 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 				return true;
 			}
 			private void conditionallyUnbuffer() {
-				if(this.shouldUnbuffer)
-					this.pressBuffer = 0;
+				if(this.shouldUnbuffer) {
+					this.unbuffer();
+				}
+			}
+			private void unbuffer() {
+				this.pressBuffer = 0;
+				this.shouldUnbuffer = false;
 			}
 
 			private void update(boolean isHeld) {
 				this.update(isHeld, isHeld);
 			}
 			private void update(boolean isHeld, boolean isPressed) {
-				this.shouldUnbuffer = false;
 				if(isHeld && isPressed && !this.isHeld)
 					this.pressBuffer = MarioQuaMario.CONFIG.getBufferLength();
 				else
@@ -293,6 +298,12 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		private void updateAnalog(double forwardInput, double strafeInput) {
 			this.forwardInput = forwardInput;
 			this.strafeInput = strafeInput;
+		}
+
+		private void cancelUnbuffers() {
+			this.JUMP_CLIENT.shouldUnbuffer = false;
+			this.DUCK_CLIENT.shouldUnbuffer = false;
+			this.SPIN_CLIENT.shouldUnbuffer = false;
 		}
 
 		private void conditionallyUnbufferAll() {
