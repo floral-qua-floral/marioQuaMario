@@ -3,6 +3,8 @@
   "values": [
     "#mario_qua_mario:mario_climbable",
     "minecraft:honey_block",
-    "minecraft:sugar_cane"
+    "minecraft:sugar_cane",
+    "#c:glass_blocks",
+    "#c:glass_panes"
   ]
 }

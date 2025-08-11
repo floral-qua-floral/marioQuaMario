@@ -2,8 +2,7 @@
   "replace": false,
   "values": [
     "#minecraft:climbable",
-    "#minecraft:fences",
-    "minecraft:iron_bars",
+    "#mario_qua_mario:mario_climbable_panes",
     "minecraft:copper_grate",
     "minecraft:exposed_copper_grate",
     "minecraft:weathered_copper_grate",
@@ -11,6 +10,14 @@
     "minecraft:waxed_copper_grate",
     "minecraft:waxed_exposed_copper_grate",
     "minecraft:waxed_weathered_copper_grate",
-    "minecraft:waxed_oxidized_copper_grate"
+    "minecraft:waxed_oxidized_copper_grate",
+    {
+      "id": "create:sail_frame",
+      "required": false
+    },
+    {
+      "id": "supplementaries:iron_gate",
+      "required": false
+    }
   ]
 }

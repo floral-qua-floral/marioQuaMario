@@ -18,6 +18,7 @@ public interface MQMTags {
 	TagKey<Block> NOT_POWERED_WHEN_BAPPED = getTag(BLOCK, "not_powered_when_bapped");
 	TagKey<Block> USES_DOUBLE_HARDNESS_WHEN_BAPPED = getTag(BLOCK, "uses_double_hardness_when_bapped");
 	TagKey<Block> USES_HALF_HARDNESS_WHEN_BAPPED = getTag(BLOCK, "uses_half_hardness_when_bapped");
+	TagKey<Block> DESTROYED_BY_INDIRECT_BAP = getTag(BLOCK, "destroyed_by_indirect_bap");
 
 	private static <T> TagKey<T> getTag(RegistryKey<Registry<T>> key, String name) {
 		return TagKey.of(key, Identifier.of("mario_qua_mario", name));

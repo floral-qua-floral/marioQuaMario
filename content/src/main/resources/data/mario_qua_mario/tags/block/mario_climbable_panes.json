@@ -6,6 +6,22 @@
     {
       "id": "#chipped:iron_bars",
       "required": false
+    },
+    {
+      "id": "create:copper_bars",
+      "required": false
+    },
+    {
+      "id": "create:andesite_bars",
+      "required": false
+    },
+    {
+      "id": "create:brass_bars",
+      "required": false
+    },
+    {
+      "id": "betterend:thallasium_bars",
+      "required": false
     }
   ]
 }

@@ -9,21 +9,19 @@ import com.fqf.mario_qua_mario.util.MarioSFX;
 import com.fqf.mario_qua_mario_api.interfaces.BapResult;
 import com.fqf.mario_qua_mario_api.interfaces.Bappable;
 import com.fqf.mario_qua_mario_api.util.MQMTags;
-import it.unimi.dsi.fastutil.objects.Object2ByteArrayMap;
-import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.FluidState;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.PalettedContainer;
+import net.minecraft.world.chunk.WorldChunk;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -89,7 +87,7 @@ public class BlockBappingUtil {
 		}
 
 		if(info != null) {
-			storeBapInfo(info);
+			storeBapInfo(info, 0);
 			if(data.isServer()) {
 				MarioBappingPackets.bapS2C(
 						(ServerWorld) world, pos,
@@ -135,7 +133,54 @@ public class BlockBappingUtil {
 		}
 	}
 
-	public static void storeBapInfo(AbstractBapInfo info) {
+	private static void indirectBap(BumpingBlockInfo info, Direction direction, int propagations) {
+		BlockPos indirectPos = info.POS.offset(direction);
+		BlockState indirectState = info.WORLD.getBlockState(indirectPos);
+		if(indirectState.isAir()) return;
+
+		if(!indirectState.canPlaceAt(info.WORLD, indirectPos)) {
+			AbstractBapInfo newInfo;
+			boolean power = !indirectState.isIn(MQMTags.NOT_POWERED_WHEN_BAPPED);
+			if(indirectState.isIn(MQMTags.DESTROYED_BY_INDIRECT_BAP))
+				newInfo = new BapBreakingBlockInfo(info.WORLD, indirectPos,
+						power ? BapResult.BREAK : BapResult.BREAK_NO_POWER, info.DISPLACEMENT_DIRECTION, info.BAPPER);
+			else if(indirectState.getHardness(info.WORLD, indirectPos) == 0)
+				newInfo = new BumpingBlockInfo(info.WORLD, indirectPos,
+						power ? BapResult.BUMP : BapResult.BUMP_NO_POWER, info.DISPLACEMENT_DIRECTION, info.BAPPER);
+			else
+				newInfo = new BumpingEmbrittlingBlockInfo(info.WORLD, indirectPos,
+						power ? BapResult.BUMP_EMBRITTLE : BapResult.BUMP_EMBRITTLE_NO_POWER, info.DISPLACEMENT_DIRECTION, info.BAPPER);
+
+			storeBapInfo(newInfo, propagations + 1);
+		}
+	}
+
+	private static final int MAX_PROPAGATIONS = 10;
+
+	public static void storeBapInfo(AbstractBapInfo info, int propagations) {
+		if(info instanceof BumpingBlockInfo bumping && propagations < MAX_PROPAGATIONS) {
+			BlockState bappedState = info.WORLD.getBlockState(info.POS);
+
+			WorldChunk bapWorldChunk = info.WORLD.getWorldChunk(info.POS);
+			PalettedContainer<BlockState> container = bapWorldChunk.getSection(bapWorldChunk.getSectionIndex(info.POS.getY())).getBlockStateContainer();
+			container.set(info.POS.getX() & 15, info.POS.getY() & 15, info.POS.getZ() & 15,
+					Blocks.AIR.getDefaultState());
+
+			Direction opposite = bumping.DISPLACEMENT_DIRECTION.getOpposite();
+
+			if(propagations == 0) {
+				for(Direction direction : Direction.values()) {
+					if(direction != opposite)
+						indirectBap(bumping, direction, propagations);
+				}
+			}
+
+			indirectBap(bumping, opposite, propagations);
+
+			container.set(info.POS.getX() & 15, info.POS.getY() & 15, info.POS.getZ() & 15,
+					bappedState);
+		}
+
 		if(info.WORLD.isClient())
 			MarioClientHelperManager.helper.clientBap(info);
 
@@ -208,7 +253,7 @@ public class BlockBappingUtil {
 		}
 
 		if(replacementBaps != null) for(AbstractBapInfo replacementBap : replacementBaps) {
-			storeBapInfo(replacementBap);
+			storeBapInfo(replacementBap, 0);
 		}
 	}
 
