@@ -19,7 +19,7 @@ public interface MQMContentTags {
 	TagKey<EntityType<?>> FIRE_MARIO_PUNCH_TARGETS = getTag(ENTITY_TYPE, "fire_mario_punch_targets");
 
 	TagKey<Block> CLIMBABLE = getTag(BLOCK, "mario_climbable");
-	TagKey<Block> CLIMBABLE_PANES = getTag(BLOCK, "mario_climbable_panes");
+	TagKey<Block> SOMETIMES_CLIMBABLE_PANES = getTag(BLOCK, "mario_sometimes_climbable_panes");
 	TagKey<Block> UNSLIDEABLE_WALLS = getTag(BLOCK, "mario_unslideable_walls");
 	TagKey<Block> DESTROYED_BY_FIREBALL = getTag(BLOCK, "destroyed_by_mario_fireball");
 

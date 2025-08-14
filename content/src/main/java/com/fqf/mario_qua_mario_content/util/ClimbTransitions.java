@@ -28,7 +28,7 @@ public class ClimbTransitions {
 			if(facing.isPresent())
 				return facing.get().getAxis() == direction.getAxis(); // can climb the back face of ladders because why not
 
-			if(state.isIn(MQMContentTags.CLIMBABLE_PANES))
+			if(state.isIn(MQMContentTags.SOMETIMES_CLIMBABLE_PANES))
 				return MultifaceGrowthBlock.hasDirection(state, direction.rotateYClockwise())
 						|| MultifaceGrowthBlock.hasDirection(state, direction.rotateYCounterclockwise());
 
