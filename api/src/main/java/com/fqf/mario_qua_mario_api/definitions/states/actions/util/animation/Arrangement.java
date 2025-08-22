@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation;
 
+import com.fqf.mario_qua_mario_api.mariodata.IMarioAnimatingData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioReadableMotionData;
 
 public class Arrangement {
@@ -8,7 +9,7 @@ public class Arrangement {
 
 	@FunctionalInterface
 	public interface Mutator {
-		void mutate(IMarioReadableMotionData data, Arrangement arrangement, float progress);
+		void mutate(IMarioAnimatingData data, Arrangement arrangement, float progress);
 	}
 
 	public void setPos(float x, float y, float z) {

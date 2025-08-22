@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation;
 
+import com.fqf.mario_qua_mario_api.mariodata.IMarioAnimatingData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioReadableMotionData;
 import com.fqf.mario_qua_mario_api.util.Easing;
 import net.minecraft.util.Identifier;
@@ -19,11 +20,11 @@ public record ProgressHandler(@Nullable Identifier animationID, @Nullable Progre
 
 	@FunctionalInterface
 	public interface ProgressCalculator {
-		float calculateProgress(IMarioReadableMotionData data, int ticksPassed);
+		float calculateProgress(IMarioAnimatingData data, int ticksPassed);
 	}
 
 	@FunctionalInterface
 	public interface ProgressResetPredicate {
-		boolean shouldReset(IMarioReadableMotionData data, @Nullable Identifier prevAnimationID);
+		boolean shouldReset(IMarioAnimatingData data, @Nullable Identifier prevAnimationID);
 	}
 }
