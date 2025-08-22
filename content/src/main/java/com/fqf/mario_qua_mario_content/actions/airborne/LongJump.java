@@ -10,11 +10,14 @@ import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.Voicelines;
 import com.fqf.mario_qua_mario_content.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario_content.actions.grounded.PRun;
+import com.fqf.mario_qua_mario_content.util.ClimbTransitions;
 import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector2d;
 
 import java.util.List;
 
@@ -181,11 +184,36 @@ public class LongJump extends Jump implements AirborneActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {
 		return List.of(
 				Submerged.SUBMERGE,
+				BonkAir.BONK.variate(
+						WallJump.ID,
+						data -> BonkAir.BONK.evaluator().shouldTransition(data) && data.getInputs().JUMP.isPressed(),
+						null,
+						data -> {
+							Vec3d wallJumpHorizVel = data.getRecordedCollisions().getHorizontallyReflectedVelocity();
+							double wallJumpSpeed = WallJump.WALL_JUMP_SPEED.get(data);
+//							MarioQuaMarioContent.LOGGER.info("Horiz Vel: {}\tThreshold: {}", wallJumpHorizVel.horizontalLengthSquared(), wallJumpSpeed * wallJumpSpeed);
+							if(wallJumpHorizVel.horizontalLengthSquared() < wallJumpSpeed * wallJumpSpeed) {
+								Vector2d wallJumpHorizOnlyVel = new Vector2d(wallJumpHorizVel.x, wallJumpHorizVel.z).normalize(wallJumpSpeed);
+								wallJumpHorizVel = new Vec3d(wallJumpHorizOnlyVel.x, wallJumpHorizVel.y, wallJumpHorizOnlyVel.y);
+							}
+							data.setVelocity(wallJumpHorizVel);
+							data.setYVel(WallJump.WALL_JUMP_VEL.get(data));
+						},
+						(data, isSelf, seed) -> {
+							data.playSound(MarioContentSFX.BONK, seed);
+							data.playJumpSound(seed);
+							data.playSound(MarioContentSFX.WALL_JUMP, seed);
+							data.voice(Voicelines.WALL_JUMP, seed);
+						}
+				),
 				BonkAir.BONK,
 				Jump.DOUBLE_JUMPABLE_LANDING.variate(PRun.ID, data ->
 						Fall.LANDING.evaluator().shouldTransition(data) && (data.isServer() || PRun.meetsPRunRequirements(data)),
 						EvaluatorEnvironment.CLIENT_CHECKED, null, null),
-				Jump.DOUBLE_JUMPABLE_LANDING
+				Jump.DOUBLE_JUMPABLE_LANDING,
+				// Mario can start climbing non-solids (vines), but can't climb solids or start wall-sliding (because he'd bonk)
+				ClimbTransitions.CLIMB_NON_SOLID_DIRECTIONAL,
+				ClimbTransitions.CLIMB_NON_SOLID_NON_DIRECTIONAL
 		);
 	}
 }

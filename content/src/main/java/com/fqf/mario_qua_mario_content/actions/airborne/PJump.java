@@ -13,7 +13,9 @@ import com.fqf.mario_qua_mario_content.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario_content.actions.grounded.PRun;
 import com.fqf.mario_qua_mario_content.actions.power.TailFly;
 import com.fqf.mario_qua_mario_content.actions.power.TailStall;
+import com.fqf.mario_qua_mario_content.actions.wallbound.WallSlide;
 import com.fqf.mario_qua_mario_content.powerups.Raccoon;
+import com.fqf.mario_qua_mario_content.util.ClimbTransitions;
 import com.fqf.mario_qua_mario_content.util.Powers;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -86,7 +88,11 @@ public class PJump extends Jump implements AirborneActionDefinition {
 						EvaluatorEnvironment.CLIENT_CHECKED,
 						null,
 						null),
-				Jump.DOUBLE_JUMPABLE_LANDING
+				Jump.DOUBLE_JUMPABLE_LANDING,
+				ClimbTransitions.CLIMB_NON_SOLID_DIRECTIONAL,
+				ClimbTransitions.CLIMB_NON_SOLID_NON_DIRECTIONAL,
+				ClimbTransitions.CLIMB_SOLID,
+				WallSlide.WALL_SLIDE
 		);
 	}
 }

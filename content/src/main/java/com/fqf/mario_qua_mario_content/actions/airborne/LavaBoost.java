@@ -11,6 +11,7 @@ import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_api.util.CharaStat;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.aquatic.Submerged;
+import com.fqf.mario_qua_mario_content.util.ClimbTransitions;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
@@ -133,7 +134,11 @@ public class LavaBoost extends Fall implements AirborneActionDefinition {
 						},
 						(data, isSelf, seed) -> {}
 				),
-				Fall.LANDING.variate(null, data -> data.getYVel() <= 0 && Fall.LANDING.evaluator().shouldTransition(data))
+				Fall.LANDING.variate(null, data -> data.getYVel() <= 0 && Fall.LANDING.evaluator().shouldTransition(data)),
+				// Mario can start climbing from a Lava Boost, but can't wall-jump
+				ClimbTransitions.CLIMB_NON_SOLID_DIRECTIONAL,
+				ClimbTransitions.CLIMB_NON_SOLID_NON_DIRECTIONAL,
+				ClimbTransitions.CLIMB_SOLID
 		);
 	}
 
