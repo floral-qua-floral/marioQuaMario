@@ -1,11 +1,13 @@
 package com.fqf.mario_qua_mario.mariodata;
 
+import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.HandPreference;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.mario_qua_mario.mariodata.util.*;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import com.fqf.mario_qua_mario.util.MarioSFX;
+import com.fqf.mario_qua_mario_api.mariodata.IMarioAnimatingData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -22,7 +24,7 @@ import net.minecraft.util.math.random.Random;
 import java.util.HashMap;
 import java.util.Map;
 
-public interface IMarioClientDataImpl extends IMarioClientData {
+public interface IMarioClientDataImpl extends IMarioAnimatingData {
 	@Override
 	default boolean isClient() {
 		return true;
@@ -161,5 +163,15 @@ public interface IMarioClientDataImpl extends IMarioClientData {
 		public SoundInstanceWrapperImpl(SoundInstance sound) {
 			this.SOUND = sound;
 		}
+	}
+
+	@Override
+	default HandPreference getCurrentHandPreference() {
+		return HandPreference.EITHER;
+	}
+
+	@Override
+	default float getRelativeHeadYaw() {
+		return 0;
 	}
 }
