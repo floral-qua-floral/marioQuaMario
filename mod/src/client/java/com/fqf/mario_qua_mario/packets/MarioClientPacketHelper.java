@@ -259,6 +259,8 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 	public static void syncMarioDatasToReplay() {
 		// Known issue - might not include players in other dimensions being tracked through Immersive Portals?
 		// WHO CARES!!!!!!!
+
+		// Known issue that actually matters - doesn't save playermodel? :(
 		for(PlayerEntity player : Objects.requireNonNull(MinecraftClient.getInstance().player).getWorld().getPlayers()) {
 			MarioPlayerData data = player.mqm$getMarioData();
 			if(data.isEnabled()) {

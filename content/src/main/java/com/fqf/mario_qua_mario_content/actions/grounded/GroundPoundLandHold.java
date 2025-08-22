@@ -27,6 +27,11 @@ public class GroundPoundLandHold extends GroundPoundLand implements GroundedActi
 	}
 
 	@Override
+	public @NotNull List<TransitionDefinition> getBasicTransitions(GroundedActionHelper helper) {
+		return List.of();
+	}
+
+	@Override
 	public @NotNull List<TransitionDefinition> getInputTransitions(GroundedActionHelper helper) {
 		return List.of(
 				new TransitionDefinition(
@@ -47,7 +52,9 @@ public class GroundPoundLandHold extends GroundPoundLand implements GroundedActi
 						(nearbyTransition, castableHelper) -> new TransitionDefinition(
 								GroundPoundLandHold.ID,
 								data -> (data.isServer() || data.getInputs().DUCK.isHeld()) && nearbyTransition.evaluator().shouldTransition(data),
-								EvaluatorEnvironment.CLIENT_CHECKED
+								EvaluatorEnvironment.CLIENT_CHECKED,
+								nearbyTransition.travelExecutor(),
+								nearbyTransition.clientsExecutor()
 						)
 				)
 		);
