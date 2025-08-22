@@ -41,6 +41,7 @@
 			"com.fqf.mario_qua_mario_content.actions.grounded.DuckWaddle",
 			"com.fqf.mario_qua_mario_content.actions.grounded.DuckSlide",
 			"com.fqf.mario_qua_mario_content.actions.grounded.GroundPoundLand",
+			"com.fqf.mario_qua_mario_content.actions.grounded.GroundPoundLandHold",
 			"com.fqf.mario_qua_mario_content.actions.grounded.BonkGroundBackward",
 			"com.fqf.mario_qua_mario_content.actions.grounded.BonkGroundForward",
 

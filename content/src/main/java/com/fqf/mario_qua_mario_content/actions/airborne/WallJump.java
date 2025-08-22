@@ -1,11 +1,8 @@
 package com.fqf.mario_qua_mario_content.actions.airborne;
 
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.*;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.*;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
@@ -14,9 +11,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.Set;
 
 import static com.fqf.mario_qua_mario_api.util.StatCategory.*;
 
@@ -109,7 +103,7 @@ public class WallJump extends Jump implements AirborneActionDefinition {
 		return new PlayermodelAnimation(
 				null,
 				new ProgressHandler((data, ticksPassed) -> {
-					float deviation = MathHelper.subtractAngles(data.getMario().bodyYaw, data.getVars(BonkAir.BonkVars.class).BONK_YAW);
+					float deviation = MathHelper.subtractAngles(data.getMario().bodyYaw, data.getVars(BonkAir.BonkVars.class).recalculateBonkYaw(data));
 					return deviation / 180 * 2;
 				}),
 				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {

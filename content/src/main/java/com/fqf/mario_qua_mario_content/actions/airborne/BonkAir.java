@@ -102,7 +102,8 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 		return new PlayermodelAnimation(
 				null,
 				new ProgressHandler((data, ticksPassed) -> {
-					float deviation = MathHelper.subtractAngles(data.getMario().bodyYaw, data.getVars(BonkVars.class).BONK_YAW);
+					float deviation = MathHelper.subtractAngles(data.getMario().bodyYaw,
+							data.getVars(BonkVars.class).recalculateBonkYaw(data));
 					return deviation / 180 * 2;
 				}),
 				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
@@ -178,18 +179,25 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 	}
 
 	protected static class BonkVars {
-		public final float BONK_YAW;
+		public float bonkYaw;
 		public int noInputTicks;
 
 		public BonkVars(IMarioData data) {
 			this.noInputTicks = 2;
 			BonkVars oldVars = data.getVars(BonkVars.class);
 			if(oldVars != null)
-				this.BONK_YAW = oldVars.BONK_YAW;
+				this.bonkYaw = oldVars.bonkYaw;
 			else if(data instanceof IMarioReadableMotionData motionData)
-				this.BONK_YAW = yawFromVec3d(motionData.getVelocity());
+				this.recalculateBonkYaw(motionData);
 			else
-				this.BONK_YAW = data.getMario().bodyYaw;
+				this.bonkYaw = data.getMario().bodyYaw;
+		}
+
+		public float recalculateBonkYaw(IMarioReadableMotionData data) {
+			if(data.getHorizVelSquared() != 0) {
+				this.bonkYaw = yawFromVec3d(data.getVelocity());
+			}
+			return this.bonkYaw;
 		}
 	}
 
@@ -219,7 +227,7 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 				Fall.LANDING.variate(
 						BonkGroundBackward.ID,
 						data -> Fall.LANDING.evaluator().shouldTransition(data)
-								&& Math.abs(MathHelper.subtractAngles(data.getMario().bodyYaw, data.getVars(BonkVars.class).BONK_YAW)) < 90,
+								&& Math.abs(MathHelper.subtractAngles(data.getMario().bodyYaw, data.getVars(BonkVars.class).bonkYaw)) < 90,
 						EvaluatorEnvironment.CLIENT_ONLY,
 						null,
 						null
