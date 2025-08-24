@@ -29,7 +29,7 @@ public class CoinItem extends Item {
 		ItemStack stack = user.getStackInHand(hand);
 		if(!user.isInCreativeMode() && stack.getCount() < 8) return TypedActionResult.fail(stack);
 
-		user.playSound(MarioContentSFX.COIN, 1.0F, 1.0F);
+		user.playSound(MarioContentSFX.COIN_USE, 1.0F, 1.0F);
 
 		if(!world.isClient()) {
 			Pair<Item, Integer> reward = COIN_REWARDS.get(user.getRandom().nextInt(COIN_REWARDS.size()));
@@ -42,4 +42,6 @@ public class CoinItem extends Item {
 
 		return TypedActionResult.fail(stack);
 	}
+
+
 }

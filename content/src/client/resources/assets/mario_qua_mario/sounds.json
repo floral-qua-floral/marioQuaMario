@@ -107,6 +107,12 @@
 			"mario_qua_mario:sfx/power_up/coin"
 		]
 	},
+	"sfx.power_up.coin_use": {
+		"subtitle": "subtitles.mario_qua_mario.power_up.coin_use",
+		"sounds": [
+			"mario_qua_mario:sfx/power_up/coin_use"
+		]
+	},
 	"sfx.power_up.fireball": {
 		"subtitle": "subtitles.mario_qua_mario.power_up.fireball",
 		"sounds": [

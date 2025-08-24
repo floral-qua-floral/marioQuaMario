@@ -181,6 +181,8 @@ public class LongJump extends Jump implements AirborneActionDefinition {
 		return List.of();
 	}
 
+	public static final double WALL_JUMP_SPEED_MULTIPLIER = 1.2;
+
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {
 		return List.of(
 				Submerged.SUBMERGE,
@@ -196,8 +198,11 @@ public class LongJump extends Jump implements AirborneActionDefinition {
 								Vector2d wallJumpHorizOnlyVel = new Vector2d(wallJumpHorizVel.x, wallJumpHorizVel.z).normalize(wallJumpSpeed);
 								wallJumpHorizVel = new Vec3d(wallJumpHorizOnlyVel.x, wallJumpHorizVel.y, wallJumpHorizOnlyVel.y);
 							}
-							data.setVelocity(wallJumpHorizVel);
-							data.setYVel(WallJump.WALL_JUMP_VEL.get(data));
+							data.setVelocity(new Vec3d(
+									wallJumpHorizVel.x * WALL_JUMP_SPEED_MULTIPLIER,
+									WallJump.WALL_JUMP_VEL.get(data),
+									wallJumpHorizVel.z * WALL_JUMP_SPEED_MULTIPLIER
+							));
 						},
 						(data, isSelf, seed) -> {
 							data.playSound(MarioContentSFX.BONK, seed);

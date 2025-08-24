@@ -25,5 +25,8 @@ sfx = {
   "mk7_tanookiattack": "tail_whip",
   "mk7_tanookileaf": "tail_empower",
 
-  "dive": "aquatic_ground_pound_drop"
+  "dive": "aquatic_ground_pound_drop",
+
+  "nsmbwiiCoinAppear2": "coin_use",
+  "nsmbwiiFenceHit": "climbable_hit"
 }

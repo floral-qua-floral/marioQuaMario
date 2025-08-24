@@ -36,12 +36,13 @@
   "subtitles.mario_qua_mario.movement.wall_jump": "Wall jumping",
 
   "subtitles.mario_qua_mario.power_up.burn_object": "Fireball incinerates",
-  "subtitles.mario_qua_mario.power_up.coin": "Coin spent",
+  "subtitles.mario_qua_mario.power_up.coin": "Coin collected",
   "subtitles.mario_qua_mario.power_up.fireball": "Fireball thrown",
   "subtitles.mario_qua_mario.power_up.fireball_enemy": "Fireball strikes",
   "subtitles.mario_qua_mario.power_up.fireball_wall": "Fireball impact",
   "subtitles.mario_qua_mario.power_up.tail_whip": "Tail whips",
   "subtitles.mario_qua_mario.power_up.tail_empower": "Powering up",
+  "subtitles.mario_qua_mario.power_up.coin_use": "Coins spent",
   "subtitles.mario_qua_mario.power_up.tail_fly": "Tail waggles",
 
   "subtitles.mario_qua_mario.stomp.kick": "Something gets attacked",

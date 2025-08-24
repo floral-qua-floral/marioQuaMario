@@ -3,6 +3,7 @@
   "package": "com.fqf.mario_qua_mario_content.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "CoinSpinMixin",
     "DropCoinWithExperienceMixin",
     "PlayerStruckByLightningMixin"
   ],

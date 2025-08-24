@@ -37,7 +37,8 @@ sfx_movement = {
 }
 
 sfx_power_up = {
-  "coin": "Coin spent",
+  "coin": "Coin collected",
+  "coin_use": "Coins spent",
   "fireball": "Fireball thrown",
   "fireball_enemy": "Fireball strikes",
   "fireball_wall": "Fireball impact",
@@ -69,4 +70,5 @@ sfx_action = {
   "aquatic_ground_pound_drop": "Diving",
   "aquatic_ground_pound_land": "Ground pounded",
   "bonk": "Something slams"
+  # "climbable_hit": "Something thwacks"
 }
