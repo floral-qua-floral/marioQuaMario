@@ -10,6 +10,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.BlockPosArgumentType;
@@ -30,13 +31,13 @@ import static net.minecraft.server.command.CommandManager.literal;
 
 public class MarioCommand {
 	public static void registerMarioCommand() {
-		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
-			dispatcher.register(literal("mario")
+		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+			LiteralCommandNode<ServerCommandSource> literalCommandNode = dispatcher.register(literal("mario")
 				.then(literal("disable")
 					.requires(source -> source.hasPermissionLevel(2))
 					.executes(context -> disable(context, false))
 					.then(argument("mario", EntityArgumentType.player())
-							.executes(context -> disable(context, true))
+						.executes(context -> disable(context, true))
 					)
 				)
 				.then(literal("set")
@@ -118,8 +119,9 @@ public class MarioCommand {
 						)
 					)
 				)
-			)
-		);
+			);
+			dispatcher.register(literal("mqm").redirect(literalCommandNode));
+		});
 	}
 
 	private static int sendFeedback(CommandContext<ServerCommandSource> context, String feedback, boolean successful) {
