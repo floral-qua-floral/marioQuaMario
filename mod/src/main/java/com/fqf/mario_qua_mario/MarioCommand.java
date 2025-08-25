@@ -1,11 +1,14 @@
 package com.fqf.mario_qua_mario;
 
+import com.fqf.mario_qua_mario.bapping.BlockBappingUtil;
+import com.fqf.mario_qua_mario_api.interfaces.BapResult;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.mariodata.MarioServerPlayerData;
 import com.fqf.mario_qua_mario.packets.MarioAttackInterceptionPackets;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
+import com.fqf.mario_qua_mario_api.util.MQMTags;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -81,16 +84,16 @@ public class MarioCommand {
 							)
 						)
 					)
-					.then(literal("bump")
+					.then(literal("bap")
 						.requires(source -> source.hasPermissionLevel(2))
 						.then(argument("position", BlockPosArgumentType.blockPos())
-							.executes(context -> executeBump(context, false, Direction.UP, 4))
-							.then(makeBumpDirectionFork(Direction.UP))
-							.then(makeBumpDirectionFork(Direction.DOWN))
-							.then(makeBumpDirectionFork(Direction.NORTH))
-							.then(makeBumpDirectionFork(Direction.SOUTH))
-							.then(makeBumpDirectionFork(Direction.EAST))
-							.then(makeBumpDirectionFork(Direction.WEST))
+							.executes(context -> executeBapFromStrength(context, false, Direction.UP, 4))
+							.then(makeBapDirectionFork(Direction.UP))
+							.then(makeBapDirectionFork(Direction.DOWN))
+							.then(makeBapDirectionFork(Direction.NORTH))
+							.then(makeBapDirectionFork(Direction.SOUTH))
+							.then(makeBapDirectionFork(Direction.EAST))
+							.then(makeBapDirectionFork(Direction.WEST))
 						)
 					)
 					.then(literal("actionTransition")
@@ -124,10 +127,13 @@ public class MarioCommand {
 		});
 	}
 
-	private static int sendFeedback(CommandContext<ServerCommandSource> context, String feedback, boolean successful) {
-		if(successful) context.getSource().sendFeedback(() -> Text.literal(feedback), true);
+	private static int sendFeedback(CommandContext<ServerCommandSource> context, String feedback, int result) {
+		if(result > 0) context.getSource().sendFeedback(() -> Text.literal(feedback), true);
 		else context.getSource().sendError(Text.literal(feedback));
-		return successful ? 1 : 0;
+		return result;
+	}
+	private static int sendFeedback(CommandContext<ServerCommandSource> context, String feedback, boolean successful) {
+		return sendFeedback(context, feedback, successful ? 1 : 0);
 	}
 	private static int sendFeedback(CommandContext<ServerCommandSource> context, String feedback) {
 		return sendFeedback(context, feedback, true);
@@ -213,33 +219,75 @@ public class MarioCommand {
 	}
 
 
-	private static int executeBump(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven, Direction direction, Integer strength) throws CommandSyntaxException {
+	private static int executeBapFromStrength(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven, Direction direction, Integer strength) throws CommandSyntaxException {
 		ServerPlayerEntity mario = getPlayerFromCmd(context, playerArgumentGiven);
 		MarioServerPlayerData data = mario.mqm$getMarioData();
 		String name = mario.getName().getString();
 
 		if(!data.isEnabled())
-			return sendFeedback(context, name + " is not playing as a character, and as such cannot bump blocks.", false);
+			return sendFeedback(context, name + " is not playing as a character, and as such cannot bap blocks.", false);
+		BlockPos position = BlockPosArgumentType.getBlockPos(context, "position");
+		String posString = "(" + position.getX() + ", " + position.getY() + ", " + position.getZ() + ")";
 
-//		if(strength == null) strength = IntegerArgumentType.getInteger(environment, "strength");
-//		BlockPos position = BlockPosArgumentType.getBlockPos(environment, "position");
-//
-//		MarioServerData data = (MarioServerData) MarioDataManager.getMarioData(bumper);
-//		BumpManager.bumpBlockServer(data, bumper.getServerWorld(), position, strength, strength, direction, true, true);
-//		BumpManager.bumpResponseCommon(data, data, bumper.getServerWorld(), bumper.getServerWorld().getBlockState(position), position, strength, strength, direction);
-//
-//		return sendFeedback(environment, "Made " + bumper.getName().getString() + " bump block " + direction + " with a strength " + strength);
+		if(context.getSource().getWorld().getBlockState(position).isAir())
+			return sendFeedback(context, "Block at " + posString + " is air!", false);
 
-		return sendFeedback(context, "Command not yet implemented.", false);
+		if(strength == null) strength = IntegerArgumentType.getInteger(context, "strength");
+
+		BapResult result = BlockBappingUtil.attemptBap(data, mario.getWorld(), position, direction, strength, true);
+
+		if(result == BapResult.FAIL)
+			return sendFeedback(context, "Block at " + posString + " is unaffected by " + name + "'s bap.", false);
+
+		return sendFeedback(context, "Made " + name + " bap block at position " + posString + ". Result: " + result, result.ordinal() + 1);
 	}
-	private static LiteralArgumentBuilder<ServerCommandSource> makeBumpDirectionFork(Direction direction) {
+	private static int executeBapFromResult(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven, Direction direction, BapResult result) throws CommandSyntaxException {
+		ServerPlayerEntity mario = getPlayerFromCmd(context, playerArgumentGiven);
+		MarioServerPlayerData data = mario.mqm$getMarioData();
+		String name = mario.getName().getString();
+
+		if(!data.isEnabled())
+			return sendFeedback(context, name + " is not playing as a character, and as such cannot bap blocks.", false);
+		BlockPos position = BlockPosArgumentType.getBlockPos(context, "position");
+		String posString = "(" + position.getX() + ", " + position.getY() + ", " + position.getZ() + ")";
+
+		if(context.getSource().getWorld().getBlockState(position).isAir())
+			return sendFeedback(context, "Block at " + posString + " is air!", false);
+
+		boolean noPower = mario.getServerWorld().getBlockState(position).isIn(MQMTags.NOT_POWERED_WHEN_BAPPED);
+		result = switch(result) {
+			case BUMP -> noPower ? BapResult.BUMP_NO_POWER : result;
+			case BUMP_EMBRITTLE -> noPower ? BapResult.BUMP_EMBRITTLE_NO_POWER : result;
+			case BREAK -> noPower ? BapResult.BREAK_NO_POWER : result;
+			default -> result;
+		};
+
+		BlockBappingUtil.networkAndStoreBapInfo(mario.getWorld(), position, direction, -1, mario, result, true);
+
+		return sendFeedback(context, "Made " + name + " do " + result + " to block at " + posString, true);
+	}
+	private static LiteralArgumentBuilder<ServerCommandSource> makeBapDirectionFork(Direction direction) {
 		return literal(direction.name().toLowerCase(Locale.ROOT))
-			.executes(context -> executeBump(context, false, direction, 4))
-			.then(argument("strength", IntegerArgumentType.integer())
-				.executes(context -> executeBump(context, false, direction, null))
-				.then(argument("mario", EntityArgumentType.player())
-					.executes(context -> executeBump(context, true, direction, null))
+			.executes(context -> executeBapFromStrength(context, false, direction, 4))
+			.then(literal("strength")
+				.then(argument("strength", IntegerArgumentType.integer())
+					.executes(context -> executeBapFromStrength(context, false, direction, null))
+					.then(argument("mario", EntityArgumentType.player())
+						.executes(context -> executeBapFromStrength(context, true, direction, null))
+					)
 				)
+			)
+			.then(literal("result")
+				.then(makeBapResultFork(direction, "bump", BapResult.BUMP))
+				.then(makeBapResultFork(direction, "embrittle", BapResult.BUMP_EMBRITTLE))
+				.then(makeBapResultFork(direction, "break", BapResult.BREAK))
+			);
+	}
+	private static LiteralArgumentBuilder<ServerCommandSource> makeBapResultFork(Direction direction, String name, BapResult result) {
+		return literal(name)
+			.executes(context -> executeBapFromResult(context, false, direction, result))
+			.then(argument("mario", EntityArgumentType.player())
+				.executes(context -> executeBapFromResult(context, true, direction, result))
 			);
 	}
 

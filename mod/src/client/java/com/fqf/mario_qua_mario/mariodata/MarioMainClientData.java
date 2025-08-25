@@ -477,7 +477,7 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		if(bapStrength == 0)
 			bapResult = null;
 		else
-			bapResult = BlockBappingUtil.attemptBap(this, this.getMario().clientWorld, pos, direction, bapStrength);
+			bapResult = BlockBappingUtil.attemptBap(this, this.getMario().clientWorld, pos, direction, bapStrength, true);
 
 		if(bapResult != BapResult.BUST)
 			this.RECORDED_COLLISIONS.REFLECTS[direction.getAxis().ordinal()] = true;

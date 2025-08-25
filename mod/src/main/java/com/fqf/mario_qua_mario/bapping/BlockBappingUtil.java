@@ -1,6 +1,5 @@
 package com.fqf.mario_qua_mario.bapping;
 
-import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
 import com.fqf.mario_qua_mario.packets.MarioBappingPackets;
 import com.fqf.mario_qua_mario.util.MarioClientHelperManager;
@@ -70,7 +69,7 @@ public class BlockBappingUtil {
 	}
 
 	@SuppressWarnings("UnusedReturnValue")
-	public static BapResult attemptBap(MarioPlayerData data, World world, BlockPos pos, Direction direction, int strength) {
+	public static BapResult attemptBap(MarioPlayerData data, World world, BlockPos pos, Direction direction, int strength, boolean fullyNetwork) {
 		BlockState blockState = world.getBlockState(pos);
 
 		BapResult result = handleBapResultForAdventureMode(((Bappable) blockState.getBlock()).mqm$getBapResult(
@@ -79,25 +78,28 @@ public class BlockBappingUtil {
 				direction, strength
 		), blockState, data.getMario());
 
-		AbstractBapInfo info = makeBapInfo(world, pos, direction, strength, data.getMario(), result);
+		networkAndStoreBapInfo(world, pos, direction, strength, data.getMario(), result, fullyNetwork);
 
-		if(data.getMario().isMainPlayer() && result != BapResult.FAIL) {
-			MarioClientHelperManager.packetSender.bapBlockC2S(pos, direction, data.getAction());
-			MarioClientHelperManager.packetSender.conditionallySaveBapToReplayMod(pos, direction, strength, result, data.getMario());
+		return result;
+	}
+	public static void networkAndStoreBapInfo(World world, BlockPos pos, Direction direction, int strength, @Nullable Entity bapper, BapResult result, boolean fullyNetwork) {
+		AbstractBapInfo info = makeBapInfo(world, pos, direction, strength, bapper, result);
+
+		if(result != BapResult.FAIL && fullyNetwork && bapper instanceof PlayerEntity mario && mario.isMainPlayer()) {
+			MarioClientHelperManager.packetSender.bapBlockC2S(pos, direction, mario.mqm$getMarioData().getAction());
+			MarioClientHelperManager.packetSender.conditionallySaveBapToReplayMod(pos, direction, strength, result, bapper);
 		}
 
 		if(info != null) {
 			storeBapInfo(info, 0);
-			if(data.isServer()) {
+			if(!world.isClient) {
 				MarioBappingPackets.bapS2C(
-						(ServerWorld) world, pos,
+						(ServerWorld) info.WORLD, info.POS,
 						direction, strength, result,
-						data.getMario(), false
+						bapper, fullyNetwork
 				);
 			}
 		}
-
-		return result;
 	}
 
 	public static @Nullable AbstractBapInfo makeBapInfo(World world, BlockPos pos, Direction direction, int strength, @Nullable Entity bapper, BapResult result) {

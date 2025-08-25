@@ -18,8 +18,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
-import javax.annotation.Nullable;
-
 public class MarioBappingPackets {
 	public static void bapS2C(
 			ServerWorld world, BlockPos pos,
@@ -53,7 +51,8 @@ public class MarioBappingPackets {
 						context.player().getServerWorld(),
 						payload.pos,
 						direction,
-						data.getBapStrength(bappingAction, direction)
+						data.getBapStrength(bappingAction, direction),
+						false
 				);
 		}
 
