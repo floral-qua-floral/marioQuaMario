@@ -12,10 +12,7 @@ import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
 import com.fqf.mario_qua_mario_content.actions.airborne.SpecialFall;
 import com.fqf.mario_qua_mario_content.actions.airborne.WallJump;
 import com.fqf.mario_qua_mario_content.actions.grounded.SubWalk;
-import com.fqf.mario_qua_mario_content.util.ClimbTransitions;
-import com.fqf.mario_qua_mario_content.util.MQMContentTags;
-import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
-import com.fqf.mario_qua_mario_content.util.MarioVars;
+import com.fqf.mario_qua_mario_content.util.*;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -233,7 +230,7 @@ public class WallSlide implements WallboundActionDefinition {
 		return false;
 	}
 
-	private static class WallSlideVars {
+	private static class WallSlideVars extends ActionTimerVars {
 		private int holdAwayFromWallTicks;
 	}
 	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
@@ -245,17 +242,24 @@ public class WallSlide implements WallboundActionDefinition {
 	@Override public void serverTick(IMarioAuthoritativeData data) {
 
 	}
+	private static final int GRAVITY_RAMP_UP_TICKS = 5;
 	@Override public void travelHook(IMarioTravelData data, WallInfo wall, WallboundActionHelper helper) {
+		WallSlideVars vars = data.getVars(WallSlideVars.class);
 		if(data.isClient()) {
 			if(wall.getTowardsWallInput() < -0.05)
-				data.getVars(WallSlideVars.class).holdAwayFromWallTicks += 3;
+				vars.holdAwayFromWallTicks += 3;
 			else if(wall.getTowardsWallInput() < 0.05)
-				data.getVars(WallSlideVars.class).holdAwayFromWallTicks++;
+				vars.holdAwayFromWallTicks++;
 			else
-				data.getVars(WallSlideVars.class).holdAwayFromWallTicks = 0;
+				vars.holdAwayFromWallTicks = 0;
 		}
 
-		data.setYVel(Math.max(data.getYVel() - 0.02, -0.265));
+		double gravityFactor;
+		if(data.getMario().isTouchingWaterOrRain()) gravityFactor = 1.5;
+		else if(vars.actionTimer >= GRAVITY_RAMP_UP_TICKS) gravityFactor = 1;
+		else gravityFactor = vars.actionTimer * (1.0 / GRAVITY_RAMP_UP_TICKS);
+
+		data.setYVel(Math.max(data.getYVel() - (0.02 * gravityFactor), -0.265));
 		if(Math.abs(wall.getSidleVel()) > 0.065)
 			helper.setSidleVel(data, wall.getSidleVel() * 0.8);
 		else
@@ -268,10 +272,16 @@ public class WallSlide implements WallboundActionDefinition {
 			MarioVars::checkWallSlide,
 			EvaluatorEnvironment.CLIENT_ONLY,
 			data -> {
-				data.setYVel(0);
+				if(!data.getMario().isTouchingWaterOrRain()) {
+					data.getMario().fallDistance = 0;
+					data.setYVel(0);
+				}
 				if(data.isServer()) data.setForwardStrafeVel(0, 0);
 			},
-			null
+			(data, isSelf, seed) -> {
+				if(!data.getMario().isTouchingWaterOrRain())
+					data.getMario().fallDistance = 0;
+			}
 	);
 
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(WallboundActionHelper helper) {
