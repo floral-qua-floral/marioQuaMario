@@ -8,6 +8,7 @@ import net.minecraft.util.Identifier;
 
 public class MarioContentSFX {
 	public static final SoundEvent AQUATIC_GROUND_POUND_DROP = makeActionSound("aquatic_ground_pound_drop");
+	public static final SoundEvent AQUATIC_GROUND_POUND_FLIP = makeActionSound("aquatic_ground_pound_flip");
 	public static final SoundEvent AQUATIC_GROUND_POUND_LAND = makeActionSound("aquatic_ground_pound_land");
 	public static final SoundEvent BONK = makeActionSound("bonk");
 	public static final SoundEvent DUCK = makeActionSound("duck");

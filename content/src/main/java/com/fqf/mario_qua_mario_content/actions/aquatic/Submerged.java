@@ -13,6 +13,7 @@ import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
 import com.fqf.mario_qua_mario_content.actions.airborne.GroundPoundFlip;
 import com.fqf.mario_qua_mario_content.actions.airborne.SpecialFall;
+import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -176,7 +177,13 @@ public class Submerged implements AquaticActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AquaticActionHelper helper) {
 		return List.of(
 				Swim.SWIM,
-				GroundPoundFlip.GROUND_POUND.variate(AquaticPoundFlip.ID, null)
+				GroundPoundFlip.GROUND_POUND.variate(
+						AquaticPoundFlip.ID,
+						null,
+						null,
+						null,
+						(data, isSelf, seed) -> data.playSound(MarioContentSFX.AQUATIC_GROUND_POUND_FLIP, seed)
+				)
 		);
 	}
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AquaticActionHelper helper) {

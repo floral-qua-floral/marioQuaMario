@@ -5,6 +5,12 @@
 			"mario_qua_mario:sfx/action/aquatic_ground_pound_drop"
 		]
 	},
+	"sfx.action.aquatic_ground_pound_flip": {
+		"subtitle": "subtitles.mario_qua_mario.action.aquatic_ground_pound_flip",
+		"sounds": [
+			"mario_qua_mario:sfx/action/aquatic_ground_pound_flip"
+		]
+	},
 	"sfx.action.aquatic_ground_pound_land": {
 		"subtitle": "subtitles.mario_qua_mario.action.aquatic_ground_pound_land",
 		"sounds": [
