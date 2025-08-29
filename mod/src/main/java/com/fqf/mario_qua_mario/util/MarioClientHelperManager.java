@@ -3,6 +3,7 @@ package com.fqf.mario_qua_mario.util;
 import com.fqf.mario_qua_mario.bapping.AbstractBapInfo;
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
+import com.fqf.mario_qua_mario.registries.actions.TransitionPhase;
 import com.fqf.mario_qua_mario_api.interfaces.BapResult;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
@@ -16,7 +17,7 @@ public class MarioClientHelperManager {
 		void clientBap(AbstractBapInfo info);
 	}
 	public interface ClientPacketSender {
-		void setActionC2S(AbstractParsedAction fromAction, AbstractParsedAction toAction, long seed);
+		void setActionC2S(AbstractParsedAction fromAction, AbstractParsedAction toAction, long seed, TransitionPhase phase);
 		void transmitWallYawC2S(MarioMoveableData data, float wallYaw);
 		void conditionallySaveTransitionToReplayMod(AbstractParsedAction fromAction, AbstractParsedAction toAction, long seed);
 		void bapBlockC2S(BlockPos pos, Direction direction, AbstractParsedAction action);

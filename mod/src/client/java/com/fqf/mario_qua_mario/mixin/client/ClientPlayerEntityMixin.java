@@ -6,9 +6,11 @@ import com.fqf.mario_qua_mario.util.MarioPositionSettable;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.authlib.GameProfile;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,6 +19,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.List;
 
 @Mixin(ClientPlayerEntity.class)
 public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity implements AdvMarioMainClientDataHolder, MarioPositionSettable {
@@ -79,5 +83,14 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 		this.lastX = pos.x;
 		this.lastBaseY = pos.y;
 		this.lastZ = pos.z;
+	}
+
+	@Inject(method = "sendMovementPackets", at = @At("RETURN"))
+	private void sendHeldTransitionPackets(CallbackInfo ci) {
+		List<CustomPayload> heldPackets = this.mqm$getMarioData().HELD_TRANSITION_PACKETS;
+		for(CustomPayload heldTransitionPacket : heldPackets) {
+			ClientPlayNetworking.send(heldTransitionPacket);
+		}
+		heldPackets.clear();
 	}
 }

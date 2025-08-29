@@ -1,8 +1,8 @@
 package com.fqf.mario_qua_mario.packets;
 
-import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.bapping.BlockBappingUtil;
 import com.fqf.mario_qua_mario.compat.RecordingModsCompatSafe;
+import com.fqf.mario_qua_mario.registries.actions.TransitionPhase;
 import com.fqf.mario_qua_mario.util.MarioClientHelperManager;
 import com.fqf.mario_qua_mario_api.interfaces.BapResult;
 import com.fqf.mario_qua_mario_api.interfaces.StompResult;
@@ -16,6 +16,7 @@ import com.fqf.mario_qua_mario.util.MarioGamerules;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
@@ -158,9 +159,18 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 	}
 
 	@Override
-	public void setActionC2S(AbstractParsedAction fromAction, AbstractParsedAction toAction, long seed) {
-//		MarioQuaMario.LOGGER.info("Sending setActionC2S Packet for {}->{}", stompTypeID.ID, toAction.ID);
-		ClientPlayNetworking.send(new MarioDataPackets.SetActionC2SPayload(fromAction.getIntID(), toAction.getIntID(), seed));
+	public void setActionC2S(AbstractParsedAction fromAction, AbstractParsedAction toAction, long seed, TransitionPhase phase) {
+		CustomPayload packet = new MarioDataPackets.SetActionC2SPayload(fromAction.getIntID(), toAction.getIntID(), seed);
+		if(phase == TransitionPhase.WORLD_COLLISION) {
+			// If this transition occurred after moving, hold onto it and only send it after we've sent the movement packet too.
+			// This means that Mario's position on the server when the transition is checked should match his position
+			// when it was checked on the client (unless the movement itself was rejected by the server, i.e. moved wrongly).
+			ClientPlayerEntity mario = MinecraftClient.getInstance().player;
+			assert mario != null;
+			mario.mqm$getMarioData().HELD_TRANSITION_PACKETS.add(packet);
+			return;
+		}
+		ClientPlayNetworking.send(packet);
 	}
 
 	@Override

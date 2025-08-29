@@ -199,7 +199,7 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 	@Override
 	public boolean travelHook(double forwardInput, double strafeInput) {
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.BASIC);
-		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
+		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION_EARLY);
 
 		boolean cancelVanillaTravel = this.getAction().travelHook(this);
 
@@ -246,7 +246,7 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 		};
 	}
 
-//	public void syncToClient(ServerPlayerEntity toWhom) {
+	//	public void syncToClient(ServerPlayerEntity toWhom) {
 //		this.setEnabled(this.isEnabled());
 //		MarioDataPackets.assignCharacterS2C(this.getMario(), this.getCharacter());
 //		MarioDataPackets.assignPowerUpS2C(this.getMario(), this.getPowerUp());

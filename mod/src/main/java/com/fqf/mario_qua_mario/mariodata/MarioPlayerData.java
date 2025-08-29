@@ -179,8 +179,6 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	public void tick() {
 		this.tickAnimation = true;
 		this.onMarioLookAround();
-		MarioQuaMario.LOGGER.info("Testing collision methods:\n\tOn Ground: {}\n\tNear ground: {}\n\tDistance to North: {}",
-				this.isOnGround(), this.isNearGround(2), this.getSolidDistance(5, Direction.NORTH));
 	}
 
 	@Override public double getStat(CharaStat stat) {

@@ -23,6 +23,7 @@ import net.minecraft.client.input.Input;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.entity.MovementType;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.*;
 import org.jetbrains.annotations.NotNull;
@@ -162,10 +163,11 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 	}
 
 	@Override public boolean travelHook(double forwardInput, double strafeInput) {
+		this.HELD_TRANSITION_PACKETS.clear();
 		this.INPUTS.updateAnalog(forwardInput, strafeInput);
 
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.BASIC);
-		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
+		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION_EARLY);
 
 		boolean cancelVanillaTravel = this.getAction().travelHook(this);
 
@@ -196,6 +198,8 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 
 		return cancelVanillaTravel;
 	}
+
+	public final List<CustomPayload> HELD_TRANSITION_PACKETS = new ArrayList<>();
 
 	@Override
 	public void handleInputUnbuffering(boolean transitionSuccessful) {
