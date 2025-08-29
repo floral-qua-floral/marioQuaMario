@@ -256,7 +256,7 @@ public class WallSlide implements WallboundActionDefinition {
 
 		double gravityFactor;
 		if(data.getMario().isTouchingWaterOrRain()) gravityFactor = 1.5;
-		else if(vars.actionTimer >= GRAVITY_RAMP_UP_TICKS) gravityFactor = 1;
+		else if(++vars.actionTimer >= GRAVITY_RAMP_UP_TICKS) gravityFactor = 1;
 		else gravityFactor = vars.actionTimer * (1.0 / GRAVITY_RAMP_UP_TICKS);
 
 		data.setYVel(Math.max(data.getYVel() - (0.02 * gravityFactor), -0.265));

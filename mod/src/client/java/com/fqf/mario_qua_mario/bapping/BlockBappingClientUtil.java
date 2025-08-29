@@ -33,8 +33,8 @@ public class BlockBappingClientUtil {
 	}
 
 	public static BumpedBlockParticle getBumpedBlockUnder(Entity entity) {
-		if(entity.isOnGround()) {
-			Map<BlockPos, BumpedBlockParticle> map = BlockBappingClientUtil.PARTICLES.get((ClientWorld) entity.getWorld());
+		if(entity.isOnGround() && entity.getWorld() instanceof ClientWorld clientWorld) {
+			Map<BlockPos, BumpedBlockParticle> map = BlockBappingClientUtil.PARTICLES.get(clientWorld);
 			if(map != null) {
 				return map.get(entity.getVelocityAffectingPos());
 			}
