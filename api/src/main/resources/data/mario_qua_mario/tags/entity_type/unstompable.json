@@ -1,4 +1,13 @@
 {
   "values": [
+    "minecraft:leash_knot",
+    {
+      "id": "connectiblechains:chain_knot",
+      "required": false
+    },
+    {
+      "id": "connectiblechains:chain_collision",
+      "required": false
+    }
   ]
 }
