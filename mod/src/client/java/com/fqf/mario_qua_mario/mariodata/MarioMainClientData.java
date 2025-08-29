@@ -14,6 +14,7 @@ import com.fqf.mario_qua_mario.registries.actions.TransitionPhase;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.mario_qua_mario_api.interfaces.BapResult;
+import com.fqf.mario_qua_mario_api.mariodata.util.CollisionMatcher;
 import com.fqf.mario_qua_mario_api.mariodata.util.RecordedCollision;
 import com.fqf.mario_qua_mario_api.mariodata.util.RecordedCollisionSet;
 import it.unimi.dsi.fastutil.objects.ObjectDoublePair;

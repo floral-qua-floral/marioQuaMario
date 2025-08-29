@@ -4,12 +4,10 @@ import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
 import com.fqf.mario_qua_mario.mariodata.MarioPlayerData;
 import com.fqf.mario_qua_mario.registries.actions.UniversalActionDefinitionHelper;
 import com.fqf.mario_qua_mario.registries.actions.parsed.ParsedWallboundAction;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 
-import java.util.List;
 import java.util.Set;
 
 public abstract class DirectionBasedWallInfo implements AdvancedWallInfo {
@@ -67,15 +65,7 @@ public abstract class DirectionBasedWallInfo implements AdvancedWallInfo {
 
 	@Override
 	public double getDistanceFromWall(double maxDistance) {
-		// This isn't very optimized(?) but I don't care that much TBH
-		Direction.AxisDirection axisDir = this.wallDirection.getDirection();
-		return Math.abs(Entity.adjustMovementForCollisions(
-				this.OWNER.getMario(),
-				Vec3d.ZERO.withAxis(this.wallDirection.getAxis(), maxDistance * axisDir.offset()),
-				this.OWNER.getMario().getBoundingBox().offset(this.legalityCheckOffset),
-				this.OWNER.getMario().getWorld(),
-				List.of()
-		).getComponentAlongAxis(this.wallDirection.getAxis()));
+		return this.OWNER.getSolidDistance(maxDistance, this.wallDirection);
 	}
 
 //	private double getDistanceFromWall() {

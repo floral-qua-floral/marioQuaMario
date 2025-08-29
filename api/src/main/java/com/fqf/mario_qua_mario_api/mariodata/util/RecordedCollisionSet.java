@@ -1,7 +1,5 @@
 package com.fqf.mario_qua_mario_api.mariodata.util;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
@@ -16,11 +14,6 @@ public interface RecordedCollisionSet extends Set<RecordedCollision> {
 
 	@Nullable Direction getDirectionOfCollisionsWith(CollisionMatcher matcher, boolean allowVertical);
 	@Nullable RecordedCollision getAnyMatch(CollisionMatcher matcher);
-
-	@FunctionalInterface
-	interface CollisionMatcher {
-		boolean test(RecordedCollision collision, BlockState block);
-	}
 
 	default boolean collidedHorizontally() {
 		return this.collidedOnAxis(Direction.Axis.X) || this.collidedOnAxis(Direction.Axis.Z);

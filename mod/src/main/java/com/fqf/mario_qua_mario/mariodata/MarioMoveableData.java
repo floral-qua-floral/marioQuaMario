@@ -2,6 +2,7 @@ package com.fqf.mario_qua_mario.mariodata;
 
 import com.fqf.mario_qua_mario.util.MarioPositionSettable;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
+import com.fqf.mario_qua_mario_api.mariodata.util.CollisionMatcher;
 import com.fqf.mario_qua_mario_api.mariodata.util.RecordedCollision;
 import com.fqf.mario_qua_mario_api.mariodata.util.RecordedCollisionSet;
 import net.minecraft.server.network.ServerPlayerEntity;

@@ -33,4 +33,8 @@ public interface IMarioData {
 
 	double getImmersionLevel();
 	double getImmersionPercent();
+
+	boolean isOnGround();
+	boolean isNearGround(double maxDistance);
+	double getSolidDistance(double maxDistance, Direction direction);
 }

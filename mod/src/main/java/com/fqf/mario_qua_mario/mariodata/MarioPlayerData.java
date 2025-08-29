@@ -14,6 +14,7 @@ import com.fqf.mario_qua_mario.registries.power_granting.ParsedCharacter;
 import com.fqf.mario_qua_mario.registries.power_granting.ParsedPowerUp;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioReadableMotionData;
 import com.fqf.mario_qua_mario_api.util.CharaStat;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -25,10 +26,7 @@ import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	protected MarioPlayerData() {
@@ -181,6 +179,8 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	public void tick() {
 		this.tickAnimation = true;
 		this.onMarioLookAround();
+		MarioQuaMario.LOGGER.info("Testing collision methods:\n\tOn Ground: {}\n\tNear ground: {}\n\tDistance to North: {}",
+				this.isOnGround(), this.isNearGround(2), this.getSolidDistance(5, Direction.NORTH));
 	}
 
 	@Override public double getStat(CharaStat stat) {
@@ -287,6 +287,29 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	@Override
 	public double getImmersionPercent() {
 		return this.getImmersionLevel() / this.getMario().getHeight();
+	}
+
+	@Override
+	public boolean isOnGround() {
+		return this.getMario().isOnGround();
+	}
+
+	@Override
+	public boolean isNearGround(double maxDistance) {
+		return this.getSolidDistance(maxDistance, Direction.DOWN) < maxDistance;
+	}
+
+	@Override
+	public double getSolidDistance(double maxDistance, Direction direction) {
+		// This isn't very optimized(?) but I don't care that much TBH
+		Direction.AxisDirection axisDir = direction.getDirection();
+		return Math.abs(Entity.adjustMovementForCollisions(
+				this.getMario(),
+				Vec3d.ZERO.withAxis(direction.getAxis(), maxDistance * axisDir.offset()),
+				this.getMario().getBoundingBox(),
+				this.getMario().getWorld(),
+				List.of()
+		).getComponentAlongAxis(direction.getAxis()));
 	}
 
 	public void onMarioLookAround() {
