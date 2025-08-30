@@ -22,7 +22,7 @@ public class MarioVars {
 	}
 
 	public static boolean checkWallSlide(IMarioReadableMotionData data) {
-		if(data.getYVel() > 0) return false;
+		if(data.getYVel() > 0 || data.isNearGround(0.5)) return false;
 
 		long worldTime = data.getMario().getWorld().getTime();
 		MarioVars vars = data.getVars(MarioVars.class);

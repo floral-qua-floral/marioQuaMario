@@ -293,8 +293,8 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	}
 
 	@Override
-	public boolean isNearGround(double maxDistance) {
-		return this.getSolidDistance(maxDistance, Direction.DOWN) < maxDistance;
+	public boolean isNearGround(double range) {
+		return this.getSolidDistance(range, Direction.DOWN) < range;
 	}
 
 	@Override
