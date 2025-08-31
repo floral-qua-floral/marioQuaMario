@@ -6,6 +6,7 @@ import com.fqf.mario_qua_mario_api.mariodata.util.CollisionMatcher;
 import com.fqf.mario_qua_mario_api.mariodata.util.RecordedCollision;
 import com.fqf.mario_qua_mario_api.mariodata.util.RecordedCollisionSet;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -263,12 +264,19 @@ public abstract class MarioMoveableData extends MarioPlayerData implements IMari
 
 	protected Vec3d getMovementWithFluidPushing() {
 		Vec3d motion = this.getMario().getVelocity().add(this.getFluidPushingVel());
-		// isChunkLoaded is deprecated but what the HECK ELSE DO I USE INSTEAD??? LivingEntity.travel uses it???
-		if(!this.getMario().getWorld().isChunkLoaded(this.getMario().getVelocityAffectingPos())) {
+		// god i hope this fixes it
+		if(this.isInUnloadedChunks()) {
 			motion = motion.withAxis(Direction.Axis.Y, 0);
 			this.getMario().setVelocity(this.getMario().getVelocity().withAxis(Direction.Axis.Y, 0));
 		}
 		return motion;
+	}
+
+	public boolean isInUnloadedChunks() {
+		if(this.isServer()) return true; // vanilla parity?
+
+		return this.getMario().getWorld().getChunk(ChunkSectionPos.getSectionCoord(this.getMario().getBlockPos().getX()),
+				ChunkSectionPos.getSectionCoord(this.getMario().getBlockPos().getZ())).isEmpty();
 	}
 
 	public abstract boolean travelHook(double forwardInput, double strafeInput);
