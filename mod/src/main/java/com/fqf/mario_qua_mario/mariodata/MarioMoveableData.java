@@ -5,6 +5,8 @@ import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_api.mariodata.util.CollisionMatcher;
 import com.fqf.mario_qua_mario_api.mariodata.util.RecordedCollision;
 import com.fqf.mario_qua_mario_api.mariodata.util.RecordedCollisionSet;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.math.Direction;
@@ -14,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2d;
 
 import java.util.HashSet;
+import java.util.Objects;
 
 public abstract class MarioMoveableData extends MarioPlayerData implements IMarioTravelData {
 	public boolean jumpCapped;
@@ -273,13 +276,23 @@ public abstract class MarioMoveableData extends MarioPlayerData implements IMari
 	}
 
 	public boolean isInUnloadedChunks() {
-		if(this.isServer()) return true; // vanilla parity?
+		if(this.isServer()) return false;
 
 		return this.getMario().getWorld().getChunk(ChunkSectionPos.getSectionCoord(this.getMario().getBlockPos().getX()),
 				ChunkSectionPos.getSectionCoord(this.getMario().getBlockPos().getZ())).isEmpty();
 	}
 
 	public abstract boolean travelHook(double forwardInput, double strafeInput);
+
+	public boolean applyLevitation() {
+		StatusEffectInstance levitationEffect = this.getMario().getStatusEffect(StatusEffects.LEVITATION);
+		if(levitationEffect != null) {
+			double levitationVel = (levitationEffect.getAmplifier() + 1) * 0.2;
+			this.setYVel((this.getYVel() - levitationVel) * 0.785 + levitationVel);
+			return true;
+		}
+		return false;
+	}
 
 	public abstract void handleInputUnbuffering(boolean transitionSuccessful);
 

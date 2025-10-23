@@ -57,8 +57,8 @@ public class TailSpinFall implements AirborneActionDefinition {
 		return null;
 	}
 
-	public static final CharaStat FALL_ACCEL = Fall.FALL_ACCEL.variate(0.575, DUCKING, NORMAL_GRAVITY, POWER_UP);
-	public static final CharaStat FALL_SPEED = Fall.FALL_SPEED.variate(0.6, DUCKING, TERMINAL_VELOCITY, POWER_UP);
+	public static final CharaStat FALL_ACCEL = Fall.FALL_ACCEL.variateAndReplaceCategories(0.575, DUCKING, NORMAL_GRAVITY, POWER_UP);
+	public static final CharaStat FALL_SPEED = Fall.FALL_SPEED.variateAndReplaceCategories(0.6, DUCKING, TERMINAL_VELOCITY, POWER_UP);
 
 	public static CharaStat REDUCED_FORWARD_ACCEL = Fall.FORWARD_DRIFT_ACCEL.variate(0.5);
 	public static CharaStat REDUCED_BACKWARD_ACCEL = Fall.BACKWARD_DRIFT_ACCEL.variate(0.5);

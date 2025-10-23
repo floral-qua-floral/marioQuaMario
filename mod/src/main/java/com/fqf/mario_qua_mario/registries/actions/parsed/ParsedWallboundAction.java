@@ -43,6 +43,7 @@ public class ParsedWallboundAction extends AbstractParsedAction {
 		data.jumpCapped = false;
 		UniversalActionDefinitionHelper helper = UniversalActionDefinitionHelper.INSTANCE;
 		this.WALLBOUND_DEFINITION.travelHook(data, helper.getWallInfo(data), helper);
+		data.applyLevitation();
 		return true;
 	}
 

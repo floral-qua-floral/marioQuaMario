@@ -4,6 +4,7 @@ public enum StatCategory {
 	WALKING,
 	RUNNING,
 	P_RUNNING,
+
 	DUCKING,
 
 	DRIFTING, // Airborne

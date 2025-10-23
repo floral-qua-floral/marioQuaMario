@@ -2,6 +2,7 @@ package com.fqf.mario_qua_mario.mariodata;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.registries.actions.parsed.ParsedWallboundAction;
+import com.fqf.mario_qua_mario.util.CharaStatCalculationHelper;
 import com.fqf.mario_qua_mario.util.DirectionBasedWallInfo;
 import com.fqf.mario_qua_mario.util.AdvancedWallInfo;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.ActionCategory;
@@ -182,7 +183,7 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	}
 
 	@Override public double getStat(CharaStat stat) {
-		return this.getPowerUp().adjustStat(stat, this.getCharacter().adjustStat(stat, stat.BASE_VALUE));
+		return CharaStatCalculationHelper.calculate(this, stat);
 	}
 
 	@Override public float getHorizontalScale() {

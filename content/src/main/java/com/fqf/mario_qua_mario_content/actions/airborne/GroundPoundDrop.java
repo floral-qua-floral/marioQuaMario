@@ -24,8 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-import static com.fqf.mario_qua_mario_api.util.StatCategory.DRIFTING;
-import static com.fqf.mario_qua_mario_api.util.StatCategory.TERMINAL_VELOCITY;
+import static com.fqf.mario_qua_mario_api.util.StatCategory.*;
 
 public class GroundPoundDrop implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMarioContent.makeID("ground_pound_drop");
@@ -67,7 +66,7 @@ public class GroundPoundDrop implements AirborneActionDefinition {
 		return GroundPound.ID;
 	}
 
-	public static final CharaStat GROUND_POUND_VEL = new CharaStat(-1.5, TERMINAL_VELOCITY);
+	public static final CharaStat GROUND_POUND_VEL = new CharaStat(-1.5, TERMINAL_VELOCITY, STOMP);
 	public static final CharaStat GROUND_POUND_STRAINING_VEL = new CharaStat(0.1, DRIFTING);
 
 	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {

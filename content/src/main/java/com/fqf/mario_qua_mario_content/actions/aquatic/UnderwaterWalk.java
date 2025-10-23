@@ -3,6 +3,7 @@ package com.fqf.mario_qua_mario_content.actions.aquatic;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.*;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.mario_qua_mario_api.util.CharaStat;
+import com.fqf.mario_qua_mario_api.util.StatCategory;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.AquaticActionDefinition;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.*;
@@ -90,14 +91,14 @@ public class UnderwaterWalk implements AquaticActionDefinition {
 		return null;
 	}
 
-	public static CharaStat REDUCED_FORWARD_ACCEL = Submerged.FORWARD_SWIM_ACCEL.variate(0.475);
-	public static CharaStat REDUCED_FORWARD_SPEED = Submerged.FORWARD_SWIM_SPEED.variate(0.475);
-	public static CharaStat REDUCED_BACKWARD_ACCEL = Submerged.BACKWARD_SWIM_ACCEL.variate(0.475);
-	public static CharaStat REDUCED_BACKWARD_SPEED = Submerged.BACKWARD_SWIM_SPEED.variate(0.475);
-	public static CharaStat REDUCED_STRAFE_ACCEL = Submerged.STRAFE_SWIM_ACCEL.variate(0.475);
-	public static CharaStat REDUCED_STRAFE_SPEED = Submerged.STRAFE_SWIM_SPEED.variate(0.475);
+	public static CharaStat REDUCED_FORWARD_ACCEL = Submerged.FORWARD_SWIM_ACCEL.variateAndAddCategories(0.475, StatCategory.WALKING);
+	public static CharaStat REDUCED_FORWARD_SPEED = Submerged.FORWARD_SWIM_SPEED.variateAndAddCategories(0.475, StatCategory.WALKING);
+	public static CharaStat REDUCED_BACKWARD_ACCEL = Submerged.BACKWARD_SWIM_ACCEL.variateAndAddCategories(0.475, StatCategory.WALKING);
+	public static CharaStat REDUCED_BACKWARD_SPEED = Submerged.BACKWARD_SWIM_SPEED.variateAndAddCategories(0.475, StatCategory.WALKING);
+	public static CharaStat REDUCED_STRAFE_ACCEL = Submerged.STRAFE_SWIM_ACCEL.variateAndAddCategories(0.475, StatCategory.WALKING);
+	public static CharaStat REDUCED_STRAFE_SPEED = Submerged.STRAFE_SWIM_SPEED.variateAndAddCategories(0.475, StatCategory.WALKING);
 
-	public static CharaStat REDUCED_REDIRECTION = Submerged.SWIM_REDIRECTION.variate(0.7);
+	public static CharaStat REDUCED_REDIRECTION = Submerged.SWIM_REDIRECTION.variateAndAddCategories(0.7, StatCategory.WALKING);
 
 	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
 		return null;

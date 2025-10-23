@@ -93,7 +93,7 @@ public class InGameHudMixin {
 		renderText(context, 6, clientMario.mqm$getAnimationData().isAnimating(clientMario) ? "Animating" : "Not Animating");
 		renderText(context, 5, "FallDistance (C, S): ", clientMario.fallDistance, serverMario.fallDistance);
 
-		renderText(context, 9, "In unloaded chunk (C, S): " + clientData.isInUnloadedChunks() + ", " + serverData.isInUnloadedChunks());
+		renderText(context, 9, "In unloaded chunk: " + clientData.isInUnloadedChunks());
 	}
 
 	@Unique

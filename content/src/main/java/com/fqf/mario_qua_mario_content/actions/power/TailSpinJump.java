@@ -16,5 +16,5 @@ public class TailSpinJump extends TailSpinFall implements AirborneActionDefiniti
 	    return ID;
 	}
 
-	public static final CharaStat JUMP_VEL = Jump.JUMP_VEL.variate(0.7, DUCKING, JUMP_VELOCITY, POWER_UP);
+	public static final CharaStat JUMP_VEL = Jump.JUMP_VEL.variateAndReplaceCategories(0.7, DUCKING, JUMP_VELOCITY, POWER_UP);
 }
