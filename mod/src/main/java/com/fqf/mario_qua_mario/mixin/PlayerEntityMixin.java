@@ -1,8 +1,11 @@
 package com.fqf.mario_qua_mario.mixin;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.bapping.BlockBappingUtil;
+import com.fqf.mario_qua_mario.bapping.WorldBapsInfo;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.parsed.ParsedWallboundAction;
+import com.fqf.mario_qua_mario.util.MarioGamerules;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.SlidingStatus;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.SneakingRule;
@@ -27,6 +30,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.GameMode;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
@@ -216,6 +220,15 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 	@Inject(method = "isPartVisible", at = @At("HEAD"), cancellable = true)
 	private void ensureCapeVisibility(PlayerModelPart modelPart, CallbackInfoReturnable<Boolean> cir) {
 		cir.setReturnValue(true);
+	}
+
+	@Inject(method = "isBlockBreakingRestricted", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;getMainHandStack()Lnet/minecraft/item/ItemStack;"), cancellable = true)
+	private void optionallyAllowBreakingBrittleBlocks(World world, BlockPos pos, GameMode gameMode, CallbackInfoReturnable<Boolean> cir) {
+		if(MarioGamerules.adventurePlayersBreakBrittleBlocks) {
+			WorldBapsInfo worldBaps = BlockBappingUtil.getBapsInfoNullable(world);
+			if(worldBaps != null && worldBaps.BRITTLE.contains(pos))
+				cir.setReturnValue(false);
+		}
 	}
 
 	@Override

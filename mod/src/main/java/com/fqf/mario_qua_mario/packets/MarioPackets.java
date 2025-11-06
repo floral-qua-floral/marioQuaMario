@@ -38,7 +38,7 @@ public class MarioPackets {
 		MarioDataPackets.TransmitWallYawS2CPayload.register();
 
 		SyncUseCharacterStatsS2CPayload.register();
-		SyncRestrictAdventureBappingS2CPayload.register();
+		SyncAdventureGamerulesS2C.register();
 
 		StompS2CPayload.register();
 		StompDragonPartAffectMarioS2CPayload.register();
@@ -67,15 +67,15 @@ public class MarioPackets {
 		ServerPlayNetworking.send(player, new SyncUseCharacterStatsS2CPayload(shouldUse));
 	}
 
-	public static void syncRestrictAdventureBapsS2C(MinecraftServer server, boolean isRestricted) {
-		CustomPayload packet = new SyncRestrictAdventureBappingS2CPayload(isRestricted);
+	public static void syncRestrictAdventureBapsS2C(MinecraftServer server, boolean isRestricted, boolean canBreakBrittle) {
+		CustomPayload packet = new SyncAdventureGamerulesS2C(isRestricted, canBreakBrittle);
 		for(ServerPlayerEntity player : PlayerLookup.all(server)) {
 			ServerPlayNetworking.send(player, packet);
 		}
 	}
 
-	public static void syncRestrictAdventureBapsS2C(ServerPlayerEntity player, boolean isRestricted) {
-		ServerPlayNetworking.send(player, new SyncRestrictAdventureBappingS2CPayload(isRestricted));
+	public static void syncRestrictAdventureBapsS2C(ServerPlayerEntity player, boolean isRestricted, boolean canBreakBrittle) {
+		ServerPlayNetworking.send(player, new SyncAdventureGamerulesS2C(isRestricted, canBreakBrittle));
 	}
 
 	public static void stompS2C(ServerPlayerEntity mario, ParsedStompType stompType, Entity stompedEntity, StompResult.ExecutableResult result, boolean affectMario) {
@@ -145,11 +145,12 @@ public class MarioPackets {
 		}
 	}
 
-	protected record SyncRestrictAdventureBappingS2CPayload(boolean isRestricted) implements CustomPayload {
-		public static final Id<SyncRestrictAdventureBappingS2CPayload> ID = MarioPackets.makeID("sync_restrict_adventure_bapping_s2c");
-		public static final PacketCodec<RegistryByteBuf, SyncRestrictAdventureBappingS2CPayload> CODEC = PacketCodec.tuple(
-				PacketCodecs.BOOL, SyncRestrictAdventureBappingS2CPayload::isRestricted,
-				SyncRestrictAdventureBappingS2CPayload::new
+	protected record SyncAdventureGamerulesS2C(boolean isRestricted, boolean canBreakBrittle) implements CustomPayload {
+		public static final Id<SyncAdventureGamerulesS2C> ID = MarioPackets.makeID("sync_restrict_adventure_bapping_s2c");
+		public static final PacketCodec<RegistryByteBuf, SyncAdventureGamerulesS2C> CODEC = PacketCodec.tuple(
+				PacketCodecs.BOOL, SyncAdventureGamerulesS2C::isRestricted,
+				PacketCodecs.BOOL, SyncAdventureGamerulesS2C::canBreakBrittle,
+				SyncAdventureGamerulesS2C::new
 		);
 
 		@Override public Id<? extends CustomPayload> getId() {

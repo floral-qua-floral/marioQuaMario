@@ -36,10 +36,11 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 				MarioGamerules.useCharacterStats = payload.shouldUse()
 		);
 
-		// SyncRestrictAdventureBappingS2CPayload Receiver
-		ClientPlayNetworking.registerGlobalReceiver(MarioPackets.SyncRestrictAdventureBappingS2CPayload.ID, (payload, context) ->
-				MarioGamerules.restrictAdventureBapping = payload.isRestricted()
-		);
+		// SyncAdventureGamerulesS2C Receiver
+		ClientPlayNetworking.registerGlobalReceiver(MarioPackets.SyncAdventureGamerulesS2C.ID, (payload, context) -> {
+			MarioGamerules.restrictAdventureBapping = payload.isRestricted();
+			MarioGamerules.adventurePlayersBreakBrittleBlocks = payload.canBreakBrittle();
+		});
 
 		// StompS2CPayload Receiver
 		ClientPlayNetworking.registerGlobalReceiver(MarioPackets.StompS2CPayload.ID, (payload, context) -> {

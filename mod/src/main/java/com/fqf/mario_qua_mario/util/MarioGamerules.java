@@ -4,11 +4,13 @@ import com.fqf.mario_qua_mario.packets.MarioPackets;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
 import net.fabricmc.fabric.api.gamerule.v1.rule.DoubleRule;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.GameRules;
 
 public class MarioGamerules {
 	public static boolean useCharacterStats;
 	public static boolean restrictAdventureBapping;
+	public static boolean adventurePlayersBreakBrittleBlocks;
 
 	public static final GameRules.Key<GameRules.BooleanRule> USE_CHARACTER_STATS =
 			GameRuleRegistry.register("mqmUseCharacterStats", GameRules.Category.PLAYER,
@@ -22,7 +24,15 @@ public class MarioGamerules {
 			GameRuleRegistry.register("mqmRestrictBapsInAdventureMode", GameRules.Category.PLAYER,
 					GameRuleFactory.createBooleanRule(true, (server, booleanRule) -> {
 						restrictAdventureBapping = booleanRule.get();
-						MarioPackets.syncRestrictAdventureBapsS2C(server, restrictAdventureBapping);
+						syncAdventureRules(server);
+					})
+			);
+
+	public static final GameRules.Key<GameRules.BooleanRule> ADVENTURE_PLAYERS_BREAK_BRITTLE_BLOCKS =
+			GameRuleRegistry.register("mqmBreakBrittleBlocksInAdventureMode", GameRules.Category.PLAYER,
+					GameRuleFactory.createBooleanRule(false, (server, booleanRule) -> {
+						adventurePlayersBreakBrittleBlocks = booleanRule.get();
+						syncAdventureRules(server);
 					})
 			);
 
@@ -41,6 +51,10 @@ public class MarioGamerules {
 	public static final GameRules.Key<GameRules.BooleanRule> REVERT_TO_SMALL =
 			GameRuleRegistry.register("mqmAlwaysRevertToWeakestForm", GameRules.Category.PLAYER,
 					GameRuleFactory.createBooleanRule(false));
+
+	private static void syncAdventureRules(MinecraftServer server) {
+		MarioPackets.syncRestrictAdventureBapsS2C(server, restrictAdventureBapping, adventurePlayersBreakBrittleBlocks);
+	}
 
 	public static void register() {
 

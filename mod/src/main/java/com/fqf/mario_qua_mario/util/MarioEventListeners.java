@@ -19,6 +19,7 @@ public class MarioEventListeners {
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> {
 			MarioGamerules.useCharacterStats = server.getGameRules().getBoolean(MarioGamerules.USE_CHARACTER_STATS);
 			MarioGamerules.restrictAdventureBapping = server.getGameRules().getBoolean(MarioGamerules.RESTRICT_ADVENTURE_BAPPING);
+			MarioGamerules.adventurePlayersBreakBrittleBlocks = server.getGameRules().getBoolean(MarioGamerules.ADVENTURE_PLAYERS_BREAK_BRITTLE_BLOCKS);
 		});
 
 		ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
@@ -46,7 +47,7 @@ public class MarioEventListeners {
 
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 			MarioPackets.syncUseCharacterStatsS2C(handler.player, MarioGamerules.useCharacterStats);
-			MarioPackets.syncRestrictAdventureBapsS2C(handler.player, MarioGamerules.restrictAdventureBapping);
+			MarioPackets.syncRestrictAdventureBapsS2C(handler.player, MarioGamerules.restrictAdventureBapping, MarioGamerules.adventurePlayersBreakBrittleBlocks);
 		});
 
 		ServerTickEvents.START_WORLD_TICK.register(BlockBappingUtil::serverWorldTick);
