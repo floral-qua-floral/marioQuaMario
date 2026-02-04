@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario.util;
 
+import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.bapping.BlockBappingUtil;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario.mariodata.MarioServerPlayerData;
@@ -11,6 +12,8 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.minecraft.entity.damage.DamageTypes;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 
@@ -34,7 +37,15 @@ public class MarioEventListeners {
 		ServerLivingEntityEvents.ALLOW_DEATH.register((livingEntity, damageSource, amount) -> {
 			if(!(livingEntity instanceof ServerPlayerEntity mario)) return true;
 			if(damageSource.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY)) return true;
-//			if(damageSource.isOf(DamageTypes.MAGIC) && amount == mario.mqm$getMarioData().getCharacter().modifyIncomingDamage(mario.mqm$getMarioData(), damageSource, 1))
+			if( // try to detect if we're taking specifically poison damage. i wish so bad that this was its own damage type... ;-;
+					damageSource.isOf(DamageTypes.MAGIC)
+					&& mario.hasStatusEffect(StatusEffects.POISON)
+					&& amount == mario.mqm$getMarioData().getCharacter().modifyIncomingDamage(mario.mqm$getMarioData(), damageSource, 1)
+			) {
+				MarioQuaMario.LOGGER.info("Prevented player {} from either dying or reverting due to probable poison damage!", mario.getName().getString());
+				livingEntity.setHealth(1); // leave player on half a heart
+				return false;
+			}
 
 			return mario.mqm$getMarioData().executeReversion() != IMarioAuthoritativeData.ReversionResult.SUCCESS;
 		});

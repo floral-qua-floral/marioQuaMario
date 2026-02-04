@@ -44,15 +44,7 @@ public abstract class AbstractMario implements CharacterDefinition {
 			return 10;
 		}
 
-		float increasedAmount = amount * (float) data.getMario().getWorld().getGameRules().get(MarioContentGamerules.INCOMING_DAMAGE_MULTIPLIER).get();
-
-		// Awful disgusting hack to prevent Poison from being able to kill. We have to try and guess whether this is poison
-		boolean isProbablyPoison = (
-				amount == 1
-				&& source.isOf(DamageTypes.MAGIC)
-				&& data.getMario().hasStatusEffect(StatusEffects.POISON)
-		);
-		return (isProbablyPoison && increasedAmount > data.getMario().getHealth() ? 1 : increasedAmount);
+		return amount * (float) data.getMario().getWorld().getGameRules().get(MarioContentGamerules.INCOMING_DAMAGE_MULTIPLIER).get();
 	}
 
 	@Override public float getWidthFactor() {
