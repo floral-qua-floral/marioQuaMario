@@ -75,7 +75,7 @@ public class MarioCommand {
 				.then(literal("perform")
 					.then(literal("stomp")
 						.requires(source -> source.hasPermissionLevel(2))
-						.then(argument("stomp", RegistryEntryReferenceArgumentType.registryEntry(registryAccess, RegistryManager.STOMP_TYPES_KEY))
+						.then(argument("stomp", RegistryEntryReferenceArgumentType.registryEntry(registryAccess, RegistryManager.COLLISION_ATTACK_TYPES_KEY))
 							.then(argument("goomba", EntityArgumentType.entity())
 								.executes(context -> executeStomp(context, false))
 								.then(argument("mario", EntityArgumentType.player())
