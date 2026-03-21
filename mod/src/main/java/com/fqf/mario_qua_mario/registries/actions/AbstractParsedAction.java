@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.registries.actions;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.registries.ParsedCollisionAttackType;
 import com.fqf.mario_qua_mario_api.definitions.states.AttackInterceptingStateDefinition;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
@@ -8,7 +9,6 @@ import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.Pla
 import com.fqf.mario_qua_mario.mariodata.MarioMoveableData;
 import com.fqf.mario_qua_mario.registries.ParsedAttackInterception;
 import com.fqf.mario_qua_mario.registries.ParsedMarioState;
-import com.fqf.mario_qua_mario.registries.ParsedStompType;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +28,7 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 	public final SprintingRule SPRINTING_RULE;
 
 	public final @NotNull BappingRule BAPPING_RULE;
-	public final @Nullable ParsedStompType STOMP_TYPE;
+	public final @Nullable ParsedCollisionAttackType COLLISION_ATTACK_TYPE;
 
 	public final Map<AbstractParsedAction, ParsedTransition> TRANSITIONS_FROM_TARGETS;
 	public final EnumMap<TransitionPhase, List<ParsedTransition>> CLIENT_TRANSITIONS;
@@ -57,7 +57,7 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 
 		BappingRule bappingRule = definition.getBappingRule();
 		this.BAPPING_RULE = bappingRule == null ? NULL_EQUIVALENT : bappingRule;
-		this.STOMP_TYPE = RegistryManager.STOMP_TYPES.get(definition.getStompTypeID());
+		this.COLLISION_ATTACK_TYPE = RegistryManager.COLLISION_ATTACK_TYPES.get(definition.getCollisionAttackTypeID());
 
 		this.TRANSITIONS_FROM_TARGETS = new HashMap<>();
 		this.CLIENT_TRANSITIONS = new EnumMap<>(TransitionPhase.class);

@@ -45,10 +45,10 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 		// Only perform stomp checks on movement that comes from a player packet (as opposed to server-side travel).
 		// Should this change??
 		long time = this.getWorld().getTime();
-		if(data.isEnabled() && data.doMarioTravel() && data.getAction().STOMP_TYPE != null
+		if(data.isEnabled() && data.doMarioTravel() && data.getAction().COLLISION_ATTACK_TYPE != null
 				&& (movementType == MovementType.PLAYER || movementType == MovementType.SELF)
 				&& time != this.tickAfterStomp && time != this.tickAfterStomp - 1)
-			movement = data.getAction().STOMP_TYPE.moveHook(data, movement);
+			movement = data.getAction().COLLISION_ATTACK_TYPE.moveHook(data, movement);
 
 		super.move(movementType, movement);
 		if(!oldMovement.equals(movement)) {

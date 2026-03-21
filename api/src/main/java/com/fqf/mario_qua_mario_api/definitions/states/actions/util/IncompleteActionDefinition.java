@@ -19,7 +19,7 @@ public interface IncompleteActionDefinition extends AttackInterceptingStateDefin
 	@NotNull SprintingRule getSprintingRule();
 	
 	@Nullable BappingRule getBappingRule();
-	@Nullable Identifier getStompTypeID();
+	@Nullable Identifier getCollisionAttackTypeID();
 
 	@NotNull Set<TransitionInjectionDefinition> getTransitionInjections();
 }

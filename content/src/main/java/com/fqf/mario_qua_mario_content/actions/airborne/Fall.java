@@ -55,7 +55,7 @@ public class Fall implements AirborneActionDefinition {
 	@Override public @Nullable BappingRule getBappingRule() {
 		return BappingRule.FALLING;
 	}
-	@Override public @Nullable Identifier getStompTypeID() {
+	@Override public @Nullable Identifier getCollisionAttackTypeID() {
 		return JumpStomp.ID;
 	}
 

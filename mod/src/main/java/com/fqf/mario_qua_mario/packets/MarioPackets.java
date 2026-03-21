@@ -1,8 +1,8 @@
 package com.fqf.mario_qua_mario.packets;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario_api.interfaces.StompResult;
-import com.fqf.mario_qua_mario.registries.ParsedStompType;
+import com.fqf.mario_qua_mario.registries.ParsedCollisionAttackType;
+import com.fqf.mario_qua_mario_api.interfaces.CollisionAttackResult;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
@@ -78,11 +78,11 @@ public class MarioPackets {
 		ServerPlayNetworking.send(player, new SyncAdventureGamerulesS2C(isRestricted, canBreakBrittle));
 	}
 
-	public static void stompS2C(ServerPlayerEntity mario, ParsedStompType stompType, Entity stompedEntity, StompResult.ExecutableResult result, boolean affectMario) {
+	public static void stompS2C(ServerPlayerEntity mario, ParsedCollisionAttackType stompType, Entity stompedEntity, CollisionAttackResult.ExecutableResult result, boolean affectMario) {
 //		MarioQuaMario.LOGGER.info("Sending stomp packet to clients.\nTarget: {}\nTarget ID: {}", stompedEntity, stompedEntity.getId());
 		sendToTrackers(mario, makeStompS2CPayload(mario, stompType, stompedEntity, result, affectMario), true);
 	}
-	private static CustomPayload makeStompS2CPayload(ServerPlayerEntity mario, ParsedStompType stompType, Entity stompedEntity, StompResult.ExecutableResult result, boolean affectMario) {
+	private static CustomPayload makeStompS2CPayload(ServerPlayerEntity mario, ParsedCollisionAttackType stompType, Entity stompedEntity, CollisionAttackResult.ExecutableResult result, boolean affectMario) {
 		if(stompedEntity instanceof EnderDragonPart stompedDragonPart) {
 			// oh my god ender dragon parts are HORRIFIC
 			// this is a dumb way to handle it but i don't wanna have to figure out how to cram more variables into a payload
@@ -93,7 +93,7 @@ public class MarioPackets {
 
 			if(affectMario) return new StompDragonPartAffectMarioS2CPayload(
 					mario.getId(),
-					RegistryManager.STOMP_TYPES.getRawIdOrThrow(stompType),
+					RegistryManager.COLLISION_ATTACK_TYPES.getRawIdOrThrow(stompType),
 					stompedDragonPart.owner.getId(),
 					partIndex,
 					result.ordinal(),
@@ -101,7 +101,7 @@ public class MarioPackets {
 			);
 			else return new StompDragonPartNoAffectMarioS2CPayload(
 					mario.getId(),
-					RegistryManager.STOMP_TYPES.getRawIdOrThrow(stompType),
+					RegistryManager.COLLISION_ATTACK_TYPES.getRawIdOrThrow(stompType),
 					stompedDragonPart.owner.getId(),
 					partIndex,
 					result.ordinal(),
@@ -111,7 +111,7 @@ public class MarioPackets {
 
 		return new StompS2CPayload(
 				mario.getId(),
-				RegistryManager.STOMP_TYPES.getRawIdOrThrow(stompType),
+				RegistryManager.COLLISION_ATTACK_TYPES.getRawIdOrThrow(stompType),
 				stompedEntity.getId(),
 				result.ordinal(),
 				affectMario,

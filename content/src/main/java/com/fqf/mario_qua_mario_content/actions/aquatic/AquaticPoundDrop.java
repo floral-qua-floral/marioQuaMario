@@ -52,7 +52,7 @@ public class AquaticPoundDrop implements AquaticActionDefinition {
 	@Override public @Nullable BappingRule getBappingRule() {
 		return new BappingRule(0, 3);
 	}
-	@Override public @Nullable Identifier getStompTypeID() {
+	@Override public @Nullable Identifier getCollisionAttackTypeID() {
 		return AquaticGroundPound.ID;
 	}
 

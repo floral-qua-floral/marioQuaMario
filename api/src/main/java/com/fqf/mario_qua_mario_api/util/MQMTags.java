@@ -13,8 +13,8 @@ import static net.minecraft.registry.RegistryKeys.ENTITY_TYPE;
 import static net.minecraft.registry.RegistryKeys.DAMAGE_TYPE;
 
 public interface MQMTags {
-	TagKey<EntityType<?>> NOT_HIT_BY_COLLISION_ATTACKS = getTag(ENTITY_TYPE, "unstompable");
-	TagKey<EntityType<?>> HURTS_TO_STOMP = getTag(ENTITY_TYPE, "hurts_to_stomp");
+	TagKey<EntityType<?>> NOT_HIT_BY_COLLISION_ATTACKS = getTag(ENTITY_TYPE, "not_hurt_by_collision_attacks");
+	TagKey<EntityType<?>> HARMS_COLLISION_ATTACKERS = getTag(ENTITY_TYPE, "harms_collision_attackers");
 
 	TagKey<Block> UNBAPPABLE = getTag(BLOCK, "unbappable");
 	TagKey<Block> NOT_POWERED_WHEN_BAPPED = getTag(BLOCK, "not_powered_when_bapped");

@@ -1,9 +1,7 @@
 package com.fqf.mario_qua_mario_content.stomp_types;
 
-import com.fqf.mario_qua_mario_api.definitions.StompTypeDefinition;
-import com.fqf.mario_qua_mario_api.interfaces.StompResult;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioAuthoritativeData;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
+import com.fqf.mario_qua_mario_api.definitions.CollisionAttackTypeDefinition;
+import com.fqf.mario_qua_mario_api.interfaces.CollisionAttackResult;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_api.util.CharaStat;
@@ -11,21 +9,16 @@ import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.aquatic.Submerged;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
 import static com.fqf.mario_qua_mario_api.util.StatCategory.DAMAGE;
 import static com.fqf.mario_qua_mario_api.util.StatCategory.STOMP;
 
-public class AquaticGroundPound extends JumpStomp implements StompTypeDefinition {
+public class AquaticGroundPound extends JumpStomp implements CollisionAttackTypeDefinition {
 	public static final Identifier ID = MarioQuaMarioContent.makeID("aquatic_ground_pound");
 	@Override public @NotNull Identifier getID() {
 	    return ID;
@@ -47,7 +40,7 @@ public class AquaticGroundPound extends JumpStomp implements StompTypeDefinition
 	}
 
 	@Override
-	public @Nullable Identifier getPostStompActions(StompResult.ExecutableResult result) {
+	public @Nullable Identifier getPostCollisionActions(CollisionAttackResult.ExecutableResult result) {
 		return Submerged.ID;
 	}
 
@@ -74,7 +67,7 @@ public class AquaticGroundPound extends JumpStomp implements StompTypeDefinition
 	}
 
 	@Override
-	public @Nullable Vec3d executeTravellersAndModifyTargetPos(IMarioTravelData data, ItemStack equipment, Entity target, StompResult.ExecutableResult result, Vec3d movingToPos, boolean affectMario) {
+	public @Nullable Vec3d executeTravellersAndModifyTargetPos(IMarioTravelData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, Vec3d movingToPos, boolean affectMario) {
 		return super.executeTravellersAndModifyTargetPos(data, equipment, target, result, movingToPos, affectMario);
 	}
 }

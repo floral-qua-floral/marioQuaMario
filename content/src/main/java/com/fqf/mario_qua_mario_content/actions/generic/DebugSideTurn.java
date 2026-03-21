@@ -61,7 +61,7 @@ public class DebugSideTurn implements GenericActionDefinition {
 	@Override public @Nullable BappingRule getBappingRule() {
 		return null;
 	}
-	@Override public @Nullable Identifier getStompTypeID() {
+	@Override public @Nullable Identifier getCollisionAttackTypeID() {
 		return null;
 	}
 

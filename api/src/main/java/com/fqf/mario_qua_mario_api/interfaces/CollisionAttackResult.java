@@ -1,6 +1,6 @@
 package com.fqf.mario_qua_mario_api.interfaces;
 
-public enum StompResult {
+public enum CollisionAttackResult {
 	MOUNT,
 	PAINFUL,
 	NORMAL,

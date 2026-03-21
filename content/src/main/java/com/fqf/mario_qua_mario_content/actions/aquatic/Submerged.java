@@ -107,7 +107,7 @@ public class Submerged implements AquaticActionDefinition {
 	@Override public @Nullable BappingRule getBappingRule() {
 		return new BappingRule(3, 0);
 	}
-	@Override public @Nullable Identifier getStompTypeID() {
+	@Override public @Nullable Identifier getCollisionAttackTypeID() {
 		return null;
 	}
 

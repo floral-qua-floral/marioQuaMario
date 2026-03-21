@@ -8,27 +8,27 @@ import net.minecraft.entity.damage.DamageSource;
 import org.jetbrains.annotations.NotNull;
 
 public interface CollisionAttackable {
-	default @NotNull StompResult mqm$processCollisionAttack(
+	default @NotNull CollisionAttackResult mqm$processCollisionAttack(
 		IMarioAuthoritativeData marioData,
 		boolean attemptMount,
 		float damageAmount, DamageSource damageSource
 	) {
 		if(this instanceof Entity thisEntity) {
-			if(thisEntity.getType().isIn(MQMTags.NOT_HIT_BY_COLLISION_ATTACKS)) return StompResult.FAIL;
-			if(thisEntity.getType().isIn(MQMTags.HURTS_TO_STOMP)) return StompResult.PAINFUL;
+			if(thisEntity.getType().isIn(MQMTags.NOT_HIT_BY_COLLISION_ATTACKS)) return CollisionAttackResult.FAIL;
+			if(thisEntity.getType().isIn(MQMTags.HARMS_COLLISION_ATTACKERS)) return CollisionAttackResult.PAINFUL;
 
 			if(this instanceof Saddleable thisSaddleable) {
 				if(thisSaddleable.isSaddled() && marioData.getMario().startRiding(thisEntity, false))
-					return StompResult.MOUNT;
+					return CollisionAttackResult.MOUNT;
 			}
 
 			boolean damaged = thisEntity.damage(damageSource, damageAmount);
 			if(damaged) {
 				marioData.getMario().onAttacking(thisEntity);
-				return StompResult.NORMAL;
+				return CollisionAttackResult.NORMAL;
 			}
-			else return StompResult.RESISTED;
+			else return CollisionAttackResult.RESISTED;
 		}
-		else return StompResult.FAIL;
+		else return CollisionAttackResult.FAIL;
 	}
 }

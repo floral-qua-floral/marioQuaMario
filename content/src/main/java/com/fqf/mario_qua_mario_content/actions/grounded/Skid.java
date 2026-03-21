@@ -112,7 +112,7 @@ public class Skid implements GroundedActionDefinition {
 	@Override public @Nullable BappingRule getBappingRule() {
 		return new BappingRule(0, 0, 3, new CharaStat(0, THRESHOLD));
 	}
-	@Override public @Nullable Identifier getStompTypeID() {
+	@Override public @Nullable Identifier getCollisionAttackTypeID() {
 		return null;
 	}
 

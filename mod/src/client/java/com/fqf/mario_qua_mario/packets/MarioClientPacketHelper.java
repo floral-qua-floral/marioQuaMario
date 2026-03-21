@@ -2,13 +2,13 @@ package com.fqf.mario_qua_mario.packets;
 
 import com.fqf.mario_qua_mario.bapping.BlockBappingUtil;
 import com.fqf.mario_qua_mario.compat.RecordingModsCompatSafe;
+import com.fqf.mario_qua_mario.registries.ParsedCollisionAttackType;
 import com.fqf.mario_qua_mario.registries.actions.TransitionPhase;
 import com.fqf.mario_qua_mario.util.MarioClientHelperManager;
 import com.fqf.mario_qua_mario_api.interfaces.BapResult;
-import com.fqf.mario_qua_mario_api.interfaces.StompResult;
+import com.fqf.mario_qua_mario_api.interfaces.CollisionAttackResult;
 import com.fqf.mario_qua_mario.mariodata.*;
 import com.fqf.mario_qua_mario.registries.ParsedAttackInterception;
-import com.fqf.mario_qua_mario.registries.ParsedStompType;
 import com.fqf.mario_qua_mario.registries.RegistryManager;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.ParsedActionHelper;
@@ -240,8 +240,8 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 //		MarioQuaMario.LOGGER.info("Stomping target: {}", target);
 		PlayerEntity mario = getMarioFromID(context, marioID);
 		MarioPlayerData data = mario.mqm$getMarioData();
-		StompResult.ExecutableResult result = StompResult.ExecutableResult.values()[stompResultIndex];
-		ParsedStompType stomp = Objects.requireNonNull(RegistryManager.STOMP_TYPES.get(stompTypeID));
+		CollisionAttackResult.ExecutableResult result = CollisionAttackResult.ExecutableResult.values()[stompResultIndex];
+		ParsedCollisionAttackType stomp = Objects.requireNonNull(RegistryManager.COLLISION_ATTACK_TYPES.get(stompTypeID));
 
 		if(affectMario) stomp.transitionAction(data, result);
 

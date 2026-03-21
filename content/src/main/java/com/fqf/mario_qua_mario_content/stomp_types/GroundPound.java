@@ -1,7 +1,7 @@
 package com.fqf.mario_qua_mario_content.stomp_types;
 
-import com.fqf.mario_qua_mario_api.definitions.StompTypeDefinition;
-import com.fqf.mario_qua_mario_api.interfaces.StompResult;
+import com.fqf.mario_qua_mario_api.definitions.CollisionAttackTypeDefinition;
+import com.fqf.mario_qua_mario_api.interfaces.CollisionAttackResult;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
@@ -25,7 +25,7 @@ import java.util.List;
 import static com.fqf.mario_qua_mario_api.util.StatCategory.DAMAGE;
 import static com.fqf.mario_qua_mario_api.util.StatCategory.STOMP;
 
-public class GroundPound implements StompTypeDefinition {
+public class GroundPound implements CollisionAttackTypeDefinition {
 	public static final Identifier ID = MarioQuaMarioContent.makeID("ground_pound");
 	@Override public @NotNull Identifier getID() {
 	    return ID;
@@ -37,8 +37,8 @@ public class GroundPound implements StompTypeDefinition {
 	}
 
 	@Override
-	public @NotNull PainfulStompResponse painfulStompResponse() {
-		return PainfulStompResponse.INJURY;
+	public @NotNull CollisionAttackTypeDefinition.PainfulCollisionResponse painfulCollisionResponse() {
+		return PainfulCollisionResponse.INJURY;
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class GroundPound implements StompTypeDefinition {
 	}
 
 	@Override
-	public @Nullable Identifier getPostStompActions(StompResult.ExecutableResult result) {
+	public @Nullable Identifier getPostCollisionActions(CollisionAttackResult.ExecutableResult result) {
 		return null;
 	}
 
@@ -80,18 +80,18 @@ public class GroundPound implements StompTypeDefinition {
 	}
 
 	@Override
-	public void executeServer(IMarioAuthoritativeData data, ItemStack equipment, Entity target, StompResult.ExecutableResult result, boolean affectMario) {
+	public void executeServer(IMarioAuthoritativeData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, boolean affectMario) {
 
 	}
 
 	@Override
-	public @Nullable Vec3d executeTravellersAndModifyTargetPos(IMarioTravelData data, ItemStack equipment, Entity target, StompResult.ExecutableResult result, Vec3d movingToPos, boolean affectMario) {
+	public @Nullable Vec3d executeTravellersAndModifyTargetPos(IMarioTravelData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, Vec3d movingToPos, boolean affectMario) {
 		return null;
 	}
 
 	@Override
-	public void executeClients(IMarioClientData data, ItemStack equipment, Entity target, StompResult.ExecutableResult result, boolean affectMario, long seed) {
-		if(result == StompResult.ExecutableResult.RESISTED || result == StompResult.ExecutableResult.PAINFUL) return;
+	public void executeClients(IMarioClientData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, boolean affectMario, long seed) {
+		if(result == CollisionAttackResult.ExecutableResult.RESISTED || result == CollisionAttackResult.ExecutableResult.PAINFUL) return;
 		MarioQuaMarioContent.LOGGER.info("Result: {}", result);
 		data.playSound(MarioContentSFX.KICK, seed);
 	}

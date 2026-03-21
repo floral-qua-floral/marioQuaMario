@@ -1,7 +1,7 @@
 package com.fqf.mario_qua_mario.registries;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario_api.definitions.StompTypeDefinition;
+import com.fqf.mario_qua_mario_api.definitions.CollisionAttackTypeDefinition;
 import com.fqf.mario_qua_mario_api.definitions.VoicelineSetDefinition;
 import com.fqf.mario_qua_mario_api.definitions.states.CharacterDefinition;
 import com.fqf.mario_qua_mario_api.definitions.states.PowerUpDefinition;
@@ -19,8 +19,6 @@ import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
-import net.minecraft.block.BlockState;
-import net.minecraft.particle.ParticleType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
@@ -34,7 +32,7 @@ public class RegistryManager {
 	public static void registerAll() {
 		MarioSFX.staticInitialize();
 
-		registerStompTypes();
+		registerCollisionAttackTypes();
 		registerActions();
 		registerPowerUps();
 		registerCharacters();
@@ -44,9 +42,9 @@ public class RegistryManager {
 
 	public static final Map<String, Map<ParsedCharacter, SoundEvent>> VOICE_LINES = new HashMap<>();
 
-	public static final RegistryKey<Registry<ParsedStompType>> STOMP_TYPES_KEY =
+	public static final RegistryKey<Registry<ParsedCollisionAttackType>> COLLISION_ATTACK_TYPES_KEY =
 			RegistryKey.ofRegistry(MarioQuaMario.makeID("stomp_types"));
-	public static final Registry<ParsedStompType> STOMP_TYPES = FabricRegistryBuilder.createSimple(STOMP_TYPES_KEY)
+	public static final Registry<ParsedCollisionAttackType> COLLISION_ATTACK_TYPES = FabricRegistryBuilder.createSimple(COLLISION_ATTACK_TYPES_KEY)
 			.attribute(RegistryAttribute.SYNCED)
 			.buildAndRegister();
 
@@ -78,11 +76,11 @@ public class RegistryManager {
 		Registry.register(registry, thing.ID, thing);
 	}
 
-	private static void registerStompTypes() {
-		for(StompTypeDefinition definition : getEntrypoints("mqm-stomp-types", StompTypeDefinition.class)) {
-			registerThing(STOMP_TYPES, new ParsedStompType(definition));
+	private static void registerCollisionAttackTypes() {
+		for(CollisionAttackTypeDefinition definition : getEntrypoints("mqm-stomp-types", CollisionAttackTypeDefinition.class)) {
+			registerThing(COLLISION_ATTACK_TYPES, new ParsedCollisionAttackType(definition));
 		}
-		STOMP_TYPES.freeze();
+		COLLISION_ATTACK_TYPES.freeze();
 	}
 
 	private static int totalActionTransitions;
@@ -113,9 +111,9 @@ public class RegistryManager {
 		MarioQuaMario.LOGGER.info("Registered {} actions, with {} transitions connecting them.",
 				ACTIONS.size(), totalActionTransitions);
 
-		// We can also register all Stomp Types' actions now. There's no reason to do this sooner since it uses a map; can't be final anyways
-		for(ParsedStompType stompType : STOMP_TYPES) {
-			stompType.populatePostStompActions();
+		// We can also register all Collision Attack Types' actions now. There's no reason to do this sooner since it uses a map; can't be final anyways
+		for(ParsedCollisionAttackType collisionAttackType : COLLISION_ATTACK_TYPES) {
+			collisionAttackType.populatePostCollisionActions();
 		}
 	}
 

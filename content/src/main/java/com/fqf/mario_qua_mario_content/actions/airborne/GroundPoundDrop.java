@@ -62,7 +62,7 @@ public class GroundPoundDrop implements AirborneActionDefinition {
 	@Override public @Nullable BappingRule getBappingRule() {
 		return BappingRule.GROUND_POUND;
 	}
-	@Override public @Nullable Identifier getStompTypeID() {
+	@Override public @Nullable Identifier getCollisionAttackTypeID() {
 		return GroundPound.ID;
 	}
 

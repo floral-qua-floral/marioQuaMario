@@ -1,7 +1,7 @@
 package com.fqf.mario_qua_mario_content.stomp_types;
 
-import com.fqf.mario_qua_mario_api.definitions.StompTypeDefinition;
-import com.fqf.mario_qua_mario_api.interfaces.StompResult;
+import com.fqf.mario_qua_mario_api.definitions.CollisionAttackTypeDefinition;
+import com.fqf.mario_qua_mario_api.interfaces.CollisionAttackResult;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioAuthoritativeData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
@@ -13,7 +13,6 @@ import com.fqf.mario_qua_mario_content.actions.airborne.StompBounce;
 import com.fqf.mario_qua_mario_content.util.*;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.projectile.TridentEntity;
@@ -36,7 +35,7 @@ import java.util.Optional;
 import static com.fqf.mario_qua_mario_api.util.StatCategory.DAMAGE;
 import static com.fqf.mario_qua_mario_api.util.StatCategory.STOMP;
 
-public class JumpStomp implements StompTypeDefinition {
+public class JumpStomp implements CollisionAttackTypeDefinition {
 	public static final Identifier ID = MarioQuaMarioContent.makeID("stomp");
 	@Override public @NotNull Identifier getID() {
 	    return ID;
@@ -45,8 +44,8 @@ public class JumpStomp implements StompTypeDefinition {
 	@Override public boolean shouldAttemptMounting() {
 		return true;
 	}
-	@Override public @NotNull PainfulStompResponse painfulStompResponse() {
-		return PainfulStompResponse.INJURY;
+	@Override public @NotNull CollisionAttackTypeDefinition.PainfulCollisionResponse painfulCollisionResponse() {
+		return PainfulCollisionResponse.INJURY;
 	}
 	@Override public @Nullable EquipmentSlot getEquipmentSlot() {
 		return EquipmentSlot.FEET;
@@ -54,7 +53,7 @@ public class JumpStomp implements StompTypeDefinition {
 	@Override public @NotNull Identifier getDamageType() {
 		return MarioQuaMarioContent.makeResID("stomp");
 	}
-	@Override public @Nullable Identifier getPostStompActions(StompResult.ExecutableResult result) {
+	@Override public @Nullable Identifier getPostCollisionActions(CollisionAttackResult.ExecutableResult result) {
 		return switch(result) {
 			case PAINFUL -> null; // Later: Replace this with Bonk
 			case NORMAL, GLANCING, RESISTED -> StompBounce.ID;
@@ -81,7 +80,7 @@ public class JumpStomp implements StompTypeDefinition {
 		potentialTargets.removeIf(entity -> entity.collidesWith(mario) || entity.isConnectedThroughVehicle(mario) || !(
 				(entity.canHit() || entity instanceof TridentEntity) // Mario can only stomp on things he can hit w/ crosshair (& Tridents)
 						&& collidingFromTop(entity, mario, mario.getY(), motion,
-						!entity.getType().isIn(MQMTags.HURTS_TO_STOMP) && ( // No rising stomp on pointy things!
+						!entity.getType().isIn(MQMTags.HARMS_COLLISION_ATTACKERS) && ( // No rising stomp on pointy things!
 								entity instanceof Monster // Mario can do rising stomps against monsters
 								|| entity.getType().isIn(MQMContentTags.RISING_STOMPABLE_NONMONSTERS) // And off of armor stands
 						))
@@ -121,14 +120,14 @@ public class JumpStomp implements StompTypeDefinition {
 	}
 
 	@Override
-	public void executeServer(IMarioAuthoritativeData data, ItemStack equipment, Entity target, StompResult.ExecutableResult result, boolean affectMario) {
+	public void executeServer(IMarioAuthoritativeData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, boolean affectMario) {
 		if(affectMario && data.hasPower(Powers.STOMP_GUARD)) {
 			data.getVars(MarioVars.class).stompGuardMinHeight = target.getY() + target.getHeight() + 0.15;
 			data.getVars(MarioVars.class).stompGuardRemainingTicks = 4;
 		}
 	}
 
-	public static Vec3d stompETAMTS(IMarioTravelData data, ItemStack equipment, Entity target, StompResult.ExecutableResult result, Vec3d movingToPos, boolean affectMario) {
+	public static Vec3d stompETAMTS(IMarioTravelData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, Vec3d movingToPos, boolean affectMario) {
 		return switch(result) {
 			case PAINFUL -> null; // Replace once Bonk implemented: Give Mario backwards momentum
 			case NORMAL, GLANCING, RESISTED -> {
@@ -143,12 +142,12 @@ public class JumpStomp implements StompTypeDefinition {
 	}
 
 	@Override
-	public @Nullable Vec3d executeTravellersAndModifyTargetPos(IMarioTravelData data, ItemStack equipment, Entity target, StompResult.ExecutableResult result, Vec3d movingToPos, boolean affectMario) {
+	public @Nullable Vec3d executeTravellersAndModifyTargetPos(IMarioTravelData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, Vec3d movingToPos, boolean affectMario) {
 		return stompETAMTS(data, equipment, target, result, movingToPos, affectMario);
 	}
 
 	@Override
-	public void executeClients(IMarioClientData data, ItemStack equipment, Entity target, StompResult.ExecutableResult result, boolean affectMario, long seed) {
+	public void executeClients(IMarioClientData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, boolean affectMario, long seed) {
 		SoundEvent stompSound = switch(result) {
 			case MOUNT, PAINFUL -> null;
 			case NORMAL, GLANCING -> target.isAlive() ? MarioContentSFX.STOMP : MarioContentSFX.LAST;

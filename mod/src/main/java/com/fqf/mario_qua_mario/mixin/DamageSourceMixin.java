@@ -1,6 +1,6 @@
 package com.fqf.mario_qua_mario.mixin;
 
-import com.fqf.mario_qua_mario.util.StompDamageSource;
+import com.fqf.mario_qua_mario.util.CollisionAttackDamageSource;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.entity.LivingEntity;
@@ -13,8 +13,8 @@ import org.spongepowered.asm.mixin.injection.At;
 public class DamageSourceMixin {
 	@WrapOperation(method = "getDeathMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;getMainHandStack()Lnet/minecraft/item/ItemStack;"))
 	private ItemStack useStompWeapon(LivingEntity killed, Operation<ItemStack> original) {
-		if((DamageSource) (Object) this instanceof StompDamageSource stompDamageSource)
-			return stompDamageSource.WEAPON_STACK;
+		if((DamageSource) (Object) this instanceof CollisionAttackDamageSource collisionAttackDamageSource)
+			return collisionAttackDamageSource.WEAPON_STACK;
 		return original.call(killed);
 	}
 }

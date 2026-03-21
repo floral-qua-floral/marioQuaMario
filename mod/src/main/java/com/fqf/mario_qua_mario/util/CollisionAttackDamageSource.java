@@ -9,11 +9,11 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.world.ServerWorld;
 import org.jetbrains.annotations.Nullable;
 
-public class StompDamageSource extends DamageSource {
+public class CollisionAttackDamageSource extends DamageSource {
 	public final float PIERCING;
 	public final ItemStack WEAPON_STACK;
 
-	public StompDamageSource(ServerWorld world, RegistryKey<DamageType> key, @Nullable Entity attacker, float piercing, ItemStack stompEquipment) {
+	public CollisionAttackDamageSource(ServerWorld world, RegistryKey<DamageType> key, @Nullable Entity attacker, float piercing, ItemStack stompEquipment) {
 		super(world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(key), attacker);
 		this.PIERCING = piercing;
 		this.WEAPON_STACK = stompEquipment;

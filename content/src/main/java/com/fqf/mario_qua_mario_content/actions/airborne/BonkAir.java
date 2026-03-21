@@ -157,7 +157,7 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 		return SprintingRule.PROHIBIT;
 	}
 
-	@Override public @Nullable Identifier getStompTypeID() {
+	@Override public @Nullable Identifier getCollisionAttackTypeID() {
 		return null;
 	}
 

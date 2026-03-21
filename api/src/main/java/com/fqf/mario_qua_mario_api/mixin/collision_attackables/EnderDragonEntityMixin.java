@@ -1,6 +1,6 @@
-package com.fqf.mario_qua_mario_api.mixin.stompables;
+package com.fqf.mario_qua_mario_api.mixin.collision_attackables;
 
-import com.fqf.mario_qua_mario_api.interfaces.StompResult;
+import com.fqf.mario_qua_mario_api.interfaces.CollisionAttackResult;
 import com.fqf.mario_qua_mario_api.interfaces.CollisionAttackable;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioAuthoritativeData;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(EnderDragonEntity.class)
 public class EnderDragonEntityMixin implements CollisionAttackable {
 	@Override
-	public @NotNull StompResult mqm$processCollisionAttack(IMarioAuthoritativeData marioData, boolean attemptMount, float damageAmount, DamageSource damageSource) {
-		return StompResult.FAIL; // EnderDragonPart should be stomped instead!
+	public @NotNull CollisionAttackResult mqm$processCollisionAttack(IMarioAuthoritativeData marioData, boolean attemptMount, float damageAmount, DamageSource damageSource) {
+		return CollisionAttackResult.FAIL; // EnderDragonPart should be stomped instead!
 	}
 }
