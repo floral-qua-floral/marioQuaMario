@@ -9,7 +9,6 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.command.EntityDataObject;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
-import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.Stats;
 import net.minecraft.text.ClickEvent;
@@ -25,7 +24,7 @@ public class MarioContentEventListeners {
 		ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
 			if(entity instanceof ServerPlayerEntity mario) {
 				IMarioData data = mario.mqm$getIMarioData();
-				if(data.isEnabled() && data.hasPower(Powers.STOMP_GUARD) && source.isDirect() && !source.isIn(DamageTypeTags.IS_PLAYER_ATTACK) && !source.isIn(DamageTypeTags.IS_EXPLOSION)) {
+				if(data.isEnabled() && data.hasPower(Powers.STOMP_GUARD) && source.isDirect() && !source.isIn(MQMContentTags.BYPASSES_STOMP_GUARD)) {
 					Entity attacker = source.getAttacker();
 					if(attacker != null) {
 						double marioY;

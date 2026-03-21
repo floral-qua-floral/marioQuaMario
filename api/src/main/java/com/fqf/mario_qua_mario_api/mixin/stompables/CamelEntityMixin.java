@@ -1,7 +1,7 @@
 package com.fqf.mario_qua_mario_api.mixin.stompables;
 
 import com.fqf.mario_qua_mario_api.interfaces.StompResult;
-import com.fqf.mario_qua_mario_api.interfaces.Stompable;
+import com.fqf.mario_qua_mario_api.interfaces.CollisionAttackable;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioAuthoritativeData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
@@ -10,12 +10,12 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(CamelEntity.class)
-public class CamelEntityMixin implements Stompable {
+public class CamelEntityMixin implements CollisionAttackable {
 	@Override
-	public @NotNull StompResult mqm$stomp(IMarioAuthoritativeData marioData, boolean attemptMount, float damageAmount, DamageSource damageSource) {
+	public @NotNull StompResult mqm$processCollisionAttack(IMarioAuthoritativeData marioData, boolean attemptMount, float damageAmount, DamageSource damageSource) {
 		if(marioData.getMario().startRiding((Entity) (Object) this, false))
 			return StompResult.MOUNT;
 		else
-			return Stompable.super.mqm$stomp(marioData, attemptMount, damageAmount, damageSource);
+			return CollisionAttackable.super.mqm$processCollisionAttack(marioData, attemptMount, damageAmount, damageSource);
 	}
 }

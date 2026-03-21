@@ -3,7 +3,7 @@ package com.fqf.mario_qua_mario.registries;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario_api.definitions.StompTypeDefinition;
 import com.fqf.mario_qua_mario_api.interfaces.StompResult;
-import com.fqf.mario_qua_mario_api.interfaces.Stompable;
+import com.fqf.mario_qua_mario_api.interfaces.CollisionAttackable;
 import com.fqf.mario_qua_mario.mariodata.*;
 import com.fqf.mario_qua_mario.packets.MarioPackets;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
@@ -95,7 +95,7 @@ public class ParsedStompType extends ParsedMarioThing {
 		EnumMap<StompResult.ExecutableResult, Set<Entity>> stompedEntities = new EnumMap<>(StompResult.ExecutableResult.class);
 		boolean canMount = this.MOUNTING && !mario.isSneaking();
 		for(Entity target : entities) {
-			StompResult result = ((Stompable) target).mqm$stomp(data, canMount, stompDamageAmount, stompDamageSource);
+			StompResult result = ((CollisionAttackable) target).mqm$processCollisionAttack(data, canMount, stompDamageAmount, stompDamageSource);
 			if(result == StompResult.PAINFUL) {
 				result = switch(this.PAINFUL_STOMP_RESPONSE) {
 					case INJURY -> StompResult.PAINFUL;

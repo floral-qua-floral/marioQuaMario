@@ -7,6 +7,7 @@ import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
 import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_api.util.CharaStat;
+import com.fqf.mario_qua_mario_api.util.MQMTags;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.airborne.StompBounce;
 import com.fqf.mario_qua_mario_content.util.*;
@@ -80,9 +81,9 @@ public class JumpStomp implements StompTypeDefinition {
 		potentialTargets.removeIf(entity -> entity.collidesWith(mario) || entity.isConnectedThroughVehicle(mario) || !(
 				(entity.canHit() || entity instanceof TridentEntity) // Mario can only stomp on things he can hit w/ crosshair (& Tridents)
 						&& collidingFromTop(entity, mario, mario.getY(), motion,
-						(
+						!entity.getType().isIn(MQMTags.HURTS_TO_STOMP) && ( // No rising stomp on pointy things!
 								entity instanceof Monster // Mario can do rising stomps against monsters
-										|| entity.getType().isIn(MQMContentTags.RISING_STOMPABLE_NONMONSTERS) // And off of armor stands
+								|| entity.getType().isIn(MQMContentTags.RISING_STOMPABLE_NONMONSTERS) // And off of armor stands
 						))
 		));
 	}

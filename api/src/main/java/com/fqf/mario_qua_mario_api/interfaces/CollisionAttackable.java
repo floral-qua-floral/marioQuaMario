@@ -7,14 +7,14 @@ import net.minecraft.entity.Saddleable;
 import net.minecraft.entity.damage.DamageSource;
 import org.jetbrains.annotations.NotNull;
 
-public interface Stompable {
-	default @NotNull StompResult mqm$stomp(
+public interface CollisionAttackable {
+	default @NotNull StompResult mqm$processCollisionAttack(
 		IMarioAuthoritativeData marioData,
 		boolean attemptMount,
 		float damageAmount, DamageSource damageSource
 	) {
 		if(this instanceof Entity thisEntity) {
-			if(thisEntity.getType().isIn(MQMTags.UNSTOMPABLE)) return StompResult.FAIL;
+			if(thisEntity.getType().isIn(MQMTags.NOT_HIT_BY_COLLISION_ATTACKS)) return StompResult.FAIL;
 			if(thisEntity.getType().isIn(MQMTags.HURTS_TO_STOMP)) return StompResult.PAINFUL;
 
 			if(this instanceof Saddleable thisSaddleable) {

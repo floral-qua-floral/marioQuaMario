@@ -14,6 +14,7 @@ import static net.minecraft.registry.RegistryKeys.DAMAGE_TYPE;
 
 public interface MQMContentTags {
 	TagKey<DamageType> FLATTENS_ENTITIES = getTag(DAMAGE_TYPE, "flattens_entities");
+	TagKey<DamageType> BYPASSES_STOMP_GUARD = getTag(DAMAGE_TYPE, "bypasses_stomp_guard");
 
 	TagKey<EntityType<?>> RISING_STOMPABLE_NONMONSTERS = getTag(ENTITY_TYPE, "rising_stompable_nonmonsters");
 	TagKey<EntityType<?>> FIRE_MARIO_PUNCH_TARGETS = getTag(ENTITY_TYPE, "fire_mario_punch_targets");
