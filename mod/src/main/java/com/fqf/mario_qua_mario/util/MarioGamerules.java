@@ -36,6 +36,14 @@ public class MarioGamerules {
 					})
 			);
 
+	public static final GameRules.Key<GameRules.BooleanRule> PETS_AND_TEAMMATES_RESIST_COLLISION_ATTACKS =
+			GameRuleRegistry.register("mqmFriendliesResistCollisionAttacks", GameRules.Category.PLAYER,
+					GameRuleFactory.createBooleanRule(true, (server, booleanRule) -> {
+						adventurePlayersBreakBrittleBlocks = booleanRule.get();
+						syncAdventureRules(server);
+					})
+			);
+
 	public static final GameRules.Key<GameRules.BooleanRule> REJECT_INVALID_ACTION_TRANSITIONS =
 			GameRuleRegistry.register("mqmRejectInvalidActionTransitions", GameRules.Category.PLAYER,
 					GameRuleFactory.createBooleanRule(true));

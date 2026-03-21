@@ -77,7 +77,9 @@
 
   "subtitles.mario_qua_mario.stomp.kick": "Something gets attacked",
   "subtitles.mario_qua_mario.stomp.stomp": "Something gets stomped",
+  "subtitles.mario_qua_mario.stomp.harmless": "Something gets bounced on",
   "subtitles.mario_qua_mario.stomp.heavy": "Something gets stomped",
+  "subtitles.mario_qua_mario.stomp.last": "Something gets stomped flat",
   "subtitles.mario_qua_mario.stomp.spin": "Something gets stomped",
   "subtitles.mario_qua_mario.stomp.yoshi": "Something gets crushed",
 

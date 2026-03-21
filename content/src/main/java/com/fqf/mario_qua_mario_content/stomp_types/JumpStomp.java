@@ -20,6 +20,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
@@ -76,7 +77,7 @@ public class JumpStomp implements StompTypeDefinition {
 	}
 
 	public static void filterStompTargets(List<Entity> potentialTargets, ServerPlayerEntity mario, Vec3d motion) {
-		potentialTargets.removeIf(entity -> !(
+		potentialTargets.removeIf(entity -> entity.collidesWith(mario) || entity.isConnectedThroughVehicle(mario) || !(
 				(entity.canHit() || entity instanceof TridentEntity) // Mario can only stomp on things he can hit w/ crosshair (& Tridents)
 						&& collidingFromTop(entity, mario, mario.getY(), motion,
 						(
@@ -147,6 +148,12 @@ public class JumpStomp implements StompTypeDefinition {
 
 	@Override
 	public void executeClients(IMarioClientData data, ItemStack equipment, Entity target, StompResult.ExecutableResult result, boolean affectMario, long seed) {
-		data.playSound(MarioContentSFX.STOMP, seed);
+		SoundEvent stompSound = switch(result) {
+			case MOUNT, PAINFUL -> null;
+			case NORMAL, GLANCING -> target.isAlive() ? MarioContentSFX.STOMP : MarioContentSFX.LAST;
+			case RESISTED -> MarioContentSFX.HARMLESS;
+		};
+		if(stompSound == null) return;
+		data.playSound(stompSound, seed);
 	}
 }

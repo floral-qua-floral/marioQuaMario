@@ -155,6 +155,12 @@
 			"mario_qua_mario:sfx/power_up/tail_whip"
 		]
 	},
+	"sfx.stomp.harmless": {
+		"subtitle": "subtitles.mario_qua_mario.stomp.harmless",
+		"sounds": [
+			"mario_qua_mario:sfx/stomp/harmless"
+		]
+	},
 	"sfx.stomp.heavy": {
 		"subtitle": "subtitles.mario_qua_mario.stomp.heavy",
 		"sounds": [
@@ -165,6 +171,12 @@
 		"subtitle": "subtitles.mario_qua_mario.stomp.kick",
 		"sounds": [
 			"mario_qua_mario:sfx/stomp/kick"
+		]
+	},
+	"sfx.stomp.last": {
+		"subtitle": "subtitles.mario_qua_mario.stomp.last",
+		"sounds": [
+			"mario_qua_mario:sfx/stomp/last"
 		]
 	},
 	"sfx.stomp.spin": {

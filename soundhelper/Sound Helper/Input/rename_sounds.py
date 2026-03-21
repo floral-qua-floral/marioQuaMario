@@ -17,6 +17,8 @@ sfx = {
   "stomp_spin": "spin",
   "stomp_heavy": "heavy",
   "stomp_yoshi": "yoshi",
+  "stomp_last": "last",
+  "stomp_harmless": "harmless",
 
   "pound_land": "ground_pound_land",
   "drumroll": "ground_pound_drop",

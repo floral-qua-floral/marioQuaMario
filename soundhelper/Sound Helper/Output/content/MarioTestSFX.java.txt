@@ -36,8 +36,10 @@ public class MarioContentSFX {
 	public static final SoundEvent TAIL_FLY = makePowerUpSound("tail_fly");
 	public static final SoundEvent TAIL_WHIP = makePowerUpSound("tail_whip");
 
+	public static final SoundEvent HARMLESS = makeStompSound("harmless");
 	public static final SoundEvent HEAVY = makeStompSound("heavy");
 	public static final SoundEvent KICK = makeStompSound("kick");
+	public static final SoundEvent LAST = makeStompSound("last");
 	public static final SoundEvent SPIN = makeStompSound("spin");
 	public static final SoundEvent STOMP = makeStompSound("stomp");
 	public static final SoundEvent YOSHI = makeStompSound("yoshi");

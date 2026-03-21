@@ -7,7 +7,7 @@
     "compat.CPMCommonBaseMixin",
     "compat.CPMNetHandlerMixin",
     "DamageSourceMixin",
-    "EntityStompabilityMixin",
+    "LivingEntityStompabilityMixin",
     "PlayerEntityMarioDataMixin",
     "PlayerEntityMixin",
     "RedstoneViewMixin",

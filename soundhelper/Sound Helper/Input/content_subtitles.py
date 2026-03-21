@@ -56,6 +56,7 @@ sfx_stomp = {
   "heavy": "Something gets stomped",
   "yoshi": "Something gets crushed",
   "kick": "Something gets attacked",
+  "harmless": "Something gets bounced on"
 }
 
 sfx_action = {
