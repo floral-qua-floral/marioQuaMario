@@ -1,8 +1,8 @@
 {
   "replace": false,
   "values": [
-    "mqm:super_mushroom",
-    "mqm:fire_flower",
-    "mqm:super_leaf"
+    "mario_qua_mario:super_mushroom",
+    "mario_qua_mario:fire_flower",
+    "mario_qua_mario:super_leaf"
   ]
 }
