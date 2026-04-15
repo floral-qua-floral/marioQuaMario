@@ -3,6 +3,7 @@ package com.fqf.mario_qua_mario.registries.actions;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.registries.ParsedCollisionAttackType;
 import com.fqf.mario_qua_mario_api.definitions.states.AttackInterceptingStateDefinition;
+import com.fqf.mario_qua_mario_api.definitions.states.actions.GenericActionDefinition;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.PlayermodelAnimation;
@@ -26,6 +27,7 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 
 	public final SneakingRule SNEAKING_RULE;
 	public final SprintingRule SPRINTING_RULE;
+	public final @Nullable GenericActionType GENERIC_ACTION_TYPE;
 
 	public final @NotNull BappingRule BAPPING_RULE;
 	public final @Nullable ParsedCollisionAttackType COLLISION_ATTACK_TYPE;
@@ -54,6 +56,7 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 
 		this.SNEAKING_RULE = definition.getSneakingRule();
 		this.SPRINTING_RULE = definition.getSprintingRule();
+		this.GENERIC_ACTION_TYPE = (definition instanceof GenericActionDefinition genericDefinition ? genericDefinition.getGenericActionType() : null);
 
 		BappingRule bappingRule = definition.getBappingRule();
 		this.BAPPING_RULE = bappingRule == null ? NULL_EQUIVALENT : bappingRule;

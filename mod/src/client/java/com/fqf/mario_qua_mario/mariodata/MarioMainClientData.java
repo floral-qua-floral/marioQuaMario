@@ -167,6 +167,7 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		this.INPUTS.updateAnalog(forwardInput, strafeInput);
 
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.BASIC);
+		// Check for Elytra and Creative Flight
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION_EARLY);
 
 		boolean cancelVanillaTravel = this.getAction().travelHook(this);

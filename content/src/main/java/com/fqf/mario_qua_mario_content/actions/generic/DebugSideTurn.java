@@ -57,6 +57,9 @@ public class DebugSideTurn implements GenericActionDefinition {
 	@Override public @NotNull SprintingRule getSprintingRule() {
 		return SprintingRule.PROHIBIT;
 	}
+	@Override public @NotNull GenericActionType getGenericActionType() {
+		return GenericActionType.UNSPECIFIED;
+	}
 
 	@Override public @Nullable BappingRule getBappingRule() {
 		return null;
