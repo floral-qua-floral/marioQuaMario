@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "mario_qua_mario:stomp"
+    "#mario_qua_mario:collision_attacks",
+    "mario_qua_mario:mario_fireball"
   ]
 }
