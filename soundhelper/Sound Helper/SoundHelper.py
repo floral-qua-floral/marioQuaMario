@@ -150,7 +150,7 @@ def make_sounds_dot_json_and_java_file(sounds_dot_json_location, do_voices, inpu
                     voiceline_sound_files.append(f"mario_qua_mario:voices/{character}/{voiceline}/{sfx_name}")
 
                 sounds_dot_json[f"voice.{character}.{voiceline}"] = {
-                    "subtitle": f"subtitles.mario_qua_mario.voice_{character}_{voiceline}",
+                    "subtitle": f"subtitles.mario_qua_mario.voice.{character}_{voiceline}",
                     "sounds": voiceline_sound_files
                 }
 
