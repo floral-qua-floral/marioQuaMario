@@ -5,6 +5,22 @@
     {
       "id": "#chipped:cobweb",
       "required": false
+    },
+    {
+      "id": "biomesoplenty:hanging_cobweb",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:hanging_cobweb_strand",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:stringy_cobweb",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:webbing",
+      "required": false
     }
   ]
 }
