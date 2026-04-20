@@ -60,6 +60,9 @@
   "enchantment.mario_qua_mario.depth_charge.desc": "Ground Pounds go further and deal more damage underwater",
 
   "tag.item.mario_qua_mario.enchantable.pulverizing": "Enchantable with Pulverizing",
+  "tag.item.mario_qua_mario.power_ups": "Power-ups for Mario",
+  "tag.item.mario_qua_mario.edible_power_ups": "Edible power-ups for Mario",
+  "tag.item.mario_qua_mario.less_nutritious_power_ups": "Less nutritious power-ups for Mario",
 
   "subtitles.mario_qua_mario.movement.flip": "Aerial flip",
   "subtitles.mario_qua_mario.movement.jump": "Jumping",

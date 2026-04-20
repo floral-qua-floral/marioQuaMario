@@ -2,7 +2,6 @@
   "replace": false,
   "values": [
     "mario_qua_mario:super_mushroom",
-    "mario_qua_mario:fire_flower",
-    "mario_qua_mario:super_leaf"
+    "#mario_qua_mario:less_nutritious_power_ups"
   ]
 }
