@@ -7,6 +7,8 @@ public class MarioSableCompatSafe {
 	public static final boolean SABLE_PRESENT = FabricLoader.getInstance().isModLoaded("sable");
 
 	public static void trySablePostTravelCompatibility(PlayerEntity mario) {
-		MarioSableCompatUnsafe.runPostTravelSableMethods(mario);
+		if(SABLE_PRESENT) {
+			MarioSableCompatUnsafe.runPostTravelSableMethods(mario);
+		}
 	}
 }
