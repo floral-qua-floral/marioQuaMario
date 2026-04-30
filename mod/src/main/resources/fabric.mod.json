@@ -27,7 +27,7 @@
 		],
 
 		"cpmapi": [
-          "com.fqf.mario_qua_mario.compat.MarioCPMCompat"
+          "com.fqf.mario_qua_mario.compat.required.MarioCPMCompat"
 		],
 		"modmenu": [
 			"com.fqf.mario_qua_mario.util.MQMModMenuIntegration"

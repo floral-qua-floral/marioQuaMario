@@ -3,6 +3,7 @@ package com.fqf.mario_qua_mario.mixin;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.bapping.BlockBappingUtil;
 import com.fqf.mario_qua_mario.bapping.WorldBapsInfo;
+import com.fqf.mario_qua_mario.compat.optional.MarioSableCompatSafe;
 import com.fqf.mario_qua_mario.registries.actions.AbstractParsedAction;
 import com.fqf.mario_qua_mario.registries.actions.parsed.ParsedWallboundAction;
 import com.fqf.mario_qua_mario.util.MarioGamerules;
@@ -62,8 +63,11 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 	private void travelHook(Vec3d movementInput, CallbackInfo ci) {
 		if(this.mqm$getMarioData() instanceof MarioMoveableData moveableData
 				&& moveableData.doMarioTravel()
-				&& moveableData.travelHook(movementInput.z, movementInput.x))
+				&& moveableData.travelHook(movementInput.z, movementInput.x)) {
+			// SABLE HOOK
+			MarioSableCompatSafe.trySablePostTravelCompatibility(moveableData.getMario());
 			ci.cancel();
+		}
 	}
 
 	@Override

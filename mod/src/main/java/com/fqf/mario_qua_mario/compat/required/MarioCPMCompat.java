@@ -1,7 +1,6 @@
-package com.fqf.mario_qua_mario.compat;
+package com.fqf.mario_qua_mario.compat.required;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.tom.cpm.api.CommonApi;
 import com.tom.cpm.api.ICPMPlugin;
 import com.tom.cpm.api.IClientAPI;
 import com.tom.cpm.api.ICommonAPI;
