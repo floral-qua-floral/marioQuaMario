@@ -53,6 +53,9 @@ public abstract class AbstractMario implements CharacterDefinition {
 	@Override public float getHeightFactor() {
 		return 1;
 	}
+	@Override public float getEyeHeightFactor() {
+		return 1;
+	}
 	@Override public float getAnimationWidthFactor() {
 		return 1;
 	}

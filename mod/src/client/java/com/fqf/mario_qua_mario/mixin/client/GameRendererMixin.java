@@ -28,7 +28,7 @@ public class GameRendererMixin {
 	private void scaleBobbing(MatrixStack instance, float x, float y, float z, Operation<Void> original) {
 		MarioPlayerData data = ((PlayerEntity) Objects.requireNonNull(this.client.getCameraEntity())).mqm$getMarioData();
 		float horizontalScale = data.getHorizontalScale();
-		original.call(instance, x * horizontalScale, y * data.getVerticalScale(), z * horizontalScale);
+		original.call(instance, x * horizontalScale, y * data.getEyeHeightScale(), z * horizontalScale);
 	}
 
 	@Inject(method = "shouldRenderBlockOutline", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/pattern/CachedBlockPosition;<init>(Lnet/minecraft/world/WorldView;Lnet/minecraft/util/math/BlockPos;Z)V"), cancellable = true)

@@ -25,6 +25,7 @@ public interface IMarioData {
 	double getStat(CharaStat stat);
 	float getHorizontalScale();
 	float getVerticalScale();
+	float getEyeHeightScale();
 	int getBapStrength(Direction direction);
 
 	<T> T getVars(Class<T> clazz);

@@ -192,6 +192,9 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	@Override public float getVerticalScale() {
 		return this.isEnabled() ? this.getPowerUp().HEIGHT_FACTOR * this.getCharacter().HEIGHT_FACTOR : 1;
 	}
+	@Override public float getEyeHeightScale() {
+		return this.isEnabled() ? this.getPowerUp().HEIGHT_FACTOR * this.getCharacter().EYE_HEIGHT_FACTOR : 1;
+	}
 
 	@Override public int getBapStrength(Direction direction) {
 		return this.getBapStrength(this.getAction(), direction);

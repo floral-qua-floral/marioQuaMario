@@ -21,6 +21,8 @@ public class ParsedCharacter extends ParsedPowerGrantingState {
 	public final SoundEvent JUMP_SOUND;
 	public final String VOICE_NAME;
 
+	public final float EYE_HEIGHT_FACTOR;
+
 	public final Map<ParsedPowerUp, ModelFile> MODELS;
 
 	public ParsedCharacter(CharacterDefinition definition) {
@@ -34,6 +36,8 @@ public class ParsedCharacter extends ParsedPowerGrantingState {
 
 		this.JUMP_SOUND = definition.getJumpSound();
 		this.VOICE_NAME = definition.getVoiceName();
+
+		this.EYE_HEIGHT_FACTOR = definition.getEyeHeightFactor();
 
 		this.MODELS = new HashMap<>();
 	}

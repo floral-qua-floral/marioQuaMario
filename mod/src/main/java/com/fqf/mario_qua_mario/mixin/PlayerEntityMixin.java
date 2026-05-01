@@ -110,14 +110,18 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 			else {
 				float widthFactor = data.getHorizontalScale();
 				float heightFactor = data.getVerticalScale();
-				if(pose == EntityPose.CROUCHING) heightFactor *= 0.6F;
+				float eyeHeightFactor = data.getEyeHeightScale();
+				if(pose == EntityPose.CROUCHING) {
+					heightFactor *= 0.6F;
+					eyeHeightFactor *= 0.6F;
+				}
 
 				EntityDimensions normalDimensions = cir.getReturnValue();
 
 				cir.setReturnValue(new EntityDimensions(
 						normalDimensions.width() * widthFactor,
 						normalDimensions.height() * heightFactor,
-						normalDimensions.eyeHeight() * heightFactor,
+						normalDimensions.eyeHeight() * eyeHeightFactor,
 						normalDimensions.attachments().scale(widthFactor, heightFactor, widthFactor), normalDimensions.fixed()
 				));
 			}

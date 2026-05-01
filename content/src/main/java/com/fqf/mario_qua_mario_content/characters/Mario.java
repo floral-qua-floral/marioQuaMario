@@ -4,6 +4,7 @@ import com.fqf.mario_qua_mario_api.definitions.states.CharacterDefinition;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
 import com.fqf.mario_qua_mario_content.util.Powers;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -14,6 +15,16 @@ public class Mario extends AbstractMario implements CharacterDefinition {
 	public static final Identifier ID = MarioQuaMarioContent.makeID("mario");
 	@Override public @NotNull Identifier getID() {
 	    return ID;
+	}
+
+	@Override
+	public float getHeightFactor() {
+		return 0.97F;
+	}
+
+	@Override
+	public float getEyeHeightFactor() {
+		return 0.96F;
 	}
 
 	@Override
@@ -28,13 +39,7 @@ public class Mario extends AbstractMario implements CharacterDefinition {
 
 	@Override
 	public Set<String> getPowers() {
-		return Set.of(
-				Powers.DROP_COINS,
-				Powers.LIGHTNING_SHRINKS,
-				Powers.CEILING_CLIPPING,
-				Powers.STOMP_GUARD,
-
-				Powers.SLEEPY
-		);
+		ImmutableSet.Builder<String> marioPowers = ImmutableSet.builder();
+		return marioPowers.addAll(super.getPowers()).add(Powers.SLEEPY).build();
 	}
 }

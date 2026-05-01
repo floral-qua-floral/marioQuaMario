@@ -16,6 +16,21 @@ public class Toadette extends AbstractMario implements CharacterDefinition {
 	}
 
 	@Override
+	public float getHeightFactor() {
+		return 0.97F;
+	}
+
+	@Override
+	public float getEyeHeightFactor() {
+		return 0.765F;
+	}
+
+	@Override
+	public float getAnimationHeightFactor() {
+		return 0.8F;
+	}
+
+	@Override
 	public @NotNull SoundEvent getJumpSound() {
 		return MarioContentSFX.TOADETTE_JUMP;
 	}
