@@ -30,6 +30,10 @@ public class Toadette extends AbstractMario implements CharacterDefinition {
 		return 0.8F;
 	}
 
+	// FIXME: Small Toadette's armor
+	// FIXME: All Toadette forms' boots
+	// FIXME: All Toadette forms' chest disappearing when wearing chestplate
+
 	@Override
 	public @NotNull SoundEvent getJumpSound() {
 		return MarioContentSFX.TOADETTE_JUMP;
