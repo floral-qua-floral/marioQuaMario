@@ -24,6 +24,7 @@ public class CPMClientBaseMixin {
 			ModelDefinition modelDefinition,
 			CallbackInfo ci
 	) {
-		abstractClientPlayerEntity.mqm$getAnimationData().animateTail(partialTicks, abstractClientPlayerEntity, model.cloak, model.body, model.rightLeg, model.leftLeg);
+		if(abstractClientPlayerEntity.mqm$getMarioData().isEnabled())
+			abstractClientPlayerEntity.mqm$getAnimationData().animateTail(partialTicks, abstractClientPlayerEntity, model.cloak, model.body, model.rightLeg, model.leftLeg);
 	}
 }
