@@ -6,7 +6,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
-public class MarioSFX {
+public class CPASounds {
 $INSERT CODE HERE$
 
 	private static SoundEvent makeMovementSound(String name) {
@@ -23,7 +23,7 @@ $INSERT CODE HERE$
 	}
 
 	private static SoundEvent makeAndRegisterSound(String path) {
-		Identifier identifier = MarioQuaMario.makeResID(path);
+		Identifier identifier = CharaPowerAct.makeResID(path);
 		SoundEvent event = SoundEvent.of(identifier);
 
 		Registry.register(Registries.SOUND_EVENT, identifier, event);
