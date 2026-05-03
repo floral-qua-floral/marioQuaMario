@@ -39,9 +39,10 @@ public class ServerPlayNetworkHandlerMixin implements MarioPositionSettable {
 
 	@WrapMethod(method = "requestTeleport(DDDFFLjava/util/Set;)V")
 	private void requestTeleportHook(double x, double y, double z, float yaw, float pitch, Set<PositionFlag> flags, Operation<Void> original) {
-		if(!this.player.cpa$getCPAData().cancelNextRequestTeleportPacket) {
+		if(this.player.cpa$getCPAData().cancelNextRequestTeleportPacket)
+			this.player.cpa$getCPAData().cancelNextRequestTeleportPacket = false;
+		else
 			original.call(x, y, z, yaw, pitch, flags);
-		}
 	}
 
 	@Override
