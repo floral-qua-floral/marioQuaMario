@@ -1,15 +1,15 @@
 package com.fqf.charapoweract.registries.actions;
 
+import com.fqf.charapoweract.CharaPowerAct;
 import com.fqf.charapoweract.cpadata.CPAMoveableData;
 import com.fqf.charapoweract.cpadata.CPAPlayerData;
-import com.fqf.charapoweract.util.MarioClientHelperManager;
-import com.fqf.charapoweract.MarioQuaMario;
+import com.fqf.charapoweract.packets.CPADataPackets;
+import com.fqf.charapoweract.util.CPAClientHelperManager;
 import com.fqf.charapoweract_api.definitions.states.actions.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charapoweract_api.definitions.states.actions.util.IncompleteActionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.charapoweract_api.cpadata.ICPAClientData;
-import com.fqf.charapoweract.packets.MarioDataPackets;
 import com.fqf.charapoweract.registries.RegistryManager;
 import com.fqf.charapoweract.registries.actions.parsed.*;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -36,16 +36,16 @@ public class ParsedActionHelper {
 	}
 
 	public static void attemptTransitions(CPAMoveableData data, TransitionPhase phase) {
-//		MarioQuaMario.LOGGER.info("Start checking on {}:", data.isClient() ? "CLIENT": "SERVER");
+//		CharaPowerAct.LOGGER.info("Start checking on {}:", data.isClient() ? "CLIENT": "SERVER");
 		TransitionPhase usePhase = phase == TransitionPhase.WORLD_COLLISION_EARLY ? TransitionPhase.WORLD_COLLISION : phase;
 		for(ParsedTransition transition : data.isClient() ? data.getAction().CLIENT_TRANSITIONS.get(usePhase) : data.getAction().SERVER_TRANSITIONS.get(usePhase)) {
-//			if(Objects.equals(data.getActionID(), MarioQuaMario.makeID("jump")))
-//				MarioQuaMario.LOGGER.info("Testing transition from {}->{}:\n{}", data.getActionID(), transition.targetAction().ID, transition.evaluator().shouldTransition(data));
+//			if(Objects.equals(data.getActionID(), CharaPowerAct.makeID("jump")))
+//				CharaPowerAct.LOGGER.info("Testing transition from {}->{}:\n{}", data.getActionID(), transition.targetAction().ID, transition.evaluator().shouldTransition(data));
 			if(transition.evaluator().shouldTransition(data)) {
 				long seed = data.getPlayer().getRandom().nextLong();
 
 				if(data.isServer()) {
-					MarioDataPackets.transitionToActionS2C((ServerPlayerEntity) data.getPlayer(), transition.fullyNetworked(),
+					CPADataPackets.transitionToActionS2C((ServerPlayerEntity) data.getPlayer(), transition.fullyNetworked(),
 							data.getAction(), transition.targetAction(), seed);
 				}
 				else {
@@ -55,17 +55,17 @@ public class ParsedActionHelper {
 						data.getWallInfo().setYaw(wallYaw);
 
 						if(!wallAction.verifyWallLegality(data, Vec3d.ZERO)) {
-//							MarioQuaMario.LOGGER.info("Client is cancelling successful wallbound transition without networking " +
+//							CharaPowerAct.LOGGER.info("Client is cancelling successful wallbound transition without networking " +
 //									"because legality check failed ({} -> {})", data.getActionID(), wallAction.ID);
 							continue;
 						}
 
-						MarioClientHelperManager.packetSender.transmitWallYawC2S(data, wallYaw);
+						CPAClientHelperManager.packetSender.transmitWallYawC2S(data, wallYaw);
 					}
 
-					MarioClientHelperManager.packetSender.conditionallySaveTransitionToReplayMod(data.getAction(), transition.targetAction(), seed);
+					CPAClientHelperManager.packetSender.conditionallySaveTransitionToReplayMod(data.getAction(), transition.targetAction(), seed);
 					if (transition.fullyNetworked()) {
-						MarioClientHelperManager.packetSender.setActionC2S(data.getAction(), transition.targetAction(), seed, phase);
+						CPAClientHelperManager.packetSender.setActionC2S(data.getAction(), transition.targetAction(), seed, phase);
 					}
 				}
 
@@ -87,7 +87,7 @@ public class ParsedActionHelper {
 	}
 
 	public static void executeTransition(CPAPlayerData data, ParsedTransition transition, long seed) {
-		if(MarioQuaMario.CONFIG.logAllActionTransitions()) MarioQuaMario.LOGGER.info("Executing transition for {} on {}: {} -> {}",
+		if(CharaPowerAct.CONFIG.logAllActionTransitions()) CharaPowerAct.LOGGER.info("Executing transition for {} on {}: {} -> {}",
 				data.getPlayer().getName().getString(), data.isClient() ? "CLIENT" : "SERVER",
 				data.getActionID(), transition.targetAction().ID
 		);

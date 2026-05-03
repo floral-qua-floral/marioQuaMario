@@ -1,10 +1,10 @@
 package com.fqf.charapoweract.packets;
 
-import com.fqf.charapoweract.MarioQuaMario;
+import com.fqf.charapoweract.CharaPowerAct;
 import com.fqf.charapoweract.registries.ParsedAttackInterception;
 import com.fqf.charapoweract.registries.RegistryManager;
 import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
-import com.fqf.charapoweract.registries.power_granting.ParsedPowerUp;
+import com.fqf.charapoweract.registries.power_granting.ParsedPowerForm;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
@@ -16,47 +16,47 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
-public class MarioAttackInterceptionPackets {
+public class AttackInterceptionPackets {
 	public static void handleInterceptionCommandAction(
-			ServerPlayerEntity mario, AbstractParsedAction fromAction, int index,
+			ServerPlayerEntity player, AbstractParsedAction fromAction, int index,
 			@Nullable Entity targetEntity, @Nullable BlockPos targetBlock
 	) {
-		long seed = mario.getRandom().nextLong();
-		fromAction.INTERCEPTIONS.get(index).execute(mario.cpa$getCPAData(), targetEntity, targetBlock, seed);
+		long seed = player.getRandom().nextLong();
+		fromAction.INTERCEPTIONS.get(index).execute(player.cpa$getCPAData(), targetEntity, targetBlock, seed);
 		AttackInterceptionPayload dummyPayload = new MissedAttackInterceptedC2SPayload(true, RegistryManager.ACTIONS.getRawIdOrThrow(fromAction), index, seed);
-		MarioPackets.sendToTrackers(mario, convertPayloadToS2C(mario, dummyPayload, targetEntity, targetBlock), true);
+		CPAPackets.sendToTrackers(player, convertPayloadToS2C(player, dummyPayload, targetEntity, targetBlock), true);
 	}
-	public static void handleInterceptionCommandPowerUp(
-			ServerPlayerEntity mario, ParsedPowerUp fromPowerUp, int index,
+	public static void handleInterceptionCommandPowerForm(
+			ServerPlayerEntity player, ParsedPowerForm fromPowerUp, int index,
 			@Nullable Entity targetEntity, @Nullable BlockPos targetBlock
 	) {
-		long seed = mario.getRandom().nextLong();
-		fromPowerUp.INTERCEPTIONS.get(index).execute(mario.cpa$getCPAData(), targetEntity, targetBlock, seed);
+		long seed = player.getRandom().nextLong();
+		fromPowerUp.INTERCEPTIONS.get(index).execute(player.cpa$getCPAData(), targetEntity, targetBlock, seed);
 		AttackInterceptionPayload dummyPayload = new MissedAttackInterceptedC2SPayload(false, RegistryManager.POWER_UPS.getRawIdOrThrow(fromPowerUp), index, seed);
-		MarioPackets.sendToTrackers(mario, convertPayloadToS2C(mario, dummyPayload, targetEntity, targetBlock), true);
+		CPAPackets.sendToTrackers(player, convertPayloadToS2C(player, dummyPayload, targetEntity, targetBlock), true);
 	}
 	private static void handleAttackInterception(
-			ServerPlayerEntity mario, AttackInterceptionPayload payload,
+			ServerPlayerEntity player, AttackInterceptionPayload payload,
 			@Nullable Entity targetEntity, @Nullable BlockPos targetBlock, long seed
 	) {
 		ParsedAttackInterception.getInterception(payload)
-				.execute(mario.cpa$getCPAData(), targetEntity, targetBlock, seed);
+				.execute(player.cpa$getCPAData(), targetEntity, targetBlock, seed);
 
-		MarioPackets.sendToTrackers(mario, convertPayloadToS2C(mario, payload, targetEntity, targetBlock), false);
+		CPAPackets.sendToTrackers(player, convertPayloadToS2C(player, payload, targetEntity, targetBlock), false);
 	}
 	private static CustomPayload convertPayloadToS2C(
-			ServerPlayerEntity mario, AttackInterceptionPayload payload,
+			ServerPlayerEntity player, AttackInterceptionPayload payload,
 			@Nullable Entity targetEntity, @Nullable BlockPos targetBlock
 	) {
 		if(targetEntity != null)
 			return new EntityAttackInterceptedS2CPayload(
-					mario.getId(), payload.isFromAction(), payload.interceptionSource(), payload.interceptionIndex(), targetEntity.getId(), payload.seed());
+					player.getId(), payload.isFromAction(), payload.interceptionSource(), payload.interceptionIndex(), targetEntity.getId(), payload.seed());
 		else if(targetBlock != null)
 			return new BlockAttackInterceptedS2CPayload(
-					mario.getId(), payload.isFromAction(), payload.interceptionSource(), payload.interceptionIndex(), targetBlock, payload.seed());
+					player.getId(), payload.isFromAction(), payload.interceptionSource(), payload.interceptionIndex(), targetBlock, payload.seed());
 		else
 			return new MissedAttackInterceptedS2CPayload(
-					mario.getId(), payload.isFromAction(), payload.interceptionSource(), payload.interceptionIndex(), payload.seed());
+					player.getId(), payload.isFromAction(), payload.interceptionSource(), payload.interceptionIndex(), payload.seed());
 	}
 
 	public interface AttackInterceptionPayload {
@@ -70,7 +70,7 @@ public class MarioAttackInterceptionPackets {
 			boolean isFromAction, int interceptionSource, int interceptionIndex,
 			long seed
 	) implements CustomPayload, AttackInterceptionPayload {
-		public static final Id<MissedAttackInterceptedC2SPayload> ID = new Id<>(MarioQuaMario.makeID("missed_attack_intercepted_c2s"));
+		public static final Id<MissedAttackInterceptedC2SPayload> ID = new Id<>(CharaPowerAct.makeID("missed_attack_intercepted_c2s"));
 		public static final PacketCodec<RegistryByteBuf, MissedAttackInterceptedC2SPayload> CODEC = PacketCodec.tuple(
 				PacketCodecs.BOOL, MissedAttackInterceptedC2SPayload::isFromAction,
 				PacketCodecs.INTEGER, MissedAttackInterceptedC2SPayload::interceptionSource,
@@ -97,7 +97,7 @@ public class MarioAttackInterceptionPackets {
 			boolean isFromAction, int interceptionSource, int interceptionIndex,
 			int targetID, long seed
 	) implements CustomPayload, AttackInterceptionPayload {
-		public static final Id<EntityAttackInterceptedC2SPayload> ID = new Id<>(MarioQuaMario.makeID("entity_attack_intercepted_c2s"));
+		public static final Id<EntityAttackInterceptedC2SPayload> ID = new Id<>(CharaPowerAct.makeID("entity_attack_intercepted_c2s"));
 		public static final PacketCodec<RegistryByteBuf, EntityAttackInterceptedC2SPayload> CODEC = PacketCodec.tuple(
 				PacketCodecs.BOOL, EntityAttackInterceptedC2SPayload::isFromAction,
 				PacketCodecs.INTEGER, EntityAttackInterceptedC2SPayload::interceptionSource,
@@ -128,7 +128,7 @@ public class MarioAttackInterceptionPackets {
 			boolean isFromAction, int interceptionSource, int interceptionIndex,
 			BlockPos targetBlock, long seed
 	) implements CustomPayload, AttackInterceptionPayload {
-		public static final Id<BlockAttackInterceptedC2SPayload> ID = new Id<>(MarioQuaMario.makeID("block_attack_intercepted_c2s"));
+		public static final Id<BlockAttackInterceptedC2SPayload> ID = new Id<>(CharaPowerAct.makeID("block_attack_intercepted_c2s"));
 		public static final PacketCodec<RegistryByteBuf, BlockAttackInterceptedC2SPayload> CODEC = PacketCodec.tuple(
 				PacketCodecs.BOOL, BlockAttackInterceptedC2SPayload::isFromAction,
 				PacketCodecs.INTEGER, BlockAttackInterceptedC2SPayload::interceptionSource,
@@ -153,13 +153,13 @@ public class MarioAttackInterceptionPackets {
 	}
 
 	protected record MissedAttackInterceptedS2CPayload(
-			int marioID,
+			int playerID,
 			boolean isFromAction, int interceptionSource, int interceptionIndex,
 			long seed
 	) implements CustomPayload, AttackInterceptionPayload {
-		public static final Id<MissedAttackInterceptedS2CPayload> ID = MarioPackets.makeID("missed_attack_intercepted_s2c");
+		public static final Id<MissedAttackInterceptedS2CPayload> ID = CPAPackets.makeID("missed_attack_intercepted_s2c");
 		public static final PacketCodec<RegistryByteBuf, MissedAttackInterceptedS2CPayload> CODEC = PacketCodec.tuple(
-				PacketCodecs.INTEGER, MissedAttackInterceptedS2CPayload::marioID,
+				PacketCodecs.INTEGER, MissedAttackInterceptedS2CPayload::playerID,
 
 				PacketCodecs.BOOL, MissedAttackInterceptedS2CPayload::isFromAction,
 				PacketCodecs.INTEGER, MissedAttackInterceptedS2CPayload::interceptionSource,
@@ -178,13 +178,13 @@ public class MarioAttackInterceptionPackets {
 	}
 
 	protected record EntityAttackInterceptedS2CPayload(
-			int marioID,
+			int playerID,
 			boolean isFromAction, int interceptionSource, int interceptionIndex,
 			int targetID, long seed
 	) implements CustomPayload, AttackInterceptionPayload {
-		public static final Id<EntityAttackInterceptedS2CPayload> ID = MarioPackets.makeID("entity_attack_intercepted_s2c");
+		public static final Id<EntityAttackInterceptedS2CPayload> ID = CPAPackets.makeID("entity_attack_intercepted_s2c");
 		public static final PacketCodec<RegistryByteBuf, EntityAttackInterceptedS2CPayload> CODEC = PacketCodec.tuple(
-				PacketCodecs.INTEGER, EntityAttackInterceptedS2CPayload::marioID,
+				PacketCodecs.INTEGER, EntityAttackInterceptedS2CPayload::playerID,
 
 				PacketCodecs.BOOL, EntityAttackInterceptedS2CPayload::isFromAction,
 				PacketCodecs.INTEGER, EntityAttackInterceptedS2CPayload::interceptionSource,
@@ -204,13 +204,13 @@ public class MarioAttackInterceptionPackets {
 	}
 
 	protected record BlockAttackInterceptedS2CPayload(
-			int marioID,
+			int playerID,
 			boolean isFromAction, int interceptionSource, int interceptionIndex,
 			BlockPos targetBlock, long seed
 	) implements CustomPayload, AttackInterceptionPayload {
-		public static final Id<BlockAttackInterceptedS2CPayload> ID = MarioPackets.makeID("block_attack_intercepted_s2c");
+		public static final Id<BlockAttackInterceptedS2CPayload> ID = CPAPackets.makeID("block_attack_intercepted_s2c");
 		public static final PacketCodec<RegistryByteBuf, BlockAttackInterceptedS2CPayload> CODEC = PacketCodec.tuple(
-				PacketCodecs.INTEGER, BlockAttackInterceptedS2CPayload::marioID,
+				PacketCodecs.INTEGER, BlockAttackInterceptedS2CPayload::playerID,
 
 				PacketCodecs.BOOL, BlockAttackInterceptedS2CPayload::isFromAction,
 				PacketCodecs.INTEGER, BlockAttackInterceptedS2CPayload::interceptionSource,

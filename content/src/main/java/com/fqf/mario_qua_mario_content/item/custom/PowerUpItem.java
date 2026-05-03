@@ -22,7 +22,7 @@ public class PowerUpItem extends Item {
 	public ItemStack finishUsing(ItemStack stack, World world, LivingEntity user) {
 		if(user instanceof ServerPlayerEntity serverPlayer) {
 			ICPAAuthoritativeData data = serverPlayer.cpa$getICPAAuthoritativeData();
-			if(data.isEnabled() && this.REPLACEMENT_VALUE_THRESHOLD >= data.getPowerUpValue() && !data.getPowerUpID().equals(this.POWER_UP_FORM_ID))
+			if(data.isEnabled() && this.REPLACEMENT_VALUE_THRESHOLD >= data.getPowerFormValue() && !data.getPowerFormID().equals(this.POWER_UP_FORM_ID))
 				data.empowerTo(this.POWER_UP_FORM_ID);
 		}
 		return super.finishUsing(stack, world, user);

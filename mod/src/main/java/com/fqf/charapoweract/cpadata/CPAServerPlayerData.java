@@ -1,7 +1,8 @@
 package com.fqf.charapoweract.cpadata;
 
-import com.fqf.charapoweract.MarioQuaMario;
-import com.fqf.charapoweract.packets.MarioDataPackets;
+import com.fqf.charapoweract.CharaPowerAct;
+import com.fqf.charapoweract.compat.required.CPMCompat;
+import com.fqf.charapoweract.packets.CPADataPackets;
 import com.fqf.charapoweract.registries.RegistryManager;
 import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
 import com.fqf.charapoweract.registries.actions.ParsedActionHelper;
@@ -9,9 +10,8 @@ import com.fqf.charapoweract.registries.actions.ParsedTransition;
 import com.fqf.charapoweract.registries.actions.TransitionPhase;
 import com.fqf.charapoweract.registries.actions.parsed.ParsedWallboundAction;
 import com.fqf.charapoweract.registries.power_granting.ParsedCharacter;
-import com.fqf.charapoweract.registries.power_granting.ParsedPowerUp;
-import com.fqf.charapoweract.compat.required.MarioCPMCompat;
-import com.fqf.charapoweract.util.MarioGamerules;
+import com.fqf.charapoweract.registries.power_granting.ParsedPowerForm;
+import com.fqf.charapoweract.util.CPAGamerules;
 import com.fqf.charapoweract_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charapoweract_api.cpadata.ICPAAuthoritativeData;
 import com.tom.cpm.shared.io.ModelFile;
@@ -30,13 +30,13 @@ import java.util.Objects;
 import java.util.Set;
 
 public class CPAServerPlayerData extends CPAMoveableData implements ICPAAuthoritativeData {
-	private final ServerPlayerEntity MARIO;
-	public CPAServerPlayerData(ServerPlayerEntity mario) {
+	private final ServerPlayerEntity PLAYER;
+	public CPAServerPlayerData(ServerPlayerEntity player) {
 		super();
-		this.MARIO = mario;
+		this.PLAYER = player;
 	}
 	@Override public ServerPlayerEntity getPlayer() {
-		return this.MARIO;
+		return this.PLAYER;
 	}
 
 	public boolean cancelNextRequestTeleportPacket;
@@ -45,10 +45,10 @@ public class CPAServerPlayerData extends CPAMoveableData implements ICPAAuthorit
 
 	@Override public void initialApply() {
 		if(this.isEnabled()) {
-			ParsedPowerUp preApplyPowerUp = this.getPowerUp();
+			ParsedPowerForm preApplyPowerUp = this.getPowerForm();
 			this.setCharacter(this.getCharacter());
 			this.setPowerUpTransitionless(preApplyPowerUp);
-			MarioDataPackets.syncMarioDataToPlayerS2C(this.getPlayer(), this.getPlayer());
+			CPADataPackets.syncCPADataToPlayerS2C(this.getPlayer(), this.getPlayer());
 		}
 		else super.initialApply();
 //		this.syncToClient(this.getPlayer());
@@ -58,7 +58,7 @@ public class CPAServerPlayerData extends CPAMoveableData implements ICPAAuthorit
 	public void updatePassiveUniversalTraits(boolean enabled) {
 		super.updatePassiveUniversalTraits(enabled);
 		if(enabled) this.updatePlayerModel();
-		else MarioCPMCompat.getCommonAPI().resetPlayerModel(PlayerEntity.class, this.getPlayer());
+		else CPMCompat.getCommonAPI().resetPlayerModel(PlayerEntity.class, this.getPlayer());
 	}
 
 	@Override
@@ -66,19 +66,19 @@ public class CPAServerPlayerData extends CPAMoveableData implements ICPAAuthorit
 		if(!forced && !fromCommand) {
 			if(!this.getAction().equals(fromAction)) {
 				if(fromAction == null) {
-					MarioQuaMario.LOGGER.warn("TRANSITION REJECTED: fromAction is null. Trying to transition from null to {}",
+					CharaPowerAct.LOGGER.warn("TRANSITION REJECTED: fromAction is null. Trying to transition from null to {}",
 							toAction.ID);
 					return false;
 				}
 
 				// Check if we were recently in fromAction. If not, return false.
 				if(!this.recentlyInAction(fromAction)) {
-					if (MarioQuaMario.LOGGER.isWarnEnabled()) { // is there a reason to bother checking this????
+					if (CharaPowerAct.LOGGER.isWarnEnabled()) { // is there a reason to bother checking this????
 						StringBuilder recentActionsString = new StringBuilder();
 						for (Pair<AbstractParsedAction, Long> recentAction : RECENT_ACTIONS) {
 							recentActionsString.append("\n").append(recentAction.getLeft().ID);
 						}
-						MarioQuaMario.LOGGER.warn("""
+						CharaPowerAct.LOGGER.warn("""
 								TRANSITION REJECTED: Not recently in fromAction.
 								Server-sided action: {}
 								Attempted {} -> {}
@@ -90,7 +90,7 @@ public class CPAServerPlayerData extends CPAMoveableData implements ICPAAuthorit
 
 			// Check if our current action is a Mounted action and the fromAction isn't. If so, return false.
 			if(this.getActionCategory() == ActionCategory.MOUNTED && fromAction.CATEGORY != ActionCategory.MOUNTED) {
-				MarioQuaMario.LOGGER.warn("""
+				CharaPowerAct.LOGGER.warn("""
 							TRANSITION REJECTED: Trying to execute non-mounted transition while in mounted action.
 							Server-sided action: {}
 							Attempted: {} -> {}""", this.getActionID(), fromAction.ID, toAction.ID);
@@ -103,7 +103,7 @@ public class CPAServerPlayerData extends CPAMoveableData implements ICPAAuthorit
 
 				// If last received wall yaw packet was too long ago, reject
 				if(this.getPlayer().getWorld().getTime() > this.lastReceivedWallYawTime + 60L) {
-					MarioQuaMario.LOGGER.warn("""
+					CharaPowerAct.LOGGER.warn("""
 							TRANSITION REJECTED: Trying to enter Wallbound Action, but last wall yaw packet was\
 							 received too long ago.
 							Server-sided action: {}
@@ -118,7 +118,7 @@ public class CPAServerPlayerData extends CPAMoveableData implements ICPAAuthorit
 				this.getWallInfo().setYaw(this.lastReceivedWallYaw);
 				// And if legality check fails, REJECT
 				if(!wallAction.verifyWallLegality(this, Vec3d.ZERO)) {
-					MarioQuaMario.LOGGER.warn("""
+					CharaPowerAct.LOGGER.warn("""
 							TRANSITION REJECTED: Trying to enter Wallbound Action, but server-sided legality check failed.
 							Server-sided action: {}
 							Attempted: {} -> {}""", this.getActionID(), fromAction.ID, toAction.ID);
@@ -126,12 +126,12 @@ public class CPAServerPlayerData extends CPAMoveableData implements ICPAAuthorit
 				}
 
 				// Else, broadcast wall yaw to clients:
-				MarioDataPackets.transmitWallYawS2C(this.getPlayer(), this.lastReceivedWallYaw);
+				CPADataPackets.transmitWallYawS2C(this.getPlayer(), this.lastReceivedWallYaw);
 			}
 
 			@Nullable ParsedTransition transition = fromAction.TRANSITIONS_FROM_TARGETS.get(toAction);
 			if(transition != null && transition.serverChecked() && !transition.evaluator().shouldTransition(this)) {
-				MarioQuaMario.LOGGER.warn("""
+				CharaPowerAct.LOGGER.warn("""
 						TRANSITION REJECTED: Transition is server-checked and evaluator failed.
 						Attempted {} -> {}""", fromAction.ID, toAction.ID);
 				return false;
@@ -152,24 +152,24 @@ public class CPAServerPlayerData extends CPAMoveableData implements ICPAAuthorit
 	}
 
 	@Override
-	public boolean setPowerUpTransitionless(ParsedPowerUp newPowerUp) {
+	public boolean setPowerUpTransitionless(ParsedPowerForm newPowerUp) {
 		if(!this.updatePlayerModel(newPowerUp)) return false;
 		return super.setPowerUpTransitionless(newPowerUp);
 	}
 
-	private boolean updatePlayerModel(ParsedPowerUp newPowerUp) {
+	private boolean updatePlayerModel(ParsedPowerForm newPowerUp) {
 		ModelFile newModel = this.getCharacter().MODELS.get(newPowerUp);
 		if(newModel == null) {
-			MarioQuaMario.LOGGER.error("Attempting to set {}'s power-up, however there is no model for combination {} + {}!",
+			CharaPowerAct.LOGGER.error("Attempting to set {}'s power-up, however there is no model for combination {} + {}!",
 					this.getPlayer().getName().getString(), this.getCharacterID(), newPowerUp.ID);
 			return false;
 		}
 		if(this.getPlayer().networkHandler != null)
-			MarioCPMCompat.getCommonAPI().setPlayerModel(PlayerEntity.class, this.getPlayer(), newModel, true);
+			CPMCompat.getCommonAPI().setPlayerModel(PlayerEntity.class, this.getPlayer(), newModel, true);
 		return true;
 	}
 	public void updatePlayerModel() {
-		this.updatePlayerModel(this.getPowerUp());
+		this.updatePlayerModel(this.getPowerForm());
 	}
 
 	@Override
@@ -181,7 +181,7 @@ public class CPAServerPlayerData extends CPAMoveableData implements ICPAAuthorit
 	public void tick() {
 		super.tick();
 		this.getAction().serverTick(this);
-		this.getPowerUp().serverTick(this);
+		this.getPowerForm().serverTick(this);
 		this.getCharacter().serverTick(this);
 
 		long worldTime = this.getPlayer().getWorld().getTime();
@@ -220,13 +220,13 @@ public class CPAServerPlayerData extends CPAMoveableData implements ICPAAuthorit
 
 	}
 
-	@Override public MarioInputs getInputs() {
+	@Override public Inputs getInputs() {
 		return PHONY_INPUTS;
 	}
 
-	public static final MarioInputs PHONY_INPUTS;
+	public static final Inputs PHONY_INPUTS;
 	static {
-		MarioInputs.MarioButton phonyButton = new MarioInputs.MarioButton() {
+		Inputs.ButtonInput phonyButton = new Inputs.ButtonInput() {
 			@Override public boolean isPressed() {
 				return false;
 			}
@@ -234,7 +234,7 @@ public class CPAServerPlayerData extends CPAMoveableData implements ICPAAuthorit
 				return false;
 			}
 		};
-		PHONY_INPUTS = new MarioInputs(phonyButton, phonyButton, phonyButton) {
+		PHONY_INPUTS = new Inputs(phonyButton, phonyButton, phonyButton) {
 			@Override public double getForwardInput() {
 				return 0;
 			}
@@ -249,16 +249,16 @@ public class CPAServerPlayerData extends CPAMoveableData implements ICPAAuthorit
 
 	//	public void syncToClient(ServerPlayerEntity toWhom) {
 //		this.setEnabled(this.isEnabled());
-//		MarioDataPackets.assignCharacterS2C(this.getPlayer(), this.getCharacter());
-//		MarioDataPackets.assignPowerUpS2C(this.getPlayer(), this.getPowerUp());
-//		MarioDataPackets.assignActionS2C(this.getPlayer(), true, this.getAction());
-////		MarioDataPackets.updatePlayermodelS2C(this.getPlayer());
+//		CPADataPackets.assignCharacterS2C(this.getPlayer(), this.getCharacter());
+//		CPADataPackets.assignPowerUpS2C(this.getPlayer(), this.getPowerForm());
+//		CPADataPackets.assignActionS2C(this.getPlayer(), true, this.getAction());
+////		CPADataPackets.updatePlayermodelS2C(this.getPlayer());
 //	}
 
 	// CUTOFF FOR ICPAAuthoritativeData IMPLEMENTATION:---------------------------------------------------------------
 	@Override public void disable() {
 		this.disableInternal();
-		MarioDataPackets.disableMarioS2C(this.getPlayer());
+		CPADataPackets.setNoCharacterS2C(this.getPlayer());
 	}
 
 	@Override public ActionTransitionResult forceActionTransition(@Nullable Identifier fromID, @NotNull Identifier toID) {
@@ -274,7 +274,7 @@ public class CPAServerPlayerData extends CPAMoveableData implements ICPAAuthorit
 				"Target action (" + toID + ") doesn't exist!");
 
 		if(this.setAction(fromAction, toAction, seed, false, true)) {
-			MarioDataPackets.transitionToActionS2C(this.getPlayer(), true, fromAction, toAction, seed);
+			CPADataPackets.transitionToActionS2C(this.getPlayer(), true, fromAction, toAction, seed);
 			return ActionTransitionResult.SUCCESS;
 		}
 		return ActionTransitionResult.NO_SUCH_TRANSITION;
@@ -288,7 +288,7 @@ public class CPAServerPlayerData extends CPAMoveableData implements ICPAAuthorit
 		AbstractParsedAction newAction = Objects.requireNonNull(RegistryManager.ACTIONS.get(actionID),
 				"Target action (" + actionID + ") doesn't exist!");
 		this.setActionTransitionless(newAction);
-		MarioDataPackets.assignActionS2C(this.getPlayer(), true, newAction);
+		CPADataPackets.assignActionS2C(this.getPlayer(), true, newAction);
 		return ActionChangeOperationResult.SUCCESS;
 	}
 	@Override public ActionChangeOperationResult assignAction(String actionID) {
@@ -297,12 +297,12 @@ public class CPAServerPlayerData extends CPAMoveableData implements ICPAAuthorit
 
 	@Override public PowerChangeOperationResult empowerTo(Identifier powerUpID) {
 		if(!this.isEnabled()) return PowerChangeOperationResult.NOT_ENABLED;
-		ParsedPowerUp newPowerUp = Objects.requireNonNull(RegistryManager.POWER_UPS.get(powerUpID),
+		ParsedPowerForm newPowerUp = Objects.requireNonNull(RegistryManager.POWER_UPS.get(powerUpID),
 				"Target power-up (" + powerUpID + ") doesn't exist!");
 
 		long seed = RandomSeed.getSeed();
 		if(!this.setPowerUp(newPowerUp, false, seed)) return PowerChangeOperationResult.MISSING_PLAYERMODEL;
-		MarioDataPackets.empowerRevertS2C(this.getPlayer(), newPowerUp, false, seed);
+		CPADataPackets.empowerRevertS2C(this.getPlayer(), newPowerUp, false, seed);
 		return PowerChangeOperationResult.SUCCESS;
 	}
 	@Override public PowerChangeOperationResult empowerTo(String powerUpID) {
@@ -313,51 +313,51 @@ public class CPAServerPlayerData extends CPAMoveableData implements ICPAAuthorit
 	public ReversionResult executeReversion() {
 		if(!this.isEnabled()) return ReversionResult.NOT_ENABLED;
 
-		ServerPlayerEntity mario = this.getPlayer();
-		Identifier reversionTarget = this.getPowerUp().REVERSION_TARGET_ID;
+		ServerPlayerEntity player = this.getPlayer();
+		Identifier reversionTarget = this.getPowerForm().REVERSION_TARGET_ID;
 		if(reversionTarget == null) return ReversionResult.NO_WEAKER_FORM;
 
-		if(mario.getWorld().getGameRules().getBoolean(MarioGamerules.REVERT_TO_SMALL)) {
+		if(player.getWorld().getGameRules().getBoolean(CPAGamerules.REVERT_TO_SMALL)) {
 			while(Objects.requireNonNull(RegistryManager.POWER_UPS.get(reversionTarget)).REVERSION_TARGET_ID != null) {
 				reversionTarget = Objects.requireNonNull(RegistryManager.POWER_UPS.get(reversionTarget)).REVERSION_TARGET_ID;
 			}
 		}
 		if(this.revertTo(reversionTarget) == PowerChangeOperationResult.MISSING_PLAYERMODEL) {
-			MarioQuaMario.LOGGER.warn(
+			CharaPowerAct.LOGGER.warn(
 					"{}'s current power up ({}) should revert to {}, however this is illegal for their character! ({})",
-					mario.getName().getString(), this.getPowerUpID(), reversionTarget, this.getCharacterID()
+					player.getName().getString(), this.getPowerFormID(), reversionTarget, this.getCharacterID()
 			);
 			return ReversionResult.MISSING_PLAYERMODEL;
 		}
-		mario.setHealth(mario.getMaxHealth());
+		player.setHealth(player.getMaxHealth());
 		return ReversionResult.SUCCESS;
 	}
 
 	@Override public PowerChangeOperationResult revertTo(Identifier powerUpID) {
 		if(!this.isEnabled()) return PowerChangeOperationResult.NOT_ENABLED;
-		ParsedPowerUp newPowerUp = Objects.requireNonNull(RegistryManager.POWER_UPS.get(powerUpID),
+		ParsedPowerForm newPowerUp = Objects.requireNonNull(RegistryManager.POWER_UPS.get(powerUpID),
 				"Target power-up (" + powerUpID + ") doesn't exist!");
 
 		long seed = RandomSeed.getSeed();
 		if(!this.setPowerUp(newPowerUp, true, seed)) return PowerChangeOperationResult.MISSING_PLAYERMODEL;
-		MarioDataPackets.empowerRevertS2C(this.getPlayer(), newPowerUp, true, seed);
+		CPADataPackets.empowerRevertS2C(this.getPlayer(), newPowerUp, true, seed);
 		return PowerChangeOperationResult.SUCCESS;
 	}
 	@Override public PowerChangeOperationResult revertTo(String powerUpID) {
 		return this.revertTo(Identifier.of(powerUpID));
 	}
 
-	@Override public PowerChangeOperationResult assignPowerUp(Identifier powerUpID) {
+	@Override public PowerChangeOperationResult assignPowerForm(Identifier powerUpID) {
 		if(!this.isEnabled()) return PowerChangeOperationResult.NOT_ENABLED;
-		ParsedPowerUp newPowerUp = Objects.requireNonNull(RegistryManager.POWER_UPS.get(powerUpID),
+		ParsedPowerForm newPowerUp = Objects.requireNonNull(RegistryManager.POWER_UPS.get(powerUpID),
 				"Target power-up (" + powerUpID + ") doesn't exist!");
 
 		if(!this.setPowerUpTransitionless(newPowerUp)) return PowerChangeOperationResult.MISSING_PLAYERMODEL;
-		MarioDataPackets.assignPowerUpS2C(this.getPlayer(), newPowerUp);
+		CPADataPackets.assignPowerUpS2C(this.getPlayer(), newPowerUp);
 		return PowerChangeOperationResult.SUCCESS;
 	}
-	@Override public PowerChangeOperationResult assignPowerUp(String powerUpID) {
-		return this.assignPowerUp(Identifier.of(powerUpID));
+	@Override public PowerChangeOperationResult assignPowerForm(String powerUpID) {
+		return this.assignPowerForm(Identifier.of(powerUpID));
 	}
 
 	@Override public void assignCharacter(Identifier characterID) {
@@ -365,7 +365,7 @@ public class CPAServerPlayerData extends CPAMoveableData implements ICPAAuthorit
 				"Target character (" + characterID + ") doesn't exist!");
 
 		this.setCharacter(newCharacter);
-		MarioDataPackets.assignCharacterS2C(this.getPlayer(), newCharacter);
+		CPADataPackets.assignCharacterS2C(this.getPlayer(), newCharacter);
 	}
 	@Override public void assignCharacter(String characterID) {
 		this.assignCharacter(Identifier.of(characterID));

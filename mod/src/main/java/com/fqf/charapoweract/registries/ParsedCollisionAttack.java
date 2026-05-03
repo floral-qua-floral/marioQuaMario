@@ -4,7 +4,7 @@ import com.fqf.charapoweract_api.definitions.CollisionAttackTypeDefinition;
 import com.fqf.charapoweract_api.interfaces.CollisionAttackResult;
 import com.fqf.charapoweract_api.interfaces.CollisionAttackable;
 import com.fqf.charapoweract.cpadata.*;
-import com.fqf.charapoweract.packets.MarioPackets;
+import com.fqf.charapoweract.packets.CPAPackets;
 import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
 import com.fqf.charapoweract.util.ItemStackArmorReader;
 import com.fqf.charapoweract.util.CollisionAttackDamageSource;
@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class ParsedCollisionAttackType extends ParsedMarioThing {
+public class ParsedCollisionAttack extends ParsedCPAThing {
 	private final CollisionAttackTypeDefinition DEFINITION;
 
 	private final boolean MOUNTING;
@@ -34,7 +34,7 @@ public class ParsedCollisionAttackType extends ParsedMarioThing {
 	private final @NotNull RegistryKey<DamageType> DAMAGE_TYPE;
 	private final EnumMap<CollisionAttackResult.ExecutableResult, @Nullable AbstractParsedAction> POST_COLLISION_ACTIONS;
 
-	public ParsedCollisionAttackType(@NotNull CollisionAttackTypeDefinition definition) {
+	public ParsedCollisionAttack(@NotNull CollisionAttackTypeDefinition definition) {
 		super(definition.getID());
 
 		this.DEFINITION = definition;
@@ -64,18 +64,18 @@ public class ParsedCollisionAttackType extends ParsedMarioThing {
 	}
 
 	public Vec3d moveHook(CPAServerPlayerData data, Vec3d movement) {
-		ServerPlayerEntity mario = data.getPlayer();
+		ServerPlayerEntity player = data.getPlayer();
 
-		List<Entity> possibleTargets = mario.getWorld().getOtherEntities(mario, this.DEFINITION.tweakPlayerBoundingBox(data, mario.getBoundingBox()).stretch(movement));
+		List<Entity> possibleTargets = player.getWorld().getOtherEntities(player, this.DEFINITION.tweakPlayerBoundingBox(data, player.getBoundingBox()).stretch(movement));
 		possibleTargets.removeIf(entity -> !entity.isAlive());
-		this.DEFINITION.filterPotentialTargets(possibleTargets, mario, movement);
+		this.DEFINITION.filterPotentialTargets(possibleTargets, player, movement);
 
 		if(possibleTargets.isEmpty()) return movement;
 
-		Vec3d targetPos = hitEntitiesAndGetTargetPos(data, possibleTargets, mario.getPos().add(movement));
+		Vec3d targetPos = hitEntitiesAndGetTargetPos(data, possibleTargets, player.getPos().add(movement));
 
 		if(targetPos == null) return movement;
-		else return targetPos.subtract(mario.getPos());
+		else return targetPos.subtract(player.getPos());
 	}
 
 	private void registerCollidedEntity(EnumMap<CollisionAttackResult.ExecutableResult, Set<Entity>> collidedEntities, Entity entity, CollisionAttackResult.ExecutableResult result) {
@@ -84,15 +84,15 @@ public class ParsedCollisionAttackType extends ParsedMarioThing {
 	}
 
 	public Vec3d hitEntitiesAndGetTargetPos(CPAServerPlayerData data, List<Entity> entities, @Nullable Vec3d goingToPos) {
-		ServerPlayerEntity mario = data.getPlayer();
-		ItemStack collisionEquipment = mario.getEquippedStack(this.USE_EQUIPMENT_SLOT);
+		ServerPlayerEntity player = data.getPlayer();
+		ItemStack collisionEquipment = player.getEquippedStack(this.USE_EQUIPMENT_SLOT);
 		FloatFloatImmutablePair equipmentArmor = ItemStackArmorReader.read(collisionEquipment, this.USE_EQUIPMENT_SLOT);
 		float collisionDamageAmount = this.DEFINITION.calculateDamage(data, collisionEquipment, equipmentArmor.leftFloat(), equipmentArmor.rightFloat());
 		float collisionDamagePiercing = Math.min(collisionDamageAmount, this.DEFINITION.calculatePiercing(data, collisionEquipment, equipmentArmor.leftFloat(), equipmentArmor.rightFloat()));
-		DamageSource collisionDamageSource = new CollisionAttackDamageSource(mario.getServerWorld(), this.DAMAGE_TYPE, mario, collisionDamagePiercing, collisionEquipment);
+		DamageSource collisionDamageSource = new CollisionAttackDamageSource(player.getServerWorld(), this.DAMAGE_TYPE, player, collisionDamagePiercing, collisionEquipment);
 
 		EnumMap<CollisionAttackResult.ExecutableResult, Set<Entity>> collidedEntities = new EnumMap<>(CollisionAttackResult.ExecutableResult.class);
-		boolean canMount = this.MOUNTING && !mario.isSneaking();
+		boolean canMount = this.MOUNTING && !player.isSneaking();
 		for(Entity target : entities) {
 			CollisionAttackResult result = ((CollisionAttackable) target).cpa$processCollisionAttack(data, canMount, collisionDamageAmount, collisionDamageSource);
 			if(result == CollisionAttackResult.PAINFUL) {
@@ -101,7 +101,7 @@ public class ParsedCollisionAttackType extends ParsedMarioThing {
 					case MUTUALLY_HARMLESS -> CollisionAttackResult.GLANCING;
 					case IMMUNE -> {
 						if(target.damage(collisionDamageSource, collisionDamageAmount)) {
-							mario.onAttacking(target);
+							player.onAttacking(target);
 							yield CollisionAttackResult.NORMAL;
 						}
 						else yield CollisionAttackResult.RESISTED;
@@ -134,7 +134,7 @@ public class ParsedCollisionAttackType extends ParsedMarioThing {
 				}
 				if(currentCollisionResult == CollisionAttackResult.ExecutableResult.PAINFUL && canHurtMario) {
 					canHurtMario = false;
-					mario.damage(mario.getDamageSources().thorns(affectEntity), 4);
+					player.damage(player.getDamageSources().thorns(affectEntity), 4);
 				}
 			}
 		}
@@ -157,7 +157,7 @@ public class ParsedCollisionAttackType extends ParsedMarioThing {
 		this.DEFINITION.executeServer(data, data.getPlayer().getEquippedStack(this.USE_EQUIPMENT_SLOT), target, result, affectMario);
 		if(affectMario) this.transitionAction(data, result);
 
-		MarioPackets.stompS2C(data.getPlayer(), this, target, result, affectMario);
+		CPAPackets.collisionAttackS2C(data.getPlayer(), this, target, result, affectMario);
 		return this.executeTravellersAndGetTargetPos(data, target, result, targetPos, affectMario);
 	}
 

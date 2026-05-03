@@ -1,6 +1,6 @@
 package com.fqf.charapoweract.cpadata;
 
-import com.fqf.charapoweract.MarioQuaMario;
+import com.fqf.charapoweract.CharaPowerAct;
 import com.fqf.charapoweract.bapping.BlockBappingUtil;
 import com.fqf.charapoweract.util.BlockCollisionFinder;
 import com.fqf.charapoweract.util.DirectionBasedWallInfo;
@@ -11,7 +11,7 @@ import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camer
 import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
 import com.fqf.charapoweract.registries.actions.ParsedActionHelper;
 import com.fqf.charapoweract.registries.actions.TransitionPhase;
-import com.fqf.charapoweract.registries.power_granting.ParsedPowerUp;
+import com.fqf.charapoweract.registries.power_granting.ParsedPowerForm;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charapoweract_api.interfaces.BapResult;
 import com.fqf.charapoweract_api.cpadata.util.CollisionMatcher;
@@ -42,7 +42,7 @@ public class CPAMainClientData extends CPAMoveableData implements ICPAClientData
 		return PLAYER;
 	}
 
-	@Override public boolean setPowerUp(ParsedPowerUp newPowerUp, boolean isReversion, long seed) {
+	@Override public boolean setPowerUp(ParsedPowerForm newPowerUp, boolean isReversion, long seed) {
 		this.handlePowerTransitionSound(isReversion, newPowerUp, seed);
 		return super.setPowerUp(newPowerUp, isReversion, seed);
 	}
@@ -54,7 +54,7 @@ public class CPAMainClientData extends CPAMoveableData implements ICPAClientData
 
 	@Override public void setActionTransitionless(AbstractParsedAction action) {
 		this.handleSlidingSound(action);
-		this.PLAYER.mqm$getAnimationData().replaceAnimation(this, action.ANIMATION, -1);
+		this.PLAYER.cpa$getAnimationData().replaceAnimation(this, action.ANIMATION, -1);
 
 		if(action != this.getAction()) {
 			this.playCameraAnimation(action.CAMERA_ANIMATIONS);
@@ -99,13 +99,13 @@ public class CPAMainClientData extends CPAMoveableData implements ICPAClientData
 			this.currentCameraAnimation = null;
 			this.attemptFinish = false;
 		}
-		else this.getPlayer().mqm$getAnimationData().mutate(cameraArrangement, this.currentCameraAnimation.mutator(), this, progress);
+		else this.getPlayer().cpa$getAnimationData().mutate(cameraArrangement, this.currentCameraAnimation.mutator(), this, progress);
 	}
 
 	@Override public void tick() {
 		super.tick();
 		this.getAction().clientTick(this, true);
-		this.getPowerUp().clientTick(this, true);
+		this.getPowerForm().clientTick(this, true);
 		this.getCharacter().clientTick(this, true);
 		if(!MinecraftClient.getInstance().options.getPerspective().isFirstPerson())
 			this.currentCameraAnimation = null;
@@ -134,7 +134,7 @@ public class CPAMainClientData extends CPAMoveableData implements ICPAClientData
 			// Vector for inputs in world space
 			Vector3f worldSpaceInputs = forwardDir.mul((float) this.OWNER.getInputs().getForwardInput())
 					.add(rightDir.mul((float) this.OWNER.getInputs().getStrafeInput()));
-//			MarioQuaMario.LOGGER.info("World-space inputs: ({}, {}, {})", worldSpaceInputs.x, worldSpaceInputs.y, worldSpaceInputs.z);
+//			CharaPowerAct.LOGGER.info("World-space inputs: ({}, {}, {})", worldSpaceInputs.x, worldSpaceInputs.y, worldSpaceInputs.z);
 
 			this.towardsWallInput = MathHelper.clamp(worldSpaceInputs.dot(this.wallDirection.getUnitVector()), -1, 1);
 			this.sidleInput = MathHelper.clamp(worldSpaceInputs.dot(this.wallDirection.rotateYClockwise().getUnitVector()), -1, 1);
@@ -209,7 +209,7 @@ public class CPAMainClientData extends CPAMoveableData implements ICPAClientData
 	}
 
 	private final RealInputs INPUTS = new RealInputs();
-	@Override public MarioInputs getInputs() {
+	@Override public Inputs getInputs() {
 		return this.INPUTS;
 	}
 
@@ -218,25 +218,25 @@ public class CPAMainClientData extends CPAMoveableData implements ICPAClientData
 		return this.STORED_SOUNDS;
 	}
 
-	private class RealInputs extends MarioInputs {
-		private final ClientButton JUMP_CLIENT;
-		private final ClientButton DUCK_CLIENT;
-		private final ClientButton SPIN_CLIENT;
+	private class RealInputs extends Inputs {
+		private final ClientButtonInput JUMP_CLIENT;
+		private final ClientButtonInput DUCK_CLIENT;
+		private final ClientButtonInput SPIN_CLIENT;
 
-		private final ClientButton LEFT;
-		private final ClientButton RIGHT;
+		private final ClientButtonInput LEFT;
+		private final ClientButtonInput RIGHT;
 
 		public RealInputs() {
-			super(new ClientButton(), new ClientButton(), new ClientButton());
-			this.JUMP_CLIENT = (ClientButton) this.JUMP;
-			this.DUCK_CLIENT = (ClientButton) this.DUCK;
-			this.SPIN_CLIENT = (ClientButton) this.SPIN;
+			super(new ClientButtonInput(), new ClientButtonInput(), new ClientButtonInput());
+			this.JUMP_CLIENT = (ClientButtonInput) this.JUMP;
+			this.DUCK_CLIENT = (ClientButtonInput) this.DUCK;
+			this.SPIN_CLIENT = (ClientButtonInput) this.SPIN;
 
-			this.LEFT = new ClientButton();
-			this.RIGHT = new ClientButton();
+			this.LEFT = new ClientButtonInput();
+			this.RIGHT = new ClientButtonInput();
 		}
 
-		private static class ClientButton implements MarioButton {
+		private static class ClientButtonInput implements ButtonInput {
 			private boolean isHeld = false;
 			private int pressBuffer = 0;
 			private boolean shouldUnbuffer = false;
@@ -270,7 +270,7 @@ public class CPAMainClientData extends CPAMoveableData implements ICPAClientData
 			}
 			private void update(boolean isHeld, boolean isPressed) {
 				if(isHeld && isPressed && !this.isHeld)
-					this.pressBuffer = MarioQuaMario.CONFIG.getBufferLength();
+					this.pressBuffer = CharaPowerAct.CONFIG.getBufferLength();
 				else
 					this.pressBuffer--;
 				this.isHeld = isHeld;
@@ -290,14 +290,14 @@ public class CPAMainClientData extends CPAMoveableData implements ICPAClientData
 		}
 
 		private void updateButtons() {
-			ClientPlayerEntity mario = getPlayer();
-			Input inputs = mario.input;
+			ClientPlayerEntity player = getPlayer();
+			Input inputs = player.input;
 
 			this.LEFT.update(inputs.pressingLeft);
 			this.RIGHT.update(inputs.pressingRight);
 
 			this.JUMP_CLIENT.update(inputs.jumping);
-			this.DUCK_CLIENT.update(inputs.sneaking || mario.isInSneakingPose(), inputs.sneaking);
+			this.DUCK_CLIENT.update(inputs.sneaking || player.isInSneakingPose(), inputs.sneaking);
 			this.SPIN_CLIENT.update(LEFT.isHeld && RIGHT.isHeld,
 					LEFT.isPressedNoUnbuffer() && RIGHT.isPressedNoUnbuffer());
 		}
@@ -324,12 +324,12 @@ public class CPAMainClientData extends CPAMoveableData implements ICPAClientData
 		int strength = super.getBapStrength(action, direction);
 
 		if(strength != 0 && direction.getAxis().isHorizontal()) {
-			Vec3d marioVel = this.getPlayer().getVelocity();
+			Vec3d velocity = this.getPlayer().getVelocity();
 
 			double wallSpeedThreshold = this.getAction().BAPPING_RULE.wallBumpSpeedThreshold().getAsThreshold(this);
-			if(marioVel.horizontalLengthSquared() < wallSpeedThreshold * wallSpeedThreshold)
+			if(velocity.horizontalLengthSquared() < wallSpeedThreshold * wallSpeedThreshold)
 				return 0;
-			if(Math.abs(marioVel.getComponentAlongAxis(direction.getAxis())) < wallSpeedThreshold * 0.5)
+			if(Math.abs(velocity.getComponentAlongAxis(direction.getAxis())) < wallSpeedThreshold * 0.5)
 				return 0;
 		}
 

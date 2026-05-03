@@ -1,7 +1,8 @@
 package com.fqf.charapoweract.registries.actions;
 
-import com.fqf.charapoweract.MarioQuaMario;
-import com.fqf.charapoweract.registries.ParsedCollisionAttackType;
+import com.fqf.charapoweract.CharaPowerAct;
+import com.fqf.charapoweract.registries.ParsedCPAState;
+import com.fqf.charapoweract.registries.ParsedCollisionAttack;
 import com.fqf.charapoweract_api.definitions.states.AttackInterceptingStateDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.GenericActionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.*;
@@ -9,7 +10,6 @@ import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camer
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.charapoweract.cpadata.CPAMoveableData;
 import com.fqf.charapoweract.registries.ParsedAttackInterception;
-import com.fqf.charapoweract.registries.ParsedMarioState;
 import com.fqf.charapoweract.registries.RegistryManager;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public abstract class AbstractParsedAction extends ParsedMarioState {
+public abstract class AbstractParsedAction extends ParsedCPAState {
 	protected final IncompleteActionDefinition ACTION_DEFINITION;
 	public final ActionCategory CATEGORY;
 
@@ -30,7 +30,7 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 	public final @Nullable GenericActionType GENERIC_ACTION_TYPE;
 
 	public final @NotNull BappingRule BAPPING_RULE;
-	public final @Nullable ParsedCollisionAttackType COLLISION_ATTACK_TYPE;
+	public final @Nullable ParsedCollisionAttack COLLISION_ATTACK_TYPE;
 
 	public final Map<AbstractParsedAction, ParsedTransition> TRANSITIONS_FROM_TARGETS;
 	public final EnumMap<TransitionPhase, List<ParsedTransition>> CLIENT_TRANSITIONS;
@@ -38,14 +38,14 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 
 	public final List<ParsedAttackInterception> INTERCEPTIONS;
 
-	private static final boolean LOG_TRANSITION_INJECTIONS = MarioQuaMario.CONFIG.logActionTransitionInjections();
+	private static final boolean LOG_TRANSITION_INJECTIONS = CharaPowerAct.CONFIG.logActionTransitionInjections();
 
 	private static final BappingRule NULL_EQUIVALENT = new BappingRule(0, 0);
 
 	public AbstractParsedAction(IncompleteActionDefinition definition, HashMap<Identifier, Set<TransitionInjectionDefinition>> allInjections) {
 		super(definition);
 
-		MarioQuaMario.LOGGER.info("Parsing action {}...", this.ID);
+		CharaPowerAct.LOGGER.info("Parsing action {}...", this.ID);
 
 		this.ACTION_DEFINITION = definition;
 		this.CATEGORY = this.getCategory();
@@ -60,7 +60,7 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 
 		BappingRule bappingRule = definition.getBappingRule();
 		this.BAPPING_RULE = bappingRule == null ? NULL_EQUIVALENT : bappingRule;
-		this.COLLISION_ATTACK_TYPE = RegistryManager.COLLISION_ATTACK_TYPES.get(definition.getCollisionAttackTypeID());
+		this.COLLISION_ATTACK_TYPE = RegistryManager.COLLISION_ATTACKS.get(definition.getCollisionAttackTypeID());
 
 		this.TRANSITIONS_FROM_TARGETS = new HashMap<>();
 		this.CLIENT_TRANSITIONS = new EnumMap<>(TransitionPhase.class);
@@ -103,7 +103,7 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 
 			this.conditionallyInjectTransitions(buildingClientList, buildingServerList, relevantInjections,
 					TransitionInjectionDefinition.InjectionPlacement.BEFORE, definition);
-			MarioQuaMario.LOGGER.debug("Parsing transition into {}", definition.targetID());
+			CharaPowerAct.LOGGER.debug("Parsing transition into {}", definition.targetID());
 			addTransitionToLists(buildingClientList, buildingServerList, definition);
 			this.conditionallyInjectTransitions(buildingClientList, buildingServerList, relevantInjections,
 					TransitionInjectionDefinition.InjectionPlacement.AFTER, definition);
@@ -119,7 +119,7 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 		for(TransitionInjectionDefinition injection : relevantInjections) {
 			if(injection.placement() == placement) {
 				TransitionDefinition injectTransition = injection.injectedTransitionCreator().makeTransition(originalTransition, UniversalActionDefinitionHelper.INSTANCE);
-				if(LOG_TRANSITION_INJECTIONS) MarioQuaMario.LOGGER.info("Injecting transition: {}->{}",
+				if(LOG_TRANSITION_INJECTIONS) CharaPowerAct.LOGGER.info("Injecting transition: {}->{}",
 						this.ID, injectTransition.targetID());
 				addTransitionToLists(buildingClientList, buildingServerList, injectTransition);
 			}
@@ -133,7 +133,7 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 		RegistryManager.incrementTransitionCount();
 		ParsedTransition transition = new ParsedTransition(definition);
 		if(this.TRANSITIONS_FROM_TARGETS.containsKey(transition.targetAction()))
-			MarioQuaMario.LOGGER.warn("Action {} has multiple transitions into {}! This is likely to cause issues!",
+			CharaPowerAct.LOGGER.warn("Action {} has multiple transitions into {}! This is likely to cause issues!",
 					this.ID, transition.targetAction().ID);
 		else this.TRANSITIONS_FROM_TARGETS.put(transition.targetAction(), transition);
 		if(definition.environment() != EvaluatorEnvironment.SERVER_ONLY) client.add(transition);

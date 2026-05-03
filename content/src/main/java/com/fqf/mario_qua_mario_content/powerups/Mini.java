@@ -1,6 +1,6 @@
 package com.fqf.mario_qua_mario_content.powerups;
 
-import com.fqf.charapoweract_api.definitions.states.PowerUpDefinition;
+import com.fqf.charapoweract_api.definitions.states.PowerFormDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charapoweract_api.cpadata.ICPAAuthoritativeData;
 import com.fqf.charapoweract_api.cpadata.ICPAData;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-public class Mini implements PowerUpDefinition {
+public class Mini implements PowerFormDefinition {
 	public static final Identifier ID = MarioQuaMarioContent.makeID("mini");
 	@Override public @NotNull Identifier getID() {
 	    return ID;

@@ -9,7 +9,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
-public class MarioClientHelperManager {
+public class CPAClientHelperManager {
 	public static ClientHelper helper = null;
 	public static ClientPacketSender packetSender = null;
 

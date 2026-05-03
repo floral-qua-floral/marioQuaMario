@@ -65,7 +65,7 @@ public class GroundPoundDrop implements AirborneActionDefinition {
 		return GroundPound.ID;
 	}
 
-	public static final CharaStat GROUND_POUND_VEL = new CharaStat(-1.5, TERMINAL_VELOCITY, STOMP);
+	public static final CharaStat GROUND_POUND_VEL = new CharaStat(-1.5, TERMINAL_VELOCITY, COLLISION_ATTACK);
 	public static final CharaStat GROUND_POUND_STRAINING_VEL = new CharaStat(0.1, DRIFTING);
 
 	@Override public @Nullable Object provideStateData(ICPAData data) {

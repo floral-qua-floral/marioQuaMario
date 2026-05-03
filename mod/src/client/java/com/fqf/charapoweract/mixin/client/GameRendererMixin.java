@@ -3,7 +3,7 @@ package com.fqf.charapoweract.mixin.client;
 import com.fqf.charapoweract.bapping.BlockBappingUtil;
 import com.fqf.charapoweract.bapping.WorldBapsInfo;
 import com.fqf.charapoweract.cpadata.CPAPlayerData;
-import com.fqf.charapoweract.util.MarioGamerules;
+import com.fqf.charapoweract.util.CPAGamerules;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.MinecraftClient;
@@ -34,7 +34,7 @@ public class GameRendererMixin {
 	@Inject(method = "shouldRenderBlockOutline", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/pattern/CachedBlockPosition;<init>(Lnet/minecraft/world/WorldView;Lnet/minecraft/util/math/BlockPos;Z)V"), cancellable = true)
 	private void optionallyRenderOutlineOnBrittleBlocks(CallbackInfoReturnable<Boolean> cir) {
 		assert this.client.world != null && this.client.crosshairTarget != null;
-		if(MarioGamerules.adventurePlayersBreakBrittleBlocks) {
+		if(CPAGamerules.adventurePlayersBreakBrittleBlocks) {
 			WorldBapsInfo worldBaps = BlockBappingUtil.getBapsInfoNullable(this.client.world);
 			if(worldBaps != null) {
 				if(worldBaps.BRITTLE.contains(((BlockHitResult) this.client.crosshairTarget).getBlockPos()))

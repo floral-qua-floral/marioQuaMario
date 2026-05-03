@@ -23,8 +23,8 @@ public interface ICPAAuthoritativeData extends ICPAData {
 	PowerChangeOperationResult revertTo(Identifier powerUpID);
 	PowerChangeOperationResult revertTo(String powerUpID);
 
-	PowerChangeOperationResult assignPowerUp(Identifier powerUpID);
-	PowerChangeOperationResult assignPowerUp(String powerUpID);
+	PowerChangeOperationResult assignPowerForm(Identifier powerUpID);
+	PowerChangeOperationResult assignPowerForm(String powerUpID);
 
 	void assignCharacter(@Nullable Identifier characterID);
 	void assignCharacter(String characterID);

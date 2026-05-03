@@ -17,20 +17,20 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class BlockCollisionFinder {
-	public static Set<BlockPos> getCollidedBlockPositions(Entity mario, double motion, Direction.Axis axis) {
-		return getCollidedBlockPositions(mario, mario.getBoundingBox(), motion, axis).left();
+	public static Set<BlockPos> getCollidedBlockPositions(Entity movingEntity, double motion, Direction.Axis axis) {
+		return getCollidedBlockPositions(movingEntity, movingEntity.getBoundingBox(), motion, axis).left();
 	}
 
-	public static ObjectDoublePair<Set<BlockPos>> getCollidedBlockPositions(Entity mario, Box box, double motion, Direction.Axis axis) {
+	public static ObjectDoublePair<Set<BlockPos>> getCollidedBlockPositions(Entity movingEntity, Box box, double motion, Direction.Axis axis) {
 		Box stretchedBox = box.stretch(Vec3d.ZERO.withAxis(axis, motion));
 
-		Iterable<VoxelShapeWithBlockPos> collideBlocks = getBlockCollisionsWithPositions( mario.getWorld(), mario, stretchedBox);
+		Iterable<VoxelShapeWithBlockPos> collideBlocks = getBlockCollisionsWithPositions( movingEntity.getWorld(), movingEntity, stretchedBox);
 
 		Set<BlockPos> collideWithBlockPositions = new HashSet<>();
 		double absSmallestOffsetFound = Math.abs(motion);
 
 		Box bumpingBox;
-		if(axis.isHorizontal() && mario.isOnGround()) bumpingBox = box.withMinY(box.minY + mario.getStepHeight());
+		if(axis.isHorizontal() && movingEntity.isOnGround()) bumpingBox = box.withMinY(box.minY + movingEntity.getStepHeight());
 		else bumpingBox = box;
 
 		for(VoxelShapeWithBlockPos positionedShape : collideBlocks) {
@@ -49,10 +49,10 @@ public class BlockCollisionFinder {
 
 	private static Iterable<VoxelShapeWithBlockPos> getBlockCollisionsWithPositions(
 			CollisionView world,
-			Entity mario,
+			Entity movingEntity,
 			Box box
 	) {
-		return () -> new BlockCollisionSpliterator<>(world, mario, box, false, (pos, voxelShape) -> new VoxelShapeWithBlockPos(voxelShape, pos.toImmutable()));
+		return () -> new BlockCollisionSpliterator<>(world, movingEntity, box, false, (pos, voxelShape) -> new VoxelShapeWithBlockPos(voxelShape, pos.toImmutable()));
 	}
 
 	private record VoxelShapeWithBlockPos(@NotNull VoxelShape shape, @Nullable BlockPos pos) {

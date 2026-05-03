@@ -39,17 +39,17 @@ public class BipedEntityModelMixin<T extends LivingEntity> {
 			T livingEntity,
 			float f, float g, float h, float i, float j, CallbackInfo ci,
 			@Share("apply") LocalBooleanRef applyRef,
-			@Share("mario") LocalRef<AbstractClientPlayerEntity> marioRef,
+			@Share("player") LocalRef<AbstractClientPlayerEntity> playerRef,
 			@Share("rightArm") LocalBooleanRef rightArmRef,
 			@Share("leftArm") LocalBooleanRef leftArmRef,
 			@Share("rightLeg") LocalBooleanRef rightLegRef,
 			@Share("leftLeg") LocalBooleanRef leftLegRef
 			) {
-		if(livingEntity instanceof AbstractClientPlayerEntity mario) {
-			PlayermodelAnimation animation = mario.mqm$getAnimationData().currentAnim;
+		if(livingEntity instanceof AbstractClientPlayerEntity player) {
+			PlayermodelAnimation animation = player.cpa$getAnimationData().currentAnim;
 			if(animation != null) {
 				applyRef.set(true);
-				marioRef.set(mario);
+				playerRef.set(player);
 
 				rightArmRef.set(animationSuppressesSwinging(animation.rightArmAnimation()));
 				leftArmRef.set(animationSuppressesSwinging(animation.leftArmAnimation()));
@@ -66,7 +66,7 @@ public class BipedEntityModelMixin<T extends LivingEntity> {
 	private void preventLimbSwinging(
 			ModelPart instance, float newValue, Operation<Void> original,
 			@Share("apply") LocalBooleanRef applyRef,
-			@Share("mario") LocalRef<AbstractClientPlayerEntity> marioRef,
+			@Share("player") LocalRef<AbstractClientPlayerEntity> playerRef,
 			@Share("rightArm") LocalBooleanRef rightArmRef,
 			@Share("leftArm") LocalBooleanRef leftArmRef,
 			@Share("rightLeg") LocalBooleanRef rightLegRef,
@@ -74,7 +74,7 @@ public class BipedEntityModelMixin<T extends LivingEntity> {
 	) {
 		if(applyRef.get()) {
 			if(instance == this.head) {
-				newValue = marioRef.get().mqm$getAnimationData().counterRotateHead(this.head, newValue);
+				newValue = playerRef.get().cpa$getAnimationData().counterRotateHead(this.head, newValue);
 			}
 			else if(
 					attemptSuppression(rightArmRef, instance, this.rightArm)

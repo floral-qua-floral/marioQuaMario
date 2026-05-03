@@ -1,7 +1,7 @@
 package com.fqf.charapoweract.mixin.compat;
 
-import com.fqf.charapoweract.MarioQuaMario;
-import com.fqf.charapoweract.compat.required.MarioCPMCompat;
+import com.fqf.charapoweract.CharaPowerAct;
+import com.fqf.charapoweract.compat.required.CPMCompat;
 import com.tom.cpm.CommonBase;
 import com.tom.cpm.api.CPMApiManager;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,9 +16,9 @@ public class CPMCommonBaseMixin {
 
 	@Inject(method = "apiInit", at = @At("HEAD"), remap = false)
 	private void manuallyRegisterMQMPluginIfAbsent(CallbackInfo ci) {
-		if(!MarioCPMCompat.isRegistered()) {
-			MarioQuaMario.LOGGER.warn("MQM CPM plugin wasn't registered normally. Are we in Sinytra? Adding it manually...");
-			api.register(new MarioCPMCompat());
+		if(!CPMCompat.isRegistered()) {
+			CharaPowerAct.LOGGER.warn("MQM CPM plugin wasn't registered normally. Are we in Sinytra? Adding it manually...");
+			api.register(new CPMCompat());
 		}
 	}
 }

@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.fqf.charapoweract_api.util.StatCategory.JUMP_VELOCITY;
-import static com.fqf.charapoweract_api.util.StatCategory.STOMP;
+import static com.fqf.charapoweract_api.util.StatCategory.COLLISION_ATTACK;
 
 public class StompBounce extends Jump implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMarioContent.makeID("stomp");
@@ -22,7 +22,7 @@ public class StompBounce extends Jump implements AirborneActionDefinition {
 		return DoubleJump.ANIMATION;
 	}
 
-	public static final CharaStat BOUNCE_VEL = new CharaStat(1.15, STOMP, JUMP_VELOCITY);
+	public static final CharaStat BOUNCE_VEL = new CharaStat(1.15, COLLISION_ATTACK, JUMP_VELOCITY);
 
 	@Override
 	protected double getJumpCapThreshold() {

@@ -5,8 +5,8 @@ import com.fqf.charapoweract_api.definitions.states.actions.util.animation.Playe
 import com.fqf.charapoweract.cpadata.util.*;
 import com.fqf.charapoweract.registries.RegistryManager;
 import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
-import com.fqf.charapoweract.registries.power_granting.ParsedPowerUp;
-import com.fqf.charapoweract.util.MarioSFX;
+import com.fqf.charapoweract.registries.power_granting.ParsedPowerForm;
+import com.fqf.charapoweract.util.CPASounds;
 import com.fqf.charapoweract_api.cpadata.ICPAAnimatingData;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -19,7 +19,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public interface ICPAClientDataImpl extends ICPAAnimatingData {
@@ -33,7 +32,7 @@ public interface ICPAClientDataImpl extends ICPAAnimatingData {
 
 	@Override
 	default void playAnimation(PlayermodelAnimation animation, int ticks) {
-		this.getPlayer().mqm$getAnimationData().replaceAnimation((CPAPlayerData) this, animation, ticks);
+		this.getPlayer().cpa$getAnimationData().replaceAnimation((CPAPlayerData) this, animation, ticks);
 	}
 
 	@Override
@@ -59,8 +58,8 @@ public interface ICPAClientDataImpl extends ICPAAnimatingData {
 
 	@Override
 	default SoundInstanceWrapperImpl playSound(SoundEvent event, float pitch, float volume, long seed) {
-		Vec3d marioPos = this.getPlayer().getPos();
-		return this.playSound(event, SoundCategory.PLAYERS, marioPos.x, marioPos.y, marioPos.z, pitch, volume, seed);
+		Vec3d position = this.getPlayer().getPos();
+		return this.playSound(event, SoundCategory.PLAYERS, position.x, position.y, position.z, pitch, volume, seed);
 	}
 
 	@Override
@@ -68,19 +67,17 @@ public interface ICPAClientDataImpl extends ICPAAnimatingData {
 		return this.playSound(event, category, entity.getX(), entity.getY(), entity.getZ(), 1F, 1F, seed);
 	}
 
-	Map<ICPAClientDataImpl, SoundInstance> MARIO_VOICE_LINES = new HashMap<>();
-
-	default void handlePowerTransitionSound(boolean isReversion, ParsedPowerUp newPower, long seed) {
-		if(isReversion) this.playSound(MarioSFX.REVERT, seed);
+	default void handlePowerTransitionSound(boolean isReversion, ParsedPowerForm newPower, long seed) {
+		if(isReversion) this.playSound(CPASounds.REVERT, seed);
 		else this.playSound(newPower.ACQUISITION_SOUND, seed);
 	}
 
 	// The stored sounds feature necessitates a tiny bit of duplicated code which is ANNOYING
 	// To minimize the amount of such duplicated code, we leverage it for as much as possible
 	Map<Identifier, SoundInstance> getStoredSounds();
-	Identifier JUMP_IDENTIFIER = Identifier.of("mqm_fake_ids", "jump");
-	Identifier COMMON_VOICE_IDENTIFIER = Identifier.of("mqm_fake_ids", "voices");
-	Identifier SLIDE_IDENTIFIER = Identifier.of("mqm_fake_ids", "slide");
+	Identifier JUMP_IDENTIFIER = Identifier.of("charapoweract_fake_ids", "jump");
+	Identifier COMMON_VOICE_IDENTIFIER = Identifier.of("charapoweract_fake_ids", "voices");
+	Identifier SLIDE_IDENTIFIER = Identifier.of("charapoweract_fake_ids", "slide");
 
 	default void handleSlidingSound(AbstractParsedAction newAction) {
 		AbstractSlidingSoundInstance slidingSound = switch(newAction.SLIDING_STATUS) {
@@ -95,7 +92,7 @@ public interface ICPAClientDataImpl extends ICPAAnimatingData {
 	}
 
 	default SoundEvent getFloorSlidingSound() {
-		return MarioSFX.SKID;
+		return CPASounds.SKID;
 	}
 
 	@Override
@@ -115,12 +112,12 @@ public interface ICPAClientDataImpl extends ICPAAnimatingData {
 	@Override
 	default SoundInstanceWrapperImpl voice(String voiceline, long seed) {
 		MinecraftClient.getInstance().getSoundManager().stop(this.getStoredSounds().get(COMMON_VOICE_IDENTIFIER));
-		Vec3d marioPos = this.getPlayer().getPos();
+		Vec3d position = this.getPlayer().getPos();
 		if(RegistryManager.VOICE_LINES.get(voiceline) == null)
 			throw new AssertionError("Voiceline " + voiceline + " isn't registered!!!");
 		SoundInstanceWrapperImpl newVoiceSound = this.playSound(
 				RegistryManager.VOICE_LINES.get(voiceline).get(((CPAPlayerData) this).getCharacter()), SoundCategory.VOICE,
-				marioPos.x, marioPos.y, marioPos.z,
+				position.x, position.y, position.z,
 				this.getVoicePitch(), 1.0F,
 				seed
 		);
@@ -132,7 +129,7 @@ public interface ICPAClientDataImpl extends ICPAAnimatingData {
 
 	@Override
 	default float getVoicePitch() {
-		return ((CPAPlayerData) this).getPowerUp().VOICE_PITCH;
+		return ((CPAPlayerData) this).getPowerForm().VOICE_PITCH;
 	}
 
 	@Override
@@ -150,10 +147,6 @@ public interface ICPAClientDataImpl extends ICPAAnimatingData {
 	default void instantVisualRotate(float rotationDegrees, boolean counterRotateAnimation) {
 		if(!this.getPlayer().isMainPlayer())
 			this.getPlayer().setYaw(this.getPlayer().getYaw() + rotationDegrees);
-//		this.getPlayer().bodyYaw += 90;
-//		this.getPlayer().headYaw += 90;
-//		if(counterRotateAnimation)
-//			this.getPlayer().mqm$getAnimationData().everythingYawLerpDisplacement = rotationDegrees * MathHelper.RADIANS_PER_DEGREE * -1;
 	}
 
 	class SoundInstanceWrapperImpl implements SoundInstanceWrapper {

@@ -28,7 +28,7 @@ import org.joml.Vector3f;
 
 import static net.minecraft.util.math.MathHelper.*;
 
-public class MarioAnimationData {
+public class CPAAnimationData {
 	private @Nullable Pose prevTickPose = new Pose();
 	private @Nullable Pose thisTickPose = new Pose();
 
@@ -125,7 +125,7 @@ public class MarioAnimationData {
 			ModelPart rightLeg, ModelPart leftLeg,
 			BipedEntityModel.ArmPose rightArmPose, BipedEntityModel.ArmPose leftArmPose
 	) {
-		if(this.isAnimating(mario) && !MarioAnimationData.renderingFirstPersonArm) {
+		if(this.isAnimating(mario) && !CPAAnimationData.renderingFirstPersonArm) {
 			if (this.reevaluateMirroring && this.currentAnim != null) {
 				this.reevaluateMirroring = false;
 				this.isMirrored = this.currentAnim.mirroringEvaluator() != null &&
@@ -310,8 +310,8 @@ public class MarioAnimationData {
 			arrangement.yaw -= 2 * (arrangement.yaw - unmutatedYaw);
 			arrangement.roll -= 2 * (arrangement.roll - unmutatedRoll);
 		}
-		float horizontalScale = data.getPowerUp().ANIMATION_WIDTH_FACTOR * data.getCharacter().ANIMATION_WIDTH_FACTOR;
-		float verticalScale = data.getPowerUp().ANIMATION_HEIGHT_FACTOR * data.getCharacter().ANIMATION_HEIGHT_FACTOR;
+		float horizontalScale = data.getPowerForm().ANIMATION_WIDTH_FACTOR * data.getCharacter().ANIMATION_WIDTH_FACTOR;
+		float verticalScale = data.getPowerForm().ANIMATION_HEIGHT_FACTOR * data.getCharacter().ANIMATION_HEIGHT_FACTOR;
 		arrangement.x = unmutatedX + (arrangement.x - unmutatedX) * horizontalScale;
 		arrangement.y = unmutatedY + (arrangement.y - unmutatedY) * verticalScale;
 		arrangement.z = unmutatedZ + (arrangement.z - unmutatedZ) * horizontalScale;
@@ -474,10 +474,9 @@ public class MarioAnimationData {
 			setupArrangement(model.leftArm, this.LEFT_ARM);
 			setupArrangement(model.rightLeg, this.RIGHT_LEG);
 			setupArrangement(model.leftLeg, this.LEFT_LEG);
-			Arrangement oldTailArrangement = mario.mqm$getAnimationData().TAIL_ARRANGEMENT;
+			Arrangement oldTailArrangement = mario.cpa$getAnimationData().TAIL_ARRANGEMENT;
 			this.TAIL.setPos(oldTailArrangement.x, oldTailArrangement.y, oldTailArrangement.z);
 			this.TAIL.setAngles(oldTailArrangement.pitch, oldTailArrangement.yaw, oldTailArrangement.roll);
-//			mario.mqm$getAnimationData().setupTailArrangement(this.TAIL, mario.cpa$getCPAData(), model.body.pivotX, model.body.pivotY, model.body.pivotZ, model.body.pitch, model.body.yaw, model.body.roll, model.rightLeg.pitch, model.leftLeg.pitch);
 		}
 	}
 }

@@ -1,18 +1,18 @@
 package com.fqf.charapoweract.registries;
 
-import com.fqf.charapoweract.MarioQuaMario;
+import com.fqf.charapoweract.CharaPowerAct;
+import com.fqf.charapoweract.registries.power_granting.ParsedPowerForm;
 import com.fqf.charapoweract_api.definitions.CollisionAttackTypeDefinition;
 import com.fqf.charapoweract_api.definitions.VoicelineSetDefinition;
 import com.fqf.charapoweract_api.definitions.states.CharacterDefinition;
-import com.fqf.charapoweract_api.definitions.states.PowerUpDefinition;
+import com.fqf.charapoweract_api.definitions.states.PowerFormDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.IncompleteActionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
 import com.fqf.charapoweract.registries.actions.ParsedActionHelper;
 import com.fqf.charapoweract.registries.power_granting.ParsedCharacter;
-import com.fqf.charapoweract.registries.power_granting.ParsedPowerUp;
-import com.fqf.charapoweract.util.MarioSFX;
+import com.fqf.charapoweract.util.CPASounds;
 import com.fqf.charapoweract.util.PlayermodelListener;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
@@ -30,7 +30,7 @@ import java.util.*;
 
 public class RegistryManager {
 	public static void registerAll() {
-		MarioSFX.staticInitialize();
+		CPASounds.staticInitialize();
 
 		registerCollisionAttackTypes();
 		registerActions();
@@ -42,26 +42,26 @@ public class RegistryManager {
 
 	public static final Map<String, Map<ParsedCharacter, SoundEvent>> VOICE_LINES = new HashMap<>();
 
-	public static final RegistryKey<Registry<ParsedCollisionAttackType>> COLLISION_ATTACK_TYPES_KEY =
-			RegistryKey.ofRegistry(MarioQuaMario.makeID("stomp_types"));
-	public static final Registry<ParsedCollisionAttackType> COLLISION_ATTACK_TYPES = FabricRegistryBuilder.createSimple(COLLISION_ATTACK_TYPES_KEY)
+	public static final RegistryKey<Registry<ParsedCollisionAttack>> COLLISION_ATTACKS_KEY =
+			RegistryKey.ofRegistry(CharaPowerAct.makeID("collision_attacks"));
+	public static final Registry<ParsedCollisionAttack> COLLISION_ATTACKS = FabricRegistryBuilder.createSimple(COLLISION_ATTACKS_KEY)
 			.attribute(RegistryAttribute.SYNCED)
 			.buildAndRegister();
 
 	public static final RegistryKey<Registry<AbstractParsedAction>> ACTIONS_KEY =
-			RegistryKey.ofRegistry(MarioQuaMario.makeID("actions"));
+			RegistryKey.ofRegistry(CharaPowerAct.makeID("actions"));
 	public static final Registry<AbstractParsedAction> ACTIONS = FabricRegistryBuilder.createSimple(ACTIONS_KEY)
 			.attribute(RegistryAttribute.SYNCED)
 			.buildAndRegister();
 
-	public static final RegistryKey<Registry<ParsedPowerUp>> POWER_UPS_KEY =
-			RegistryKey.ofRegistry(MarioQuaMario.makeID("powerups"));
-	public static final Registry<ParsedPowerUp> POWER_UPS = FabricRegistryBuilder.createSimple(POWER_UPS_KEY)
+	public static final RegistryKey<Registry<ParsedPowerForm>> POWER_FORMS_KEY =
+			RegistryKey.ofRegistry(CharaPowerAct.makeID("power_forms"));
+	public static final Registry<ParsedPowerForm> POWER_UPS = FabricRegistryBuilder.createSimple(POWER_FORMS_KEY)
 			.attribute(RegistryAttribute.SYNCED)
 			.buildAndRegister();
 
 	public static final RegistryKey<Registry<ParsedCharacter>> CHARACTERS_KEY =
-			RegistryKey.ofRegistry(MarioQuaMario.makeID("power_granting"));
+			RegistryKey.ofRegistry(CharaPowerAct.makeID("power_granting"));
 	public static final Registry<ParsedCharacter> CHARACTERS = FabricRegistryBuilder.createSimple(CHARACTERS_KEY)
 			.attribute(RegistryAttribute.SYNCED)
 			.buildAndRegister();
@@ -70,17 +70,17 @@ public class RegistryManager {
 		return FabricLoader.getInstance().getEntrypointContainers(key, clazz).stream().map(EntrypointContainer::getEntrypoint).toList();
 	}
 
-	public static <Thing extends ParsedMarioThing> void registerThing(Registry<Thing> registry, Thing thing) {
+	public static <Thing extends ParsedCPAThing> void registerThing(Registry<Thing> registry, Thing thing) {
 		if(registry.containsId(thing.ID))
 			throw new IllegalStateException(thing.ID + " was registered twice as a " + thing.getClass().getName() + "!!!");
 		Registry.register(registry, thing.ID, thing);
 	}
 
 	private static void registerCollisionAttackTypes() {
-		for(CollisionAttackTypeDefinition definition : getEntrypoints("mqm-stomp-types", CollisionAttackTypeDefinition.class)) {
-			registerThing(COLLISION_ATTACK_TYPES, new ParsedCollisionAttackType(definition));
+		for(CollisionAttackTypeDefinition definition : getEntrypoints("cpa-collision-attacks", CollisionAttackTypeDefinition.class)) {
+			registerThing(COLLISION_ATTACKS, new ParsedCollisionAttack(definition));
 		}
-		COLLISION_ATTACK_TYPES.freeze();
+		COLLISION_ATTACKS.freeze();
 	}
 
 	private static int totalActionTransitions;
@@ -90,12 +90,12 @@ public class RegistryManager {
 
 	private static void registerActions() {
 		List<IncompleteActionDefinition> actionDefinitions = new ArrayList<>();
-		actionDefinitions.addAll(getEntrypoints("mqm-generic-actions", GenericActionDefinition.class));
-		actionDefinitions.addAll(getEntrypoints("mqm-grounded-actions", GroundedActionDefinition.class));
-		actionDefinitions.addAll(getEntrypoints("mqm-airborne-actions", AirborneActionDefinition.class));
-		actionDefinitions.addAll(getEntrypoints("mqm-aquatic-actions", AquaticActionDefinition.class));
-		actionDefinitions.addAll(getEntrypoints("mqm-wallbound-actions", WallboundActionDefinition.class));
-		actionDefinitions.addAll(getEntrypoints("mqm-mounted-actions", MountedActionDefinition.class));
+		actionDefinitions.addAll(getEntrypoints("cpa-generic-actions", GenericActionDefinition.class));
+		actionDefinitions.addAll(getEntrypoints("cpa-grounded-actions", GroundedActionDefinition.class));
+		actionDefinitions.addAll(getEntrypoints("cpa-airborne-actions", AirborneActionDefinition.class));
+		actionDefinitions.addAll(getEntrypoints("cpa-aquatic-actions", AquaticActionDefinition.class));
+		actionDefinitions.addAll(getEntrypoints("cpa-wallbound-actions", WallboundActionDefinition.class));
+		actionDefinitions.addAll(getEntrypoints("cpa-mounted-actions", MountedActionDefinition.class));
 
 		HashMap<Identifier, Set<TransitionInjectionDefinition>> allInjections = new HashMap<>();
 		for(IncompleteActionDefinition definition : actionDefinitions) {
@@ -108,25 +108,25 @@ public class RegistryManager {
 			action.parseTransitions(allInjections);
 		}
 
-		MarioQuaMario.LOGGER.info("Registered {} actions, with {} transitions connecting them.",
+		CharaPowerAct.LOGGER.info("Registered {} actions, with {} transitions connecting them.",
 				ACTIONS.size(), totalActionTransitions);
 
 		// We can also register all Collision Attack Types' actions now. There's no reason to do this sooner since it uses a map; can't be final anyways
-		for(ParsedCollisionAttackType collisionAttackType : COLLISION_ATTACK_TYPES) {
+		for(ParsedCollisionAttack collisionAttackType : COLLISION_ATTACKS) {
 			collisionAttackType.populatePostCollisionActions();
 		}
 	}
 
 	private static void registerPowerUps() {
-		for(PowerUpDefinition definition : getEntrypoints("mqm-power-ups", PowerUpDefinition.class)) {
-			registerThing(POWER_UPS, new ParsedPowerUp(definition));
+		for(PowerFormDefinition definition : getEntrypoints("cpa-power-forms", PowerFormDefinition.class)) {
+			registerThing(POWER_UPS, new ParsedPowerForm(definition));
 		}
 		POWER_UPS.freeze();
 	}
 
 	private static void registerCharacters() {
 		Set<String> characterNamespaces = new HashSet<>();
-		for(CharacterDefinition definition : getEntrypoints("mqm-characters", CharacterDefinition.class)) {
+		for(CharacterDefinition definition : getEntrypoints("cpa-characters", CharacterDefinition.class)) {
 			ParsedCharacter character = new ParsedCharacter(definition);
 			registerThing(CHARACTERS, character);
 			characterNamespaces.add(character.RESOURCE_ID.getNamespace());
@@ -134,13 +134,13 @@ public class RegistryManager {
 		CHARACTERS.freeze();
 
 		for(String namespace : characterNamespaces) {
-			MarioQuaMario.LOGGER.info("Registering a playermodel resource listener for namespace \"{}\"...", namespace);
+			CharaPowerAct.LOGGER.info("Registering a playermodel resource listener for namespace \"{}\"...", namespace);
 			ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new PlayermodelListener(namespace));
 		}
 	}
 
 	private static void registerVoicelines() {
-		List<VoicelineSetDefinition> voicelineSetDefinitions = getEntrypoints("mqm-voicelines", VoicelineSetDefinition.class);
+		List<VoicelineSetDefinition> voicelineSetDefinitions = getEntrypoints("cpa-voicelines", VoicelineSetDefinition.class);
 		for(VoicelineSetDefinition voicelineSet : voicelineSetDefinitions) {
 			for (String voiceLine : voicelineSet.getVoiceLines()) {
 				VOICE_LINES.put(voiceLine, new HashMap<>());

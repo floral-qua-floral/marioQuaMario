@@ -1,9 +1,9 @@
 package com.fqf.charapoweract.util;
 
-import com.fqf.charapoweract.MarioQuaMario;
+import com.fqf.charapoweract.CharaPowerAct;
 import com.fqf.charapoweract.registries.RegistryManager;
 import com.fqf.charapoweract.registries.power_granting.ParsedCharacter;
-import com.fqf.charapoweract.registries.power_granting.ParsedPowerUp;
+import com.fqf.charapoweract.registries.power_granting.ParsedPowerForm;
 import com.tom.cpm.shared.io.ModelFile;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.resource.Resource;
@@ -48,33 +48,33 @@ public class PlayermodelListener implements SimpleSynchronousResourceReloadListe
 					String power_path = fileName.substring(separationPoint + 1);
 
 					Identifier powerUpID = Identifier.of(power_namespace, power_path);
-					ParsedPowerUp powerUp = RegistryManager.POWER_UPS.get(powerUpID);
+					ParsedPowerForm powerUp = RegistryManager.POWER_UPS.get(powerUpID);
 
 					if(powerUp != null) {
-						MarioQuaMario.LOGGER.info("Found model for character {} in form {}!", character.ID, powerUpID);
+						CharaPowerAct.LOGGER.info("Found model for character {} in form {}!", character.ID, powerUpID);
 						ModelFile model = ModelFile.load(stream);
 //						ModelDefinition definition = MinecraftClientAccess.get().getDefinitionLoader().loadModel(model.getDataBlock(), MinecraftClientAccess.get().getClientPlayer());
 
 //						if(definition.hasRoot(RootModelType.CAPE)) {
 //							RootModelElement element = definition.getModelElementFor(RootModelType.CAPE).get();
-//							MarioQuaMario.LOGGER.info("This model has a tail! {} @ {}", element, element.getPos());
+//							CharaPowerAct.LOGGER.info("This model has a tail! {} @ {}", element, element.getPos());
 //						}
 //						else {
-//							MarioQuaMario.LOGGER.info("This model has no CAPE, which means no tail.");
+//							CharaPowerAct.LOGGER.info("This model has no CAPE, which means no tail.");
 //						}
 
 //						Vec3f i = MinecraftClientAccess.get().getDefinitionLoader().loadModel(model.getDataBlock(), MinecraftClientAccess.get().getClientPlayer()).getModelElementFor(RootModelType.CAPE).get().getPos();
-//						MarioQuaMario.LOGGER.info("Cape position for this model: {}", i);
+//						CharaPowerAct.LOGGER.info("Cape position for this model: {}", i);
 
 						character.MODELS.put(powerUp, model);
 						if(!character.ID.getNamespace().equals(powerUp.ID.getNamespace()))
-							MarioQuaMario.LOGGER.info("They have different namespaces too! Look at you, being so compatible!");
+							CharaPowerAct.LOGGER.info("They have different namespaces too! Look at you, being so compatible!");
 					}
-					else MarioQuaMario.LOGGER.warn("Ignoring model for character {} in unregistered power-up form {}.",
+					else CharaPowerAct.LOGGER.warn("Ignoring model for character {} in unregistered power-up form {}.",
 							character.ID, powerUpID);
 				}
 				catch(Exception exception) {
-					MarioQuaMario.LOGGER.error(
+					CharaPowerAct.LOGGER.error(
 							"""
 									Error occurred while attempting to load Mario Qua Mario playermodels.
 									Namespace (this mod is responsible!!): {}

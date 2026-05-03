@@ -52,7 +52,7 @@ public class AnimationHelperImpl implements AnimationHelper {
 			case 1 -> second;
 			default -> more[easingIndex - 2];
 		};
-//		MarioQuaMario.LOGGER.info("Sequenced Ease:\nProgress: {}\nEasing Index: {}\nPre-post:\n{}\n{}",
+//		CharaPowerAct.LOGGER.info("Sequenced Ease:\nProgress: {}\nEasing Index: {}\nPre-post:\n{}\n{}",
 //				progress, easingIndex, progress % 1, useEase.ease(progress % 1));
 		return easingIndex + useEase.ease(progress % 1);
 	}

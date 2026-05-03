@@ -1,19 +1,19 @@
 package com.fqf.charapoweract.mixin;
 
-import com.fqf.charapoweract.MarioQuaMario;
+import com.fqf.charapoweract.CharaPowerAct;
 import com.fqf.charapoweract.bapping.BlockBappingUtil;
 import com.fqf.charapoweract.bapping.WorldBapsInfo;
-import com.fqf.charapoweract.compat.optional.MarioSableCompatSafe;
+import com.fqf.charapoweract.compat.optional.SableCompatSafe;
 import com.fqf.charapoweract.cpadata.CPAMoveableData;
 import com.fqf.charapoweract.cpadata.CPAPlayerData;
 import com.fqf.charapoweract.cpadata.injections.AdvCPADataHolder;
 import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
 import com.fqf.charapoweract.registries.actions.parsed.ParsedWallboundAction;
-import com.fqf.charapoweract.util.MarioGamerules;
+import com.fqf.charapoweract.util.CPAGamerules;
 import com.fqf.charapoweract_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charapoweract_api.definitions.states.actions.util.SlidingStatus;
 import com.fqf.charapoweract_api.definitions.states.actions.util.SneakingRule;
-import com.fqf.charapoweract.util.MarioNbtKeys;
+import com.fqf.charapoweract.util.CPANbtKeys;
 import com.fqf.charapoweract_api.definitions.states.actions.util.WallBodyAlignment;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -59,10 +59,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCPADa
 	@Inject(method = "travel", at = @At("HEAD"), cancellable = true)
 	private void travelHook(Vec3d movementInput, CallbackInfo ci) {
 		if(this.cpa$getCPAData() instanceof CPAMoveableData moveableData
-				&& moveableData.doMarioTravel()
+				&& moveableData.doCustomTravel()
 				&& moveableData.travelHook(movementInput.z, movementInput.x)) {
 			// SABLE HOOK
-			MarioSableCompatSafe.trySablePostTravelCompatibility(moveableData.getPlayer());
+			SableCompatSafe.trySablePostTravelCompatibility(moveableData.getPlayer());
 			ci.cancel();
 		}
 	}
@@ -85,21 +85,21 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCPADa
 
 	@Inject(method = "shouldSwimInFluids", at = @At("HEAD"), cancellable = true)
 	private void preventVanillaSwimming(CallbackInfoReturnable<Boolean> cir) {
-		if(cpa$getCPAData().doMarioTravel())
+		if(cpa$getCPAData().doCustomTravel())
 			cir.setReturnValue(false);
 	}
 
 	@Inject(method = "isPushedByFluids", at = @At("HEAD"), cancellable = true)
 	private void preventVanillaFluidPushing(CallbackInfoReturnable<Boolean> cir) {
-		if(cpa$getCPAData().doMarioTravel())
+		if(cpa$getCPAData().doCustomTravel())
 			cir.setReturnValue(false);
 	}
 
 	@Inject(method = "getBaseDimensions", at = @At("RETURN"), cancellable = true)
-	private void alterMarioHitbox(EntityPose pose, CallbackInfoReturnable<EntityDimensions> cir) {
+	private void alterCharacterHitbox(EntityPose pose, CallbackInfoReturnable<EntityDimensions> cir) {
 		CPAPlayerData data = cpa$getCPAData();
 		if(data.isEnabled()) {
-			// Return the standing hitbox if we're trying to evaluate Mario's sneaking hitbox while he can't sneak
+			// Return the standing hitbox if we're trying to evaluate the player's sneaking hitbox while she can't sneak
 			if(pose == EntityPose.CROUCHING && data.getAction().SNEAKING_RULE == SneakingRule.PROHIBIT)
 				cir.setReturnValue(getBaseDimensions(EntityPose.STANDING));
 			else if(pose == EntityPose.STANDING && data.getAction().SNEAKING_RULE == SneakingRule.FORCE)
@@ -128,7 +128,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCPADa
 	@Inject(method = "clipAtLedge", at = @At("HEAD"), cancellable = true)
 	private void slideOffLedges(CallbackInfoReturnable<Boolean> cir) {
 		CPAPlayerData data = cpa$getCPAData();
-		if(data.doMarioTravel() && data.getAction().SNEAKING_RULE == SneakingRule.SLIP)
+		if(data.doCustomTravel() && data.getAction().SNEAKING_RULE == SneakingRule.SLIP)
 			cir.setReturnValue(false);
 	}
 
@@ -169,8 +169,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCPADa
 
 	@WrapOperation(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"))
 	private boolean modifyIncomingDamage(PlayerEntity instance, DamageSource source, float amount, Operation<Boolean> original) {
-		if(instance instanceof ServerPlayerEntity serverMario && serverMario.cpa$getCPAData().isEnabled()) {
-			float modifiedAmount = serverMario.cpa$getCPAData().getCharacter().modifyIncomingDamage(serverMario.cpa$getCPAData(), source, amount);
+		if(instance instanceof ServerPlayerEntity serverPlayer && serverPlayer.cpa$getCPAData().isEnabled()) {
+			float modifiedAmount = serverPlayer.cpa$getCPAData().getCharacter().modifyIncomingDamage(serverPlayer.cpa$getCPAData(), source, amount);
 			return modifiedAmount > 0 && original.call(instance, source, modifiedAmount);
 		}
 		return original.call(instance, source, amount);
@@ -178,27 +178,27 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCPADa
 
 	@WrapWithCondition(method = "jump", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;jump()V"))
 	private boolean preventLivingEntityJump(LivingEntity instance) {
-		return !cpa$getCPAData().doMarioTravel();
+		return !cpa$getCPAData().doCustomTravel();
 	}
 
 	@Inject(method = "writeCustomDataToNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;writeCustomDataToNbt(Lnet/minecraft/nbt/NbtCompound;)V", shift = At.Shift.AFTER))
-	private void writeMarioDataToNBT(NbtCompound nbt, CallbackInfo ci) {
+	private void writeCPADataToNBT(NbtCompound nbt, CallbackInfo ci) {
 		NbtCompound persistentData = new NbtCompound();
 		CPAPlayerData data = cpa$getCPAData();
 
 		boolean enabled = data.isEnabled();
-		persistentData.putBoolean(MarioNbtKeys.ENABLED, enabled);
+		persistentData.putBoolean(CPANbtKeys.ENABLED, enabled);
 		if(enabled) {
-			persistentData.putString(MarioNbtKeys.CHARACTER, data.getCharacterID().toString());
-			persistentData.putString(MarioNbtKeys.POWER_UP, data.getPowerUpID().toString());
+			persistentData.putString(CPANbtKeys.CHARACTER, data.getCharacterID().toString());
+			persistentData.putString(CPANbtKeys.POWER_UP, data.getPowerFormID().toString());
 		}
 
-		if(MarioQuaMario.CONFIG.logNBTReadWrite()) MarioQuaMario.LOGGER.info("Writing player NBT:\nEnabled: {}\nCharacter: {}\nPower-up: {}",
-				persistentData.getBoolean(MarioNbtKeys.ENABLED),
-				persistentData.getString(MarioNbtKeys.CHARACTER),
-				persistentData.getString(MarioNbtKeys.POWER_UP));
+		if(CharaPowerAct.CONFIG.logNBTReadWrite()) CharaPowerAct.LOGGER.info("Writing player NBT:\nEnabled: {}\nCharacter: {}\nPower-up: {}",
+				persistentData.getBoolean(CPANbtKeys.ENABLED),
+				persistentData.getString(CPANbtKeys.CHARACTER),
+				persistentData.getString(CPANbtKeys.POWER_UP));
 
-		nbt.put(MarioNbtKeys.DATA, persistentData);
+		nbt.put(CPANbtKeys.DATA, persistentData);
 	}
 
 	@Override
@@ -229,7 +229,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCPADa
 
 	@Inject(method = "isBlockBreakingRestricted", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;getMainHandStack()Lnet/minecraft/item/ItemStack;"), cancellable = true)
 	private void optionallyAllowBreakingBrittleBlocks(World world, BlockPos pos, GameMode gameMode, CallbackInfoReturnable<Boolean> cir) {
-		if(MarioGamerules.adventurePlayersBreakBrittleBlocks) {
+		if(CPAGamerules.adventurePlayersBreakBrittleBlocks) {
 			WorldBapsInfo worldBaps = BlockBappingUtil.getBapsInfoNullable(world);
 			if(worldBaps != null && worldBaps.BRITTLE.contains(pos))
 				cir.setReturnValue(false);
@@ -293,7 +293,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCPADa
 	@Override
 	public void changeLookDirection(double cursorDeltaX, double cursorDeltaY) {
 		super.changeLookDirection(cursorDeltaX, cursorDeltaY);
-		if(this.cpa$getCPAData().isEnabled()) this.cpa$getCPAData().onMarioLookAround();
+		if(this.cpa$getCPAData().isEnabled()) this.cpa$getCPAData().onLookAround();
 	}
 
 	@Unique private static final int SPRINTING_FLAG_INDEX = 3;

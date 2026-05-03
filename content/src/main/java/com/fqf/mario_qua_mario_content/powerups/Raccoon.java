@@ -1,6 +1,6 @@
 package com.fqf.mario_qua_mario_content.powerups;
 
-import com.fqf.charapoweract_api.definitions.states.PowerUpDefinition;
+import com.fqf.charapoweract_api.definitions.states.PowerFormDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimation;
@@ -35,7 +35,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-public class Raccoon implements PowerUpDefinition {
+public class Raccoon implements PowerFormDefinition {
 	public static final Identifier ID = MarioQuaMarioContent.makeID("raccoon");
 	@Override public @NotNull Identifier getID() {
 	    return ID;

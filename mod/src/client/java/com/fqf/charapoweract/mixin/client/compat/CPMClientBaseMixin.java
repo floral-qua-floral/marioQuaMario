@@ -25,6 +25,6 @@ public class CPMClientBaseMixin {
 			CallbackInfo ci
 	) {
 		if(abstractClientPlayerEntity.cpa$getCPAData().isEnabled())
-			abstractClientPlayerEntity.mqm$getAnimationData().animateTail(partialTicks, abstractClientPlayerEntity, model.cloak, model.body, model.rightLeg, model.leftLeg);
+			abstractClientPlayerEntity.cpa$getAnimationData().animateTail(partialTicks, abstractClientPlayerEntity, model.cloak, model.body, model.rightLeg, model.leftLeg);
 	}
 }

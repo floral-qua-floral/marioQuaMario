@@ -1,7 +1,7 @@
 package com.fqf.charapoweract.cpadata;
 
 import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
-import com.fqf.charapoweract.registries.power_granting.ParsedPowerUp;
+import com.fqf.charapoweract.registries.power_granting.ParsedPowerForm;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charapoweract_api.cpadata.util.RecordedCollisionSet;
@@ -16,17 +16,17 @@ import java.util.Map;
 
 public class CPAOtherClientData extends CPAPlayerData implements ICPAClientDataImpl {
 	public boolean jumpCapped;
-	private final OtherClientPlayerEntity MARIO;
-	public CPAOtherClientData(OtherClientPlayerEntity mario) {
+	private final OtherClientPlayerEntity PLAYER;
+	public CPAOtherClientData(OtherClientPlayerEntity player) {
 		super();
-		this.MARIO = mario;
+		this.PLAYER = player;
 	}
 	@Override public OtherClientPlayerEntity getPlayer() {
-		return this.MARIO;
+		return this.PLAYER;
 	}
 
 	@Override
-	public boolean setPowerUp(ParsedPowerUp newPowerUp, boolean isReversion, long seed) {
+	public boolean setPowerUp(ParsedPowerForm newPowerUp, boolean isReversion, long seed) {
 		this.handlePowerTransitionSound(isReversion, newPowerUp, seed);
 		return super.setPowerUp(newPowerUp, isReversion, seed);
 	}
@@ -47,10 +47,10 @@ public class CPAOtherClientData extends CPAPlayerData implements ICPAClientDataI
 	@Override public void tick() {
 		super.tick();
 		this.getAction().clientTick(this, false);
-		this.getPowerUp().clientTick(this, false);
+		this.getPowerForm().clientTick(this, false);
 		this.getCharacter().clientTick(this, false);
 
-		Vec3d pos = MARIO.getPos();
+		Vec3d pos = PLAYER.getPos();
 		this.deltaX = pos.x - prevX;
 		this.deltaY = pos.y - prevY;
 		this.deltaZ = pos.z - prevZ;
@@ -62,7 +62,7 @@ public class CPAOtherClientData extends CPAPlayerData implements ICPAClientDataI
 
 		if(this.replaceAnimationNextTick) {
 			this.replaceAnimationNextTick = false;
-			this.MARIO.mqm$getAnimationData().replaceAnimation(this, this.nextTickAnimation, -1);
+			this.PLAYER.cpa$getAnimationData().replaceAnimation(this, this.nextTickAnimation, -1);
 		}
 		if(this.replaceAnimationNextNextTick) {
 			this.replaceAnimationNextNextTick = false;
@@ -71,20 +71,20 @@ public class CPAOtherClientData extends CPAPlayerData implements ICPAClientDataI
 		}
 	}
 
-	private final MarioInferredVelocities VELOCITIES = new MarioInferredVelocities();
+	private final InferredVelocities VELOCITIES = new InferredVelocities();
 
 	@Override
 	public void playCameraAnimation(CameraAnimationSet animationSet) {
 		// Do nothing
 	}
 
-	private class MarioInferredVelocities {
+	private class InferredVelocities {
 		private double forward;
 		private double strafe;
 		private double vertical;
 		private boolean isGenerated;
 
-		private MarioInferredVelocities ensure() {
+		private InferredVelocities ensure() {
 			if(this.isGenerated) return this;
 			this.isGenerated = true;
 
@@ -152,7 +152,7 @@ public class CPAOtherClientData extends CPAPlayerData implements ICPAClientDataI
 	}
 
 	@Override
-	public MarioInputs getInputs() {
+	public Inputs getInputs() {
 		return CPAServerPlayerData.PHONY_INPUTS;
 	}
 }

@@ -5,7 +5,7 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface PowerUpDefinition extends StatAlteringStateDefinition, AttackInterceptingStateDefinition {
+public interface PowerFormDefinition extends StatAlteringStateDefinition, AttackInterceptingStateDefinition {
 	@Nullable Identifier getReversionTarget();
 	int getValue();
 

@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 import static com.fqf.charapoweract_api.util.StatCategory.DAMAGE;
-import static com.fqf.charapoweract_api.util.StatCategory.STOMP;
+import static com.fqf.charapoweract_api.util.StatCategory.COLLISION_ATTACK;
 
 public class GroundPound implements CollisionAttackTypeDefinition {
 	public static final Identifier ID = MarioQuaMarioContent.makeID("ground_pound");
@@ -65,7 +65,7 @@ public class GroundPound implements CollisionAttackTypeDefinition {
 		potentialTargets.removeIf(entity -> !(entity.canHit() && entity instanceof LivingEntity));
 	}
 
-	public static final CharaStat BASE_DAMAGE = new CharaStat(7, STOMP, DAMAGE);
+	public static final CharaStat BASE_DAMAGE = new CharaStat(7, COLLISION_ATTACK, DAMAGE);
 
 	@Override
 	public float calculateDamage(ICPAData data, ItemStack equipment, float equipmentArmor, float equipmentToughness) {

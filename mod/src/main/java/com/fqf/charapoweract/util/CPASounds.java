@@ -1,12 +1,12 @@
 package com.fqf.charapoweract.util;
 
-import com.fqf.charapoweract.MarioQuaMario;
+import com.fqf.charapoweract.CharaPowerAct;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
-public class MarioSFX {
+public class CPASounds {
 	public static final SoundEvent BUMP = makeMovementSound("bump");
 	public static final SoundEvent SKID = makeMovementSound("skid");
 	public static final SoundEvent SKID_ICE = makeMovementSound("skid_ice");
@@ -31,7 +31,7 @@ public class MarioSFX {
 	}
 
 	private static SoundEvent makeAndRegisterSound(String path) {
-		Identifier identifier = MarioQuaMario.makeResID(path);
+		Identifier identifier = CharaPowerAct.makeResID(path);
 		SoundEvent event = SoundEvent.of(identifier);
 
 		Registry.register(Registries.SOUND_EVENT, identifier, event);

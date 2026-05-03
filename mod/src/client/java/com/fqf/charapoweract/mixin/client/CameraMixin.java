@@ -50,17 +50,17 @@ public abstract class CameraMixin {
 			boolean thirdPerson, boolean inverseView, float tickDelta,
 			CallbackInfo ci
 	) {
-		if(!thirdPerson && focusedEntity instanceof ClientPlayerEntity mario && mario.cpa$getCPAData().animatingCamera()) {
-			Vec3d marioPos = new Vec3d(
+		if(!thirdPerson && focusedEntity instanceof ClientPlayerEntity player && player.cpa$getCPAData().animatingCamera()) {
+			Vec3d playerPos = new Vec3d(
 					MathHelper.lerp(tickDelta, focusedEntity.prevX, focusedEntity.getX()),
 					MathHelper.lerp(tickDelta, focusedEntity.prevY, focusedEntity.getY()),
 					MathHelper.lerp(tickDelta, focusedEntity.prevZ, focusedEntity.getZ())
 			);
-			Vec3d cameraRelativePos = this.getPos().subtract(marioPos);
+			Vec3d cameraRelativePos = this.getPos().subtract(playerPos);
 			this.CAMERA_ARRANGEMENT.setPos((float) cameraRelativePos.x, (float) cameraRelativePos.y, (float) cameraRelativePos.z);
 			this.CAMERA_ARRANGEMENT.setAngles(this.getPitch() * MathHelper.RADIANS_PER_DEGREE, this.getYaw() * MathHelper.RADIANS_PER_DEGREE, 0);
-			mario.cpa$getCPAData().mutateCamera(this.CAMERA_ARRANGEMENT, tickDelta);
-			this.setPos(marioPos.add(this.CAMERA_ARRANGEMENT.x, this.CAMERA_ARRANGEMENT.y, this.CAMERA_ARRANGEMENT.z));
+			player.cpa$getCPAData().mutateCamera(this.CAMERA_ARRANGEMENT, tickDelta);
+			this.setPos(playerPos.add(this.CAMERA_ARRANGEMENT.x, this.CAMERA_ARRANGEMENT.y, this.CAMERA_ARRANGEMENT.z));
 			this.setRotationRads(this.CAMERA_ARRANGEMENT.pitch, MathHelper.PI + this.CAMERA_ARRANGEMENT.yaw, this.CAMERA_ARRANGEMENT.roll);
 			MinecraftClient.getInstance().worldRenderer.scheduleTerrainUpdate();
 		}

@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.fqf.charapoweract_api.util.StatCategory.DAMAGE;
-import static com.fqf.charapoweract_api.util.StatCategory.STOMP;
+import static com.fqf.charapoweract_api.util.StatCategory.COLLISION_ATTACK;
 
 public class JumpStomp implements CollisionAttackTypeDefinition {
 	public static final Identifier ID = MarioQuaMarioContent.makeID("stomp");
@@ -92,7 +92,7 @@ public class JumpStomp implements CollisionAttackTypeDefinition {
 		filterStompTargets(potentialTargets, attacker, motion);
 	}
 
-	public static final CharaStat BASE_DAMAGE = new CharaStat(4.5, STOMP, DAMAGE);
+	public static final CharaStat BASE_DAMAGE = new CharaStat(4.5, COLLISION_ATTACK, DAMAGE);
 
 	public static final Identifier PULVERIZING_ID = MarioQuaMarioContent.makeResID("pulverizing");
 	public static final Identifier BOUNDING_ID = MarioQuaMarioContent.makeResID("bounding");

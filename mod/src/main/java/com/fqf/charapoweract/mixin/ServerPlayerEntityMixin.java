@@ -1,12 +1,12 @@
 package com.fqf.charapoweract.mixin;
 
-import com.fqf.charapoweract.MarioQuaMario;
+import com.fqf.charapoweract.CharaPowerAct;
 import com.fqf.charapoweract.cpadata.CPAServerPlayerData;
 import com.fqf.charapoweract.cpadata.injections.AdvCPAServerDataHolder;
-import com.fqf.charapoweract.packets.MarioDataPackets;
+import com.fqf.charapoweract.packets.CPADataPackets;
 import com.fqf.charapoweract.registries.RegistryManager;
 import com.fqf.charapoweract.registries.power_granting.ParsedCharacter;
-import com.fqf.charapoweract.util.MarioNbtKeys;
+import com.fqf.charapoweract.util.CPANbtKeys;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -45,78 +45,78 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 		// Only perform stomp checks on movement that comes from a player packet (as opposed to server-side travel).
 		// Should this change??
 		long time = this.getWorld().getTime();
-		if(data.isEnabled() && data.doMarioTravel() && data.getAction().COLLISION_ATTACK_TYPE != null
+		if(data.isEnabled() && data.doCustomTravel() && data.getAction().COLLISION_ATTACK_TYPE != null
 				&& (movementType == MovementType.PLAYER || movementType == MovementType.SELF)
 				&& time != this.tickAfterStomp && time != this.tickAfterStomp - 1)
 			movement = data.getAction().COLLISION_ATTACK_TYPE.moveHook(data, movement);
 
 		super.move(movementType, movement);
 		if(!oldMovement.equals(movement)) {
-//			MarioQuaMario.LOGGER.info("Server-sided stomp after move completion:\nTick: {}\tForbiddenTick: {}\tMovetype: {}\nOld position: {}\nMovement: {}\nNew position: {}\nDifference: {}",
+//			CharaPowerAct.LOGGER.info("Server-sided stomp after move completion:\nTick: {}\tForbiddenTick: {}\tMovetype: {}\nOld position: {}\nMovement: {}\nNew position: {}\nDifference: {}",
 //					this.getWorld().getTime(), this.tickAfterStomp, movementType, oldPos, movement, this.getPos(), this.getPos().subtract(oldPos));
 			this.tickAfterStomp = time + 1;
 		}
-//		else MarioQuaMario.LOGGER.info("Movement: {}->{}", oldPos, this.getPos());
+//		else CharaPowerAct.LOGGER.info("Movement: {}->{}", oldPos, this.getPos());
 	}
 
 	@Inject(method = "readCustomDataFromNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;readCustomDataFromNbt(Lnet/minecraft/nbt/NbtCompound;)V", shift = At.Shift.AFTER))
-	private void readMarioDataFromNbt(NbtCompound nbt, CallbackInfo ci) {
+	private void readCPADataFromNbt(NbtCompound nbt, CallbackInfo ci) {
 		super.readCustomDataFromNbt(nbt);
 
-		if(nbt.contains(MarioNbtKeys.DATA, NbtElement.COMPOUND_TYPE)) {
-			NbtCompound persistentMarioData = nbt.getCompound(MarioNbtKeys.DATA);
+		if(nbt.contains(CPANbtKeys.DATA, NbtElement.COMPOUND_TYPE)) {
+			NbtCompound persistentCPAData = nbt.getCompound(CPANbtKeys.DATA);
 
-			boolean extraLogging = MarioQuaMario.CONFIG.logNBTReadWrite();
-			if(extraLogging) MarioQuaMario.LOGGER.info("Reading player NBT:\nEnabled: {}\nCharacter: {}\nPower-up: {}",
-					persistentMarioData.getBoolean(MarioNbtKeys.ENABLED),
-					persistentMarioData.getString(MarioNbtKeys.CHARACTER),
-					persistentMarioData.getString(MarioNbtKeys.POWER_UP));
+			boolean extraLogging = CharaPowerAct.CONFIG.logNBTReadWrite();
+			if(extraLogging) CharaPowerAct.LOGGER.info("Reading player NBT:\nEnabled: {}\nCharacter: {}\nPower-up: {}",
+					persistentCPAData.getBoolean(CPANbtKeys.ENABLED),
+					persistentCPAData.getString(CPANbtKeys.CHARACTER),
+					persistentCPAData.getString(CPANbtKeys.POWER_UP));
 
-			if(persistentMarioData.getBoolean(MarioNbtKeys.ENABLED)) {
-				String storedCharacterID = persistentMarioData.getString(MarioNbtKeys.CHARACTER);
+			if(persistentCPAData.getBoolean(CPANbtKeys.ENABLED)) {
+				String storedCharacterID = persistentCPAData.getString(CPANbtKeys.CHARACTER);
 				if(storedCharacterID.isEmpty()) {
-					MarioQuaMario.LOGGER.error("Shocking error: A player's NBT data claims the mod is enabled, but no character ID is stored?!");
+					CharaPowerAct.LOGGER.error("Shocking error: A player's NBT data claims the mod is enabled, but no character ID is stored?!");
 				}
 				else if(RegistryManager.CHARACTERS.containsId(Identifier.of(storedCharacterID))) {
 					ParsedCharacter storedCharacter = Objects.requireNonNull(RegistryManager.CHARACTERS.get(Identifier.of(storedCharacterID)));
-					String storedPowerUpID = persistentMarioData.getString(MarioNbtKeys.POWER_UP);
+					String storedPowerUpID = persistentCPAData.getString(CPANbtKeys.POWER_UP);
 					if(storedPowerUpID.isEmpty()) {
-						MarioQuaMario.LOGGER.error("Shocking error: A player's NBT data claims the mod is enabled, and a character ID is stored, but no power-up ID is stored?!");
+						CharaPowerAct.LOGGER.error("Shocking error: A player's NBT data claims the mod is enabled, and a character ID is stored, but no power-up ID is stored?!");
 					}
 					else {
 						if(!RegistryManager.POWER_UPS.containsId(Identifier.of(storedPowerUpID))) {
-							MarioQuaMario.LOGGER.error("A player's NBT data contains an invalid Power-up ID: {}." +
+							CharaPowerAct.LOGGER.error("A player's NBT data contains an invalid Power-up ID: {}." +
 									"The player will instead be set to their character's default power-up state.", storedPowerUpID);
 							storedPowerUpID = storedCharacter.INITIAL_POWER_UP.ID.toString();
 						}
 
 						if(extraLogging)
-							MarioQuaMario.LOGGER.info("Loaded a full set of Mario Data from NBT. This is {} in {} form.", storedCharacterID, storedPowerUpID);
+							CharaPowerAct.LOGGER.info("Loaded a full set of CPA Data from NBT. This is {} in {} form.", storedCharacterID, storedPowerUpID);
 
 						CPAServerPlayerData data = this.cpa$getCPAData();
 						if(this.networkHandler == null) {
 							if(extraLogging)
-								MarioQuaMario.LOGGER.info("Player is not yet ready for networking. Assigning silently for later synchronization...");
+								CharaPowerAct.LOGGER.info("Player is not yet ready for networking. Assigning silently for later synchronization...");
 							data.setupVariablesBeforeInitialApply(
 									storedCharacter,
 									RegistryManager.POWER_UPS.get(Identifier.of(storedPowerUpID))
 							);
 						}
 						else {
-							if(extraLogging) MarioQuaMario.LOGGER.info("Syncing data from NBT...");
+							if(extraLogging) CharaPowerAct.LOGGER.info("Syncing data from NBT...");
 							data.assignCharacter(storedCharacterID);
-							data.assignPowerUp(storedPowerUpID);
+							data.assignPowerForm(storedPowerUpID);
 						}
 					}
 				}
-				else MarioQuaMario.LOGGER.error("A player's NBT data contains an invalid Character ID: {}", storedCharacterID);
+				else CharaPowerAct.LOGGER.error("A player's NBT data contains an invalid Character ID: {}", storedCharacterID);
 
 //				CPAServerPlayerData data = cpa$getCPAData();
 //				if(networkHandler != null) {
 //					data.assignCharacter(getCharacterID(nbt));
-//					data.assignPowerUp(getPowerUpID(nbt));
+//					data.assignPowerForm(getPowerFormID(nbt));
 //				}
-//				else data.preInitialApply(persistentMarioData.getBoolean("Enabled"), getPowerUp(nbt), getCharacter(nbt));
+//				else data.preInitialApply(persistentCPAData.getBoolean("Enabled"), getPowerForm(nbt), getCharacter(nbt));
 			}
 		}
 	}
@@ -124,6 +124,6 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 	@Override
 	public void onStartedTrackingBy(ServerPlayerEntity player) {
 		super.onStartedTrackingBy(player);
-		MarioDataPackets.syncMarioDataToPlayerS2C((ServerPlayerEntity) (Object) this, player);
+		CPADataPackets.syncCPADataToPlayerS2C((ServerPlayerEntity) (Object) this, player);
 	}
 }

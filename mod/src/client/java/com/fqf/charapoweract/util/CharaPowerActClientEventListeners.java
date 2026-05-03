@@ -13,7 +13,7 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
-public class MarioClientEventListeners {
+public class CharaPowerActClientEventListeners {
 	public static void register() {
 		ClientTickEvents.START_WORLD_TICK.register(BlockBappingClientUtil::clientWorldTick);
 

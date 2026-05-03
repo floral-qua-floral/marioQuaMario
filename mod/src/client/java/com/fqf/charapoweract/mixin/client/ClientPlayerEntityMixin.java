@@ -2,7 +2,7 @@ package com.fqf.charapoweract.mixin.client;
 
 import com.fqf.charapoweract.cpadata.CPAMainClientData;
 import com.fqf.charapoweract.cpadata.injections.AdvCPAMainClientDataHolder;
-import com.fqf.charapoweract.util.MarioPositionSettable;
+import com.fqf.charapoweract.util.CPAPositionSettable;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.authlib.GameProfile;
@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.List;
 
 @Mixin(ClientPlayerEntity.class)
-public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity implements AdvCPAMainClientDataHolder, MarioPositionSettable {
+public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity implements AdvCPAMainClientDataHolder, CPAPositionSettable {
 	@Shadow private double lastX, lastBaseY, lastZ;
 
 	public ClientPlayerEntityMixin(ClientWorld world, GameProfile profile) {
@@ -33,7 +33,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
 	@Inject(method = "canSprint", at = @At("HEAD"), cancellable = true)
 	private void preventSprinting(CallbackInfoReturnable<Boolean> cir) {
-		if(this.cpa$getCPAData().doMarioTravel()) switch( this.cpa$getCPAData().getAction().SPRINTING_RULE) {
+		if(this.cpa$getCPAData().doCustomTravel()) switch( this.cpa$getCPAData().getAction().SPRINTING_RULE) {
 			case ALLOW:
 				break;
 			case IF_ALREADY_SPRINTING:
@@ -55,7 +55,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
 	@WrapOperation(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isUsingItem()Z"))
 	private boolean moveFastWithItem(ClientPlayerEntity instance, Operation<Boolean> original) {
-		return (!this.cpa$getCPAData().doMarioTravel() || instance.isOnGround()) && original.call(instance);
+		return (!this.cpa$getCPAData().doCustomTravel() || instance.isOnGround()) && original.call(instance);
 	}
 
 	@Override
@@ -65,7 +65,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
 	@Inject(method = "shouldSlowDown", at = @At("HEAD"), cancellable = true)
 	private void preventSlowDown(CallbackInfoReturnable<Boolean> cir) {
-		if(this.cpa$getCPAData().doMarioTravel()) cir.setReturnValue(false);
+		if(this.cpa$getCPAData().doCustomTravel()) cir.setReturnValue(false);
 	}
 
 	@Inject(method = "isInSneakingPose", at = @At("HEAD"), cancellable = true)
@@ -78,7 +78,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 	}
 
 	@Override
-	public void mqm$setPos(Vec3d pos) {
+	public void cpa$setPos(Vec3d pos) {
 		// will this fix it please
 		this.lastX = pos.x;
 		this.lastBaseY = pos.y;

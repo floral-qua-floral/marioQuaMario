@@ -22,7 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPlayerEntity.class)
 public class ClientPlayerEntityCPADataMixin implements AdvCPAMainClientDataHolder, ICPATravelDataHolder, ICPAClientDataHolder {
-	@Unique private CPAMainClientData marioData = new CPAMainClientData((ClientPlayerEntity) (Object) this);
+	@Unique private CPAMainClientData cpaData = new CPAMainClientData((ClientPlayerEntity) (Object) this);
 
 	@Override public ICPATravelData cpa$getICPATravelData() {
 		return this.cpa$getCPAData();
@@ -33,17 +33,17 @@ public class ClientPlayerEntityCPADataMixin implements AdvCPAMainClientDataHolde
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void constructorHook(MinecraftClient client, ClientWorld world, ClientPlayNetworkHandler networkHandler, StatHandler stats, ClientRecipeBook recipeBook, boolean lastSneaking, boolean lastSprinting, CallbackInfo ci) {
-		this.cpa$setCPAData(this.marioData);
+		this.cpa$setCPAData(this.cpaData);
 	}
 
 	@Override
 	public @NotNull CPAMainClientData cpa$getCPAData() {
-		return this.marioData;
+		return this.cpaData;
 	}
 
 	@Override
 	public void cpa$setCPAData(CPAPlayerData replacementData) {
-		this.marioData = (CPAMainClientData) replacementData;
+		this.cpaData = (CPAMainClientData) replacementData;
 		replacementData.initialApply();
 	}
 }

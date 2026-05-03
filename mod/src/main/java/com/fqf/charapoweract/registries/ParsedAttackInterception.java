@@ -2,7 +2,7 @@ package com.fqf.charapoweract.registries;
 
 import com.fqf.charapoweract_api.definitions.states.AttackInterceptingStateDefinition;
 import com.fqf.charapoweract.cpadata.*;
-import com.fqf.charapoweract.packets.MarioAttackInterceptionPackets;
+import com.fqf.charapoweract.packets.AttackInterceptionPackets;
 import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
 import com.fqf.charapoweract.registries.actions.ParsedActionHelper;
 import com.fqf.charapoweract_api.cpadata.ICPAAuthoritativeData;
@@ -20,12 +20,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ParsedAttackInterception {
-	public static ParsedAttackInterception getInterception(MarioAttackInterceptionPackets.AttackInterceptionPayload payload) {
+	public static ParsedAttackInterception getInterception(AttackInterceptionPackets.AttackInterceptionPayload payload) {
 		return payload.isFromAction() ? ParsedActionHelper.get(payload.interceptionSource()).INTERCEPTIONS.get(payload.interceptionIndex())
 				: RegistryManager.POWER_UPS.getOrThrow(payload.interceptionSource()).INTERCEPTIONS.get(payload.interceptionIndex());
 	}
-	public static float getAttackCooldownProgress(PlayerEntity mario) {
-		return mario.getAttackCooldownProgress(0.5F);
+	public static float getAttackCooldownProgress(PlayerEntity player) {
+		return player.getAttackCooldownProgress(0.5F);
 	}
 
 	private final AttackInterceptingStateDefinition.AttackInterceptionDefinition DEFINITION;

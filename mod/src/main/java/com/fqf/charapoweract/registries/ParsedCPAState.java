@@ -6,12 +6,12 @@ import com.fqf.charapoweract_api.definitions.states.CPAStateDefinition;
 import com.fqf.charapoweract_api.cpadata.ICPAClientData;
 import org.jetbrains.annotations.Nullable;
 
-public class ParsedMarioState extends ParsedMarioThing {
+public class ParsedCPAState extends ParsedCPAThing {
 	private final @Nullable CPAStateDefinition STATE_DEFINITION;
 
 	private @Nullable Class<?> lastCustomVarsClass;
 
-	public ParsedMarioState(CPAStateDefinition definition) {
+	public ParsedCPAState(CPAStateDefinition definition) {
 		super(definition.getID());
 		this.STATE_DEFINITION = definition;
 	}

@@ -1,9 +1,9 @@
 package com.fqf.charapoweract;
 
 import com.fqf.charapoweract.bapping.BumpedBlockParticle;
-import com.fqf.charapoweract.packets.MarioClientPacketHelper;
-import com.fqf.charapoweract.util.MarioClientEventListeners;
-import com.fqf.charapoweract.util.MarioClientHelperManager;
+import com.fqf.charapoweract.packets.CPAClientPacketHelper;
+import com.fqf.charapoweract.util.CharaPowerActClientEventListeners;
+import com.fqf.charapoweract.util.CPAClientHelperManager;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
@@ -13,14 +13,14 @@ public class CharaPowerActClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		MarioQuaMario.LOGGER.info("CharaPowerAct initializing on the client...");
+		CharaPowerAct.LOGGER.info("CharaPowerAct initializing on the client...");
 
-		MarioClientHelperManager.helper = new CPAClientHelper();
-		MarioClientHelperManager.packetSender = new MarioClientPacketHelper();
+		CPAClientHelperManager.helper = new CPAClientHelper();
+		CPAClientHelperManager.packetSender = new CPAClientPacketHelper();
 
-		MarioClientPacketHelper.registerClientReceivers();
+		CPAClientPacketHelper.registerClientReceivers();
 
-		MarioClientEventListeners.register();
+		CharaPowerActClientEventListeners.register();
 
 		ParticleFactoryRegistry.getInstance().register(FabricParticleTypes.simple(), new BumpedBlockParticle.Factory());
 	}

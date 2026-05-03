@@ -1,8 +1,8 @@
 package com.fqf.charapoweract.mixin.client;
 
-import com.fqf.charapoweract.MarioQuaMario;
+import com.fqf.charapoweract.CharaPowerAct;
 import com.fqf.charapoweract.cpadata.CPAServerPlayerData;
-import com.fqf.charapoweract_api.definitions.states.PowerUpDefinition;
+import com.fqf.charapoweract_api.definitions.states.PowerFormDefinition;
 import com.fqf.charapoweract.cpadata.CPAMainClientData;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -39,12 +39,12 @@ public class InGameHudMixin {
 
 	@Unique
 	private static @Nullable Identifier getPowerHeart(InGameHud.HeartType heartType, boolean hardcore, boolean half, boolean blinking) {
-		ClientPlayerEntity mario = MinecraftClient.getInstance().player;
-		if(mario == null || !mario.cpa$getCPAData().isEnabled()) {
+		ClientPlayerEntity mainPlayer = MinecraftClient.getInstance().player;
+		if(mainPlayer == null || !mainPlayer.cpa$getCPAData().isEnabled()) {
 			return null;
 		}
 
-		PowerUpDefinition.PowerHeart powerHeart = mario.cpa$getCPAData().getPowerUp().HEART;
+		PowerFormDefinition.PowerHeart powerHeart = mainPlayer.cpa$getCPAData().getPowerForm().HEART;
 
 		if(heartType == InGameHud.HeartType.CONTAINER)
 			return blinking ? powerHeart.containerBlinkingTexture() : powerHeart.containerTexture();
@@ -63,35 +63,35 @@ public class InGameHudMixin {
 
 	@Inject(method = "renderMainHud", at = @At("TAIL"))
 	public void renderSpeedometerWithServerData(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
-		if(!MarioQuaMario.CONFIG.isSpecialHUDEnabled()) return;
+		if(!CharaPowerAct.CONFIG.isSpecialHUDEnabled()) return;
 
 		MinecraftClient client = MinecraftClient.getInstance();
-		ClientPlayerEntity clientMario = client.player;
-		if(clientMario == null) return;
-		CPAMainClientData clientData = clientMario.cpa$getCPAData();
+		ClientPlayerEntity mainPlayer = client.player;
+		if(mainPlayer == null) return;
+		CPAMainClientData clientData = mainPlayer.cpa$getCPAData();
 		if(!clientData.isEnabled()) return;
 
-		double horizontalSpeed = Vector2d.distance(clientMario.getX(), clientMario.getZ(), clientMario.prevX, clientMario.prevZ);
-		double verticalSpeed = clientMario.getY() - clientMario.prevY;
+		double horizontalSpeed = Vector2d.distance(mainPlayer.getX(), mainPlayer.getZ(), mainPlayer.prevX, mainPlayer.prevZ);
+		double verticalSpeed = mainPlayer.getY() - mainPlayer.prevY;
 
 		renderText(context, 1, "C: ", horizontalSpeed, verticalSpeed);
 
 		IntegratedServer integratedServer = MinecraftClient.getInstance().getServer();
 		if(integratedServer == null) return;
-		Entity serverMario = Objects.requireNonNull(integratedServer.getWorld(clientMario.getWorld().getRegistryKey())).getEntityById(clientMario.getId());
-		if(serverMario == null) return;
-		CPAServerPlayerData serverData = ((ServerPlayerEntity) serverMario).cpa$getCPAData();
+		Entity serverSidedMainPlayer = Objects.requireNonNull(integratedServer.getWorld(mainPlayer.getWorld().getRegistryKey())).getEntityById(mainPlayer.getId());
+		if(serverSidedMainPlayer == null) return;
+		CPAServerPlayerData serverData = ((ServerPlayerEntity) serverSidedMainPlayer).cpa$getCPAData();
 
-		renderText(context, 0, "S: ", serverMario.getVelocity().horizontalLength(), serverMario.getVelocity().y);
+		renderText(context, 0, "S: ", serverSidedMainPlayer.getVelocity().horizontalLength(), serverSidedMainPlayer.getVelocity().y);
 
-		renderText(context, 3, clientMario.getPose() + " (" + clientMario.getHeight() + ") VS "
-				+ serverMario.getPose() + " (" + serverMario.getHeight() + ")");
+		renderText(context, 3, mainPlayer.getPose() + " (" + mainPlayer.getHeight() + ") VS "
+				+ serverSidedMainPlayer.getPose() + " (" + serverSidedMainPlayer.getHeight() + ")");
 
 
 		renderText(context, 7, clientData.getActionID() + " VS " + serverData.getActionID(),
 				clientData.getActionID().equals(serverData.getActionID()) ? Colors.WHITE : Colors.LIGHT_RED);
-		renderText(context, 6, clientMario.mqm$getAnimationData().isAnimating(clientMario) ? "Animating" : "Not Animating");
-		renderText(context, 5, "FallDistance (C, S): ", clientMario.fallDistance, serverMario.fallDistance);
+		renderText(context, 6, mainPlayer.cpa$getAnimationData().isAnimating(mainPlayer) ? "Animating" : "Not Animating");
+		renderText(context, 5, "FallDistance (C, S): ", mainPlayer.fallDistance, serverSidedMainPlayer.fallDistance);
 
 		renderText(context, 9, "In unloaded chunk: " + clientData.isInUnloadedChunks());
 	}

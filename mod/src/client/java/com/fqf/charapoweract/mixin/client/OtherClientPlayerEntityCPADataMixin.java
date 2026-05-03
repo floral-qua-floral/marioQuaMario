@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(OtherClientPlayerEntity.class)
 public class OtherClientPlayerEntityCPADataMixin implements AdvCPAOtherClientDataHolder, ICPAClientDataHolder {
-	@Unique private CPAOtherClientData marioData = new CPAOtherClientData((OtherClientPlayerEntity) (Object) this);
+	@Unique private CPAOtherClientData cpaData = new CPAOtherClientData((OtherClientPlayerEntity) (Object) this);
 
 	@Override public ICPAClientData cpa$getICPAClientData() {
 		return this.cpa$getCPAData();
@@ -25,17 +25,17 @@ public class OtherClientPlayerEntityCPADataMixin implements AdvCPAOtherClientDat
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void constructorHook(ClientWorld clientWorld, GameProfile gameProfile, CallbackInfo ci) {
-		this.cpa$setCPAData(this.marioData);
+		this.cpa$setCPAData(this.cpaData);
 	}
 
 	@Override
 	public @NotNull CPAOtherClientData cpa$getCPAData() {
-		return this.marioData;
+		return this.cpaData;
 	}
 
 	@Override
 	public void cpa$setCPAData(CPAPlayerData replacementData) {
-		this.marioData = (CPAOtherClientData) replacementData;
+		this.cpaData = (CPAOtherClientData) replacementData;
 		replacementData.initialApply();
 	}
 }

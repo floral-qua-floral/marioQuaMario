@@ -18,7 +18,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
-public class MarioBappingPackets {
+public class BappingPackets {
 	public static void bapS2C(
 			ServerWorld world, BlockPos pos,
 			Direction direction, int strength, BapResult result,
@@ -32,7 +32,7 @@ public class MarioBappingPackets {
 	}
 
 	protected record BapBlockC2SPayload(BlockPos pos, int direction, int action) implements CustomPayload {
-		public static final Id<BapBlockC2SPayload> ID = MarioPackets.makeID("bap_block_c2s");
+		public static final Id<BapBlockC2SPayload> ID = CPAPackets.makeID("bap_block_c2s");
 		public static final PacketCodec<RegistryByteBuf, BapBlockC2SPayload> CODEC = PacketCodec.tuple(
 				BlockPos.PACKET_CODEC, BapBlockC2SPayload::pos,
 				PacketCodecs.INTEGER, BapBlockC2SPayload::direction,
@@ -66,7 +66,7 @@ public class MarioBappingPackets {
 	}
 
 	protected record BapBlockS2CPayload(BlockPos pos, int direction, int strength, int result, int bapperID) implements CustomPayload {
-		public static final Id<BapBlockS2CPayload> ID = MarioPackets.makeID("bap_block_s2c");
+		public static final Id<BapBlockS2CPayload> ID = CPAPackets.makeID("bap_block_s2c");
 		public static final PacketCodec<RegistryByteBuf, BapBlockS2CPayload> CODEC = PacketCodec.tuple(
 				BlockPos.PACKET_CODEC, BapBlockS2CPayload::pos,
 				PacketCodecs.INTEGER, BapBlockS2CPayload::direction,

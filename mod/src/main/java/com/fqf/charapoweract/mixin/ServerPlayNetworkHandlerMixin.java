@@ -1,7 +1,7 @@
 package com.fqf.charapoweract.mixin;
 
-import com.fqf.charapoweract.util.MarioGamerules;
-import com.fqf.charapoweract.util.MarioPositionSettable;
+import com.fqf.charapoweract.util.CPAGamerules;
+import com.fqf.charapoweract.util.CPAPositionSettable;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import java.util.Set;
 
 @Mixin(ServerPlayNetworkHandler.class)
-public class ServerPlayNetworkHandlerMixin implements MarioPositionSettable {
+public class ServerPlayNetworkHandlerMixin implements CPAPositionSettable {
 	@Shadow public ServerPlayerEntity player;
 
 	@Shadow private double lastTickX, lastTickY, lastTickZ;
@@ -25,12 +25,12 @@ public class ServerPlayNetworkHandlerMixin implements MarioPositionSettable {
 
 	@WrapOperation(method = "onPlayerMove", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;isInTeleportationState()Z"))
 	private boolean isTeleportingOrCharacter(ServerPlayerEntity instance, Operation<Boolean> original) {
-		return (instance.getServerWorld().getGameRules().getBoolean(MarioGamerules.DISABLE_CHARACTER_MOVEMENT_CHECK) && instance.cpa$getICPAData().isEnabled()) || original.call(instance);
+		return (instance.getServerWorld().getGameRules().getBoolean(CPAGamerules.DISABLE_CHARACTER_MOVEMENT_CHECK) && instance.cpa$getICPAData().isEnabled()) || original.call(instance);
 	}
 
 //	@Inject(method = "onPlayerMove", at = @At(value = "INVOKE", target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;Ljava/lang/Object;)V"))
 //	private void uwu(PlayerMoveC2SPacket packet, CallbackInfo ci) {
-//		MarioQuaMario.LOGGER.info("Moved wrongly. Information:\n\tLast tick: ({}, {}, {})\n\tPlayer position: ({}, {}, {})\n\tPacket target: ({}, {}, {})",
+//		CharaPowerAct.LOGGER.info("Moved wrongly. Information:\n\tLast tick: ({}, {}, {})\n\tPlayer position: ({}, {}, {})\n\tPacket target: ({}, {}, {})",
 //				this.lastTickX, this.lastTickY, this.lastTickZ,
 //				player.getX(), player.getY(), player.getZ(),
 //				packet.getX(0), packet.getY(0), packet.getZ(0));
@@ -46,7 +46,7 @@ public class ServerPlayNetworkHandlerMixin implements MarioPositionSettable {
 	}
 
 	@Override
-	public void mqm$setPos(Vec3d pos) {
+	public void cpa$setPos(Vec3d pos) {
 		// for the love of god please
 		this.lastTickX = pos.x;
 		this.lastTickY = pos.y;

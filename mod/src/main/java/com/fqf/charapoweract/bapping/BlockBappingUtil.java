@@ -1,10 +1,10 @@
 package com.fqf.charapoweract.bapping;
 
 import com.fqf.charapoweract.cpadata.CPAPlayerData;
-import com.fqf.charapoweract.packets.MarioBappingPackets;
-import com.fqf.charapoweract.util.MarioClientHelperManager;
-import com.fqf.charapoweract.util.MarioGamerules;
-import com.fqf.charapoweract.util.MarioSFX;
+import com.fqf.charapoweract.packets.BappingPackets;
+import com.fqf.charapoweract.util.CPAClientHelperManager;
+import com.fqf.charapoweract.util.CPAGamerules;
+import com.fqf.charapoweract.util.CPASounds;
 import com.fqf.charapoweract_api.interfaces.BapResult;
 import com.fqf.charapoweract_api.interfaces.Bappable;
 import com.fqf.charapoweract_api.util.CPATags;
@@ -58,7 +58,7 @@ public class BlockBappingUtil {
 	}
 
 	private static BapResult handleBapResultForAdventureMode(BapResult original, BlockState state, PlayerEntity bapper) {
-		if(bapper.getAbilities().allowModifyWorld || !MarioGamerules.restrictAdventureBapping) return original;
+		if(bapper.getAbilities().allowModifyWorld || !CPAGamerules.restrictAdventureBapping) return original;
 
 		return switch(original) {
 			case BREAK -> BapResult.BUMP_EMBRITTLE;
@@ -85,15 +85,16 @@ public class BlockBappingUtil {
 	public static void networkAndStoreBapInfo(World world, BlockPos pos, Direction direction, int strength, @Nullable Entity bapper, BapResult result, boolean fullyNetwork) {
 		AbstractBapInfo info = makeBapInfo(world, pos, direction, strength, bapper, result);
 
-		if(result != BapResult.FAIL && fullyNetwork && bapper instanceof PlayerEntity mario && mario.isMainPlayer()) {
-			MarioClientHelperManager.packetSender.bapBlockC2S(pos, direction, mario.cpa$getCPAData().getAction());
-			MarioClientHelperManager.packetSender.conditionallySaveBapToReplayMod(pos, direction, strength, result, bapper);
+		if(result != BapResult.FAIL && fullyNetwork && bapper instanceof PlayerEntity player && player.isMainPlayer()) {
+			CPAClientHelperManager.packetSender.bapBlockC2S(pos, direction, player.cpa$getCPAData().getAction());
+			CPAClientHelperManager.packetSender.conditionallySaveBapToReplayMod(pos, direction, strength, result, bapper);
 		}
 
 		if(info != null) {
 			storeBapInfo(info, 0);
 			if(!world.isClient) {
-				MarioBappingPackets.bapS2C(
+				Objects.requireNonNull(bapper, "Bapper is null, but there's no way to network a null bapper.");
+				BappingPackets.bapS2C(
 						(ServerWorld) info.WORLD, info.POS,
 						direction, strength, result,
 						bapper, fullyNetwork
@@ -105,13 +106,13 @@ public class BlockBappingUtil {
 	public static @Nullable AbstractBapInfo makeBapInfo(World world, BlockPos pos, Direction direction, int strength, @Nullable Entity bapper, BapResult result) {
 		BlockState blockState = world.getBlockState(pos);
 		((Bappable) blockState.getBlock()).cpa$onBapped(
-				bapper instanceof PlayerEntity mario ? mario.cpa$getCPAData() : null,
+				bapper instanceof PlayerEntity player ? player.cpa$getCPAData() : null,
 				world, pos, blockState, direction, strength,
 				result);
 		switch(result) {
 			case BUMP, BUMP_WITHOUT_POWERING, BUMP_EMBRITTLE, BUMP_EMBRITTLE_WITHOUT_POWERING, BREAK,
 				 BREAK_WITHOUT_POWERING -> {
-				world.playSound(bapper, pos, MarioSFX.BUMP, SoundCategory.BLOCKS, 0.4F, 1.0F);
+				world.playSound(bapper, pos, CPASounds.BUMP, SoundCategory.BLOCKS, 0.4F, 1.0F);
 				BlockSoundGroup group = blockState.getSoundGroup();
 				world.playSound(bapper, pos, group.getPlaceSound(), SoundCategory.BLOCKS, group.pitch * 0.8F, group.volume);
 			}
@@ -185,7 +186,7 @@ public class BlockBappingUtil {
 		}
 
 		if(info.WORLD.isClient())
-			MarioClientHelperManager.helper.clientBap(info);
+			CPAClientHelperManager.helper.clientBap(info);
 
 		WorldBapsInfo worldBaps = getBapsInfoNullable(info.WORLD);
 		if(worldBaps == null) {

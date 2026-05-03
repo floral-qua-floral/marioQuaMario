@@ -1,18 +1,18 @@
 package com.fqf.charapoweract.cpadata;
 
-import com.fqf.charapoweract.MarioQuaMario;
+import com.fqf.charapoweract.CharaPowerAct;
 import com.fqf.charapoweract.registries.actions.parsed.ParsedWallboundAction;
+import com.fqf.charapoweract.registries.power_granting.ParsedPowerForm;
 import com.fqf.charapoweract.util.CharaStatCalculationHelper;
 import com.fqf.charapoweract.util.DirectionBasedWallInfo;
 import com.fqf.charapoweract.util.AdvancedWallInfo;
 import com.fqf.charapoweract_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charapoweract_api.definitions.states.actions.util.WallBodyAlignment;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.PlayermodelAnimation;
-import com.fqf.charapoweract.registries.ParsedMarioState;
+import com.fqf.charapoweract.registries.ParsedCPAState;
 import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
 import com.fqf.charapoweract.registries.actions.ParsedActionHelper;
 import com.fqf.charapoweract.registries.power_granting.ParsedCharacter;
-import com.fqf.charapoweract.registries.power_granting.ParsedPowerUp;
 import com.fqf.charapoweract_api.cpadata.ICPAReadableMotionData;
 import com.fqf.charapoweract_api.util.CharaStat;
 import net.minecraft.entity.Entity;
@@ -31,15 +31,15 @@ import java.util.*;
 
 public abstract class CPAPlayerData implements ICPAReadableMotionData {
 	protected CPAPlayerData() {
-		MarioQuaMario.LOGGER.info("Created new CPA Player Data: {}", this);
+		CharaPowerAct.LOGGER.info("Created new CPA Player Data: {}", this);
 	}
 
-	private static final Identifier FALL_RESISTANCE_ID = MarioQuaMario.makeID("mario_fall_resistance");
+	private static final Identifier FALL_RESISTANCE_ID = CharaPowerAct.makeID("mario_fall_resistance");
 	private static final EntityAttributeModifier FALL_RESISTANCE = new EntityAttributeModifier(
 			FALL_RESISTANCE_ID, 8, EntityAttributeModifier.Operation.ADD_VALUE
 	);
 
-	private static final Identifier ATTACK_SLOWDOWN_ID = MarioQuaMario.makeID("mario_fall_resistance");
+	private static final Identifier ATTACK_SLOWDOWN_ID = CharaPowerAct.makeID("mario_fall_resistance");
 	private static final EntityAttributeModifier ATTACK_SLOWDOWN = new EntityAttributeModifier(
 			ATTACK_SLOWDOWN_ID, -0.5, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
 	);
@@ -93,23 +93,23 @@ public abstract class CPAPlayerData implements ICPAReadableMotionData {
 //		if(action.CATEGORY != ActionCategory.MOUNTED) this.getPlayer().dismountVehicle();
 	}
 
-	private ParsedPowerUp powerUp;
-	public ParsedPowerUp getPowerUp() {
+	private ParsedPowerForm powerUp;
+	public ParsedPowerForm getPowerForm() {
 		return this.powerUp;
 	}
-	@Override public Identifier getPowerUpID() {
-		return this.isEnabled() ? this.getPowerUp().ID : null;
+	@Override public Identifier getPowerFormID() {
+		return this.isEnabled() ? this.getPowerForm().ID : null;
 	}
 
 	@Override
-	public int getPowerUpValue() {
-		return this.isEnabled() ? this.getPowerUp().VALUE : -1;
+	public int getPowerFormValue() {
+		return this.isEnabled() ? this.getPowerForm().VALUE : -1;
 	}
 
-	public boolean setPowerUp(ParsedPowerUp newPowerUp, boolean isReversion, long seed) {
+	public boolean setPowerUp(ParsedPowerForm newPowerUp, boolean isReversion, long seed) {
 		return this.setPowerUpTransitionless(newPowerUp);
 	}
-	public boolean setPowerUpTransitionless(ParsedPowerUp newPowerUp) {
+	public boolean setPowerUpTransitionless(ParsedPowerForm newPowerUp) {
 		this.setupCustomVars(this.powerUp, newPowerUp);
 		this.powerUp = newPowerUp;
 		updateCharacterFormCombo();
@@ -135,7 +135,7 @@ public abstract class CPAPlayerData implements ICPAReadableMotionData {
 		this.updatePassiveUniversalTraits(true);
 	}
 
-	public void setupCustomVars(ParsedMarioState oldThing, ParsedMarioState newThing) {
+	public void setupCustomVars(ParsedCPAState oldThing, ParsedCPAState newThing) {
 		Object newThingVars = newThing.makeCustomThing(this);
 		Class<?> newThingVarsClass = newThingVars == null ? null : newThingVars.getClass();
 		Class<?> oldThingVarsClass = oldThing == null ? null : oldThing.getLastCustomVarsClass();
@@ -149,7 +149,7 @@ public abstract class CPAPlayerData implements ICPAReadableMotionData {
 	private final Set<String> POWERS = new HashSet<>();
 	public void updateCharacterFormCombo() {
 		this.POWERS.clear();
-		this.POWERS.addAll(this.getPowerUp().POWERS);
+		this.POWERS.addAll(this.getPowerForm().POWERS);
 		this.POWERS.addAll(this.getCharacter().POWERS);
 		this.getPlayer().calculateDimensions();
 	}
@@ -157,7 +157,7 @@ public abstract class CPAPlayerData implements ICPAReadableMotionData {
 		return this.isEnabled() && this.POWERS.contains(power);
 	}
 
-	public void setupVariablesBeforeInitialApply(ParsedCharacter character, ParsedPowerUp powerUp) {
+	public void setupVariablesBeforeInitialApply(ParsedCharacter character, ParsedPowerForm powerUp) {
 		this.character = character;
 		this.powerUp = powerUp;
 		this.action = character.getInitialAction(this);
@@ -168,7 +168,7 @@ public abstract class CPAPlayerData implements ICPAReadableMotionData {
 
 	public void tick() {
 		this.tickAnimation = true;
-		this.onMarioLookAround();
+		this.onLookAround();
 	}
 
 	@Override public double getStat(CharaStat stat) {
@@ -176,13 +176,13 @@ public abstract class CPAPlayerData implements ICPAReadableMotionData {
 	}
 
 	@Override public float getHorizontalScale() {
-		return this.isEnabled() ? this.getPowerUp().WIDTH_FACTOR * this.getCharacter().WIDTH_FACTOR : 1;
+		return this.isEnabled() ? this.getPowerForm().WIDTH_FACTOR * this.getCharacter().WIDTH_FACTOR : 1;
 	}
 	@Override public float getVerticalScale() {
-		return this.isEnabled() ? this.getPowerUp().HEIGHT_FACTOR * this.getCharacter().HEIGHT_FACTOR : 1;
+		return this.isEnabled() ? this.getPowerForm().HEIGHT_FACTOR * this.getCharacter().HEIGHT_FACTOR : 1;
 	}
 	@Override public float getEyeHeightScale() {
-		return this.isEnabled() ? this.getPowerUp().HEIGHT_FACTOR * this.getCharacter().EYE_HEIGHT_FACTOR : 1;
+		return this.isEnabled() ? this.getPowerForm().HEIGHT_FACTOR * this.getCharacter().EYE_HEIGHT_FACTOR : 1;
 	}
 
 	@Override public int getBapStrength(Direction direction) {
@@ -196,7 +196,7 @@ public abstract class CPAPlayerData implements ICPAReadableMotionData {
 			case NORTH, SOUTH, WEST, EAST -> action.BAPPING_RULE.wallBumpStrength();
 		};
 		if(actionBapStrength <= 1) return Math.max(0, actionBapStrength);
-		return Math.max(1, actionBapStrength + this.getCharacter().BUMP_STRENGTH_MODIFIER + this.getPowerUp().BUMP_STRENGTH_MODIFIER);
+		return Math.max(1, actionBapStrength + this.getCharacter().BUMP_STRENGTH_MODIFIER + this.getPowerForm().BUMP_STRENGTH_MODIFIER);
 	}
 
 	private final Map<Class<?>, Object> customVars = new HashMap<>();
@@ -205,7 +205,7 @@ public abstract class CPAPlayerData implements ICPAReadableMotionData {
 		return clazz.cast(customData);
 	}
 
-	public boolean doMarioTravel() {
+	public boolean doCustomTravel() {
 		return this.isEnabled() && !this.getPlayer().getAbilities().flying && !this.getPlayer().isFallFlying() && !this.getPlayer().isUsingRiptide();
 	}
 
@@ -303,10 +303,10 @@ public abstract class CPAPlayerData implements ICPAReadableMotionData {
 		).getComponentAlongAxis(direction.getAxis()));
 	}
 
-	public void onMarioLookAround() {
+	public void onLookAround() {
 		if(this.getActionCategory() != ActionCategory.WALLBOUND) return;
 
-		PlayerEntity mario = this.getPlayer();
+		PlayerEntity player = this.getPlayer();
 		ParsedWallboundAction wallAction = (ParsedWallboundAction) this.getAction();
 
 		if(wallAction.ALIGNMENT == WallBodyAlignment.ANY) return;
@@ -320,15 +320,15 @@ public abstract class CPAPlayerData implements ICPAReadableMotionData {
 			default -> throw new IllegalStateException("Unexpected value: " + wallAction.ALIGNMENT);
 		};
 
-		mario.setBodyYaw(bodyYaw);
+		player.setBodyYaw(bodyYaw);
 
 		if(wallAction.HEAD_RANGE >= 360) return;
 
-		float headDifference = MathHelper.wrapDegrees(mario.getYaw() - bodyYaw);
+		float headDifference = MathHelper.wrapDegrees(player.getYaw() - bodyYaw);
 		float clampedHeadYawDifference = MathHelper.clamp(headDifference, -wallAction.HEAD_RANGE, wallAction.HEAD_RANGE);
-		mario.prevYaw += clampedHeadYawDifference - headDifference;
-		mario.setYaw(mario.getYaw() + clampedHeadYawDifference - headDifference);
+		player.prevYaw += clampedHeadYawDifference - headDifference;
+		player.setYaw(player.getYaw() + clampedHeadYawDifference - headDifference);
 
-		mario.setHeadYaw(mario.getYaw());
+		player.setHeadYaw(player.getYaw());
 	}
 }

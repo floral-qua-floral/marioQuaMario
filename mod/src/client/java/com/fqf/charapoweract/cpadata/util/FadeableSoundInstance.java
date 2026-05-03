@@ -11,7 +11,7 @@ public class FadeableSoundInstance extends PositionedSoundInstance implements Ti
 	private boolean isFading = false;
 
 	public FadeableSoundInstance(CPAPlayerData mario) {
-		this(mario.getCharacter().JUMP_SOUND, mario.getPlayer(), 1F, mario.getPowerUp().JUMP_PITCH);
+		this(mario.getCharacter().JUMP_SOUND, mario.getPlayer(), 1F, mario.getPowerForm().JUMP_PITCH);
 	}
 	public FadeableSoundInstance(SoundEvent sound, PlayerEntity mario, float volume, float pitch) {
 		super(sound, SoundCategory.PLAYERS, volume, pitch, mario.getRandom(), mario.getX(), mario.getY(), mario.getZ());

@@ -17,13 +17,13 @@ import java.util.Objects;
 public class ParsedCharacter extends ParsedPowerGrantingState {
 	private final CharacterDefinition CHARACTER_DEFINITION;
 	public final AbstractParsedAction INITIAL_ACTION;
-	public final ParsedPowerUp INITIAL_POWER_UP;
+	public final ParsedPowerForm INITIAL_POWER_UP;
 	public final SoundEvent JUMP_SOUND;
 	public final String VOICE_NAME;
 
 	public final float EYE_HEIGHT_FACTOR;
 
-	public final Map<ParsedPowerUp, ModelFile> MODELS;
+	public final Map<ParsedPowerForm, ModelFile> MODELS;
 
 	public ParsedCharacter(CharacterDefinition definition) {
 		super(definition);

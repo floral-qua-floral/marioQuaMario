@@ -1,27 +1,27 @@
 package com.fqf.charapoweract.registries.power_granting;
 
-import com.fqf.charapoweract_api.definitions.states.PowerUpDefinition;
+import com.fqf.charapoweract_api.definitions.states.PowerFormDefinition;
 import net.minecraft.util.Identifier;
 
-public class PowerHeartHelperImpl implements PowerUpDefinition.PowerHeartHelper {
+public class PowerHeartHelperImpl implements PowerFormDefinition.PowerHeartHelper {
 	private final Identifier ID;
 	public PowerHeartHelperImpl(Identifier powerUpID) {
 		this.ID = powerUpID;
 	}
 
 	@Override
-	public PowerUpDefinition.PowerHeart auto() {
+	public PowerFormDefinition.PowerHeart auto() {
 		return this.standard(this.ID.getNamespace(), this.ID.getPath());
 	}
 
 	@Override
-	public PowerUpDefinition.PowerHeart standard(String namespace, String folder) {
+	public PowerFormDefinition.PowerHeart standard(String namespace, String folder) {
 		return this.fromRoot(Identifier.of(namespace, "hud/power_hearts/" + folder));
 	}
 
 	@Override
-	public PowerUpDefinition.PowerHeart fromRoot(Identifier root) {
-		return new PowerUpDefinition.PowerHeart(
+	public PowerFormDefinition.PowerHeart fromRoot(Identifier root) {
+		return new PowerFormDefinition.PowerHeart(
 				Identifier.of(root.getNamespace(), root.getPath() + "/full"),
 				Identifier.of(root.getNamespace(), root.getPath() + "/full_blinking"),
 

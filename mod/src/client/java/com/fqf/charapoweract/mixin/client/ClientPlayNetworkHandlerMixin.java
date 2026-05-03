@@ -16,9 +16,9 @@ import org.spongepowered.asm.mixin.injection.At;
 public class ClientPlayNetworkHandlerMixin {
 	@WrapOperation(method = "onEntityPassengersSet", at = @At(value = "INVOKE", target = "Lnet/minecraft/text/Text;translatable(Ljava/lang/String;[Ljava/lang/Object;)Lnet/minecraft/text/MutableText;"))
 	private MutableText adjustDismountHint(String key, Object[] args, Operation<MutableText> original) {
-		ClientPlayerEntity mario = MinecraftClient.getInstance().player;
-		if(mario != null) {
-			CPAMainClientData data = mario.cpa$getCPAData();
+		ClientPlayerEntity mainPlayer = MinecraftClient.getInstance().player;
+		if(mainPlayer != null) {
+			CPAMainClientData data = mainPlayer.cpa$getCPAData();
 			if(data.isEnabled() && data.getActionCategory() == ActionCategory.MOUNTED) {
 				MutableText actionDismountHint = ((ParsedMountedAction) data.getAction()).getDismountHint();
 				if(actionDismountHint != null) return actionDismountHint;

@@ -1,6 +1,6 @@
 package com.fqf.charapoweract.compat.required;
 
-import com.fqf.charapoweract.MarioQuaMario;
+import com.fqf.charapoweract.CharaPowerAct;
 import com.tom.cpm.api.ICPMPlugin;
 import com.tom.cpm.api.IClientAPI;
 import com.tom.cpm.api.ICommonAPI;
@@ -8,12 +8,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class MarioCPMCompat implements ICPMPlugin {
+public class CPMCompat implements ICPMPlugin {
 	private static IClientAPI clientAPI;
 	private static ICommonAPI commonAPI;
 	private static boolean instantiated = false;
 
-	public MarioCPMCompat() {
+	public CPMCompat() {
 		instantiated = true;
 	}
 	public static boolean isRegistered() {
@@ -28,7 +28,7 @@ public class MarioCPMCompat implements ICPMPlugin {
 	}
 
 	@Override public String getOwnerModId() {
-		return MarioQuaMario.MOD_ID;
+		return CharaPowerAct.MOD_ID;
 	}
 	@Override public void initClient(IClientAPI iClientAPI) {
 		clientAPI = iClientAPI;

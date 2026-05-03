@@ -1,10 +1,10 @@
 package com.fqf.charapoweract;
 
-import com.fqf.charapoweract.packets.MarioPackets;
+import com.fqf.charapoweract.packets.CPAPackets;
 import com.fqf.charapoweract.registries.RegistryManager;
+import com.fqf.charapoweract.util.CPAGamerules;
 import com.fqf.charapoweract.util.HelperGetterImplementation;
-import com.fqf.charapoweract.util.MarioEventListeners;
-import com.fqf.charapoweract.util.MarioGamerules;
+import com.fqf.charapoweract.util.CPAEventListeners;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
@@ -12,30 +12,30 @@ import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MarioQuaMario implements ModInitializer {
+public class CharaPowerAct implements ModInitializer {
 	public static final String MOD_ID = "mario_qua_mario";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-	public static final MQMConfig CONFIG;
+	public static final CharaPowerActConfig CONFIG;
 	static {
-		AutoConfig.register(MQMConfig.class, GsonConfigSerializer::new);
-		CONFIG = AutoConfig.getConfigHolder(MQMConfig.class).getConfig();
+		AutoConfig.register(CharaPowerActConfig.class, GsonConfigSerializer::new);
+		CONFIG = AutoConfig.getConfigHolder(CharaPowerActConfig.class).getConfig();
 	}
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Mario qua Mario initializing...");
+		LOGGER.info("CharaPowerAct initializing...");
 
 		HelperGetterImplementation.staticInitialize(); // Make sure the helpers are ready for action registration
 
 		RegistryManager.registerAll();
 
-		MarioCommand.registerMarioCommand();
+		CharaPowerActCommand.registerMarioCommand();
 
-		MarioPackets.register();
+		CPAPackets.register();
 
-		MarioGamerules.register();
-		MarioEventListeners.register();
+		CPAGamerules.register();
+		CPAEventListeners.register();
 
 	}
 

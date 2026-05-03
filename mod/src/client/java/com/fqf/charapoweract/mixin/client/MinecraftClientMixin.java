@@ -1,8 +1,8 @@
 package com.fqf.charapoweract.mixin.client;
 
 import com.fqf.charapoweract.cpadata.CPAMainClientData;
+import com.fqf.charapoweract.packets.CPAClientPacketHelper;
 import com.fqf.charapoweract_api.definitions.states.AttackInterceptingStateDefinition.MiningHandling;
-import com.fqf.charapoweract.packets.MarioClientPacketHelper;
 import com.fqf.charapoweract.registries.ParsedAttackInterception;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -60,7 +60,7 @@ public abstract class MinecraftClientMixin {
 			if(this.shouldInterceptAttack(data, attackCooldownProgress, weapon, entityTarget, interception))
 				return true;
 
-		for (ParsedAttackInterception interception : data.getPowerUp().INTERCEPTIONS)
+		for (ParsedAttackInterception interception : data.getPowerForm().INTERCEPTIONS)
 			if(this.shouldInterceptAttack(data, attackCooldownProgress, weapon, entityTarget, interception))
 				return true;
 
@@ -95,7 +95,7 @@ public abstract class MinecraftClientMixin {
 				return handling != MiningHandling.MINE;
 		}
 
-		for (ParsedAttackInterception interception : data.getPowerUp().INTERCEPTIONS) {
+		for (ParsedAttackInterception interception : data.getPowerForm().INTERCEPTIONS) {
 			MiningHandling handling = this.shouldInterceptMiningAttack(
 					data, attackCooldownProgress, weapon, (BlockHitResult) this.crosshairTarget, interception);
 			if(handling != null)
@@ -144,7 +144,7 @@ public abstract class MinecraftClientMixin {
 		Entity entityTarget = entityHitResult == null ? null : entityHitResult.getEntity();
 		BlockPos blockTarget = blockHitResult == null ? null : blockHitResult.getBlockPos();
 		interception.execute(data, entityTarget, blockTarget, seed);
-		MarioClientPacketHelper.attackInterceptionC2S(data, interception, entityTarget, blockTarget, seed);
+		CPAClientPacketHelper.attackInterceptionC2S(data, interception, entityTarget, blockTarget, seed);
 	}
 
 	@Unique private @Nullable ParsedAttackInterception heldInterception;

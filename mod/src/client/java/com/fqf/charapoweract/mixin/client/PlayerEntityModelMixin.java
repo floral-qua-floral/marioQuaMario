@@ -40,10 +40,10 @@ public abstract class PlayerEntityModelMixin<T extends LivingEntity> extends Bip
 	}
 
 	@Inject(method = "setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/BipedEntityModel;setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V", shift = At.Shift.AFTER))
-	private void animateMario(T livingEntity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, CallbackInfo ci) {
-		if(livingEntity instanceof AbstractClientPlayerEntity mario && mario.cpa$getCPAData().isEnabled()) {
-			mario.mqm$getAnimationData().setAngles(
-					MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(true), mario,
+	private void animateCPAPlayer(T livingEntity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, CallbackInfo ci) {
+		if(livingEntity instanceof AbstractClientPlayerEntity player && player.cpa$getCPAData().isEnabled()) {
+			player.cpa$getAnimationData().setAngles(
+					MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(true), player,
 					this.head, this.body, this.rightArm, this.leftArm, this.rightLeg, this.leftLeg,
 					this.rightArmPose, this.leftArmPose
 			);

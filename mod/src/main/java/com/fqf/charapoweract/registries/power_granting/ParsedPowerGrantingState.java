@@ -1,8 +1,8 @@
 package com.fqf.charapoweract.registries.power_granting;
 
-import com.fqf.charapoweract.MarioQuaMario;
+import com.fqf.charapoweract.CharaPowerAct;
 import com.fqf.charapoweract_api.definitions.states.StatAlteringStateDefinition;
-import com.fqf.charapoweract.registries.ParsedMarioState;
+import com.fqf.charapoweract.registries.ParsedCPAState;
 import com.fqf.charapoweract_api.util.CharaStat;
 import com.fqf.charapoweract_api.util.StatCategory;
 import net.minecraft.util.Identifier;
@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class ParsedPowerGrantingState extends ParsedMarioState {
+public class ParsedPowerGrantingState extends ParsedCPAState {
 	public final float WIDTH_FACTOR;
 	public final float HEIGHT_FACTOR;
 	public final float ANIMATION_WIDTH_FACTOR;
@@ -27,7 +27,7 @@ public class ParsedPowerGrantingState extends ParsedMarioState {
 
 	public ParsedPowerGrantingState(StatAlteringStateDefinition definition) {
 		super(definition);
-		this.RESOURCE_ID = this.ID.getNamespace().equals("mqm") ? MarioQuaMario.makeResID(this.ID.getPath()) : this.ID;
+		this.RESOURCE_ID = this.ID.getNamespace().equals("mqm") ? CharaPowerAct.makeResID(this.ID.getPath()) : this.ID;
 
 		this.WIDTH_FACTOR = definition.getWidthFactor();
 		this.HEIGHT_FACTOR = definition.getHeightFactor();

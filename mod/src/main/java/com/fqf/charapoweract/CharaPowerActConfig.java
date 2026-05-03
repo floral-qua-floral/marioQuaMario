@@ -5,7 +5,7 @@ import me.shedaniel.autoconfig.annotation.Config;
 
 @SuppressWarnings({"FieldCanBeLocal", "FieldMayBeFinal"})
 @Config(name = "mario_qua_mario")
-public class MQMConfig implements ConfigData {
+public class CharaPowerActConfig implements ConfigData {
 	private int bufferLength = 3;
 	private boolean logAllActionTransitions = false;
 	private boolean logNBTReadWrite = false;

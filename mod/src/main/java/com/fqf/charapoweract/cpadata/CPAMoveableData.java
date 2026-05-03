@@ -1,6 +1,6 @@
 package com.fqf.charapoweract.cpadata;
 
-import com.fqf.charapoweract.util.MarioPositionSettable;
+import com.fqf.charapoweract.util.CPAPositionSettable;
 import com.fqf.charapoweract_api.cpadata.ICPATravelData;
 import com.fqf.charapoweract_api.cpadata.util.CollisionMatcher;
 import com.fqf.charapoweract_api.cpadata.util.RecordedCollision;
@@ -24,8 +24,8 @@ public abstract class CPAMoveableData extends CPAPlayerData implements ICPATrave
 		super();
 	}
 
-	private final MarioVelocities VELOCITIES = new MarioVelocities();
-	private class MarioVelocities {
+	private final CPAVelocities VELOCITIES = new CPAVelocities();
+	private class CPAVelocities {
 		private double forward;
 		private double strafe;
 		private double vertical;
@@ -34,7 +34,7 @@ public abstract class CPAMoveableData extends CPAPlayerData implements ICPATrave
 		private boolean isGenerated;
 		private boolean isDirty;
 
-		private MarioVelocities ensure() {
+		private CPAVelocities ensure() {
 			if(this.isGenerated) return this;
 			this.isGenerated = true;
 
@@ -51,7 +51,7 @@ public abstract class CPAMoveableData extends CPAPlayerData implements ICPATrave
 
 			return this;
 		}
-		private MarioVelocities ensureDirty() {
+		private CPAVelocities ensureDirty() {
 			this.isDirty = true;
 			return this.ensure();
 		}
@@ -117,8 +117,8 @@ public abstract class CPAMoveableData extends CPAPlayerData implements ICPATrave
 
 	@Override
 	public void goTo(Vec3d pos) {
-		if(this.getPlayer() instanceof MarioPositionSettable mainClientMario) mainClientMario.mqm$setPos(pos);
-		else if(this.getPlayer() instanceof ServerPlayerEntity serverMario) ((MarioPositionSettable) serverMario.networkHandler).mqm$setPos(pos);
+		if(this.getPlayer() instanceof CPAPositionSettable mainClientPlayer) mainClientPlayer.cpa$setPos(pos);
+		else if(this.getPlayer() instanceof ServerPlayerEntity serverPlayer) ((CPAPositionSettable) serverPlayer.networkHandler).cpa$setPos(pos);
 		this.getPlayer().setPos(pos.x, pos.y, pos.z);
 	}
 

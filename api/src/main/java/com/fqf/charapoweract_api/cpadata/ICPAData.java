@@ -16,8 +16,8 @@ public interface ICPAData {
 	boolean isEnabled();
 	Identifier getActionID();
 	ActionCategory getActionCategory();
-	Identifier getPowerUpID();
-	int getPowerUpValue();
+	Identifier getPowerFormID();
+	int getPowerFormValue();
 	Identifier getCharacterID();
 
 	boolean hasPower(String power);

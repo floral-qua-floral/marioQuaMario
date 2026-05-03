@@ -20,7 +20,7 @@ public abstract class PlayerStruckByLightningMixin extends PlayerEntity implemen
 //	public void onStruckByLightning(ServerWorld world, LightningEntity lightning) {
 //		ICPAAuthoritativeData data = mqm$getIMarioAuthoritativeData();
 //		if(data.isEnabled()) {
-//			if(!data.getPowerUpID().toString().equals("mqm:mini"))
+//			if(!data.getPowerFormID().toString().equals("mqm:mini"))
 //				data.empowerTo("mqm:mini");
 //		}
 //		else super.onStruckByLightning(world, lightning);

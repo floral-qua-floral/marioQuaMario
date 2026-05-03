@@ -17,7 +17,7 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.fqf.charapoweract.MarioQuaMario"
+			"com.fqf.charapoweract.CharaPowerAct"
 		],
 		"client": [
 			"com.fqf.charapoweract.CharaPowerActClient"
@@ -27,10 +27,10 @@
 		],
 
 		"cpmapi": [
-          "com.fqf.charapoweract.compat.required.MarioCPMCompat"
+			"com.fqf.charapoweract.compat.required.CPMCompat"
 		],
 		"modmenu": [
-			"com.fqf.charapoweract.util.MQMModMenuIntegration"
+			"com.fqf.charapoweract.util.ModMenuIntegration"
 		]
 	},
 	"mixins": [

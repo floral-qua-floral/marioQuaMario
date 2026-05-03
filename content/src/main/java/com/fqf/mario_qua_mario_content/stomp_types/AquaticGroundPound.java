@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.fqf.charapoweract_api.util.StatCategory.DAMAGE;
-import static com.fqf.charapoweract_api.util.StatCategory.STOMP;
+import static com.fqf.charapoweract_api.util.StatCategory.COLLISION_ATTACK;
 
 public class AquaticGroundPound extends JumpStomp implements CollisionAttackTypeDefinition {
 	public static final Identifier ID = MarioQuaMarioContent.makeID("aquatic_ground_pound");
@@ -44,7 +44,7 @@ public class AquaticGroundPound extends JumpStomp implements CollisionAttackType
 		return Submerged.ID;
 	}
 
-	public static final CharaStat BASE_DAMAGE = new CharaStat(4.5, STOMP, DAMAGE);
+	public static final CharaStat BASE_DAMAGE = new CharaStat(4.5, COLLISION_ATTACK, DAMAGE);
 
 	public static final Identifier DEPTH_CHARGE_ID = MarioQuaMarioContent.makeResID("depth_charge");
 

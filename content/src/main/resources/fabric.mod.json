@@ -2,8 +2,8 @@
 	"schemaVersion": 1,
 	"id": "mario_qua_mario_content",
 	"version": "${version}",
-	"name": "Mario qua Mario Content",
-	"description": "Mod that uses the MQM character-power-action framework to add Mario as a playable character.",
+	"name": "Mario qua Mario",
+	"description": "Mod that uses the Character Power Action framework to add Mario as a playable character.",
 	"authors": [
 		"Floral qua Floral"
 	],
@@ -16,13 +16,13 @@
 	"icon": "assets/mario_qua_mario_content/icon.png",
 	"environment": "*",
 	"entrypoints": {
-		"mqm-stomp-types": [
+		"cpa-stomp-types": [
 			"com.fqf.mario_qua_mario_content.stomp_types.JumpStomp",
 			"com.fqf.mario_qua_mario_content.stomp_types.GroundPound",
 			"com.fqf.mario_qua_mario_content.stomp_types.AquaticGroundPound"
 		],
 
-		"mqm-generic-actions": [
+		"cpa-generic-actions": [
 			"com.fqf.mario_qua_mario_content.actions.generic.ClimbPole",
 
 			"com.fqf.mario_qua_mario_content.actions.generic.Debug",
@@ -33,7 +33,7 @@
 			"com.fqf.mario_qua_mario_content.actions.generic.DebugSideTurn",
 			"com.fqf.mario_qua_mario_content.actions.generic.DebugVanillaTravel"
 		],
-		"mqm-grounded-actions": [
+		"cpa-grounded-actions": [
 			"com.fqf.mario_qua_mario_content.actions.grounded.SubWalk",
 			"com.fqf.mario_qua_mario_content.actions.grounded.WalkRun",
 			"com.fqf.mario_qua_mario_content.actions.grounded.Skid",
@@ -48,7 +48,7 @@
 			"com.fqf.mario_qua_mario_content.actions.power.RetroIdle",
 			"com.fqf.mario_qua_mario_content.actions.power.TailSpinGround"
 		],
-		"mqm-airborne-actions": [
+		"cpa-airborne-actions": [
 			"com.fqf.mario_qua_mario_content.actions.airborne.Fall",
 			"com.fqf.mario_qua_mario_content.actions.airborne.SpecialFall",
 			"com.fqf.mario_qua_mario_content.actions.airborne.StompBounce",
@@ -74,7 +74,7 @@
 			"com.fqf.mario_qua_mario_content.actions.power.TailSpinFall",
 			"com.fqf.mario_qua_mario_content.actions.power.TailSpinJump"
 		],
-		"mqm-aquatic-actions": [
+		"cpa-aquatic-actions": [
 			"com.fqf.mario_qua_mario_content.actions.aquatic.Submerged",
 			"com.fqf.mario_qua_mario_content.actions.aquatic.Swim",
 			"com.fqf.mario_qua_mario_content.actions.aquatic.UnderwaterWalk",
@@ -83,30 +83,30 @@
 			"com.fqf.mario_qua_mario_content.actions.aquatic.AquaticPoundDrop",
 			"com.fqf.mario_qua_mario_content.actions.aquatic.AquaticPoundLand"
 		],
-		"mqm-wallbound-actions": [
+		"cpa-wallbound-actions": [
 			"com.fqf.mario_qua_mario_content.actions.wallbound.ClimbIntangibleDirectional",
 			"com.fqf.mario_qua_mario_content.actions.wallbound.ClimbIntangibleSideHang",
 			"com.fqf.mario_qua_mario_content.actions.wallbound.ClimbWall",
 			"com.fqf.mario_qua_mario_content.actions.wallbound.ClimbWallSideHang",
 			"com.fqf.mario_qua_mario_content.actions.wallbound.WallSlide"
 		],
-		"mqm-mounted-actions": [
+		"cpa-mounted-actions": [
 			"com.fqf.mario_qua_mario_content.actions.mounted.Mounted"
 		],
 
-		"mqm-power-ups": [
+		"cpa-power-forms": [
 			"com.fqf.mario_qua_mario_content.powerups.Small",
 			"com.fqf.mario_qua_mario_content.powerups.Super",
 			"com.fqf.mario_qua_mario_content.powerups.Fire",
 			"com.fqf.mario_qua_mario_content.powerups.Raccoon"
 		],
 
-		"mqm-characters": [
+		"cpa-characters": [
 			"com.fqf.mario_qua_mario_content.characters.Mario",
 			"com.fqf.mario_qua_mario_content.characters.Toadette"
 		],
 
-		"mqm-voicelines": [
+		"cpa-voicelines": [
 			"com.fqf.mario_qua_mario_content.Voicelines"
 		],
 

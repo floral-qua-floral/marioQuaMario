@@ -1,7 +1,7 @@
 package com.fqf.charapoweract.registries.actions.parsed;
 
-import com.fqf.charapoweract.util.MarioClientHelperManager;
-import com.fqf.charapoweract.MarioQuaMario;
+import com.fqf.charapoweract.CharaPowerAct;
+import com.fqf.charapoweract.util.CPAClientHelperManager;
 import com.fqf.charapoweract_api.definitions.states.actions.MountedActionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionDefinition;
@@ -22,7 +22,7 @@ public class ParsedMountedAction extends AbstractParsedAction {
 	public ParsedMountedAction(MountedActionDefinition definition, HashMap<Identifier, Set<TransitionInjectionDefinition>> allInjections) {
 		super(definition, allInjections);
 		this.MOUNTED_DEFINITION = definition;
-		MarioQuaMario.LOGGER.info("\nClient Helper Manager: {}\nClient Packet Sender: {}", MarioClientHelperManager.helper, MarioClientHelperManager.packetSender);
+		CharaPowerAct.LOGGER.info("\nClient Helper Manager: {}\nClient Packet Sender: {}", CPAClientHelperManager.helper, CPAClientHelperManager.packetSender);
 	}
 
 	public MutableText getDismountHint() {

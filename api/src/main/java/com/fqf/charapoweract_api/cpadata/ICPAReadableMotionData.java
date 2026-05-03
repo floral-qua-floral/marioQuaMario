@@ -14,26 +14,26 @@ public interface ICPAReadableMotionData extends ICPAData {
 
 	double getDeltaYaw();
 
-	MarioInputs getInputs();
+	Inputs getInputs();
 
 	RecordedCollisionSet getRecordedCollisions();
 
-	abstract class MarioInputs {
-		public final MarioButton JUMP;
-		public final MarioButton DUCK;
-		public final MarioButton SPIN;
+	abstract class Inputs {
+		public final ButtonInput JUMP;
+		public final ButtonInput DUCK;
+		public final ButtonInput SPIN;
 
 		public abstract double getForwardInput();
 		public abstract double getStrafeInput();
 
 		public abstract boolean isReal();
 
-		public interface MarioButton {
+		public interface ButtonInput {
 			boolean isPressed();
 			boolean isHeld();
 		}
 
-		protected MarioInputs(MarioButton jump, MarioButton duck, MarioButton spin) {
+		protected Inputs(ButtonInput jump, ButtonInput duck, ButtonInput spin) {
 			JUMP = jump;
 			DUCK = duck;
 			SPIN = spin;
