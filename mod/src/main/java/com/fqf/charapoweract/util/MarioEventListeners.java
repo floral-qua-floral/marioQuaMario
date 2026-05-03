@@ -2,7 +2,7 @@ package com.fqf.charapoweract.util;
 
 import com.fqf.charapoweract.MarioQuaMario;
 import com.fqf.charapoweract.bapping.BlockBappingUtil;
-import com.fqf.charapoweract_api.mariodata.IMarioAuthoritativeData;
+import com.fqf.charapoweract_api.cpadata.ICPAAuthoritativeData;
 import com.fqf.charapoweract.mariodata.MarioServerPlayerData;
 import com.fqf.charapoweract.packets.MarioPackets;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
@@ -46,7 +46,7 @@ public class MarioEventListeners {
 				return false;
 			}
 
-			return mario.mqm$getMarioData().executeReversion() != IMarioAuthoritativeData.ReversionResult.SUCCESS;
+			return mario.mqm$getMarioData().executeReversion() != ICPAAuthoritativeData.ReversionResult.SUCCESS;
 		});
 
 //		EntityTrackingEvents.START_TRACKING.register((trackedEntity, player) -> {

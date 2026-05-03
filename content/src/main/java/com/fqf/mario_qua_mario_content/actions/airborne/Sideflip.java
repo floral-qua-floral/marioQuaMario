@@ -6,9 +6,9 @@ import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimation;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
-import com.fqf.charapoweract_api.mariodata.IMarioAuthoritativeData;
-import com.fqf.charapoweract_api.mariodata.IMarioClientData;
-import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.cpadata.ICPAAuthoritativeData;
+import com.fqf.charapoweract_api.cpadata.ICPAClientData;
+import com.fqf.charapoweract_api.cpadata.ICPATravelData;
 import com.fqf.charapoweract_api.util.CharaStat;
 import com.fqf.charapoweract_api.util.Easing;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
@@ -116,13 +116,13 @@ public class Sideflip extends Backflip implements AirborneActionDefinition {
 	public static CharaStat SIDEFLIP_BACKWARDS_SPEED = new CharaStat(-0.375, DRIFTING, BACKWARD, SPEED);
 	public static CharaStat SIDEFLIP_THRESHOLD = new CharaStat(0.2, WALKING, FRICTION, THRESHOLD);
 
-	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
+	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
 
 	}
-	@Override public void serverTick(IMarioAuthoritativeData data) {
+	@Override public void serverTick(ICPAAuthoritativeData data) {
 
 	}
-	@Override public void travelHook(IMarioTravelData data, AirborneActionHelper helper) {
+	@Override public void travelHook(ICPATravelData data, AirborneActionHelper helper) {
 		helper.applyComplexGravity(data, Fall.FALL_ACCEL, JUMP_GRAVITY, Fall.FALL_SPEED);
 		if(data.getYVel() < 0.1) Fall.drift(data, helper);
 	}

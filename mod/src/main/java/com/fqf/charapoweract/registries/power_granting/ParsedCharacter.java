@@ -2,7 +2,7 @@ package com.fqf.charapoweract.registries.power_granting;
 
 import com.fqf.charapoweract.mariodata.MarioPlayerData;
 import com.fqf.charapoweract_api.definitions.states.CharacterDefinition;
-import com.fqf.charapoweract_api.mariodata.IMarioAuthoritativeData;
+import com.fqf.charapoweract_api.cpadata.ICPAAuthoritativeData;
 import com.fqf.charapoweract.registries.RegistryManager;
 import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
 import com.tom.cpm.shared.io.ModelFile;
@@ -46,13 +46,13 @@ public class ParsedCharacter extends ParsedPowerGrantingState {
 		return RegistryManager.ACTIONS.get(this.CHARACTER_DEFINITION.getMountedAction(mount));
 	}
 
-	public float modifyIncomingDamage(IMarioAuthoritativeData data, DamageSource source, float amount) {
+	public float modifyIncomingDamage(ICPAAuthoritativeData data, DamageSource source, float amount) {
 		return this.CHARACTER_DEFINITION.modifyIncomingDamage(data, source, amount);
 	}
 
 	public AbstractParsedAction getInitialAction(MarioPlayerData data) {
-		if(data.getMario().getVehicle() != null)
-			return this.getMountedAction(data.getMario().getVehicle());
+		if(data.getPlayer().getVehicle() != null)
+			return this.getMountedAction(data.getPlayer().getVehicle());
 		return this.INITIAL_ACTION;
 	}
 }

@@ -13,7 +13,7 @@ import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
 import com.fqf.charapoweract.registries.actions.ParsedActionHelper;
 import com.fqf.charapoweract.registries.power_granting.ParsedCharacter;
 import com.fqf.charapoweract.registries.power_granting.ParsedPowerUp;
-import com.fqf.charapoweract_api.mariodata.IMarioReadableMotionData;
+import com.fqf.charapoweract_api.cpadata.ICPAReadableMotionData;
 import com.fqf.charapoweract_api.util.CharaStat;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public abstract class MarioPlayerData implements IMarioReadableMotionData {
+public abstract class MarioPlayerData implements ICPAReadableMotionData {
 	protected MarioPlayerData() {
 		MarioQuaMario.LOGGER.info("Created new MarioData: {}", this);
 //		this.disable();
@@ -64,8 +64,8 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 		this.updatePassiveUniversalTraits(false);
 	}
 	public void updatePassiveUniversalTraits(boolean enabled) {
-		EntityAttributeInstance safeFallAttributeInstance = this.getMario().getAttributeInstance(EntityAttributes.GENERIC_SAFE_FALL_DISTANCE);
-		EntityAttributeInstance attackSpeedAttributeInstance = this.getMario().getAttributeInstance(EntityAttributes.GENERIC_ATTACK_SPEED);
+		EntityAttributeInstance safeFallAttributeInstance = this.getPlayer().getAttributeInstance(EntityAttributes.GENERIC_SAFE_FALL_DISTANCE);
+		EntityAttributeInstance attackSpeedAttributeInstance = this.getPlayer().getAttributeInstance(EntityAttributes.GENERIC_ATTACK_SPEED);
 		assert safeFallAttributeInstance != null && attackSpeedAttributeInstance != null;
 		safeFallAttributeInstance.removeModifier(FALL_RESISTANCE_ID);
 		attackSpeedAttributeInstance.removeModifier(ATTACK_SLOWDOWN_ID);
@@ -100,8 +100,8 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 		this.prevAnimation = this.action == null ? null : this.action.ANIMATION;
 		this.setupCustomVars(this.action, action);
 		this.action = action;
-		this.getMario().calculateDimensions();
-//		if(action.CATEGORY != ActionCategory.MOUNTED) this.getMario().dismountVehicle();
+		this.getPlayer().calculateDimensions();
+//		if(action.CATEGORY != ActionCategory.MOUNTED) this.getPlayer().dismountVehicle();
 	}
 
 	private ParsedPowerUp powerUp;
@@ -162,7 +162,7 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 		this.POWERS.clear();
 		this.POWERS.addAll(this.getPowerUp().POWERS);
 		this.POWERS.addAll(this.getCharacter().POWERS);
-		this.getMario().calculateDimensions();
+		this.getPlayer().calculateDimensions();
 	}
 	@Override public boolean hasPower(String power) {
 		return this.isEnabled() && this.POWERS.contains(power);
@@ -211,24 +211,24 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	}
 
 	private final Map<Class<?>, Object> customVars = new HashMap<>();
-	@Override public <T> T getVars(Class<T> clazz) {
+	@Override public <T> T retrieveStateData(Class<T> clazz) {
 		Object customData = this.customVars.get(clazz);
 		return clazz.cast(customData);
 	}
 
 	public boolean doMarioTravel() {
-		return this.isEnabled() && !this.getMario().getAbilities().flying && !this.getMario().isFallFlying() && !this.getMario().isUsingRiptide();
+		return this.isEnabled() && !this.getPlayer().getAbilities().flying && !this.getPlayer().isFallFlying() && !this.getPlayer().isUsingRiptide();
 	}
 
 	public Vec3d getFluidPushingVel() {
-		Box box = this.getMario().getBoundingBox().contract(0.001);
+		Box box = this.getPlayer().getBoundingBox().contract(0.001);
 		int boxMinX = MathHelper.floor(box.minX); int boxMaxX = MathHelper.ceil(box.maxX);
 		int boxMinY = MathHelper.floor(box.minY); int boxMaxY = MathHelper.ceil(box.maxY);
 		int boxMinZ = MathHelper.floor(box.minZ); int boxMaxZ = MathHelper.ceil(box.maxZ);
 
 		BlockPos.Mutable mutable = new BlockPos.Mutable();
 		double velX = 0; double velY = 0; double velZ = 0; int fluidsCount = 0;
-		World world = this.getMario().getWorld();
+		World world = this.getPlayer().getWorld();
 		for (int checkX = boxMinX; checkX < boxMaxX; checkX++) {
 			for (int checkY = boxMinY; checkY < boxMaxY; checkY++) {
 				for (int checkZ = boxMinZ; checkZ < boxMaxZ; checkZ++) {
@@ -283,17 +283,17 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 
 	@Override
 	public double getImmersionLevel() {
-		return Math.max(this.getMario().getFluidHeight(FluidTags.WATER), this.getMario().getFluidHeight(FluidTags.LAVA));
+		return Math.max(this.getPlayer().getFluidHeight(FluidTags.WATER), this.getPlayer().getFluidHeight(FluidTags.LAVA));
 	}
 
 	@Override
 	public double getImmersionPercent() {
-		return this.getImmersionLevel() / this.getMario().getHeight();
+		return this.getImmersionLevel() / this.getPlayer().getHeight();
 	}
 
 	@Override
 	public boolean isOnGround() {
-		return this.getMario().isOnGround();
+		return this.getPlayer().isOnGround();
 	}
 
 	@Override
@@ -306,10 +306,10 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 		// This isn't very optimized(?) but I don't care that much TBH
 		Direction.AxisDirection axisDir = direction.getDirection();
 		return Math.abs(Entity.adjustMovementForCollisions(
-				this.getMario(),
+				this.getPlayer(),
 				Vec3d.ZERO.withAxis(direction.getAxis(), maxDistance * axisDir.offset()),
-				this.getMario().getBoundingBox(),
-				this.getMario().getWorld(),
+				this.getPlayer().getBoundingBox(),
+				this.getPlayer().getWorld(),
 				List.of()
 		).getComponentAlongAxis(direction.getAxis()));
 	}
@@ -317,7 +317,7 @@ public abstract class MarioPlayerData implements IMarioReadableMotionData {
 	public void onMarioLookAround() {
 		if(this.getActionCategory() != ActionCategory.WALLBOUND) return;
 
-		PlayerEntity mario = this.getMario();
+		PlayerEntity mario = this.getPlayer();
 		ParsedWallboundAction wallAction = (ParsedWallboundAction) this.getAction();
 
 		if(wallAction.ALIGNMENT == WallBodyAlignment.ANY) return;

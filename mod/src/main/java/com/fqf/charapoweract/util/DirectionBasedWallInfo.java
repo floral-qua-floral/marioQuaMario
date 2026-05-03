@@ -60,7 +60,7 @@ public abstract class DirectionBasedWallInfo implements AdvancedWallInfo {
 
 	@Override
 	public float getYawDeviation() {
-		return UniversalActionDefinitionHelper.INSTANCE.getAngleDifference(this.OWNER.getMario().getYaw(), this.getWallYaw());
+		return UniversalActionDefinitionHelper.INSTANCE.getAngleDifference(this.OWNER.getPlayer().getYaw(), this.getWallYaw());
 	}
 
 	@Override
@@ -75,8 +75,8 @@ public abstract class DirectionBasedWallInfo implements AdvancedWallInfo {
 	@Override
 	public Set<BlockPos> getWallBlocks(double maxDistance) {
 		return BlockCollisionFinder.getCollidedBlockPositions(
-				this.OWNER.getMario(),
-				this.OWNER.getMario().getBoundingBox().offset(this.legalityCheckOffset),
+				this.OWNER.getPlayer(),
+				this.OWNER.getPlayer().getBoundingBox().offset(this.legalityCheckOffset),
 				maxDistance * this.wallDirection.getDirection().offset(),
 				this.wallDirection.getAxis()
 		).left();

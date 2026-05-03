@@ -9,10 +9,9 @@ import com.fqf.charapoweract_api.definitions.states.actions.util.animation.Anima
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.LimbAnimation;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.ProgressHandler;
-import com.fqf.charapoweract_api.mariodata.IMarioAuthoritativeData;
-import com.fqf.charapoweract_api.mariodata.IMarioClientData;
-import com.fqf.charapoweract_api.mariodata.IMarioData;
-import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.cpadata.*;
+import com.fqf.charapoweract_api.cpadata.ICPAClientData;
+import com.fqf.charapoweract_api.cpadata.ICPATravelData;
 import com.fqf.charapoweract_api.util.CharaStat;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
@@ -56,7 +55,7 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 				false, (data, arrangement, progress) -> {
 					float value;
 					if(useProgress) value = progress;
-					else value = data.getVars(ActionTimerVars.class).actionTimer * 1.1F;
+					else value = data.retrieveStateData(ActionTimerVars.class).actionTimer * 1.1F;
 					arrangement.setAngles(
 							MathHelper.sin(value * 1.2F) * 38.3F,
 							MathHelper.sin(value * 0.6F) * 52,
@@ -81,22 +80,22 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 	public static final CharaStat FALL_ACCEL = new CharaStat(-0.013775, NORMAL_GRAVITY, POWER_UP);
 	public static final CharaStat FALL_SPEED = new CharaStat(-0.445, TERMINAL_VELOCITY, POWER_UP);
 
-	public static void tailWaggleTick(IMarioClientData data) {
-		if(data.getVars(ActionTimerVars.class).actionTimer++ % 4 == 0)
-			data.playSound(MarioContentSFX.TAIL_FLY, 1F, 0.2F, data.getMario().getRandom().nextLong());
+	public static void tailWaggleTick(ICPAClientData data) {
+		if(data.retrieveStateData(ActionTimerVars.class).actionTimer++ % 4 == 0)
+			data.playSound(MarioContentSFX.TAIL_FLY, 1F, 0.2F, data.getPlayer().getRandom().nextLong());
 	}
 
-	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
+	@Override public @Nullable Object provideStateData(ICPAData data) {
 		return new ActionTimerVars();
 	}
-	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
+	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
 		tailWaggleTick(data);
 	}
-	@Override public void serverTick(IMarioAuthoritativeData data) {}
-	@Override public void travelHook(IMarioTravelData data, AirborneActionHelper helper) {
+	@Override public void serverTick(ICPAAuthoritativeData data) {}
+	@Override public void travelHook(ICPATravelData data, AirborneActionHelper helper) {
 		helper.applyComplexGravity(data, FALL_ACCEL, null, FALL_SPEED);
 		drift(data, helper);
-		if(data.getYVel() > FALL_SPEED.get(data)) data.getMario().fallDistance = 0;
+		if(data.getYVel() > FALL_SPEED.get(data)) data.getPlayer().fallDistance = 0;
 	}
 
 	protected static final TransitionDefinition END_STALLING = new TransitionDefinition(
@@ -126,14 +125,14 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 			TailStall.ID,
 			data ->
 					data.hasPower(Powers.TAIL_STALL)
-					&& !data.getMario().isInSneakingPose()
+					&& !data.getPlayer().isInSneakingPose()
 					&& (data.isServer() || (
 							data.getYVel() < STALL_THRESHOLD.get(data)
 							&& data.getInputs().JUMP.isHeld()
 					)),
 			EvaluatorEnvironment.CLIENT_CHECKED,
 			data -> {
-				Raccoon.RaccoonVars vars = data.getVars(Raccoon.RaccoonVars.class);
+				Raccoon.RaccoonVars vars = data.retrieveStateData(Raccoon.RaccoonVars.class);
 
 				// If Mario hasn't initiated tail-stalling yet, then set it to its initial value
 				if(vars.stallStartVel == null)
@@ -152,7 +151,7 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 			DUCK_STALL_ID,
 			data ->
 					data.hasPower(Powers.TAIL_STALL)
-					&& data.getMario().isInSneakingPose()
+					&& data.getPlayer().isInSneakingPose()
 					&& (data.isServer() || (
 							data.getYVel() < STALL_THRESHOLD.get(data)
 							&& data.getInputs().JUMP.isHeld()

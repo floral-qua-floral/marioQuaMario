@@ -1,9 +1,9 @@
 {
 	"schemaVersion": 1,
-	"id": "mario_qua_mario_api",
+	"id": "charapoweract_api",
 	"version": "${version}",
-	"name": "Mario qua Mario API",
-	"description": "Library mod that contains all the little bits necessary to make a mod that uses the MQM character-power-action framework.",
+	"name": "CharaPowerAct API",
+	"description": "Library mod that contains all the little bits necessary to make a mod that uses the character-power-action framework.",
 	"authors": [
 		"Floral qua Floral"
 	],
@@ -13,17 +13,17 @@
 		"issues": "https://github.com/floral-qua-floral/marioQuaMario/issues"
 	},
 	"license": "GPL-3.0-only",
-	"icon": "assets/mario_qua_mario_api/icon.png",
+	"icon": "assets/charapoweract_api/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.fqf.charapoweract_api.MarioQuaMarioAPI"
+			"com.fqf.charapoweract_api.CharaPowerActAPI"
 		],
 		"client": [
-          "com.fqf.charapoweract_api.MarioQuaMarioAPIClient"
+			"com.fqf.charapoweract_api.CharaPowerActAPIClient"
 		],
 		"fabric-datagen": [
-          "com.fqf.charapoweract_api.MarioQuaMarioAPIDataGenerator"
+			"com.fqf.charapoweract_api.CharaPowerActAPIDataGenerator"
 		]
 	},
 	"mixins": [
@@ -38,7 +38,7 @@
 		"minecraft": "~1.21",
 		"java": ">=21",
 		"fabric-api": "*",
-		"mario_qua_mario": "*"
+		"charapoweract": "*"
 	},
 	"suggests": {
 
@@ -46,18 +46,18 @@
 
 	"custom": {
 		"loom:injected_interfaces": {
-			"net/minecraft/class_1657": ["com/fqf/charapoweract_api/mariodata/injections/IMarioDataHolder"],
+			"net/minecraft/class_1657": ["com/fqf/charapoweract_api/cpadata/injections/ICPADataHolder"],
 			"net/minecraft/class_3222": [
-				"com/fqf/charapoweract_api/mariodata/injections/IMarioAuthoritativeDataHolder",
-				"com/fqf/charapoweract_api/mariodata/injections/IMarioTravelDataHolder"
+				"com/fqf/charapoweract_api/cpadata/injections/ICPAAuthoritativeDataHolder",
+				"com/fqf/charapoweract_api/cpadata/injections/ICPATravelDataHolder"
 			],
 
-			"net/minecraft/class_742": ["com/fqf/charapoweract_api/mariodata/injections/IMarioClientDataHolder"],
+			"net/minecraft/class_742": ["com/fqf/charapoweract_api/cpadata/injections/ICPAClientDataHolder"],
 			"net/minecraft/class_746": [
-				"com/fqf/charapoweract_api/mariodata/injections/IMarioClientDataHolder",
-				"com/fqf/charapoweract_api/mariodata/injections/IMarioTravelDataHolder"
+				"com/fqf/charapoweract_api/cpadata/injections/ICPAClientDataHolder",
+				"com/fqf/charapoweract_api/cpadata/injections/ICPATravelDataHolder"
 			],
-			"net/minecraft/class_745": ["com/fqf/charapoweract_api/mariodata/injections/IMarioClientDataHolder"]
+			"net/minecraft/class_745": ["com/fqf/charapoweract_api/cpadata/injections/ICPAClientDataHolder"]
 		}
 	}
 }

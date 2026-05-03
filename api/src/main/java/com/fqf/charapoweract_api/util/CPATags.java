@@ -12,7 +12,7 @@ import static net.minecraft.registry.RegistryKeys.BLOCK;
 import static net.minecraft.registry.RegistryKeys.ENTITY_TYPE;
 import static net.minecraft.registry.RegistryKeys.DAMAGE_TYPE;
 
-public interface MQMTags {
+public interface CPATags {
 	TagKey<EntityType<?>> NOT_HIT_BY_COLLISION_ATTACKS = getTag(ENTITY_TYPE, "not_hurt_by_collision_attacks");
 	TagKey<EntityType<?>> HARMS_COLLISION_ATTACKERS = getTag(ENTITY_TYPE, "harms_collision_attackers");
 

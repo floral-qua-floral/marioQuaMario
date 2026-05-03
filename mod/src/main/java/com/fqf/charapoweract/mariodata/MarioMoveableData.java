@@ -1,10 +1,10 @@
 package com.fqf.charapoweract.mariodata;
 
 import com.fqf.charapoweract.util.MarioPositionSettable;
-import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
-import com.fqf.charapoweract_api.mariodata.util.CollisionMatcher;
-import com.fqf.charapoweract_api.mariodata.util.RecordedCollision;
-import com.fqf.charapoweract_api.mariodata.util.RecordedCollisionSet;
+import com.fqf.charapoweract_api.cpadata.ICPATravelData;
+import com.fqf.charapoweract_api.cpadata.util.CollisionMatcher;
+import com.fqf.charapoweract_api.cpadata.util.RecordedCollision;
+import com.fqf.charapoweract_api.cpadata.util.RecordedCollisionSet;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -17,7 +17,7 @@ import org.joml.Vector2d;
 
 import java.util.HashSet;
 
-public abstract class MarioMoveableData extends MarioPlayerData implements IMarioTravelData {
+public abstract class MarioMoveableData extends MarioPlayerData implements ICPATravelData {
 	public boolean jumpCapped;
 
 	public MarioMoveableData() {
@@ -39,12 +39,12 @@ public abstract class MarioMoveableData extends MarioPlayerData implements IMari
 			this.isGenerated = true;
 
 			// Calculate forward and sideways vector components
-			double yawRad = Math.toRadians(getMario().getYaw());
+			double yawRad = Math.toRadians(getPlayer().getYaw());
 			this.negativeSineYaw = -Math.sin(yawRad);
 			this.cosineYaw = Math.cos(yawRad);
 
 			// Calculate current forwards and sideways velocity
-			Vec3d currentVel = getMario().getVelocity();
+			Vec3d currentVel = getPlayer().getVelocity();
 			this.forward = currentVel.x * negativeSineYaw + currentVel.z * cosineYaw;
 			this.strafe = currentVel.x * cosineYaw + currentVel.z * -negativeSineYaw;
 			this.vertical = currentVel.y;
@@ -57,7 +57,7 @@ public abstract class MarioMoveableData extends MarioPlayerData implements IMari
 		}
 		private void apply() {
 			if(!this.isGenerated || !this.isDirty) return;
-			getMario().setVelocity(this.forward * this.negativeSineYaw + this.strafe * this.cosineYaw,
+			getPlayer().setVelocity(this.forward * this.negativeSineYaw + this.strafe * this.cosineYaw,
 					this.vertical, this.forward * this.cosineYaw + this.strafe * -this.negativeSineYaw);
 		}
 	}
@@ -70,13 +70,13 @@ public abstract class MarioMoveableData extends MarioPlayerData implements IMari
 	}
 	@Override public double getYVel() {
 		if(this.VELOCITIES.isGenerated) return this.VELOCITIES.vertical;
-		else return this.getMario().getVelocity().y;
+		else return this.getPlayer().getVelocity().y;
 	}
 	@Override public double getHorizVel() {
-		return this.getMario().getVelocity().horizontalLength();
+		return this.getPlayer().getVelocity().horizontalLength();
 	}
 	@Override public double getHorizVelSquared() {
-		return this.getMario().getVelocity().horizontalLengthSquared();
+		return this.getPlayer().getVelocity().horizontalLengthSquared();
 	}
 
 	@Override public double getDeltaYaw() {
@@ -88,8 +88,8 @@ public abstract class MarioMoveableData extends MarioPlayerData implements IMari
 	@Override public void tick() {
 		super.tick();
 
-		double deltaYaw = this.getMario().getYaw() - this.prevYaw;
-		this.prevYaw = this.getMario().getYaw();
+		double deltaYaw = this.getPlayer().getYaw() - this.prevYaw;
+		this.prevYaw = this.getPlayer().getYaw();
 		this.smoothedDeltaYaw = MathHelper.lerp(0.2, this.smoothedDeltaYaw, deltaYaw);
 //		double deltaYawDiff = deltaYaw - smoothedDeltaYaw;
 //		if(Math.abs(deltaYawDiff) > 0.1) this.smoothedDeltaYaw += 0.1 * Math.signum(deltaYawDiff);
@@ -103,29 +103,29 @@ public abstract class MarioMoveableData extends MarioPlayerData implements IMari
 		this.VELOCITIES.ensureDirty().strafe = strafe;
 	}
 	@Override public void setYVel(double vertical) {
-//		if(vertical > 0) this.getMario().fallDistance = 0;
+//		if(vertical > 0) this.getPlayer().fallDistance = 0;
 		if(this.VELOCITIES.isGenerated) this.VELOCITIES.ensureDirty().vertical = vertical;
 		else {
-			Vec3d oldVel = this.getMario().getVelocity();
-			this.getMario().setVelocity(oldVel.x, vertical, oldVel.z);
+			Vec3d oldVel = this.getPlayer().getVelocity();
+			this.getPlayer().setVelocity(oldVel.x, vertical, oldVel.z);
 		}
 	}
 	@Override public void setVelocity(Vec3d velocity) {
 		this.applyModifiedVelocity();
-		this.getMario().setVelocity(velocity);
+		this.getPlayer().setVelocity(velocity);
 	}
 
 	@Override
 	public void goTo(Vec3d pos) {
-		if(this.getMario() instanceof MarioPositionSettable mainClientMario) mainClientMario.mqm$setPos(pos);
-		else if(this.getMario() instanceof ServerPlayerEntity serverMario) ((MarioPositionSettable) serverMario.networkHandler).mqm$setPos(pos);
-		this.getMario().setPos(pos.x, pos.y, pos.z);
+		if(this.getPlayer() instanceof MarioPositionSettable mainClientMario) mainClientMario.mqm$setPos(pos);
+		else if(this.getPlayer() instanceof ServerPlayerEntity serverMario) ((MarioPositionSettable) serverMario.networkHandler).mqm$setPos(pos);
+		this.getPlayer().setPos(pos.x, pos.y, pos.z);
 	}
 
 	@Override
 	public Vec3d getVelocity() {
 		this.applyModifiedVelocity();
-		return this.getMario().getVelocity();
+		return this.getPlayer().getVelocity();
 	}
 
 	public void applyModifiedVelocity() {
@@ -265,11 +265,11 @@ public abstract class MarioMoveableData extends MarioPlayerData implements IMari
 	}
 
 	protected Vec3d getMovementWithFluidPushing() {
-		Vec3d motion = this.getMario().getVelocity().add(this.getFluidPushingVel());
+		Vec3d motion = this.getPlayer().getVelocity().add(this.getFluidPushingVel());
 		// god i hope this fixes it
 		if(this.isInUnloadedChunks()) {
 			motion = motion.withAxis(Direction.Axis.Y, 0);
-			this.getMario().setVelocity(this.getMario().getVelocity().withAxis(Direction.Axis.Y, 0));
+			this.getPlayer().setVelocity(this.getPlayer().getVelocity().withAxis(Direction.Axis.Y, 0));
 		}
 		return motion;
 	}
@@ -277,14 +277,14 @@ public abstract class MarioMoveableData extends MarioPlayerData implements IMari
 	public boolean isInUnloadedChunks() {
 		if(this.isServer()) return false;
 
-		return this.getMario().getWorld().getChunk(ChunkSectionPos.getSectionCoord(this.getMario().getBlockPos().getX()),
-				ChunkSectionPos.getSectionCoord(this.getMario().getBlockPos().getZ())).isEmpty();
+		return this.getPlayer().getWorld().getChunk(ChunkSectionPos.getSectionCoord(this.getPlayer().getBlockPos().getX()),
+				ChunkSectionPos.getSectionCoord(this.getPlayer().getBlockPos().getZ())).isEmpty();
 	}
 
 	public abstract boolean travelHook(double forwardInput, double strafeInput);
 
 	public boolean applyLevitation() {
-		StatusEffectInstance levitationEffect = this.getMario().getStatusEffect(StatusEffects.LEVITATION);
+		StatusEffectInstance levitationEffect = this.getPlayer().getStatusEffect(StatusEffects.LEVITATION);
 		if(levitationEffect != null) {
 			double levitationVel = (levitationEffect.getAmplifier() + 1) * 0.2;
 			this.setYVel((this.getYVel() - levitationVel) * 0.785 + levitationVel);

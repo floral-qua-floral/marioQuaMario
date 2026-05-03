@@ -25,7 +25,7 @@ public class ServerPlayNetworkHandlerMixin implements MarioPositionSettable {
 
 	@WrapOperation(method = "onPlayerMove", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;isInTeleportationState()Z"))
 	private boolean isTeleportingOrCharacter(ServerPlayerEntity instance, Operation<Boolean> original) {
-		return (instance.getServerWorld().getGameRules().getBoolean(MarioGamerules.DISABLE_CHARACTER_MOVEMENT_CHECK) && instance.mqm$getIMarioData().isEnabled()) || original.call(instance);
+		return (instance.getServerWorld().getGameRules().getBoolean(MarioGamerules.DISABLE_CHARACTER_MOVEMENT_CHECK) && instance.cpa$getICPAData().isEnabled()) || original.call(instance);
 	}
 
 //	@Inject(method = "onPlayerMove", at = @At(value = "INVOKE", target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;Ljava/lang/Object;)V"))

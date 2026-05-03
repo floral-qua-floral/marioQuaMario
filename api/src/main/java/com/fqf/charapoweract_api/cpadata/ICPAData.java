@@ -1,4 +1,4 @@
-package com.fqf.charapoweract_api.mariodata;
+package com.fqf.charapoweract_api.cpadata;
 
 import com.fqf.charapoweract_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charapoweract_api.util.CharaStat;
@@ -6,8 +6,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 
-public interface IMarioData {
-	PlayerEntity getMario();
+public interface ICPAData {
+	PlayerEntity getPlayer();
 	boolean isClient();
 	default boolean isServer() {
 		return !this.isClient();
@@ -28,7 +28,7 @@ public interface IMarioData {
 	float getEyeHeightScale();
 	int getBapStrength(Direction direction);
 
-	<T> T getVars(Class<T> clazz);
+	<T> T retrieveStateData(Class<T> clazz);
 
 	void forceBodyAlignment(boolean urgent);
 

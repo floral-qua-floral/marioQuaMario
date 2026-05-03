@@ -6,10 +6,9 @@ import com.fqf.charapoweract_api.definitions.states.actions.util.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charapoweract_api.mariodata.IMarioAuthoritativeData;
-import com.fqf.charapoweract_api.mariodata.IMarioClientData;
-import com.fqf.charapoweract_api.mariodata.IMarioData;
-import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.cpadata.*;
+import com.fqf.charapoweract_api.cpadata.ICPAData;
+import com.fqf.charapoweract_api.cpadata.ICPATravelData;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.airborne.Backflip;
 import com.fqf.mario_qua_mario_content.actions.grounded.SubWalk;
@@ -57,16 +56,16 @@ public class Mounted implements MountedActionDefinition {
 		return MarioQuaMarioContent.getClientHelper().getBackflipDismountText();
 	}
 
-	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
+	@Override public @Nullable Object provideStateData(ICPAData data) {
 		return null;
 	}
-	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
+	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
 
 	}
-	@Override public void serverTick(IMarioAuthoritativeData data) {
+	@Override public void serverTick(ICPAAuthoritativeData data) {
 
 	}
-	@Override public boolean travelHook(IMarioTravelData data, Entity mount, MountedActionHelper helper) {
+	@Override public boolean travelHook(ICPATravelData data, Entity mount, MountedActionHelper helper) {
 		return false;
 	}
 

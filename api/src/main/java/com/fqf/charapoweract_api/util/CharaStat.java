@@ -1,6 +1,6 @@
 package com.fqf.charapoweract_api.util;
 
-import com.fqf.charapoweract_api.mariodata.IMarioData;
+import com.fqf.charapoweract_api.cpadata.ICPAData;
 
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -37,17 +37,17 @@ public class CharaStat {
 		this.CATEGORIES = categorySet;
 	}
 
-	public double get(IMarioData data) {
+	public double get(ICPAData data) {
 		return data.getStat(this);
 	}
-	public double getAsThreshold(IMarioData data) {
+	public double getAsThreshold(ICPAData data) {
 		return this.get(data) * 0.96;
 	}
-	public double getAsSquaredThreshold(IMarioData data) {
+	public double getAsSquaredThreshold(ICPAData data) {
 		double threshold = this.getAsThreshold(data);
 		return threshold * threshold;
 	}
-	public double getAsLimit(IMarioData data) {
+	public double getAsLimit(ICPAData data) {
 		return this.get(data) * 1.015;
 	}
 }

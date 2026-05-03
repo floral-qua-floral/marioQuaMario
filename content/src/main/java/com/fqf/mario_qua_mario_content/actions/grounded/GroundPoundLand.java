@@ -4,10 +4,9 @@ import com.fqf.charapoweract_api.definitions.states.actions.GroundedActionDefini
 import com.fqf.charapoweract_api.definitions.states.actions.util.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charapoweract_api.mariodata.IMarioAuthoritativeData;
-import com.fqf.charapoweract_api.mariodata.IMarioClientData;
-import com.fqf.charapoweract_api.mariodata.IMarioData;
-import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.cpadata.*;
+import com.fqf.charapoweract_api.cpadata.ICPAClientData;
+import com.fqf.charapoweract_api.cpadata.ICPAData;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
 import com.fqf.mario_qua_mario_content.actions.airborne.GroundPoundDrop;
@@ -53,18 +52,18 @@ public class GroundPoundLand implements GroundedActionDefinition {
 		return null;
 	}
 
-	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
+	@Override public @Nullable Object provideStateData(ICPAData data) {
 		return new ActionTimerVars();
 	}
-	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
+	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
 
 	}
-	@Override public void serverTick(IMarioAuthoritativeData data) {
+	@Override public void serverTick(ICPAAuthoritativeData data) {
 
 	}
-	@Override public void travelHook(IMarioTravelData data, GroundedActionHelper helper) {
+	@Override public void travelHook(ICPATravelData data, GroundedActionHelper helper) {
 		data.setForwardStrafeVel(0, 0);
-		data.getVars(ActionTimerVars.class).actionTimer++;
+		data.retrieveStateData(ActionTimerVars.class).actionTimer++;
 	}
 
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(GroundedActionHelper helper) {

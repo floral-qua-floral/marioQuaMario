@@ -6,7 +6,7 @@ import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimation;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
-import com.fqf.charapoweract_api.mariodata.*;
+import com.fqf.charapoweract_api.cpadata.*;
 import com.fqf.charapoweract_api.util.Easing;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.Voicelines;
@@ -98,11 +98,11 @@ public class Raccoon implements PowerUpDefinition {
 		public @Nullable Double stallStartVel;
 	}
 
-	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
+	@Override public @Nullable Object provideStateData(ICPAData data) {
 		return new RaccoonVars();
 	}
-	private void tick(IMarioData data) {
-		RaccoonVars vars = data.getVars(RaccoonVars.class);
+	private void tick(ICPAData data) {
+		RaccoonVars vars = data.retrieveStateData(RaccoonVars.class);
 		if(data.getActionCategory() != ActionCategory.AIRBORNE && data.getActionCategory() != ActionCategory.WALLBOUND) {
 			vars.stallStartVel = null;
 			vars.flightTicks = 75;
@@ -113,10 +113,10 @@ public class Raccoon implements PowerUpDefinition {
 			vars.flightTicks--;
 		}
 	}
-	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
+	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
 		tick(data);
 	}
-	@Override public void serverTick(IMarioAuthoritativeData data) {
+	@Override public void serverTick(ICPAAuthoritativeData data) {
 		tick(data);
 	}
 
@@ -149,24 +149,24 @@ public class Raccoon implements PowerUpDefinition {
 		}
 
 		@Override
-		public boolean shouldInterceptAttack(IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
+		public boolean shouldInterceptAttack(ICPAReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
 			return weapon.isEmpty() && attackCooldownProgress >= 1 && this.testSwing(data);
 		}
 
-		protected abstract boolean testSwing(IMarioReadableMotionData data);
+		protected abstract boolean testSwing(ICPAReadableMotionData data);
 
 		@Override
-		public @NotNull MiningHandling shouldSuppressMining(IMarioReadableMotionData data, ItemStack weapon, @NotNull BlockHitResult blockHitResult, int miningTicks) {
+		public @NotNull MiningHandling shouldSuppressMining(ICPAReadableMotionData data, ItemStack weapon, @NotNull BlockHitResult blockHitResult, int miningTicks) {
 			return miningTicks <= 3 ? MiningHandling.HOLD : MiningHandling.MINE;
 		}
 
 		@Override
-		public void executeTravellers(IMarioTravelData data, ItemStack weapon, float attackCooldownProgress, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget) {
+		public void executeTravellers(ICPATravelData data, ItemStack weapon, float attackCooldownProgress, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget) {
 
 		}
 
 		@Override
-		public void executeClients(IMarioClientData data, ItemStack weapon, float attackCooldownProgress, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget, long seed) {
+		public void executeClients(ICPAClientData data, ItemStack weapon, float attackCooldownProgress, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget, long seed) {
 			data.forceBodyAlignment(false);
 			data.playSound(MarioContentSFX.TAIL_WHIP, seed);
 //			if(entityTarget != null) data.playSound(MarioContentSFX.KICK, seed);
@@ -179,10 +179,10 @@ public class Raccoon implements PowerUpDefinition {
 		}
 
 		@Override
-		public void executeServer(IMarioAuthoritativeData data, ItemStack weapon, float attackCooldownProgress, ServerWorld world, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget) {
-			data.getMario().spawnSweepAttackParticles();
+		public void executeServer(ICPAAuthoritativeData data, ItemStack weapon, float attackCooldownProgress, ServerWorld world, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget) {
+			data.getPlayer().spawnSweepAttackParticles();
 			if(entityTarget != null) {
-				ServerPlayerEntity mario = data.getMario();
+				ServerPlayerEntity mario = data.getPlayer();
 				DamageSource damageSource = mario.getDamageSources().playerAttack(mario);
 				entityTarget.damage(damageSource, TAIL_STRIKE_DAMAGE);
 				List<LivingEntity> sweepTargets = mario.getWorld().getNonSpectatingEntities(LivingEntity.class, entityTarget.getBoundingBox().expand(1.0, 0.25, 1.0));
@@ -211,23 +211,23 @@ public class Raccoon implements PowerUpDefinition {
 
 		return List.of(
 				new TailAttack(TailSpinGround.ID, null, null) {
-					@Override protected boolean testSwing(IMarioReadableMotionData data) {
-						return data.getMario().isOnGround() && data.getMario().isInSneakingPose();
+					@Override protected boolean testSwing(ICPAReadableMotionData data) {
+						return data.getPlayer().isOnGround() && data.getPlayer().isInSneakingPose();
 					}
 				},
 				new TailAttack(TailSpinFall.ID, null, null) {
-					@Override protected boolean testSwing(IMarioReadableMotionData data) {
-						return !data.getMario().isOnGround() && data.getMario().isInSneakingPose();
+					@Override protected boolean testSwing(ICPAReadableMotionData data) {
+						return !data.getPlayer().isOnGround() && data.getPlayer().isInSneakingPose();
 					}
 				},
 				new TailAttack(null, tailWhipAnimation, tailWhipCameraAnimation) {
-					@Override protected boolean testSwing(IMarioReadableMotionData data) {
+					@Override protected boolean testSwing(ICPAReadableMotionData data) {
 						return true;
 					}
 				},
 				new PreventAttack() {
 					@Override
-					public boolean shouldInterceptAttack(IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
+					public boolean shouldInterceptAttack(ICPAReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
 						return weapon.isEmpty() && blockHitResult == null;
 					}
 				}
@@ -282,7 +282,7 @@ public class Raccoon implements PowerUpDefinition {
 				armAnimation, armAnimation,
 				legAnimation, legAnimation,
 				new LimbAnimation(false, (data, arrangement, progress) -> {
-					arrangement.pitch = helper.interpolateKeyframes(progress * 2, 0, MathHelper.clamp(data.getMario().getPitch() - 30, -80, 75), 20);
+					arrangement.pitch = helper.interpolateKeyframes(progress * 2, 0, MathHelper.clamp(data.getPlayer().getPitch() - 30, -80, 75), 20);
 					arrangement.yaw = helper.interpolateKeyframes(progress * 2, 0, 85, 0);
 				})
 		);

@@ -1,8 +1,8 @@
 package com.fqf.charapoweract_api.definitions.states.actions.util;
 
 /**
- * Affects whether Mario plays footstep sounds and whether view-bobbing occurs.
- * This does have a server-side effect - if footsteps are suppressed, Sculk Sensors won't be triggered!
+ * Affects whether a character plays footstep sounds and whether view-bobbing occurs.
+ * This does have minor mechanical implications - if footsteps are suppressed, Sculk Sensors won't be triggered!
  * <p>NOT_SLIDING: Vanilla behavior
  * <p>NOT_SLIDING_SMOOTH: Footsteps occur, but no view-bobbing.
  * <p>

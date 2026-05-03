@@ -2,8 +2,8 @@ package com.fqf.mario_qua_mario_content.util;
 
 import com.fqf.charapoweract_api.HelperGetter;
 import com.fqf.charapoweract_api.definitions.states.actions.WallboundActionDefinition;
-import com.fqf.charapoweract_api.mariodata.IMarioClientData;
-import com.fqf.charapoweract_api.mariodata.IMarioReadableMotionData;
+import com.fqf.charapoweract_api.cpadata.ICPAClientData;
+import com.fqf.charapoweract_api.cpadata.ICPAReadableMotionData;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import net.minecraft.block.BlockState;
 import net.minecraft.sound.BlockSoundGroup;
@@ -15,11 +15,11 @@ public class ClimbVars {
 	public float progress;
 	private boolean ticked;
 
-	public void clientTick(IMarioClientData data) {
+	public void clientTick(ICPAClientData data) {
 		if(!ticked) {
 			ticked = true;
-			WallboundActionDefinition.WallInfo wall = HelperGetter.getWallboundActionHelper().getWallInfo((IMarioReadableMotionData) data);
-			World world = data.getMario().getWorld();
+			WallboundActionDefinition.WallInfo wall = HelperGetter.getWallboundActionHelper().getWallInfo((ICPAReadableMotionData) data);
+			World world = data.getPlayer().getWorld();
 			BlockSoundGroup wallSoundGroup = null;
 			for(BlockPos block : wall.getWallBlocks(1)) {
 				BlockState blockState = world.getBlockState(block);
@@ -32,7 +32,7 @@ public class ClimbVars {
 				MarioQuaMarioContent.LOGGER.info("Tried to play climb start sound, but no climbable blocks were found?!");
 				return;
 			}
-			data.playSound(wallSoundGroup.getStepSound(), wallSoundGroup.pitch, 1, data.getMario().getRandom().nextLong());
+			data.playSound(wallSoundGroup.getStepSound(), wallSoundGroup.pitch, 1, data.getPlayer().getRandom().nextLong());
 		}
 	}
 }

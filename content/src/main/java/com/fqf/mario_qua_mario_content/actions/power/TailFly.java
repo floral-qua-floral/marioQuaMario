@@ -7,9 +7,9 @@ import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionInjec
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.ProgressHandler;
-import com.fqf.charapoweract_api.mariodata.IMarioClientData;
-import com.fqf.charapoweract_api.mariodata.IMarioData;
-import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.cpadata.ICPAClientData;
+import com.fqf.charapoweract_api.cpadata.ICPAData;
+import com.fqf.charapoweract_api.cpadata.ICPATravelData;
 import com.fqf.charapoweract_api.util.CharaStat;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
@@ -51,14 +51,14 @@ public class TailFly extends PJump implements AirborneActionDefinition {
 
 	public static final CharaStat FLIGHT_VEL = new CharaStat(0.41, JUMP_VELOCITY, POWER_UP);
 
-	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
+	@Override public @Nullable Object provideStateData(ICPAData data) {
 		return new ActionTimerVars();
 	}
-	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
+	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
 		TailStall.tailWaggleTick(data);
 	}
-	@Override public void travelHook(IMarioTravelData data, AirborneActionHelper helper) {
-		data.getVars(Raccoon.RaccoonVars.class).flightTicks--;
+	@Override public void travelHook(ICPATravelData data, AirborneActionHelper helper) {
+		data.retrieveStateData(Raccoon.RaccoonVars.class).flightTicks--;
 		data.setYVel(FLIGHT_VEL.get(data));
 		Fall.drift(data, helper);
 	}
@@ -67,7 +67,7 @@ public class TailFly extends PJump implements AirborneActionDefinition {
 		return List.of(
 				new TransitionDefinition(
 						SpecialFall.ID,
-						data -> !data.hasPower(Powers.TAIL_STALL) || data.getVars(Raccoon.RaccoonVars.class).flightTicks <= 0,
+						data -> !data.hasPower(Powers.TAIL_STALL) || data.retrieveStateData(Raccoon.RaccoonVars.class).flightTicks <= 0,
 						EvaluatorEnvironment.COMMON
 				)
 		);

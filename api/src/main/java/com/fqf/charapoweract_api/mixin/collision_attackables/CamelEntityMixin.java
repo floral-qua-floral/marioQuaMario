@@ -2,7 +2,7 @@ package com.fqf.charapoweract_api.mixin.collision_attackables;
 
 import com.fqf.charapoweract_api.interfaces.CollisionAttackResult;
 import com.fqf.charapoweract_api.interfaces.CollisionAttackable;
-import com.fqf.charapoweract_api.mariodata.IMarioAuthoritativeData;
+import com.fqf.charapoweract_api.cpadata.ICPAAuthoritativeData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.passive.CamelEntity;
@@ -12,10 +12,10 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(CamelEntity.class)
 public class CamelEntityMixin implements CollisionAttackable {
 	@Override
-	public @NotNull CollisionAttackResult mqm$processCollisionAttack(IMarioAuthoritativeData marioData, boolean attemptMount, float damageAmount, DamageSource damageSource) {
-		if(marioData.getMario().startRiding((Entity) (Object) this, false))
+	public @NotNull CollisionAttackResult cpa$processCollisionAttack(ICPAAuthoritativeData data, boolean attemptMount, float damageAmount, DamageSource damageSource) {
+		if(data.getPlayer().startRiding((Entity) (Object) this, false))
 			return CollisionAttackResult.MOUNT;
 		else
-			return CollisionAttackable.super.mqm$processCollisionAttack(marioData, attemptMount, damageAmount, damageSource);
+			return CollisionAttackable.super.cpa$processCollisionAttack(data, attemptMount, damageAmount, damageSource);
 	}
 }

@@ -1,15 +1,15 @@
 package com.fqf.mario_qua_mario_content.actions.aquatic;
 
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.charapoweract_api.cpadata.ICPAClientData;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.charapoweract_api.definitions.states.actions.AquaticActionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.PlayermodelAnimation;
-import com.fqf.charapoweract_api.mariodata.IMarioAuthoritativeData;
-import com.fqf.charapoweract_api.mariodata.IMarioClientData;
-import com.fqf.charapoweract_api.mariodata.IMarioData;
-import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.cpadata.ICPAAuthoritativeData;
+import com.fqf.charapoweract_api.cpadata.ICPAData;
+import com.fqf.charapoweract_api.cpadata.ICPATravelData;
 import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
 import com.fqf.mario_qua_mario_content.actions.grounded.DuckWaddle;
 import net.minecraft.util.Identifier;
@@ -50,16 +50,16 @@ public class UnderwaterDuck implements AquaticActionDefinition {
 		return null;
 	}
 
-	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
+	@Override public @Nullable Object provideStateData(ICPAData data) {
 		return null;
 	}
-	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
+	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
 
 	}
-	@Override public void serverTick(IMarioAuthoritativeData data) {
+	@Override public void serverTick(ICPAAuthoritativeData data) {
 
 	}
-	@Override public void travelHook(IMarioTravelData data, AquaticActionHelper helper) {
+	@Override public void travelHook(ICPATravelData data, AquaticActionHelper helper) {
 		Submerged.waterMove(data, helper);
 	}
 

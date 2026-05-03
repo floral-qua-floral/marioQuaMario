@@ -3,9 +3,9 @@ package com.fqf.mario_qua_mario_content.actions.grounded;
 import com.fqf.charapoweract_api.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
-import com.fqf.charapoweract_api.mariodata.IMarioData;
-import com.fqf.charapoweract_api.mariodata.IMarioReadableMotionData;
-import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.cpadata.ICPAData;
+import com.fqf.charapoweract_api.cpadata.ICPAReadableMotionData;
+import com.fqf.charapoweract_api.cpadata.ICPATravelData;
 import com.fqf.charapoweract_api.util.CharaStat;
 import com.fqf.charapoweract_api.util.Easing;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
@@ -55,17 +55,17 @@ public class WalkRun extends SubWalk implements GroundedActionDefinition {
 	public static final CharaStat RUN_REDIRECTION = new CharaStat(2.76, RUNNING, FORWARD, REDIRECTION);
 	public static final CharaStat OVERRUN_ACCEL = new CharaStat(0.0175, RUNNING, FORWARD, OVERSPEED_CORRECTION);
 
-	public static boolean meetsWalkRunRequirement(IMarioReadableMotionData data) {
+	public static boolean meetsWalkRunRequirement(ICPAReadableMotionData data) {
 		return data.getInputs().getForwardInput() > 0 &&
 				data.getForwardVel() > WALK_STANDSTILL_THRESHOLD.get(data) &&
 				data.getHorizVelSquared() > WALK_SPEED.getAsSquaredThreshold(data);
 	}
 
-	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
+	@Override public @Nullable Object provideStateData(ICPAData data) {
 		return new ActionTimerVars();
 	}
-	@Override public void travelHook(IMarioTravelData data, GroundedActionHelper helper) {
-		if(data.getMario().isSprinting()) {
+	@Override public void travelHook(ICPATravelData data, GroundedActionHelper helper) {
+		if(data.getPlayer().isSprinting()) {
 			ActionTimerVars vars = ActionTimerVars.get(data);
 
 			if(data.getForwardVel() > RUN_SPEED.getAsLimit(data)) {

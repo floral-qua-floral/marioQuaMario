@@ -1,9 +1,9 @@
-package com.fqf.charapoweract_api.mariodata;
+package com.fqf.charapoweract_api.cpadata;
 
-import com.fqf.charapoweract_api.mariodata.util.RecordedCollisionSet;
+import com.fqf.charapoweract_api.cpadata.util.RecordedCollisionSet;
 import net.minecraft.util.math.Vec3d;
 
-public interface IMarioReadableMotionData extends IMarioData {
+public interface ICPAReadableMotionData extends ICPAData {
 	double getForwardVel();
 	double getStrafeVel();
 	double getYVel();

@@ -14,9 +14,9 @@ import com.fqf.charapoweract.registries.actions.TransitionPhase;
 import com.fqf.charapoweract.registries.power_granting.ParsedPowerUp;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charapoweract_api.interfaces.BapResult;
-import com.fqf.charapoweract_api.mariodata.util.CollisionMatcher;
-import com.fqf.charapoweract_api.mariodata.util.RecordedCollision;
-import com.fqf.charapoweract_api.mariodata.util.RecordedCollisionSet;
+import com.fqf.charapoweract_api.cpadata.util.CollisionMatcher;
+import com.fqf.charapoweract_api.cpadata.util.RecordedCollision;
+import com.fqf.charapoweract_api.cpadata.util.RecordedCollisionSet;
 import it.unimi.dsi.fastutil.objects.ObjectDoublePair;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.input.Input;
@@ -32,13 +32,13 @@ import org.joml.Vector3f;
 
 import java.util.*;
 
-public class MarioMainClientData extends MarioMoveableData implements IMarioClientDataImpl {
+public class MarioMainClientData extends MarioMoveableData implements ICPAClientDataImpl {
 	private final ClientPlayerEntity MARIO;
 	public MarioMainClientData(ClientPlayerEntity mario) {
 		super();
 		this.MARIO = mario;
 	}
-	@Override public ClientPlayerEntity getMario() {
+	@Override public ClientPlayerEntity getPlayer() {
 		return MARIO;
 	}
 
@@ -86,7 +86,7 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 	}
 
 	public boolean animatingCamera() {
-		return this.isEnabled() && this.currentCameraAnimation != null && !this.getMario().isSleeping();
+		return this.isEnabled() && this.currentCameraAnimation != null && !this.getPlayer().isSleeping();
 	}
 
 	public void mutateCamera(Arrangement cameraArrangement, float tickDelta) {
@@ -99,7 +99,7 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 			this.currentCameraAnimation = null;
 			this.attemptFinish = false;
 		}
-		else this.getMario().mqm$getAnimationData().mutate(cameraArrangement, this.currentCameraAnimation.mutator(), this, progress);
+		else this.getPlayer().mqm$getAnimationData().mutate(cameraArrangement, this.currentCameraAnimation.mutator(), this, progress);
 	}
 
 	@Override public void tick() {
@@ -125,7 +125,7 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 			if(this.calculatedInputs) return;
 			this.calculatedInputs = true; // Only calculate once per tick
 
-			float yawRadians = this.OWNER.getMario().getYaw() * MathHelper.RADIANS_PER_DEGREE;
+			float yawRadians = this.OWNER.getPlayer().getYaw() * MathHelper.RADIANS_PER_DEGREE;
 			float sinYaw = MathHelper.sin(yawRadians);
 			float cosYaw = MathHelper.cos(yawRadians);
 			Vector3f forwardDir = new Vector3f(-sinYaw, 0, cosYaw);
@@ -177,25 +177,25 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		this.applyModifiedVelocity();
 
 		this.RECORDED_COLLISIONS.clear();
-		this.RECORDED_COLLISIONS.storedVelocity = this.getMario().getVelocity();
+		this.RECORDED_COLLISIONS.storedVelocity = this.getPlayer().getVelocity();
 		this.RECORDED_COLLISIONS.COLLIDED[0] = false; this.RECORDED_COLLISIONS.REFLECTS[0] = false;
 		this.RECORDED_COLLISIONS.COLLIDED[1] = false; this.RECORDED_COLLISIONS.REFLECTS[1] = false;
 		this.RECORDED_COLLISIONS.COLLIDED[2] = false; this.RECORDED_COLLISIONS.REFLECTS[2] = false;
 		Vec3d movement = this.getMovementWithFluidPushing();
 		this.preemptMovement(movement);
-		this.getMario().move(MovementType.SELF, movement);
+		this.getPlayer().move(MovementType.SELF, movement);
 
 		this.WALL_INFO.calculatedInputs = false;
 
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
 		this.applyModifiedVelocity();
 
-		if(this.getActionCategory() == ActionCategory.GROUNDED && this.getMario().isOnGround() && this.getYVel() == 0.0)
-			this.getMario().setVelocity(this.getMario().getVelocity().withAxis(Direction.Axis.Y, -0.1));
+		if(this.getActionCategory() == ActionCategory.GROUNDED && this.getPlayer().isOnGround() && this.getYVel() == 0.0)
+			this.getPlayer().setVelocity(this.getPlayer().getVelocity().withAxis(Direction.Axis.Y, -0.1));
 		// ^ Needed for Presence Footsteps compatibility
 		// TODO: Prevent Presence Footsteps steps while in a Sliding action.
 
-		this.getMario().updateLimbs(false);
+		this.getPlayer().updateLimbs(false);
 
 		return cancelVanillaTravel;
 	}
@@ -290,7 +290,7 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		}
 
 		private void updateButtons() {
-			ClientPlayerEntity mario = getMario();
+			ClientPlayerEntity mario = getPlayer();
 			Input inputs = mario.input;
 
 			this.LEFT.update(inputs.pressingLeft);
@@ -324,7 +324,7 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		int strength = super.getBapStrength(action, direction);
 
 		if(strength != 0 && direction.getAxis().isHorizontal()) {
-			Vec3d marioVel = this.getMario().getVelocity();
+			Vec3d marioVel = this.getPlayer().getVelocity();
 
 			double wallSpeedThreshold = this.getAction().BAPPING_RULE.wallBumpSpeedThreshold().getAsThreshold(this);
 			if(marioVel.horizontalLengthSquared() < wallSpeedThreshold * wallSpeedThreshold)
@@ -400,7 +400,7 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 					case Z -> onZAxis;
 				}) continue;
 
-				if(matcher.test(recordedCollision, this.OWNER.getMario().getWorld().getBlockState(recordedCollision.pos()))) {
+				if(matcher.test(recordedCollision, this.OWNER.getPlayer().getWorld().getBlockState(recordedCollision.pos()))) {
 					switch(recordedCollision.direction().getAxis()) {
 						case X -> onXAxis = true;
 						case Y -> onYAxis = true;
@@ -417,7 +417,7 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		@Override
 		public @Nullable RecordedCollision getAnyMatch(CollisionMatcher matcher) {
 			for(RecordedCollision recordedCollision : this) {
-				if(matcher.test(recordedCollision, this.OWNER.getMario().getWorld().getBlockState(recordedCollision.pos())))
+				if(matcher.test(recordedCollision, this.OWNER.getPlayer().getWorld().getBlockState(recordedCollision.pos())))
 					return recordedCollision;
 			}
 			return null;
@@ -440,7 +440,7 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 	}
 
 	private boolean preemptMovementAndOptionallyRecalculate(Vec3d movement) {
-		Box movedBox = bapAlongAxis(this.getMario().getBoundingBox(), movement, Direction.Axis.Y);
+		Box movedBox = bapAlongAxis(this.getPlayer().getBoundingBox(), movement, Direction.Axis.Y);
 		if(movedBox == null) return true;
 
 		boolean doXFirst = Math.abs(movement.x) > Math.abs(movement.z);
@@ -463,7 +463,7 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 
 		Direction dir = Direction.from(axis, motion > 0 ? Direction.AxisDirection.POSITIVE : Direction.AxisDirection.NEGATIVE);
 
-		ObjectDoublePair<Set<BlockPos>> pair = BlockCollisionFinder.getCollidedBlockPositions(this.getMario(), box, motion, axis);
+		ObjectDoublePair<Set<BlockPos>> pair = BlockCollisionFinder.getCollidedBlockPositions(this.getPlayer(), box, motion, axis);
 		Set<BlockPos> collideWithBlockPositions = pair.left();
 		double absSmallestOffsetFound = pair.rightDouble();
 
@@ -483,12 +483,12 @@ public class MarioMainClientData extends MarioMoveableData implements IMarioClie
 		if(bapStrength == 0)
 			bapResult = null;
 		else
-			bapResult = BlockBappingUtil.attemptBap(this, this.getMario().clientWorld, pos, direction, bapStrength, true);
+			bapResult = BlockBappingUtil.attemptBap(this, this.getPlayer().clientWorld, pos, direction, bapStrength, true);
 
 		if(bapResult != BapResult.BUST)
 			this.RECORDED_COLLISIONS.REFLECTS[direction.getAxis().ordinal()] = true;
 		this.RECORDED_COLLISIONS.COLLIDED[direction.getAxis().ordinal()] = true;
-		this.RECORDED_COLLISIONS.add(new RecordedCollision(pos, this.getMario().clientWorld.getBlockState(pos), direction, bapResult));
+		this.RECORDED_COLLISIONS.add(new RecordedCollision(pos, this.getPlayer().clientWorld.getBlockState(pos), direction, bapResult));
 		return bapResult == BapResult.BUST;
 	}
 }

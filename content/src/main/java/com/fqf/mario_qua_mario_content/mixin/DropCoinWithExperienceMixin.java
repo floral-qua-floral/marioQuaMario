@@ -24,7 +24,7 @@ public abstract class DropCoinWithExperienceMixin extends Entity {
 
 	@Inject(method = "dropXp", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ExperienceOrbEntity;spawn(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/Vec3d;I)V"))
 	private void dropCoin(Entity attacker, CallbackInfo ci) {
-		if(this.attackingPlayer != null && this.attackingPlayer.mqm$getIMarioData().hasPower(Powers.DROP_COINS))
+		if(this.attackingPlayer != null && this.attackingPlayer.cpa$getICPAData().hasPower(Powers.DROP_COINS))
 			this.dropItem(ModItems.COIN);
 	}
 }

@@ -67,7 +67,7 @@ public class PJump extends Jump implements AirborneActionDefinition {
 						TailFly.ID,
 						data ->
 								data.hasPower(Powers.TAIL_FLY)
-								&& data.getVars(Raccoon.RaccoonVars.class).flightTicks > 0
+								&& data.retrieveStateData(Raccoon.RaccoonVars.class).flightTicks > 0
 								&& (data.isServer() || (
 										data.getYVel() < TailStall.STALL_THRESHOLD.get(data)
 										&& data.getInputs().JUMP.isHeld()

@@ -3,8 +3,8 @@ package com.fqf.charapoweract_api.definitions.states.actions;
 import com.fqf.charapoweract_api.definitions.states.actions.util.IncompleteActionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.WallBodyAlignment;
-import com.fqf.charapoweract_api.mariodata.IMarioReadableMotionData;
-import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.cpadata.ICPAReadableMotionData;
+import com.fqf.charapoweract_api.cpadata.ICPATravelData;
 import com.fqf.charapoweract_api.util.CharaStat;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -19,33 +19,33 @@ public interface WallboundActionDefinition extends IncompleteActionDefinition {
 	float getHeadYawRange();
 
 	/**
-	 * Called on the client the instant Mario transitions into this action. The result is networked to the server
-	 * and then to other clients without checking.
+	 * Called on the client the instant the player transitions into this action. The result is networked to the server
+	 * and then to other clients without being verified.
 	 * @param data
 	 * @return
 	 */
-	float getWallYaw(IMarioReadableMotionData data);
+	float getWallYaw(ICPAReadableMotionData data);
 
 	/**
 	 * Called on the server to validate whether transitioning into this action is allowed. This is never called if
-	 * the gamerule mqmRejectIllegalActionTransitions is set to false!
+	 * the gamerule cpaRejectIllegalActionTransitions is set to false!
 	 *
-	 * @param data        Mario's data (server-sided)
+	 * @param data        Player's data (server-sided)
 	 * @param wall        Information about the wall, as claimed by the client.
 	 * @param checkOffset
-	 * @return Whether the transition is allowed. If false, it is rejected and Mario is forced back into his previous
+	 * @return Whether the transition is allowed. If false, it is rejected and the player is forced back into her previous
 	 * action.
 	 */
-	boolean checkLegality(IMarioReadableMotionData data, WallInfo wall, Vec3d checkOffset);
+	boolean checkLegality(ICPAReadableMotionData data, WallInfo wall, Vec3d checkOffset);
 
-	void travelHook(IMarioTravelData data, WallInfo wall, WallboundActionHelper helper);
+	void travelHook(ICPATravelData data, WallInfo wall, WallboundActionHelper helper);
 
 	@NotNull List<TransitionDefinition> getBasicTransitions(WallboundActionHelper helper);
 	@NotNull List<TransitionDefinition> getInputTransitions(WallboundActionHelper helper);
 	@NotNull List<TransitionDefinition> getWorldCollisionTransitions(WallboundActionHelper helper);
 
 	/**
-	 * Provides some information about the wall Mario is interacting with and his relationship to it.
+	 * Provides some information about the wall the player is interacting with and her relationship to it.
 	 */
 	interface WallInfo {
 		Vec3d getWallNormal();
@@ -69,21 +69,21 @@ public interface WallboundActionDefinition extends IncompleteActionDefinition {
 	 * Contains a number of methods intended to help with the creation of Wallbound Actions.
 	 */
 	interface WallboundActionHelper {
-		WallInfo getWallInfo(IMarioReadableMotionData data);
+		WallInfo getWallInfo(ICPAReadableMotionData data);
 
 		float getAngleDifference(float alfa, float bravo);
 
-		void applyGravity(IMarioTravelData data, CharaStat gravity, CharaStat terminalVelocity);
+		void applyGravity(ICPATravelData data, CharaStat gravity, CharaStat terminalVelocity);
 
 		void climbWall(
-				IMarioTravelData data,
+				ICPATravelData data,
 				CharaStat ascendSpeedStat, CharaStat ascendAccelStat,
 				CharaStat descendSpeedStat, CharaStat descendAccelStat,
 				CharaStat sidleSpeedStat, CharaStat sidleAccelStat
 		);
 
-		void setSidleVel(IMarioTravelData data, double sidleVel);
+		void setSidleVel(ICPATravelData data, double sidleVel);
 
-		void setTowardsWallVel(IMarioTravelData data, double towardsWallVel);
+		void setTowardsWallVel(ICPATravelData data, double towardsWallVel);
 	}
 }

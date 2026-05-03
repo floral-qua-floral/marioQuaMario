@@ -1,11 +1,11 @@
 package com.fqf.charapoweract.mariodata.util;
 
-import com.fqf.charapoweract.mariodata.IMarioClientDataImpl;
+import com.fqf.charapoweract.mariodata.ICPAClientDataImpl;
 import com.fqf.charapoweract.util.MarioSFX;
 import net.minecraft.util.math.MathHelper;
 
 public class WallSlidingSoundInstance extends AbstractSlidingSoundInstance {
-	public WallSlidingSoundInstance(IMarioClientDataImpl data) {
+	public WallSlidingSoundInstance(ICPAClientDataImpl data) {
 		super(MarioSFX.SKID, data);
 	}
 

@@ -2,13 +2,12 @@ package com.fqf.mario_qua_mario_content.actions.generic;
 
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.charapoweract_api.cpadata.*;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.charapoweract_api.definitions.states.actions.GenericActionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.*;
-import com.fqf.charapoweract_api.mariodata.IMarioAuthoritativeData;
-import com.fqf.charapoweract_api.mariodata.IMarioClientData;
-import com.fqf.charapoweract_api.mariodata.IMarioData;
-import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.cpadata.ICPAAuthoritativeData;
+import com.fqf.charapoweract_api.cpadata.ICPAData;
 import com.fqf.mario_qua_mario_content.util.ActionTimerVars;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -68,18 +67,18 @@ public class DebugSideTurn implements GenericActionDefinition {
 		return null;
 	}
 
-	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
+	@Override public @Nullable Object provideStateData(ICPAData data) {
 		return new ActionTimerVars();
 	}
-	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
-		if(data.getVars(ActionTimerVars.class).actionTimer++ == 1) {
+	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
+		if(data.retrieveStateData(ActionTimerVars.class).actionTimer++ == 1) {
 			data.instantVisualRotate(90, true);
 		}
 	}
-	@Override public void serverTick(IMarioAuthoritativeData data) {
+	@Override public void serverTick(ICPAAuthoritativeData data) {
 
 	}
-	@Override public boolean travelHook(IMarioTravelData data) {
+	@Override public boolean travelHook(ICPATravelData data) {
 		return true;
 	}
 
@@ -88,7 +87,7 @@ public class DebugSideTurn implements GenericActionDefinition {
 			data -> data.getInputs().SPIN.isPressed(),
 			EvaluatorEnvironment.CLIENT_ONLY,
 			data -> {
-				data.getMario().setYaw(data.getMario().getYaw() + 90);
+				data.getPlayer().setYaw(data.getPlayer().getYaw() + 90);
 			},
 			(data, isSelf, seed) -> {
 				data.forceBodyAlignment(true);

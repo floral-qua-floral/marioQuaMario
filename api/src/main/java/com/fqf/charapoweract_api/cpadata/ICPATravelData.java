@@ -1,9 +1,9 @@
-package com.fqf.charapoweract_api.mariodata;
+package com.fqf.charapoweract_api.cpadata;
 
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 
-public interface IMarioTravelData extends IMarioReadableMotionData {
+public interface ICPATravelData extends ICPAReadableMotionData {
 	void setForwardVel(double forward);
 	void setStrafeVel(double strafe);
 	default void setForwardStrafeVel(double forward, double strafe) {
@@ -15,7 +15,7 @@ public interface IMarioTravelData extends IMarioReadableMotionData {
 	void setVelocity(Vec3d velocity);
 	void goTo(Vec3d pos);
 	default void centerLaterally() {
-		this.goTo(this.getMario().getBlockPos().toCenterPos().withAxis(Direction.Axis.Y, this.getMario().getY()));
+		this.goTo(this.getPlayer().getBlockPos().toCenterPos().withAxis(Direction.Axis.Y, this.getPlayer().getY()));
 	}
 
 	void approachAngleAndAccel(

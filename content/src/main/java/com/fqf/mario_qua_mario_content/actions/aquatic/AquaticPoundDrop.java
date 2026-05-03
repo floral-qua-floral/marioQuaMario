@@ -1,15 +1,14 @@
 package com.fqf.mario_qua_mario_content.actions.aquatic;
 
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.charapoweract_api.cpadata.*;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.charapoweract_api.definitions.states.actions.AquaticActionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.PlayermodelAnimation;
-import com.fqf.charapoweract_api.mariodata.IMarioAuthoritativeData;
-import com.fqf.charapoweract_api.mariodata.IMarioClientData;
-import com.fqf.charapoweract_api.mariodata.IMarioData;
-import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.cpadata.ICPAClientData;
+import com.fqf.charapoweract_api.cpadata.ICPATravelData;
 import com.fqf.charapoweract_api.util.CharaStat;
 import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
 import com.fqf.mario_qua_mario_content.actions.airborne.GroundPoundDrop;
@@ -58,17 +57,17 @@ public class AquaticPoundDrop implements AquaticActionDefinition {
 	public static CharaStat AQUATIC_GROUND_POUND_DRAG = new CharaStat(0.19, WATER_DRAG);
 	public static CharaStat AQUATIC_GROUND_POUND_DRAG_MIN = new CharaStat(0.02, WATER_DRAG);
 
-	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
+	@Override public @Nullable Object provideStateData(ICPAData data) {
 		return null;
 	}
-	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
+	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
 
 	}
-	@Override public void serverTick(IMarioAuthoritativeData data) {
+	@Override public void serverTick(ICPAAuthoritativeData data) {
 
 	}
-	@Override public void travelHook(IMarioTravelData data, AquaticActionHelper helper) {
-		int depthChargeLevel = AquaticGroundPound.getDepthChargeLevel(data.getMario().getEquippedStack(EquipmentSlot.LEGS), data);
+	@Override public void travelHook(ICPATravelData data, AquaticActionHelper helper) {
+		int depthChargeLevel = AquaticGroundPound.getDepthChargeLevel(data.getPlayer().getEquippedStack(EquipmentSlot.LEGS), data);
 		CharaStat drag;
 		if(depthChargeLevel == 0) drag = AQUATIC_GROUND_POUND_DRAG;
 		else drag = AQUATIC_GROUND_POUND_DRAG.variate(1.0 / (depthChargeLevel + 1));

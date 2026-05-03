@@ -2,12 +2,12 @@ package com.fqf.mario_qua_mario_content.stomp_types;
 
 import com.fqf.charapoweract_api.definitions.CollisionAttackTypeDefinition;
 import com.fqf.charapoweract_api.interfaces.CollisionAttackResult;
-import com.fqf.charapoweract_api.mariodata.IMarioAuthoritativeData;
-import com.fqf.charapoweract_api.mariodata.IMarioClientData;
-import com.fqf.charapoweract_api.mariodata.IMarioData;
-import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.cpadata.ICPAAuthoritativeData;
+import com.fqf.charapoweract_api.cpadata.ICPAClientData;
+import com.fqf.charapoweract_api.cpadata.ICPAData;
+import com.fqf.charapoweract_api.cpadata.ICPATravelData;
 import com.fqf.charapoweract_api.util.CharaStat;
-import com.fqf.charapoweract_api.util.MQMTags;
+import com.fqf.charapoweract_api.util.CPATags;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.airborne.StompBounce;
 import com.fqf.mario_qua_mario_content.util.*;
@@ -61,7 +61,7 @@ public class JumpStomp implements CollisionAttackTypeDefinition {
 		};
 	}
 
-	@Override public Box tweakMarioBoundingBox(IMarioData data, Box box) {
+	@Override public Box tweakPlayerBoundingBox(ICPAData data, Box box) {
 		return box.stretch(0, -0.05, 0);
 	}
 
@@ -80,7 +80,7 @@ public class JumpStomp implements CollisionAttackTypeDefinition {
 		potentialTargets.removeIf(entity -> entity.collidesWith(mario) || entity.isConnectedThroughVehicle(mario) || !(
 				(entity.canHit() || entity instanceof TridentEntity) // Mario can only stomp on things he can hit w/ crosshair (& Tridents)
 						&& collidingFromTop(entity, mario, mario.getY(), motion,
-						!entity.getType().isIn(MQMTags.HARMS_COLLISION_ATTACKERS) && ( // No rising stomp on pointy things!
+						!entity.getType().isIn(CPATags.HARMS_COLLISION_ATTACKERS) && ( // No rising stomp on pointy things!
 								entity instanceof Monster // Mario can do rising stomps against monsters
 								|| entity.getType().isIn(MQMContentTags.RISING_STOMPABLE_NONMONSTERS) // And off of armor stands
 						))
@@ -88,8 +88,8 @@ public class JumpStomp implements CollisionAttackTypeDefinition {
 	}
 
 	@Override
-	public void filterPotentialTargets(List<Entity> potentialTargets, ServerPlayerEntity mario, Vec3d motion) {
-		filterStompTargets(potentialTargets, mario, motion);
+	public void filterPotentialTargets(List<Entity> potentialTargets, ServerPlayerEntity attacker, Vec3d motion) {
+		filterStompTargets(potentialTargets, attacker, motion);
 	}
 
 	public static final CharaStat BASE_DAMAGE = new CharaStat(4.5, STOMP, DAMAGE);
@@ -97,8 +97,8 @@ public class JumpStomp implements CollisionAttackTypeDefinition {
 	public static final Identifier PULVERIZING_ID = MarioQuaMarioContent.makeResID("pulverizing");
 	public static final Identifier BOUNDING_ID = MarioQuaMarioContent.makeResID("bounding");
 
-	public static int getPulverizingLevel(ItemStack item, IMarioData data) {
-		return getEnchantmentLevel(item, data.getMario().getWorld(), PULVERIZING_ID);
+	public static int getPulverizingLevel(ItemStack item, ICPAData data) {
+		return getEnchantmentLevel(item, data.getPlayer().getWorld(), PULVERIZING_ID);
 	}
 
 	public static int getEnchantmentLevel(ItemStack item, World world, Identifier enchantmentID) {
@@ -109,31 +109,31 @@ public class JumpStomp implements CollisionAttackTypeDefinition {
 	}
 
 	@Override
-	public float calculateDamage(IMarioData data, ItemStack equipment, float equipmentArmor, float equipmentToughness) {
+	public float calculateDamage(ICPAData data, ItemStack equipment, float equipmentArmor, float equipmentToughness) {
 		int pulverizingLevel = JumpStomp.getPulverizingLevel(equipment, data);
 		return ((float) BASE_DAMAGE.get(data)) + equipmentArmor * 2.25F + pulverizingLevel * 0.5F + (pulverizingLevel > 0 ? 0.5F : 0);
 	}
 
 	@Override
-	public float calculatePiercing(IMarioData data, ItemStack equipment, float equipmentArmor, float equipmentToughness) {
+	public float calculatePiercing(ICPAData data, ItemStack equipment, float equipmentArmor, float equipmentToughness) {
 		return equipmentToughness * 2;
 	}
 
 	@Override
-	public void executeServer(IMarioAuthoritativeData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, boolean affectMario) {
-		if(affectMario && data.hasPower(Powers.STOMP_GUARD)) {
-			data.getVars(MarioVars.class).stompGuardMinHeight = target.getY() + target.getHeight() + 0.15;
-			data.getVars(MarioVars.class).stompGuardRemainingTicks = 4;
+	public void executeServer(ICPAAuthoritativeData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, boolean affectAttacker) {
+		if(affectAttacker && data.hasPower(Powers.STOMP_GUARD)) {
+			data.retrieveStateData(MarioVars.class).stompGuardMinHeight = target.getY() + target.getHeight() + 0.15;
+			data.retrieveStateData(MarioVars.class).stompGuardRemainingTicks = 4;
 		}
 	}
 
-	public static Vec3d stompETAMTS(IMarioTravelData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, Vec3d movingToPos, boolean affectMario) {
+	public static Vec3d stompETAMTS(ICPATravelData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, Vec3d movingToPos, boolean affectMario) {
 		return switch(result) {
 			case PAINFUL -> null; // Replace once Bonk implemented: Give Mario backwards momentum
 			case NORMAL, GLANCING, RESISTED -> {
 				if(affectMario) {
 					data.refreshJumpCapping();
-					data.setYVel(StompBounce.BOUNCE_VEL.get(data) + 0.2F * getEnchantmentLevel(equipment, data.getMario().getWorld(), BOUNDING_ID));
+					data.setYVel(StompBounce.BOUNCE_VEL.get(data) + 0.2F * getEnchantmentLevel(equipment, data.getPlayer().getWorld(), BOUNDING_ID));
 				}
 				yield movingToPos.withAxis(Direction.Axis.Y, target.getY() + target.getHeight());
 			}
@@ -142,12 +142,12 @@ public class JumpStomp implements CollisionAttackTypeDefinition {
 	}
 
 	@Override
-	public @Nullable Vec3d executeTravellersAndModifyTargetPos(IMarioTravelData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, Vec3d movingToPos, boolean affectMario) {
-		return stompETAMTS(data, equipment, target, result, movingToPos, affectMario);
+	public @Nullable Vec3d executeTravellersAndModifyTargetPos(ICPATravelData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, Vec3d movingToPos, boolean affectAttacker) {
+		return stompETAMTS(data, equipment, target, result, movingToPos, affectAttacker);
 	}
 
 	@Override
-	public void executeClients(IMarioClientData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, boolean affectMario, long seed) {
+	public void executeClients(ICPAClientData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, boolean affectAttacker, long seed) {
 		SoundEvent stompSound = switch(result) {
 			case MOUNT, PAINFUL -> null;
 			case NORMAL, GLANCING -> target.isAlive() ? MarioContentSFX.STOMP : MarioContentSFX.LAST;

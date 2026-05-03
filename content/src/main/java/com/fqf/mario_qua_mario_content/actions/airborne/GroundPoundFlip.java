@@ -6,10 +6,9 @@ import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimation;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
-import com.fqf.charapoweract_api.mariodata.IMarioAuthoritativeData;
-import com.fqf.charapoweract_api.mariodata.IMarioClientData;
-import com.fqf.charapoweract_api.mariodata.IMarioData;
-import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.cpadata.*;
+import com.fqf.charapoweract_api.cpadata.ICPAAuthoritativeData;
+import com.fqf.charapoweract_api.cpadata.ICPAClientData;
 import com.fqf.charapoweract_api.util.Easing;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.aquatic.AquaticPoundFlip;
@@ -113,24 +112,24 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 
 	public static class FlipTimerVars extends ActionTimerVars {
 		private final float STORED_FALL_DISTANCE;
-		public FlipTimerVars(IMarioData data) {
-			this.STORED_FALL_DISTANCE = data.getMario().fallDistance;
+		public FlipTimerVars(ICPAData data) {
+			this.STORED_FALL_DISTANCE = data.getPlayer().fallDistance;
 
-			FlipTimerVars existingVars = data.getVars(FlipTimerVars.class);
+			FlipTimerVars existingVars = data.retrieveStateData(FlipTimerVars.class);
 			if(existingVars != null) this.actionTimer = existingVars.actionTimer;
 		}
 	}
-	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
+	@Override public @Nullable Object provideStateData(ICPAData data) {
 		return new FlipTimerVars(data);
 	}
-	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
+	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
 
 	}
-	@Override public void serverTick(IMarioAuthoritativeData data) {
+	@Override public void serverTick(ICPAAuthoritativeData data) {
 
 	}
-	@Override public void travelHook(IMarioTravelData data, AirborneActionHelper helper) {
-		data.getVars(FlipTimerVars.class).actionTimer++;
+	@Override public void travelHook(ICPATravelData data, AirborneActionHelper helper) {
+		data.retrieveStateData(FlipTimerVars.class).actionTimer++;
 		data.setYVel(0.15);
 	}
 
@@ -147,16 +146,16 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 	public static TransitionDefinition makeDropTransition(Identifier targetAction, float flipDuration, SoundEvent sfx) {
 		return new TransitionDefinition(
 				targetAction,
-				data -> data.getVars(FlipTimerVars.class).actionTimer >= flipDuration,
+				data -> data.retrieveStateData(FlipTimerVars.class).actionTimer >= flipDuration,
 				EvaluatorEnvironment.COMMON,
 				data -> {
 					data.setYVel(GroundPoundDrop.GROUND_POUND_VEL.get(data));
 					data.getInputs().JUMP.isPressed(); // Unbuffer jump to make Ground Pound stalling harder
-					data.getMario().fallDistance = data.getVars(FlipTimerVars.class).STORED_FALL_DISTANCE * 0.6F;
+					data.getPlayer().fallDistance = data.retrieveStateData(FlipTimerVars.class).STORED_FALL_DISTANCE * 0.6F;
 				},
 				(data, isSelf, seed) -> {
 					data.storeSound(data.playSound(sfx, seed));
-					data.getMario().fallDistance = data.getVars(FlipTimerVars.class).STORED_FALL_DISTANCE * 0.6F;
+					data.getPlayer().fallDistance = data.retrieveStateData(FlipTimerVars.class).STORED_FALL_DISTANCE * 0.6F;
 				}
 		);
 	}

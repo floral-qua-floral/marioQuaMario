@@ -1,6 +1,6 @@
 package com.fqf.mario_qua_mario_content.util;
 
-import com.fqf.charapoweract_api.mariodata.IMarioData;
+import com.fqf.charapoweract_api.cpadata.ICPAData;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.characters.Mario;
 import com.fqf.mario_qua_mario_content.stomp_types.JumpStomp;
@@ -23,13 +23,13 @@ public class MarioContentEventListeners {
 	public static void register() {
 		ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
 			if(entity instanceof ServerPlayerEntity mario) {
-				IMarioData data = mario.mqm$getIMarioData();
+				ICPAData data = mario.cpa$getICPAData();
 				if(data.isEnabled() && data.hasPower(Powers.STOMP_GUARD) && source.isDirect() && !source.isIn(MQMContentTags.BYPASSES_STOMP_GUARD)) {
 					Entity attacker = source.getAttacker();
 					if(attacker != null) {
 						double marioY;
-						if(data.getVars(MarioVars.class).stompGuardRemainingTicks > 0)
-							marioY = Math.max(mario.getY(), data.getVars(MarioVars.class).stompGuardMinHeight);
+						if(data.retrieveStateData(MarioVars.class).stompGuardRemainingTicks > 0)
+							marioY = Math.max(mario.getY(), data.retrieveStateData(MarioVars.class).stompGuardMinHeight);
 						else
 							marioY = mario.getY();
 

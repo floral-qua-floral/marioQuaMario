@@ -2,15 +2,14 @@ package com.fqf.mario_qua_mario_content.actions.aquatic;
 
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.ProgressHandler;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.charapoweract_api.cpadata.*;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.charapoweract_api.definitions.states.actions.AquaticActionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.PlayermodelAnimation;
-import com.fqf.charapoweract_api.mariodata.IMarioAuthoritativeData;
-import com.fqf.charapoweract_api.mariodata.IMarioClientData;
-import com.fqf.charapoweract_api.mariodata.IMarioData;
-import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.cpadata.ICPAClientData;
+import com.fqf.charapoweract_api.cpadata.ICPAData;
 import com.fqf.mario_qua_mario_content.actions.airborne.GroundPoundFlip;
 import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
 import net.minecraft.util.Identifier;
@@ -57,17 +56,17 @@ public class AquaticPoundFlip implements AquaticActionDefinition {
 		return null;
 	}
 
-	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
+	@Override public @Nullable Object provideStateData(ICPAData data) {
 		return new GroundPoundFlip.FlipTimerVars(data);
 	}
-	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
+	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
 
 	}
-	@Override public void serverTick(IMarioAuthoritativeData data) {
+	@Override public void serverTick(ICPAAuthoritativeData data) {
 
 	}
-	@Override public void travelHook(IMarioTravelData data, AquaticActionHelper helper) {
-		data.getVars(GroundPoundFlip.FlipTimerVars.class).actionTimer++;
+	@Override public void travelHook(ICPATravelData data, AquaticActionHelper helper) {
+		data.retrieveStateData(GroundPoundFlip.FlipTimerVars.class).actionTimer++;
 		data.setYVel(0.075);
 	}
 

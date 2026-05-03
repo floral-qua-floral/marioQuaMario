@@ -3,7 +3,7 @@ package com.fqf.mario_qua_mario_content.actions.airborne;
 import com.fqf.charapoweract_api.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
-import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.cpadata.ICPATravelData;
 import com.fqf.charapoweract_api.util.CharaStat;
 import com.fqf.charapoweract_api.util.Easing;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
@@ -163,7 +163,7 @@ public class LongJump extends Jump implements AirborneActionDefinition {
 	public static CharaStat REDUCED_REDIRECTION = Fall.DRIFT_REDIRECTION.variate(0.66);
 
 	@Override
-	public void travelHook(IMarioTravelData data, AirborneActionHelper helper) {
+	public void travelHook(ICPATravelData data, AirborneActionHelper helper) {
 		helper.applyComplexGravity(data, FALL_ACCEL, null, Fall.FALL_SPEED);
 		helper.airborneAccel(data,
 				REDUCED_FORWARD_ACCEL, Fall.FORWARD_DRIFT_SPEED,

@@ -4,10 +4,9 @@ import com.fqf.charapoweract_api.definitions.states.actions.GroundedActionDefini
 import com.fqf.charapoweract_api.definitions.states.actions.util.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charapoweract_api.mariodata.IMarioAuthoritativeData;
-import com.fqf.charapoweract_api.mariodata.IMarioClientData;
-import com.fqf.charapoweract_api.mariodata.IMarioData;
-import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.cpadata.*;
+import com.fqf.charapoweract_api.cpadata.ICPAClientData;
+import com.fqf.charapoweract_api.cpadata.ICPATravelData;
 import com.fqf.charapoweract_api.util.CharaStat;
 import com.fqf.charapoweract_api.util.Easing;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
@@ -34,7 +33,7 @@ public class DuckWaddle implements GroundedActionDefinition {
 
 	private static final LimbAnimation ARM = new LimbAnimation(false, (data, arrangement, progress) -> {
 		arrangement.addPos(0, progress * 12.2F, -1);
-		arrangement.pitch = Easing.LINEAR.ease(Math.min(progress, 1), arrangement.pitch, -162.92F + 0.26F * Math.min(data.getMario().getPitch(), 0) + -1.15F * arrangement.pitch);
+		arrangement.pitch = Easing.LINEAR.ease(Math.min(progress, 1), arrangement.pitch, -162.92F + 0.26F * Math.min(data.getPlayer().getPitch(), 0) + -1.15F * arrangement.pitch);
 		if(Math.abs(arrangement.roll) < 10) arrangement.roll = 0;
 	});
 	private static LimbAnimation makeLegAnimation(boolean walking) {
@@ -114,16 +113,16 @@ public class DuckWaddle implements GroundedActionDefinition {
 
 	public static final CharaStat WADDLE_REDIRECTION = new CharaStat(0.0, DUCKING, REDIRECTION);
 
-	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
+	@Override public @Nullable Object provideStateData(ICPAData data) {
 		return null;
 	}
-	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
+	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
 
 	}
-	@Override public void serverTick(IMarioAuthoritativeData data) {
+	@Override public void serverTick(ICPAAuthoritativeData data) {
 
 	}
-	@Override public void travelHook(IMarioTravelData data, GroundedActionHelper helper) {
+	@Override public void travelHook(ICPATravelData data, GroundedActionHelper helper) {
 		boolean waddlingForward = data.getInputs().getForwardInput() > 0;
 		helper.groundAccel(data,
 				waddlingForward ? WADDLE_ACCEL : WADDLE_BACKPEDAL_ACCEL,

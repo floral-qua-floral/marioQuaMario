@@ -8,7 +8,7 @@ import com.fqf.charapoweract.packets.MarioPackets;
 import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
 import com.fqf.charapoweract.util.ItemStackArmorReader;
 import com.fqf.charapoweract.util.CollisionAttackDamageSource;
-import com.fqf.charapoweract_api.mariodata.IMarioClientData;
+import com.fqf.charapoweract_api.cpadata.ICPAClientData;
 import it.unimi.dsi.fastutil.floats.FloatFloatImmutablePair;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
@@ -64,9 +64,9 @@ public class ParsedCollisionAttackType extends ParsedMarioThing {
 	}
 
 	public Vec3d moveHook(MarioServerPlayerData data, Vec3d movement) {
-		ServerPlayerEntity mario = data.getMario();
+		ServerPlayerEntity mario = data.getPlayer();
 
-		List<Entity> possibleTargets = mario.getWorld().getOtherEntities(mario, this.DEFINITION.tweakMarioBoundingBox(data, mario.getBoundingBox()).stretch(movement));
+		List<Entity> possibleTargets = mario.getWorld().getOtherEntities(mario, this.DEFINITION.tweakPlayerBoundingBox(data, mario.getBoundingBox()).stretch(movement));
 		possibleTargets.removeIf(entity -> !entity.isAlive());
 		this.DEFINITION.filterPotentialTargets(possibleTargets, mario, movement);
 
@@ -84,7 +84,7 @@ public class ParsedCollisionAttackType extends ParsedMarioThing {
 	}
 
 	public Vec3d hitEntitiesAndGetTargetPos(MarioServerPlayerData data, List<Entity> entities, @Nullable Vec3d goingToPos) {
-		ServerPlayerEntity mario = data.getMario();
+		ServerPlayerEntity mario = data.getPlayer();
 		ItemStack collisionEquipment = mario.getEquippedStack(this.USE_EQUIPMENT_SLOT);
 		FloatFloatImmutablePair equipmentArmor = ItemStackArmorReader.read(collisionEquipment, this.USE_EQUIPMENT_SLOT);
 		float collisionDamageAmount = this.DEFINITION.calculateDamage(data, collisionEquipment, equipmentArmor.leftFloat(), equipmentArmor.rightFloat());
@@ -94,7 +94,7 @@ public class ParsedCollisionAttackType extends ParsedMarioThing {
 		EnumMap<CollisionAttackResult.ExecutableResult, Set<Entity>> collidedEntities = new EnumMap<>(CollisionAttackResult.ExecutableResult.class);
 		boolean canMount = this.MOUNTING && !mario.isSneaking();
 		for(Entity target : entities) {
-			CollisionAttackResult result = ((CollisionAttackable) target).mqm$processCollisionAttack(data, canMount, collisionDamageAmount, collisionDamageSource);
+			CollisionAttackResult result = ((CollisionAttackable) target).cpa$processCollisionAttack(data, canMount, collisionDamageAmount, collisionDamageSource);
 			if(result == CollisionAttackResult.PAINFUL) {
 				result = switch(this.PAINFUL_COLLISION_RESPONSE) {
 					case INJURY -> CollisionAttackResult.PAINFUL;
@@ -154,10 +154,10 @@ public class ParsedCollisionAttackType extends ParsedMarioThing {
 			Vec3d targetPos,
 			boolean affectMario
 	) {
-		this.DEFINITION.executeServer(data, data.getMario().getEquippedStack(this.USE_EQUIPMENT_SLOT), target, result, affectMario);
+		this.DEFINITION.executeServer(data, data.getPlayer().getEquippedStack(this.USE_EQUIPMENT_SLOT), target, result, affectMario);
 		if(affectMario) this.transitionAction(data, result);
 
-		MarioPackets.stompS2C(data.getMario(), this, target, result, affectMario);
+		MarioPackets.stompS2C(data.getPlayer(), this, target, result, affectMario);
 		return this.executeTravellersAndGetTargetPos(data, target, result, targetPos, affectMario);
 	}
 
@@ -168,18 +168,18 @@ public class ParsedCollisionAttackType extends ParsedMarioThing {
 			Vec3d targetPos,
 			boolean affectMario
 	) {
-		Vec3d value = this.DEFINITION.executeTravellersAndModifyTargetPos(data, data.getMario().getEquippedStack(this.USE_EQUIPMENT_SLOT), target, result, targetPos, affectMario);
+		Vec3d value = this.DEFINITION.executeTravellersAndModifyTargetPos(data, data.getPlayer().getEquippedStack(this.USE_EQUIPMENT_SLOT), target, result, targetPos, affectMario);
 		data.applyModifiedVelocity();
 		return value;
 	}
 
 	public void executeClients(
-			IMarioClientData data,
+			ICPAClientData data,
 			Entity target,
 			CollisionAttackResult.ExecutableResult result,
 			boolean affectMario,
 			long seed
 	) {
-		this.DEFINITION.executeClients(data, data.getMario().getEquippedStack(this.USE_EQUIPMENT_SLOT), target, result, affectMario, seed);
+		this.DEFINITION.executeClients(data, data.getPlayer().getEquippedStack(this.USE_EQUIPMENT_SLOT), target, result, affectMario, seed);
 	}
 }

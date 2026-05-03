@@ -2,7 +2,7 @@ package com.fqf.mario_qua_mario_content.powerups;
 
 import com.fqf.charapoweract_api.definitions.states.PowerUpDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charapoweract_api.mariodata.*;
+import com.fqf.charapoweract_api.cpadata.*;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.Voicelines;
 import com.fqf.mario_qua_mario_content.entity.custom.MarioFireballProjectileEntity;
@@ -78,13 +78,13 @@ public class Fire implements PowerUpDefinition {
 		return Set.of();
 	}
 
-	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
+	@Override public @Nullable Object provideStateData(ICPAData data) {
 		return new FireFlowerData();
 	}
-	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
+	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
 
 	}
-	@Override public void serverTick(IMarioAuthoritativeData data) {
+	@Override public void serverTick(ICPAAuthoritativeData data) {
 
 	}
 
@@ -112,7 +112,7 @@ public class Fire implements PowerUpDefinition {
 		}
 
 		@Override public boolean shouldInterceptAttack(
-				IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
+				ICPAReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
 				@Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult
 		) {
 			return canFireballEntity(entityHitResult)
@@ -120,41 +120,41 @@ public class Fire implements PowerUpDefinition {
 		}
 
 		protected abstract boolean canThrowFireball(
-				IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
+				ICPAReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
 				@Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult
 		);
 
 		@Override public void executeTravellers(
-				IMarioTravelData data, ItemStack weapon, float attackCooldownProgress,
+				ICPATravelData data, ItemStack weapon, float attackCooldownProgress,
 				@Nullable BlockPos blockTarget, @Nullable Entity entityTarget
 		) {
 
 		}
 		@Override public void executeClients(
-				IMarioClientData data, ItemStack weapon, float attackCooldownProgress,
+				ICPAClientData data, ItemStack weapon, float attackCooldownProgress,
 				@Nullable BlockPos blockTarget, @Nullable Entity entityTarget,
 				long seed
 		) {
 			data.playSound(MarioContentSFX.FIREBALL, seed);
 			data.voice(Voicelines.FIREBALL, seed);
-			if(data.getMario().isMainPlayer()) {
-				long time = data.getMario().getWorld().getTime();
+			if(data.getPlayer().isMainPlayer()) {
+				long time = data.getPlayer().getWorld().getTime();
 				if(this.HAND == Hand.MAIN_HAND) {
-					data.getVars(FireFlowerData.class).noMainFireballsUntil = time + 12;
-					data.getVars(FireFlowerData.class).noSecondaryFireballsUntil = time + 3;
+					data.retrieveStateData(FireFlowerData.class).noMainFireballsUntil = time + 12;
+					data.retrieveStateData(FireFlowerData.class).noSecondaryFireballsUntil = time + 3;
 				}
 				else {
-					data.getVars(FireFlowerData.class).noMainFireballsUntil = time + 12;
-					data.getVars(FireFlowerData.class).noSecondaryFireballsUntil = time + 12;
+					data.retrieveStateData(FireFlowerData.class).noMainFireballsUntil = time + 12;
+					data.retrieveStateData(FireFlowerData.class).noSecondaryFireballsUntil = time + 12;
 				}
 			}
 		}
 
 		@Override public void executeServer(
-				IMarioAuthoritativeData data, ItemStack weapon, float attackCooldownProgress,
+				ICPAAuthoritativeData data, ItemStack weapon, float attackCooldownProgress,
 				ServerWorld world, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget
 		) {
-			ServerPlayerEntity mario = data.getMario();
+			ServerPlayerEntity mario = data.getPlayer();
 			if(entityTarget != null) {
 				// Directly apply damage as if from a fireball, so that the Fire Flower can't outright prevent an
 				// attack from hitting due to projectile awkwardness
@@ -175,38 +175,38 @@ public class Fire implements PowerUpDefinition {
 		return List.of(
 				new FireballDefinition(Hand.MAIN_HAND) {
 					@Override
-					public boolean canThrowFireball(IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
-						return weapon.isEmpty() && data.getMario().getWorld().getTime() > data.getVars(FireFlowerData.class).noMainFireballsUntil
+					public boolean canThrowFireball(ICPAReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
+						return weapon.isEmpty() && data.getPlayer().getWorld().getTime() > data.retrieveStateData(FireFlowerData.class).noMainFireballsUntil
 								&& attackCooldownProgress >= 1;
 					}
 
 					@Override
-					public @NotNull MiningHandling shouldSuppressMining(IMarioReadableMotionData data, ItemStack weapon, @NotNull BlockHitResult blockHitResult, int miningTicks) {
+					public @NotNull MiningHandling shouldSuppressMining(ICPAReadableMotionData data, ItemStack weapon, @NotNull BlockHitResult blockHitResult, int miningTicks) {
 						return miningTicks <= 3 ? MiningHandling.INTERCEPT : MiningHandling.MINE;
 					}
 				},
 				new FireballDefinition(Hand.OFF_HAND) {
 					@Override
-					public boolean canThrowFireball(IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
-						long time = data.getMario().getWorld().getTime();
-						return time > data.getVars(FireFlowerData.class).noSecondaryFireballsUntil
+					public boolean canThrowFireball(ICPAReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
+						long time = data.getPlayer().getWorld().getTime();
+						return time > data.retrieveStateData(FireFlowerData.class).noSecondaryFireballsUntil
 								// Only after throwing a first fireball, or any time if holding an item
-								&& (time < data.getVars(FireFlowerData.class).noMainFireballsUntil || !weapon.isEmpty())
-								&& data.getMario().getOffHandStack().isEmpty()
+								&& (time < data.retrieveStateData(FireFlowerData.class).noMainFireballsUntil || !weapon.isEmpty())
+								&& data.getPlayer().getOffHandStack().isEmpty()
 								&& attackCooldownProgress < 1;
 					}
 
 					@Override
-					public @NotNull MiningHandling shouldSuppressMining(IMarioReadableMotionData data, ItemStack weapon, @NotNull BlockHitResult blockHitResult, int miningTicks) {
+					public @NotNull MiningHandling shouldSuppressMining(ICPAReadableMotionData data, ItemStack weapon, @NotNull BlockHitResult blockHitResult, int miningTicks) {
 						return miningTicks <= 3 ? MiningHandling.INTERCEPT : MiningHandling.MINE;
 					}
 				},
 				new PreventAttack() {
 					@Override
-					public boolean shouldInterceptAttack(IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
-						long time = data.getMario().getWorld().getTime();
+					public boolean shouldInterceptAttack(ICPAReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
+						long time = data.getPlayer().getWorld().getTime();
 						return attackCooldownProgress < 1 && weapon.isEmpty() && canFireballEntity(entityHitResult)
-								&& (time < data.getVars(FireFlowerData.class).noSecondaryFireballsUntil || time > data.getVars(FireFlowerData.class).noMainFireballsUntil);
+								&& (time < data.retrieveStateData(FireFlowerData.class).noSecondaryFireballsUntil || time > data.retrieveStateData(FireFlowerData.class).noMainFireballsUntil);
 					}
 				}
 		);

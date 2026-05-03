@@ -1,6 +1,6 @@
 package com.fqf.charapoweract_api.definitions.states.actions.util.animation;
 
-import com.fqf.charapoweract_api.mariodata.IMarioAnimatingData;
+import com.fqf.charapoweract_api.cpadata.ICPAAnimatingData;
 import com.fqf.charapoweract_api.util.Easing;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -19,11 +19,11 @@ public record ProgressHandler(@Nullable Identifier animationID, @Nullable Progre
 
 	@FunctionalInterface
 	public interface ProgressCalculator {
-		float calculateProgress(IMarioAnimatingData data, int ticksPassed);
+		float calculateProgress(ICPAAnimatingData data, int ticksPassed);
 	}
 
 	@FunctionalInterface
 	public interface ProgressResetPredicate {
-		boolean shouldReset(IMarioAnimatingData data, @Nullable Identifier prevAnimationID);
+		boolean shouldReset(ICPAAnimatingData data, @Nullable Identifier prevAnimationID);
 	}
 }

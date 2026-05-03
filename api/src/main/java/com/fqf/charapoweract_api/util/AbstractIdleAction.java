@@ -4,7 +4,7 @@ import com.fqf.charapoweract_api.definitions.states.actions.GroundedActionDefini
 import com.fqf.charapoweract_api.definitions.states.actions.util.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charapoweract_api.mariodata.*;
+import com.fqf.charapoweract_api.cpadata.*;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
@@ -35,23 +35,23 @@ public abstract class AbstractIdleAction implements GroundedActionDefinition {
 		return null;
 	}
 
-	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
+	@Override public @Nullable Object provideStateData(ICPAData data) {
 		return null;
 	}
-	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
+	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
 
 	}
-	@Override public void serverTick(IMarioAuthoritativeData data) {
+	@Override public void serverTick(ICPAAuthoritativeData data) {
 
 	}
-	@Override public void travelHook(IMarioTravelData data, GroundedActionHelper helper) {
+	@Override public void travelHook(ICPATravelData data, GroundedActionHelper helper) {
 
 	}
 
 	public abstract @NotNull Identifier getWakeupID();
 	protected final @NotNull Identifier WAKEUP_ID = this.getWakeupID();
 
-	public static boolean isIdle(IMarioReadableMotionData data) {
+	public static boolean isIdle(ICPAReadableMotionData data) {
 		return MathHelper.approximatelyEquals(data.getForwardVel(), 0)
 				&& MathHelper.approximatelyEquals(data.getStrafeVel(), 0)
 				&& MathHelper.approximatelyEquals(data.getInputs().getForwardInput(), 0)

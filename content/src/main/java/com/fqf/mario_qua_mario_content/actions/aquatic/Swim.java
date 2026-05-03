@@ -44,13 +44,13 @@ public class Swim extends Submerged {
 	public static final TransitionDefinition SWIM = new TransitionDefinition(
 			ID,
 			data -> {
-				ActionTimerVars vars = data.getVars(ActionTimerVars.class);
+				ActionTimerVars vars = data.retrieveStateData(ActionTimerVars.class);
 				return (vars == null || vars.actionTimer > 2) && data.getInputs().JUMP.isPressed();
 			},
 			EvaluatorEnvironment.CLIENT_ONLY,
 			data -> {
 				data.setYVel(Math.min(SWIM_MAX_ASCENSION_SPEED.get(data), data.getYVel() + SWIM_ACCEL.get(data)));
-				data.getMario().limbAnimator.setSpeed(1.5F); // Kick the legs a little (like when damaged)
+				data.getPlayer().limbAnimator.setSpeed(1.5F); // Kick the legs a little (like when damaged)
 			},
 			(data, isSelf, seed) -> data.playSound(MarioContentSFX.SWIM, seed)
 	);

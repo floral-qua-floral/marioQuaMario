@@ -1,10 +1,10 @@
 package com.fqf.charapoweract.mixin.client;
 
-import com.fqf.charapoweract_api.mariodata.IMarioClientData;
+import com.fqf.charapoweract_api.cpadata.ICPAClientData;
 import com.fqf.charapoweract.mariodata.MarioOtherClientData;
 import com.fqf.charapoweract.mariodata.MarioPlayerData;
 import com.fqf.charapoweract.mariodata.injections.AdvMarioOtherClientDataHolder;
-import com.fqf.charapoweract_api.mariodata.injections.IMarioClientDataHolder;
+import com.fqf.charapoweract_api.cpadata.injections.ICPAClientDataHolder;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.network.OtherClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
@@ -16,10 +16,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(OtherClientPlayerEntity.class)
-public class OtherClientPlayerEntityMarioDataMixin implements AdvMarioOtherClientDataHolder, IMarioClientDataHolder {
+public class OtherClientPlayerEntityMarioDataMixin implements AdvMarioOtherClientDataHolder, ICPAClientDataHolder {
 	@Unique private MarioOtherClientData marioData = new MarioOtherClientData((OtherClientPlayerEntity) (Object) this);
 
-	@Override public IMarioClientData mqm$getIMarioClientData() {
+	@Override public ICPAClientData cpa$getICPAClientData() {
 		return this.mqm$getMarioData();
 	}
 

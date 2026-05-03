@@ -3,7 +3,7 @@ package com.fqf.charapoweract.registries.actions;
 import com.fqf.charapoweract_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charapoweract_api.mariodata.IMarioReadableMotionData;
+import com.fqf.charapoweract_api.cpadata.ICPAReadableMotionData;
 import com.fqf.charapoweract_api.util.Easing;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.MathHelper;
@@ -58,7 +58,7 @@ public class AnimationHelperImpl implements AnimationHelper {
 	}
 
 	@Override
-	public @Nullable WallboundActionDefinition.WallInfo getWallInfo(IMarioReadableMotionData data) {
+	public @Nullable WallboundActionDefinition.WallInfo getWallInfo(ICPAReadableMotionData data) {
 		if(data.getActionCategory() != ActionCategory.WALLBOUND) return null;
 		return UniversalActionDefinitionHelper.INSTANCE.getWallInfo(data);
 	}

@@ -4,7 +4,7 @@ import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
 import com.fqf.charapoweract.registries.power_granting.ParsedPowerUp;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charapoweract_api.mariodata.util.RecordedCollisionSet;
+import com.fqf.charapoweract_api.cpadata.util.RecordedCollisionSet;
 import net.minecraft.client.network.OtherClientPlayerEntity;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.util.Identifier;
@@ -14,14 +14,14 @@ import org.joml.Vector2d;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MarioOtherClientData extends MarioPlayerData implements IMarioClientDataImpl {
+public class MarioOtherClientData extends MarioPlayerData implements ICPAClientDataImpl {
 	public boolean jumpCapped;
 	private final OtherClientPlayerEntity MARIO;
 	public MarioOtherClientData(OtherClientPlayerEntity mario) {
 		super();
 		this.MARIO = mario;
 	}
-	@Override public OtherClientPlayerEntity getMario() {
+	@Override public OtherClientPlayerEntity getPlayer() {
 		return this.MARIO;
 	}
 
@@ -89,7 +89,7 @@ public class MarioOtherClientData extends MarioPlayerData implements IMarioClien
 			this.isGenerated = true;
 
 			// Calculate forward and sideways vector components
-			double yawRad = Math.toRadians(getMario().getYaw());
+			double yawRad = Math.toRadians(MarioOtherClientData.this.getPlayer().getYaw());
 			double negativeSineYaw = -Math.sin(yawRad);
 			double cosineYaw = Math.cos(yawRad);
 

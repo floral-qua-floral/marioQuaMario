@@ -1,12 +1,12 @@
-package com.fqf.charapoweract_api.mariodata;
+package com.fqf.charapoweract_api.cpadata;
 
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface IMarioAuthoritativeData extends IMarioData {
-	@Override ServerPlayerEntity getMario();
+public interface ICPAAuthoritativeData extends ICPAData {
+	@Override ServerPlayerEntity getPlayer();
 
 	void disable();
 

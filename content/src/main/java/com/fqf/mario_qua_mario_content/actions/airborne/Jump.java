@@ -9,7 +9,7 @@ import com.fqf.charapoweract_api.definitions.states.actions.util.animation.Anima
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.LimbAnimation;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.ProgressHandler;
-import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.cpadata.ICPATravelData;
 import com.fqf.charapoweract_api.util.CharaStat;
 import com.fqf.charapoweract_api.util.Easing;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
@@ -35,7 +35,7 @@ public class Jump extends Fall implements AirborneActionDefinition {
 					if(leftArmBusy && !rightArmBusy) return false;
 					if(rightArmBusy && !leftArmBusy) return true;
 					if(Math.abs(headRelativeYaw) > 0.55F) return headRelativeYaw > 0;
-					return data.getMario().getRandom().nextBoolean();
+					return data.getPlayer().getRandom().nextBoolean();
 				},
 				new ProgressHandler(
 						(data, ticksPassed) ->
@@ -79,7 +79,7 @@ public class Jump extends Fall implements AirborneActionDefinition {
 	public static final CharaStat JUMP_VEL = new CharaStat(0.858, JUMP_VELOCITY);
 	public static final CharaStat JUMP_ADDEND = new CharaStat(0.3, JUMP_VELOCITY);
 
-	@Override public void travelHook(IMarioTravelData data, AirborneActionHelper helper) {
+	@Override public void travelHook(ICPATravelData data, AirborneActionHelper helper) {
 		helper.applyComplexGravity(data, Fall.FALL_ACCEL, JUMP_GRAVITY, Fall.FALL_SPEED);
 		Fall.drift(data, helper);
 	}

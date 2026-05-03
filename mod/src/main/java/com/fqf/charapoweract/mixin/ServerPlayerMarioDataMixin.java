@@ -1,12 +1,12 @@
 package com.fqf.charapoweract.mixin;
 
-import com.fqf.charapoweract_api.mariodata.IMarioAuthoritativeData;
-import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.cpadata.ICPAAuthoritativeData;
+import com.fqf.charapoweract_api.cpadata.ICPATravelData;
 import com.fqf.charapoweract.mariodata.MarioPlayerData;
 import com.fqf.charapoweract.mariodata.MarioServerPlayerData;
 import com.fqf.charapoweract.mariodata.injections.AdvMarioServerDataHolder;
-import com.fqf.charapoweract_api.mariodata.injections.IMarioAuthoritativeDataHolder;
-import com.fqf.charapoweract_api.mariodata.injections.IMarioTravelDataHolder;
+import com.fqf.charapoweract_api.cpadata.injections.ICPAAuthoritativeDataHolder;
+import com.fqf.charapoweract_api.cpadata.injections.ICPATravelDataHolder;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.network.packet.c2s.common.SyncedClientOptions;
 import net.minecraft.server.MinecraftServer;
@@ -20,13 +20,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerPlayerEntity.class)
-public class ServerPlayerMarioDataMixin implements AdvMarioServerDataHolder, IMarioAuthoritativeDataHolder, IMarioTravelDataHolder {
+public class ServerPlayerMarioDataMixin implements AdvMarioServerDataHolder, ICPAAuthoritativeDataHolder, ICPATravelDataHolder {
 	@Unique private MarioServerPlayerData marioServerData = new MarioServerPlayerData((ServerPlayerEntity) (Object) this);
 
-	@Override public IMarioAuthoritativeData mqm$getIMarioAuthoritativeData() {
+	@Override public ICPAAuthoritativeData cpa$getICPAAuthoritativeData() {
 		return this.mqm$getMarioData();
 	}
-	@Override public IMarioTravelData mqm$getIMarioTravelData() {
+	@Override public ICPATravelData cpa$getICPATravelData() {
 		return this.mqm$getMarioData();
 	}
 

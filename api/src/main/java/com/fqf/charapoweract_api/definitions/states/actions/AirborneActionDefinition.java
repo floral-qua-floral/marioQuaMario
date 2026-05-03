@@ -2,7 +2,7 @@ package com.fqf.charapoweract_api.definitions.states.actions;
 
 import com.fqf.charapoweract_api.definitions.states.actions.util.IncompleteActionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.cpadata.ICPATravelData;
 import com.fqf.charapoweract_api.util.CharaStat;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public interface AirborneActionDefinition extends IncompleteActionDefinition {
-	void travelHook(IMarioTravelData data, AirborneActionHelper helper);
+	void travelHook(ICPATravelData data, AirborneActionHelper helper);
 
 	@NotNull List<TransitionDefinition> getBasicTransitions(AirborneActionHelper helper);
 	@NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper);
@@ -21,13 +21,13 @@ public interface AirborneActionDefinition extends IncompleteActionDefinition {
 	 */
 	interface AirborneActionHelper {
 		void applyComplexGravity(
-				IMarioTravelData data,
+				ICPATravelData data,
 				CharaStat gravity, @Nullable CharaStat jumpingGravity,
 				CharaStat terminalVelocity
 		);
 
 		void airborneAccel(
-				IMarioTravelData data,
+				ICPATravelData data,
 				CharaStat forwardAccelStat, CharaStat forwardSpeedStat,
 				CharaStat backwardAccelStat, CharaStat backwardSpeedStat,
 				CharaStat strafeAccelStat, CharaStat strafeSpeedStat,

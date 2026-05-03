@@ -8,8 +8,8 @@ import com.fqf.charapoweract_api.definitions.states.actions.util.EvaluatorEnviro
 import com.fqf.charapoweract_api.definitions.states.actions.util.IncompleteActionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionInjectionDefinition;
-import com.fqf.charapoweract_api.mariodata.IMarioReadableMotionData;
-import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.cpadata.ICPAReadableMotionData;
+import com.fqf.charapoweract_api.cpadata.ICPATravelData;
 import com.fqf.charapoweract.mariodata.MarioMoveableData;
 import com.fqf.charapoweract_api.util.CharaStat;
 import com.fqf.charapoweract_api.util.StatCategory;
@@ -32,7 +32,7 @@ public class UniversalActionDefinitionHelper implements
 
 	@Override
 	public void groundAccel(
-			IMarioTravelData data,
+			ICPATravelData data,
 			CharaStat forwardAccelStat, CharaStat forwardSpeedStat,
 			CharaStat strafeAccelStat, CharaStat strafeSpeedStat,
 			double forwardAngleContribution, double strafeAngleContribution, CharaStat redirectStat
@@ -48,7 +48,7 @@ public class UniversalActionDefinitionHelper implements
 
 	@Override
 	public void applyDrag(
-			IMarioTravelData data,
+			ICPATravelData data,
 			CharaStat drag, CharaStat dragMin,
 			double forwardAngleContribution, double strafeAngleContribution, CharaStat redirection
 	) {
@@ -82,8 +82,8 @@ public class UniversalActionDefinitionHelper implements
 	}
 
 	@Override
-	public double getSlipFactor(IMarioReadableMotionData data) {
-		return Math.pow(0.6 / getFloorSlipperiness(data.getMario()), 3);
+	public double getSlipFactor(ICPAReadableMotionData data) {
+		return Math.pow(0.6 / getFloorSlipperiness(data.getPlayer()), 3);
 	}
 	private static float getFloorSlipperiness(Entity stepper) {
 		if(stepper.isOnGround()) {
@@ -94,12 +94,12 @@ public class UniversalActionDefinitionHelper implements
 	}
 
 	@Override
-	public void performJump(IMarioTravelData data, CharaStat jumpVel, @Nullable CharaStat speedAddend) {
+	public void performJump(ICPATravelData data, CharaStat jumpVel, @Nullable CharaStat speedAddend) {
 		double newYVel = jumpVel.get(data);
 		if(speedAddend != null) newYVel += speedAddend.get(data) * getSpeedFactor(data);
 		data.setYVel(newYVel);
 	}
-	private double getSpeedFactor(IMarioTravelData data) {
+	private double getSpeedFactor(ICPATravelData data) {
 		double scaledForwardVel = data.getForwardVel();
 		if(scaledForwardVel < 0) return scaledForwardVel * 0.2;
 		if(scaledForwardVel < 1) return scaledForwardVel * scaledForwardVel;
@@ -107,7 +107,7 @@ public class UniversalActionDefinitionHelper implements
 	}
 
 	@Override public void applyComplexGravity(
-			IMarioTravelData data,
+			ICPATravelData data,
 			CharaStat gravity, @Nullable CharaStat jumpingGravity,
 			CharaStat terminalVelocity
 	) {
@@ -115,7 +115,7 @@ public class UniversalActionDefinitionHelper implements
 	}
 
 	@Override public void airborneAccel(
-			IMarioTravelData data,
+			ICPATravelData data,
 			CharaStat forwardAccelStat, CharaStat forwardSpeedStat,
 			CharaStat backwardAccelStat, CharaStat backwardSpeedStat,
 			CharaStat strafeAccelStat, CharaStat strafeSpeedStat,
@@ -131,7 +131,7 @@ public class UniversalActionDefinitionHelper implements
 	}
 
 	private void driftingAccel(
-			IMarioTravelData data,
+			ICPATravelData data,
 			CharaStat accelStat, CharaStat speedStat,
 			CharaStat strafeAccelStat, CharaStat strafeSpeedStat,
 			double forwardAngleContribution, double strafeAngleContribution, CharaStat redirectStat
@@ -174,7 +174,7 @@ public class UniversalActionDefinitionHelper implements
 	}
 
 	@Override
-	public void applyGravity(IMarioTravelData data, CharaStat gravity, CharaStat terminalVelocity) {
+	public void applyGravity(ICPATravelData data, CharaStat gravity, CharaStat terminalVelocity) {
 		double maxFallSpeed = terminalVelocity.get(data);
 		double yVel = data.getYVel();
 		if(yVel > maxFallSpeed) {
@@ -184,7 +184,7 @@ public class UniversalActionDefinitionHelper implements
 	}
 
 	@Override
-	public void applyWaterDrag(IMarioTravelData data, CharaStat drag, CharaStat dragMin) {
+	public void applyWaterDrag(ICPATravelData data, CharaStat drag, CharaStat dragMin) {
 		double dragValue = drag.get(data);
 		boolean dragInverted = dragValue < 0;
 		double slipFactor = 1.0;
@@ -208,7 +208,7 @@ public class UniversalActionDefinitionHelper implements
 
 	@Override
 	public void aquaticAccel(
-			IMarioTravelData data,
+			ICPATravelData data,
 			CharaStat forwardAccelStat, CharaStat forwardSpeedStat,
 			CharaStat backwardAccelStat, CharaStat backwardSpeedStat,
 			CharaStat strafeAccelStat, CharaStat strafeSpeedStat,
@@ -224,7 +224,7 @@ public class UniversalActionDefinitionHelper implements
 	}
 
 	@Override
-	public AdvancedWallInfo getWallInfo(IMarioReadableMotionData data) {
+	public AdvancedWallInfo getWallInfo(ICPAReadableMotionData data) {
 		return((MarioPlayerData) data).getWallInfo();
 	}
 
@@ -234,7 +234,7 @@ public class UniversalActionDefinitionHelper implements
 	}
 
 	@Override public void climbWall(
-			IMarioTravelData data,
+			ICPATravelData data,
 			CharaStat ascendSpeedStat, CharaStat ascendAccelStat,
 			CharaStat descendSpeedStat, CharaStat descendAccelStat,
 			CharaStat sidleSpeedStat, CharaStat sidleAccelStat
@@ -273,26 +273,26 @@ public class UniversalActionDefinitionHelper implements
 	}
 
 	@Override
-	public void setSidleVel(IMarioTravelData data, double sidleVel) {
+	public void setSidleVel(ICPATravelData data, double sidleVel) {
 		AdvancedWallInfo wall = this.getWallInfo(data);
 		if(wall != null) wall.setSidleVel(sidleVel);
 	}
 
 	@Override
-	public void setTowardsWallVel(IMarioTravelData data, double towardsWallVel) {
+	public void setTowardsWallVel(ICPATravelData data, double towardsWallVel) {
 		AdvancedWallInfo wall = this.getWallInfo(data);
 		if(wall != null) wall.setTowardsWallVel(towardsWallVel);
 	}
 
 	@Override
-	public Entity getMount(IMarioReadableMotionData data) {
-		return data.getMario().getVehicle();
+	public Entity getMount(ICPAReadableMotionData data) {
+		return data.getPlayer().getVehicle();
 	}
 
 
 	@Override
-	public void dismount(IMarioTravelData data, boolean reposition) {
-		data.getMario().stopRiding();
+	public void dismount(ICPATravelData data, boolean reposition) {
+		data.getPlayer().stopRiding();
 		if(!reposition && data instanceof MarioServerPlayerData serverData)
 			serverData.cancelNextRequestTeleportPacket = true;
 //		((MarioPlayerData) data).attemptDismount = reposition

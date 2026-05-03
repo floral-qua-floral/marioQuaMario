@@ -2,7 +2,7 @@ package com.fqf.charapoweract_api.mixin.bappables;
 
 import com.fqf.charapoweract_api.interfaces.BapResult;
 import com.fqf.charapoweract_api.interfaces.Bappable;
-import com.fqf.charapoweract_api.mariodata.IMarioData;
+import com.fqf.charapoweract_api.cpadata.ICPAData;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.DoorBlock;
@@ -33,11 +33,12 @@ public abstract class DoorBlockMixin implements Bappable {
 	@Shadow public abstract boolean isOpen(BlockState state);
 
 	@Override
-	public void mqm$onBapped(IMarioData data, World world, BlockPos pos, BlockState blockState, Direction direction, int strength, BapResult result) {
-		Bappable.super.mqm$onBapped(data, world, pos, blockState, direction, strength, result);
+	public void cpa$onBapped(ICPAData data, World world, BlockPos pos, BlockState blockState, Direction direction, int strength, BapResult result) {
+		Bappable.super.cpa$onBapped(data, world, pos, blockState, direction, strength, result);
 
 		switch(result) {
-			case BUMP, BUMP_NO_POWER, BUMP_EMBRITTLE, BUMP_EMBRITTLE_NO_POWER, BREAK, BREAK_NO_POWER -> {
+			case BUMP, BUMP_WITHOUT_POWERING, BUMP_EMBRITTLE, BUMP_EMBRITTLE_WITHOUT_POWERING, BREAK,
+				 BREAK_WITHOUT_POWERING -> {
 				Direction flipDir;
 
 				if(blockState.get(OPEN)) {
@@ -53,11 +54,11 @@ public abstract class DoorBlockMixin implements Bappable {
 				if(direction == flipDir) {
 					blockState = blockState.cycle(OPEN);
 					world.setBlockState(pos, blockState, Block.NOTIFY_LISTENERS | Block.REDRAW_ON_MAIN_THREAD);
-					this.playOpenCloseSound(data == null ? null : data.getMario(), world, pos, blockState.get(OPEN));
-					world.emitGameEvent(data == null ? null : data.getMario(), this.isOpen(blockState) ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, pos);
+					this.playOpenCloseSound(data == null ? null : data.getPlayer(), world, pos, blockState.get(OPEN));
+					world.emitGameEvent(data == null ? null : data.getPlayer(), this.isOpen(blockState) ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, pos);
 				}
 
-//				MarioQuaMarioAPI.LOGGER.info("Door bap test:\n\t- Open: {}\n\t- Facing: {}\n\t- Hinge: {}\n\t- Bapdir: {}\n\t- Flipdir: {}",
+//				CharaPowerActAPI.LOGGER.info("Door bap test:\n\t- Open: {}\n\t- Facing: {}\n\t- Hinge: {}\n\t- Bapdir: {}\n\t- Flipdir: {}",
 //						blockState.get(OPEN), blockState.get(FACING), blockState.get(HINGE), direction, flipDir);
 			}
 		}

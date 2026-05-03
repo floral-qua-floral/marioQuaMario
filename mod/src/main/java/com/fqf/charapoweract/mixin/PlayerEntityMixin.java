@@ -62,7 +62,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 				&& moveableData.doMarioTravel()
 				&& moveableData.travelHook(movementInput.z, movementInput.x)) {
 			// SABLE HOOK
-			MarioSableCompatSafe.trySablePostTravelCompatibility(moveableData.getMario());
+			MarioSableCompatSafe.trySablePostTravelCompatibility(moveableData.getPlayer());
 			ci.cancel();
 		}
 	}

@@ -1,6 +1,6 @@
 package com.fqf.mario_qua_mario_content.item.custom;
 
-import com.fqf.charapoweract_api.mariodata.IMarioAuthoritativeData;
+import com.fqf.charapoweract_api.cpadata.ICPAAuthoritativeData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -21,7 +21,7 @@ public class PowerUpItem extends Item {
 	@Override
 	public ItemStack finishUsing(ItemStack stack, World world, LivingEntity user) {
 		if(user instanceof ServerPlayerEntity serverPlayer) {
-			IMarioAuthoritativeData data = serverPlayer.mqm$getIMarioAuthoritativeData();
+			ICPAAuthoritativeData data = serverPlayer.cpa$getICPAAuthoritativeData();
 			if(data.isEnabled() && this.REPLACEMENT_VALUE_THRESHOLD >= data.getPowerUpValue() && !data.getPowerUpID().equals(this.POWER_UP_FORM_ID))
 				data.empowerTo(this.POWER_UP_FORM_ID);
 		}

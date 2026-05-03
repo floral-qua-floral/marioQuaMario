@@ -2,13 +2,13 @@ package com.fqf.charapoweract;
 
 import com.fqf.charapoweract.bapping.BlockBappingUtil;
 import com.fqf.charapoweract_api.interfaces.BapResult;
-import com.fqf.charapoweract_api.mariodata.IMarioAuthoritativeData;
+import com.fqf.charapoweract_api.cpadata.ICPAAuthoritativeData;
 import com.fqf.charapoweract.mariodata.MarioServerPlayerData;
 import com.fqf.charapoweract.packets.MarioAttackInterceptionPackets;
 import com.fqf.charapoweract.registries.RegistryManager;
 import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
 import com.fqf.charapoweract.registries.power_granting.ParsedPowerUp;
-import com.fqf.charapoweract_api.util.MQMTags;
+import com.fqf.charapoweract_api.util.CPATags;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -254,11 +254,11 @@ public class MarioCommand {
 		if(context.getSource().getWorld().getBlockState(position).isAir())
 			return sendFeedback(context, "Block at " + posString + " is air!", false);
 
-		boolean noPower = mario.getServerWorld().getBlockState(position).isIn(MQMTags.NOT_POWERED_WHEN_BAPPED);
+		boolean noPower = mario.getServerWorld().getBlockState(position).isIn(CPATags.NOT_POWERED_WHEN_BAPPED);
 		result = switch(result) {
-			case BUMP -> noPower ? BapResult.BUMP_NO_POWER : result;
-			case BUMP_EMBRITTLE -> noPower ? BapResult.BUMP_EMBRITTLE_NO_POWER : result;
-			case BREAK -> noPower ? BapResult.BREAK_NO_POWER : result;
+			case BUMP -> noPower ? BapResult.BUMP_WITHOUT_POWERING : result;
+			case BUMP_EMBRITTLE -> noPower ? BapResult.BUMP_EMBRITTLE_WITHOUT_POWERING : result;
+			case BREAK -> noPower ? BapResult.BREAK_WITHOUT_POWERING : result;
 			default -> result;
 		};
 
@@ -402,7 +402,7 @@ public class MarioCommand {
 			return sendFeedback(context, name + " is not playing as a character, and as such cannot revert forms.", false);
 
 		Identifier formerPowerUp = data.getPowerUpID();
-		IMarioAuthoritativeData.ReversionResult result = data.executeReversion();
+		ICPAAuthoritativeData.ReversionResult result = data.executeReversion();
 		Identifier newPowerUp = data.getPowerUpID();
 
 		return sendFeedback(context, switch(result) {
@@ -412,6 +412,6 @@ public class MarioCommand {
 					"Unable to execute reversion; " + name + "'s current power-up (" + formerPowerUp + ") reverts into form "
 					+ data.getPowerUp().REVERSION_TARGET_ID + ", for which their character (" + data.getCharacterID() + ") has no playermodel.";
 			case NOT_ENABLED -> "Unable to execute reversion; " + name + " is not playing as a character.";
-		}, result == IMarioAuthoritativeData.ReversionResult.SUCCESS);
+		}, result == ICPAAuthoritativeData.ReversionResult.SUCCESS);
 	}
 }

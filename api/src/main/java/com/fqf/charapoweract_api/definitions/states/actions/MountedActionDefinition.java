@@ -2,8 +2,8 @@ package com.fqf.charapoweract_api.definitions.states.actions;
 
 import com.fqf.charapoweract_api.definitions.states.actions.util.IncompleteActionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.charapoweract_api.mariodata.IMarioReadableMotionData;
-import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.cpadata.ICPAReadableMotionData;
+import com.fqf.charapoweract_api.cpadata.ICPATravelData;
 import net.minecraft.entity.Entity;
 import net.minecraft.text.MutableText;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +14,7 @@ import java.util.List;
 public interface MountedActionDefinition extends IncompleteActionDefinition {
 	@Nullable MutableText dismountingHint();
 
-	boolean travelHook(IMarioTravelData data, Entity mount, MountedActionHelper helper);
+	boolean travelHook(ICPATravelData data, Entity mount, MountedActionHelper helper);
 
 	@NotNull List<TransitionDefinition> getBasicTransitions(MountedActionHelper helper);
 	@NotNull List<TransitionDefinition> getInputTransitions(MountedActionHelper helper);
@@ -25,9 +25,9 @@ public interface MountedActionDefinition extends IncompleteActionDefinition {
 	 * other ActionHelpers, if for whatever reason you need them.
 	 */
 	interface MountedActionHelper {
-		Entity getMount(IMarioReadableMotionData data);
+		Entity getMount(ICPAReadableMotionData data);
 
-		void dismount(IMarioTravelData data, boolean reposition);
+		void dismount(ICPATravelData data, boolean reposition);
 
 		double getSlipFactor(Entity mount);
 	}

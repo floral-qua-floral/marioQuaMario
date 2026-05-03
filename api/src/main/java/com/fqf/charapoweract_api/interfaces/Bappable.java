@@ -1,7 +1,7 @@
 package com.fqf.charapoweract_api.interfaces;
 
-import com.fqf.charapoweract_api.mariodata.IMarioData;
-import com.fqf.charapoweract_api.util.MQMTags;
+import com.fqf.charapoweract_api.cpadata.ICPAData;
+import com.fqf.charapoweract_api.util.CPATags;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -19,19 +19,19 @@ public interface Bappable {
 	 * @param strength
 	 * @return How the block should react to the collision.
 	 */
-	default BapResult mqm$getBapResult(
-			IMarioData data, World world,
+	default BapResult cpa$getBapResult(
+			ICPAData data, World world,
 			BlockPos pos, BlockState blockState, float hardness,
 			Direction direction,
 			int strength
 	) {
 		// Cannot affect indestructible blocks.
-		if(hardness == -1 || blockState.isIn(MQMTags.UNBAPPABLE))
+		if(hardness == -1 || blockState.isIn(CPATags.UNBAPPABLE))
 			return BapResult.FAIL;
 
-		if(blockState.isIn(MQMTags.USES_DOUBLE_HARDNESS_WHEN_BAPPED))
+		if(blockState.isIn(CPATags.USES_DOUBLE_HARDNESS_WHEN_BAPPED))
 			hardness *= 2;
-		if(blockState.isIn(MQMTags.USES_HALF_HARDNESS_WHEN_BAPPED))
+		if(blockState.isIn(CPATags.USES_HALF_HARDNESS_WHEN_BAPPED))
 			hardness *= 0.5F;
 
 		float bustThreshold;
@@ -76,16 +76,16 @@ public interface Bappable {
 		if(hardness < bustThreshold)
 			return BapResult.BUST;
 
-		boolean shouldPower = !blockState.isIn(MQMTags.NOT_POWERED_WHEN_BAPPED);
+		boolean shouldPower = !blockState.isIn(CPATags.NOT_POWERED_WHEN_BAPPED);
 
 		if(hardness < breakThreshold)
-			return shouldPower ? BapResult.BREAK : BapResult.BREAK_NO_POWER;
+			return shouldPower ? BapResult.BREAK : BapResult.BREAK_WITHOUT_POWERING;
 
 		if(hardness < embrittleThreshold)
-			return shouldPower ? BapResult.BUMP_EMBRITTLE : BapResult.BUMP_EMBRITTLE_NO_POWER;
+			return shouldPower ? BapResult.BUMP_EMBRITTLE : BapResult.BUMP_EMBRITTLE_WITHOUT_POWERING;
 
 		if(hardness < bumpThreshold)
-			return shouldPower ? BapResult.BUMP : BapResult.BUMP_NO_POWER;
+			return shouldPower ? BapResult.BUMP : BapResult.BUMP_WITHOUT_POWERING;
 
 		return BapResult.FAIL;
 	}
@@ -99,8 +99,8 @@ public interface Bappable {
 	 * @param strength
 	 * @param result     After this is called, the block will receive an update.
 	 */
-	default void mqm$onBapped(
-			IMarioData data,
+	default void cpa$onBapped(
+			ICPAData data,
 			World world,
 			BlockPos pos, BlockState blockState,
 			Direction direction,

@@ -2,7 +2,7 @@ package com.fqf.mario_qua_mario_content.actions.airborne;
 
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charapoweract_api.mariodata.*;
+import com.fqf.charapoweract_api.cpadata.*;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.charapoweract_api.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.*;
@@ -102,8 +102,8 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 		return new PlayermodelAnimation(
 				null,
 				new ProgressHandler((data, ticksPassed) -> {
-					float deviation = MathHelper.subtractAngles(data.getMario().bodyYaw,
-							data.getVars(BonkVars.class).recalculateBonkYaw(data));
+					float deviation = MathHelper.subtractAngles(data.getPlayer().bodyYaw,
+							data.retrieveStateData(BonkVars.class).recalculateBonkYaw(data));
 					return deviation / 180 * 2;
 				}),
 				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
@@ -182,18 +182,18 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 		public float bonkYaw;
 		public int noInputTicks;
 
-		public BonkVars(IMarioData data) {
+		public BonkVars(ICPAData data) {
 			this.noInputTicks = 2;
-			BonkVars oldVars = data.getVars(BonkVars.class);
+			BonkVars oldVars = data.retrieveStateData(BonkVars.class);
 			if(oldVars != null)
 				this.bonkYaw = oldVars.bonkYaw;
-			else if(data instanceof IMarioReadableMotionData motionData)
+			else if(data instanceof ICPAReadableMotionData motionData)
 				this.recalculateBonkYaw(motionData);
 			else
-				this.bonkYaw = data.getMario().bodyYaw;
+				this.bonkYaw = data.getPlayer().bodyYaw;
 		}
 
-		public float recalculateBonkYaw(IMarioReadableMotionData data) {
+		public float recalculateBonkYaw(ICPAReadableMotionData data) {
 			if(data.getHorizVelSquared() != 0) {
 				this.bonkYaw = yawFromVec3d(data.getVelocity());
 			}
@@ -201,17 +201,17 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 		}
 	}
 
-	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
+	@Override public @Nullable Object provideStateData(ICPAData data) {
 		return new BonkVars(data);
 	}
-	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
+	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
 //		data.forceBodyAlignment(true);
-//		data.getMario().setBodyYaw(data.getVars(BonkVars.class).BONK_YAW);
+//		data.getPlayer().setBodyYaw(data.retrieveStateData(BonkVars.class).BONK_YAW);
 	}
-	@Override public void serverTick(IMarioAuthoritativeData data) {
+	@Override public void serverTick(ICPAAuthoritativeData data) {
 
 	}
-	@Override public void travelHook(IMarioTravelData data, AirborneActionHelper helper) {
+	@Override public void travelHook(ICPATravelData data, AirborneActionHelper helper) {
 		helper.applyComplexGravity(data, Fall.FALL_ACCEL, null, Fall.FALL_SPEED);
 	}
 
@@ -227,7 +227,7 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 				Fall.LANDING.variate(
 						BonkGroundBackward.ID,
 						data -> Fall.LANDING.evaluator().shouldTransition(data)
-								&& Math.abs(MathHelper.subtractAngles(data.getMario().bodyYaw, data.getVars(BonkVars.class).bonkYaw)) < 90,
+								&& Math.abs(MathHelper.subtractAngles(data.getPlayer().bodyYaw, data.retrieveStateData(BonkVars.class).bonkYaw)) < 90,
 						EvaluatorEnvironment.CLIENT_ONLY,
 						null,
 						null

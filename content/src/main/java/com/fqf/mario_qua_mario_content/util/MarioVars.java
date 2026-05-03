@@ -1,7 +1,7 @@
 package com.fqf.mario_qua_mario_content.util;
 
-import com.fqf.charapoweract_api.mariodata.IMarioData;
-import com.fqf.charapoweract_api.mariodata.IMarioReadableMotionData;
+import com.fqf.charapoweract_api.cpadata.ICPAData;
+import com.fqf.charapoweract_api.cpadata.ICPAReadableMotionData;
 import com.fqf.mario_qua_mario_content.actions.wallbound.WallSlide;
 import net.minecraft.util.math.Direction;
 
@@ -17,15 +17,15 @@ public class MarioVars {
 	private Direction lastWallSlideDirection;
 	private int wallSlidingTicks;
 
-	public static MarioVars get(IMarioData data) {
-		return data.getVars(MarioVars.class);
+	public static MarioVars get(ICPAData data) {
+		return data.retrieveStateData(MarioVars.class);
 	}
 
-	public static boolean checkWallSlide(IMarioReadableMotionData data) {
+	public static boolean checkWallSlide(ICPAReadableMotionData data) {
 		if(data.getYVel() > 0 || data.isNearGround(0.5) || data.getInputs().DUCK.isHeld()) return false;
 
-		long worldTime = data.getMario().getWorld().getTime();
-		MarioVars vars = data.getVars(MarioVars.class);
+		long worldTime = data.getPlayer().getWorld().getTime();
+		MarioVars vars = data.retrieveStateData(MarioVars.class);
 
 		processing: {
 			if(vars.lastWallSlideTick == worldTime) {

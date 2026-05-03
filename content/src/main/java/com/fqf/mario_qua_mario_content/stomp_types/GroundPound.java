@@ -2,10 +2,9 @@ package com.fqf.mario_qua_mario_content.stomp_types;
 
 import com.fqf.charapoweract_api.definitions.CollisionAttackTypeDefinition;
 import com.fqf.charapoweract_api.interfaces.CollisionAttackResult;
-import com.fqf.charapoweract_api.mariodata.IMarioAuthoritativeData;
-import com.fqf.charapoweract_api.mariodata.IMarioClientData;
-import com.fqf.charapoweract_api.mariodata.IMarioData;
-import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.cpadata.*;
+import com.fqf.charapoweract_api.cpadata.ICPAClientData;
+import com.fqf.charapoweract_api.cpadata.ICPAData;
 import com.fqf.charapoweract_api.util.CharaStat;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
@@ -57,40 +56,40 @@ public class GroundPound implements CollisionAttackTypeDefinition {
 	}
 
 	@Override
-	public Box tweakMarioBoundingBox(IMarioData data, Box box) {
+	public Box tweakPlayerBoundingBox(ICPAData data, Box box) {
 		return box.stretch(0, -0.05, 0);
 	}
 
 	@Override
-	public void filterPotentialTargets(List<Entity> potentialTargets, ServerPlayerEntity mario, Vec3d motion) {
+	public void filterPotentialTargets(List<Entity> potentialTargets, ServerPlayerEntity attacker, Vec3d motion) {
 		potentialTargets.removeIf(entity -> !(entity.canHit() && entity instanceof LivingEntity));
 	}
 
 	public static final CharaStat BASE_DAMAGE = new CharaStat(7, STOMP, DAMAGE);
 
 	@Override
-	public float calculateDamage(IMarioData data, ItemStack equipment, float equipmentArmor, float equipmentToughness) {
+	public float calculateDamage(ICPAData data, ItemStack equipment, float equipmentArmor, float equipmentToughness) {
 		int pulverizingLevel = JumpStomp.getPulverizingLevel(equipment, data);
 		return ((float) BASE_DAMAGE.get(data)) + equipmentArmor * 2.25F + pulverizingLevel * 0.5F + (pulverizingLevel > 0 ? 1 : 0);
 	}
 
 	@Override
-	public float calculatePiercing(IMarioData data, ItemStack equipment, float equipmentArmor, float equipmentToughness) {
+	public float calculatePiercing(ICPAData data, ItemStack equipment, float equipmentArmor, float equipmentToughness) {
 		return equipmentToughness * 2.5F;
 	}
 
 	@Override
-	public void executeServer(IMarioAuthoritativeData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, boolean affectMario) {
+	public void executeServer(ICPAAuthoritativeData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, boolean affectAttacker) {
 
 	}
 
 	@Override
-	public @Nullable Vec3d executeTravellersAndModifyTargetPos(IMarioTravelData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, Vec3d movingToPos, boolean affectMario) {
+	public @Nullable Vec3d executeTravellersAndModifyTargetPos(ICPATravelData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, Vec3d movingToPos, boolean affectAttacker) {
 		return null;
 	}
 
 	@Override
-	public void executeClients(IMarioClientData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, boolean affectMario, long seed) {
+	public void executeClients(ICPAClientData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, boolean affectAttacker, long seed) {
 		if(result == CollisionAttackResult.ExecutableResult.RESISTED || result == CollisionAttackResult.ExecutableResult.PAINFUL) return;
 		MarioQuaMarioContent.LOGGER.info("Result: {}", result);
 		data.playSound(MarioContentSFX.KICK, seed);

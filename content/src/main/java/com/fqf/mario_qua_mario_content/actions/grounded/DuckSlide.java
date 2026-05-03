@@ -5,10 +5,9 @@ import com.fqf.charapoweract_api.definitions.states.actions.util.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charapoweract_api.mariodata.IMarioAuthoritativeData;
-import com.fqf.charapoweract_api.mariodata.IMarioClientData;
-import com.fqf.charapoweract_api.mariodata.IMarioData;
-import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.cpadata.*;
+import com.fqf.charapoweract_api.cpadata.ICPAClientData;
+import com.fqf.charapoweract_api.cpadata.ICPAData;
 import com.fqf.charapoweract_api.util.CharaStat;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.Voicelines;
@@ -64,17 +63,17 @@ public class DuckSlide implements GroundedActionDefinition {
 	public static final CharaStat SLIDE_DRAG_MIN = new CharaStat(0.01, DUCKING, DRAG);
 	public static final CharaStat SLIDE_REDIRECTION = new CharaStat(4.0, DUCKING, REDIRECTION);
 
-	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
+	@Override public @Nullable Object provideStateData(ICPAData data) {
 		return new ActionTimerVars();
 	}
-	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
+	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
 
 	}
-	@Override public void serverTick(IMarioAuthoritativeData data) {
+	@Override public void serverTick(ICPAAuthoritativeData data) {
 
 	}
-	@Override public void travelHook(IMarioTravelData data, GroundedActionHelper helper) {
-		data.getVars(ActionTimerVars.class).actionTimer++;
+	@Override public void travelHook(ICPATravelData data, GroundedActionHelper helper) {
+		data.retrieveStateData(ActionTimerVars.class).actionTimer++;
 		helper.applyDrag(
 				data, SLIDE_DRAG, SLIDE_DRAG_MIN,
 				data.getInputs().getForwardInput(), data.getInputs().getStrafeInput(),
@@ -99,7 +98,7 @@ public class DuckSlide implements GroundedActionDefinition {
 						LongJump.ID,
 						data ->
 								data.getInputs().getForwardInput() > 0.4
-								&& data.getVars(ActionTimerVars.class).actionTimer < 5
+								&& data.retrieveStateData(ActionTimerVars.class).actionTimer < 5
 								&& data.getForwardVel() > LongJump.LONG_JUMP_THRESHOLD.get(data)
 								&& data.getInputs().JUMP.isPressed(),
 						EvaluatorEnvironment.CLIENT_ONLY,

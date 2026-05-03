@@ -1,11 +1,11 @@
 package com.fqf.mario_qua_mario_content.actions.airborne;
 
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
+import com.fqf.charapoweract_api.cpadata.ICPAClientData;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.charapoweract_api.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.charapoweract_api.mariodata.IMarioClientData;
-import com.fqf.charapoweract_api.mariodata.IMarioData;
-import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.cpadata.ICPAData;
+import com.fqf.charapoweract_api.cpadata.ICPATravelData;
 import com.fqf.charapoweract_api.util.CharaStat;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -103,7 +103,7 @@ public class WallJump extends Jump implements AirborneActionDefinition {
 		return new PlayermodelAnimation(
 				null,
 				new ProgressHandler((data, ticksPassed) -> {
-					float deviation = MathHelper.subtractAngles(data.getMario().bodyYaw, data.getVars(BonkAir.BonkVars.class).recalculateBonkYaw(data));
+					float deviation = MathHelper.subtractAngles(data.getPlayer().bodyYaw, data.retrieveStateData(BonkAir.BonkVars.class).recalculateBonkYaw(data));
 					return deviation / 180 * 2;
 				}),
 				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
@@ -147,18 +147,18 @@ public class WallJump extends Jump implements AirborneActionDefinition {
 	public static final CharaStat WALL_JUMP_SPEED = new CharaStat(0.4, DRIFTING);
 
 	@Override
-	public void clientTick(IMarioClientData data, boolean isSelf) {
+	public void clientTick(ICPAClientData data, boolean isSelf) {
 		data.forceBodyAlignment(true);
 	}
 
 	@Override
-	public void travelHook(IMarioTravelData data, AirborneActionHelper helper) {
+	public void travelHook(ICPATravelData data, AirborneActionHelper helper) {
 		helper.applyComplexGravity(data, Fall.FALL_ACCEL, JUMP_GRAVITY, Fall.FALL_SPEED);
-		BonkAir.BonkVars vars = data.getVars(BonkAir.BonkVars.class);
+		BonkAir.BonkVars vars = data.retrieveStateData(BonkAir.BonkVars.class);
 		if(vars.noInputTicks-- <= 0) Fall.drift(data, helper);
 	}
 
-	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
+	@Override public @Nullable Object provideStateData(ICPAData data) {
 		return new BonkAir.BonkVars(data);
 	}
 }

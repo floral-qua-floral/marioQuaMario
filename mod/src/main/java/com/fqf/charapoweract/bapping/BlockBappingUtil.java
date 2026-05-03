@@ -7,7 +7,7 @@ import com.fqf.charapoweract.util.MarioGamerules;
 import com.fqf.charapoweract.util.MarioSFX;
 import com.fqf.charapoweract_api.interfaces.BapResult;
 import com.fqf.charapoweract_api.interfaces.Bappable;
-import com.fqf.charapoweract_api.util.MQMTags;
+import com.fqf.charapoweract_api.util.CPATags;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -62,8 +62,8 @@ public class BlockBappingUtil {
 
 		return switch(original) {
 			case BREAK -> BapResult.BUMP_EMBRITTLE;
-			case BREAK_NO_POWER -> BapResult.BUMP_EMBRITTLE_NO_POWER;
-			case BUST -> state.isIn(MQMTags.NOT_POWERED_WHEN_BAPPED) ? BapResult.BUMP_EMBRITTLE : BapResult.BUMP_EMBRITTLE_NO_POWER;
+			case BREAK_WITHOUT_POWERING -> BapResult.BUMP_EMBRITTLE_WITHOUT_POWERING;
+			case BUST -> state.isIn(CPATags.NOT_POWERED_WHEN_BAPPED) ? BapResult.BUMP_EMBRITTLE : BapResult.BUMP_EMBRITTLE_WITHOUT_POWERING;
 			default -> original;
 		};
 	}
@@ -72,13 +72,13 @@ public class BlockBappingUtil {
 	public static BapResult attemptBap(MarioPlayerData data, World world, BlockPos pos, Direction direction, int strength, boolean fullyNetwork) {
 		BlockState blockState = world.getBlockState(pos);
 
-		BapResult result = handleBapResultForAdventureMode(((Bappable) blockState.getBlock()).mqm$getBapResult(
+		BapResult result = handleBapResultForAdventureMode(((Bappable) blockState.getBlock()).cpa$getBapResult(
 				data, world,
 				pos, blockState, getVanillaHardness(world, pos, blockState),
 				direction, strength
-		), blockState, data.getMario());
+		), blockState, data.getPlayer());
 
-		networkAndStoreBapInfo(world, pos, direction, strength, data.getMario(), result, fullyNetwork);
+		networkAndStoreBapInfo(world, pos, direction, strength, data.getPlayer(), result, fullyNetwork);
 
 		return result;
 	}
@@ -104,25 +104,26 @@ public class BlockBappingUtil {
 
 	public static @Nullable AbstractBapInfo makeBapInfo(World world, BlockPos pos, Direction direction, int strength, @Nullable Entity bapper, BapResult result) {
 		BlockState blockState = world.getBlockState(pos);
-		((Bappable) blockState.getBlock()).mqm$onBapped(
+		((Bappable) blockState.getBlock()).cpa$onBapped(
 				bapper instanceof PlayerEntity mario ? mario.mqm$getMarioData() : null,
 				world, pos, blockState, direction, strength,
 				result);
 		switch(result) {
-			case BUMP, BUMP_NO_POWER, BUMP_EMBRITTLE, BUMP_EMBRITTLE_NO_POWER, BREAK, BREAK_NO_POWER -> {
+			case BUMP, BUMP_WITHOUT_POWERING, BUMP_EMBRITTLE, BUMP_EMBRITTLE_WITHOUT_POWERING, BREAK,
+				 BREAK_WITHOUT_POWERING -> {
 				world.playSound(bapper, pos, MarioSFX.BUMP, SoundCategory.BLOCKS, 0.4F, 1.0F);
 				BlockSoundGroup group = blockState.getSoundGroup();
 				world.playSound(bapper, pos, group.getPlaceSound(), SoundCategory.BLOCKS, group.pitch * 0.8F, group.volume);
 			}
 		}
 		switch(result) {
-			case BUMP, BUMP_NO_POWER -> {
+			case BUMP, BUMP_WITHOUT_POWERING -> {
 				return new BumpingBlockInfo(world, pos, result, direction, bapper);
 			}
-			case BUMP_EMBRITTLE, BUMP_EMBRITTLE_NO_POWER -> {
+			case BUMP_EMBRITTLE, BUMP_EMBRITTLE_WITHOUT_POWERING -> {
 				return new BumpingEmbrittlingBlockInfo(world, pos, result, direction, bapper);
 			}
-			case BREAK, BREAK_NO_POWER -> {
+			case BREAK, BREAK_WITHOUT_POWERING -> {
 				return new BapBreakingBlockInfo(world, pos, result, direction, bapper);
 			}
 			case BUST -> {
@@ -142,16 +143,16 @@ public class BlockBappingUtil {
 
 		if(!indirectState.canPlaceAt(info.WORLD, indirectPos)) {
 			AbstractBapInfo newInfo;
-			boolean power = !indirectState.isIn(MQMTags.NOT_POWERED_WHEN_BAPPED);
-			if(indirectState.isIn(MQMTags.DESTROYED_BY_INDIRECT_BAP))
+			boolean power = !indirectState.isIn(CPATags.NOT_POWERED_WHEN_BAPPED);
+			if(indirectState.isIn(CPATags.DESTROYED_BY_INDIRECT_BAP))
 				newInfo = new BapBreakingBlockInfo(info.WORLD, indirectPos,
-						power ? BapResult.BREAK : BapResult.BREAK_NO_POWER, info.DISPLACEMENT_DIRECTION, info.BAPPER);
+						power ? BapResult.BREAK : BapResult.BREAK_WITHOUT_POWERING, info.DISPLACEMENT_DIRECTION, info.BAPPER);
 			else if(indirectState.getHardness(info.WORLD, indirectPos) == 0)
 				newInfo = new BumpingBlockInfo(info.WORLD, indirectPos,
-						power ? BapResult.BUMP : BapResult.BUMP_NO_POWER, info.DISPLACEMENT_DIRECTION, info.BAPPER);
+						power ? BapResult.BUMP : BapResult.BUMP_WITHOUT_POWERING, info.DISPLACEMENT_DIRECTION, info.BAPPER);
 			else
 				newInfo = new BumpingEmbrittlingBlockInfo(info.WORLD, indirectPos,
-						power ? BapResult.BUMP_EMBRITTLE : BapResult.BUMP_EMBRITTLE_NO_POWER, info.DISPLACEMENT_DIRECTION, info.BAPPER);
+						power ? BapResult.BUMP_EMBRITTLE : BapResult.BUMP_EMBRITTLE_WITHOUT_POWERING, info.DISPLACEMENT_DIRECTION, info.BAPPER);
 
 			storeBapInfo(newInfo, propagations + 1);
 		}
@@ -198,9 +199,9 @@ public class BlockBappingUtil {
 	public static void addOrRemoveFromSets(AbstractBapInfo info, WorldBapsInfo world, boolean adding) {
 		List<Set<BlockPos>> sets = switch(info.RESULT) {
 			case BUMP, BREAK -> List.of(world.HIDDEN, world.POWERED);
-			case BUMP_NO_POWER, BREAK_NO_POWER -> List.of(world.HIDDEN);
+			case BUMP_WITHOUT_POWERING, BREAK_WITHOUT_POWERING -> List.of(world.HIDDEN);
 			case BUMP_EMBRITTLE -> List.of(world.HIDDEN, world.POWERED, world.BRITTLE);
-			case BUMP_EMBRITTLE_NO_POWER -> List.of(world.HIDDEN, world.BRITTLE);
+			case BUMP_EMBRITTLE_WITHOUT_POWERING -> List.of(world.HIDDEN, world.BRITTLE);
 			case EMBRITTLE -> List.of(world.BRITTLE);
 			case BUST, FAIL -> throw new IllegalStateException("BapInfo with BUST or FAIL result shouldn't be possible!");
 		};

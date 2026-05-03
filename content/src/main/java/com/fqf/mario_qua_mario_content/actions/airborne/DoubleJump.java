@@ -36,7 +36,7 @@ public class DoubleJump extends Jump implements AirborneActionDefinition {
 		});
 	}
 	public static final PlayermodelAnimation ANIMATION = new PlayermodelAnimation(
-			(data, rightArmBusy, leftArmBusy, headRelativeYaw) -> data.getMario().getRandom().nextBoolean(),
+			(data, rightArmBusy, leftArmBusy, headRelativeYaw) -> data.getPlayer().getRandom().nextBoolean(),
 			new ProgressHandler(
 					(data, ticksPassed) ->
 							Easing.EXPO_IN_OUT.ease(Easing.QUAD_IN.ease(Easing.clampedRangeToProgress(data.getYVel(), 0.87F, -0.85F)))

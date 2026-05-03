@@ -29,7 +29,7 @@ public class SpecialFall extends Fall implements AirborneActionDefinition {
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
 		return new PlayermodelAnimation(
-				(data, rightArmBusy, leftArmBusy, headRelativeYaw) -> data.getMario().getRandom().nextBoolean(),
+				(data, rightArmBusy, leftArmBusy, headRelativeYaw) -> data.getPlayer().getRandom().nextBoolean(),
 				null, null, null, null,
 				makeArmAnimation(1), makeArmAnimation(-1),
 				new LimbAnimation(false, (data, arrangement, progress) -> {

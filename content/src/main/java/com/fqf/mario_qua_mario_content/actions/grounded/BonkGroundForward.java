@@ -17,7 +17,7 @@ public class BonkGroundForward extends BonkGroundBackward implements GroundedAct
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
 		return StandUpWithKneeAnimation.makeAnimation(
-				helper, (data, ticksPassed) -> data.getVars(ActionTimerVars.class).actionTimer / (float) STANDUP_TICKS,
+				helper, (data, ticksPassed) -> data.retrieveStateData(ActionTimerVars.class).actionTimer / (float) STANDUP_TICKS,
 				-3.25F, 40,
 				-80, -80, 90, 1.25F,
 				87.5F, 0, 1.5F,

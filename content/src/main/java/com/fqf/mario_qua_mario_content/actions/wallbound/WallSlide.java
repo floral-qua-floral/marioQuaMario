@@ -2,7 +2,7 @@ package com.fqf.mario_qua_mario_content.actions.wallbound;
 
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charapoweract_api.mariodata.*;
+import com.fqf.charapoweract_api.cpadata.*;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.charapoweract_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.*;
@@ -121,7 +121,7 @@ public class WallSlide implements WallboundActionDefinition {
 		return new PlayermodelAnimation(
 				null,
 				new ProgressHandler((data, ticksPassed) -> {
-					float deviation = MathHelper.subtractAngles(data.getMario().bodyYaw, Objects.requireNonNull(helper.getWallInfo(data)).getWallYaw());
+					float deviation = MathHelper.subtractAngles(data.getPlayer().bodyYaw, Objects.requireNonNull(helper.getWallInfo(data)).getWallYaw());
 					return deviation / 180 * 2;
 				}),
 				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
@@ -213,16 +213,16 @@ public class WallSlide implements WallboundActionDefinition {
 	}
 
 	@Override
-	public float getWallYaw(IMarioReadableMotionData data) {
+	public float getWallYaw(ICPAReadableMotionData data) {
 		return ClimbTransitions.yawOf(data.getRecordedCollisions().getDirectionOfCollisionsWith((collision, block) ->
 				canSlideDownBlock(collision.state()), false));
 	}
 
 	@Override
-	public boolean checkLegality(IMarioReadableMotionData data, WallInfo wall, Vec3d checkOffset) {
+	public boolean checkLegality(ICPAReadableMotionData data, WallInfo wall, Vec3d checkOffset) {
 		if(!data.getActionID().equals(WallSlide.ID) && data.isClient() && wall.getTowardsWallInput() < 0.3)
 			return false; // Yay!
-		World world = data.getMario().getWorld();
+		World world = data.getPlayer().getWorld();
 		for(BlockPos wallBlock : wall.getWallBlocks(0.4)) {
 			if(canSlideDownBlock(world.getBlockState(wallBlock))) return true;
 		}
@@ -232,18 +232,18 @@ public class WallSlide implements WallboundActionDefinition {
 	private static class WallSlideVars extends ActionTimerVars {
 		private int holdAwayFromWallTicks;
 	}
-	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
+	@Override public @Nullable Object provideStateData(ICPAData data) {
 		return new WallSlideVars();
 	}
-	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
+	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
 		data.forceBodyAlignment(true);
 	}
-	@Override public void serverTick(IMarioAuthoritativeData data) {
+	@Override public void serverTick(ICPAAuthoritativeData data) {
 
 	}
 	private static final int GRAVITY_RAMP_UP_TICKS = 5;
-	@Override public void travelHook(IMarioTravelData data, WallInfo wall, WallboundActionHelper helper) {
-		WallSlideVars vars = data.getVars(WallSlideVars.class);
+	@Override public void travelHook(ICPATravelData data, WallInfo wall, WallboundActionHelper helper) {
+		WallSlideVars vars = data.retrieveStateData(WallSlideVars.class);
 		if(data.isClient()) {
 			if(wall.getTowardsWallInput() < -0.05)
 				vars.holdAwayFromWallTicks += 3;
@@ -254,7 +254,7 @@ public class WallSlide implements WallboundActionDefinition {
 		}
 
 		double gravityFactor;
-		if(data.getMario().isTouchingWaterOrRain()) gravityFactor = 1.5;
+		if(data.getPlayer().isTouchingWaterOrRain()) gravityFactor = 1.5;
 		else if(++vars.actionTimer >= GRAVITY_RAMP_UP_TICKS) gravityFactor = 1;
 		else gravityFactor = vars.actionTimer * (1.0 / GRAVITY_RAMP_UP_TICKS);
 
@@ -271,15 +271,15 @@ public class WallSlide implements WallboundActionDefinition {
 			MarioVars::checkWallSlide,
 			EvaluatorEnvironment.CLIENT_ONLY,
 			data -> {
-				if(!data.getMario().isTouchingWaterOrRain()) {
-					data.getMario().fallDistance = 0;
+				if(!data.getPlayer().isTouchingWaterOrRain()) {
+					data.getPlayer().fallDistance = 0;
 					data.setYVel(0);
 				}
 				if(data.isServer()) data.setForwardStrafeVel(0, 0);
 			},
 			(data, isSelf, seed) -> {
-				if(!data.getMario().isTouchingWaterOrRain())
-					data.getMario().fallDistance = 0;
+				if(!data.getPlayer().isTouchingWaterOrRain())
+					data.getPlayer().fallDistance = 0;
 			}
 	);
 
@@ -306,7 +306,7 @@ public class WallSlide implements WallboundActionDefinition {
 				),
 				new TransitionDefinition(
 						Fall.ID,
-						data -> data.getInputs().DUCK.isPressed() || data.getVars(WallSlideVars.class).holdAwayFromWallTicks > 6,
+						data -> data.getInputs().DUCK.isPressed() || data.retrieveStateData(WallSlideVars.class).holdAwayFromWallTicks > 6,
 						EvaluatorEnvironment.CLIENT_ONLY,
 						data -> helper.setTowardsWallVel(data, 0),
 						null
@@ -326,7 +326,7 @@ public class WallSlide implements WallboundActionDefinition {
 				),
 				new TransitionDefinition(
 						SubWalk.ID,
-						data -> data.getMario().isOnGround(),
+						data -> data.getPlayer().isOnGround(),
 						EvaluatorEnvironment.COMMON
 				)
 		);

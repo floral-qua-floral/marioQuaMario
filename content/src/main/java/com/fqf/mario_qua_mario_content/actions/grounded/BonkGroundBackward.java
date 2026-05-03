@@ -4,10 +4,10 @@ import com.fqf.charapoweract_api.definitions.states.actions.GroundedActionDefini
 import com.fqf.charapoweract_api.definitions.states.actions.util.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charapoweract_api.mariodata.IMarioAuthoritativeData;
-import com.fqf.charapoweract_api.mariodata.IMarioClientData;
-import com.fqf.charapoweract_api.mariodata.IMarioData;
-import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.cpadata.ICPAData;
+import com.fqf.charapoweract_api.cpadata.ICPAAuthoritativeData;
+import com.fqf.charapoweract_api.cpadata.ICPAClientData;
+import com.fqf.charapoweract_api.cpadata.ICPATravelData;
 import com.fqf.charapoweract_api.util.CharaStat;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.airborne.BonkAir;
@@ -43,7 +43,7 @@ public class BonkGroundBackward implements GroundedActionDefinition {
 	}
 
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return makeBonkStandupAnimation(helper, (data, ticksPassed) -> data.getVars(ActionTimerVars.class).actionTimer / (float) STANDUP_TICKS);
+		return makeBonkStandupAnimation(helper, (data, ticksPassed) -> data.retrieveStateData(ActionTimerVars.class).actionTimer / (float) STANDUP_TICKS);
 	}
 
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
@@ -72,18 +72,18 @@ public class BonkGroundBackward implements GroundedActionDefinition {
 
 	public static final int STANDUP_TICKS = 8;
 
-	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
+	@Override public @Nullable Object provideStateData(ICPAData data) {
 		return new ActionTimerVars();
 	}
-	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
+	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
 
 	}
-	@Override public void serverTick(IMarioAuthoritativeData data) {
+	@Override public void serverTick(ICPAAuthoritativeData data) {
 
 	}
-	@Override public void travelHook(IMarioTravelData data, GroundedActionHelper helper) {
-		if(data.getHorizVelSquared() == 0) data.getVars(ActionTimerVars.class).actionTimer++;
-		else data.getVars(ActionTimerVars.class).actionTimer = 0;
+	@Override public void travelHook(ICPATravelData data, GroundedActionHelper helper) {
+		if(data.getHorizVelSquared() == 0) data.retrieveStateData(ActionTimerVars.class).actionTimer++;
+		else data.retrieveStateData(ActionTimerVars.class).actionTimer = 0;
 		helper.applyDrag(
 				data, BONK_DRAG, BONK_DRAG_MIN,
 				-data.getInputs().getForwardInput(), data.getInputs().getStrafeInput(),
@@ -95,7 +95,7 @@ public class BonkGroundBackward implements GroundedActionDefinition {
 		return List.of(
 				new TransitionDefinition(
 						SubWalk.ID,
-						data -> data.getVars(ActionTimerVars.class).actionTimer > STANDUP_TICKS,
+						data -> data.retrieveStateData(ActionTimerVars.class).actionTimer > STANDUP_TICKS,
 						EvaluatorEnvironment.CLIENT_ONLY
 				)
 		);
@@ -107,7 +107,7 @@ public class BonkGroundBackward implements GroundedActionDefinition {
 		return List.of(
 				Fall.FALL.variate(
 						BonkAir.ID,
-						data -> Fall.FALL.evaluator().shouldTransition(data) && data.getVars(ActionTimerVars.class).actionTimer == 0,
+						data -> Fall.FALL.evaluator().shouldTransition(data) && data.retrieveStateData(ActionTimerVars.class).actionTimer == 0,
 						EvaluatorEnvironment.CLIENT_ONLY,
 						null,
 						null

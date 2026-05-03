@@ -4,7 +4,7 @@ import com.fqf.charapoweract_api.util.StatCategory;
 
 import java.util.Set;
 
-public interface StatAlteringStateDefinition extends MarioStateDefinition {
+public interface StatAlteringStateDefinition extends CPAStateDefinition {
 	float getWidthFactor();
 	float getHeightFactor();
 	float getAnimationWidthFactor();

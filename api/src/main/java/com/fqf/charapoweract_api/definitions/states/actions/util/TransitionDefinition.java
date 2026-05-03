@@ -1,8 +1,8 @@
 package com.fqf.charapoweract_api.definitions.states.actions.util;
 
-import com.fqf.charapoweract_api.mariodata.IMarioClientData;
-import com.fqf.charapoweract_api.mariodata.IMarioReadableMotionData;
-import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.cpadata.ICPAClientData;
+import com.fqf.charapoweract_api.cpadata.ICPAReadableMotionData;
+import com.fqf.charapoweract_api.cpadata.ICPATravelData;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @param targetID The ID of the action that this transition leads to.
  * @param evaluator The Evaluator that determines if this transition should fire.
- * @param travelExecutor The effect the transition has on Mario's motion.
+ * @param travelExecutor The effect the transition has on the character's motion.
  * @param clientsExecutor Client-side effects of this transition firing.
  */
 public record TransitionDefinition(
@@ -49,7 +49,7 @@ public record TransitionDefinition(
 	 * Runs on the client-side to test if the associated transition should occur.
 	 */
 	@FunctionalInterface public interface Evaluator {
-		boolean shouldTransition(IMarioReadableMotionData data);
+		boolean shouldTransition(ICPAReadableMotionData data);
 	}
 
 	/**
@@ -58,13 +58,13 @@ public record TransitionDefinition(
 	 * when you're the one transitioning.
 	 */
 	@FunctionalInterface public interface TravelExecutor {
-		void execute(IMarioTravelData data);
+		void execute(ICPATravelData data);
 	}
 
 	/**
-	 * Runs on the client side for anyone who is in range to see Mario transition.
+	 * Runs on the client side for anyone who is in range to see the transition (not just the person doing it).
 	 */
 	@FunctionalInterface public interface ClientsExecutor {
-		void execute(IMarioClientData data, boolean isSelf, long seed);
+		void execute(ICPAClientData data, boolean isSelf, long seed);
 	}
 }

@@ -3,8 +3,8 @@ package com.fqf.mario_qua_mario_content.actions.wallbound;
 import com.fqf.charapoweract_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
-import com.fqf.charapoweract_api.mariodata.IMarioReadableMotionData;
-import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.cpadata.ICPAReadableMotionData;
+import com.fqf.charapoweract_api.cpadata.ICPATravelData;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -43,7 +43,7 @@ public class ClimbWallSideHang extends ClimbWall implements WallboundActionDefin
 			}
 	    });
 	}
-	protected float getEntireBodyXOffset(IMarioReadableMotionData data) {
+	protected float getEntireBodyXOffset(ICPAReadableMotionData data) {
 		return -1.25F;
 	}
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
@@ -67,19 +67,19 @@ public class ClimbWallSideHang extends ClimbWall implements WallboundActionDefin
 		return WallBodyAlignment.SIDEWAYS;
 	}
 
-	public static void sideHangTravelHook(IMarioTravelData data, WallInfo wall, WallboundActionHelper helper, ClimbWall baseAction) {
+	public static void sideHangTravelHook(ICPATravelData data, WallInfo wall, WallboundActionHelper helper, ClimbWall baseAction) {
 		helper.setTowardsWallVel(data, baseAction.TOWARDS_WALL_VEL);
 		if(data.getYVel() < -0.05) {
 			data.setYVel(data.getYVel() * 0.775);
 		}
 		else {
-			data.getMario().fallDistance = 0;
+			data.getPlayer().fallDistance = 0;
 			data.setYVel(0);
 		}
 	}
 
 	@Override
-	public void travelHook(IMarioTravelData data, WallInfo wall, WallboundActionHelper helper) {
+	public void travelHook(ICPATravelData data, WallInfo wall, WallboundActionHelper helper) {
 		sideHangTravelHook(data, wall, helper, this);
 	}
 
@@ -109,7 +109,7 @@ public class ClimbWallSideHang extends ClimbWall implements WallboundActionDefin
 						(fromAction, fromCategory, existingTransitions) -> fromCategory != ActionCategory.WALLBOUND,
 						(nearbyTransition, castableHelper) -> nearbyTransition.variate(
 								this.getID(),
-								data -> (data.isServer() || MathHelper.angleBetween(data.getMario().getYaw(), this.getWallYaw(data)) > ClimbWall.MIN_DEVIATION_TO_SIDE_HANG)
+								data -> (data.isServer() || MathHelper.angleBetween(data.getPlayer().getYaw(), this.getWallYaw(data)) > ClimbWall.MIN_DEVIATION_TO_SIDE_HANG)
 										&& nearbyTransition.evaluator().shouldTransition(data)
 						)
 				)

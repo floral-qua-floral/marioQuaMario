@@ -3,7 +3,7 @@ package com.fqf.mario_qua_mario_content.actions.wallbound;
 import com.fqf.charapoweract_api.HelperGetter;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charapoweract_api.mariodata.*;
+import com.fqf.charapoweract_api.cpadata.*;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.charapoweract_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.*;
@@ -35,7 +35,7 @@ public class ClimbWall implements WallboundActionDefinition {
 
 	private static LimbAnimation makeArmAnimation(int factor) {
 	    return new LimbAnimation(false, (data, arrangement, progress) -> {
-			ClimbOmniDirectionalVars vars = data.getVars(ClimbOmniDirectionalVars.class);
+			ClimbOmniDirectionalVars vars = data.retrieveStateData(ClimbOmniDirectionalVars.class);
 			arrangement.addAngles(
 					-110 + (-30 * Math.abs(vars.yComponent) * (1 - Math.abs(vars.xComponent))) + (progress * -20 * factor * vars.yComponent),
 					factor * (24 * Math.abs(vars.xComponent) + 20 * progress * vars.xComponent),
@@ -46,7 +46,7 @@ public class ClimbWall implements WallboundActionDefinition {
 	}
 	private static LimbAnimation makeLegAnimation(int factor) {
 	    return new LimbAnimation(false, (data, arrangement, progress) -> {
-			ClimbOmniDirectionalVars vars = data.getVars(ClimbOmniDirectionalVars.class);
+			ClimbOmniDirectionalVars vars = data.retrieveStateData(ClimbOmniDirectionalVars.class);
 //			boolean isRight = factor == 1;
 //			float pseudoProgress = isRight ? progress : MathHelper.cos(vars.progress);
 			float yawRollAdjustment = factor * (3 * Math.abs(vars.xComponent) + 16 * progress * vars.xComponent);
@@ -59,14 +59,14 @@ public class ClimbWall implements WallboundActionDefinition {
 			arrangement.z -= 3.7F;
 	    });
 	}
-	protected float getEntireBodyZOffset(IMarioReadableMotionData data) {
+	protected float getEntireBodyZOffset(ICPAReadableMotionData data) {
 		return 2.25F;
 	}
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
 	    return new PlayermodelAnimation(
 	            null,
 	            new ProgressHandler((data, ticksPassed) -> {
-					ClimbOmniDirectionalVars vars = data.getVars(ClimbOmniDirectionalVars.class);
+					ClimbOmniDirectionalVars vars = data.retrieveStateData(ClimbOmniDirectionalVars.class);
 					WallInfo wall = helper.getWallInfo(data);
 					assert wall != null;
 
@@ -81,7 +81,7 @@ public class ClimbWall implements WallboundActionDefinition {
 						vars.yComponent = (float) climbInput / denominator;
 					}
 
-					return MathHelper.sin(data.getVars(ClimbOmniDirectionalVars.class).progress);
+					return MathHelper.sin(data.retrieveStateData(ClimbOmniDirectionalVars.class).progress);
 				}),
 	            new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
 					arrangement.z += this.getEntireBodyZOffset(data);
@@ -129,18 +129,18 @@ public class ClimbWall implements WallboundActionDefinition {
 		return 360;
 	}
 
-	public static Direction getWallDirection(IMarioReadableMotionData data) {
+	public static Direction getWallDirection(ICPAReadableMotionData data) {
 		return data.getRecordedCollisions().getDirectionOfCollisionsWith((collision, block) -> ClimbTransitions.canClimbBlock(collision.state(), collision.direction()), false);
 	}
 
 	@Override
-	public float getWallYaw(IMarioReadableMotionData data) {
+	public float getWallYaw(ICPAReadableMotionData data) {
 		return ClimbTransitions.yawOf(getWallDirection(data));
 	}
 
 	@Override
-	public boolean checkLegality(IMarioReadableMotionData data, WallInfo wall, Vec3d checkOffset) {
-		World world = data.getMario().getWorld();
+	public boolean checkLegality(ICPAReadableMotionData data, WallInfo wall, Vec3d checkOffset) {
+		World world = data.getPlayer().getWorld();
 		for(BlockPos wallBlock : wall.getWallBlocks(0.4)) {
 			if(ClimbTransitions.canClimbBlock(world.getBlockState(wallBlock), Direction.fromRotation(wall.getWallYaw())))
 				return true;
@@ -163,31 +163,31 @@ public class ClimbWall implements WallboundActionDefinition {
 	}
 	protected final double TOWARDS_WALL_VEL = this.getConstantTowardsWallVel();
 
-	protected boolean useAlternateOffset(IMarioData data) {
+	protected boolean useAlternateOffset(ICPAData data) {
 		return false;
 	}
 
-	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
+	@Override public @Nullable Object provideStateData(ICPAData data) {
 		return new ClimbOmniDirectionalVars(this.useAlternateOffset(data));
 	}
-	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
-		data.getVars(ClimbOmniDirectionalVars.class).clientTick(data);
+	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
+		data.retrieveStateData(ClimbOmniDirectionalVars.class).clientTick(data);
 	}
-	@Override public void serverTick(IMarioAuthoritativeData data) {
+	@Override public void serverTick(ICPAAuthoritativeData data) {
 
 	}
-	@Override public void travelHook(IMarioTravelData data, WallInfo wall, WallboundActionHelper helper) {
+	@Override public void travelHook(ICPATravelData data, WallInfo wall, WallboundActionHelper helper) {
 		helper.setTowardsWallVel(data, TOWARDS_WALL_VEL);
-		data.getMario().fallDistance = 0;
+		data.getPlayer().fallDistance = 0;
 		double climbInput = wall.getTowardsWallInput() * (data.getInputs().DUCK.isHeld() ? 0.3 : 1);
 		double sidleInput = wall.getSidleInput();
 		if(sidleInput != 0 && !wall.wouldBeLegalWithOffset(0, Math.signum(sidleInput) * 0.8)) {
 			sidleInput = 0;
 
 			Direction.Axis axis = Direction.fromRotation(HelperGetter.getWallboundActionHelper().getWallInfo(data).getWallYaw()).rotateYClockwise().getAxis();
-			double targetCoord = data.getMario().getBlockPos().toBottomCenterPos().getComponentAlongAxis(axis);
-			if(wall.wouldBeLegalWithOffset(0, targetCoord - data.getMario().getPos().getComponentAlongAxis(axis)))
-				data.goTo(data.getMario().getPos().withAxis(axis, targetCoord));
+			double targetCoord = data.getPlayer().getBlockPos().toBottomCenterPos().getComponentAlongAxis(axis);
+			if(wall.wouldBeLegalWithOffset(0, targetCoord - data.getPlayer().getPos().getComponentAlongAxis(axis)))
+				data.goTo(data.getPlayer().getPos().withAxis(axis, targetCoord));
 		}
 
 		double climbSpeed = ClimbPole.CLIMB_SPEED.get(data);
@@ -273,7 +273,7 @@ public class ClimbWall implements WallboundActionDefinition {
 				),
 				new TransitionDefinition(
 						SubWalk.ID,
-						data -> data.getMario().isOnGround(),
+						data -> data.getPlayer().isOnGround(),
 						EvaluatorEnvironment.CLIENT_ONLY
 				)
 		);

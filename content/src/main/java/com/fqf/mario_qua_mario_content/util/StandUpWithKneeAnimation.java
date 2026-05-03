@@ -117,7 +117,7 @@ public class StandUpWithKneeAnimation {
 				(data, rightArmBusy, leftArmBusy, headRelativeYaw) -> {
 					if(rightArmBusy && !leftArmBusy) return false;
 					if(leftArmBusy && !rightArmBusy) return true;
-					return data.getMario().getRandom().nextBoolean();
+					return data.getPlayer().getRandom().nextBoolean();
 				},
 				new ProgressHandler((data, ticksPassed) -> 2 * Easing.SINE_IN_OUT.ease(Math.min(1, progressCalculator.calculateProgress(data, ticksPassed)))),
 				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {

@@ -1,4 +1,4 @@
-package com.fqf.charapoweract_api.mariodata.util;
+package com.fqf.charapoweract_api.cpadata.util;
 
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;

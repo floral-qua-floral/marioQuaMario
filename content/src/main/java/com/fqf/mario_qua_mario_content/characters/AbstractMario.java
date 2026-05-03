@@ -1,9 +1,9 @@
 package com.fqf.mario_qua_mario_content.characters;
 
 import com.fqf.charapoweract_api.definitions.states.CharacterDefinition;
-import com.fqf.charapoweract_api.mariodata.IMarioAuthoritativeData;
-import com.fqf.charapoweract_api.mariodata.IMarioClientData;
-import com.fqf.charapoweract_api.mariodata.IMarioData;
+import com.fqf.charapoweract_api.cpadata.ICPAClientData;
+import com.fqf.charapoweract_api.cpadata.ICPAData;
+import com.fqf.charapoweract_api.cpadata.ICPAAuthoritativeData;
 import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
 import com.fqf.mario_qua_mario_content.actions.airborne.LavaBoost;
 import com.fqf.mario_qua_mario_content.actions.generic.Debug;
@@ -34,13 +34,13 @@ public abstract class AbstractMario implements CharacterDefinition {
 	}
 
 	@Override
-	public float modifyIncomingDamage(IMarioAuthoritativeData data, DamageSource source, float amount) {
+	public float modifyIncomingDamage(ICPAAuthoritativeData data, DamageSource source, float amount) {
 		if(source.getTypeRegistryEntry().matchesKey(DamageTypes.LAVA)) {
 			data.forceActionTransition(Debug.ID, LavaBoost.ID);
 			return 10;
 		}
 
-		return amount * (float) data.getMario().getWorld().getGameRules().get(MarioContentGamerules.INCOMING_DAMAGE_MULTIPLIER).get();
+		return amount * (float) data.getPlayer().getWorld().getGameRules().get(MarioContentGamerules.INCOMING_DAMAGE_MULTIPLIER).get();
 	}
 
 	@Override public float getWidthFactor() {
@@ -72,11 +72,11 @@ public abstract class AbstractMario implements CharacterDefinition {
 		);
 	}
 
-	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
+	@Override public @Nullable Object provideStateData(ICPAData data) {
 		return new MarioVars();
 	}
-	private static void commonTick(IMarioData data) {
-		MarioVars vars = data.getVars(MarioVars.class);
+	private static void commonTick(ICPAData data) {
+		MarioVars vars = data.retrieveStateData(MarioVars.class);
 		vars.canDoubleJumpTicks--;
 		vars.canTripleJumpTicks--;
 		switch(data.getActionCategory()) {
@@ -92,11 +92,11 @@ public abstract class AbstractMario implements CharacterDefinition {
 					vars.pSpeed = 0;
 		}
 	}
-	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
+	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
 		commonTick(data);
 	}
-	@Override public void serverTick(IMarioAuthoritativeData data) {
+	@Override public void serverTick(ICPAAuthoritativeData data) {
 		commonTick(data);
-		data.getVars(MarioVars.class).stompGuardRemainingTicks--;
+		data.retrieveStateData(MarioVars.class).stompGuardRemainingTicks--;
 	}
 }

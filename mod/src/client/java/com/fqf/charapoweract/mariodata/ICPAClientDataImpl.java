@@ -7,7 +7,7 @@ import com.fqf.charapoweract.registries.RegistryManager;
 import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
 import com.fqf.charapoweract.registries.power_granting.ParsedPowerUp;
 import com.fqf.charapoweract.util.MarioSFX;
-import com.fqf.charapoweract_api.mariodata.IMarioAnimatingData;
+import com.fqf.charapoweract_api.cpadata.ICPAAnimatingData;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.sound.PositionedSoundInstance;
@@ -22,18 +22,18 @@ import net.minecraft.util.math.random.Random;
 import java.util.HashMap;
 import java.util.Map;
 
-public interface IMarioClientDataImpl extends IMarioAnimatingData {
+public interface ICPAClientDataImpl extends ICPAAnimatingData {
 	@Override
 	default boolean isClient() {
 		return true;
 	}
 
 	@Override
-	AbstractClientPlayerEntity getMario();
+	AbstractClientPlayerEntity getPlayer();
 
 	@Override
 	default void playAnimation(PlayermodelAnimation animation, int ticks) {
-		this.getMario().mqm$getAnimationData().replaceAnimation((MarioPlayerData) this, animation, ticks);
+		this.getPlayer().mqm$getAnimationData().replaceAnimation((MarioPlayerData) this, animation, ticks);
 	}
 
 	@Override
@@ -59,7 +59,7 @@ public interface IMarioClientDataImpl extends IMarioAnimatingData {
 
 	@Override
 	default SoundInstanceWrapperImpl playSound(SoundEvent event, float pitch, float volume, long seed) {
-		Vec3d marioPos = this.getMario().getPos();
+		Vec3d marioPos = this.getPlayer().getPos();
 		return this.playSound(event, SoundCategory.PLAYERS, marioPos.x, marioPos.y, marioPos.z, pitch, volume, seed);
 	}
 
@@ -68,7 +68,7 @@ public interface IMarioClientDataImpl extends IMarioAnimatingData {
 		return this.playSound(event, category, entity.getX(), entity.getY(), entity.getZ(), 1F, 1F, seed);
 	}
 
-	Map<IMarioClientDataImpl, SoundInstance> MARIO_VOICE_LINES = new HashMap<>();
+	Map<ICPAClientDataImpl, SoundInstance> MARIO_VOICE_LINES = new HashMap<>();
 
 	default void handlePowerTransitionSound(boolean isReversion, ParsedPowerUp newPower, long seed) {
 		if(isReversion) this.playSound(MarioSFX.REVERT, seed);
@@ -115,7 +115,7 @@ public interface IMarioClientDataImpl extends IMarioAnimatingData {
 	@Override
 	default SoundInstanceWrapperImpl voice(String voiceline, long seed) {
 		MinecraftClient.getInstance().getSoundManager().stop(this.getStoredSounds().get(COMMON_VOICE_IDENTIFIER));
-		Vec3d marioPos = this.getMario().getPos();
+		Vec3d marioPos = this.getPlayer().getPos();
 		if(RegistryManager.VOICE_LINES.get(voiceline) == null)
 			throw new AssertionError("Voiceline " + voiceline + " isn't registered!!!");
 		SoundInstanceWrapperImpl newVoiceSound = this.playSound(
@@ -148,12 +148,12 @@ public interface IMarioClientDataImpl extends IMarioAnimatingData {
 
 	@Override
 	default void instantVisualRotate(float rotationDegrees, boolean counterRotateAnimation) {
-		if(!this.getMario().isMainPlayer())
-			this.getMario().setYaw(this.getMario().getYaw() + rotationDegrees);
-//		this.getMario().bodyYaw += 90;
-//		this.getMario().headYaw += 90;
+		if(!this.getPlayer().isMainPlayer())
+			this.getPlayer().setYaw(this.getPlayer().getYaw() + rotationDegrees);
+//		this.getPlayer().bodyYaw += 90;
+//		this.getPlayer().headYaw += 90;
 //		if(counterRotateAnimation)
-//			this.getMario().mqm$getAnimationData().everythingYawLerpDisplacement = rotationDegrees * MathHelper.RADIANS_PER_DEGREE * -1;
+//			this.getPlayer().mqm$getAnimationData().everythingYawLerpDisplacement = rotationDegrees * MathHelper.RADIANS_PER_DEGREE * -1;
 	}
 
 	class SoundInstanceWrapperImpl implements SoundInstanceWrapper {

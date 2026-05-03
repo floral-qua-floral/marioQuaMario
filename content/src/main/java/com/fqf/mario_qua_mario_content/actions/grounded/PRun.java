@@ -4,7 +4,7 @@ import com.fqf.charapoweract_api.definitions.states.actions.GroundedActionDefini
 import com.fqf.charapoweract_api.definitions.states.actions.util.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charapoweract_api.mariodata.*;
+import com.fqf.charapoweract_api.cpadata.*;
 import com.fqf.charapoweract_api.util.CharaStat;
 import com.fqf.charapoweract_api.util.Easing;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
@@ -68,17 +68,17 @@ public class PRun implements GroundedActionDefinition {
 		return null;
 	}
 
-	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
+	@Override public @Nullable Object provideStateData(ICPAData data) {
 		return null;
 	}
-	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
+	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
 
 	}
-	@Override public void serverTick(IMarioAuthoritativeData data) {
+	@Override public void serverTick(ICPAAuthoritativeData data) {
 
 	}
-	@Override public void travelHook(IMarioTravelData data, GroundedActionHelper helper) {
-		boolean sprinting = data.getMario().isSprinting();
+	@Override public void travelHook(ICPATravelData data, GroundedActionHelper helper) {
+		boolean sprinting = data.getPlayer().isSprinting();
 		helper.groundAccel(data,
 				sprinting ? WalkRun.OVERRUN_ACCEL : WalkRun.OVERWALK_ACCEL,
 				sprinting ? P_SPEED : SubWalk.WALK_SPEED,
@@ -88,7 +88,7 @@ public class PRun implements GroundedActionDefinition {
 		);
 	}
 
-	public static boolean meetsPRunRequirements(IMarioReadableMotionData data) {
+	public static boolean meetsPRunRequirements(ICPAReadableMotionData data) {
 		return data.getInputs().getForwardInput() > 0 &&
 				data.getForwardVel() > SubWalk.WALK_SPEED.get(data) &&
 				data.getHorizVelSquared() > WalkRun.RUN_SPEED.getAsSquaredThreshold(data);

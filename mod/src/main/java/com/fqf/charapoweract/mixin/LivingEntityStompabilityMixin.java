@@ -1,7 +1,7 @@
 package com.fqf.charapoweract.mixin;
 
 import com.fqf.charapoweract.util.MarioGamerules;
-import com.fqf.charapoweract_api.util.MQMTags;
+import com.fqf.charapoweract_api.util.CPATags;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -24,7 +24,7 @@ public abstract class LivingEntityStompabilityMixin extends Entity {
 
 	@Inject(method = "damage", at = @At("HEAD"), cancellable = true)
 	private void conditionallyPreventCollisionDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-		if(source.isIn(MQMTags.COLLISION_ATTACKS)
+		if(source.isIn(CPATags.COLLISION_ATTACKS)
 				&& !this.getWorld().isClient()
 				&& this.getWorld().getGameRules().getBoolean(MarioGamerules.PETS_AND_TEAMMATES_RESIST_COLLISION_ATTACKS)
 				&& this.canIgnoreCollisionAttacksFrom(source.getAttacker())) {

@@ -1,7 +1,7 @@
 package com.fqf.mario_qua_mario_content.actions.wallbound;
 
 import com.fqf.charapoweract_api.HelperGetter;
-import com.fqf.charapoweract_api.mariodata.*;
+import com.fqf.charapoweract_api.cpadata.*;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.charapoweract_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.*;
@@ -22,51 +22,51 @@ public class ClimbIntangibleDirectional extends ClimbWall implements WallboundAc
 	}
 
 	@Override
-	protected float getEntireBodyZOffset(IMarioReadableMotionData data) {
-		return data.getVars(ClimbOmniDirectionalVars.class).ALTERNATE_OFFSET ? -1.75F : 0;
+	protected float getEntireBodyZOffset(ICPAReadableMotionData data) {
+		return data.retrieveStateData(ClimbOmniDirectionalVars.class).ALTERNATE_OFFSET ? -1.75F : 0;
 	}
 
 	private static float getYawOf(PlayerEntity mario, BlockPos pos, BlockState state) {
 		return ClimbTransitions.yawOf(ClimbTransitions.getIntangibleClimbableDirectionality(mario, pos, state));
 	}
-	protected static float currentBlockYaw(IMarioReadableMotionData data) {
-		return getYawOf(data.getMario(), data.getMario().getBlockPos(), data.getMario().getBlockStateAtPos());
+	protected static float currentBlockYaw(ICPAReadableMotionData data) {
+		return getYawOf(data.getPlayer(), data.getPlayer().getBlockPos(), data.getPlayer().getBlockStateAtPos());
 	}
 
 	@Override
-	public float getWallYaw(IMarioReadableMotionData data) {
+	public float getWallYaw(ICPAReadableMotionData data) {
 		return currentBlockYaw(data);
 	}
 
-	public static boolean checkLegalityStatic(IMarioReadableMotionData data, WallInfo wall, Vec3d checkOffset) {
-		Vec3d alteredPos = data.getMario().getPos().add(checkOffset);
+	public static boolean checkLegalityStatic(ICPAReadableMotionData data, WallInfo wall, Vec3d checkOffset) {
+		Vec3d alteredPos = data.getPlayer().getPos().add(checkOffset);
 		BlockPos blockPos = new BlockPos(
 				MathHelper.floor(alteredPos.x),
 				MathHelper.floor(alteredPos.y),
 				MathHelper.floor(alteredPos.z)
 		);
-		return ClimbTransitions.verifyIntangibleDirectionalClimbingLegality(data.getMario(), blockPos, Direction.fromRotation(wall.getWallYaw()), true);
-//		BlockState state = data.getMario().getWorld().getBlockState(blockPos);
-//		return wall.getWallYaw() == getYawOf(data.getMario(), blockPos, state);
+		return ClimbTransitions.verifyIntangibleDirectionalClimbingLegality(data.getPlayer(), blockPos, Direction.fromRotation(wall.getWallYaw()), true);
+//		BlockState state = data.getPlayer().getWorld().getBlockState(blockPos);
+//		return wall.getWallYaw() == getYawOf(data.getPlayer(), blockPos, state);
 	}
 
-	public static boolean useAlternateOffset(IMarioReadableMotionData data) {
-		return !ClimbTransitions.verifyIntangibleDirectionalClimbingLegality(data.getMario(), data.getMario().getBlockPos(),
+	public static boolean useAlternateOffset(ICPAReadableMotionData data) {
+		return !ClimbTransitions.verifyIntangibleDirectionalClimbingLegality(data.getPlayer(), data.getPlayer().getBlockPos(),
 				Direction.fromRotation(HelperGetter.getWallboundActionHelper().getWallInfo(data).getWallYaw()),
 				false);
 	}
 
 	@Override
-	protected boolean useAlternateOffset(IMarioData data) {
-		return useAlternateOffset((IMarioReadableMotionData) data);
+	protected boolean useAlternateOffset(ICPAData data) {
+		return useAlternateOffset((ICPAReadableMotionData) data);
 	}
 
-	@Override public boolean checkLegality(IMarioReadableMotionData data, WallInfo wall, Vec3d checkOffset) {
+	@Override public boolean checkLegality(ICPAReadableMotionData data, WallInfo wall, Vec3d checkOffset) {
 		return checkLegalityStatic(data, wall, checkOffset);
 	}
 
 	@Override
-	public void clientTick(IMarioClientData data, boolean isSelf) {
+	public void clientTick(ICPAClientData data, boolean isSelf) {
 
 	}
 

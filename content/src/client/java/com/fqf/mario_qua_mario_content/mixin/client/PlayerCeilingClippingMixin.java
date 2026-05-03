@@ -24,7 +24,7 @@ public abstract class PlayerCeilingClippingMixin extends AbstractClientPlayerEnt
 	@Override
 	public void move(MovementType movementType, Vec3d movement) {
 		if(movementType == MovementType.SELF || movementType == MovementType.PLAYER) {
-			if(movement.y > 0 && this.mqm$getIMarioData().hasPower(Powers.CEILING_CLIPPING)) {
+			if(movement.y > 0 && this.cpa$getICPAData().hasPower(Powers.CEILING_CLIPPING)) {
 				// If Mario's horizontal velocity is responsible for him clipping a ceiling, then just cancel his horizontal movement
 				if(
 						(movement.x != 0 || movement.z != 0)

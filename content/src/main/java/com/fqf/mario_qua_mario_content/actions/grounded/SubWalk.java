@@ -5,7 +5,7 @@ import com.fqf.charapoweract_api.definitions.states.actions.util.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charapoweract_api.mariodata.*;
+import com.fqf.charapoweract_api.cpadata.*;
 import com.fqf.charapoweract_api.util.CharaStat;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
@@ -70,16 +70,16 @@ public class SubWalk implements GroundedActionDefinition {
 	public static final CharaStat STRAFE_ACCEL = new CharaStat(0.065, WALKING, STRAFE, ACCELERATION);
 	public static final CharaStat STRAFE_SPEED = new CharaStat(0.275, WALKING, STRAFE, SPEED);
 
-	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
+	@Override public @Nullable Object provideStateData(ICPAData data) {
 		return null;
 	}
-	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
+	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
 
 	}
-	@Override public void serverTick(IMarioAuthoritativeData data) {
+	@Override public void serverTick(ICPAAuthoritativeData data) {
 
 	}
-	@Override public void travelHook(IMarioTravelData data, GroundedActionHelper helper) {
+	@Override public void travelHook(ICPATravelData data, GroundedActionHelper helper) {
 		if(data.getInputs().getForwardInput() > 0) {
 			if(data.getForwardVel() > WALK_SPEED.getAsLimit(data)) {
 				// Overwalk
@@ -148,7 +148,7 @@ public class SubWalk implements GroundedActionDefinition {
 		}
 	}
 
-	public static boolean isIdle(IMarioReadableMotionData data) {
+	public static boolean isIdle(ICPAReadableMotionData data) {
 		return MathHelper.approximatelyEquals(data.getForwardVel(), 0)
 				&& MathHelper.approximatelyEquals(data.getStrafeVel(), 0)
 				&& MathHelper.approximatelyEquals(data.getInputs().getForwardInput(), 0)

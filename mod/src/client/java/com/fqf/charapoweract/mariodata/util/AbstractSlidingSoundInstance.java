@@ -1,21 +1,21 @@
 package com.fqf.charapoweract.mariodata.util;
 
-import com.fqf.charapoweract.mariodata.IMarioClientDataImpl;
+import com.fqf.charapoweract.mariodata.ICPAClientDataImpl;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.sound.MovingSoundInstance;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 
 public abstract class AbstractSlidingSoundInstance extends MovingSoundInstance {
-	protected final IMarioClientDataImpl DATA;
+	protected final ICPAClientDataImpl DATA;
 	protected final AbstractClientPlayerEntity MARIO;
 	private final SoundEvent SOUND_EVENT;
 	protected int ticks;
 
-	public AbstractSlidingSoundInstance(SoundEvent soundEvent, IMarioClientDataImpl data) {
-		super(soundEvent, SoundCategory.PLAYERS, data.getMario().getRandom());
+	public AbstractSlidingSoundInstance(SoundEvent soundEvent, ICPAClientDataImpl data) {
+		super(soundEvent, SoundCategory.PLAYERS, data.getPlayer().getRandom());
 		this.DATA = data;
-		this.MARIO = data.getMario();
+		this.MARIO = data.getPlayer();
 		this.SOUND_EVENT = soundEvent;
 		this.repeat = true;
 		this.ticks = 0;
@@ -28,7 +28,7 @@ public abstract class AbstractSlidingSoundInstance extends MovingSoundInstance {
 
 	@Override
 	public void tick() {
-		if(!this.MARIO.isRemoved() && this.equals(this.DATA.getStoredSounds().get(IMarioClientDataImpl.SLIDE_IDENTIFIER))) {
+		if(!this.MARIO.isRemoved() && this.equals(this.DATA.getStoredSounds().get(ICPAClientDataImpl.SLIDE_IDENTIFIER))) {
 			if(this.isFloorDependent() && this.DATA.getFloorSlidingSound() != this.SOUND_EVENT) {
 				this.setDone();
 				this.DATA.handleSlidingSound(this.MARIO.mqm$getMarioData().getAction());

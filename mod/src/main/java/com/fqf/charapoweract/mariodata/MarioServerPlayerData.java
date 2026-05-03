@@ -13,7 +13,7 @@ import com.fqf.charapoweract.registries.power_granting.ParsedPowerUp;
 import com.fqf.charapoweract.compat.required.MarioCPMCompat;
 import com.fqf.charapoweract.util.MarioGamerules;
 import com.fqf.charapoweract_api.definitions.states.actions.util.ActionCategory;
-import com.fqf.charapoweract_api.mariodata.IMarioAuthoritativeData;
+import com.fqf.charapoweract_api.cpadata.ICPAAuthoritativeData;
 import com.tom.cpm.shared.io.ModelFile;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -29,13 +29,13 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public class MarioServerPlayerData extends MarioMoveableData implements IMarioAuthoritativeData {
+public class MarioServerPlayerData extends MarioMoveableData implements ICPAAuthoritativeData {
 	private final ServerPlayerEntity MARIO;
 	public MarioServerPlayerData(ServerPlayerEntity mario) {
 		super();
 		this.MARIO = mario;
 	}
-	@Override public ServerPlayerEntity getMario() {
+	@Override public ServerPlayerEntity getPlayer() {
 		return this.MARIO;
 	}
 
@@ -48,17 +48,17 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 			ParsedPowerUp preApplyPowerUp = this.getPowerUp();
 			this.setCharacter(this.getCharacter());
 			this.setPowerUpTransitionless(preApplyPowerUp);
-			MarioDataPackets.syncMarioDataToPlayerS2C(this.getMario(), this.getMario());
+			MarioDataPackets.syncMarioDataToPlayerS2C(this.getPlayer(), this.getPlayer());
 		}
 		else super.initialApply();
-//		this.syncToClient(this.getMario());
+//		this.syncToClient(this.getPlayer());
 	}
 
 	@Override
 	public void updatePassiveUniversalTraits(boolean enabled) {
 		super.updatePassiveUniversalTraits(enabled);
 		if(enabled) this.updatePlayerModel();
-		else MarioCPMCompat.getCommonAPI().resetPlayerModel(PlayerEntity.class, this.getMario());
+		else MarioCPMCompat.getCommonAPI().resetPlayerModel(PlayerEntity.class, this.getPlayer());
 	}
 
 	@Override
@@ -102,7 +102,7 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 				ParsedWallboundAction wallAction = (ParsedWallboundAction) toAction;
 
 				// If last received wall yaw packet was too long ago, reject
-				if(this.getMario().getWorld().getTime() > this.lastReceivedWallYawTime + 60L) {
+				if(this.getPlayer().getWorld().getTime() > this.lastReceivedWallYawTime + 60L) {
 					MarioQuaMario.LOGGER.warn("""
 							TRANSITION REJECTED: Trying to enter Wallbound Action, but last wall yaw packet was\
 							 received too long ago.
@@ -126,7 +126,7 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 				}
 
 				// Else, broadcast wall yaw to clients:
-				MarioDataPackets.transmitWallYawS2C(this.getMario(), this.lastReceivedWallYaw);
+				MarioDataPackets.transmitWallYawS2C(this.getPlayer(), this.lastReceivedWallYaw);
 			}
 
 			@Nullable ParsedTransition transition = fromAction.TRANSITIONS_FROM_TARGETS.get(toAction);
@@ -147,7 +147,7 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 
 	@Override
 	public void setActionTransitionless(AbstractParsedAction action) {
-		this.RECENT_ACTIONS.add(new Pair<>(this.getAction(), this.getMario().getWorld().getTime() + 10L));
+		this.RECENT_ACTIONS.add(new Pair<>(this.getAction(), this.getPlayer().getWorld().getTime() + 10L));
 		super.setActionTransitionless(action);
 	}
 
@@ -161,11 +161,11 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 		ModelFile newModel = this.getCharacter().MODELS.get(newPowerUp);
 		if(newModel == null) {
 			MarioQuaMario.LOGGER.error("Attempting to set {}'s power-up, however there is no model for combination {} + {}!",
-					this.getMario().getName().getString(), this.getCharacterID(), newPowerUp.ID);
+					this.getPlayer().getName().getString(), this.getCharacterID(), newPowerUp.ID);
 			return false;
 		}
-		if(this.getMario().networkHandler != null)
-			MarioCPMCompat.getCommonAPI().setPlayerModel(PlayerEntity.class, this.getMario(), newModel, true);
+		if(this.getPlayer().networkHandler != null)
+			MarioCPMCompat.getCommonAPI().setPlayerModel(PlayerEntity.class, this.getPlayer(), newModel, true);
 		return true;
 	}
 	public void updatePlayerModel() {
@@ -184,7 +184,7 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 		this.getPowerUp().serverTick(this);
 		this.getCharacter().serverTick(this);
 
-		long worldTime = this.getMario().getWorld().getTime();
+		long worldTime = this.getPlayer().getWorld().getTime();
 		this.RECENT_ACTIONS.removeIf(pair -> worldTime > pair.getRight());
 	}
 
@@ -193,7 +193,7 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 	public void receiveWallYaw(float wallYaw) {
 		this.lastReceivedWallYaw = wallYaw;
 		// NaN yaws will never be checked
-		this.lastReceivedWallYawTime = Float.isNaN(wallYaw) ? Long.MIN_VALUE : this.getMario().getWorld().getTime();
+		this.lastReceivedWallYawTime = Float.isNaN(wallYaw) ? Long.MIN_VALUE : this.getPlayer().getWorld().getTime();
 	}
 
 	@Override
@@ -207,11 +207,11 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.INPUT);
 
 		this.applyModifiedVelocity();
-		this.getMario().move(MovementType.SELF, this.getMovementWithFluidPushing());
+		this.getPlayer().move(MovementType.SELF, this.getMovementWithFluidPushing());
 
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
 
-		this.getMario().updateLimbs(false);
+		this.getPlayer().updateLimbs(false);
 		return cancelVanillaTravel;
 	}
 
@@ -249,16 +249,16 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 
 	//	public void syncToClient(ServerPlayerEntity toWhom) {
 //		this.setEnabled(this.isEnabled());
-//		MarioDataPackets.assignCharacterS2C(this.getMario(), this.getCharacter());
-//		MarioDataPackets.assignPowerUpS2C(this.getMario(), this.getPowerUp());
-//		MarioDataPackets.assignActionS2C(this.getMario(), true, this.getAction());
-////		MarioDataPackets.updatePlayermodelS2C(this.getMario());
+//		MarioDataPackets.assignCharacterS2C(this.getPlayer(), this.getCharacter());
+//		MarioDataPackets.assignPowerUpS2C(this.getPlayer(), this.getPowerUp());
+//		MarioDataPackets.assignActionS2C(this.getPlayer(), true, this.getAction());
+////		MarioDataPackets.updatePlayermodelS2C(this.getPlayer());
 //	}
 
-	// CUTOFF FOR IMarioAuthoritativeData IMPLEMENTATION:---------------------------------------------------------------
+	// CUTOFF FOR ICPAAuthoritativeData IMPLEMENTATION:---------------------------------------------------------------
 	@Override public void disable() {
 		this.disableInternal();
-		MarioDataPackets.disableMarioS2C(this.getMario());
+		MarioDataPackets.disableMarioS2C(this.getPlayer());
 	}
 
 	@Override public ActionTransitionResult forceActionTransition(@Nullable Identifier fromID, @NotNull Identifier toID) {
@@ -274,7 +274,7 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 				"Target action (" + toID + ") doesn't exist!");
 
 		if(this.setAction(fromAction, toAction, seed, false, true)) {
-			MarioDataPackets.transitionToActionS2C(this.getMario(), true, fromAction, toAction, seed);
+			MarioDataPackets.transitionToActionS2C(this.getPlayer(), true, fromAction, toAction, seed);
 			return ActionTransitionResult.SUCCESS;
 		}
 		return ActionTransitionResult.NO_SUCH_TRANSITION;
@@ -288,7 +288,7 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 		AbstractParsedAction newAction = Objects.requireNonNull(RegistryManager.ACTIONS.get(actionID),
 				"Target action (" + actionID + ") doesn't exist!");
 		this.setActionTransitionless(newAction);
-		MarioDataPackets.assignActionS2C(this.getMario(), true, newAction);
+		MarioDataPackets.assignActionS2C(this.getPlayer(), true, newAction);
 		return ActionChangeOperationResult.SUCCESS;
 	}
 	@Override public ActionChangeOperationResult assignAction(String actionID) {
@@ -302,7 +302,7 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 
 		long seed = RandomSeed.getSeed();
 		if(!this.setPowerUp(newPowerUp, false, seed)) return PowerChangeOperationResult.MISSING_PLAYERMODEL;
-		MarioDataPackets.empowerRevertS2C(this.getMario(), newPowerUp, false, seed);
+		MarioDataPackets.empowerRevertS2C(this.getPlayer(), newPowerUp, false, seed);
 		return PowerChangeOperationResult.SUCCESS;
 	}
 	@Override public PowerChangeOperationResult empowerTo(String powerUpID) {
@@ -313,7 +313,7 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 	public ReversionResult executeReversion() {
 		if(!this.isEnabled()) return ReversionResult.NOT_ENABLED;
 
-		ServerPlayerEntity mario = this.getMario();
+		ServerPlayerEntity mario = this.getPlayer();
 		Identifier reversionTarget = this.getPowerUp().REVERSION_TARGET_ID;
 		if(reversionTarget == null) return ReversionResult.NO_WEAKER_FORM;
 
@@ -340,7 +340,7 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 
 		long seed = RandomSeed.getSeed();
 		if(!this.setPowerUp(newPowerUp, true, seed)) return PowerChangeOperationResult.MISSING_PLAYERMODEL;
-		MarioDataPackets.empowerRevertS2C(this.getMario(), newPowerUp, true, seed);
+		MarioDataPackets.empowerRevertS2C(this.getPlayer(), newPowerUp, true, seed);
 		return PowerChangeOperationResult.SUCCESS;
 	}
 	@Override public PowerChangeOperationResult revertTo(String powerUpID) {
@@ -353,7 +353,7 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 				"Target power-up (" + powerUpID + ") doesn't exist!");
 
 		if(!this.setPowerUpTransitionless(newPowerUp)) return PowerChangeOperationResult.MISSING_PLAYERMODEL;
-		MarioDataPackets.assignPowerUpS2C(this.getMario(), newPowerUp);
+		MarioDataPackets.assignPowerUpS2C(this.getPlayer(), newPowerUp);
 		return PowerChangeOperationResult.SUCCESS;
 	}
 	@Override public PowerChangeOperationResult assignPowerUp(String powerUpID) {
@@ -365,7 +365,7 @@ public class MarioServerPlayerData extends MarioMoveableData implements IMarioAu
 				"Target character (" + characterID + ") doesn't exist!");
 
 		this.setCharacter(newCharacter);
-		MarioDataPackets.assignCharacterS2C(this.getMario(), newCharacter);
+		MarioDataPackets.assignCharacterS2C(this.getPlayer(), newCharacter);
 	}
 	@Override public void assignCharacter(String characterID) {
 		this.assignCharacter(Identifier.of(characterID));

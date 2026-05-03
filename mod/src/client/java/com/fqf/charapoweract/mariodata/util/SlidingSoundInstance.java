@@ -1,10 +1,10 @@
 package com.fqf.charapoweract.mariodata.util;
 
-import com.fqf.charapoweract.mariodata.IMarioClientDataImpl;
+import com.fqf.charapoweract.mariodata.ICPAClientDataImpl;
 import net.minecraft.sound.SoundEvent;
 
 public class SlidingSoundInstance extends AbstractSlidingSoundInstance {
-	public SlidingSoundInstance(SoundEvent soundEvent, IMarioClientDataImpl data) {
+	public SlidingSoundInstance(SoundEvent soundEvent, ICPAClientDataImpl data) {
 		super(soundEvent, data);
 	}
 

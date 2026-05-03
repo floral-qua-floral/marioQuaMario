@@ -5,7 +5,7 @@ import com.fqf.charapoweract_api.definitions.states.actions.util.animation.Arran
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.LimbAnimation;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.ProgressHandler;
-import com.fqf.charapoweract_api.mariodata.IMarioAnimatingData;
+import com.fqf.charapoweract_api.cpadata.ICPAAnimatingData;
 import com.fqf.charapoweract_api.util.Easing;
 import com.tom.cpl.math.Vec3f;
 import com.tom.cpm.client.CustomPlayerModelsClient;
@@ -53,13 +53,13 @@ public class MarioAnimationData {
 		if(this.ticksUntilAutoReplaceAnimation > 0) return;
 		this.prevAnim = this.currentAnim;
 		this.currentAnim = newAnim;
-		if(this.shouldResetAnimation((IMarioAnimatingData) data)) {
+		if(this.shouldResetAnimation((ICPAAnimatingData) data)) {
 			this.changingAnim = true;
 			this.animationTicks = 0;
 		}
 		this.ticksUntilAutoReplaceAnimation = ticksUntilAutoReplace;
 	}
-	private boolean shouldResetAnimation(IMarioAnimatingData data) {
+	private boolean shouldResetAnimation(ICPAAnimatingData data) {
 		boolean isSame = this.currentAnim == this.prevAnim;
 		if(this.currentAnim == null || this.currentAnim.progressHandler() == null || this.currentAnim.progressHandler().resetter() == null || this.prevAnim == null)
 			return !isSame;
@@ -194,7 +194,7 @@ public class MarioAnimationData {
 	private float calculateProgress(MarioPlayerData data) {
 		ProgressHandler handler = this.currentAnim.progressHandler();
 		if(handler == null) return 1;
-		else return handler.calculator().calculateProgress((IMarioAnimatingData) data, this.animationTicks);
+		else return handler.calculator().calculateProgress((ICPAAnimatingData) data, this.animationTicks);
 	}
 	private void conditionallyAnimateArm(
 			Arrangement arrangement, LimbAnimation limbAnimation, MarioPlayerData data, float progress,
@@ -245,9 +245,9 @@ public class MarioAnimationData {
 				if(this.currentAnim == null || this.currentAnim.tailAnimation() == null || this.currentAnim.tailAnimation().shouldSwingWithMovement()) {
 					float swing = leftLegPitch - rightLegPitch;
 					float lift;
-					if (data.getMario().isOnGround() || data.getActionCategory() == ActionCategory.WALLBOUND) {
+					if (data.getPlayer().isOnGround() || data.getActionCategory() == ActionCategory.WALLBOUND) {
 						lift = Easing.SINE_IN_OUT.ease(Easing.clampedRangeToProgress(data.getForwardVel(), 0, 0.55));
-						swing += sin(data.getMario().age / 17F) * 0.5F * Math.max(0F, HALF_PI * 0.5F - Math.abs(swing));
+						swing += sin(data.getPlayer().age / 17F) * 0.5F * Math.max(0F, HALF_PI * 0.5F - Math.abs(swing));
 					}
 					else lift = Easing.EXPO_IN_OUT.ease(Easing.clampedRangeToProgress(data.getYVel(), 0.87, -0.85), 0.45F, 1.8F);
 
@@ -304,7 +304,7 @@ public class MarioAnimationData {
 		float unmutatedZ = arrangement.z;
 		float unmutatedYaw = arrangement.yaw;
 		float unmutatedRoll = arrangement.roll;
-		mutator.mutate((IMarioAnimatingData) data, arrangement, progress);
+		mutator.mutate((ICPAAnimatingData) data, arrangement, progress);
 		if(isMirrored) {
 			arrangement.x -= 2 * (arrangement.x - unmutatedX);
 			arrangement.yaw -= 2 * (arrangement.yaw - unmutatedYaw);

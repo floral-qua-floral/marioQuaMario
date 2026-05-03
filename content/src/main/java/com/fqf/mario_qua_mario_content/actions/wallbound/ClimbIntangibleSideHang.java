@@ -2,9 +2,9 @@ package com.fqf.mario_qua_mario_content.actions.wallbound;
 
 import com.fqf.charapoweract_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.*;
-import com.fqf.charapoweract_api.mariodata.IMarioClientData;
-import com.fqf.charapoweract_api.mariodata.IMarioData;
-import com.fqf.charapoweract_api.mariodata.IMarioReadableMotionData;
+import com.fqf.charapoweract_api.cpadata.ICPAClientData;
+import com.fqf.charapoweract_api.cpadata.ICPAData;
+import com.fqf.charapoweract_api.cpadata.ICPAReadableMotionData;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
@@ -17,22 +17,22 @@ public class ClimbIntangibleSideHang extends ClimbWallSideHang implements Wallbo
 	}
 
 	@Override
-	protected float getEntireBodyXOffset(IMarioReadableMotionData data) {
-		return data.getVars(ClimbOmniDirectionalVars.class).ALTERNATE_OFFSET ? 2.75F : 1;
+	protected float getEntireBodyXOffset(ICPAReadableMotionData data) {
+		return data.retrieveStateData(ClimbOmniDirectionalVars.class).ALTERNATE_OFFSET ? 2.75F : 1;
 	}
 
 	@Override
-	public float getWallYaw(IMarioReadableMotionData data) {
+	public float getWallYaw(ICPAReadableMotionData data) {
 		return ClimbIntangibleDirectional.currentBlockYaw(data);
 	}
 
 	@Override
-	public boolean checkLegality(IMarioReadableMotionData data, WallInfo wall, Vec3d checkOffset) {
+	public boolean checkLegality(ICPAReadableMotionData data, WallInfo wall, Vec3d checkOffset) {
 		return ClimbIntangibleDirectional.checkLegalityStatic(data, wall, checkOffset);
 	}
 
 	@Override
-	public void clientTick(IMarioClientData data, boolean isSelf) {
+	public void clientTick(ICPAClientData data, boolean isSelf) {
 
 	}
 
@@ -47,8 +47,8 @@ public class ClimbIntangibleSideHang extends ClimbWallSideHang implements Wallbo
 	}
 
 	@Override
-	protected boolean useAlternateOffset(IMarioData data) {
-		return ClimbIntangibleDirectional.useAlternateOffset((IMarioReadableMotionData) data);
+	protected boolean useAlternateOffset(ICPAData data) {
+		return ClimbIntangibleDirectional.useAlternateOffset((ICPAReadableMotionData) data);
 	}
 
 	@Override

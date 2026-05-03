@@ -7,8 +7,8 @@ import com.fqf.charapoweract_api.definitions.states.actions.util.SprintingRule;
 import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.PlayermodelAnimation;
-import com.fqf.charapoweract_api.mariodata.IMarioClientData;
-import com.fqf.charapoweract_api.mariodata.IMarioData;
+import com.fqf.charapoweract_api.cpadata.ICPAClientData;
+import com.fqf.charapoweract_api.cpadata.ICPAData;
 import com.fqf.mario_qua_mario_content.actions.airborne.DuckFall;
 import com.fqf.mario_qua_mario_content.actions.grounded.DuckWaddle;
 import com.fqf.mario_qua_mario_content.util.ActionTimerVars;
@@ -42,10 +42,10 @@ public class TailStallDucking extends TailStall implements AirborneActionDefinit
 		return SprintingRule.PROHIBIT;
 	}
 
-	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
+	@Override public @Nullable Object provideStateData(ICPAData data) {
 		return new ActionTimerVars();
 	}
-	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
+	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
 		TailStall.tailWaggleTick(data);
 	}
 

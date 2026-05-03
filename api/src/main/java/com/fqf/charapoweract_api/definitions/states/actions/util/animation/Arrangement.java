@@ -1,6 +1,6 @@
 package com.fqf.charapoweract_api.definitions.states.actions.util.animation;
 
-import com.fqf.charapoweract_api.mariodata.IMarioAnimatingData;
+import com.fqf.charapoweract_api.cpadata.ICPAAnimatingData;
 
 public class Arrangement {
 	public float x, y, z;
@@ -8,7 +8,7 @@ public class Arrangement {
 
 	@FunctionalInterface
 	public interface Mutator {
-		void mutate(IMarioAnimatingData data, Arrangement arrangement, float progress);
+		void mutate(ICPAAnimatingData data, Arrangement arrangement, float progress);
 	}
 
 	public void setPos(float x, float y, float z) {

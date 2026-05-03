@@ -5,7 +5,7 @@ import com.fqf.charapoweract_api.definitions.states.actions.util.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charapoweract_api.mariodata.*;
+import com.fqf.charapoweract_api.cpadata.*;
 import com.fqf.charapoweract_api.util.CharaStat;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.aquatic.Submerged;
@@ -73,7 +73,7 @@ public class Fall implements AirborneActionDefinition {
 
 	public static final CharaStat DRIFT_REDIRECTION = new CharaStat(6.0, DRIFTING, REDIRECTION);
 
-	public static void drift(IMarioTravelData data, AirborneActionHelper helper) {
+	public static void drift(ICPATravelData data, AirborneActionHelper helper) {
 		helper.airborneAccel(
 				data,
 				FORWARD_DRIFT_ACCEL, FORWARD_DRIFT_SPEED,
@@ -85,27 +85,27 @@ public class Fall implements AirborneActionDefinition {
 
 	public static final TransitionDefinition FALL = new TransitionDefinition(
 			Fall.ID,
-			data -> !data.getMario().isOnGround(),
+			data -> !data.getPlayer().isOnGround(),
 			EvaluatorEnvironment.CLIENT_ONLY
 	);
 
-	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
+	@Override public @Nullable Object provideStateData(ICPAData data) {
 		return null;
 	}
-	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
+	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
 
 	}
-	@Override public void serverTick(IMarioAuthoritativeData data) {
+	@Override public void serverTick(ICPAAuthoritativeData data) {
 		
 	}
-	@Override public void travelHook(IMarioTravelData data, AirborneActionHelper helper) {
+	@Override public void travelHook(ICPATravelData data, AirborneActionHelper helper) {
 		helper.applyComplexGravity(data, FALL_ACCEL, null, FALL_SPEED);
 		drift(data, helper);
 	}
 
 	public static final TransitionDefinition LANDING = new TransitionDefinition(
 			SubWalk.ID,
-			data -> data.getMario().isOnGround(),
+			data -> data.getPlayer().isOnGround(),
 			EvaluatorEnvironment.COMMON
 	);
 

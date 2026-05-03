@@ -4,7 +4,7 @@ import com.fqf.charapoweract_api.definitions.states.actions.GenericActionDefinit
 import com.fqf.charapoweract_api.definitions.states.actions.util.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charapoweract_api.mariodata.*;
+import com.fqf.charapoweract_api.cpadata.*;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.Voicelines;
 import com.fqf.mario_qua_mario_content.actions.airborne.LavaBoost;
@@ -74,16 +74,16 @@ public class Debug implements GenericActionDefinition {
 		return null;
 	}
 
-	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
+	@Override public @Nullable Object provideStateData(ICPAData data) {
 		return new ActionTimerVars();
 	}
-	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
+	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
 
 	}
-	@Override public void serverTick(IMarioAuthoritativeData data) {
-		data.getMario().setHealth(20);
+	@Override public void serverTick(ICPAAuthoritativeData data) {
+		data.getPlayer().setHealth(20);
 	}
-	@Override public boolean travelHook(IMarioTravelData data) {
+	@Override public boolean travelHook(ICPATravelData data) {
 		ActionTimerVars.get(data).actionTimer++;
 		data.setForwardStrafeVel(data.getInputs().getForwardInput() * 0.5, data.getInputs().getStrafeInput() * 0.5);
 		data.setYVel(data.getInputs().JUMP.isHeld() ? 0.4 : (data.getInputs().DUCK.isHeld() ? -0.4 : (0.03 * Math.sin(ActionTimerVars.get(data).actionTimer++ / 16.0))));
@@ -94,7 +94,7 @@ public class Debug implements GenericActionDefinition {
 		return List.of(
 				new TransitionDefinition(
 						DebugSprint.ID,
-						data -> data.getMario().isSprinting(), EvaluatorEnvironment.COMMON,
+						data -> data.getPlayer().isSprinting(), EvaluatorEnvironment.COMMON,
 						null,
 						(data, isSelf, seed) -> data.playSound(MarioContentSFX.FIREBALL, seed)
 				),
@@ -144,30 +144,30 @@ public class Debug implements GenericActionDefinition {
 					}
 
 					@Override
-					public boolean shouldInterceptAttack(IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
+					public boolean shouldInterceptAttack(ICPAReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
 						return weapon.isOf(Items.WOODEN_AXE);
 					}
 
 					@Override
-					public @NotNull MiningHandling shouldSuppressMining(IMarioReadableMotionData data, ItemStack weapon, @NotNull BlockHitResult blockHitResult, int miningTicks) {
+					public @NotNull MiningHandling shouldSuppressMining(ICPAReadableMotionData data, ItemStack weapon, @NotNull BlockHitResult blockHitResult, int miningTicks) {
 						return MiningHandling.INTERCEPT;
 					}
 
 					@Override
-					public void executeTravellers(IMarioTravelData data, ItemStack weapon, float attackCooldownProgress, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget) {
+					public void executeTravellers(ICPATravelData data, ItemStack weapon, float attackCooldownProgress, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget) {
 
-						data.getMario().setYaw(data.getMario().getYaw() + 90);
+						data.getPlayer().setYaw(data.getPlayer().getYaw() + 90);
 					}
 
 					@Override
-					public void executeClients(IMarioClientData data, ItemStack weapon, float attackCooldownProgress, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget, long seed) {
+					public void executeClients(ICPAClientData data, ItemStack weapon, float attackCooldownProgress, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget, long seed) {
 						data.forceBodyAlignment(true);
 						data.instantVisualRotate(90, true);
 						data.playAnimation(DebugSideTurn.ANIMATION, -1);
 					}
 
 					@Override
-					public void executeServer(IMarioAuthoritativeData data, ItemStack weapon, float attackCooldownProgress, ServerWorld world, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget) {
+					public void executeServer(ICPAAuthoritativeData data, ItemStack weapon, float attackCooldownProgress, ServerWorld world, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget) {
 
 					}
 				},
@@ -183,27 +183,27 @@ public class Debug implements GenericActionDefinition {
 					}
 
 					@Override public boolean shouldInterceptAttack(
-							IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
+							ICPAReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
 							@Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult
 					) {
 						return weapon.isEmpty();
 					}
 
 					@Override public @NotNull MiningHandling shouldSuppressMining(
-							IMarioReadableMotionData data, ItemStack weapon,
+							ICPAReadableMotionData data, ItemStack weapon,
 							@NotNull BlockHitResult blockHitResult, int miningTicks
 					) {
 						return miningTicks < 20 ? MiningHandling.INTERCEPT : MiningHandling.MINE;
 					}
 
 					@Override public void executeTravellers(
-							IMarioTravelData data, ItemStack weapon, float attackCooldownProgress,
+							ICPATravelData data, ItemStack weapon, float attackCooldownProgress,
 							@Nullable BlockPos blockTarget, @Nullable Entity entityTarget
 					) {
 
 					}
 					@Override public void executeClients(
-							IMarioClientData data, ItemStack weapon, float attackCooldownProgress,
+							ICPAClientData data, ItemStack weapon, float attackCooldownProgress,
 							@Nullable BlockPos blockTarget, @Nullable Entity entityTarget,
 							long seed
 					) {
@@ -211,7 +211,7 @@ public class Debug implements GenericActionDefinition {
 					}
 
 					@Override public void executeServer(
-							IMarioAuthoritativeData data, ItemStack weapon, float attackCooldownProgress,
+							ICPAAuthoritativeData data, ItemStack weapon, float attackCooldownProgress,
 							ServerWorld world, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget
 					) {
 

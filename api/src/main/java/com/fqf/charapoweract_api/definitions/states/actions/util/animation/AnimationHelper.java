@@ -1,7 +1,7 @@
 package com.fqf.charapoweract_api.definitions.states.actions.util.animation;
 
 import com.fqf.charapoweract_api.definitions.states.actions.WallboundActionDefinition;
-import com.fqf.charapoweract_api.mariodata.IMarioReadableMotionData;
+import com.fqf.charapoweract_api.cpadata.ICPAReadableMotionData;
 import com.fqf.charapoweract_api.util.Easing;
 import net.minecraft.util.Pair;
 import org.jetbrains.annotations.Nullable;
@@ -15,5 +15,5 @@ public interface AnimationHelper {
 
 	float sequencedEase(float progress, Easing first, Easing second, Easing... more);
 
-	@Nullable WallboundActionDefinition.WallInfo getWallInfo(IMarioReadableMotionData data);
+	@Nullable WallboundActionDefinition.WallInfo getWallInfo(ICPAReadableMotionData data);
 }

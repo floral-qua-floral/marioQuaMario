@@ -4,7 +4,7 @@ import com.fqf.charapoweract_api.definitions.states.actions.GenericActionDefinit
 import com.fqf.charapoweract_api.definitions.states.actions.util.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charapoweract_api.mariodata.*;
+import com.fqf.charapoweract_api.cpadata.*;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.util.ActionTimerVars;
 import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
@@ -75,16 +75,16 @@ public class DebugTailTest implements GenericActionDefinition {
 		return null;
 	}
 
-	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
+	@Override public @Nullable Object provideStateData(ICPAData data) {
 		return new ActionTimerVars();
 	}
-	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
+	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
 
 	}
-	@Override public void serverTick(IMarioAuthoritativeData data) {
+	@Override public void serverTick(ICPAAuthoritativeData data) {
 
 	}
-	@Override public boolean travelHook(IMarioTravelData data) {
+	@Override public boolean travelHook(ICPATravelData data) {
 		ActionTimerVars.get(data).actionTimer++;
 		data.setForwardStrafeVel(data.getInputs().getForwardInput() * 0.5, data.getInputs().getStrafeInput() * 0.5);
 		data.setYVel(data.getInputs().JUMP.isHeld() ? 0.4 : (data.getInputs().DUCK.isHeld() ? -0.4 : (0.03 * Math.sin(ActionTimerVars.get(data).actionTimer++ / 16.0))));
@@ -95,7 +95,7 @@ public class DebugTailTest implements GenericActionDefinition {
 		return List.of(
 				new TransitionDefinition(
 						DebugSprint.ID,
-						data -> data.getMario().isSprinting(), EvaluatorEnvironment.COMMON,
+						data -> data.getPlayer().isSprinting(), EvaluatorEnvironment.COMMON,
 						null,
 						(data, isSelf, seed) -> data.playSound(MarioContentSFX.FIREBALL, seed)
 				)
@@ -126,27 +126,27 @@ public class DebugTailTest implements GenericActionDefinition {
 					}
 
 					@Override public boolean shouldInterceptAttack(
-							IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
+							ICPAReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
 							@Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult
 					) {
 						return weapon.isEmpty();
 					}
 
 					@Override public @NotNull MiningHandling shouldSuppressMining(
-							IMarioReadableMotionData data, ItemStack weapon,
+							ICPAReadableMotionData data, ItemStack weapon,
 							@NotNull BlockHitResult blockHitResult, int miningTicks
 					) {
 						return miningTicks < 20 ? MiningHandling.INTERCEPT : MiningHandling.MINE;
 					}
 
 					@Override public void executeTravellers(
-							IMarioTravelData data, ItemStack weapon, float attackCooldownProgress,
+							ICPATravelData data, ItemStack weapon, float attackCooldownProgress,
 							@Nullable BlockPos blockTarget, @Nullable Entity entityTarget
 					) {
 
 					}
 					@Override public void executeClients(
-							IMarioClientData data, ItemStack weapon, float attackCooldownProgress,
+							ICPAClientData data, ItemStack weapon, float attackCooldownProgress,
 							@Nullable BlockPos blockTarget, @Nullable Entity entityTarget,
 							long seed
 					) {
@@ -154,7 +154,7 @@ public class DebugTailTest implements GenericActionDefinition {
 					}
 
 					@Override public void executeServer(
-							IMarioAuthoritativeData data, ItemStack weapon, float attackCooldownProgress,
+							ICPAAuthoritativeData data, ItemStack weapon, float attackCooldownProgress,
 							ServerWorld world, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget
 					) {
 

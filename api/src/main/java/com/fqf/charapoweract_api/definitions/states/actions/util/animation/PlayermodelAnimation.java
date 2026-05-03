@@ -1,6 +1,6 @@
 package com.fqf.charapoweract_api.definitions.states.actions.util.animation;
 
-import com.fqf.charapoweract_api.mariodata.IMarioReadableMotionData;
+import com.fqf.charapoweract_api.cpadata.ICPAReadableMotionData;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -91,6 +91,6 @@ public record PlayermodelAnimation(
 		 *                        positive, he's looking left.
 		 * @return Whether the animation should be automatically mirrored.
 		 */
-		boolean shouldMirror(IMarioReadableMotionData data, boolean rightArmBusy, boolean leftArmBusy, float headRelativeYaw);
+		boolean shouldMirror(ICPAReadableMotionData data, boolean rightArmBusy, boolean leftArmBusy, float headRelativeYaw);
 	}
 }

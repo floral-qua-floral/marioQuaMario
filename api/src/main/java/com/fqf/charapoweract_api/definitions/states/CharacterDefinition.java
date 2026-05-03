@@ -1,6 +1,6 @@
 package com.fqf.charapoweract_api.definitions.states;
 
-import com.fqf.charapoweract_api.mariodata.IMarioAuthoritativeData;
+import com.fqf.charapoweract_api.cpadata.ICPAAuthoritativeData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.sound.SoundEvent;
@@ -20,7 +20,7 @@ public interface CharacterDefinition extends StatAlteringStateDefinition {
 
 	float getEyeHeightFactor();
 
-	default float modifyIncomingDamage(IMarioAuthoritativeData data, DamageSource source, float amount) {
+	default float modifyIncomingDamage(ICPAAuthoritativeData data, DamageSource source, float amount) {
 		return amount;
 	}
 }

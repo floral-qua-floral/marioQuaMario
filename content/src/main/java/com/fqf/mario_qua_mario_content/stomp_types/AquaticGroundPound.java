@@ -2,8 +2,8 @@ package com.fqf.mario_qua_mario_content.stomp_types;
 
 import com.fqf.charapoweract_api.definitions.CollisionAttackTypeDefinition;
 import com.fqf.charapoweract_api.interfaces.CollisionAttackResult;
-import com.fqf.charapoweract_api.mariodata.IMarioData;
-import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.cpadata.ICPAData;
+import com.fqf.charapoweract_api.cpadata.ICPATravelData;
 import com.fqf.charapoweract_api.util.CharaStat;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.aquatic.Submerged;
@@ -49,7 +49,7 @@ public class AquaticGroundPound extends JumpStomp implements CollisionAttackType
 	public static final Identifier DEPTH_CHARGE_ID = MarioQuaMarioContent.makeResID("depth_charge");
 
 	@Override
-	public float calculateDamage(IMarioData data, ItemStack equipment, float equipmentArmor, float equipmentToughness) {
+	public float calculateDamage(ICPAData data, ItemStack equipment, float equipmentArmor, float equipmentToughness) {
 		int pulverizingLevel = JumpStomp.getPulverizingLevel(equipment, data);
 		float pulverizingBonus = pulverizingLevel * 0.25F + (pulverizingLevel > 0 ? 0.5F : 0);
 		int depthChargeLevel = getDepthChargeLevel(equipment, data);
@@ -57,17 +57,17 @@ public class AquaticGroundPound extends JumpStomp implements CollisionAttackType
 		return ((float) BASE_DAMAGE.get(data)) + equipmentArmor * 2.25F + pulverizingBonus + depthChargeBonus;
 	}
 
-	public static int getDepthChargeLevel(ItemStack item, IMarioData data) {
-		return JumpStomp.getEnchantmentLevel(item, data.getMario().getWorld(), DEPTH_CHARGE_ID);
+	public static int getDepthChargeLevel(ItemStack item, ICPAData data) {
+		return JumpStomp.getEnchantmentLevel(item, data.getPlayer().getWorld(), DEPTH_CHARGE_ID);
 	}
 
 	@Override
-	public float calculatePiercing(IMarioData data, ItemStack equipment, float equipmentArmor, float equipmentToughness) {
+	public float calculatePiercing(ICPAData data, ItemStack equipment, float equipmentArmor, float equipmentToughness) {
 		return equipmentToughness * 0.5F;
 	}
 
 	@Override
-	public @Nullable Vec3d executeTravellersAndModifyTargetPos(IMarioTravelData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, Vec3d movingToPos, boolean affectMario) {
-		return super.executeTravellersAndModifyTargetPos(data, equipment, target, result, movingToPos, affectMario);
+	public @Nullable Vec3d executeTravellersAndModifyTargetPos(ICPATravelData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, Vec3d movingToPos, boolean affectAttacker) {
+		return super.executeTravellersAndModifyTargetPos(data, equipment, target, result, movingToPos, affectAttacker);
 	}
 }

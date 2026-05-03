@@ -27,7 +27,7 @@ public class CharaStatCalculationHelper {
 	private static final Identifier SPRINTING_ATTRIBUTE_MODIFIER_ID = Identifier.ofVanilla("sprinting");
 
 	public static double adjustBaseValue(MarioPlayerData data, CharaStat stat) {
-		PlayerEntity mario = data.getMario();
+		PlayerEntity mario = data.getPlayer();
 
 		double multiplier = 1;
 

@@ -2,8 +2,8 @@ package com.fqf.mario_qua_mario_content.util;
 
 import com.fqf.charapoweract_api.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.charapoweract_api.mariodata.IMarioClientData;
-import com.fqf.charapoweract_api.mariodata.IMarioReadableMotionData;
+import com.fqf.charapoweract_api.cpadata.ICPAClientData;
+import com.fqf.charapoweract_api.cpadata.ICPAReadableMotionData;
 import com.fqf.charapoweract_api.util.CharaStat;
 import com.fqf.charapoweract_api.util.StatCategory;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
@@ -103,8 +103,8 @@ public class ClimbTransitions {
 				|| state.contains(MultifaceGrowthBlock.getProperty(Direction.WEST)));
 	}
 
-	public static boolean isNonSolidClimbable(IMarioReadableMotionData data, BlockPos pos, BlockState state, boolean directionality) {
-		PlayerEntity mario = data.getMario();
+	public static boolean isNonSolidClimbable(ICPAReadableMotionData data, BlockPos pos, BlockState state, boolean directionality) {
+		PlayerEntity mario = data.getPlayer();
 		boolean acceptableDirectionality;
 		if(directionality) {
 			acceptableDirectionality = getIntangibleClimbableDirectionality(mario, pos, state) != null;
@@ -115,17 +115,17 @@ public class ClimbTransitions {
 		return acceptableDirectionality;
 	}
 
-	public static boolean inNonSolidClimbable(IMarioReadableMotionData data, boolean directionality) {
-		return isNonSolidClimbable(data, data.getMario().getBlockPos(), data.getMario().getBlockStateAtPos(), directionality);
+	public static boolean inNonSolidClimbable(ICPAReadableMotionData data, boolean directionality) {
+		return isNonSolidClimbable(data, data.getPlayer().getBlockPos(), data.getPlayer().getBlockStateAtPos(), directionality);
 	}
 
-	private static boolean tryingToStartClimbingIntangible(IMarioReadableMotionData data) {
+	private static boolean tryingToStartClimbingIntangible(ICPAReadableMotionData data) {
 		if(data.getInputs().JUMP.isPressed()) return true;
 		return MarioQuaMarioContent.CONFIG.doAutoLadder() && data.getRecordedCollisions().collidedHorizontally();
 	}
 
-	private static BlockPos getClimbingBlockPos(IMarioClientData data) {
-		PlayerEntity mario = data.getMario();
+	private static BlockPos getClimbingBlockPos(ICPAClientData data) {
+		PlayerEntity mario = data.getPlayer();
 		BlockPos pos = mario.getBlockPos();
 		if(isIntangibleClimbable(mario, pos, mario.getBlockStateAtPos()))
 			return pos;
@@ -136,8 +136,8 @@ public class ClimbTransitions {
 		if(testBackFaceClimbability(mario, pos, directions[2])) return pos.offset(directions[2]);
 		return pos.offset(directions[3]); // whatever!!
 	}
-	public static void playGrabIntangibleSound(IMarioClientData data, long seed) {
-		BlockSoundGroup group = data.getMario().getWorld().getBlockState(getClimbingBlockPos(data)).getSoundGroup();
+	public static void playGrabIntangibleSound(ICPAClientData data, long seed) {
+		BlockSoundGroup group = data.getPlayer().getWorld().getBlockState(getClimbingBlockPos(data)).getSoundGroup();
 		data.playSound(group.getStepSound(), group.getPitch(), 1, seed);
 	}
 

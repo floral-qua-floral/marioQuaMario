@@ -1,10 +1,9 @@
 package com.fqf.charapoweract_api.definitions;
 
 import com.fqf.charapoweract_api.interfaces.CollisionAttackResult;
-import com.fqf.charapoweract_api.mariodata.IMarioAuthoritativeData;
-import com.fqf.charapoweract_api.mariodata.IMarioClientData;
-import com.fqf.charapoweract_api.mariodata.IMarioData;
-import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.cpadata.*;
+import com.fqf.charapoweract_api.cpadata.ICPAAuthoritativeData;
+import com.fqf.charapoweract_api.cpadata.ICPAData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -26,19 +25,19 @@ public interface CollisionAttackTypeDefinition {
 	@NotNull Identifier getDamageType();
 	@Nullable Identifier getPostCollisionActions(CollisionAttackResult.ExecutableResult result);
 
-	Box tweakMarioBoundingBox(IMarioData data, Box box);
-	void filterPotentialTargets(List<Entity> potentialTargets, ServerPlayerEntity mario, Vec3d motion);
+	Box tweakPlayerBoundingBox(ICPAData data, Box box);
+	void filterPotentialTargets(List<Entity> potentialTargets, ServerPlayerEntity attacker, Vec3d motion);
 
-	float calculateDamage(IMarioData data, ItemStack equipment, float equipmentArmor, float equipmentToughness);
-	float calculatePiercing(IMarioData data, ItemStack equipment, float equipmentArmor, float equipmentToughness);
+	float calculateDamage(ICPAData data, ItemStack equipment, float equipmentArmor, float equipmentToughness);
+	float calculatePiercing(ICPAData data, ItemStack equipment, float equipmentArmor, float equipmentToughness);
 
-	void executeServer(IMarioAuthoritativeData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, boolean affectMario);
-	@Nullable Vec3d executeTravellersAndModifyTargetPos(IMarioTravelData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, Vec3d movingToPos, boolean affectMario);
-	void executeClients(IMarioClientData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, boolean affectMario, long seed);
+	void executeServer(ICPAAuthoritativeData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, boolean affectAttacker);
+	@Nullable Vec3d executeTravellersAndModifyTargetPos(ICPATravelData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, Vec3d movingToPos, boolean affectAttacker);
+	void executeClients(ICPAClientData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, boolean affectAttacker, long seed);
 
 	enum PainfulCollisionResponse {
 		INJURY,
-		MUTUALLY_HARMLESS, // Mario bounces off and neither entity takes damage. Like the Spin Jump from Super Mario World.
-		IMMUNE // Mario damages the entity and isn't harmed himself. Like the Goomba's Shoe.
+		MUTUALLY_HARMLESS, // Player bounces off and neither entity takes damage. Like the Spin Jump from Super Mario World.
+		IMMUNE // Player damages the entity and isn't harmed herself. Like the Goomba's Shoe.
 	}
 }

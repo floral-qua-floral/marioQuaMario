@@ -136,9 +136,9 @@
 		"java": ">=21",
 		"fabric-api": "*",
 		"cloth-config": "*",
-		"mario_qua_mario_api": "*"
+		"charapoweract_api": "*"
 	},
 	"suggests": {
-		"another-mod": "*"
+
 	}
 }

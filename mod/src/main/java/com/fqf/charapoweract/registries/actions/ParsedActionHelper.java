@@ -6,7 +6,7 @@ import com.fqf.charapoweract_api.definitions.states.actions.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charapoweract_api.definitions.states.actions.util.IncompleteActionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionInjectionDefinition;
-import com.fqf.charapoweract_api.mariodata.IMarioClientData;
+import com.fqf.charapoweract_api.cpadata.ICPAClientData;
 import com.fqf.charapoweract.mariodata.MarioMoveableData;
 import com.fqf.charapoweract.mariodata.MarioPlayerData;
 import com.fqf.charapoweract.packets.MarioDataPackets;
@@ -42,10 +42,10 @@ public class ParsedActionHelper {
 //			if(Objects.equals(data.getActionID(), MarioQuaMario.makeID("jump")))
 //				MarioQuaMario.LOGGER.info("Testing transition from {}->{}:\n{}", data.getActionID(), transition.targetAction().ID, transition.evaluator().shouldTransition(data));
 			if(transition.evaluator().shouldTransition(data)) {
-				long seed = data.getMario().getRandom().nextLong();
+				long seed = data.getPlayer().getRandom().nextLong();
 
 				if(data.isServer()) {
-					MarioDataPackets.transitionToActionS2C((ServerPlayerEntity) data.getMario(), transition.fullyNetworked(),
+					MarioDataPackets.transitionToActionS2C((ServerPlayerEntity) data.getPlayer(), transition.fullyNetworked(),
 							data.getAction(), transition.targetAction(), seed);
 				}
 				else {
@@ -88,14 +88,14 @@ public class ParsedActionHelper {
 
 	public static void executeTransition(MarioPlayerData data, ParsedTransition transition, long seed) {
 		if(MarioQuaMario.CONFIG.logAllActionTransitions()) MarioQuaMario.LOGGER.info("Executing transition for {} on {}: {} -> {}",
-				data.getMario().getName().getString(), data.isClient() ? "CLIENT" : "SERVER",
+				data.getPlayer().getName().getString(), data.isClient() ? "CLIENT" : "SERVER",
 				data.getActionID(), transition.targetAction().ID
 		);
 
 		if(data instanceof MarioMoveableData moveableData && transition.travelExecutor() != null)
 			transition.travelExecutor().execute(moveableData);
-		if(data instanceof IMarioClientData clientData && transition.clientsExecutor() != null)
-			transition.clientsExecutor().execute(clientData, data.getMario().isMainPlayer(), seed);
+		if(data instanceof ICPAClientData clientData && transition.clientsExecutor() != null)
+			transition.clientsExecutor().execute(clientData, data.getPlayer().isMainPlayer(), seed);
 
 		data.setActionTransitionless(transition.targetAction());
 	}

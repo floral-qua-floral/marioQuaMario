@@ -4,10 +4,9 @@ import com.fqf.charapoweract_api.definitions.states.actions.AirborneActionDefini
 import com.fqf.charapoweract_api.definitions.states.actions.util.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charapoweract_api.mariodata.IMarioAuthoritativeData;
-import com.fqf.charapoweract_api.mariodata.IMarioClientData;
-import com.fqf.charapoweract_api.mariodata.IMarioData;
-import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.cpadata.*;
+import com.fqf.charapoweract_api.cpadata.ICPAClientData;
+import com.fqf.charapoweract_api.cpadata.ICPAData;
 import com.fqf.charapoweract_api.util.CharaStat;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.aquatic.Submerged;
@@ -89,18 +88,18 @@ public class LavaBoost extends Fall implements AirborneActionDefinition {
 	private static class LavaBoostVars {
 		private double bounceVel;
 	}
-	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
+	@Override public @Nullable Object provideStateData(ICPAData data) {
 		return new LavaBoostVars();
 	}
-	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
+	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
 
 	}
-	@Override public void serverTick(IMarioAuthoritativeData data) {
+	@Override public void serverTick(ICPAAuthoritativeData data) {
 
 	}
-	@Override public void travelHook(IMarioTravelData data, AirborneActionHelper helper) {
+	@Override public void travelHook(ICPATravelData data, AirborneActionHelper helper) {
 		helper.applyComplexGravity(data, FALL_ACCEL, null, FALL_SPEED);
-		data.getVars(LavaBoostVars.class).bounceVel = data.getYVel() * -0.6;
+		data.retrieveStateData(LavaBoostVars.class).bounceVel = data.getYVel() * -0.6;
 		if(data.getYVel() < 0) Fall.drift(data, helper);
 		else helper.airborneAccel(
 				data,
@@ -125,11 +124,11 @@ public class LavaBoost extends Fall implements AirborneActionDefinition {
 						ID,
 						data ->
 								data.getYVel() <= 0
-								&& data.getVars(LavaBoostVars.class).bounceVel > 0.06
+								&& data.retrieveStateData(LavaBoostVars.class).bounceVel > 0.06
 								&& Fall.LANDING.evaluator().shouldTransition(data),
 						null,
 						data -> {
-							data.setYVel(data.getVars(LavaBoostVars.class).bounceVel);
+							data.setYVel(data.retrieveStateData(LavaBoostVars.class).bounceVel);
 							data.setForwardStrafeVel(data.getForwardVel() * 0.5, data.getStrafeVel() * 0.5);
 						},
 						(data, isSelf, seed) -> {}

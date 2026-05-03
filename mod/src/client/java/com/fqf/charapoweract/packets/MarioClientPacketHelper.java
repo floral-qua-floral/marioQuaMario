@@ -13,7 +13,7 @@ import com.fqf.charapoweract.registries.RegistryManager;
 import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
 import com.fqf.charapoweract.registries.actions.ParsedActionHelper;
 import com.fqf.charapoweract.util.MarioGamerules;
-import com.fqf.charapoweract_api.mariodata.IMarioClientData;
+import com.fqf.charapoweract_api.cpadata.ICPAClientData;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -201,7 +201,7 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 			interceptionIndex = data.getPowerUp().INTERCEPTIONS.indexOf(interception);
 		}
 
-		int marioID = data.getMario().getId();
+		int marioID = data.getPlayer().getId();
 		if(targetEntity != null) {
 			packet = new MarioAttackInterceptionPackets.EntityAttackInterceptedC2SPayload(
 					interception.IS_FROM_ACTION, interceptionSource, interceptionIndex, targetEntity.getId(), seed);
@@ -229,7 +229,7 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 		ClientPlayNetworking.send(new MarioDataPackets.TransmitWallYawC2SPayload(wallYaw));
 
 		RecordingModsCompatSafe.conditionallySaveReplayPacket(
-				new MarioDataPackets.TransmitWallYawS2CPayload(data.getMario().getId(), wallYaw));
+				new MarioDataPackets.TransmitWallYawS2CPayload(data.getPlayer().getId(), wallYaw));
 	}
 
 	private static void packetAgnosticStompHandling(
@@ -245,12 +245,12 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 
 		if(affectMario) stomp.transitionAction(data, result);
 
-		stomp.executeClients((IMarioClientData) data, target, result, affectMario, seed);
+		stomp.executeClients((ICPAClientData) data, target, result, affectMario, seed);
 
 		if(data instanceof MarioMoveableData moveableData) {
 			Vec3d targetPos = stomp.executeTravellersAndGetTargetPos(moveableData, target, result, mario.getPos(), affectMario);
 			if(affectMario && targetPos != null) {
-				data.getMario().move(MovementType.SELF, targetPos.subtract(mario.getPos()));
+				data.getPlayer().move(MovementType.SELF, targetPos.subtract(mario.getPos()));
 			}
 		}
 	}

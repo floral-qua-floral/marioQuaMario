@@ -5,9 +5,9 @@ import com.fqf.charapoweract.mariodata.*;
 import com.fqf.charapoweract.packets.MarioAttackInterceptionPackets;
 import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
 import com.fqf.charapoweract.registries.actions.ParsedActionHelper;
-import com.fqf.charapoweract_api.mariodata.IMarioAuthoritativeData;
-import com.fqf.charapoweract_api.mariodata.IMarioClientData;
-import com.fqf.charapoweract_api.mariodata.IMarioReadableMotionData;
+import com.fqf.charapoweract_api.cpadata.ICPAAuthoritativeData;
+import com.fqf.charapoweract_api.cpadata.ICPAClientData;
+import com.fqf.charapoweract_api.cpadata.ICPAReadableMotionData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -46,13 +46,13 @@ public class ParsedAttackInterception {
 	}
 
 	public boolean shouldInterceptAttack(
-			IMarioReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
+			ICPAReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
 			@Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult
 	) {
 		return this.DEFINITION.shouldInterceptAttack(data, weapon, attackCooldownProgress, entityHitResult, blockHitResult);
 	}
 	public @NotNull AttackInterceptingStateDefinition.MiningHandling shouldSuppressMining(
-			IMarioReadableMotionData data, ItemStack weapon, BlockHitResult blockHitResult, int miningTicks
+			ICPAReadableMotionData data, ItemStack weapon, BlockHitResult blockHitResult, int miningTicks
 	) {
 		return this.DEFINITION.shouldSuppressMining(data, weapon, blockHitResult, miningTicks);
 	}
@@ -61,18 +61,18 @@ public class ParsedAttackInterception {
 			MarioPlayerData data,
 			@Nullable Entity targetEntity, @Nullable BlockPos targetBlock, long seed
 	) {
-		ItemStack weapon = data.getMario().getWeaponStack();
-		float cooldownProgress = getAttackCooldownProgress(data.getMario());
+		ItemStack weapon = data.getPlayer().getWeaponStack();
+		float cooldownProgress = getAttackCooldownProgress(data.getPlayer());
 
-		if(data instanceof IMarioClientData clientData)
+		if(data instanceof ICPAClientData clientData)
 			this.DEFINITION.executeClients(clientData, weapon, cooldownProgress, targetBlock, targetEntity, seed);
 		if(data instanceof MarioMoveableData moveableData)
 			this.DEFINITION.executeTravellers(moveableData, weapon, cooldownProgress, targetBlock, targetEntity);
-		if(data instanceof IMarioAuthoritativeData authoritativeData)
-			this.DEFINITION.executeServer(authoritativeData, weapon, cooldownProgress, authoritativeData.getMario().getServerWorld(), targetBlock, targetEntity);
+		if(data instanceof ICPAAuthoritativeData authoritativeData)
+			this.DEFINITION.executeServer(authoritativeData, weapon, cooldownProgress, authoritativeData.getPlayer().getServerWorld(), targetBlock, targetEntity);
 
 		if(this.ACTION_TARGET != null) data.setActionTransitionless(this.ACTION_TARGET);
-		if(data.isClient() && this.HAND_TO_SWING != null) data.getMario().swingHand(this.HAND_TO_SWING, false);
-		if(this.TRIGGERS_ATTACK_COOLDOWN) data.getMario().resetLastAttackedTicks();
+		if(data.isClient() && this.HAND_TO_SWING != null) data.getPlayer().swingHand(this.HAND_TO_SWING, false);
+		if(this.TRIGGERS_ATTACK_COOLDOWN) data.getPlayer().resetLastAttackedTicks();
 	}
 }

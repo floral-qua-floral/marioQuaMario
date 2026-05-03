@@ -5,15 +5,15 @@ import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camer
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationOption;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
+import com.fqf.charapoweract_api.cpadata.ICPATravelData;
 import com.fqf.charapoweract_api.util.CharaStat;
 import com.fqf.charapoweract_api.util.StatCategory;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.charapoweract_api.definitions.states.actions.GenericActionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.*;
-import com.fqf.charapoweract_api.mariodata.IMarioAuthoritativeData;
-import com.fqf.charapoweract_api.mariodata.IMarioClientData;
-import com.fqf.charapoweract_api.mariodata.IMarioData;
-import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.cpadata.ICPAAuthoritativeData;
+import com.fqf.charapoweract_api.cpadata.ICPAClientData;
+import com.fqf.charapoweract_api.cpadata.ICPAData;
 import com.fqf.mario_qua_mario_content.Voicelines;
 import com.fqf.mario_qua_mario_content.actions.airborne.*;
 import com.fqf.mario_qua_mario_content.actions.grounded.SubWalk;
@@ -36,10 +36,10 @@ public class ClimbPole implements GenericActionDefinition {
 		return ID;
 	}
 
-	private static Vec3d getMaximumOffset(IMarioData data, double contraction) {
-		Box cameraBox = data.getMario().getBoundingBox().contract(contraction, 0, contraction);
-		Vec3d offset = Vec3d.fromPolar(0, data.getMario().getYaw()).multiply(-0.7);
-		return Entity.adjustMovementForCollisions(data.getMario(), offset, cameraBox, data.getMario().getWorld(), List.of());
+	private static Vec3d getMaximumOffset(ICPAData data, double contraction) {
+		Box cameraBox = data.getPlayer().getBoundingBox().contract(contraction, 0, contraction);
+		Vec3d offset = Vec3d.fromPolar(0, data.getPlayer().getYaw()).multiply(-0.7);
+		return Entity.adjustMovementForCollisions(data.getPlayer(), offset, cameraBox, data.getPlayer().getWorld(), List.of());
 	}
 
 	private static LimbAnimation makeArmAnimation(int factor) {
@@ -61,7 +61,7 @@ public class ClimbPole implements GenericActionDefinition {
 		return new PlayermodelAnimation(
 				null,
 				new ProgressHandler((data, ticksPassed) -> {
-					ClimbVars vars = data.getVars(ClimbVars.class);
+					ClimbVars vars = data.retrieveStateData(ClimbVars.class);
 					double factorForInput = 1 / ClimbPole.CLIMB_SPEED.get(data);
 					vars.progress += (float) (data.getYVel() * factorForInput) / 2;
 					return MathHelper.sin(vars.progress);
@@ -117,26 +117,26 @@ public class ClimbPole implements GenericActionDefinition {
 
 	public static final CharaStat CLIMB_SPEED = new CharaStat(0.2, StatCategory.UP, StatCategory.SPEED, StatCategory.CLIMBING);
 
-	@Override public @Nullable Object setupCustomMarioVars(IMarioData data) {
+	@Override public @Nullable Object provideStateData(ICPAData data) {
 		return new ClimbVars();
 	}
-	@Override public void clientTick(IMarioClientData data, boolean isSelf) {
+	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
 		data.forceBodyAlignment(true);
 	}
-	@Override public void serverTick(IMarioAuthoritativeData data) {
+	@Override public void serverTick(ICPAAuthoritativeData data) {
 
 	}
-	@Override public boolean travelHook(IMarioTravelData data) {
+	@Override public boolean travelHook(ICPATravelData data) {
 		double forwardInput = data.getInputs().getForwardInput() * (data.getInputs().DUCK.isHeld() ? 0.3 : 1);
 		data.setYVel(forwardInput * CLIMB_SPEED.get(data));
 		data.centerLaterally();
 		data.setForwardStrafeVel(0, 0);
-		data.getMario().fallDistance = 0;
+		data.getPlayer().fallDistance = 0;
 		return true;
 	}
 
-	private static void releasePole(IMarioTravelData data) {
-		data.goTo(data.getMario().getPos().add(getMaximumOffset(data, 0)));
+	private static void releasePole(ICPATravelData data) {
+		data.goTo(data.getPlayer().getPos().add(getMaximumOffset(data, 0)));
 	}
 
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions() {
@@ -196,7 +196,7 @@ public class ClimbPole implements GenericActionDefinition {
 				),
 				new TransitionDefinition(
 						SubWalk.ID,
-						data -> data.getMario().isOnGround(),
+						data -> data.getPlayer().isOnGround(),
 						EvaluatorEnvironment.CLIENT_ONLY,
 						ClimbPole::releasePole,
 						null

@@ -1,6 +1,6 @@
 package com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera;
 
-import com.fqf.charapoweract_api.mariodata.IMarioReadableMotionData;
+import com.fqf.charapoweract_api.cpadata.ICPAReadableMotionData;
 
 public record CameraProgressHandler(
 		float minProgressToFinish,
@@ -12,6 +12,6 @@ public record CameraProgressHandler(
 
 	@FunctionalInterface
 	public interface ProgressCalculator {
-		float calculateProgress(IMarioReadableMotionData data, float ticksPassed);
+		float calculateProgress(ICPAReadableMotionData data, float ticksPassed);
 	}
 }

@@ -1,9 +1,9 @@
 {
 	"schemaVersion": 1,
-	"id": "mario_qua_mario",
+	"id": "charapoweract",
 	"version": "${version}",
-	"name": "Mario qua Mario",
-	"description": "The engine that powers the MQM character-power-action framework under the hood. Separate from the API to keep things clean.",
+	"name": "CharaPowerAct",
+	"description": "The engine that powers the character-power-action framework under the hood. Separate from the API to keep things clean.",
 	"authors": [
 		"Floral qua Floral"
 	],
@@ -47,7 +47,7 @@
 		"fabric-api": "*",
 		"cloth-config": "*",
 		"cpm": "*",
-		"mario_qua_mario_api": "*"
+		"charapoweract_api": "*"
 	},
 	"suggests": {
 
