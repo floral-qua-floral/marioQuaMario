@@ -2,7 +2,7 @@ package com.fqf.charapoweract.mixin.client;
 
 import com.fqf.charapoweract.bapping.BlockBappingUtil;
 import com.fqf.charapoweract.bapping.WorldBapsInfo;
-import com.fqf.charapoweract.mariodata.MarioPlayerData;
+import com.fqf.charapoweract.cpadata.CPAPlayerData;
 import com.fqf.charapoweract.util.MarioGamerules;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -26,7 +26,7 @@ public class GameRendererMixin {
 
 	@WrapOperation(method = "bobView", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(FFF)V"))
 	private void scaleBobbing(MatrixStack instance, float x, float y, float z, Operation<Void> original) {
-		MarioPlayerData data = ((PlayerEntity) Objects.requireNonNull(this.client.getCameraEntity())).mqm$getMarioData();
+		CPAPlayerData data = ((PlayerEntity) Objects.requireNonNull(this.client.getCameraEntity())).cpa$getCPAData();
 		float horizontalScale = data.getHorizontalScale();
 		original.call(instance, x * horizontalScale, y * data.getEyeHeightScale(), z * horizontalScale);
 	}

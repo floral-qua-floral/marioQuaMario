@@ -18,7 +18,7 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, M extend
 
 	@WrapOperation(method = "setupTransforms", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/LivingEntityRenderer;getLyingAngle(Lnet/minecraft/entity/LivingEntity;)F"))
 	private float squashDuringDeathAnimation(LivingEntityRenderer<T, M> instance, T entity, Operation<Float> original, @Local(argsOnly = true) MatrixStack matrices) {
-		if(((Squashable) entity).mqm$isSquashed()) {
+		if(((Squashable) entity).cpa$isSquashed()) {
 			matrices.scale(1.4F, 0.225F, 1.4F);
 			return 0;
 		}

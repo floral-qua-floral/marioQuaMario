@@ -1,5 +1,7 @@
 package com.fqf.charapoweract.registries.actions;
 
+import com.fqf.charapoweract.cpadata.CPAMoveableData;
+import com.fqf.charapoweract.cpadata.CPAPlayerData;
 import com.fqf.charapoweract.util.MarioClientHelperManager;
 import com.fqf.charapoweract.MarioQuaMario;
 import com.fqf.charapoweract_api.definitions.states.actions.*;
@@ -7,8 +9,6 @@ import com.fqf.charapoweract_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charapoweract_api.definitions.states.actions.util.IncompleteActionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.charapoweract_api.cpadata.ICPAClientData;
-import com.fqf.charapoweract.mariodata.MarioMoveableData;
-import com.fqf.charapoweract.mariodata.MarioPlayerData;
 import com.fqf.charapoweract.packets.MarioDataPackets;
 import com.fqf.charapoweract.registries.RegistryManager;
 import com.fqf.charapoweract.registries.actions.parsed.*;
@@ -35,7 +35,7 @@ public class ParsedActionHelper {
 		};
 	}
 
-	public static void attemptTransitions(MarioMoveableData data, TransitionPhase phase) {
+	public static void attemptTransitions(CPAMoveableData data, TransitionPhase phase) {
 //		MarioQuaMario.LOGGER.info("Start checking on {}:", data.isClient() ? "CLIENT": "SERVER");
 		TransitionPhase usePhase = phase == TransitionPhase.WORLD_COLLISION_EARLY ? TransitionPhase.WORLD_COLLISION : phase;
 		for(ParsedTransition transition : data.isClient() ? data.getAction().CLIENT_TRANSITIONS.get(usePhase) : data.getAction().SERVER_TRANSITIONS.get(usePhase)) {
@@ -78,7 +78,7 @@ public class ParsedActionHelper {
 		}
 	}
 
-	public static boolean attemptTransitionTo(MarioPlayerData data, AbstractParsedAction fromAction, AbstractParsedAction toAction, long seed) {
+	public static boolean attemptTransitionTo(CPAPlayerData data, AbstractParsedAction fromAction, AbstractParsedAction toAction, long seed) {
 		ParsedTransition transition = fromAction.TRANSITIONS_FROM_TARGETS.get(toAction);
 		if(transition == null) return false;
 
@@ -86,13 +86,13 @@ public class ParsedActionHelper {
 		return true;
 	}
 
-	public static void executeTransition(MarioPlayerData data, ParsedTransition transition, long seed) {
+	public static void executeTransition(CPAPlayerData data, ParsedTransition transition, long seed) {
 		if(MarioQuaMario.CONFIG.logAllActionTransitions()) MarioQuaMario.LOGGER.info("Executing transition for {} on {}: {} -> {}",
 				data.getPlayer().getName().getString(), data.isClient() ? "CLIENT" : "SERVER",
 				data.getActionID(), transition.targetAction().ID
 		);
 
-		if(data instanceof MarioMoveableData moveableData && transition.travelExecutor() != null)
+		if(data instanceof CPAMoveableData moveableData && transition.travelExecutor() != null)
 			transition.travelExecutor().execute(moveableData);
 		if(data instanceof ICPAClientData clientData && transition.clientsExecutor() != null)
 			transition.clientsExecutor().execute(clientData, data.getPlayer().isMainPlayer(), seed);

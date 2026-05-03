@@ -1,6 +1,6 @@
 package com.fqf.charapoweract.mixin.client;
 
-import com.fqf.charapoweract.mariodata.MarioAnimationData;
+import com.fqf.charapoweract.cpadata.MarioAnimationData;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.HeldItemRenderer;

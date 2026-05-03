@@ -1,8 +1,8 @@
-package com.fqf.charapoweract.mariodata;
+package com.fqf.charapoweract.cpadata;
 
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.HandPreference;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.PlayermodelAnimation;
-import com.fqf.charapoweract.mariodata.util.*;
+import com.fqf.charapoweract.cpadata.util.*;
 import com.fqf.charapoweract.registries.RegistryManager;
 import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
 import com.fqf.charapoweract.registries.power_granting.ParsedPowerUp;
@@ -33,7 +33,7 @@ public interface ICPAClientDataImpl extends ICPAAnimatingData {
 
 	@Override
 	default void playAnimation(PlayermodelAnimation animation, int ticks) {
-		this.getPlayer().mqm$getAnimationData().replaceAnimation((MarioPlayerData) this, animation, ticks);
+		this.getPlayer().mqm$getAnimationData().replaceAnimation((CPAPlayerData) this, animation, ticks);
 	}
 
 	@Override
@@ -101,7 +101,7 @@ public interface ICPAClientDataImpl extends ICPAAnimatingData {
 	@Override
 	default void playJumpSound(long seed) {
 		this.fadeJumpSound();
-		FadeableSoundInstance jumpSound = new FadeableSoundInstance((MarioPlayerData) this);
+		FadeableSoundInstance jumpSound = new FadeableSoundInstance((CPAPlayerData) this);
 		MinecraftClient.getInstance().getSoundManager().play(jumpSound);
 		this.getStoredSounds().put(JUMP_IDENTIFIER, jumpSound);
 	}
@@ -119,7 +119,7 @@ public interface ICPAClientDataImpl extends ICPAAnimatingData {
 		if(RegistryManager.VOICE_LINES.get(voiceline) == null)
 			throw new AssertionError("Voiceline " + voiceline + " isn't registered!!!");
 		SoundInstanceWrapperImpl newVoiceSound = this.playSound(
-				RegistryManager.VOICE_LINES.get(voiceline).get(((MarioPlayerData) this).getCharacter()), SoundCategory.VOICE,
+				RegistryManager.VOICE_LINES.get(voiceline).get(((CPAPlayerData) this).getCharacter()), SoundCategory.VOICE,
 				marioPos.x, marioPos.y, marioPos.z,
 				this.getVoicePitch(), 1.0F,
 				seed
@@ -132,7 +132,7 @@ public interface ICPAClientDataImpl extends ICPAAnimatingData {
 
 	@Override
 	default float getVoicePitch() {
-		return ((MarioPlayerData) this).getPowerUp().VOICE_PITCH;
+		return ((CPAPlayerData) this).getPowerUp().VOICE_PITCH;
 	}
 
 	@Override

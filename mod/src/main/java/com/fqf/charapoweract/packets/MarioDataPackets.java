@@ -1,7 +1,7 @@
 package com.fqf.charapoweract.packets;
 
 import com.fqf.charapoweract.MarioQuaMario;
-import com.fqf.charapoweract.mariodata.MarioServerPlayerData;
+import com.fqf.charapoweract.cpadata.CPAServerPlayerData;
 import com.fqf.charapoweract.registries.RegistryManager;
 import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
 import com.fqf.charapoweract.registries.actions.ParsedActionHelper;
@@ -82,7 +82,7 @@ public class MarioDataPackets {
 	public static void syncMarioDataToPlayerS2C(
 			ServerPlayerEntity mario, ServerPlayerEntity syncTo
 	) {
-		MarioServerPlayerData data = mario.mqm$getMarioData();
+		CPAServerPlayerData data = mario.cpa$getCPAData();
 		if(!data.isEnabled()) return;
 		ServerPlayNetworking.send(syncTo, new SyncMarioDataS2CPayload(
 				mario.getId(),
@@ -128,7 +128,7 @@ public class MarioDataPackets {
 //			MarioQuaMario.LOGGER.info("Received setActionC2S: {}->{}", stompTypeID.ID, toAction.ID);
 			boolean rejectInvalid = context.player().getWorld().getGameRules().getBoolean(MarioGamerules.REJECT_INVALID_ACTION_TRANSITIONS)
 					&& !(MarioQuaMario.CONFIG.shouldAllowIllegalTransitionsInSingleplayer() && Objects.requireNonNull(context.player().getServer()).isHost(context.player().getGameProfile()));
-			if(context.player().mqm$getMarioData().setAction(fromAction, toAction, payload.seed, !rejectInvalid, false)) {
+			if(context.player().cpa$getCPAData().setAction(fromAction, toAction, payload.seed, !rejectInvalid, false)) {
 				MarioPackets.sendToTrackers(context.player(), new ActionTransitionS2CPayload(
 						context.player().getId(),
 						payload.fromAction,
@@ -139,7 +139,7 @@ public class MarioDataPackets {
 			else {
 				// Reject the transition and instead tell Mario to go back to the action we think he's in
 				ServerPlayNetworking.send(context.player(), new AssignActionS2CPayload(
-						context.player().getId(), context.player().mqm$getMarioData().getAction().getIntID()
+						context.player().getId(), context.player().cpa$getCPAData().getAction().getIntID()
 				));
 			}
 		}
@@ -263,7 +263,7 @@ public class MarioDataPackets {
 		);
 
 		public static void receive(TransmitWallYawC2SPayload payload, ServerPlayNetworking.Context context) {
-			context.player().mqm$getMarioData().receiveWallYaw(payload.yaw());
+			context.player().cpa$getCPAData().receiveWallYaw(payload.yaw());
 		}
 
 		@Override public Id<? extends CustomPayload> getId() {

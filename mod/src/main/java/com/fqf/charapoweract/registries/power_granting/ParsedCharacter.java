@@ -1,6 +1,6 @@
 package com.fqf.charapoweract.registries.power_granting;
 
-import com.fqf.charapoweract.mariodata.MarioPlayerData;
+import com.fqf.charapoweract.cpadata.CPAPlayerData;
 import com.fqf.charapoweract_api.definitions.states.CharacterDefinition;
 import com.fqf.charapoweract_api.cpadata.ICPAAuthoritativeData;
 import com.fqf.charapoweract.registries.RegistryManager;
@@ -50,7 +50,7 @@ public class ParsedCharacter extends ParsedPowerGrantingState {
 		return this.CHARACTER_DEFINITION.modifyIncomingDamage(data, source, amount);
 	}
 
-	public AbstractParsedAction getInitialAction(MarioPlayerData data) {
+	public AbstractParsedAction getInitialAction(CPAPlayerData data) {
 		if(data.getPlayer().getVehicle() != null)
 			return this.getMountedAction(data.getPlayer().getVehicle());
 		return this.INITIAL_ACTION;

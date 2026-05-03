@@ -1,7 +1,7 @@
 package com.fqf.charapoweract.util;
 
-import com.fqf.charapoweract.mariodata.MarioMoveableData;
-import com.fqf.charapoweract.mariodata.MarioPlayerData;
+import com.fqf.charapoweract.cpadata.CPAMoveableData;
+import com.fqf.charapoweract.cpadata.CPAPlayerData;
 import com.fqf.charapoweract.registries.actions.UniversalActionDefinitionHelper;
 import com.fqf.charapoweract.registries.actions.parsed.ParsedWallboundAction;
 import net.minecraft.util.math.BlockPos;
@@ -11,11 +11,11 @@ import net.minecraft.util.math.Vec3d;
 import java.util.Set;
 
 public abstract class DirectionBasedWallInfo implements AdvancedWallInfo {
-	public final MarioPlayerData OWNER;
+	public final CPAPlayerData OWNER;
 	protected Direction wallDirection = Direction.NORTH;
 	private Vec3d legalityCheckOffset = Vec3d.ZERO;
 
-	protected DirectionBasedWallInfo(MarioPlayerData owner) {
+	protected DirectionBasedWallInfo(CPAPlayerData owner) {
 		OWNER = owner;
 	}
 
@@ -83,7 +83,7 @@ public abstract class DirectionBasedWallInfo implements AdvancedWallInfo {
 	}
 
 	private void setDirectionVel(Direction direction, double velocity) {
-		if(this.OWNER instanceof MarioMoveableData moveableOwner) {
+		if(this.OWNER instanceof CPAMoveableData moveableOwner) {
 			moveableOwner.setVelocity(this.OWNER.getVelocity().withAxis(direction.getAxis(),
 					velocity * direction.getDirection().offset()));
 		}

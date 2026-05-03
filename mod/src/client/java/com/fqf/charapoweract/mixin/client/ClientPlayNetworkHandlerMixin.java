@@ -1,6 +1,6 @@
 package com.fqf.charapoweract.mixin.client;
 
-import com.fqf.charapoweract.mariodata.MarioMainClientData;
+import com.fqf.charapoweract.cpadata.CPAMainClientData;
 import com.fqf.charapoweract.registries.actions.parsed.ParsedMountedAction;
 import com.fqf.charapoweract_api.definitions.states.actions.util.ActionCategory;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -18,7 +18,7 @@ public class ClientPlayNetworkHandlerMixin {
 	private MutableText adjustDismountHint(String key, Object[] args, Operation<MutableText> original) {
 		ClientPlayerEntity mario = MinecraftClient.getInstance().player;
 		if(mario != null) {
-			MarioMainClientData data = mario.mqm$getMarioData();
+			CPAMainClientData data = mario.cpa$getCPAData();
 			if(data.isEnabled() && data.getActionCategory() == ActionCategory.MOUNTED) {
 				MutableText actionDismountHint = ((ParsedMountedAction) data.getAction()).getDismountHint();
 				if(actionDismountHint != null) return actionDismountHint;

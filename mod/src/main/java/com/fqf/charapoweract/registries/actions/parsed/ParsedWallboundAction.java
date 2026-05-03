@@ -1,11 +1,11 @@
 package com.fqf.charapoweract.registries.actions.parsed;
 
-import com.fqf.charapoweract.mariodata.MarioPlayerData;
+import com.fqf.charapoweract.cpadata.CPAMoveableData;
+import com.fqf.charapoweract.cpadata.CPAPlayerData;
 import com.fqf.charapoweract_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionInjectionDefinition;
-import com.fqf.charapoweract.mariodata.MarioMoveableData;
 import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
 import com.fqf.charapoweract.registries.actions.UniversalActionDefinitionHelper;
 import com.fqf.charapoweract_api.definitions.states.actions.util.WallBodyAlignment;
@@ -30,16 +30,16 @@ public class ParsedWallboundAction extends AbstractParsedAction {
 		this.HEAD_RANGE = definition.getHeadYawRange();
 	}
 
-	public float getWallYaw(MarioMoveableData data) {
+	public float getWallYaw(CPAMoveableData data) {
 		return this.WALLBOUND_DEFINITION.getWallYaw(data);
 	}
 
-	public boolean verifyWallLegality(MarioPlayerData data, Vec3d offset) {
+	public boolean verifyWallLegality(CPAPlayerData data, Vec3d offset) {
 		return this.WALLBOUND_DEFINITION.checkLegality(data, data.getWallInfo(), offset);
 	}
 
 	@Override
-	public boolean travelHook(MarioMoveableData data) {
+	public boolean travelHook(CPAMoveableData data) {
 		data.jumpCapped = false;
 		UniversalActionDefinitionHelper helper = UniversalActionDefinitionHelper.INSTANCE;
 		this.WALLBOUND_DEFINITION.travelHook(data, helper.getWallInfo(data), helper);

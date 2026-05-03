@@ -4,15 +4,15 @@ import com.fqf.charapoweract.MarioQuaMario;
 import com.fqf.charapoweract.bapping.BlockBappingUtil;
 import com.fqf.charapoweract.bapping.WorldBapsInfo;
 import com.fqf.charapoweract.compat.optional.MarioSableCompatSafe;
+import com.fqf.charapoweract.cpadata.CPAMoveableData;
+import com.fqf.charapoweract.cpadata.CPAPlayerData;
+import com.fqf.charapoweract.cpadata.injections.AdvCPADataHolder;
 import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
 import com.fqf.charapoweract.registries.actions.parsed.ParsedWallboundAction;
 import com.fqf.charapoweract.util.MarioGamerules;
 import com.fqf.charapoweract_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charapoweract_api.definitions.states.actions.util.SlidingStatus;
 import com.fqf.charapoweract_api.definitions.states.actions.util.SneakingRule;
-import com.fqf.charapoweract.mariodata.MarioMoveableData;
-import com.fqf.charapoweract.mariodata.MarioPlayerData;
-import com.fqf.charapoweract.mariodata.injections.AdvMarioDataHolder;
 import com.fqf.charapoweract.util.MarioNbtKeys;
 import com.fqf.charapoweract_api.definitions.states.actions.util.WallBodyAlignment;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
@@ -40,7 +40,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerEntity.class)
-public abstract class PlayerEntityMixin extends LivingEntity implements AdvMarioDataHolder {
+public abstract class PlayerEntityMixin extends LivingEntity implements AdvCPADataHolder {
 	@Shadow public abstract EntityDimensions getBaseDimensions(EntityPose pose);
 
 	@Shadow public float strideDistance;
@@ -52,13 +52,13 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 
 	@Inject(method = "tick", at = @At("HEAD"))
 	private void tickHook(CallbackInfo ci) {
-		MarioPlayerData data = this.mqm$getMarioData();
+		CPAPlayerData data = this.cpa$getCPAData();
 		if(data.isEnabled()) data.tick();
 	}
 
 	@Inject(method = "travel", at = @At("HEAD"), cancellable = true)
 	private void travelHook(Vec3d movementInput, CallbackInfo ci) {
-		if(this.mqm$getMarioData() instanceof MarioMoveableData moveableData
+		if(this.cpa$getCPAData() instanceof CPAMoveableData moveableData
 				&& moveableData.doMarioTravel()
 				&& moveableData.travelHook(movementInput.z, movementInput.x)) {
 			// SABLE HOOK
@@ -69,7 +69,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 
 	@Override
 	protected boolean stepOnBlock(BlockPos pos, BlockState state, boolean playSound, boolean emitEvent, Vec3d movement) {
-		return switch(this.mqm$getMarioData().isEnabled() ? this.mqm$getMarioData().getAction().SLIDING_STATUS : null) {
+		return switch(this.cpa$getCPAData().isEnabled() ? this.cpa$getCPAData().getAction().SLIDING_STATUS : null) {
 			case SLIDING, SLIDING_SILENT, SKIDDING -> false;
 			case null, default -> super.stepOnBlock(pos, state, playSound, emitEvent, movement);
 		};
@@ -77,7 +77,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 
 	@Override
 	protected void playStepSounds(BlockPos pos, BlockState state) {
-		switch(this.mqm$getMarioData().isEnabled() ? this.mqm$getMarioData().getAction().SLIDING_STATUS : null) {
+		switch(this.cpa$getCPAData().isEnabled() ? this.cpa$getCPAData().getAction().SLIDING_STATUS : null) {
 			case SLIDING, SLIDING_SILENT, SKIDDING -> {}
 			case null, default -> super.playStepSounds(pos, state);
 		};
@@ -85,19 +85,19 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 
 	@Inject(method = "shouldSwimInFluids", at = @At("HEAD"), cancellable = true)
 	private void preventVanillaSwimming(CallbackInfoReturnable<Boolean> cir) {
-		if(mqm$getMarioData().doMarioTravel())
+		if(cpa$getCPAData().doMarioTravel())
 			cir.setReturnValue(false);
 	}
 
 	@Inject(method = "isPushedByFluids", at = @At("HEAD"), cancellable = true)
 	private void preventVanillaFluidPushing(CallbackInfoReturnable<Boolean> cir) {
-		if(mqm$getMarioData().doMarioTravel())
+		if(cpa$getCPAData().doMarioTravel())
 			cir.setReturnValue(false);
 	}
 
 	@Inject(method = "getBaseDimensions", at = @At("RETURN"), cancellable = true)
 	private void alterMarioHitbox(EntityPose pose, CallbackInfoReturnable<EntityDimensions> cir) {
-		MarioPlayerData data = mqm$getMarioData();
+		CPAPlayerData data = cpa$getCPAData();
 		if(data.isEnabled()) {
 			// Return the standing hitbox if we're trying to evaluate Mario's sneaking hitbox while he can't sneak
 			if(pose == EntityPose.CROUCHING && data.getAction().SNEAKING_RULE == SneakingRule.PROHIBIT)
@@ -127,21 +127,21 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 
 	@Inject(method = "clipAtLedge", at = @At("HEAD"), cancellable = true)
 	private void slideOffLedges(CallbackInfoReturnable<Boolean> cir) {
-		MarioPlayerData data = mqm$getMarioData();
+		CPAPlayerData data = cpa$getCPAData();
 		if(data.doMarioTravel() && data.getAction().SNEAKING_RULE == SneakingRule.SLIP)
 			cir.setReturnValue(false);
 	}
 
 	@Inject(method = "tickMovement", at = @At("TAIL"))
 	private void preventViewBobbing(CallbackInfo ci) {
-		MarioPlayerData data = mqm$getMarioData();
+		CPAPlayerData data = cpa$getCPAData();
 		if(data.isClient() && data.isEnabled() && data.getAction().SLIDING_STATUS != SlidingStatus.NOT_SLIDING)
 			strideDistance = prevStrideDistance * 0.6F;
 	}
 
 	@Override
 	public boolean startRiding(Entity entity, boolean force) {
-		MarioPlayerData data = mqm$getMarioData();
+		CPAPlayerData data = cpa$getCPAData();
 		if(data.isEnabled()) {
 			AbstractParsedAction mountedAction = data.getCharacter().getMountedAction(entity);
 			boolean mounted = mountedAction != null && super.startRiding(entity, force);
@@ -155,13 +155,13 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 
 	@Inject(method = "shouldDismount", at = @At("HEAD"), cancellable = true)
 	private void changeDismounting(CallbackInfoReturnable<Boolean> cir) {
-		MarioPlayerData data = mqm$getMarioData();
+		CPAPlayerData data = cpa$getCPAData();
 		if(data.isEnabled()) cir.setReturnValue(false);
 	}
 
 //	@Override
 //	protected void onDismounted(Entity vehicle) {
-//		if(mqm$getMarioData().attemptDismount == MarioPlayerData.DismountType.DISMOUNT_IN_PLACE)
+//		if(cpa$getCPAData().attemptDismount == CPAPlayerData.DismountType.DISMOUNT_IN_PLACE)
 //			requestTeleportAndDismount(this.getX(), this.getY(), this.getZ());
 //		else
 //			super.onDismounted(vehicle);
@@ -169,8 +169,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 
 	@WrapOperation(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"))
 	private boolean modifyIncomingDamage(PlayerEntity instance, DamageSource source, float amount, Operation<Boolean> original) {
-		if(instance instanceof ServerPlayerEntity serverMario && serverMario.mqm$getMarioData().isEnabled()) {
-			float modifiedAmount = serverMario.mqm$getMarioData().getCharacter().modifyIncomingDamage(serverMario.mqm$getMarioData(), source, amount);
+		if(instance instanceof ServerPlayerEntity serverMario && serverMario.cpa$getCPAData().isEnabled()) {
+			float modifiedAmount = serverMario.cpa$getCPAData().getCharacter().modifyIncomingDamage(serverMario.cpa$getCPAData(), source, amount);
 			return modifiedAmount > 0 && original.call(instance, source, modifiedAmount);
 		}
 		return original.call(instance, source, amount);
@@ -178,13 +178,13 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 
 	@WrapWithCondition(method = "jump", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;jump()V"))
 	private boolean preventLivingEntityJump(LivingEntity instance) {
-		return !mqm$getMarioData().doMarioTravel();
+		return !cpa$getCPAData().doMarioTravel();
 	}
 
 	@Inject(method = "writeCustomDataToNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;writeCustomDataToNbt(Lnet/minecraft/nbt/NbtCompound;)V", shift = At.Shift.AFTER))
 	private void writeMarioDataToNBT(NbtCompound nbt, CallbackInfo ci) {
 		NbtCompound persistentData = new NbtCompound();
-		MarioPlayerData data = mqm$getMarioData();
+		CPAPlayerData data = cpa$getCPAData();
 
 		boolean enabled = data.isEnabled();
 		persistentData.putBoolean(MarioNbtKeys.ENABLED, enabled);
@@ -203,7 +203,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 
 	@Override
 	public boolean isInSneakingPose() {
-		return switch(mqm$getMarioData().isEnabled() ? mqm$getMarioData().getAction().SNEAKING_RULE : SneakingRule.ALLOW) {
+		return switch(cpa$getCPAData().isEnabled() ? cpa$getCPAData().getAction().SNEAKING_RULE : SneakingRule.ALLOW) {
 			case ALLOW, SLIP -> super.isInSneakingPose();
 			case PROHIBIT -> false;
 			case FORCE -> true;
@@ -212,12 +212,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 
 	@Override
 	public void setSwimming(boolean swimming) {
-		super.setSwimming(swimming && !this.mqm$getMarioData().isEnabled());
+		super.setSwimming(swimming && !this.cpa$getCPAData().isEnabled());
 	}
 
 	@Inject(method = "updateSwimming", at = @At("HEAD"), cancellable = true)
 	private void prohibitDiveSwimming(CallbackInfo ci) {
-		if(this.mqm$getMarioData().isEnabled()) {
+		if(this.cpa$getCPAData().isEnabled()) {
 			ci.cancel();
 		}
 	}
@@ -238,12 +238,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 
 	@Override
 	public void updateLimbs(boolean flutter) {
-		if(!this.mqm$getMarioData().isEnabled()) {
+		if(!this.cpa$getCPAData().isEnabled()) {
 			super.updateLimbs(flutter);
 			return;
 		}
 
-		Vec3d fluidMotionVector = this.mqm$getMarioData().getFluidPushingVel();
+		Vec3d fluidMotionVector = this.cpa$getCPAData().getFluidPushingVel();
 		this.prevX -= fluidMotionVector.x;
 		this.prevY -= fluidMotionVector.y;
 		this.prevZ -= fluidMotionVector.z;
@@ -255,11 +255,11 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 
 	@Inject(method = "getMaxRelativeHeadRotation", at = @At("HEAD"), cancellable = true)
 	private void restrictHeadRotation(CallbackInfoReturnable<Float> cir) {
-		MarioPlayerData data = this.mqm$getMarioData();
+		CPAPlayerData data = this.cpa$getCPAData();
 		if(data.isEnabled()) {
-			if(data.headRestricted == MarioPlayerData.HeadRestrictionType.URGENT) {
+			if(data.headRestricted == CPAPlayerData.HeadRestrictionType.URGENT) {
 				cir.setReturnValue(0F);
-				data.headRestricted = MarioPlayerData.HeadRestrictionType.NONE;
+				data.headRestricted = CPAPlayerData.HeadRestrictionType.NONE;
 			}
 			else if(data.getActionCategory() == ActionCategory.WALLBOUND && ((ParsedWallboundAction) data.getAction()).ALIGNMENT != WallBodyAlignment.ANY)
 				cir.setReturnValue(Float.MAX_VALUE); // Prevent head rotation from affecting body rotation
@@ -268,13 +268,13 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 
 	@Override
 	protected float turnHead(float bodyRotation, float headRotation) {
-		@NotNull MarioPlayerData data = this.mqm$getMarioData();
+		@NotNull CPAPlayerData data = this.cpa$getCPAData();
 		boolean rotateBody;
 
 		if(data.isEnabled()) {
-			if(data.headRestricted == MarioPlayerData.HeadRestrictionType.NORMAL) {
+			if(data.headRestricted == CPAPlayerData.HeadRestrictionType.NORMAL) {
 				if(MathHelper.abs((bodyRotation % 360) - (this.getYaw() % 360)) <= 10)
-					data.headRestricted = MarioPlayerData.HeadRestrictionType.NONE;
+					data.headRestricted = CPAPlayerData.HeadRestrictionType.NONE;
 				bodyRotation = this.getYaw();
 			}
 
@@ -287,13 +287,13 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvMario
 
 	@Override
 	public boolean isPushable() {
-		return !this.mqm$getMarioData().isEnabled();
+		return !this.cpa$getCPAData().isEnabled();
 	}
 
 	@Override
 	public void changeLookDirection(double cursorDeltaX, double cursorDeltaY) {
 		super.changeLookDirection(cursorDeltaX, cursorDeltaY);
-		if(this.mqm$getMarioData().isEnabled()) this.mqm$getMarioData().onMarioLookAround();
+		if(this.cpa$getCPAData().isEnabled()) this.cpa$getCPAData().onMarioLookAround();
 	}
 
 	@Unique private static final int SPRINTING_FLAG_INDEX = 3;

@@ -1,4 +1,4 @@
-package com.fqf.charapoweract.mariodata;
+package com.fqf.charapoweract.cpadata;
 
 import com.fqf.charapoweract.util.MarioPositionSettable;
 import com.fqf.charapoweract_api.cpadata.ICPATravelData;
@@ -17,10 +17,10 @@ import org.joml.Vector2d;
 
 import java.util.HashSet;
 
-public abstract class MarioMoveableData extends MarioPlayerData implements ICPATravelData {
+public abstract class CPAMoveableData extends CPAPlayerData implements ICPATravelData {
 	public boolean jumpCapped;
 
-	public MarioMoveableData() {
+	public CPAMoveableData() {
 		super();
 	}
 
@@ -150,7 +150,7 @@ public abstract class MarioMoveableData extends MarioPlayerData implements ICPAT
 			Vector2d currentVel = new Vector2d(forwardVel, strafeVel);
 			Vector2d intendedAngle = new Vector2d(forwardAngleContribution, strafeAngleContribution);
 
-			if (redirectDelta > 0) redirectedVel = MarioMoveableData.slerp(currentVel, intendedAngle, redirectDelta);
+			if (redirectDelta > 0) redirectedVel = CPAMoveableData.slerp(currentVel, intendedAngle, redirectDelta);
 			else
 				redirectedVel = intendedAngle.normalize(currentVel.length()); // redirectAngle < 0 for instant redirection
 		}

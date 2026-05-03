@@ -1,7 +1,7 @@
 package com.fqf.charapoweract.packets;
 
 import com.fqf.charapoweract.bapping.BlockBappingUtil;
-import com.fqf.charapoweract.mariodata.MarioServerPlayerData;
+import com.fqf.charapoweract.cpadata.CPAServerPlayerData;
 import com.fqf.charapoweract.registries.RegistryManager;
 import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
 import com.fqf.charapoweract_api.interfaces.BapResult;
@@ -41,7 +41,7 @@ public class MarioBappingPackets {
 		);
 
 		public static void receive(BapBlockC2SPayload payload, ServerPlayNetworking.Context context) {
-			MarioServerPlayerData data = context.player().mqm$getMarioData();
+			CPAServerPlayerData data = context.player().cpa$getCPAData();
 			Direction direction = Direction.values()[payload.direction];
 
 			AbstractParsedAction bappingAction = RegistryManager.ACTIONS.getOrThrow(payload.action);

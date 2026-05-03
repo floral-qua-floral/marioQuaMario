@@ -4,7 +4,7 @@ import com.fqf.charapoweract_api.definitions.states.actions.GenericActionDefinit
 import com.fqf.charapoweract_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionInjectionDefinition;
-import com.fqf.charapoweract.mariodata.MarioMoveableData;
+import com.fqf.charapoweract.cpadata.CPAMoveableData;
 import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
 import net.minecraft.util.Identifier;
 
@@ -21,7 +21,7 @@ public class ParsedGenericAction extends AbstractParsedAction {
 	}
 
 	@Override
-	public boolean travelHook(MarioMoveableData data) {
+	public boolean travelHook(CPAMoveableData data) {
 		data.jumpCapped = false;
 		return this.GENERIC_DEFINITION.travelHook(data);
 	}

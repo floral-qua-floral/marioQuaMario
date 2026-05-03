@@ -1,7 +1,7 @@
 package com.fqf.charapoweract.registries;
 
 import com.fqf.charapoweract_api.definitions.states.AttackInterceptingStateDefinition;
-import com.fqf.charapoweract.mariodata.*;
+import com.fqf.charapoweract.cpadata.*;
 import com.fqf.charapoweract.packets.MarioAttackInterceptionPackets;
 import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
 import com.fqf.charapoweract.registries.actions.ParsedActionHelper;
@@ -58,7 +58,7 @@ public class ParsedAttackInterception {
 	}
 
 	public void execute(
-			MarioPlayerData data,
+			CPAPlayerData data,
 			@Nullable Entity targetEntity, @Nullable BlockPos targetBlock, long seed
 	) {
 		ItemStack weapon = data.getPlayer().getWeaponStack();
@@ -66,7 +66,7 @@ public class ParsedAttackInterception {
 
 		if(data instanceof ICPAClientData clientData)
 			this.DEFINITION.executeClients(clientData, weapon, cooldownProgress, targetBlock, targetEntity, seed);
-		if(data instanceof MarioMoveableData moveableData)
+		if(data instanceof CPAMoveableData moveableData)
 			this.DEFINITION.executeTravellers(moveableData, weapon, cooldownProgress, targetBlock, targetEntity);
 		if(data instanceof ICPAAuthoritativeData authoritativeData)
 			this.DEFINITION.executeServer(authoritativeData, weapon, cooldownProgress, authoritativeData.getPlayer().getServerWorld(), targetBlock, targetEntity);

@@ -4,7 +4,7 @@ import com.fqf.charapoweract_api.definitions.states.actions.AquaticActionDefinit
 import com.fqf.charapoweract_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionInjectionDefinition;
-import com.fqf.charapoweract.mariodata.MarioMoveableData;
+import com.fqf.charapoweract.cpadata.CPAMoveableData;
 import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
 import com.fqf.charapoweract.registries.actions.UniversalActionDefinitionHelper;
 import net.minecraft.util.Identifier;
@@ -22,7 +22,7 @@ public class ParsedAquaticAction extends AbstractParsedAction {
 	}
 
 	@Override
-	public boolean travelHook(MarioMoveableData data) {
+	public boolean travelHook(CPAMoveableData data) {
 		data.jumpCapped = false;
 		this.AQUATIC_DEFINITION.travelHook(data, UniversalActionDefinitionHelper.INSTANCE);
 		return true;

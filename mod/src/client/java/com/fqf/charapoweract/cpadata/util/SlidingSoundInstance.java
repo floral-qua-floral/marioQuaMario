@@ -1,6 +1,6 @@
-package com.fqf.charapoweract.mariodata.util;
+package com.fqf.charapoweract.cpadata.util;
 
-import com.fqf.charapoweract.mariodata.ICPAClientDataImpl;
+import com.fqf.charapoweract.cpadata.ICPAClientDataImpl;
 import net.minecraft.sound.SoundEvent;
 
 public class SlidingSoundInstance extends AbstractSlidingSoundInstance {
@@ -15,7 +15,7 @@ public class SlidingSoundInstance extends AbstractSlidingSoundInstance {
 
 	@Override
 	protected void updatePitchVolume() {
-		float slidingSpeed = (float) this.MARIO.mqm$getMarioData().getHorizVelSquared();
+		float slidingSpeed = (float) this.PLAYER.cpa$getCPAData().getHorizVelSquared();
 		this.volume = Math.min(1.0F, ((float) this.ticks) / 3.0F) * Math.min(1.0F, 0.7F * slidingSpeed);
 		this.pitch = 1.0F + Math.min(0.15F, 0.5F * slidingSpeed);
 	}

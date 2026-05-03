@@ -3,7 +3,7 @@ package com.fqf.charapoweract.registries;
 import com.fqf.charapoweract_api.definitions.CollisionAttackTypeDefinition;
 import com.fqf.charapoweract_api.interfaces.CollisionAttackResult;
 import com.fqf.charapoweract_api.interfaces.CollisionAttackable;
-import com.fqf.charapoweract.mariodata.*;
+import com.fqf.charapoweract.cpadata.*;
 import com.fqf.charapoweract.packets.MarioPackets;
 import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
 import com.fqf.charapoweract.util.ItemStackArmorReader;
@@ -63,7 +63,7 @@ public class ParsedCollisionAttackType extends ParsedMarioThing {
 		this.POST_COLLISION_ACTIONS.put(result, targetAction);
 	}
 
-	public Vec3d moveHook(MarioServerPlayerData data, Vec3d movement) {
+	public Vec3d moveHook(CPAServerPlayerData data, Vec3d movement) {
 		ServerPlayerEntity mario = data.getPlayer();
 
 		List<Entity> possibleTargets = mario.getWorld().getOtherEntities(mario, this.DEFINITION.tweakPlayerBoundingBox(data, mario.getBoundingBox()).stretch(movement));
@@ -83,7 +83,7 @@ public class ParsedCollisionAttackType extends ParsedMarioThing {
 		collidedEntities.get(result).add(entity);
 	}
 
-	public Vec3d hitEntitiesAndGetTargetPos(MarioServerPlayerData data, List<Entity> entities, @Nullable Vec3d goingToPos) {
+	public Vec3d hitEntitiesAndGetTargetPos(CPAServerPlayerData data, List<Entity> entities, @Nullable Vec3d goingToPos) {
 		ServerPlayerEntity mario = data.getPlayer();
 		ItemStack collisionEquipment = mario.getEquippedStack(this.USE_EQUIPMENT_SLOT);
 		FloatFloatImmutablePair equipmentArmor = ItemStackArmorReader.read(collisionEquipment, this.USE_EQUIPMENT_SLOT);
@@ -142,13 +142,13 @@ public class ParsedCollisionAttackType extends ParsedMarioThing {
 		return targetPos;
 	}
 
-	public void transitionAction(MarioPlayerData data, CollisionAttackResult.ExecutableResult result) {
+	public void transitionAction(CPAPlayerData data, CollisionAttackResult.ExecutableResult result) {
 		AbstractParsedAction targetAction = this.POST_COLLISION_ACTIONS.get(result);
 		if(targetAction != null) data.setActionTransitionless(targetAction);
 	}
 
 	public Vec3d executeServerAndNetwork(
-			MarioServerPlayerData data,
+			CPAServerPlayerData data,
 			Entity target,
 			CollisionAttackResult.ExecutableResult result,
 			Vec3d targetPos,
@@ -162,7 +162,7 @@ public class ParsedCollisionAttackType extends ParsedMarioThing {
 	}
 
 	public Vec3d executeTravellersAndGetTargetPos(
-			MarioMoveableData data,
+			CPAMoveableData data,
 			Entity target,
 			CollisionAttackResult.ExecutableResult result,
 			Vec3d targetPos,

@@ -8,11 +8,11 @@
     "compat.CPMNetHandlerMixin",
     "DamageSourceMixin",
     "LivingEntityStompabilityMixin",
-    "PlayerEntityMarioDataMixin",
+    "PlayerEntityCPADataMixin",
     "PlayerEntityMixin",
     "RedstoneViewMixin",
     "ServerPlayerEntityMixin",
-    "ServerPlayerMarioDataMixin",
+    "ServerPlayerCPADataMixin",
     "ServerPlayNetworkHandlerMixin"
   ],
   "injectors": {

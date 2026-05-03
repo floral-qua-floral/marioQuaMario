@@ -11,6 +11,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class CPMNetHandlerMixin<RL, P, NET> {
 	@Inject(method = "onJoin", at = @At("TAIL"), remap = false)
 	private void activateServerMarioData(P player, CallbackInfo ci) {
-		((ServerPlayerEntity) player).mqm$getMarioData().initialApply();
+		((ServerPlayerEntity) player).cpa$getCPAData().initialApply();
 	}
 }

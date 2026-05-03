@@ -3,7 +3,7 @@ package com.fqf.charapoweract;
 import com.fqf.charapoweract.bapping.BlockBappingUtil;
 import com.fqf.charapoweract_api.interfaces.BapResult;
 import com.fqf.charapoweract_api.cpadata.ICPAAuthoritativeData;
-import com.fqf.charapoweract.mariodata.MarioServerPlayerData;
+import com.fqf.charapoweract.cpadata.CPAServerPlayerData;
 import com.fqf.charapoweract.packets.MarioAttackInterceptionPackets;
 import com.fqf.charapoweract.registries.RegistryManager;
 import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
@@ -148,7 +148,7 @@ public class MarioCommand {
 
 	private static int disable(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
 		ServerPlayerEntity mario = getPlayerFromCmd(context, playerArgumentGiven);
-		MarioServerPlayerData data = mario.mqm$getMarioData();
+		CPAServerPlayerData data = mario.cpa$getCPAData();
 		boolean success = data.isEnabled();
 		data.disable();
 		String name = mario.getName().getString();
@@ -162,7 +162,7 @@ public class MarioCommand {
 
 		String name = mario.getName().getString();
 
-		return switch(mario.mqm$getMarioData().assignAction(newActionID)) {
+		return switch(mario.cpa$getCPAData().assignAction(newActionID)) {
 			case SUCCESS -> sendFeedback(context, "Changed " + name + "'s action to " + newActionID + ".");
 			case NOT_ENABLED ->
 					sendFeedback(context, name + " is not playing as a character, and so cannot be in an action state!", false);
@@ -173,10 +173,10 @@ public class MarioCommand {
 		ServerPlayerEntity mario = getPlayerFromCmd(context, playerArgumentGiven);
 		Identifier newPowerUpID =
 				RegistryEntryReferenceArgumentType.getRegistryEntry(context, "power-up", RegistryManager.POWER_UPS_KEY).value().ID;
-		MarioServerPlayerData data = mario.mqm$getMarioData();
+		CPAServerPlayerData data = mario.cpa$getCPAData();
 
 		String name = mario.getName().getString();
-		return switch(mario.mqm$getMarioData().assignPowerUp(newPowerUpID)) {
+		return switch(mario.cpa$getCPAData().assignPowerUp(newPowerUpID)) {
 			case SUCCESS ->
 					sendFeedback(context, "Changed " + name + "'s power-up to " + newPowerUpID + ".");
 			case NOT_ENABLED ->
@@ -193,27 +193,18 @@ public class MarioCommand {
 		ServerPlayerEntity mario = getPlayerFromCmd(context, playerArgumentGiven);
 		Identifier newCharacterID =
 				RegistryEntryReferenceArgumentType.getRegistryEntry(context, "character", RegistryManager.CHARACTERS_KEY).value().ID;
-		mario.mqm$getMarioData().assignCharacter(newCharacterID);
+		mario.cpa$getCPAData().assignCharacter(newCharacterID);
 
 		return sendFeedback(context, mario.getName().getString() + " will now play as " + newCharacterID + ".");
 	}
 
 	private static int executeStomp(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
 		ServerPlayerEntity mario = getPlayerFromCmd(context, playerArgumentGiven);
-		MarioServerPlayerData data = mario.mqm$getMarioData();
+		CPAServerPlayerData data = mario.cpa$getCPAData();
 		String name = mario.getName().getString();
 
 		if(!data.isEnabled())
 			return sendFeedback(context, name + " is not playing as a character, and as such cannot perform stomps.", false);
-
-//		ServerPlayerEntity stomper = getPlayerFromCmd(environment, playerArgumentGiven);
-//		Entity target = EntityArgumentType.getEntity(environment, "goomba");
-//		ParsedStomp stompType = RegistryEntryReferenceArgumentType.getRegistryEntry(environment, "stomp", RegistryManager.STOMP_TYPES_KEY).value();
-//
-//		stomper.teleport((ServerWorld) target.getWorld(), target.getX(), target.getY() + target.getHeight(), target.getZ(), target.getPitch(), target.yawOf());
-//		stompType.executeServerAndGetTargetAction((MarioServerData) MarioDataManager.getMarioData(stomper), target, true, RandomSeed.getSeed());
-//
-//		return sendFeedback(environment, "Made " + stomper.getName().getString() + " perform a stomp of type " + stompType.ID + " on " + target.getName().getString());
 
 		return sendFeedback(context, "Command not yet implemented.", false);
 	}
@@ -221,7 +212,7 @@ public class MarioCommand {
 
 	private static int executeBapFromStrength(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven, Direction direction, Integer strength) throws CommandSyntaxException {
 		ServerPlayerEntity mario = getPlayerFromCmd(context, playerArgumentGiven);
-		MarioServerPlayerData data = mario.mqm$getMarioData();
+		CPAServerPlayerData data = mario.cpa$getCPAData();
 		String name = mario.getName().getString();
 
 		if(!data.isEnabled())
@@ -243,7 +234,7 @@ public class MarioCommand {
 	}
 	private static int executeBapFromResult(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven, Direction direction, BapResult result) throws CommandSyntaxException {
 		ServerPlayerEntity mario = getPlayerFromCmd(context, playerArgumentGiven);
-		MarioServerPlayerData data = mario.mqm$getMarioData();
+		CPAServerPlayerData data = mario.cpa$getCPAData();
 		String name = mario.getName().getString();
 
 		if(!data.isEnabled())
@@ -293,7 +284,7 @@ public class MarioCommand {
 
 	private static int executeAttackInterception(CommandContext<ServerCommandSource> context, boolean isAction, Boolean isEntity) throws CommandSyntaxException {
 		ServerPlayerEntity mario = getPlayerFromCmd(context, true);
-		MarioServerPlayerData data = mario.mqm$getMarioData();
+		CPAServerPlayerData data = mario.cpa$getCPAData();
 		String name = mario.getName().getString();
 
 		if(!data.isEnabled())
@@ -352,7 +343,7 @@ public class MarioCommand {
 
 	private static int executeActionTransition(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
 		ServerPlayerEntity mario = getPlayerFromCmd(context, playerArgumentGiven);
-		MarioServerPlayerData data = mario.mqm$getMarioData();
+		CPAServerPlayerData data = mario.cpa$getCPAData();
 		String name = mario.getName().getString();
 
 		AbstractParsedAction fromAction =
@@ -378,7 +369,7 @@ public class MarioCommand {
 //
 //		long seed = RandomSeed.getSeed();
 //
-//		boolean successful = mario.mqm$getMarioData().setAction(stompTypeID, toAction, seed, false, true);
+//		boolean successful = mario.cpa$getCPAData().setAction(stompTypeID, toAction, seed, false, true);
 //
 //		if(successful) MarioDataPackets.transitionToActionS2C(
 //				mario,
@@ -395,7 +386,7 @@ public class MarioCommand {
 
 	private static int executeReversion(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
 		ServerPlayerEntity mario = getPlayerFromCmd(context, playerArgumentGiven);
-		MarioServerPlayerData data = mario.mqm$getMarioData();
+		CPAServerPlayerData data = mario.cpa$getCPAData();
 		String name = mario.getName().getString();
 
 		if(!data.isEnabled())

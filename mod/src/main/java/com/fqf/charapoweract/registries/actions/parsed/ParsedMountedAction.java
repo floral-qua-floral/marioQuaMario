@@ -6,7 +6,7 @@ import com.fqf.charapoweract_api.definitions.states.actions.MountedActionDefinit
 import com.fqf.charapoweract_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionInjectionDefinition;
-import com.fqf.charapoweract.mariodata.MarioMoveableData;
+import com.fqf.charapoweract.cpadata.CPAMoveableData;
 import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
 import com.fqf.charapoweract.registries.actions.UniversalActionDefinitionHelper;
 import net.minecraft.text.MutableText;
@@ -30,7 +30,7 @@ public class ParsedMountedAction extends AbstractParsedAction {
 	}
 
 	@Override
-	public boolean travelHook(MarioMoveableData data) {
+	public boolean travelHook(CPAMoveableData data) {
 		data.jumpCapped = false;
 		UniversalActionDefinitionHelper helper = UniversalActionDefinitionHelper.INSTANCE;
 		return this.MOUNTED_DEFINITION.travelHook(data, helper.getMount(data), helper);

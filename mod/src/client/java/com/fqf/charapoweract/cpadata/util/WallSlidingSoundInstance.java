@@ -1,6 +1,6 @@
-package com.fqf.charapoweract.mariodata.util;
+package com.fqf.charapoweract.cpadata.util;
 
-import com.fqf.charapoweract.mariodata.ICPAClientDataImpl;
+import com.fqf.charapoweract.cpadata.ICPAClientDataImpl;
 import com.fqf.charapoweract.util.MarioSFX;
 import net.minecraft.util.math.MathHelper;
 
@@ -17,6 +17,6 @@ public class WallSlidingSoundInstance extends AbstractSlidingSoundInstance {
 	@Override
 	protected void updatePitchVolume() {
 		this.pitch = 0.2F;
-		this.volume = MathHelper.clamp((float) Math.abs(this.MARIO.mqm$getMarioData().getYVel()), 0.4F, 1.0F);
+		this.volume = MathHelper.clamp((float) Math.abs(this.PLAYER.cpa$getCPAData().getYVel()), 0.4F, 1.0F);
 	}
 }

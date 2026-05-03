@@ -1,4 +1,4 @@
-package com.fqf.charapoweract.mariodata.util;
+package com.fqf.charapoweract.cpadata.util;
 
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.Arrangement;
 

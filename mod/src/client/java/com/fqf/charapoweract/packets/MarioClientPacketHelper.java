@@ -7,7 +7,7 @@ import com.fqf.charapoweract.registries.actions.TransitionPhase;
 import com.fqf.charapoweract.util.MarioClientHelperManager;
 import com.fqf.charapoweract_api.interfaces.BapResult;
 import com.fqf.charapoweract_api.interfaces.CollisionAttackResult;
-import com.fqf.charapoweract.mariodata.*;
+import com.fqf.charapoweract.cpadata.*;
 import com.fqf.charapoweract.registries.ParsedAttackInterception;
 import com.fqf.charapoweract.registries.RegistryManager;
 import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
@@ -66,12 +66,12 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 
 		// DisableMarioS2CPayload Receiver
 		ClientPlayNetworking.registerGlobalReceiver(MarioDataPackets.DisableMarioS2CPayload.ID, (payload, context) ->
-				getMarioFromID(context, payload.marioID()).mqm$getMarioData().disableInternal()
+				getMarioFromID(context, payload.marioID()).cpa$getCPAData().disableInternal()
 		);
 
 		// ActionTransitionS2CPayload Receiver
 		ClientPlayNetworking.registerGlobalReceiver(MarioDataPackets.ActionTransitionS2CPayload.ID, (payload, context) ->
-				getMarioFromID(context, payload.marioID()).mqm$getMarioData().setAction(
+				getMarioFromID(context, payload.marioID()).cpa$getCPAData().setAction(
 					ParsedActionHelper.get(payload.fromAction()),
 					ParsedActionHelper.get(payload.toAction()),
 					payload.seed(), true, false
@@ -80,35 +80,35 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 
 		// AssignActionS2CPayload Receiver
 		ClientPlayNetworking.registerGlobalReceiver(MarioDataPackets.AssignActionS2CPayload.ID, (payload, context) ->
-				getMarioFromID(context, payload.marioID()).mqm$getMarioData().setActionTransitionless(
+				getMarioFromID(context, payload.marioID()).cpa$getCPAData().setActionTransitionless(
 					ParsedActionHelper.get(payload.newAction())
 				)
 		);
 
 		// EmpowerRevertS2CPayload Receiver
 		ClientPlayNetworking.registerGlobalReceiver(MarioDataPackets.EmpowerRevertS2CPayload.ID, (payload, context) ->
-				getMarioFromID(context, payload.marioID()).mqm$getMarioData().setPowerUp(
+				getMarioFromID(context, payload.marioID()).cpa$getCPAData().setPowerUp(
 						RegistryManager.POWER_UPS.get(payload.toPower()), payload.isReversion(), payload.seed()
 				)
 		);
 
 		// AssignPowerUpS2CPayload Receiver
 		ClientPlayNetworking.registerGlobalReceiver(MarioDataPackets.AssignPowerUpS2CPayload.ID, (payload, context) ->
-				getMarioFromID(context, payload.marioID()).mqm$getMarioData().setPowerUpTransitionless(
+				getMarioFromID(context, payload.marioID()).cpa$getCPAData().setPowerUpTransitionless(
 						RegistryManager.POWER_UPS.get(payload.newPower())
 				)
 		);
 
 		// AssignCharacterS2CPayload Receiver
 		ClientPlayNetworking.registerGlobalReceiver(MarioDataPackets.AssignCharacterS2CPayload.ID, (payload, context) ->
-				getMarioFromID(context, payload.marioID()).mqm$getMarioData().setCharacter(
+				getMarioFromID(context, payload.marioID()).cpa$getCPAData().setCharacter(
 						RegistryManager.CHARACTERS.get(payload.newCharacter())
 				)
 		);
 
 		// SyncMarioDataS2CPayload Receiver
 		ClientPlayNetworking.registerGlobalReceiver(MarioDataPackets.SyncMarioDataS2CPayload.ID, (payload, context) -> {
-			MarioPlayerData data = getMarioFromID(context, payload.marioID()).mqm$getMarioData();
+			CPAPlayerData data = getMarioFromID(context, payload.marioID()).cpa$getCPAData();
 			data.setCharacter(RegistryManager.CHARACTERS.get(payload.character()));
 			data.setPowerUpTransitionless(RegistryManager.POWER_UPS.get(payload.powerUp()));
 			data.setActionTransitionless(RegistryManager.ACTIONS.get(payload.action()));
@@ -116,28 +116,28 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 
 		// TransmitWallYawS2CPayload Receiver
 		ClientPlayNetworking.registerGlobalReceiver(MarioDataPackets.TransmitWallYawS2CPayload.ID, (payload, context) -> {
-			MarioPlayerData data = getMarioFromID(context, payload.marioID()).mqm$getMarioData();
+			CPAPlayerData data = getMarioFromID(context, payload.marioID()).cpa$getCPAData();
 			data.getWallInfo().setYaw(payload.yaw());
 		});
 
 		// MissedAttackInterceptedS2CPayload Receiver
 		ClientPlayNetworking.registerGlobalReceiver(MarioAttackInterceptionPackets.MissedAttackInterceptedS2CPayload.ID, (payload, context) ->
 				ParsedAttackInterception.getInterception(payload).execute(
-						getMarioFromID(context, payload.marioID()).mqm$getMarioData(),
+						getMarioFromID(context, payload.marioID()).cpa$getCPAData(),
 						null, null, payload.seed()
 				)
 		);
 		// EntityAttackInterceptedS2CPayload Receiver
 		ClientPlayNetworking.registerGlobalReceiver(MarioAttackInterceptionPackets.EntityAttackInterceptedS2CPayload.ID, (payload, context) ->
 				ParsedAttackInterception.getInterception(payload).execute(
-						getMarioFromID(context, payload.marioID()).mqm$getMarioData(),
+						getMarioFromID(context, payload.marioID()).cpa$getCPAData(),
 						context.player().getWorld().getEntityById(payload.targetID()), null, payload.seed()
 				)
 		);
 		// BlockAttackInterceptedS2CPayload Receiver
 		ClientPlayNetworking.registerGlobalReceiver(MarioAttackInterceptionPackets.BlockAttackInterceptedS2CPayload.ID, (payload, context) ->
 				ParsedAttackInterception.getInterception(payload).execute(
-						getMarioFromID(context, payload.marioID()).mqm$getMarioData(),
+						getMarioFromID(context, payload.marioID()).cpa$getCPAData(),
 						null, payload.targetBlock(), payload.seed()
 				)
 		);
@@ -168,7 +168,7 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 			// when it was checked on the client (unless the movement itself was rejected by the server, i.e. moved wrongly).
 			ClientPlayerEntity mario = MinecraftClient.getInstance().player;
 			assert mario != null;
-			mario.mqm$getMarioData().HELD_TRANSITION_PACKETS.add(packet);
+			mario.cpa$getCPAData().HELD_TRANSITION_PACKETS.add(packet);
 			return;
 		}
 		ClientPlayNetworking.send(packet);
@@ -184,7 +184,7 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 	}
 
 	public static void attackInterceptionC2S(
-			MarioMainClientData data, ParsedAttackInterception interception,
+			CPAMainClientData data, ParsedAttackInterception interception,
 			@Nullable Entity targetEntity, @Nullable BlockPos targetBlock, long seed
 	) {
 		CustomPayload packet;
@@ -225,7 +225,7 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 		RecordingModsCompatSafe.conditionallySaveReplayPacket(replayPacket);
 	}
 
-	public void transmitWallYawC2S(MarioMoveableData data, float wallYaw) {
+	public void transmitWallYawC2S(CPAMoveableData data, float wallYaw) {
 		ClientPlayNetworking.send(new MarioDataPackets.TransmitWallYawC2SPayload(wallYaw));
 
 		RecordingModsCompatSafe.conditionallySaveReplayPacket(
@@ -239,7 +239,7 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 	) {
 //		MarioQuaMario.LOGGER.info("Stomping target: {}", target);
 		PlayerEntity mario = getMarioFromID(context, marioID);
-		MarioPlayerData data = mario.mqm$getMarioData();
+		CPAPlayerData data = mario.cpa$getCPAData();
 		CollisionAttackResult.ExecutableResult result = CollisionAttackResult.ExecutableResult.values()[stompResultIndex];
 		ParsedCollisionAttackType stomp = Objects.requireNonNull(RegistryManager.COLLISION_ATTACK_TYPES.get(stompTypeID));
 
@@ -247,7 +247,7 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 
 		stomp.executeClients((ICPAClientData) data, target, result, affectMario, seed);
 
-		if(data instanceof MarioMoveableData moveableData) {
+		if(data instanceof CPAMoveableData moveableData) {
 			Vec3d targetPos = stomp.executeTravellersAndGetTargetPos(moveableData, target, result, mario.getPos(), affectMario);
 			if(affectMario && targetPos != null) {
 				data.getPlayer().move(MovementType.SELF, targetPos.subtract(mario.getPos()));
@@ -273,7 +273,7 @@ public class MarioClientPacketHelper implements MarioClientHelperManager.ClientP
 
 		// Known issue that actually matters - doesn't save playermodel? :(
 		for(PlayerEntity player : Objects.requireNonNull(MinecraftClient.getInstance().player).getWorld().getPlayers()) {
-			MarioPlayerData data = player.mqm$getMarioData();
+			CPAPlayerData data = player.cpa$getCPAData();
 			if(data.isEnabled()) {
 				RecordingModsCompatSafe.conditionallySaveReplayPacket(new MarioDataPackets.SyncMarioDataS2CPayload(
 						player.getId(),

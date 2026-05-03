@@ -1,10 +1,10 @@
 package com.fqf.charapoweract.registries.actions.parsed;
 
+import com.fqf.charapoweract.cpadata.CPAMoveableData;
 import com.fqf.charapoweract_api.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionInjectionDefinition;
-import com.fqf.charapoweract.mariodata.MarioMoveableData;
 import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
 import com.fqf.charapoweract.registries.actions.UniversalActionDefinitionHelper;
 import com.fqf.charapoweract_api.util.CharaStat;
@@ -27,7 +27,7 @@ public class ParsedGroundedAction extends AbstractParsedAction {
 	private static final CharaStat GROUNDED_TERMINAL_VELOCITY = new CharaStat(-0.5, StatCategory.TERMINAL_VELOCITY);
 
 	@Override
-	public boolean travelHook(MarioMoveableData data) {
+	public boolean travelHook(CPAMoveableData data) {
 		data.jumpCapped = false;
 		this.GROUNDED_DEFINITION.travelHook(data, UniversalActionDefinitionHelper.INSTANCE);
 		if(data.isClient())

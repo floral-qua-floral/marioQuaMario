@@ -2,8 +2,8 @@ package com.fqf.charapoweract.util;
 
 import com.fqf.charapoweract.MarioQuaMario;
 import com.fqf.charapoweract.bapping.BlockBappingUtil;
+import com.fqf.charapoweract.cpadata.CPAServerPlayerData;
 import com.fqf.charapoweract_api.cpadata.ICPAAuthoritativeData;
-import com.fqf.charapoweract.mariodata.MarioServerPlayerData;
 import com.fqf.charapoweract.packets.MarioPackets;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
@@ -25,13 +25,13 @@ public class MarioEventListeners {
 		});
 
 		ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
-			MarioServerPlayerData data = newPlayer.mqm$getMarioData();
-			MarioServerPlayerData oldData = oldPlayer.mqm$getMarioData();
+			CPAServerPlayerData data = newPlayer.cpa$getCPAData();
+			CPAServerPlayerData oldData = oldPlayer.cpa$getCPAData();
 			if(oldData.isEnabled()) data.assignCharacter(oldData.getCharacterID());
 		});
 
 		ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register(((player, origin, destination) ->
-				player.mqm$getMarioData().initialApply()));
+				player.cpa$getCPAData().initialApply()));
 
 		ServerLivingEntityEvents.ALLOW_DEATH.register((livingEntity, damageSource, amount) -> {
 			if(!(livingEntity instanceof ServerPlayerEntity mario)) return true;
@@ -39,18 +39,18 @@ public class MarioEventListeners {
 			if( // try to detect if we're taking specifically poison damage. i wish so bad that this was its own damage type... ;-;
 					damageSource.isOf(DamageTypes.MAGIC)
 					&& mario.hasStatusEffect(StatusEffects.POISON)
-					&& amount == mario.mqm$getMarioData().getCharacter().modifyIncomingDamage(mario.mqm$getMarioData(), damageSource, 1)
+					&& amount == mario.cpa$getCPAData().getCharacter().modifyIncomingDamage(mario.cpa$getCPAData(), damageSource, 1)
 			) {
 				MarioQuaMario.LOGGER.info("Prevented player {} from either dying or reverting due to probable poison damage!", mario.getName().getString());
 				livingEntity.setHealth(1); // leave player on half a heart
 				return false;
 			}
 
-			return mario.mqm$getMarioData().executeReversion() != ICPAAuthoritativeData.ReversionResult.SUCCESS;
+			return mario.cpa$getCPAData().executeReversion() != ICPAAuthoritativeData.ReversionResult.SUCCESS;
 		});
 
 //		EntityTrackingEvents.START_TRACKING.register((trackedEntity, player) -> {
-//			if(trackedEntity instanceof ServerPlayerEntity mario && mario.mqm$getMarioData().isEnabled()) {
+//			if(trackedEntity instanceof ServerPlayerEntity mario && mario.cpa$getCPAData().isEnabled()) {
 //				MarioDataPackets.syncMarioDataToPlayerS2C(mario, player);
 //			}
 //		});

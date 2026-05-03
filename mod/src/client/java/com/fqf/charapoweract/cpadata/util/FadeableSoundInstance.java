@@ -1,6 +1,6 @@
-package com.fqf.charapoweract.mariodata.util;
+package com.fqf.charapoweract.cpadata.util;
 
-import com.fqf.charapoweract.mariodata.MarioPlayerData;
+import com.fqf.charapoweract.cpadata.CPAPlayerData;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.TickableSoundInstance;
 import net.minecraft.entity.player.PlayerEntity;
@@ -10,7 +10,7 @@ import net.minecraft.sound.SoundEvent;
 public class FadeableSoundInstance extends PositionedSoundInstance implements TickableSoundInstance {
 	private boolean isFading = false;
 
-	public FadeableSoundInstance(MarioPlayerData mario) {
+	public FadeableSoundInstance(CPAPlayerData mario) {
 		this(mario.getCharacter().JUMP_SOUND, mario.getPlayer(), 1F, mario.getPowerUp().JUMP_PITCH);
 	}
 	public FadeableSoundInstance(SoundEvent sound, PlayerEntity mario, float volume, float pitch) {

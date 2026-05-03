@@ -1,7 +1,7 @@
 package com.fqf.charapoweract.mixin.client;
 
-import com.fqf.charapoweract.mariodata.MarioAnimationData;
-import com.fqf.charapoweract.mariodata.injections.AdvMarioAbstractClientDataHolder;
+import com.fqf.charapoweract.cpadata.MarioAnimationData;
+import com.fqf.charapoweract.cpadata.injections.AdvCPAAbstractClientDataHolder;
 import com.fqf.charapoweract_api.cpadata.injections.ICPAClientDataHolder;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(AbstractClientPlayerEntity.class)
-public class AbstractClientPlayerEntityMarioDataMixin implements AdvMarioAbstractClientDataHolder, ICPAClientDataHolder {
+public class AbstractClientPlayerEntityCPADataMixin implements AdvCPAAbstractClientDataHolder, ICPAClientDataHolder {
 	@Unique
 	private final MarioAnimationData ANIMATION_DATA = new MarioAnimationData();
 

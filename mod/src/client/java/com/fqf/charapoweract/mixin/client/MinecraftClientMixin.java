@@ -1,7 +1,7 @@
 package com.fqf.charapoweract.mixin.client;
 
+import com.fqf.charapoweract.cpadata.CPAMainClientData;
 import com.fqf.charapoweract_api.definitions.states.AttackInterceptingStateDefinition.MiningHandling;
-import com.fqf.charapoweract.mariodata.MarioMainClientData;
 import com.fqf.charapoweract.packets.MarioClientPacketHelper;
 import com.fqf.charapoweract.registries.ParsedAttackInterception;
 import net.minecraft.client.MinecraftClient;
@@ -37,20 +37,20 @@ public abstract class MinecraftClientMixin {
 	private void doAttackInterception(CallbackInfoReturnable<Boolean> cir) {
 		assert this.player != null && this.crosshairTarget != null;
 
-		if(this.heldInterception != null || !this.player.mqm$getMarioData().isEnabled()) return;
+		if(this.heldInterception != null || !this.player.cpa$getCPAData().isEnabled()) return;
 
 		if(this.crosshairTarget.getType() == HitResult.Type.BLOCK) {
-			if(this.attemptMiningAttackInterceptions(this.player.mqm$getMarioData()))
+			if(this.attemptMiningAttackInterceptions(this.player.cpa$getCPAData()))
 				cir.setReturnValue(false);
 		}
 		else {
-			if(this.attemptAttackInterceptions(this.player.mqm$getMarioData()))
+			if(this.attemptAttackInterceptions(this.player.cpa$getCPAData()))
 				cir.setReturnValue(false);
 		}
 	}
 
 	@Unique
-	private boolean attemptAttackInterceptions(MarioMainClientData data) {
+	private boolean attemptAttackInterceptions(CPAMainClientData data) {
 		assert this.player != null && this.crosshairTarget != null;
 		float attackCooldownProgress = ParsedAttackInterception.getAttackCooldownProgress(this.player);
 		ItemStack weapon = this.player.getWeaponStack();
@@ -69,7 +69,7 @@ public abstract class MinecraftClientMixin {
 
 	@Unique
 	private boolean shouldInterceptAttack(
-			MarioMainClientData data,
+			CPAMainClientData data,
 			float attackCooldownProgress, ItemStack weapon, @Nullable EntityHitResult entityHitResult,
 			ParsedAttackInterception interception
 	) {
@@ -83,7 +83,7 @@ public abstract class MinecraftClientMixin {
 	}
 
 	@Unique
-	private boolean attemptMiningAttackInterceptions(MarioMainClientData data) {
+	private boolean attemptMiningAttackInterceptions(CPAMainClientData data) {
 		assert this.player != null && this.crosshairTarget != null;
 		float attackCooldownProgress = ParsedAttackInterception.getAttackCooldownProgress(this.player);
 		ItemStack weapon = this.player.getMainHandStack();
@@ -107,7 +107,7 @@ public abstract class MinecraftClientMixin {
 
 	@Unique
 	private MiningHandling shouldInterceptMiningAttack(
-			MarioMainClientData data,
+			CPAMainClientData data,
 			float attackCooldownProgress, ItemStack weapon, @NotNull BlockHitResult blockHitResult,
 			ParsedAttackInterception interception
 	) {
@@ -134,7 +134,7 @@ public abstract class MinecraftClientMixin {
 
 	@Unique
 	private void executeAndNetworkInterception(
-			MarioMainClientData data,
+			CPAMainClientData data,
 			float attackCooldownProgress, ItemStack weapon,
 			@Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult,
 			ParsedAttackInterception interception
@@ -154,7 +154,7 @@ public abstract class MinecraftClientMixin {
 	@Inject(method = "handleBlockBreaking", at = @At("HEAD"))
 	private void resetMiningTicksAndTriggerHeldInterception(boolean breaking, CallbackInfo ci) {
 		assert this.player != null;
-		if(!this.player.mqm$getMarioData().isEnabled()) return;
+		if(!this.player.cpa$getCPAData().isEnabled()) return;
 		if(!breaking && !this.options.attackKey.isPressed()) {
 			this.miningTicks = 0;
 			if(this.heldInterception != null) {
@@ -166,7 +166,7 @@ public abstract class MinecraftClientMixin {
 					else blockHitResult = null;
 
 					this.executeAndNetworkInterception(
-							this.player.mqm$getMarioData(),
+							this.player.cpa$getCPAData(),
 							ParsedAttackInterception.getAttackCooldownProgress(this.player), this.player.getWeaponStack(),
 							null, blockHitResult,
 							this.heldInterception
@@ -184,11 +184,11 @@ public abstract class MinecraftClientMixin {
 	private void doMiningInterception(boolean breaking, CallbackInfo ci) {
 		assert this.player != null && this.crosshairTarget != null;
 		if (breaking && this.heldInterception != null) {
-//			if (this.attemptMiningInterceptions(this.player.mqm$getMarioData(), false)) {
+//			if (this.attemptMiningInterceptions(this.player.cpa$getCPAData(), false)) {
 			float attackCooldownProgress = ParsedAttackInterception.getAttackCooldownProgress(this.player);
 			ItemStack weapon = this.player.getWeaponStack();
 			BlockHitResult blockHitResult = (BlockHitResult) this.crosshairTarget;
-			if (this.shouldSuppressMining(this.player.mqm$getMarioData(), weapon, blockHitResult, this.heldInterception)) {
+			if (this.shouldSuppressMining(this.player.cpa$getCPAData(), weapon, blockHitResult, this.heldInterception)) {
 				this.handleBlockBreaking(false);
 				ci.cancel();
 			}
@@ -202,7 +202,7 @@ public abstract class MinecraftClientMixin {
 
 	@Unique
 	private boolean shouldSuppressMining(
-			MarioMainClientData data, ItemStack weapon,
+			CPAMainClientData data, ItemStack weapon,
 			BlockHitResult blockHitResult, ParsedAttackInterception interception
 	) {
 		return switch(interception.shouldSuppressMining(data, weapon, blockHitResult, this.miningTicks)) {

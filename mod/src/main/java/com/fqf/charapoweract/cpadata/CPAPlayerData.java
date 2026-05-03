@@ -1,4 +1,4 @@
-package com.fqf.charapoweract.mariodata;
+package com.fqf.charapoweract.cpadata;
 
 import com.fqf.charapoweract.MarioQuaMario;
 import com.fqf.charapoweract.registries.actions.parsed.ParsedWallboundAction;
@@ -29,20 +29,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public abstract class MarioPlayerData implements ICPAReadableMotionData {
-	protected MarioPlayerData() {
-		MarioQuaMario.LOGGER.info("Created new MarioData: {}", this);
-//		this.disable();
-
-//		this.character = Objects.requireNonNull(RegistryManager.CHARACTERS.get(MarioQuaMario.makeID("mario")),
-//				"Mario isn't registered; can't initialize player!");
-//		this.action = this.character.INITIAL_ACTION;
-//		this.powerUp = this.character.INITIAL_POWER_UP;
-
-//		this.action = RegistryManager.ACTIONS.get(MarioQuaMario.makeID("debug"));
-//		this.setActionTransitionlessInternal(this.action);
-//		this.powerUp = null;
-//		this.character = null;
+public abstract class CPAPlayerData implements ICPAReadableMotionData {
+	protected CPAPlayerData() {
+		MarioQuaMario.LOGGER.info("Created new CPA Player Data: {}", this);
 	}
 
 	private static final Identifier FALL_RESISTANCE_ID = MarioQuaMario.makeID("mario_fall_resistance");
@@ -91,7 +80,7 @@ public abstract class MarioPlayerData implements ICPAReadableMotionData {
 
 	public boolean setAction(@Nullable AbstractParsedAction fromAction, AbstractParsedAction toAction, long seed, boolean forced, boolean fromCommand) {
 		boolean transitionedNaturally = ParsedActionHelper.attemptTransitionTo(this, fromAction == null ? this.getAction() : fromAction, toAction, seed);
-		if(transitionedNaturally && this instanceof MarioMoveableData moveableData) moveableData.applyModifiedVelocity();
+		if(transitionedNaturally && this instanceof CPAMoveableData moveableData) moveableData.applyModifiedVelocity();
 		else if(forced) this.setActionTransitionless(toAction);
 		return transitionedNaturally || forced;
 	}

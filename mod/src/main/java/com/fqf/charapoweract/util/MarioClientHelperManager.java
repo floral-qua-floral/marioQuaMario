@@ -1,7 +1,7 @@
 package com.fqf.charapoweract.util;
 
 import com.fqf.charapoweract.bapping.AbstractBapInfo;
-import com.fqf.charapoweract.mariodata.MarioMoveableData;
+import com.fqf.charapoweract.cpadata.CPAMoveableData;
 import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
 import com.fqf.charapoweract.registries.actions.TransitionPhase;
 import com.fqf.charapoweract_api.interfaces.BapResult;
@@ -18,7 +18,7 @@ public class MarioClientHelperManager {
 	}
 	public interface ClientPacketSender {
 		void setActionC2S(AbstractParsedAction fromAction, AbstractParsedAction toAction, long seed, TransitionPhase phase);
-		void transmitWallYawC2S(MarioMoveableData data, float wallYaw);
+		void transmitWallYawC2S(CPAMoveableData data, float wallYaw);
 		void conditionallySaveTransitionToReplayMod(AbstractParsedAction fromAction, AbstractParsedAction toAction, long seed);
 		void bapBlockC2S(BlockPos pos, Direction direction, AbstractParsedAction action);
 		void conditionallySaveBapToReplayMod(BlockPos pos, Direction direction, int strength, BapResult result, Entity bapper);

@@ -1,4 +1,4 @@
-package com.fqf.charapoweract.mariodata;
+package com.fqf.charapoweract.cpadata;
 
 import com.fqf.charapoweract.MarioQuaMario;
 import com.fqf.charapoweract.bapping.BlockBappingUtil;
@@ -32,14 +32,14 @@ import org.joml.Vector3f;
 
 import java.util.*;
 
-public class MarioMainClientData extends MarioMoveableData implements ICPAClientDataImpl {
-	private final ClientPlayerEntity MARIO;
-	public MarioMainClientData(ClientPlayerEntity mario) {
+public class CPAMainClientData extends CPAMoveableData implements ICPAClientDataImpl {
+	private final ClientPlayerEntity PLAYER;
+	public CPAMainClientData(ClientPlayerEntity player) {
 		super();
-		this.MARIO = mario;
+		this.PLAYER = player;
 	}
 	@Override public ClientPlayerEntity getPlayer() {
-		return MARIO;
+		return PLAYER;
 	}
 
 	@Override public boolean setPowerUp(ParsedPowerUp newPowerUp, boolean isReversion, long seed) {
@@ -54,7 +54,7 @@ public class MarioMainClientData extends MarioMoveableData implements ICPAClient
 
 	@Override public void setActionTransitionless(AbstractParsedAction action) {
 		this.handleSlidingSound(action);
-		this.MARIO.mqm$getAnimationData().replaceAnimation(this, action.ANIMATION, -1);
+		this.PLAYER.mqm$getAnimationData().replaceAnimation(this, action.ANIMATION, -1);
 
 		if(action != this.getAction()) {
 			this.playCameraAnimation(action.CAMERA_ANIMATIONS);
@@ -117,7 +117,7 @@ public class MarioMainClientData extends MarioMoveableData implements ICPAClient
 		private double sidleInput;
 		private boolean calculatedInputs;
 
-		protected WallInfoWithInputs(MarioPlayerData owner) {
+		protected WallInfoWithInputs(CPAPlayerData owner) {
 			super(owner);
 		}
 
@@ -337,12 +337,12 @@ public class MarioMainClientData extends MarioMoveableData implements ICPAClient
 	}
 
 	private static class MainClientRecordedCollisions extends HashSet<RecordedCollision> implements RecordedCollisionSet {
-		private final MarioMainClientData OWNER;
+		private final CPAMainClientData OWNER;
 		private Vec3d storedVelocity;
 		private final boolean[] COLLIDED = new boolean[3];
 		private final boolean[] REFLECTS = new boolean[3];
 
-		private MainClientRecordedCollisions(MarioMainClientData owner) {
+		private MainClientRecordedCollisions(CPAMainClientData owner) {
 			OWNER = owner;
 		}
 

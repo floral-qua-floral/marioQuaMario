@@ -22,7 +22,7 @@ public class MarioAttackInterceptionPackets {
 			@Nullable Entity targetEntity, @Nullable BlockPos targetBlock
 	) {
 		long seed = mario.getRandom().nextLong();
-		fromAction.INTERCEPTIONS.get(index).execute(mario.mqm$getMarioData(), targetEntity, targetBlock, seed);
+		fromAction.INTERCEPTIONS.get(index).execute(mario.cpa$getCPAData(), targetEntity, targetBlock, seed);
 		AttackInterceptionPayload dummyPayload = new MissedAttackInterceptedC2SPayload(true, RegistryManager.ACTIONS.getRawIdOrThrow(fromAction), index, seed);
 		MarioPackets.sendToTrackers(mario, convertPayloadToS2C(mario, dummyPayload, targetEntity, targetBlock), true);
 	}
@@ -31,7 +31,7 @@ public class MarioAttackInterceptionPackets {
 			@Nullable Entity targetEntity, @Nullable BlockPos targetBlock
 	) {
 		long seed = mario.getRandom().nextLong();
-		fromPowerUp.INTERCEPTIONS.get(index).execute(mario.mqm$getMarioData(), targetEntity, targetBlock, seed);
+		fromPowerUp.INTERCEPTIONS.get(index).execute(mario.cpa$getCPAData(), targetEntity, targetBlock, seed);
 		AttackInterceptionPayload dummyPayload = new MissedAttackInterceptedC2SPayload(false, RegistryManager.POWER_UPS.getRawIdOrThrow(fromPowerUp), index, seed);
 		MarioPackets.sendToTrackers(mario, convertPayloadToS2C(mario, dummyPayload, targetEntity, targetBlock), true);
 	}
@@ -40,7 +40,7 @@ public class MarioAttackInterceptionPackets {
 			@Nullable Entity targetEntity, @Nullable BlockPos targetBlock, long seed
 	) {
 		ParsedAttackInterception.getInterception(payload)
-				.execute(mario.mqm$getMarioData(), targetEntity, targetBlock, seed);
+				.execute(mario.cpa$getCPAData(), targetEntity, targetBlock, seed);
 
 		MarioPackets.sendToTrackers(mario, convertPayloadToS2C(mario, payload, targetEntity, targetBlock), false);
 	}

@@ -1,10 +1,10 @@
 package com.fqf.charapoweract.mixin;
 
+import com.fqf.charapoweract.cpadata.CPAServerPlayerData;
 import com.fqf.charapoweract_api.cpadata.ICPAAuthoritativeData;
 import com.fqf.charapoweract_api.cpadata.ICPATravelData;
-import com.fqf.charapoweract.mariodata.MarioPlayerData;
-import com.fqf.charapoweract.mariodata.MarioServerPlayerData;
-import com.fqf.charapoweract.mariodata.injections.AdvMarioServerDataHolder;
+import com.fqf.charapoweract.cpadata.CPAPlayerData;
+import com.fqf.charapoweract.cpadata.injections.AdvCPAServerDataHolder;
 import com.fqf.charapoweract_api.cpadata.injections.ICPAAuthoritativeDataHolder;
 import com.fqf.charapoweract_api.cpadata.injections.ICPATravelDataHolder;
 import com.mojang.authlib.GameProfile;
@@ -20,14 +20,14 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerPlayerEntity.class)
-public class ServerPlayerMarioDataMixin implements AdvMarioServerDataHolder, ICPAAuthoritativeDataHolder, ICPATravelDataHolder {
-	@Unique private MarioServerPlayerData marioServerData = new MarioServerPlayerData((ServerPlayerEntity) (Object) this);
+public class ServerPlayerCPADataMixin implements AdvCPAServerDataHolder, ICPAAuthoritativeDataHolder, ICPATravelDataHolder {
+	@Unique private CPAServerPlayerData marioServerData = new CPAServerPlayerData((ServerPlayerEntity) (Object) this);
 
 	@Override public ICPAAuthoritativeData cpa$getICPAAuthoritativeData() {
-		return this.mqm$getMarioData();
+		return this.cpa$getCPAData();
 	}
 	@Override public ICPATravelData cpa$getICPATravelData() {
-		return this.mqm$getMarioData();
+		return this.cpa$getCPAData();
 	}
 
 	@Inject(method = "<init>", at = @At("RETURN"))
@@ -35,12 +35,12 @@ public class ServerPlayerMarioDataMixin implements AdvMarioServerDataHolder, ICP
 //		this.mqm$setMarioData(this.marioServerData);
 	}
 
-	@Override public @NotNull MarioServerPlayerData mqm$getMarioData() {
+	@Override public @NotNull CPAServerPlayerData cpa$getCPAData() {
 		return this.marioServerData;
 	}
 
-	@Override public void mqm$setMarioData(MarioPlayerData replacementData) {
-		this.marioServerData = (MarioServerPlayerData) replacementData;
+	@Override public void cpa$setCPAData(CPAPlayerData replacementData) {
+		this.marioServerData = (CPAServerPlayerData) replacementData;
 		ServerPlayerEntity mario = (ServerPlayerEntity) (Object) this;
 		replacementData.initialApply();
 	}

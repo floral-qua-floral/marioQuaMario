@@ -7,7 +7,7 @@ import com.fqf.charapoweract_api.definitions.states.actions.GenericActionDefinit
 import com.fqf.charapoweract_api.definitions.states.actions.util.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.PlayermodelAnimation;
-import com.fqf.charapoweract.mariodata.MarioMoveableData;
+import com.fqf.charapoweract.cpadata.CPAMoveableData;
 import com.fqf.charapoweract.registries.ParsedAttackInterception;
 import com.fqf.charapoweract.registries.ParsedMarioState;
 import com.fqf.charapoweract.registries.RegistryManager;
@@ -145,7 +145,7 @@ public abstract class AbstractParsedAction extends ParsedMarioState {
 		return RegistryManager.ACTIONS.getRawIdOrThrow(this);
 	}
 
-	abstract public boolean travelHook(MarioMoveableData data);
+	abstract public boolean travelHook(CPAMoveableData data);
 
 	abstract protected ActionCategory getCategory();
 }

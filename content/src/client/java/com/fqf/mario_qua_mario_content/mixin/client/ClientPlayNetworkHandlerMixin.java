@@ -1,6 +1,5 @@
 package com.fqf.mario_qua_mario_content.mixin.client;
 
-import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.item.ModItems;
 import com.fqf.mario_qua_mario_content.util.MQMContentTags;
 import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
@@ -13,15 +12,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageType;
 import net.minecraft.network.packet.s2c.play.ItemPickupAnimationS2CPacket;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -33,7 +27,7 @@ public class ClientPlayNetworkHandlerMixin {
 	@WrapOperation(method = "onEntityDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;onDamaged(Lnet/minecraft/entity/damage/DamageSource;)V"))
 	private void squashFromSquashingDamage(Entity instance, DamageSource damageSource, Operation<Void> original) {
 		if(instance instanceof LivingEntity livingInstance && damageSource.isIn(MQMContentTags.FLATTENS_ENTITIES))
-			((Squashable) livingInstance).mqm$squash();
+			((Squashable) livingInstance).cpa$squash();
 		original.call(instance, damageSource);
 	}
 

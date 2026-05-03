@@ -1,8 +1,8 @@
 package com.fqf.charapoweract.mixin;
 
 import com.fqf.charapoweract.MarioQuaMario;
-import com.fqf.charapoweract.mariodata.MarioServerPlayerData;
-import com.fqf.charapoweract.mariodata.injections.AdvMarioServerDataHolder;
+import com.fqf.charapoweract.cpadata.CPAServerPlayerData;
+import com.fqf.charapoweract.cpadata.injections.AdvCPAServerDataHolder;
 import com.fqf.charapoweract.packets.MarioDataPackets;
 import com.fqf.charapoweract.registries.RegistryManager;
 import com.fqf.charapoweract.registries.power_granting.ParsedCharacter;
@@ -28,7 +28,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Objects;
 
 @Mixin(ServerPlayerEntity.class)
-public abstract class ServerPlayerEntityMixin extends PlayerEntity implements AdvMarioServerDataHolder {
+public abstract class ServerPlayerEntityMixin extends PlayerEntity implements AdvCPAServerDataHolder {
 	@Shadow public ServerPlayNetworkHandler networkHandler;
 
 	public ServerPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile gameProfile) {
@@ -39,7 +39,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 
 	@Override
 	public void move(MovementType movementType, Vec3d movement) {
-		MarioServerPlayerData data = this.mqm$getMarioData();
+		CPAServerPlayerData data = this.cpa$getCPAData();
 		Vec3d oldMovement = movement;
 		Vec3d oldPos = this.getPos();
 		// Only perform stomp checks on movement that comes from a player packet (as opposed to server-side travel).
@@ -93,7 +93,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 						if(extraLogging)
 							MarioQuaMario.LOGGER.info("Loaded a full set of Mario Data from NBT. This is {} in {} form.", storedCharacterID, storedPowerUpID);
 
-						MarioServerPlayerData data = this.mqm$getMarioData();
+						CPAServerPlayerData data = this.cpa$getCPAData();
 						if(this.networkHandler == null) {
 							if(extraLogging)
 								MarioQuaMario.LOGGER.info("Player is not yet ready for networking. Assigning silently for later synchronization...");
@@ -111,7 +111,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 				}
 				else MarioQuaMario.LOGGER.error("A player's NBT data contains an invalid Character ID: {}", storedCharacterID);
 
-//				MarioServerPlayerData data = mqm$getMarioData();
+//				CPAServerPlayerData data = cpa$getCPAData();
 //				if(networkHandler != null) {
 //					data.assignCharacter(getCharacterID(nbt));
 //					data.assignPowerUp(getPowerUpID(nbt));

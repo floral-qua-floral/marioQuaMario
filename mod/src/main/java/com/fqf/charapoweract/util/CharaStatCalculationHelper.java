@@ -1,6 +1,6 @@
 package com.fqf.charapoweract.util;
 
-import com.fqf.charapoweract.mariodata.MarioPlayerData;
+import com.fqf.charapoweract.cpadata.CPAPlayerData;
 import com.fqf.charapoweract_api.util.CharaStat;
 import com.fqf.charapoweract_api.util.StatCategory;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
@@ -18,7 +18,7 @@ import static java.util.EnumSet.of;
 import static net.minecraft.entity.attribute.EntityAttributes.*;
 
 public class CharaStatCalculationHelper {
-	public static double calculate(MarioPlayerData data, CharaStat stat) {
+	public static double calculate(CPAPlayerData data, CharaStat stat) {
 		return data.getPowerUp().adjustStat(stat, data.getCharacter().adjustStat(stat, adjustBaseValue(data, stat)));
 	}
 
@@ -26,7 +26,7 @@ public class CharaStatCalculationHelper {
 
 	private static final Identifier SPRINTING_ATTRIBUTE_MODIFIER_ID = Identifier.ofVanilla("sprinting");
 
-	public static double adjustBaseValue(MarioPlayerData data, CharaStat stat) {
+	public static double adjustBaseValue(CPAPlayerData data, CharaStat stat) {
 		PlayerEntity mario = data.getPlayer();
 
 		double multiplier = 1;

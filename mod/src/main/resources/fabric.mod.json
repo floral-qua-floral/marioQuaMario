@@ -20,10 +20,10 @@
 			"com.fqf.charapoweract.MarioQuaMario"
 		],
 		"client": [
-			"com.fqf.charapoweract.MarioQuaMarioClient"
+			"com.fqf.charapoweract.CharaPowerActClient"
 		],
 		"fabric-datagen": [
-			"com.fqf.charapoweract.MarioQuaMarioDataGenerator"
+			"com.fqf.charapoweract.CharaPowerActDataGenerator"
 		],
 
 		"cpmapi": [
@@ -54,12 +54,12 @@
 	},
 	"custom": {
 		"loom:injected_interfaces": {
-			"net/minecraft/class_1657": ["com/fqf/charapoweract/mariodata/injections/AdvMarioDataHolder"],
-			"net/minecraft/class_3222": ["com/fqf/charapoweract/mariodata/injections/AdvMarioServerDataHolder"],
+			"net/minecraft/class_1657": ["com/fqf/charapoweract/cpadata/injections/AdvCPADataHolder"],
+			"net/minecraft/class_3222": ["com/fqf/charapoweract/cpadata/injections/AdvCPAServerDataHolder"],
 
-			"net/minecraft/class_742": ["com/fqf/charapoweract/mariodata/injections/AdvMarioAbstractClientDataHolder"],
-			"net/minecraft/class_746": ["com/fqf/charapoweract/mariodata/injections/AdvMarioMainClientDataHolder"],
-			"net/minecraft/class_745": ["com/fqf/charapoweract/mariodata/injections/AdvMarioOtherClientDataHolder"]
+			"net/minecraft/class_742": ["com/fqf/charapoweract/cpadata/injections/AdvCPAAbstractClientDataHolder"],
+			"net/minecraft/class_746": ["com/fqf/charapoweract/cpadata/injections/AdvCPAMainClientDataHolder"],
+			"net/minecraft/class_745": ["com/fqf/charapoweract/cpadata/injections/AdvCPAOtherClientDataHolder"]
 		}
 	},
 

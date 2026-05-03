@@ -1,6 +1,6 @@
 package com.fqf.charapoweract.bapping;
 
-import com.fqf.charapoweract.mariodata.MarioPlayerData;
+import com.fqf.charapoweract.cpadata.CPAPlayerData;
 import com.fqf.charapoweract.packets.MarioBappingPackets;
 import com.fqf.charapoweract.util.MarioClientHelperManager;
 import com.fqf.charapoweract.util.MarioGamerules;
@@ -69,7 +69,7 @@ public class BlockBappingUtil {
 	}
 
 	@SuppressWarnings("UnusedReturnValue")
-	public static BapResult attemptBap(MarioPlayerData data, World world, BlockPos pos, Direction direction, int strength, boolean fullyNetwork) {
+	public static BapResult attemptBap(CPAPlayerData data, World world, BlockPos pos, Direction direction, int strength, boolean fullyNetwork) {
 		BlockState blockState = world.getBlockState(pos);
 
 		BapResult result = handleBapResultForAdventureMode(((Bappable) blockState.getBlock()).cpa$getBapResult(
@@ -86,7 +86,7 @@ public class BlockBappingUtil {
 		AbstractBapInfo info = makeBapInfo(world, pos, direction, strength, bapper, result);
 
 		if(result != BapResult.FAIL && fullyNetwork && bapper instanceof PlayerEntity mario && mario.isMainPlayer()) {
-			MarioClientHelperManager.packetSender.bapBlockC2S(pos, direction, mario.mqm$getMarioData().getAction());
+			MarioClientHelperManager.packetSender.bapBlockC2S(pos, direction, mario.cpa$getCPAData().getAction());
 			MarioClientHelperManager.packetSender.conditionallySaveBapToReplayMod(pos, direction, strength, result, bapper);
 		}
 
@@ -105,7 +105,7 @@ public class BlockBappingUtil {
 	public static @Nullable AbstractBapInfo makeBapInfo(World world, BlockPos pos, Direction direction, int strength, @Nullable Entity bapper, BapResult result) {
 		BlockState blockState = world.getBlockState(pos);
 		((Bappable) blockState.getBlock()).cpa$onBapped(
-				bapper instanceof PlayerEntity mario ? mario.mqm$getMarioData() : null,
+				bapper instanceof PlayerEntity mario ? mario.cpa$getCPAData() : null,
 				world, pos, blockState, direction, strength,
 				result);
 		switch(result) {

@@ -1,4 +1,4 @@
-package com.fqf.charapoweract.mariodata;
+package com.fqf.charapoweract.cpadata;
 
 import com.fqf.charapoweract.MarioQuaMario;
 import com.fqf.charapoweract.packets.MarioDataPackets;
@@ -29,9 +29,9 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public class MarioServerPlayerData extends MarioMoveableData implements ICPAAuthoritativeData {
+public class CPAServerPlayerData extends CPAMoveableData implements ICPAAuthoritativeData {
 	private final ServerPlayerEntity MARIO;
-	public MarioServerPlayerData(ServerPlayerEntity mario) {
+	public CPAServerPlayerData(ServerPlayerEntity mario) {
 		super();
 		this.MARIO = mario;
 	}

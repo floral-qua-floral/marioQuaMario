@@ -1,7 +1,8 @@
 package com.fqf.charapoweract.registries.actions;
 
-import com.fqf.charapoweract.mariodata.MarioPlayerData;
-import com.fqf.charapoweract.mariodata.MarioServerPlayerData;
+import com.fqf.charapoweract.cpadata.CPAMoveableData;
+import com.fqf.charapoweract.cpadata.CPAPlayerData;
+import com.fqf.charapoweract.cpadata.CPAServerPlayerData;
 import com.fqf.charapoweract.util.AdvancedWallInfo;
 import com.fqf.charapoweract_api.definitions.states.actions.*;
 import com.fqf.charapoweract_api.definitions.states.actions.util.EvaluatorEnvironment;
@@ -10,7 +11,6 @@ import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionDefin
 import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.charapoweract_api.cpadata.ICPAReadableMotionData;
 import com.fqf.charapoweract_api.cpadata.ICPATravelData;
-import com.fqf.charapoweract.mariodata.MarioMoveableData;
 import com.fqf.charapoweract_api.util.CharaStat;
 import com.fqf.charapoweract_api.util.StatCategory;
 import net.minecraft.entity.Entity;
@@ -111,7 +111,7 @@ public class UniversalActionDefinitionHelper implements
 			CharaStat gravity, @Nullable CharaStat jumpingGravity,
 			CharaStat terminalVelocity
 	) {
-		this.applyGravity(data, (jumpingGravity == null || ((MarioMoveableData) data).jumpCapped) ? gravity : jumpingGravity, terminalVelocity);
+		this.applyGravity(data, (jumpingGravity == null || ((CPAMoveableData) data).jumpCapped) ? gravity : jumpingGravity, terminalVelocity);
 	}
 
 	@Override public void airborneAccel(
@@ -163,10 +163,10 @@ public class UniversalActionDefinitionHelper implements
 		CharaStat cap = new CharaStat(capThreshold, StatCategory.JUMP_CAP);
 		return new TransitionDefinition(
 				forAction.getID(),
-				data -> !((MarioMoveableData) data).jumpCapped && (!data.getInputs().JUMP.isHeld()  || data.getYVel() < cap.get(data)),
+				data -> !((CPAMoveableData) data).jumpCapped && (!data.getInputs().JUMP.isHeld()  || data.getYVel() < cap.get(data)),
 				EvaluatorEnvironment.CLIENT_ONLY,
 				data -> {
-					((MarioMoveableData) data).jumpCapped = true;
+					((CPAMoveableData) data).jumpCapped = true;
 					data.setYVel(Math.min(cap.get(data), data.getYVel()));
 				},
 				(data, isSelf, seed) -> data.fadeJumpSound()
@@ -225,7 +225,7 @@ public class UniversalActionDefinitionHelper implements
 
 	@Override
 	public AdvancedWallInfo getWallInfo(ICPAReadableMotionData data) {
-		return((MarioPlayerData) data).getWallInfo();
+		return((CPAPlayerData) data).getWallInfo();
 	}
 
 	@Override
@@ -293,11 +293,11 @@ public class UniversalActionDefinitionHelper implements
 	@Override
 	public void dismount(ICPATravelData data, boolean reposition) {
 		data.getPlayer().stopRiding();
-		if(!reposition && data instanceof MarioServerPlayerData serverData)
+		if(!reposition && data instanceof CPAServerPlayerData serverData)
 			serverData.cancelNextRequestTeleportPacket = true;
-//		((MarioPlayerData) data).attemptDismount = reposition
-//				? MarioPlayerData.DismountType.VANILLA_DISMOUNT
-//				: MarioPlayerData.DismountType.DISMOUNT_IN_PLACE;
+//		((CPAPlayerData) data).attemptDismount = reposition
+//				? CPAPlayerData.DismountType.VANILLA_DISMOUNT
+//				: CPAPlayerData.DismountType.DISMOUNT_IN_PLACE;
 	}
 
 	@Override

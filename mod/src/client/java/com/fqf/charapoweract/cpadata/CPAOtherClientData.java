@@ -1,4 +1,4 @@
-package com.fqf.charapoweract.mariodata;
+package com.fqf.charapoweract.cpadata;
 
 import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
 import com.fqf.charapoweract.registries.power_granting.ParsedPowerUp;
@@ -14,10 +14,10 @@ import org.joml.Vector2d;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MarioOtherClientData extends MarioPlayerData implements ICPAClientDataImpl {
+public class CPAOtherClientData extends CPAPlayerData implements ICPAClientDataImpl {
 	public boolean jumpCapped;
 	private final OtherClientPlayerEntity MARIO;
-	public MarioOtherClientData(OtherClientPlayerEntity mario) {
+	public CPAOtherClientData(OtherClientPlayerEntity mario) {
 		super();
 		this.MARIO = mario;
 	}
@@ -89,7 +89,7 @@ public class MarioOtherClientData extends MarioPlayerData implements ICPAClientD
 			this.isGenerated = true;
 
 			// Calculate forward and sideways vector components
-			double yawRad = Math.toRadians(MarioOtherClientData.this.getPlayer().getYaw());
+			double yawRad = Math.toRadians(CPAOtherClientData.this.getPlayer().getYaw());
 			double negativeSineYaw = -Math.sin(yawRad);
 			double cosineYaw = Math.cos(yawRad);
 
@@ -143,7 +143,7 @@ public class MarioOtherClientData extends MarioPlayerData implements ICPAClientD
 
 	@Override
 	public RecordedCollisionSet getRecordedCollisions() {
-		return MarioMoveableData.EMPTY_RECORDED_COLLISION_SET;
+		return CPAMoveableData.EMPTY_RECORDED_COLLISION_SET;
 	}
 
 	@Override
@@ -153,6 +153,6 @@ public class MarioOtherClientData extends MarioPlayerData implements ICPAClientD
 
 	@Override
 	public MarioInputs getInputs() {
-		return MarioServerPlayerData.PHONY_INPUTS;
+		return CPAServerPlayerData.PHONY_INPUTS;
 	}
 }

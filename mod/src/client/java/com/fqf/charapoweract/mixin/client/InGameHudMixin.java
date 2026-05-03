@@ -1,9 +1,9 @@
 package com.fqf.charapoweract.mixin.client;
 
 import com.fqf.charapoweract.MarioQuaMario;
+import com.fqf.charapoweract.cpadata.CPAServerPlayerData;
 import com.fqf.charapoweract_api.definitions.states.PowerUpDefinition;
-import com.fqf.charapoweract.mariodata.MarioMainClientData;
-import com.fqf.charapoweract.mariodata.MarioServerPlayerData;
+import com.fqf.charapoweract.cpadata.CPAMainClientData;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.MinecraftClient;
@@ -40,11 +40,11 @@ public class InGameHudMixin {
 	@Unique
 	private static @Nullable Identifier getPowerHeart(InGameHud.HeartType heartType, boolean hardcore, boolean half, boolean blinking) {
 		ClientPlayerEntity mario = MinecraftClient.getInstance().player;
-		if(mario == null || !mario.mqm$getMarioData().isEnabled()) {
+		if(mario == null || !mario.cpa$getCPAData().isEnabled()) {
 			return null;
 		}
 
-		PowerUpDefinition.PowerHeart powerHeart = mario.mqm$getMarioData().getPowerUp().HEART;
+		PowerUpDefinition.PowerHeart powerHeart = mario.cpa$getCPAData().getPowerUp().HEART;
 
 		if(heartType == InGameHud.HeartType.CONTAINER)
 			return blinking ? powerHeart.containerBlinkingTexture() : powerHeart.containerTexture();
@@ -68,7 +68,7 @@ public class InGameHudMixin {
 		MinecraftClient client = MinecraftClient.getInstance();
 		ClientPlayerEntity clientMario = client.player;
 		if(clientMario == null) return;
-		MarioMainClientData clientData = clientMario.mqm$getMarioData();
+		CPAMainClientData clientData = clientMario.cpa$getCPAData();
 		if(!clientData.isEnabled()) return;
 
 		double horizontalSpeed = Vector2d.distance(clientMario.getX(), clientMario.getZ(), clientMario.prevX, clientMario.prevZ);
@@ -80,7 +80,7 @@ public class InGameHudMixin {
 		if(integratedServer == null) return;
 		Entity serverMario = Objects.requireNonNull(integratedServer.getWorld(clientMario.getWorld().getRegistryKey())).getEntityById(clientMario.getId());
 		if(serverMario == null) return;
-		MarioServerPlayerData serverData = ((ServerPlayerEntity) serverMario).mqm$getMarioData();
+		CPAServerPlayerData serverData = ((ServerPlayerEntity) serverMario).cpa$getCPAData();
 
 		renderText(context, 0, "S: ", serverMario.getVelocity().horizontalLength(), serverMario.getVelocity().y);
 
