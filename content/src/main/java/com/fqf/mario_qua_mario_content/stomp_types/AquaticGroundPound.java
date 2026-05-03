@@ -1,10 +1,10 @@
 package com.fqf.mario_qua_mario_content.stomp_types;
 
-import com.fqf.mario_qua_mario_api.definitions.CollisionAttackTypeDefinition;
-import com.fqf.mario_qua_mario_api.interfaces.CollisionAttackResult;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
-import com.fqf.mario_qua_mario_api.util.CharaStat;
+import com.fqf.charapoweract_api.definitions.CollisionAttackTypeDefinition;
+import com.fqf.charapoweract_api.interfaces.CollisionAttackResult;
+import com.fqf.charapoweract_api.mariodata.IMarioData;
+import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.util.CharaStat;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.aquatic.Submerged;
 import net.minecraft.entity.Entity;
@@ -15,8 +15,8 @@ import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.fqf.mario_qua_mario_api.util.StatCategory.DAMAGE;
-import static com.fqf.mario_qua_mario_api.util.StatCategory.STOMP;
+import static com.fqf.charapoweract_api.util.StatCategory.DAMAGE;
+import static com.fqf.charapoweract_api.util.StatCategory.STOMP;
 
 public class AquaticGroundPound extends JumpStomp implements CollisionAttackTypeDefinition {
 	public static final Identifier ID = MarioQuaMarioContent.makeID("aquatic_ground_pound");

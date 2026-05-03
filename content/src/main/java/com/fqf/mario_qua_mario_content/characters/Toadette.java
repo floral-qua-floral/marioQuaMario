@@ -1,6 +1,6 @@
 package com.fqf.mario_qua_mario_content.characters;
 
-import com.fqf.mario_qua_mario_api.definitions.states.CharacterDefinition;
+import com.fqf.charapoweract_api.definitions.states.CharacterDefinition;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
 import net.minecraft.sound.SoundEvent;

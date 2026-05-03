@@ -17,19 +17,19 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.fqf.mario_qua_mario_api.MarioQuaMarioAPI"
+			"com.fqf.charapoweract_api.MarioQuaMarioAPI"
 		],
 		"client": [
-          "com.fqf.mario_qua_mario_api.MarioQuaMarioAPIClient"
+          "com.fqf.charapoweract_api.MarioQuaMarioAPIClient"
 		],
 		"fabric-datagen": [
-          "com.fqf.mario_qua_mario_api.MarioQuaMarioAPIDataGenerator"
+          "com.fqf.charapoweract_api.MarioQuaMarioAPIDataGenerator"
 		]
 	},
 	"mixins": [
-		"mario_qua_mario_api.mixins.json",
+		"charapoweract_api.mixins.json",
 		{
-			"config": "mario_qua_mario_api.client.mixins.json",
+			"config": "charapoweract_api.client.mixins.json",
 			"environment": "client"
 		}
 	],
@@ -41,23 +41,23 @@
 		"mario_qua_mario": "*"
 	},
 	"suggests": {
-		"another-mod": "*"
+
 	},
 
 	"custom": {
 		"loom:injected_interfaces": {
-			"net/minecraft/class_1657": ["com/fqf/mario_qua_mario_api/mariodata/injections/IMarioDataHolder"],
+			"net/minecraft/class_1657": ["com/fqf/charapoweract_api/mariodata/injections/IMarioDataHolder"],
 			"net/minecraft/class_3222": [
-				"com/fqf/mario_qua_mario_api/mariodata/injections/IMarioAuthoritativeDataHolder",
-				"com/fqf/mario_qua_mario_api/mariodata/injections/IMarioTravelDataHolder"
+				"com/fqf/charapoweract_api/mariodata/injections/IMarioAuthoritativeDataHolder",
+				"com/fqf/charapoweract_api/mariodata/injections/IMarioTravelDataHolder"
 			],
 
-			"net/minecraft/class_742": ["com/fqf/mario_qua_mario_api/mariodata/injections/IMarioClientDataHolder"],
+			"net/minecraft/class_742": ["com/fqf/charapoweract_api/mariodata/injections/IMarioClientDataHolder"],
 			"net/minecraft/class_746": [
-				"com/fqf/mario_qua_mario_api/mariodata/injections/IMarioClientDataHolder",
-				"com/fqf/mario_qua_mario_api/mariodata/injections/IMarioTravelDataHolder"
+				"com/fqf/charapoweract_api/mariodata/injections/IMarioClientDataHolder",
+				"com/fqf/charapoweract_api/mariodata/injections/IMarioTravelDataHolder"
 			],
-			"net/minecraft/class_745": ["com/fqf/mario_qua_mario_api/mariodata/injections/IMarioClientDataHolder"]
+			"net/minecraft/class_745": ["com/fqf/charapoweract_api/mariodata/injections/IMarioClientDataHolder"]
 		}
 	}
 }

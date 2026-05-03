@@ -1,16 +1,16 @@
 package com.fqf.mario_qua_mario_content.actions.airborne;
 
-import com.fqf.mario_qua_mario_api.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.*;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.*;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimation;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioAuthoritativeData;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
-import com.fqf.mario_qua_mario_api.util.Easing;
+import com.fqf.charapoweract_api.definitions.states.actions.AirborneActionDefinition;
+import com.fqf.charapoweract_api.definitions.states.actions.util.*;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimation;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
+import com.fqf.charapoweract_api.mariodata.IMarioAuthoritativeData;
+import com.fqf.charapoweract_api.mariodata.IMarioClientData;
+import com.fqf.charapoweract_api.mariodata.IMarioData;
+import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.util.Easing;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.aquatic.AquaticPoundFlip;
 import com.fqf.mario_qua_mario_content.actions.aquatic.Submerged;

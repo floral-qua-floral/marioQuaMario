@@ -1,6 +1,6 @@
 package com.fqf.mario_qua_mario_content.mixin;
 
-import com.fqf.mario_qua_mario_api.mariodata.injections.IMarioAuthoritativeDataHolder;
+import com.fqf.charapoweract_api.mariodata.injections.IMarioAuthoritativeDataHolder;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;

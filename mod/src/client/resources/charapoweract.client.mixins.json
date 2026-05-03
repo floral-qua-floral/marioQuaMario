@@ -1,0 +1,28 @@
+{
+  "required": true,
+  "package": "com.fqf.charapoweract.mixin.client",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "AbstractClientPlayerEntityMarioDataMixin",
+    "BipedEntityModelMixin",
+    "CameraMixin",
+    "ChunkRendererRegionMixin",
+    "ClientPlayerEntityMarioDataMixin",
+    "ClientPlayerEntityMixin",
+    "ClientPlayNetworkHandlerMixin",
+    "EntityRenderDispatcherMixin",
+    "GameRendererMixin",
+    "HeldItemRendererMixin",
+    "InGameHudMixin",
+    "MinecraftClientMixin",
+    "OtherClientPlayerEntityMarioDataMixin",
+    "PlayerEntityModelMixin",
+    "PlayerEntityRendererMixin",
+    "compat.CPMClientBaseMixin",
+    "compat.FlashbackSyncOnRecordingStartMixin",
+    "compat.SodiumLevelSliceMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

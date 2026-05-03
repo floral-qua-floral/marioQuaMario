@@ -1,12 +1,12 @@
 package com.fqf.mario_qua_mario_content.actions.grounded;
 
-import com.fqf.mario_qua_mario_api.definitions.states.actions.GroundedActionDefinition;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.ActionCategory;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.TransitionInjectionDefinition;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charapoweract_api.definitions.states.actions.GroundedActionDefinition;
+import com.fqf.charapoweract_api.definitions.states.actions.util.ActionCategory;
+import com.fqf.charapoweract_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionDefinition;
+import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionInjectionDefinition;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;

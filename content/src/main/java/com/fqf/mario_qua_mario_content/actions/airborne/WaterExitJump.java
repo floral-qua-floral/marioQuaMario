@@ -1,12 +1,12 @@
 package com.fqf.mario_qua_mario_content.actions.airborne;
 
-import com.fqf.mario_qua_mario_api.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.ActionCategory;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.TransitionInjectionDefinition;
-import com.fqf.mario_qua_mario_api.util.CharaStat;
-import com.fqf.mario_qua_mario_api.util.StatCategory;
+import com.fqf.charapoweract_api.definitions.states.actions.AirborneActionDefinition;
+import com.fqf.charapoweract_api.definitions.states.actions.util.ActionCategory;
+import com.fqf.charapoweract_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionDefinition;
+import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionInjectionDefinition;
+import com.fqf.charapoweract_api.util.CharaStat;
+import com.fqf.charapoweract_api.util.StatCategory;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;

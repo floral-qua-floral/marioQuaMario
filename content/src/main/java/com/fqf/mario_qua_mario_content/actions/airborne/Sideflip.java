@@ -1,20 +1,17 @@
 package com.fqf.mario_qua_mario_content.actions.airborne;
 
-import com.fqf.mario_qua_mario_api.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.TransitionInjectionDefinition;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.*;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimation;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioAuthoritativeData;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
-import com.fqf.mario_qua_mario_api.util.CharaStat;
-import com.fqf.mario_qua_mario_api.util.Easing;
+import com.fqf.charapoweract_api.definitions.states.actions.AirborneActionDefinition;
+import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionInjectionDefinition;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimation;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
+import com.fqf.charapoweract_api.mariodata.IMarioAuthoritativeData;
+import com.fqf.charapoweract_api.mariodata.IMarioClientData;
+import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.util.CharaStat;
+import com.fqf.charapoweract_api.util.Easing;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
-import com.fqf.mario_qua_mario_content.util.ActionTimerVars;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-import static com.fqf.mario_qua_mario_api.util.StatCategory.*;
+import static com.fqf.charapoweract_api.util.StatCategory.*;
 
 public class Sideflip extends Backflip implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMarioContent.makeID("sideflip");

@@ -1,6 +1,6 @@
-package com.fqf.mario_qua_mario.util;
+package com.fqf.charapoweract.util;
 
-import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.charapoweract.MarioQuaMario;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundEvent;

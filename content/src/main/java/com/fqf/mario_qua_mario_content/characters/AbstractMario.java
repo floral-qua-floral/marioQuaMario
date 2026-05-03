@@ -1,10 +1,9 @@
 package com.fqf.mario_qua_mario_content.characters;
 
-import com.fqf.mario_qua_mario_api.definitions.states.CharacterDefinition;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioAuthoritativeData;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
-import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
+import com.fqf.charapoweract_api.definitions.states.CharacterDefinition;
+import com.fqf.charapoweract_api.mariodata.IMarioAuthoritativeData;
+import com.fqf.charapoweract_api.mariodata.IMarioClientData;
+import com.fqf.charapoweract_api.mariodata.IMarioData;
 import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
 import com.fqf.mario_qua_mario_content.actions.airborne.LavaBoost;
 import com.fqf.mario_qua_mario_content.actions.generic.Debug;
@@ -16,13 +15,10 @@ import com.fqf.mario_qua_mario_content.util.Powers;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageTypes;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 public abstract class AbstractMario implements CharacterDefinition {

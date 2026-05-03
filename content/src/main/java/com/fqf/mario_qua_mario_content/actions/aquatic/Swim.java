@@ -1,11 +1,11 @@
 package com.fqf.mario_qua_mario_content.actions.aquatic;
 
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.PlayermodelAnimation;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.ProgressHandler;
-import com.fqf.mario_qua_mario_api.util.CharaStat;
+import com.fqf.charapoweract_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionDefinition;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.ProgressHandler;
+import com.fqf.charapoweract_api.util.CharaStat;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.util.ActionTimerVars;
 import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-import static com.fqf.mario_qua_mario_api.util.StatCategory.*;
+import static com.fqf.charapoweract_api.util.StatCategory.*;
 
 public class Swim extends Submerged {
 	public static final Identifier ID = MarioQuaMarioContent.makeID("swim");

@@ -1,9 +1,9 @@
 package com.fqf.mario_qua_mario_content.actions.generic;
 
-import com.fqf.mario_qua_mario_api.definitions.states.actions.GenericActionDefinition;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.SlidingStatus;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.definitions.states.actions.GenericActionDefinition;
+import com.fqf.charapoweract_api.definitions.states.actions.util.SlidingStatus;
+import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionDefinition;
+import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;

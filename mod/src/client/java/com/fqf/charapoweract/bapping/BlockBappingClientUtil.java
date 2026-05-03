@@ -1,0 +1,42 @@
+package com.fqf.charapoweract.bapping;
+
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.math.BlockPos;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class BlockBappingClientUtil {
+	public static void clientWorldTick(ClientWorld world) {
+		BlockBappingUtil.commonWorldTick(world);
+	}
+
+	public static final Map<ClientWorld, Map<BlockPos, BumpedBlockParticle>> PARTICLES = new HashMap<>();
+
+	public static void clientBap(AbstractBapInfo info) {
+		if(info instanceof BumpingBlockInfo bumpingInfo) {
+			ClientWorld clientWorld = (ClientWorld) info.WORLD;
+
+			BumpedBlockParticle newParticle = new BumpedBlockParticle(clientWorld,
+					info.POS, bumpingInfo.DISPLACEMENT_DIRECTION, info instanceof BapBreakingBlockInfo);
+
+			if(!PARTICLES.containsKey(clientWorld)) PARTICLES.put(clientWorld, new HashMap<>());
+			BumpedBlockParticle oldParticle = PARTICLES.get(clientWorld).put(info.POS, newParticle);
+			if(oldParticle != null) oldParticle.markDead();
+
+			MinecraftClient.getInstance().particleManager.addParticle(newParticle);
+		}
+	}
+
+	public static BumpedBlockParticle getBumpedBlockUnder(Entity entity) {
+		if(entity.isOnGround() && entity.getWorld() instanceof ClientWorld clientWorld) {
+			Map<BlockPos, BumpedBlockParticle> map = BlockBappingClientUtil.PARTICLES.get(clientWorld);
+			if(map != null) {
+				return map.get(entity.getVelocityAffectingPos());
+			}
+		}
+		return null;
+	}
+}

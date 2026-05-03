@@ -1,10 +1,10 @@
 package com.fqf.mario_qua_mario_content.actions.wallbound;
 
-import com.fqf.mario_qua_mario_api.definitions.states.actions.WallboundActionDefinition;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.*;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.*;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioReadableMotionData;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.definitions.states.actions.WallboundActionDefinition;
+import com.fqf.charapoweract_api.definitions.states.actions.util.*;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
+import com.fqf.charapoweract_api.mariodata.IMarioReadableMotionData;
+import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;

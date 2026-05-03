@@ -52,11 +52,11 @@ repositories {
 }
 
 loom {
-	accessWidenerPath = file("src/main/resources/mario_qua_mario.accesswidener")
+	accessWidenerPath = file("src/main/resources/charapoweract.accesswidener")
 	splitEnvironmentSourceSets()
 
 	mods {
-		"mario_qua_mario" {
+		"charapoweract" {
 			sourceSet sourceSets.main
 			sourceSet sourceSets.client
 		}

@@ -1,6 +1,6 @@
 package com.fqf.mario_qua_mario_content.util;
 
-import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
+import com.fqf.charapoweract_api.mariodata.IMarioData;
 
 public class ActionTimerVars {
 	public int actionTimer;

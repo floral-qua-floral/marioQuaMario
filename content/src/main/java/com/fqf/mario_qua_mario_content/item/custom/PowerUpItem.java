@@ -1,6 +1,6 @@
 package com.fqf.mario_qua_mario_content.item.custom;
 
-import com.fqf.mario_qua_mario_api.mariodata.IMarioAuthoritativeData;
+import com.fqf.charapoweract_api.mariodata.IMarioAuthoritativeData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

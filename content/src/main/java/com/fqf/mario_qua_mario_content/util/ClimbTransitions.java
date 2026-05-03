@@ -1,11 +1,11 @@
 package com.fqf.mario_qua_mario_content.util;
 
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioReadableMotionData;
-import com.fqf.mario_qua_mario_api.util.CharaStat;
-import com.fqf.mario_qua_mario_api.util.StatCategory;
+import com.fqf.charapoweract_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionDefinition;
+import com.fqf.charapoweract_api.mariodata.IMarioClientData;
+import com.fqf.charapoweract_api.mariodata.IMarioReadableMotionData;
+import com.fqf.charapoweract_api.util.CharaStat;
+import com.fqf.charapoweract_api.util.StatCategory;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.Voicelines;
 import com.fqf.mario_qua_mario_content.actions.generic.ClimbPole;

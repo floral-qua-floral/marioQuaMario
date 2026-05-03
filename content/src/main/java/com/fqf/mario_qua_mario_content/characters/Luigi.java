@@ -1,6 +1,6 @@
 package com.fqf.mario_qua_mario_content.characters;
 
-import com.fqf.mario_qua_mario_api.definitions.states.CharacterDefinition;
+import com.fqf.charapoweract_api.definitions.states.CharacterDefinition;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
 import net.minecraft.sound.SoundEvent;
@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-import static com.fqf.mario_qua_mario_api.util.StatCategory.*;
+import static com.fqf.charapoweract_api.util.StatCategory.*;
 
 public class Luigi extends AbstractMario implements CharacterDefinition {
 	public static final Identifier ID = MarioQuaMarioContent.makeID("luigi");

@@ -1,0 +1,24 @@
+package com.fqf.charapoweract_api.mariodata.util;
+
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Set;
+
+public interface RecordedCollisionSet extends Set<RecordedCollision> {
+	boolean collidedOnAxis(Direction.Axis axis);
+	Vec3d getPreCollisionVelocity();
+	Vec3d getReflectedVelocity();
+	Vec3d getHorizontallyReflectedVelocity();
+
+	@Nullable Direction getDirectionOfCollisionsWith(CollisionMatcher matcher, boolean allowVertical);
+	@Nullable RecordedCollision getAnyMatch(CollisionMatcher matcher);
+
+	default boolean collidedHorizontally() {
+		return this.collidedOnAxis(Direction.Axis.X) || this.collidedOnAxis(Direction.Axis.Z);
+	}
+	default boolean collidedVertically() {
+		return this.collidedOnAxis(Direction.Axis.Y);
+	}
+}

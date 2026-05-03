@@ -1,11 +1,11 @@
 package com.fqf.mario_qua_mario_content.powerups;
 
-import com.fqf.mario_qua_mario_api.definitions.states.PowerUpDefinition;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioAuthoritativeData;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
-import com.fqf.mario_qua_mario_api.util.StatCategory;
+import com.fqf.charapoweract_api.definitions.states.PowerUpDefinition;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.charapoweract_api.mariodata.IMarioAuthoritativeData;
+import com.fqf.charapoweract_api.mariodata.IMarioClientData;
+import com.fqf.charapoweract_api.mariodata.IMarioData;
+import com.fqf.charapoweract_api.util.StatCategory;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;

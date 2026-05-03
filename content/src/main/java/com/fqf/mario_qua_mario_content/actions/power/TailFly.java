@@ -1,16 +1,16 @@
 package com.fqf.mario_qua_mario_content.actions.power;
 
-import com.fqf.mario_qua_mario_api.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.TransitionInjectionDefinition;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.PlayermodelAnimation;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.ProgressHandler;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
-import com.fqf.mario_qua_mario_api.util.CharaStat;
+import com.fqf.charapoweract_api.definitions.states.actions.AirborneActionDefinition;
+import com.fqf.charapoweract_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionDefinition;
+import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionInjectionDefinition;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.ProgressHandler;
+import com.fqf.charapoweract_api.mariodata.IMarioClientData;
+import com.fqf.charapoweract_api.mariodata.IMarioData;
+import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.util.CharaStat;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.airborne.Fall;
 import com.fqf.mario_qua_mario_content.actions.airborne.GroundPoundFlip;
@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import static com.fqf.mario_qua_mario_api.util.StatCategory.JUMP_VELOCITY;
-import static com.fqf.mario_qua_mario_api.util.StatCategory.POWER_UP;
+import static com.fqf.charapoweract_api.util.StatCategory.JUMP_VELOCITY;
+import static com.fqf.charapoweract_api.util.StatCategory.POWER_UP;
 
 public class TailFly extends PJump implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMarioContent.makeID("tail_fly");

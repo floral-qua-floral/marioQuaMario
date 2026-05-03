@@ -1,0 +1,48 @@
+package com.fqf.charapoweract.registries.actions.parsed;
+
+import com.fqf.charapoweract_api.definitions.states.actions.GenericActionDefinition;
+import com.fqf.charapoweract_api.definitions.states.actions.util.ActionCategory;
+import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionDefinition;
+import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionInjectionDefinition;
+import com.fqf.charapoweract.mariodata.MarioMoveableData;
+import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
+import net.minecraft.util.Identifier;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+
+public class ParsedGenericAction extends AbstractParsedAction {
+	private final GenericActionDefinition GENERIC_DEFINITION;
+
+	public ParsedGenericAction(GenericActionDefinition definition, HashMap<Identifier, Set<TransitionInjectionDefinition>> allInjections) {
+		super(definition, allInjections);
+		this.GENERIC_DEFINITION = definition;
+	}
+
+	@Override
+	public boolean travelHook(MarioMoveableData data) {
+		data.jumpCapped = false;
+		return this.GENERIC_DEFINITION.travelHook(data);
+	}
+
+	@Override
+	protected ActionCategory getCategory() {
+		return ActionCategory.GENERIC;
+	}
+
+	@Override
+	protected List<TransitionDefinition> getBasicTransitions() {
+		return this.GENERIC_DEFINITION.getBasicTransitions();
+	}
+
+	@Override
+	protected List<TransitionDefinition> getInputTransitions() {
+		return this.GENERIC_DEFINITION.getInputTransitions();
+	}
+
+	@Override
+	protected List<TransitionDefinition> getWorldCollisionTransitions() {
+		return this.GENERIC_DEFINITION.getWorldCollisionTransitions();
+	}
+}

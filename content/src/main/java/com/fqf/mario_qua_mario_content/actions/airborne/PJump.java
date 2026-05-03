@@ -1,13 +1,13 @@
 package com.fqf.mario_qua_mario_content.actions.airborne;
 
-import com.fqf.mario_qua_mario_api.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.SneakingRule;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.SprintingRule;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.LimbAnimation;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charapoweract_api.definitions.states.actions.AirborneActionDefinition;
+import com.fqf.charapoweract_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.charapoweract_api.definitions.states.actions.util.SneakingRule;
+import com.fqf.charapoweract_api.definitions.states.actions.util.SprintingRule;
+import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionDefinition;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.LimbAnimation;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario_content.actions.grounded.PRun;

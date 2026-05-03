@@ -1,6 +1,6 @@
 package com.fqf.mario_qua_mario_content;
 
-import com.fqf.mario_qua_mario_api.definitions.VoicelineSetDefinition;
+import com.fqf.charapoweract_api.definitions.VoicelineSetDefinition;
 
 import java.util.Set;
 

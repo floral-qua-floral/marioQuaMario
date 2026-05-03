@@ -1,8 +1,8 @@
 package com.fqf.mario_qua_mario_content.powerups;
 
-import com.fqf.mario_qua_mario_api.definitions.states.PowerUpDefinition;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.mario_qua_mario_api.mariodata.*;
+import com.fqf.charapoweract_api.definitions.states.PowerUpDefinition;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.charapoweract_api.mariodata.*;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.Voicelines;
 import com.fqf.mario_qua_mario_content.entity.custom.MarioFireballProjectileEntity;

@@ -1,7 +1,7 @@
 package com.fqf.mario_qua_mario_content.actions.grounded;
 
-import com.fqf.mario_qua_mario_api.definitions.states.actions.GroundedActionDefinition;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.*;
+import com.fqf.charapoweract_api.definitions.states.actions.GroundedActionDefinition;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.util.ActionTimerVars;
 import com.fqf.mario_qua_mario_content.util.StandUpWithKneeAnimation;

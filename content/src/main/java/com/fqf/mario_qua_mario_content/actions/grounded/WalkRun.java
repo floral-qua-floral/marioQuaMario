@@ -1,13 +1,13 @@
 package com.fqf.mario_qua_mario_content.actions.grounded;
 
-import com.fqf.mario_qua_mario_api.definitions.states.actions.GroundedActionDefinition;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.*;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.*;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioReadableMotionData;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioTravelData;
-import com.fqf.mario_qua_mario_api.util.CharaStat;
-import com.fqf.mario_qua_mario_api.util.Easing;
+import com.fqf.charapoweract_api.definitions.states.actions.GroundedActionDefinition;
+import com.fqf.charapoweract_api.definitions.states.actions.util.*;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
+import com.fqf.charapoweract_api.mariodata.IMarioData;
+import com.fqf.charapoweract_api.mariodata.IMarioReadableMotionData;
+import com.fqf.charapoweract_api.mariodata.IMarioTravelData;
+import com.fqf.charapoweract_api.util.CharaStat;
+import com.fqf.charapoweract_api.util.Easing;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.util.ActionTimerVars;
 import net.minecraft.util.Identifier;
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-import static com.fqf.mario_qua_mario_api.util.StatCategory.*;
+import static com.fqf.charapoweract_api.util.StatCategory.*;
 
 public class WalkRun extends SubWalk implements GroundedActionDefinition {
 	public static final Identifier ID = MarioQuaMarioContent.makeID("walk_run");

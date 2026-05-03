@@ -1,19 +1,18 @@
 package com.fqf.mario_qua_mario_content.actions.wallbound;
 
-import com.fqf.mario_qua_mario_api.HelperGetter;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.*;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.mario_qua_mario_api.mariodata.*;
+import com.fqf.charapoweract_api.HelperGetter;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.charapoweract_api.mariodata.*;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.WallboundActionDefinition;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.*;
+import com.fqf.charapoweract_api.definitions.states.actions.WallboundActionDefinition;
+import com.fqf.charapoweract_api.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario_content.Voicelines;
 import com.fqf.mario_qua_mario_content.actions.airborne.*;
 import com.fqf.mario_qua_mario_content.actions.generic.ClimbPole;
 import com.fqf.mario_qua_mario_content.actions.grounded.SubWalk;
 import com.fqf.mario_qua_mario_content.util.ClimbTransitions;
 import com.fqf.mario_qua_mario_content.util.ClimbVars;
-import com.fqf.mario_qua_mario_content.util.MarioContentSFX;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;

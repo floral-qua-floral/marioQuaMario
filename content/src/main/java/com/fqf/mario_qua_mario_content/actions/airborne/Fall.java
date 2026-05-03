@@ -1,12 +1,12 @@
 package com.fqf.mario_qua_mario_content.actions.airborne;
 
-import com.fqf.mario_qua_mario_api.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.*;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.PlayermodelAnimation;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.mario_qua_mario_api.mariodata.*;
-import com.fqf.mario_qua_mario_api.util.CharaStat;
+import com.fqf.charapoweract_api.definitions.states.actions.AirborneActionDefinition;
+import com.fqf.charapoweract_api.definitions.states.actions.util.*;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.charapoweract_api.mariodata.*;
+import com.fqf.charapoweract_api.util.CharaStat;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario_content.actions.grounded.SubWalk;
@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-import static com.fqf.mario_qua_mario_api.util.StatCategory.*;
+import static com.fqf.charapoweract_api.util.StatCategory.*;
 
 public class Fall implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMarioContent.makeID("fall");

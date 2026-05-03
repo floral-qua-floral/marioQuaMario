@@ -1,10 +1,10 @@
 package com.fqf.mario_qua_mario_content.actions.wallbound;
 
-import com.fqf.mario_qua_mario_api.HelperGetter;
-import com.fqf.mario_qua_mario_api.mariodata.*;
+import com.fqf.charapoweract_api.HelperGetter;
+import com.fqf.charapoweract_api.mariodata.*;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.WallboundActionDefinition;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.*;
+import com.fqf.charapoweract_api.definitions.states.actions.WallboundActionDefinition;
+import com.fqf.charapoweract_api.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario_content.util.ClimbTransitions;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;

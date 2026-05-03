@@ -1,9 +1,9 @@
 package com.fqf.mario_qua_mario_content.actions.generic;
 
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.EntireBodyAnimation;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.PlayermodelAnimation;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.util.animation.ProgressHandler;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.EntireBodyAnimation;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.ProgressHandler;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;

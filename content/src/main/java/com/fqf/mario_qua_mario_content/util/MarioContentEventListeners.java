@@ -1,6 +1,6 @@
 package com.fqf.mario_qua_mario_content.util;
 
-import com.fqf.mario_qua_mario_api.mariodata.IMarioData;
+import com.fqf.charapoweract_api.mariodata.IMarioData;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import com.fqf.mario_qua_mario_content.characters.Mario;
 import com.fqf.mario_qua_mario_content.stomp_types.JumpStomp;

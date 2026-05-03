@@ -1,9 +1,9 @@
 package com.fqf.mario_qua_mario_content.util;
 
-import com.fqf.mario_qua_mario_api.HelperGetter;
-import com.fqf.mario_qua_mario_api.definitions.states.actions.WallboundActionDefinition;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioClientData;
-import com.fqf.mario_qua_mario_api.mariodata.IMarioReadableMotionData;
+import com.fqf.charapoweract_api.HelperGetter;
+import com.fqf.charapoweract_api.definitions.states.actions.WallboundActionDefinition;
+import com.fqf.charapoweract_api.mariodata.IMarioClientData;
+import com.fqf.charapoweract_api.mariodata.IMarioReadableMotionData;
 import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
 import net.minecraft.block.BlockState;
 import net.minecraft.sound.BlockSoundGroup;
