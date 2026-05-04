@@ -32,7 +32,7 @@ repositories {
 		url = "https://raw.githubusercontent.com/tom5454/maven/main"
 	}
 
-	exclusiveContent { // Sable
+	exclusiveContent { // Sable Companion
 		forRepository {
 			maven {
 				url = "https://maven.ryanhcode.dev/releases"
@@ -43,11 +43,6 @@ repositories {
 			includeGroup("dev.ryanhcode.sable")
 			includeGroup("dev.ryanhcode.sable-companion")
 		}
-	}
-	maven { url "https://maven.blamejared.com/" } // Veil (dependency for Sable)
-	maven { // Forge Config API Port (dependency for Sable)
-		name = "Fuzs Mod Resources"
-		url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
 	}
 }
 
@@ -103,7 +98,8 @@ dependencies {
 	modCompileOnly "maven.modrinth:presence-footsteps:${presence_footsteps_version}"
 
 	// TODO: Enable bapping blocks in sublevels?
-	modCompileOnly("dev.ryanhcode.sable:sable-fabric-${project.minecraft_version}:${project.sable_version}")
+//	modCompileOnly("dev.ryanhcode.sable:sable-fabric-${project.minecraft_version}:${project.sable_version}")
+//	include(modApi("dev.ryanhcode.sable-companion:sable-companion-fabric-${project.minecraft_version}:${project.sable_companion_version}"))
 }
 
 processResources {
