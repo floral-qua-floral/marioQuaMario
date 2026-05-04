@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"id": "mario_qua_mario_content",
+	"id": "mario_qua_mario",
 	"version": "${version}",
 	"name": "Mario qua Mario",
 	"description": "Mod that uses the Character Power Action framework to add Mario as a playable character.",
@@ -13,120 +13,120 @@
 		"issues": "https://github.com/floral-qua-floral/marioQuaMario/issues"
 	},
 	"license": "GPL-3.0-only",
-	"icon": "assets/mario_qua_mario_content/icon.png",
+	"icon": "assets/mario_qua_mario/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"cpa-collision-attacks": [
-			"com.fqf.mario_qua_mario_content.stomp_types.JumpStomp",
-			"com.fqf.mario_qua_mario_content.stomp_types.GroundPound",
-			"com.fqf.mario_qua_mario_content.stomp_types.AquaticGroundPound"
+			"com.fqf.mario_qua_mario.collision_attacks.JumpStomp",
+			"com.fqf.mario_qua_mario.collision_attacks.GroundPound",
+			"com.fqf.mario_qua_mario.collision_attacks.AquaticGroundPound"
 		],
 
 		"cpa-generic-actions": [
-			"com.fqf.mario_qua_mario_content.actions.generic.ClimbPole",
+			"com.fqf.mario_qua_mario.actions.generic.ClimbPole",
 
-			"com.fqf.mario_qua_mario_content.actions.generic.Debug",
-			"com.fqf.mario_qua_mario_content.actions.generic.DebugSprint",
-			"com.fqf.mario_qua_mario_content.actions.generic.DebugSpinPitch",
-			"com.fqf.mario_qua_mario_content.actions.generic.DebugSpinYaw",
-			"com.fqf.mario_qua_mario_content.actions.generic.DebugSpinRoll",
-			"com.fqf.mario_qua_mario_content.actions.generic.DebugSideTurn",
-			"com.fqf.mario_qua_mario_content.actions.generic.DebugVanillaTravel"
+			"com.fqf.mario_qua_mario.actions.generic.Debug",
+			"com.fqf.mario_qua_mario.actions.generic.DebugSprint",
+			"com.fqf.mario_qua_mario.actions.generic.DebugSpinPitch",
+			"com.fqf.mario_qua_mario.actions.generic.DebugSpinYaw",
+			"com.fqf.mario_qua_mario.actions.generic.DebugSpinRoll",
+			"com.fqf.mario_qua_mario.actions.generic.DebugSideTurn",
+			"com.fqf.mario_qua_mario.actions.generic.DebugVanillaTravel"
 		],
 		"cpa-grounded-actions": [
-			"com.fqf.mario_qua_mario_content.actions.grounded.SubWalk",
-			"com.fqf.mario_qua_mario_content.actions.grounded.WalkRun",
-			"com.fqf.mario_qua_mario_content.actions.grounded.Skid",
-			"com.fqf.mario_qua_mario_content.actions.grounded.PRun",
-			"com.fqf.mario_qua_mario_content.actions.grounded.DuckWaddle",
-			"com.fqf.mario_qua_mario_content.actions.grounded.DuckSlide",
-			"com.fqf.mario_qua_mario_content.actions.grounded.GroundPoundLand",
-			"com.fqf.mario_qua_mario_content.actions.grounded.GroundPoundLandHold",
-			"com.fqf.mario_qua_mario_content.actions.grounded.BonkGroundBackward",
-			"com.fqf.mario_qua_mario_content.actions.grounded.BonkGroundForward",
+			"com.fqf.mario_qua_mario.actions.grounded.SubWalk",
+			"com.fqf.mario_qua_mario.actions.grounded.WalkRun",
+			"com.fqf.mario_qua_mario.actions.grounded.Skid",
+			"com.fqf.mario_qua_mario.actions.grounded.PRun",
+			"com.fqf.mario_qua_mario.actions.grounded.DuckWaddle",
+			"com.fqf.mario_qua_mario.actions.grounded.DuckSlide",
+			"com.fqf.mario_qua_mario.actions.grounded.GroundPoundLand",
+			"com.fqf.mario_qua_mario.actions.grounded.GroundPoundLandHold",
+			"com.fqf.mario_qua_mario.actions.grounded.BonkGroundBackward",
+			"com.fqf.mario_qua_mario.actions.grounded.BonkGroundForward",
 
-			"com.fqf.mario_qua_mario_content.actions.power.RetroIdle",
-			"com.fqf.mario_qua_mario_content.actions.power.TailSpinGround"
+			"com.fqf.mario_qua_mario.actions.power.RetroIdle",
+			"com.fqf.mario_qua_mario.actions.power.TailSpinGround"
 		],
 		"cpa-airborne-actions": [
-			"com.fqf.mario_qua_mario_content.actions.airborne.Fall",
-			"com.fqf.mario_qua_mario_content.actions.airborne.SpecialFall",
-			"com.fqf.mario_qua_mario_content.actions.airborne.StompBounce",
-			"com.fqf.mario_qua_mario_content.actions.airborne.LavaBoost",
-			"com.fqf.mario_qua_mario_content.actions.airborne.Jump",
-			"com.fqf.mario_qua_mario_content.actions.airborne.PJump",
-			"com.fqf.mario_qua_mario_content.actions.airborne.DuckFall",
-			"com.fqf.mario_qua_mario_content.actions.airborne.DuckJump",
-			"com.fqf.mario_qua_mario_content.actions.airborne.DoubleJump",
-			"com.fqf.mario_qua_mario_content.actions.airborne.TripleJump",
-			"com.fqf.mario_qua_mario_content.actions.airborne.LongJump",
-			"com.fqf.mario_qua_mario_content.actions.airborne.Backflip",
-			"com.fqf.mario_qua_mario_content.actions.airborne.Sideflip",
-			"com.fqf.mario_qua_mario_content.actions.airborne.WaterExitJump",
-			"com.fqf.mario_qua_mario_content.actions.airborne.GroundPoundFlip",
-			"com.fqf.mario_qua_mario_content.actions.airborne.GroundPoundDrop",
-			"com.fqf.mario_qua_mario_content.actions.airborne.BonkAir",
-			"com.fqf.mario_qua_mario_content.actions.airborne.WallJump",
+			"com.fqf.mario_qua_mario.actions.airborne.Fall",
+			"com.fqf.mario_qua_mario.actions.airborne.SpecialFall",
+			"com.fqf.mario_qua_mario.actions.airborne.StompBounce",
+			"com.fqf.mario_qua_mario.actions.airborne.LavaBoost",
+			"com.fqf.mario_qua_mario.actions.airborne.Jump",
+			"com.fqf.mario_qua_mario.actions.airborne.PJump",
+			"com.fqf.mario_qua_mario.actions.airborne.DuckFall",
+			"com.fqf.mario_qua_mario.actions.airborne.DuckJump",
+			"com.fqf.mario_qua_mario.actions.airborne.DoubleJump",
+			"com.fqf.mario_qua_mario.actions.airborne.TripleJump",
+			"com.fqf.mario_qua_mario.actions.airborne.LongJump",
+			"com.fqf.mario_qua_mario.actions.airborne.Backflip",
+			"com.fqf.mario_qua_mario.actions.airborne.Sideflip",
+			"com.fqf.mario_qua_mario.actions.airborne.WaterExitJump",
+			"com.fqf.mario_qua_mario.actions.airborne.GroundPoundFlip",
+			"com.fqf.mario_qua_mario.actions.airborne.GroundPoundDrop",
+			"com.fqf.mario_qua_mario.actions.airborne.BonkAir",
+			"com.fqf.mario_qua_mario.actions.airborne.WallJump",
 
-			"com.fqf.mario_qua_mario_content.actions.power.TailStall",
-			"com.fqf.mario_qua_mario_content.actions.power.TailStallDucking",
-			"com.fqf.mario_qua_mario_content.actions.power.TailFly",
-			"com.fqf.mario_qua_mario_content.actions.power.TailSpinFall",
-			"com.fqf.mario_qua_mario_content.actions.power.TailSpinJump"
+			"com.fqf.mario_qua_mario.actions.power.TailStall",
+			"com.fqf.mario_qua_mario.actions.power.TailStallDucking",
+			"com.fqf.mario_qua_mario.actions.power.TailFly",
+			"com.fqf.mario_qua_mario.actions.power.TailSpinFall",
+			"com.fqf.mario_qua_mario.actions.power.TailSpinJump"
 		],
 		"cpa-aquatic-actions": [
-			"com.fqf.mario_qua_mario_content.actions.aquatic.Submerged",
-			"com.fqf.mario_qua_mario_content.actions.aquatic.Swim",
-			"com.fqf.mario_qua_mario_content.actions.aquatic.UnderwaterWalk",
-			"com.fqf.mario_qua_mario_content.actions.aquatic.UnderwaterDuck",
-			"com.fqf.mario_qua_mario_content.actions.aquatic.AquaticPoundFlip",
-			"com.fqf.mario_qua_mario_content.actions.aquatic.AquaticPoundDrop",
-			"com.fqf.mario_qua_mario_content.actions.aquatic.AquaticPoundLand"
+			"com.fqf.mario_qua_mario.actions.aquatic.Submerged",
+			"com.fqf.mario_qua_mario.actions.aquatic.Swim",
+			"com.fqf.mario_qua_mario.actions.aquatic.UnderwaterWalk",
+			"com.fqf.mario_qua_mario.actions.aquatic.UnderwaterDuck",
+			"com.fqf.mario_qua_mario.actions.aquatic.AquaticPoundFlip",
+			"com.fqf.mario_qua_mario.actions.aquatic.AquaticPoundDrop",
+			"com.fqf.mario_qua_mario.actions.aquatic.AquaticPoundLand"
 		],
 		"cpa-wallbound-actions": [
-			"com.fqf.mario_qua_mario_content.actions.wallbound.ClimbIntangibleDirectional",
-			"com.fqf.mario_qua_mario_content.actions.wallbound.ClimbIntangibleSideHang",
-			"com.fqf.mario_qua_mario_content.actions.wallbound.ClimbWall",
-			"com.fqf.mario_qua_mario_content.actions.wallbound.ClimbWallSideHang",
-			"com.fqf.mario_qua_mario_content.actions.wallbound.WallSlide"
+			"com.fqf.mario_qua_mario.actions.wallbound.ClimbIntangibleDirectional",
+			"com.fqf.mario_qua_mario.actions.wallbound.ClimbIntangibleSideHang",
+			"com.fqf.mario_qua_mario.actions.wallbound.ClimbWall",
+			"com.fqf.mario_qua_mario.actions.wallbound.ClimbWallSideHang",
+			"com.fqf.mario_qua_mario.actions.wallbound.WallSlide"
 		],
 		"cpa-mounted-actions": [
-			"com.fqf.mario_qua_mario_content.actions.mounted.Mounted"
+			"com.fqf.mario_qua_mario.actions.mounted.Mounted"
 		],
 
 		"cpa-power-forms": [
-			"com.fqf.mario_qua_mario_content.powerups.Small",
-			"com.fqf.mario_qua_mario_content.powerups.Super",
-			"com.fqf.mario_qua_mario_content.powerups.Fire",
-			"com.fqf.mario_qua_mario_content.powerups.Raccoon"
+			"com.fqf.mario_qua_mario.powerups.Small",
+			"com.fqf.mario_qua_mario.powerups.Super",
+			"com.fqf.mario_qua_mario.powerups.Fire",
+			"com.fqf.mario_qua_mario.powerups.Raccoon"
 		],
 
 		"cpa-characters": [
-			"com.fqf.mario_qua_mario_content.characters.Mario",
-			"com.fqf.mario_qua_mario_content.characters.Toadette"
+			"com.fqf.mario_qua_mario.characters.Mario",
+			"com.fqf.mario_qua_mario.characters.Toadette"
 		],
 
 		"cpa-voicelines": [
-			"com.fqf.mario_qua_mario_content.Voicelines"
+			"com.fqf.mario_qua_mario.Voicelines"
 		],
 
 		"main": [
-			"com.fqf.mario_qua_mario_content.MarioQuaMarioContent"
+          "com.fqf.mario_qua_mario.MarioQuaMario"
 		],
 		"client": [
-          "com.fqf.mario_qua_mario_content.MarioQuaMarioContentClient"
+			"com.fqf.mario_qua_mario.MarioQuaMarioClient"
 		],
 		"fabric-datagen": [
-          "com.fqf.mario_qua_mario_content.MarioQuaMarioContentDataGenerator"
+			"com.fqf.mario_qua_mario.MarioQuaMarioDataGenerator"
 		],
 		"modmenu": [
-          "com.fqf.mario_qua_mario_content.util.ContentModMenuIntegration"
+			"com.fqf.mario_qua_mario.util.MQMModMenuIntegration"
 		]
 	},
 	"mixins": [
-		"mario_qua_mario_content.mixins.json",
+		"mario_qua_mario.mixins.json",
 		{
-			"config": "mario_qua_mario_content.client.mixins.json",
+			"config": "mario_qua_mario.client.mixins.json",
 			"environment": "client"
 		}
 	],

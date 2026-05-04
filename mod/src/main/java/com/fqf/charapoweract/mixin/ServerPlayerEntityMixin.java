@@ -70,7 +70,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 			if(extraLogging) CharaPowerAct.LOGGER.info("Reading player NBT:\nEnabled: {}\nCharacter: {}\nPower-up: {}",
 					persistentCPAData.getBoolean(CPANbtKeys.ENABLED),
 					persistentCPAData.getString(CPANbtKeys.CHARACTER),
-					persistentCPAData.getString(CPANbtKeys.POWER_UP));
+					persistentCPAData.getString(CPANbtKeys.POWER_FORM));
 
 			if(persistentCPAData.getBoolean(CPANbtKeys.ENABLED)) {
 				String storedCharacterID = persistentCPAData.getString(CPANbtKeys.CHARACTER);
@@ -79,7 +79,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 				}
 				else if(RegistryManager.CHARACTERS.containsId(Identifier.of(storedCharacterID))) {
 					ParsedCharacter storedCharacter = Objects.requireNonNull(RegistryManager.CHARACTERS.get(Identifier.of(storedCharacterID)));
-					String storedPowerUpID = persistentCPAData.getString(CPANbtKeys.POWER_UP);
+					String storedPowerUpID = persistentCPAData.getString(CPANbtKeys.POWER_FORM);
 					if(storedPowerUpID.isEmpty()) {
 						CharaPowerAct.LOGGER.error("Shocking error: A player's NBT data claims the mod is enabled, and a character ID is stored, but no power-up ID is stored?!");
 					}

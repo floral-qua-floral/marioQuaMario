@@ -23,7 +23,7 @@ public class PlayermodelListener implements SimpleSynchronousResourceReloadListe
 
 	@Override
 	public Identifier getFabricId() {
-		return Identifier.of(this.NAMESPACE, "mqm_playermodels");
+		return Identifier.of(this.NAMESPACE, "cpa_playermodels");
 	}
 
 	@Override
@@ -44,7 +44,6 @@ public class PlayermodelListener implements SimpleSynchronousResourceReloadListe
 					int separationPoint = fileName.indexOf('/');
 
 					String power_namespace = fileName.substring(0, separationPoint);
-					if(power_namespace.equals("mario_qua_mario")) power_namespace = "mqm"; // this is so awful
 					String power_path = fileName.substring(separationPoint + 1);
 
 					Identifier powerUpID = Identifier.of(power_namespace, power_path);

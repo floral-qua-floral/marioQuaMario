@@ -3,7 +3,6 @@ package com.fqf.charapoweract.mixin;
 import com.fqf.charapoweract.CharaPowerAct;
 import com.fqf.charapoweract.bapping.BlockBappingUtil;
 import com.fqf.charapoweract.bapping.WorldBapsInfo;
-import com.fqf.charapoweract.compat.optional.SableCompatSafe;
 import com.fqf.charapoweract.cpadata.CPAMoveableData;
 import com.fqf.charapoweract.cpadata.CPAPlayerData;
 import com.fqf.charapoweract.cpadata.injections.AdvCPADataHolder;
@@ -196,13 +195,13 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCPADa
 		persistentData.putBoolean(CPANbtKeys.ENABLED, enabled);
 		if(enabled) {
 			persistentData.putString(CPANbtKeys.CHARACTER, data.getCharacterID().toString());
-			persistentData.putString(CPANbtKeys.POWER_UP, data.getPowerFormID().toString());
+			persistentData.putString(CPANbtKeys.POWER_FORM, data.getPowerFormID().toString());
 		}
 
 		if(CharaPowerAct.CONFIG.logNBTReadWrite()) CharaPowerAct.LOGGER.info("Writing player NBT:\nEnabled: {}\nCharacter: {}\nPower-up: {}",
 				persistentData.getBoolean(CPANbtKeys.ENABLED),
 				persistentData.getString(CPANbtKeys.CHARACTER),
-				persistentData.getString(CPANbtKeys.POWER_UP));
+				persistentData.getString(CPANbtKeys.POWER_FORM));
 
 		nbt.put(CPANbtKeys.DATA, persistentData);
 	}

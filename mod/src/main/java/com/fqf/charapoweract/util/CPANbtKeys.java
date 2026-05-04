@@ -7,5 +7,5 @@ public class CPANbtKeys {
 
 	public static final String ENABLED = "Enabled";
 	public static final String CHARACTER = "Character";
-	public static final String POWER_UP = "PowerUp";
+	public static final String POWER_FORM = "PowerForm";
 }

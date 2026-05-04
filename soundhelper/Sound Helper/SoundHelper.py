@@ -40,7 +40,7 @@ def make_subtitles(include_voicelines, copy_to, subtitle_source):
 
                 if(character != last_added_character):
                     voicelines.append(empty_sound)
-                    voicelines.append(f'"subtitles.mario_qua_mario.voice.{character}.backflip": "{character.title()} {content_subtitles.voicelines["backflip"]}"')
+                    voicelines.append(f'"subtitles.{namespace}.voice.{character}.backflip": "{character.title()} {content_subtitles.voicelines["backflip"]}"')
                     last_added_character = character
 
                 if content_subtitles.voicelines[voiceline] == "SKIP":
@@ -51,7 +51,7 @@ def make_subtitles(include_voicelines, copy_to, subtitle_source):
                 os.makedirs(new_file_home, exist_ok=True)
                 shutil.copy(f"Sounds/{file_name}", f"{new_file_home}/{voiceline}{number}.ogg")
 
-                new_subtitle = f'"subtitles.mario_qua_mario.voice.{character}.{voiceline}": "{character.title()} {content_subtitles.voicelines[voiceline]}"'
+                new_subtitle = f'"subtitles.{namespace}.voice.{character}.{voiceline}": "{character.title()} {content_subtitles.voicelines[voiceline]}"'
                 if not new_subtitle in voicelines:
                     voicelines.append(new_subtitle)
 
@@ -75,10 +75,10 @@ def attempt_sfx(file_name, subtitles, prefix, to_list, to_path, allow_duping=Fal
             write_subtitle = False
             source = sfx_name
             for duped_name in special_sound_events.dupe_sfx[sfx_name]:
-                to_list.append(f'"subtitles.mario_qua_mario.{prefix}.{duped_name}": "{subtitles[source]}"')
+                to_list.append(f'"subtitles.{namespace}.{prefix}.{duped_name}": "{subtitles[source]}"')
 
         if write_subtitle:
-            to_list.append(f'"subtitles.mario_qua_mario.{prefix}.{sfx_name}": "{subtitles[sfx_name]}"')
+            to_list.append(f'"subtitles.{namespace}.{prefix}.{sfx_name}": "{subtitles[sfx_name]}"')
         new_file_home = f"{to_path}/sfx/{prefix}"
         print(f"COPY SFX TO: '{new_file_home}/{sfx_name}.ogg'")
         os.makedirs(new_file_home, exist_ok=True)
@@ -147,20 +147,20 @@ def make_sounds_dot_json_and_java_file(sounds_dot_json_location, do_voices, inpu
                 voiceline_sound_files = []
                 for sfx in os.listdir(f"{sound_files_location}voices/{character}/{voiceline}"):
                     sfx_name = sfx[:-4]
-                    voiceline_sound_files.append(f"mario_qua_mario:voices/{character}/{voiceline}/{sfx_name}")
+                    voiceline_sound_files.append(f"{namespace}:voices/{character}/{voiceline}/{sfx_name}")
 
                 sounds_dot_json[f"voice.{character}.{voiceline}"] = {
-                    "subtitle": f"subtitles.mario_qua_mario.voice.{character}.{voiceline}",
+                    "subtitle": f"subtitles.{namespace}.voice.{character}.{voiceline}",
                     "sounds": voiceline_sound_files
                 }
 
                 if voiceline == "sideflip": # Add backflip sound event; it just uses the Sideflip event
                     sounds_dot_json[f"voice.{character}.backflip"] = {
-                        "subtitle": f"subtitles.mario_qua_mario.voice.{character}.backflip",
+                        "subtitle": f"subtitles.{namespace}.voice.{character}.backflip",
                         "sounds": [
                             {
                                 "type": "event",
-                                "name": f"mario_qua_mario:voice.{character}.sideflip"
+                                "name": f"{namespace}:voice.{character}.sideflip"
                             }
                         ]
                     }
@@ -181,9 +181,9 @@ def make_sounds_dot_json_and_java_file(sounds_dot_json_location, do_voices, inpu
 
 def add_sound_to_json(sounds_dot_json, sfx_category, original_name, sfx_name, java_lines):
     sounds_dot_json[f"sfx.{sfx_category}.{sfx_name}"] = {
-        "subtitle": f"subtitles.mario_qua_mario.{sfx_category}.{original_name}",
+        "subtitle": f"subtitles.{namespace}.{sfx_category}.{original_name}",
         "sounds": [
-            f"mario_qua_mario:sfx/{sfx_category}/{original_name}"
+            f"{namespace}:sfx/{sfx_category}/{original_name}"
         ]
     }
     java_category = sfx_category
@@ -211,13 +211,22 @@ def handle_sound_set(
     save_subtitles(old_lang_file, subtitle_destination, subtitles)
     make_sounds_dot_json_and_java_file(sounds_dot_json_destination, include_voicelines, input_java_file, output_java_file, audio_destination + "/")
 
-def get_sounds_dot_json_location(module):
-    return f"../../{module}/src/client/resources/assets/mario_qua_mario/"
+def get_sounds_dot_json_location(module, mod_id):
+    return f"../../{module}/src/client/resources/assets/{mod_id}/"
 def get_java_file_location(module, sfxFileName, package):
     return f"../../{module}/src/main/java/com/fqf/{package}/util/{sfxFileName}.java"
 
+namespace = "unset"
+
 if __name__ == "__main__":
+    global namespace
+
+    namespace = "test"
     handle_sound_set(True, content_subtitles, "Output/content/", "Input/MarioContentSfxClass.txt", "Output/content/MarioTestSFX.java.txt",
             old_lang_file = "Input/testInput.json")
-    handle_sound_set(True, content_subtitles, get_sounds_dot_json_location("content"), "Input/MarioContentSfxClass.txt", get_java_file_location("content", "MarioContentSFX", "mario_qua_mario_content"))
-    handle_sound_set(False, mod_subtitles, get_sounds_dot_json_location("mod"), "Input/MarioModSfxClass.txt", get_java_file_location("mod", "CPASounds", "charapoweract"))
+
+    namespace = "mario_qua_mario"
+    handle_sound_set(True, content_subtitles, get_sounds_dot_json_location("content", "mario_qua_mario"), "Input/MarioContentSfxClass.txt", get_java_file_location("content", "MarioSFX", "mario_qua_mario"))
+
+    namespace = "charapoweract"
+    handle_sound_set(False, mod_subtitles, get_sounds_dot_json_location("mod", "charapoweract"), "Input/MarioModSfxClass.txt", get_java_file_location("mod", "CPASounds", "charapoweract"))

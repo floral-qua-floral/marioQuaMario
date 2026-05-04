@@ -1,0 +1,33 @@
+package com.fqf.mario_qua_mario.actions.generic;
+
+import com.fqf.charapoweract_api.definitions.states.actions.GenericActionDefinition;
+import com.fqf.charapoweract_api.definitions.states.actions.util.SlidingStatus;
+import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionDefinition;
+import com.fqf.charapoweract_api.cpadata.ICPATravelData;
+import com.fqf.mario_qua_mario.MarioQuaMario;
+import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+
+public class DebugVanillaTravel extends Debug implements GenericActionDefinition {
+	public static final Identifier ID = MarioQuaMario.makeID("debug_vanilla_travel");
+	@Override public @NotNull Identifier getID() {
+	    return ID;
+	}
+
+	@Override
+	public @NotNull SlidingStatus getSlidingStatus() {
+		return SlidingStatus.NOT_SLIDING;
+	}
+
+	@Override
+	public boolean travelHook(ICPATravelData data) {
+		return false;
+	}
+
+	@Override
+	public @NotNull List<TransitionDefinition> getBasicTransitions() {
+		return List.of();
+	}
+}

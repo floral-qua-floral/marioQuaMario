@@ -1,12 +1,12 @@
-package com.fqf.mario_qua_mario_content.util;
+package com.fqf.mario_qua_mario.util;
 
-import com.fqf.mario_qua_mario_content.MarioQuaMarioContent;
+import com.fqf.mario_qua_mario.MarioQuaMario;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
-public class MarioContentSFX {
+public class MarioSFX {
 $INSERT CODE HERE$
 
 	private static SoundEvent makeMovementSound(String name) {

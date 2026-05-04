@@ -1,0 +1,122 @@
+package com.fqf.mario_qua_mario.actions.aquatic;
+
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.charapoweract_api.cpadata.*;
+import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.charapoweract_api.definitions.states.actions.AquaticActionDefinition;
+import com.fqf.charapoweract_api.definitions.states.actions.util.*;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.charapoweract_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charapoweract_api.cpadata.ICPAClientData;
+import com.fqf.charapoweract_api.cpadata.ICPATravelData;
+import com.fqf.charapoweract_api.util.CharaStat;
+import com.fqf.mario_qua_mario.actions.airborne.Fall;
+import com.fqf.mario_qua_mario.actions.airborne.GroundPoundDrop;
+import com.fqf.mario_qua_mario.collision_attacks.AquaticGroundPound;
+import com.fqf.mario_qua_mario.util.MarioSFX;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.Set;
+
+import static com.fqf.charapoweract_api.util.StatCategory.*;
+
+public class AquaticPoundDrop implements AquaticActionDefinition {
+	public static final Identifier ID = MarioQuaMario.makeID("aquatic_ground_pound_drop");
+	@Override public @NotNull Identifier getID() {
+		return ID;
+	}
+
+	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
+		return GroundPoundDrop.makeAnimation(helper);
+	}
+	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
+		return null;
+	}
+	@Override public @NotNull SlidingStatus getSlidingStatus() {
+		return SlidingStatus.NOT_SLIDING;
+	}
+
+	@Override public @NotNull SneakingRule getSneakingRule() {
+		return SneakingRule.PROHIBIT;
+	}
+	@Override public @NotNull SprintingRule getSprintingRule() {
+		return SprintingRule.PROHIBIT;
+	}
+
+	@Override public @Nullable BappingRule getBappingRule() {
+		return new BappingRule(0, 3);
+	}
+	@Override public @Nullable Identifier getCollisionAttackTypeID() {
+		return AquaticGroundPound.ID;
+	}
+
+	public static CharaStat AQUATIC_GROUND_POUND_DRAG = new CharaStat(0.19, WATER_DRAG);
+	public static CharaStat AQUATIC_GROUND_POUND_DRAG_MIN = new CharaStat(0.02, WATER_DRAG);
+
+	@Override public @Nullable Object provideStateData(ICPAData data) {
+		return null;
+	}
+	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
+
+	}
+	@Override public void serverTick(ICPAAuthoritativeData data) {
+
+	}
+	@Override public void travelHook(ICPATravelData data, AquaticActionHelper helper) {
+		int depthChargeLevel = AquaticGroundPound.getDepthChargeLevel(data.getPlayer().getEquippedStack(EquipmentSlot.LEGS), data);
+		CharaStat drag;
+		if(depthChargeLevel == 0) drag = AQUATIC_GROUND_POUND_DRAG;
+		else drag = AQUATIC_GROUND_POUND_DRAG.variate(1.0 / (depthChargeLevel + 1));
+
+		helper.applyWaterDrag(data, drag, AQUATIC_GROUND_POUND_DRAG_MIN);
+	}
+
+	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(AquaticActionHelper helper) {
+		return List.of(
+				new TransitionDefinition(
+						Submerged.ID,
+						data -> data.getYVel() >= -0.01,
+						EvaluatorEnvironment.CLIENT_ONLY
+				)
+		);
+	}
+	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AquaticActionHelper helper) {
+		return List.of(
+				Swim.SWIM
+		);
+	}
+	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AquaticActionHelper helper) {
+		return List.of(
+				Fall.LANDING.variate(
+						AquaticPoundLand.ID,
+						null, null,
+						data -> data.setForwardStrafeVel(0, 0),
+						(data, isSelf, seed) -> {
+							data.stopStoredSound(MarioSFX.AQUATIC_GROUND_POUND_DROP);
+							data.playSound(MarioSFX.AQUATIC_GROUND_POUND_LAND, seed);
+						}
+				),
+				Submerged.EXIT_WATER.variate(
+						GroundPoundDrop.ID,
+						null, null,
+						null,
+						(data, isSelf, seed) -> {
+							data.stopStoredSound(MarioSFX.AQUATIC_GROUND_POUND_DROP);
+							data.storeSound(data.playSound(MarioSFX.GROUND_POUND_DROP, seed));
+						}
+				)
+		);
+	}
+
+	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
+		return Set.of();
+	}
+
+	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
+		return List.of();
+	}
+}

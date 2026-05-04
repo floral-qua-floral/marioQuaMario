@@ -5,6 +5,6 @@ import net.fabricmc.api.ClientModInitializer;
 public class CharaPowerActAPIClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
-		CharaPowerActAPI.LOGGER.info("CharaPowerAct API Client initializing...");
+		CharaPowerActAPI.LOGGER.info("CharaPowerAct API initializing on the client...");
 	}
 }

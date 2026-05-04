@@ -22,6 +22,10 @@
     {
       "id": "betterend:thallasium_bars",
       "required": false
+    },
+    {
+      "id": "quark:gold_bars",
+      "required": false
     }
   ]
 }

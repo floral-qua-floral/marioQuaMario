@@ -18,6 +18,10 @@
     {
       "id": "supplementaries:iron_gate",
       "required": false
+    },
+    {
+      "id": "quark:mud_brick_lattice",
+      "required": false
     }
   ]
 }

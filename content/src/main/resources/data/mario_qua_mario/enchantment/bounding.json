@@ -4,7 +4,7 @@
   },
   "supported_items": "#minecraft:enchantable/foot_armor",
   "primary_items": [],
-  "weight": 2,
+  "weight": 4,
   "max_level": 2,
   "min_cost": {
     "base": 12,

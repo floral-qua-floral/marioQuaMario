@@ -25,6 +25,6 @@ public interface CPATags {
 	TagKey<DamageType> COLLISION_ATTACKS = getTag(DAMAGE_TYPE, "collision_attacks");
 
 	private static <T> TagKey<T> getTag(RegistryKey<Registry<T>> key, String name) {
-		return TagKey.of(key, Identifier.of("mario_qua_mario", name));
+		return TagKey.of(key, Identifier.of("charapoweract", name));
 	}
 }

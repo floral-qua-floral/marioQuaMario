@@ -13,7 +13,7 @@
 		"issues": "https://github.com/floral-qua-floral/marioQuaMario/issues"
 	},
 	"license": "GPL-3.0-only",
-	"icon": "assets/mario_qua_mario/icon.png",
+	"icon": "assets/charapoweract/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
