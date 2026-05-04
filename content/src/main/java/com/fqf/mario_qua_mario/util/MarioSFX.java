@@ -58,7 +58,7 @@ public class MarioSFX {
 	}
 
 	private static SoundEvent makeAndRegisterSound(String path) {
-		Identifier identifier = MarioQuaMario.makeResID(path);
+		Identifier identifier = MarioQuaMario.makeID(path);
 		SoundEvent event = SoundEvent.of(identifier);
 
 		Registry.register(Registries.SOUND_EVENT, identifier, event);

@@ -5,7 +5,7 @@ import shutil
 
 from Input import rename_sounds, content_subtitles, mod_subtitles, special_sound_events
 
-def make_subtitles(include_voicelines, copy_to, subtitle_source):
+def make_subtitles(namespace, include_voicelines, copy_to, subtitle_source):
     # Clean out the sounds that are currently lying around
     shutil.rmtree(copy_to)
 
@@ -23,10 +23,10 @@ def make_subtitles(include_voicelines, copy_to, subtitle_source):
     for file_name in os.listdir("Sounds"):
         # print(f"Checking '{file_name}'...")
 
-        attempt_sfx(file_name, subtitle_source.sfx_movement, "movement", movement_sfx, copy_to)
-        attempt_sfx(file_name, subtitle_source.sfx_power_up, "power_up", power_up_sfx, copy_to)
-        attempt_sfx(file_name, subtitle_source.sfx_stomp, "stomp", stomp_sfx, copy_to)
-        attempt_sfx(file_name, subtitle_source.sfx_action, "action", action_sfx, copy_to)
+        attempt_sfx(namespace, file_name, subtitle_source.sfx_movement, "movement", movement_sfx, copy_to)
+        attempt_sfx(namespace, file_name, subtitle_source.sfx_power_up, "power_up", power_up_sfx, copy_to)
+        attempt_sfx(namespace, file_name, subtitle_source.sfx_stomp, "stomp", stomp_sfx, copy_to)
+        attempt_sfx(namespace, file_name, subtitle_source.sfx_action, "action", action_sfx, copy_to)
 
         if(include_voicelines):
             match = re.match(r"(voc_)([a-z]+)(_)([a-z_]+)(\d*)(\.ogg)", file_name)
@@ -63,7 +63,7 @@ def make_subtitles(include_voicelines, copy_to, subtitle_source):
     if voicelines: returnValue += voicelines
     return returnValue
 
-def attempt_sfx(file_name, subtitles, prefix, to_list, to_path, allow_duping=False, source=""):
+def attempt_sfx(namespace, file_name, subtitles, prefix, to_list, to_path, allow_duping=False, source=""):
     sfx_name = file_name[:-4]
     if sfx_name in rename_sounds.sfx: sfx_name = rename_sounds.sfx[sfx_name]
     if source == "": source = sfx_name
@@ -124,7 +124,7 @@ def save_subtitles(input_file, output_directory, sounds):
 
     print(f"File saved successfully to: {output_directory}")
 
-def make_sounds_dot_json_and_java_file(sounds_dot_json_location, do_voices, input_java_file, java_file, sound_files_location):
+def make_sounds_dot_json_and_java_file(namespace, sounds_dot_json_location, do_voices, input_java_file, java_file, sound_files_location):
     print(f"Making sounds.json at {sounds_dot_json_location}")
 
     sounds_dot_json = {}
@@ -135,9 +135,9 @@ def make_sounds_dot_json_and_java_file(sounds_dot_json_location, do_voices, inpu
             sfx_name = sfx[:-4]
             if sfx_name in special_sound_events.dupe_sfx:
                 for dupe_name in special_sound_events.dupe_sfx[sfx_name]:
-                    add_sound_to_json(sounds_dot_json, sfx_category, sfx_name, dupe_name, java_lines)
+                    add_sound_to_json(namespace, sounds_dot_json, sfx_category, sfx_name, dupe_name, java_lines)
             else:
-                add_sound_to_json(sounds_dot_json, sfx_category, sfx_name, sfx_name, java_lines)
+                add_sound_to_json(namespace, sounds_dot_json, sfx_category, sfx_name, sfx_name, java_lines)
 
         java_lines.append("\n")
 
@@ -179,7 +179,7 @@ def make_sounds_dot_json_and_java_file(sounds_dot_json_location, do_voices, inpu
     with open(java_file, 'w', encoding='utf-8') as file:
         file.writelines(modified_java_lines)
 
-def add_sound_to_json(sounds_dot_json, sfx_category, original_name, sfx_name, java_lines):
+def add_sound_to_json(namespace, sounds_dot_json, sfx_category, original_name, sfx_name, java_lines):
     sounds_dot_json[f"sfx.{sfx_category}.{sfx_name}"] = {
         "subtitle": f"subtitles.{namespace}.{sfx_category}.{original_name}",
         "sounds": [
@@ -192,6 +192,7 @@ def add_sound_to_json(sounds_dot_json, sfx_category, original_name, sfx_name, ja
     java_lines.append(f'\tpublic static final SoundEvent {sfx_name.upper()} = make{java_category}Sound("{sfx_name}");\n')
 
 def handle_sound_set(
+        namespace,
         include_voicelines,
         subtitle_script,
         sounds_dot_json_destination,
@@ -207,26 +208,19 @@ def handle_sound_set(
     if old_lang_file == "": old_lang_file = sounds_dot_json_destination + "lang/en_us.json"
     if subtitle_destination == "": subtitle_destination = sounds_dot_json_destination + "lang/"
 
-    subtitles = make_subtitles(include_voicelines, audio_destination, subtitle_script)
+    subtitles = make_subtitles(namespace, include_voicelines, audio_destination, subtitle_script)
     save_subtitles(old_lang_file, subtitle_destination, subtitles)
-    make_sounds_dot_json_and_java_file(sounds_dot_json_destination, include_voicelines, input_java_file, output_java_file, audio_destination + "/")
+    make_sounds_dot_json_and_java_file(namespace, sounds_dot_json_destination, include_voicelines, input_java_file, output_java_file, audio_destination + "/")
 
 def get_sounds_dot_json_location(module, mod_id):
     return f"../../{module}/src/client/resources/assets/{mod_id}/"
 def get_java_file_location(module, sfxFileName, package):
     return f"../../{module}/src/main/java/com/fqf/{package}/util/{sfxFileName}.java"
 
-namespace = "unset"
-
 if __name__ == "__main__":
-    global namespace
+    # handle_sound_set("test", True, content_subtitles, "Output/content/", "Input/MarioContentSfxClass.txt", "Output/content/MarioTestSFX.java.txt",
+    #         old_lang_file = "Input/testInput.json")
 
-    namespace = "test"
-    handle_sound_set(True, content_subtitles, "Output/content/", "Input/MarioContentSfxClass.txt", "Output/content/MarioTestSFX.java.txt",
-            old_lang_file = "Input/testInput.json")
+    handle_sound_set("mario_qua_mario", True, content_subtitles, get_sounds_dot_json_location("content", "mario_qua_mario"), "Input/MarioContentSfxClass.txt", get_java_file_location("content", "MarioSFX", "mario_qua_mario"))
 
-    namespace = "mario_qua_mario"
-    handle_sound_set(True, content_subtitles, get_sounds_dot_json_location("content", "mario_qua_mario"), "Input/MarioContentSfxClass.txt", get_java_file_location("content", "MarioSFX", "mario_qua_mario"))
-
-    namespace = "charapoweract"
-    handle_sound_set(False, mod_subtitles, get_sounds_dot_json_location("mod", "charapoweract"), "Input/MarioModSfxClass.txt", get_java_file_location("mod", "CPASounds", "charapoweract"))
+    handle_sound_set("charapoweract", False, mod_subtitles, get_sounds_dot_json_location("mod", "charapoweract"), "Input/MarioModSfxClass.txt", get_java_file_location("mod", "CPASounds", "charapoweract"))

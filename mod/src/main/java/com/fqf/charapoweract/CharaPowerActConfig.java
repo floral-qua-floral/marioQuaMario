@@ -4,7 +4,7 @@ import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 
 @SuppressWarnings({"FieldCanBeLocal", "FieldMayBeFinal"})
-@Config(name = "mario_qua_mario")
+@Config(name = "charapoweract")
 public class CharaPowerActConfig implements ConfigData {
 	private int bufferLength = 3;
 	private boolean logAllActionTransitions = false;
@@ -12,7 +12,7 @@ public class CharaPowerActConfig implements ConfigData {
 	private boolean logActionTransitionInjections = false;
 	private boolean specialHUD = false;
 	private boolean allowIllegalTransitionsInSingleplayer = true;
-	private float inherentBumpedBlockScale = 1.01F;
+	private float inherentBumpedBlockScale = 1.0001F;
 
 	public boolean logAllActionTransitions() {
 		return this.logAllActionTransitions;

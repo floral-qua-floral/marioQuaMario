@@ -1,0 +1,50 @@
+{
+	"sfx.movement.bump": {
+		"subtitle": "subtitles.charapoweract.movement.bump",
+		"sounds": [
+			"charapoweract:sfx/movement/bump"
+		]
+	},
+	"sfx.movement.skid": {
+		"subtitle": "subtitles.charapoweract.movement.skid",
+		"sounds": [
+			"charapoweract:sfx/movement/skid"
+		]
+	},
+	"sfx.movement.skid_ice": {
+		"subtitle": "subtitles.charapoweract.movement.skid_ice",
+		"sounds": [
+			"charapoweract:sfx/movement/skid_ice"
+		]
+	},
+	"sfx.movement.skid_sand": {
+		"subtitle": "subtitles.charapoweract.movement.skid_sand",
+		"sounds": [
+			"charapoweract:sfx/movement/skid_sand"
+		]
+	},
+	"sfx.movement.skid_snow": {
+		"subtitle": "subtitles.charapoweract.movement.skid_snow",
+		"sounds": [
+			"charapoweract:sfx/movement/skid_snow"
+		]
+	},
+	"sfx.movement.skid_wall": {
+		"subtitle": "subtitles.charapoweract.movement.skid_wall",
+		"sounds": [
+			"charapoweract:sfx/movement/skid_wall"
+		]
+	},
+	"sfx.power_up.empower": {
+		"subtitle": "subtitles.charapoweract.power_up.empower",
+		"sounds": [
+			"charapoweract:sfx/power_up/empower"
+		]
+	},
+	"sfx.power_up.revert": {
+		"subtitle": "subtitles.charapoweract.power_up.revert",
+		"sounds": [
+			"charapoweract:sfx/power_up/revert"
+		]
+	}
+}

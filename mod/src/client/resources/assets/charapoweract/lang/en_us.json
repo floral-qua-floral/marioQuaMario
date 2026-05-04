@@ -1,0 +1,44 @@
+{
+  "fabric.mods.charapoweract": "CharaPowerAct",
+
+  "text.autoconfig.charapoweract.title": "Mario qua Mario Options",
+
+  "text.autoconfig.charapoweract.option.bufferLength": "Input buffer length (ticks)",
+  "text.autoconfig.charapoweract.option.specialHUD": "Debugging HUD",
+  "text.autoconfig.charapoweract.option.logAllActionTransitions": "Log all action transitions",
+  "text.autoconfig.charapoweract.option.logNBTReadWrite": "Log reads & writes to NBT",
+  "text.autoconfig.charapoweract.option.logActionTransitionInjections": "Log action transition injections",
+  "text.autoconfig.charapoweract.option.allowIllegalTransitionsInSingleplayer": "Skip transition verification in Singleplayer",
+  "text.autoconfig.charapoweract.option.inherentBumpedBlockScale": "Scale of bumped blocks (prevents Z-fighting)",
+
+  "text.autoconfig.charapoweract.option.spinputType": "Spin Input Type",
+  "fabric.mods.charapoweract.spin": "Spin",
+
+  "gamerule.mqmUseCharacterStats": "Apply character-specific stat modifiers",
+  "gamerule.mqmRestrictBapsInAdventureMode": "Allow characters in Adventure Mode to break blocks with collisions",
+  "gamerule.mqmBreakBrittleBlocksInAdventureMode": "Allow characters in Adventure Mode to break blocks which have been embrittled",
+  "gamerule.mqmFriendliesResistCollisionAttacks": "Collision attacks don't damage pets and teammates",
+  "gamerule.mqmRejectInvalidActionTransitions": "Only allow legal action transitions",
+  "gamerule.mqmDisableCharacterMovementCheck": "Disable movement checks when playing as any character",
+  "gamerule.mqmRequirePlayermodels": "Only allow characters to enter power-up states that they have a playermodel for",
+  "gamerule.mqmAlwaysRevertToWeakestForm": "Players revert to weakest possible form at 0 health",
+
+  "enchantment.charapoweract.pulverizing": "Pulverizing",
+  "enchantment.charapoweract.pulverizing.desc": "Increased damage from Stomps",
+  "enchantment.charapoweract.bounding": "Bounding",
+  "enchantment.charapoweract.bounding.desc": "Higher bounce after a Stomp",
+  "enchantment.charapoweract.depth_charge": "Depth Charge",
+  "enchantment.charapoweract.depth_charge.desc": "Ground Pounds retain their momentum for longer underwater",
+
+  "tag.item.charapoweract.enchantable.pulverizing": "Enchantable with Pulverizing",
+
+  "subtitles.charapoweract.movement.bump": "Block bumped",
+  "subtitles.charapoweract.movement.skid": "Skidding",
+  "subtitles.charapoweract.movement.skid_ice": "Slipping",
+  "subtitles.charapoweract.movement.skid_sand": "Skidding",
+  "subtitles.charapoweract.movement.skid_snow": "Skidding",
+  "subtitles.charapoweract.movement.skid_wall": "Sliding",
+
+  "subtitles.charapoweract.power_up.empower": "Powering up",
+  "subtitles.charapoweract.power_up.revert": "Powering down"
+}

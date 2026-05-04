@@ -48,7 +48,7 @@ public class MQMEventListeners {
 			int timesDisconnected = handler.player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.LEAVE_GAME));
 			if(timesDisconnected == 0 && MarioQuaMario.CONFIG.isWelcomeMessageEnabled()) {
 				// Player joined for the first time; say hi and tell them how to enable the mod
-				String marioCommand = "/mario set character " + Mario.ID;
+				String marioCommand = "/cpa set character " + Mario.ID;
 				Text marioCommandText = Text.literal(marioCommand)
 						.formatted(Formatting.UNDERLINE)
 						.styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, marioCommand)));

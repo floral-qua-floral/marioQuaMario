@@ -9,7 +9,7 @@
   "messages.mario_qua_mario.link2": ", or ",
   "messages.mario_qua_mario.link3": "by commissioning a custom mod",
   "messages.mario_qua_mario.nag2": ".\nThat's all. I won't bother you again in this world, promise! To never see this message in any world, disable \"",
-  "messages.mario_qua_mario.nag3": "\" in the Mario qua Mario Content config.",
+  "messages.mario_qua_mario.nag3": "\" in the Mario qua Mario config.",
 
   "text.autoconfig.mario_qua_mario.title": "Mario qua Mario Options",
 
@@ -18,16 +18,16 @@
 
   "mount.onboard.mario": "Hold %s and press %s to Dismount",
 
-  "text.autoconfig.mario_qua_mario_content.option.backflipFromVehicles": "Dismount Backflips",
-  "text.autoconfig.mario_qua_mario_content.option.autoLadder": "Automatically grab ladders",
-  "text.autoconfig.mario_qua_mario_content.option.sideflipCameraAnim": "Sideflip Camera Animation",
-  "text.autoconfig.mario_qua_mario_content.option.backflipCameraAnim": "Backflip Camera Animation",
-  "text.autoconfig.mario_qua_mario_content.option.tripleJumpCameraAnim": "Triple Jump Camera Animation",
-  "text.autoconfig.mario_qua_mario_content.option.groundPoundCameraAnim": "Ground Pound Camera Animation",
-  "text.autoconfig.mario_qua_mario_content.option.tailWhipCameraAnim": "Tail Whip Camera Animation",
-  "text.autoconfig.mario_qua_mario_content.option.tailSpinCameraAnim": "Tail Spin Camera Animation",
-  "text.autoconfig.mario_qua_mario_content.option.welcomeMessage": "Welcome Message",
-  "text.autoconfig.mario_qua_mario_content.option.nagMessage": "One-Time Nag Message",
+  "text.autoconfig.mario_qua_mario.option.backflipFromVehicles": "Dismount Backflips",
+  "text.autoconfig.mario_qua_mario.option.autoLadder": "Automatically grab ladders",
+  "text.autoconfig.mario_qua_mario.option.sideflipCameraAnim": "Sideflip Camera Animation",
+  "text.autoconfig.mario_qua_mario.option.backflipCameraAnim": "Backflip Camera Animation",
+  "text.autoconfig.mario_qua_mario.option.tripleJumpCameraAnim": "Triple Jump Camera Animation",
+  "text.autoconfig.mario_qua_mario.option.groundPoundCameraAnim": "Ground Pound Camera Animation",
+  "text.autoconfig.mario_qua_mario.option.tailWhipCameraAnim": "Tail Whip Camera Animation",
+  "text.autoconfig.mario_qua_mario.option.tailSpinCameraAnim": "Tail Spin Camera Animation",
+  "text.autoconfig.mario_qua_mario.option.welcomeMessage": "Welcome Message",
+  "text.autoconfig.mario_qua_mario.option.nagMessage": "One-Time Nag Message",
 
   "gamerule.marioDoesRisingStomps": "Mario can stomp monsters while ascending",
   "gamerule.marioIncomingDamageMultiplier": "Mario incoming damage multiplier",

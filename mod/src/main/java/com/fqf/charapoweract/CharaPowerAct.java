@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CharaPowerAct implements ModInitializer {
-	public static final String MOD_ID = "mario_qua_mario";
+	public static final String MOD_ID = "charapoweract";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	public static final CharaPowerActConfig CONFIG;
@@ -40,7 +40,7 @@ public class CharaPowerAct implements ModInitializer {
 	}
 
 	public static Identifier makeID(String path) {
-		return Identifier.of("mqm", path);
+		return Identifier.of("charapoweract", path);
 	}
 	public static Identifier makeResID(String path) {
 		return Identifier.of(MOD_ID, path);

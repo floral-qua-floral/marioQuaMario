@@ -27,7 +27,7 @@ public class ParsedPowerGrantingState extends ParsedCPAState {
 
 	public ParsedPowerGrantingState(StatAlteringStateDefinition definition) {
 		super(definition);
-		this.RESOURCE_ID = this.ID.getNamespace().equals("mqm") ? CharaPowerAct.makeResID(this.ID.getPath()) : this.ID;
+		this.RESOURCE_ID = this.ID;
 
 		this.WIDTH_FACTOR = definition.getWidthFactor();
 		this.HEIGHT_FACTOR = definition.getHeightFactor();
