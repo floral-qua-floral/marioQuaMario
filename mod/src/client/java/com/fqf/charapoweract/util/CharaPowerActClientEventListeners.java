@@ -2,6 +2,7 @@ package com.fqf.charapoweract.util;
 
 import com.fqf.charapoweract.bapping.BlockBappingClientUtil;
 import com.fqf.charapoweract.bapping.BlockBappingUtil;
+import com.fqf.charapoweract.bapping.BumpingBlockInfo;
 import com.fqf.charapoweract.bapping.WorldBapsInfo;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
@@ -24,6 +25,14 @@ public class CharaPowerActClientEventListeners {
 			MatrixStack matrixStack = worldRenderContext.matrixStack();
 			assert matrixStack != null;
 			Vec3d cameraPos = worldRenderContext.camera().getPos();
+
+			for(BlockPos pos : worldBaps.HIDDEN) {
+				BlockBappingClientUtil.renderBumpedBlock(world, worldBaps, matrixStack, cameraPos, pos, true);
+			}
+			for(BlockPos pos : worldBaps.HIDDEN_LINGERING) {
+				BlockBappingClientUtil.renderBumpedBlock(world, worldBaps, matrixStack, cameraPos, pos, false);
+			}
+			worldBaps.HIDDEN_LINGERING.clear();
 
 			for(BlockPos pos : worldBaps.BRITTLE) {
 				if(worldBaps.HIDDEN.contains(pos)) {

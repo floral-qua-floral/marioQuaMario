@@ -1,7 +1,6 @@
 package com.fqf.charapoweract.mixin.client;
 
 import com.fqf.charapoweract.bapping.BlockBappingClientUtil;
-import com.fqf.charapoweract.bapping.BumpedBlockParticle;
 import com.fqf.charapoweract_api.definitions.states.actions.util.animation.Arrangement;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -64,9 +63,10 @@ public abstract class CameraMixin {
 			this.setRotationRads(this.CAMERA_ARRANGEMENT.pitch, MathHelper.PI + this.CAMERA_ARRANGEMENT.yaw, this.CAMERA_ARRANGEMENT.roll);
 			MinecraftClient.getInstance().worldRenderer.scheduleTerrainUpdate();
 		}
-		BumpedBlockParticle particle = BlockBappingClientUtil.getBumpedBlockUnder(focusedEntity);
-		if(particle != null) {
-			this.setPos(particle.applyOffset(this.getPos(), tickDelta));
+
+		Vec3d bumpingOffset = BlockBappingClientUtil.calculateDubiousOffsetUnder(focusedEntity, tickDelta);
+		if(bumpingOffset != Vec3d.ZERO) {
+			this.setPos(this.getPos().add(bumpingOffset));
 			MinecraftClient.getInstance().worldRenderer.scheduleTerrainUpdate();
 		}
 	}

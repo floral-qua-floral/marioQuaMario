@@ -1,6 +1,5 @@
 package com.fqf.charapoweract.util;
 
-import com.fqf.charapoweract.bapping.AbstractBapInfo;
 import com.fqf.charapoweract.cpadata.CPAMoveableData;
 import com.fqf.charapoweract.registries.actions.AbstractParsedAction;
 import com.fqf.charapoweract.registries.actions.TransitionPhase;
@@ -14,7 +13,6 @@ public class CPAClientHelperManager {
 	public static ClientPacketSender packetSender = null;
 
 	public interface ClientHelper {
-		void clientBap(AbstractBapInfo info);
 	}
 	public interface ClientPacketSender {
 		void setActionC2S(AbstractParsedAction fromAction, AbstractParsedAction toAction, long seed, TransitionPhase phase);

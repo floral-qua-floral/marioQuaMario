@@ -185,9 +185,6 @@ public class BlockBappingUtil {
 					bappedState);
 		}
 
-		if(info.WORLD.isClient())
-			CPAClientHelperManager.helper.clientBap(info);
-
 		WorldBapsInfo worldBaps = getBapsInfoNullable(info.WORLD);
 		if(worldBaps == null) {
 			worldBaps = new WorldBapsInfo();
@@ -222,7 +219,11 @@ public class BlockBappingUtil {
 			}
 			info.finishAndGetReplacement();
 		}
-		if(sets.contains(world.HIDDEN)) reRenderPos(info);
+		if(sets.contains(world.HIDDEN)) {
+			reRenderPos(info);
+			if(!adding && info.WORLD.isClient() && info.RESULT != BapResult.BREAK && info.RESULT != BapResult.BREAK_WITHOUT_POWERING)
+				world.HIDDEN_LINGERING.add(info.POS);
+		}
 		if(sets.contains(world.POWERED)) info.WORLD.updateNeighbor(info.POS, info.WORLD.getBlockState(info.POS).getBlock(), info.POS);
 	}
 

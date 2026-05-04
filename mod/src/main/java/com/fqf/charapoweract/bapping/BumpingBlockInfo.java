@@ -9,7 +9,7 @@ import net.minecraft.world.World;
 public class BumpingBlockInfo extends AbstractBapInfo {
 	public static final int BUMP_DURATION = 6;
 
-	protected final long FINISH_TIME;
+	public final long FINISH_TIME;
 	public final Direction DISPLACEMENT_DIRECTION;
 
 	protected BumpingBlockInfo(World world, BlockPos pos, BapResult result, Direction direction, Entity bapper) {
