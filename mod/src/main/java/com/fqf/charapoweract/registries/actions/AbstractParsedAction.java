@@ -60,7 +60,13 @@ public abstract class AbstractParsedAction extends ParsedCPAState {
 
 		BappingRule bappingRule = definition.getBappingRule();
 		this.BAPPING_RULE = bappingRule == null ? NULL_EQUIVALENT : bappingRule;
-		this.COLLISION_ATTACK_TYPE = RegistryManager.COLLISION_ATTACKS.get(definition.getCollisionAttackTypeID());
+
+		Identifier collisionAttackID = definition.getCollisionAttackTypeID();
+		if(collisionAttackID == null)
+			this.COLLISION_ATTACK_TYPE = null;
+		else
+			this.COLLISION_ATTACK_TYPE = Objects.requireNonNull(RegistryManager.COLLISION_ATTACKS.get(collisionAttackID),
+					"Action " + this.ID + " tries to use unregistered Collision Attack " + collisionAttackID + "!");
 
 		this.TRANSITIONS_FROM_TARGETS = new HashMap<>();
 		this.CLIENT_TRANSITIONS = new EnumMap<>(TransitionPhase.class);

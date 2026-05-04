@@ -16,7 +16,7 @@
 	"icon": "assets/mario_qua_mario_content/icon.png",
 	"environment": "*",
 	"entrypoints": {
-		"cpa-stomp-types": [
+		"cpa-collision-attacks": [
 			"com.fqf.mario_qua_mario_content.stomp_types.JumpStomp",
 			"com.fqf.mario_qua_mario_content.stomp_types.GroundPound",
 			"com.fqf.mario_qua_mario_content.stomp_types.AquaticGroundPound"
