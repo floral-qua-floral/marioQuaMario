@@ -1,5 +1,6 @@
 package com.fqf.charapoweract.bapping;
 
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.OverlayVertexConsumer;
 import net.minecraft.client.render.RenderLayers;
@@ -54,6 +55,12 @@ public class BlockBappingClientUtil {
 					false,
 					world.getRandom()
 			);
+
+			BlockEntity entity = world.getBlockEntity(pos);
+			if(entity != null) {
+				MinecraftClient.getInstance().getBlockEntityRenderDispatcher().render(entity, getTickDelta(), matrixStack, immediate);
+			}
+
 			matrixStack.pop();
 		}
 	}
