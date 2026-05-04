@@ -1,5 +1,7 @@
 package com.fqf.charapoweract.bapping;
 
+import com.fqf.charapoweract.CharaPowerAct;
+import com.fqf.charapoweract.compat.optional.SableCompatSafe;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.OverlayVertexConsumer;
@@ -10,9 +12,16 @@ import net.minecraft.client.render.model.ModelLoader;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.tuple.Triple;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.joml.Quaterniondc;
+import org.joml.Quaternionf;
+import org.joml.Vector3dc;
 
 public class BlockBappingClientUtil {
 	public static void clientWorldTick(ClientWorld world) {
@@ -22,13 +31,28 @@ public class BlockBappingClientUtil {
 	public static void renderBumpedBlock(ClientWorld world, WorldBapsInfo worldBaps, MatrixStack matrixStack, Vec3d cameraPos, BlockPos pos, boolean checkBrittle) {
 		Vec3d bumpOffset = BlockBappingClientUtil.calculateDubiousOffset(worldBaps, pos, BlockBappingClientUtil.getTickDelta());
 
-		double diffX = (double)pos.getX() + bumpOffset.x - cameraPos.x;
-		double diffY = (double)pos.getY() + bumpOffset.y - cameraPos.y;
-		double diffZ = (double)pos.getZ() + bumpOffset.z - cameraPos.z;
+		Triple<Vec3d, Vector3dc, Quaternionf> bumpedBlockPosAndOrientation = SableCompatSafe.getPosAndOrientation(world, pos);
+		Vec3d bumpedBlockPos = bumpedBlockPosAndOrientation.getLeft();
+		Vector3dc bumpedBlockScale = bumpedBlockPosAndOrientation.getMiddle();
+		Quaternionf bumpedBlockOrientation = bumpedBlockPosAndOrientation.getRight();
+
+		double diffX = bumpedBlockPos.x + bumpOffset.x - cameraPos.x;
+		double diffY = bumpedBlockPos.y + bumpOffset.y - cameraPos.y;
+		double diffZ = bumpedBlockPos.z + bumpOffset.z - cameraPos.z;
 
 		if(diffX * diffX + diffY * diffY + diffZ * diffZ < 1024) {
 			matrixStack.push();
-			matrixStack.translate(diffX, diffY, diffZ);
+
+			float inherentScale = CharaPowerAct.CONFIG.getInherentBumpedBlockScale();
+			float inherentOffset = (1 - inherentScale) / 2;
+
+			matrixStack.translate(diffX + inherentOffset, diffY + inherentOffset, diffZ + inherentOffset);
+			matrixStack.multiply(bumpedBlockOrientation);
+			matrixStack.scale(
+					(float) (inherentScale * bumpedBlockScale.x()),
+					(float) (inherentScale * bumpedBlockScale.y()),
+					(float) (inherentScale * bumpedBlockScale.z())
+			);
 
 			if(checkBrittle && worldBaps.BRITTLE.contains(pos)) {
 				MatrixStack.Entry entry3 = matrixStack.peek();

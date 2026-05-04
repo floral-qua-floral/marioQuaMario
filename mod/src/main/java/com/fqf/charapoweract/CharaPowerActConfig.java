@@ -12,6 +12,7 @@ public class CharaPowerActConfig implements ConfigData {
 	private boolean logActionTransitionInjections = false;
 	private boolean specialHUD = false;
 	private boolean allowIllegalTransitionsInSingleplayer = true;
+	private float inherentBumpedBlockScale = 1.01F;
 
 	public boolean logAllActionTransitions() {
 		return this.logAllActionTransitions;
@@ -30,5 +31,8 @@ public class CharaPowerActConfig implements ConfigData {
 	}
 	public boolean shouldAllowIllegalTransitionsInSingleplayer() {
 		return this.allowIllegalTransitionsInSingleplayer;
+	}
+	public float getInherentBumpedBlockScale() {
+		return this.inherentBumpedBlockScale;
 	}
 }

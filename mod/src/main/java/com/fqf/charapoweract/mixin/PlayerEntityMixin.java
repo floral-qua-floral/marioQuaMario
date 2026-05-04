@@ -65,9 +65,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCPADa
 				&& moveableData.doCustomTravel()
 				&& !this.getWeaponStack().isOf(Items.FIREWORK_STAR)
 				&& moveableData.travelHook(movementInput.z, movementInput.x)) {
-			// SABLE HOOK
-			SableCompatSafe.trySablePostTravelCompatibility(moveableData.getPlayer());
 
+			// SABLE HOOK
 			super.travel(null); // WHAT AM I DOING!!!!!!!!!!!
 
 			ci.cancel();

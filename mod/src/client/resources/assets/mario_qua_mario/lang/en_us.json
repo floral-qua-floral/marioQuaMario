@@ -9,6 +9,7 @@
   "text.autoconfig.mario_qua_mario.option.logNBTReadWrite": "Log reads & writes to NBT",
   "text.autoconfig.mario_qua_mario.option.logActionTransitionInjections": "Log action transition injections",
   "text.autoconfig.mario_qua_mario.option.allowIllegalTransitionsInSingleplayer": "Skip transition verification in Singleplayer",
+  "text.autoconfig.mario_qua_mario.option.inherentBumpedBlockScale": "Scale of bumped blocks (prevents Z-fighting)",
 
   "text.autoconfig.mario_qua_mario.option.spinputType": "Spin Input Type",
   "fabric.mods.mario_qua_mario.spin": "Spin",
