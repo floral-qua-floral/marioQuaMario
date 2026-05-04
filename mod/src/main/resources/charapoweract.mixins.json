@@ -4,16 +4,17 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "AbstractBlockStateMixin",
-    "compat.CPMCommonBaseMixin",
-    "compat.CPMNetHandlerMixin",
     "DamageSourceMixin",
     "LivingEntityStompabilityMixin",
     "PlayerEntityCPADataMixin",
     "PlayerEntityMixin",
     "RedstoneViewMixin",
-    "ServerPlayerEntityMixin",
     "ServerPlayerCPADataMixin",
-    "ServerPlayNetworkHandlerMixin"
+    "ServerPlayerEntityMixin",
+    "ServerPlayNetworkHandlerMixin",
+    "compat.CPMCommonBaseMixin",
+    "compat.CPMNetHandlerMixin",
+    "compat.LivingEntityEmptyTravelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

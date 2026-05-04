@@ -18,11 +18,14 @@ import com.fqf.charapoweract_api.definitions.states.actions.util.WallBodyAlignme
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Share;
+import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerModelPart;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
@@ -57,12 +60,16 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCPADa
 	}
 
 	@Inject(method = "travel", at = @At("HEAD"), cancellable = true)
-	private void travelHook(Vec3d movementInput, CallbackInfo ci) {
+	private void travelHook(Vec3d movementInput, CallbackInfo ci, @Share(namespace = "charapoweract", value = "skipLivingTravel") LocalBooleanRef isSkippingLivingTravel) {
 		if(this.cpa$getCPAData() instanceof CPAMoveableData moveableData
 				&& moveableData.doCustomTravel()
+				&& !this.getWeaponStack().isOf(Items.FIREWORK_STAR)
 				&& moveableData.travelHook(movementInput.z, movementInput.x)) {
 			// SABLE HOOK
 			SableCompatSafe.trySablePostTravelCompatibility(moveableData.getPlayer());
+
+			super.travel(null); // WHAT AM I DOING!!!!!!!!!!!
+
 			ci.cancel();
 		}
 	}
