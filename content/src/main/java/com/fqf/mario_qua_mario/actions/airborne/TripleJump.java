@@ -1,16 +1,16 @@
 package com.fqf.mario_qua_mario.actions.airborne;
 
-import com.fqf.charapoweract_api.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.GroundedActionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.ActionCategory;
-import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionInjectionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimation;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
-import com.fqf.charapoweract_api.util.CharaStat;
-import com.fqf.charapoweract_api.util.Easing;
+import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
+import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.TransitionInjectionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
+import com.fqf.charaformact_api.util.CfaStat;
+import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.util.MarioVars;
@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-import static com.fqf.charapoweract_api.util.StatCategory.*;
+import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class TripleJump extends Jump implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("triple_jump");
@@ -117,8 +117,8 @@ public class TripleJump extends Jump implements AirborneActionDefinition {
 		);
 	}
 
-	public static final CharaStat TRIPLE_JUMP_VEL = new CharaStat(1.175, JUMP_VELOCITY);
-	public static CharaStat TRIPLE_JUMP_SPEED_THRESHOLD = new CharaStat(0.34, RUNNING, FORWARD, THRESHOLD);
+	public static final CfaStat TRIPLE_JUMP_VEL = new CfaStat(1.175, JUMP_VELOCITY);
+	public static CfaStat TRIPLE_JUMP_SPEED_THRESHOLD = new CfaStat(0.34, RUNNING, FORWARD, THRESHOLD);
 
 	@Override protected double getJumpCapThreshold() {
 		return 0.65;

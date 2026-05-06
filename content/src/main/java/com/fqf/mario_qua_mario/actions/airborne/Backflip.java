@@ -1,23 +1,23 @@
 package com.fqf.mario_qua_mario.actions.airborne;
 
-import com.fqf.charapoweract_api.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.GroundedActionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimation;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
-import com.fqf.charapoweract_api.cpadata.ICPATravelData;
-import com.fqf.charapoweract_api.util.CharaStat;
-import com.fqf.charapoweract_api.util.Easing;
+import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
+import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.fqf.charaformact_api.util.CfaStat;
+import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.fqf.charapoweract_api.util.StatCategory.*;
+import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class Backflip extends Jump implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("backflip");
@@ -111,19 +111,19 @@ public class Backflip extends Jump implements AirborneActionDefinition {
 		);
 	}
 
-	public static CharaStat BACKFLIP_VEL = new CharaStat(1.065, JUMP_VELOCITY);
-	public static CharaStat BACKFLIP_BACKWARDS_SPEED = new CharaStat(-0.16, DRIFTING, BACKWARD, SPEED);
+	public static CfaStat BACKFLIP_VEL = new CfaStat(1.065, JUMP_VELOCITY);
+	public static CfaStat BACKFLIP_BACKWARDS_SPEED = new CfaStat(-0.16, DRIFTING, BACKWARD, SPEED);
 
-	public static CharaStat REDUCED_FORWARD_ACCEL = Fall.FORWARD_DRIFT_ACCEL.variate(0.5);
-	public static CharaStat REDUCED_FORWARD_SPEED = Fall.FORWARD_DRIFT_SPEED.variate(0.5);
-	public static CharaStat REDUCED_BACKWARD_ACCEL = Fall.BACKWARD_DRIFT_ACCEL.variate(0.5);
-	public static CharaStat REDUCED_BACKWARD_SPEED = Fall.BACKWARD_DRIFT_SPEED.variate(0.5);
-	public static CharaStat REDUCED_STRAFE_ACCEL = Fall.STRAFE_DRIFT_ACCEL.variate(0.5);
-	public static CharaStat REDUCED_STRAFE_SPEED = Fall.STRAFE_DRIFT_SPEED.variate(0.5);
+	public static CfaStat REDUCED_FORWARD_ACCEL = Fall.FORWARD_DRIFT_ACCEL.variate(0.5);
+	public static CfaStat REDUCED_FORWARD_SPEED = Fall.FORWARD_DRIFT_SPEED.variate(0.5);
+	public static CfaStat REDUCED_BACKWARD_ACCEL = Fall.BACKWARD_DRIFT_ACCEL.variate(0.5);
+	public static CfaStat REDUCED_BACKWARD_SPEED = Fall.BACKWARD_DRIFT_SPEED.variate(0.5);
+	public static CfaStat REDUCED_STRAFE_ACCEL = Fall.STRAFE_DRIFT_ACCEL.variate(0.5);
+	public static CfaStat REDUCED_STRAFE_SPEED = Fall.STRAFE_DRIFT_SPEED.variate(0.5);
 
-	public static CharaStat BACKFLIP_REDIRECTION = new CharaStat(0, DRIFTING, REDIRECTION);
+	public static CfaStat BACKFLIP_REDIRECTION = new CfaStat(0, DRIFTING, REDIRECTION);
 
-	@Override public void travelHook(ICPATravelData data, AirborneActionHelper helper) {
+	@Override public void travelHook(CfaTravelData data, AirborneActionHelper helper) {
 		helper.applyComplexGravity(data, Fall.FALL_ACCEL, JUMP_GRAVITY, Fall.FALL_SPEED);
 		if(data.getYVel() < 0.1) Fall.drift(data, helper);
 		else helper.airborneAccel(

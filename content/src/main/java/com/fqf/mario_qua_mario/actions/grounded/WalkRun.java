@@ -1,13 +1,13 @@
 package com.fqf.mario_qua_mario.actions.grounded;
 
-import com.fqf.charapoweract_api.definitions.states.actions.GroundedActionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.*;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
-import com.fqf.charapoweract_api.cpadata.ICPAData;
-import com.fqf.charapoweract_api.cpadata.ICPAReadableMotionData;
-import com.fqf.charapoweract_api.cpadata.ICPATravelData;
-import com.fqf.charapoweract_api.util.CharaStat;
-import com.fqf.charapoweract_api.util.Easing;
+import com.fqf.charaformact_api.cfadata.CfaData;
+import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
+import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
+import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.fqf.charaformact_api.util.CfaStat;
+import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import net.minecraft.util.Identifier;
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-import static com.fqf.charapoweract_api.util.StatCategory.*;
+import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class WalkRun extends SubWalk implements GroundedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("walk_run");
@@ -50,21 +50,21 @@ public class WalkRun extends SubWalk implements GroundedActionDefinition {
 		return SprintingRule.ALLOW;
 	}
 
-	public static final CharaStat RUN_ACCEL = new CharaStat(0.0175, RUNNING, FORWARD, ACCELERATION);
-	public static final CharaStat RUN_SPEED = new CharaStat(0.55, RUNNING, FORWARD, SPEED);
-	public static final CharaStat RUN_REDIRECTION = new CharaStat(2.76, RUNNING, FORWARD, REDIRECTION);
-	public static final CharaStat OVERRUN_ACCEL = new CharaStat(0.0175, RUNNING, FORWARD, OVERSPEED_CORRECTION);
+	public static final CfaStat RUN_ACCEL = new CfaStat(0.0175, RUNNING, FORWARD, ACCELERATION);
+	public static final CfaStat RUN_SPEED = new CfaStat(0.55, RUNNING, FORWARD, SPEED);
+	public static final CfaStat RUN_REDIRECTION = new CfaStat(2.76, RUNNING, FORWARD, REDIRECTION);
+	public static final CfaStat OVERRUN_ACCEL = new CfaStat(0.0175, RUNNING, FORWARD, OVERSPEED_CORRECTION);
 
-	public static boolean meetsWalkRunRequirement(ICPAReadableMotionData data) {
+	public static boolean meetsWalkRunRequirement(CfaReadableMotionData data) {
 		return data.getInputs().getForwardInput() > 0 &&
 				data.getForwardVel() > WALK_STANDSTILL_THRESHOLD.get(data) &&
 				data.getHorizVelSquared() > WALK_SPEED.getAsSquaredThreshold(data);
 	}
 
-	@Override public @Nullable Object provideStateData(ICPAData data) {
+	@Override public @Nullable Object provideStateData(CfaData data) {
 		return new ActionTimerVars();
 	}
-	@Override public void travelHook(ICPATravelData data, GroundedActionHelper helper) {
+	@Override public void travelHook(CfaTravelData data, GroundedActionHelper helper) {
 		if(data.getPlayer().isSprinting()) {
 			ActionTimerVars vars = ActionTimerVars.get(data);
 

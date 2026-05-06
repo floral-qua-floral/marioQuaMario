@@ -16,13 +16,13 @@
 	"icon": "assets/mario_qua_mario/icon.png",
 	"environment": "*",
 	"entrypoints": {
-		"cpa-collision-attacks": [
+		"cfa-collision-attacks": [
 			"com.fqf.mario_qua_mario.collision_attacks.JumpStomp",
 			"com.fqf.mario_qua_mario.collision_attacks.GroundPound",
 			"com.fqf.mario_qua_mario.collision_attacks.AquaticGroundPound"
 		],
 
-		"cpa-generic-actions": [
+		"cfa-generic-actions": [
 			"com.fqf.mario_qua_mario.actions.generic.ClimbPole",
 
 			"com.fqf.mario_qua_mario.actions.generic.Debug",
@@ -33,7 +33,7 @@
 			"com.fqf.mario_qua_mario.actions.generic.DebugSideTurn",
 			"com.fqf.mario_qua_mario.actions.generic.DebugVanillaTravel"
 		],
-		"cpa-grounded-actions": [
+		"cfa-grounded-actions": [
 			"com.fqf.mario_qua_mario.actions.grounded.SubWalk",
 			"com.fqf.mario_qua_mario.actions.grounded.WalkRun",
 			"com.fqf.mario_qua_mario.actions.grounded.Skid",
@@ -48,7 +48,7 @@
 			"com.fqf.mario_qua_mario.actions.power.RetroIdle",
 			"com.fqf.mario_qua_mario.actions.power.TailSpinGround"
 		],
-		"cpa-airborne-actions": [
+		"cfa-airborne-actions": [
 			"com.fqf.mario_qua_mario.actions.airborne.Fall",
 			"com.fqf.mario_qua_mario.actions.airborne.SpecialFall",
 			"com.fqf.mario_qua_mario.actions.airborne.StompBounce",
@@ -74,7 +74,7 @@
 			"com.fqf.mario_qua_mario.actions.power.TailSpinFall",
 			"com.fqf.mario_qua_mario.actions.power.TailSpinJump"
 		],
-		"cpa-aquatic-actions": [
+		"cfa-aquatic-actions": [
 			"com.fqf.mario_qua_mario.actions.aquatic.Submerged",
 			"com.fqf.mario_qua_mario.actions.aquatic.Swim",
 			"com.fqf.mario_qua_mario.actions.aquatic.UnderwaterWalk",
@@ -83,30 +83,30 @@
 			"com.fqf.mario_qua_mario.actions.aquatic.AquaticPoundDrop",
 			"com.fqf.mario_qua_mario.actions.aquatic.AquaticPoundLand"
 		],
-		"cpa-wallbound-actions": [
+		"cfa-wallbound-actions": [
 			"com.fqf.mario_qua_mario.actions.wallbound.ClimbIntangibleDirectional",
 			"com.fqf.mario_qua_mario.actions.wallbound.ClimbIntangibleSideHang",
 			"com.fqf.mario_qua_mario.actions.wallbound.ClimbWall",
 			"com.fqf.mario_qua_mario.actions.wallbound.ClimbWallSideHang",
 			"com.fqf.mario_qua_mario.actions.wallbound.WallSlide"
 		],
-		"cpa-mounted-actions": [
+		"cfa-mounted-actions": [
 			"com.fqf.mario_qua_mario.actions.mounted.Mounted"
 		],
 
-		"cpa-power-forms": [
+		"cfa-forms": [
 			"com.fqf.mario_qua_mario.powerups.Small",
 			"com.fqf.mario_qua_mario.powerups.Super",
 			"com.fqf.mario_qua_mario.powerups.Fire",
 			"com.fqf.mario_qua_mario.powerups.Raccoon"
 		],
 
-		"cpa-characters": [
+		"cfa-characters": [
 			"com.fqf.mario_qua_mario.characters.Mario",
 			"com.fqf.mario_qua_mario.characters.Toadette"
 		],
 
-		"cpa-voicelines": [
+		"cfa-voicelines": [
 			"com.fqf.mario_qua_mario.Voicelines"
 		],
 
@@ -136,7 +136,7 @@
 		"java": ">=21",
 		"fabric-api": "*",
 		"cloth-config": "*",
-		"charapoweract_api": "*"
+		"charaformact_api": "*"
 	},
 	"suggests": {
 

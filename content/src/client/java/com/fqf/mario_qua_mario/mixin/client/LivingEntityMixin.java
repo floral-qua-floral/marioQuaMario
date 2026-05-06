@@ -28,12 +28,12 @@ public abstract class LivingEntityMixin extends Entity implements Squashable {
 	}
 
 	@Override
-	public void cpa$squash() {
+	public void cfa$squash() {
 		this.squashed = true;
 	}
 
 	@Override
-	public boolean cpa$isSquashed() {
+	public boolean cfa$isSquashed() {
 		return this.squashed;
 	}
 }

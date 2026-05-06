@@ -1,12 +1,12 @@
 package com.fqf.mario_qua_mario.actions.airborne;
 
-import com.fqf.charapoweract_api.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.*;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.PlayermodelAnimation;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charapoweract_api.cpadata.*;
-import com.fqf.charapoweract_api.util.CharaStat;
+import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.charaformact_api.cfadata.*;
+import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario.actions.grounded.SubWalk;
@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-import static com.fqf.charapoweract_api.util.StatCategory.*;
+import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class Fall implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("fall");
@@ -59,21 +59,21 @@ public class Fall implements AirborneActionDefinition {
 		return JumpStomp.ID;
 	}
 
-	public static final CharaStat FALL_ACCEL = new CharaStat(-0.115, NORMAL_GRAVITY);
-	public static final CharaStat FALL_SPEED = new CharaStat(-3.25, TERMINAL_VELOCITY);
+	public static final CfaStat FALL_ACCEL = new CfaStat(-0.115, NORMAL_GRAVITY);
+	public static final CfaStat FALL_SPEED = new CfaStat(-3.25, TERMINAL_VELOCITY);
 
-	public static final CharaStat FORWARD_DRIFT_ACCEL = new CharaStat(0.045, DRIFTING, FORWARD, ACCELERATION);
-	public static final CharaStat FORWARD_DRIFT_SPEED = new CharaStat(0.275, DRIFTING, FORWARD, SPEED);
+	public static final CfaStat FORWARD_DRIFT_ACCEL = new CfaStat(0.045, DRIFTING, FORWARD, ACCELERATION);
+	public static final CfaStat FORWARD_DRIFT_SPEED = new CfaStat(0.275, DRIFTING, FORWARD, SPEED);
 
-	public static final CharaStat BACKWARD_DRIFT_ACCEL = new CharaStat(0.055, DRIFTING, BACKWARD, ACCELERATION);
-	public static final CharaStat BACKWARD_DRIFT_SPEED = new CharaStat(0.2, DRIFTING, BACKWARD, SPEED);
+	public static final CfaStat BACKWARD_DRIFT_ACCEL = new CfaStat(0.055, DRIFTING, BACKWARD, ACCELERATION);
+	public static final CfaStat BACKWARD_DRIFT_SPEED = new CfaStat(0.2, DRIFTING, BACKWARD, SPEED);
 
-	public static final CharaStat STRAFE_DRIFT_ACCEL = new CharaStat(0.065, DRIFTING, STRAFE, ACCELERATION);
-	public static final CharaStat STRAFE_DRIFT_SPEED = new CharaStat(0.25, DRIFTING, STRAFE, SPEED);
+	public static final CfaStat STRAFE_DRIFT_ACCEL = new CfaStat(0.065, DRIFTING, STRAFE, ACCELERATION);
+	public static final CfaStat STRAFE_DRIFT_SPEED = new CfaStat(0.25, DRIFTING, STRAFE, SPEED);
 
-	public static final CharaStat DRIFT_REDIRECTION = new CharaStat(6.0, DRIFTING, REDIRECTION);
+	public static final CfaStat DRIFT_REDIRECTION = new CfaStat(6.0, DRIFTING, REDIRECTION);
 
-	public static void drift(ICPATravelData data, AirborneActionHelper helper) {
+	public static void drift(CfaTravelData data, AirborneActionHelper helper) {
 		helper.airborneAccel(
 				data,
 				FORWARD_DRIFT_ACCEL, FORWARD_DRIFT_SPEED,
@@ -89,16 +89,16 @@ public class Fall implements AirborneActionDefinition {
 			EvaluatorEnvironment.CLIENT_ONLY
 	);
 
-	@Override public @Nullable Object provideStateData(ICPAData data) {
+	@Override public @Nullable Object provideStateData(CfaData data) {
 		return null;
 	}
-	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
+	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 
 	}
-	@Override public void serverTick(ICPAAuthoritativeData data) {
+	@Override public void serverTick(CfaAuthoritativeData data) {
 		
 	}
-	@Override public void travelHook(ICPATravelData data, AirborneActionHelper helper) {
+	@Override public void travelHook(CfaTravelData data, AirborneActionHelper helper) {
 		helper.applyComplexGravity(data, FALL_ACCEL, null, FALL_SPEED);
 		drift(data, helper);
 	}

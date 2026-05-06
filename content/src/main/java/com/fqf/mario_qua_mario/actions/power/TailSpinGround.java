@@ -1,19 +1,19 @@
 package com.fqf.mario_qua_mario.actions.power;
 
-import com.fqf.charapoweract_api.definitions.states.actions.GroundedActionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.*;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.EntireBodyAnimation;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.LimbAnimation;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.PlayermodelAnimation;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimation;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
-import com.fqf.charapoweract_api.cpadata.*;
-import com.fqf.charapoweract_api.cpadata.ICPAClientData;
-import com.fqf.charapoweract_api.cpadata.ICPAData;
-import com.fqf.charapoweract_api.util.CharaStat;
-import com.fqf.charapoweract_api.util.Easing;
+import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.EntireBodyAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.LimbAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
+import com.fqf.charaformact_api.cfadata.*;
+import com.fqf.charaformact_api.cfadata.CfaClientData;
+import com.fqf.charaformact_api.cfadata.CfaData;
+import com.fqf.charaformact_api.util.CfaStat;
+import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.DuckFall;
 import com.fqf.mario_qua_mario.actions.airborne.DuckJump;
@@ -99,7 +99,7 @@ public class TailSpinGround implements GroundedActionDefinition {
 		return null;
 	}
 
-	public static void attemptTailStrike(ICPAAuthoritativeData data) {
+	public static void attemptTailStrike(CfaAuthoritativeData data) {
 		if(data.retrieveStateData(TailSpinActionTimerVars.class).actionTimer % 3 == 0) {
 			ServerPlayerEntity mario = data.getPlayer();
 			List<Entity> strikeTargets = mario.getServerWorld().getOtherEntities(
@@ -114,25 +114,25 @@ public class TailSpinGround implements GroundedActionDefinition {
 		}
 	}
 
-	@Override public @Nullable Object provideStateData(ICPAData data) {
+	@Override public @Nullable Object provideStateData(CfaData data) {
 		return new TailSpinActionTimerVars(data);
 	}
-	public static void commonTick(ICPAData data) {
+	public static void commonTick(CfaData data) {
 		data.retrieveStateData(TailSpinActionTimerVars.class).actionTimer++;
 	}
-	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
+	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 		commonTick(data);
 	}
-	@Override public void serverTick(ICPAAuthoritativeData data) {
+	@Override public void serverTick(CfaAuthoritativeData data) {
 		commonTick(data);
 		attemptTailStrike(data);
 	}
-	@Override public void travelHook(ICPATravelData data, GroundedActionHelper helper) {
-		helper.applyDrag(data, CharaStat.ZERO, CharaStat.ZERO,
+	@Override public void travelHook(CfaTravelData data, GroundedActionHelper helper) {
+		helper.applyDrag(data, CfaStat.ZERO, CfaStat.ZERO,
 				data.getInputs().getForwardInput(), data.getInputs().getStrafeInput(), DuckSlide.SLIDE_REDIRECTION);
 	}
 
-	public static boolean doneSpinning(ICPAData data) {
+	public static boolean doneSpinning(CfaData data) {
 		return data.retrieveStateData(TailSpinActionTimerVars.class).actionTimer >= 2 * TICKS_PER_REVOLUTION;
 	}
 

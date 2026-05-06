@@ -1,6 +1,6 @@
 package com.fqf.mario_qua_mario;
 
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationOption;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationOption;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;

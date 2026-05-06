@@ -24,7 +24,7 @@ loom {
 	splitEnvironmentSourceSets()
 
 	mods {
-		"mario_qua_mario_content" {
+		"mario_qua_mario" {
 			sourceSet sourceSets.main
 			sourceSet sourceSets.client
 		}

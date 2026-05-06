@@ -1,10 +1,10 @@
 package com.fqf.mario_qua_mario.powerups;
 
-import com.fqf.charapoweract_api.definitions.states.PowerFormDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charapoweract_api.cpadata.ICPAClientData;
-import com.fqf.charapoweract_api.cpadata.ICPAData;
-import com.fqf.charapoweract_api.cpadata.ICPAAuthoritativeData;
+import com.fqf.charaformact_api.cfadata.CfaClientData;
+import com.fqf.charaformact_api.definitions.states.FormDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.charaformact_api.cfadata.CfaData;
+import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-public class Super implements PowerFormDefinition {
+public class Super implements FormDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("super");
 	@Override public @NotNull Identifier getID() {
 	    return ID;
@@ -59,8 +59,8 @@ public class Super implements PowerFormDefinition {
 		return Set.of();
 	}
 
-	@Override public @NotNull PowerHeart getPowerHeart(PowerHeartHelper helper) {
-		return new PowerHeart(
+	@Override public @NotNull FormDefinition.FormHeart getFormHeart(FormHeartHelper helper) {
+		return new FormHeart(
 				Identifier.ofVanilla("hud/heart/full"),
 				Identifier.ofVanilla("hud/heart/full_blinking"),
 				Identifier.ofVanilla("hud/heart/half"),
@@ -78,13 +78,13 @@ public class Super implements PowerFormDefinition {
 		return Set.of();
 	}
 
-	@Override public @Nullable Object provideStateData(ICPAData data) {
+	@Override public @Nullable Object provideStateData(CfaData data) {
 		return null;
 	}
-	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
+	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 
 	}
-	@Override public void serverTick(ICPAAuthoritativeData data) {
+	@Override public void serverTick(CfaAuthoritativeData data) {
 
 	}
 

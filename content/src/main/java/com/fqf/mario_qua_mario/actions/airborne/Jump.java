@@ -1,17 +1,17 @@
 package com.fqf.mario_qua_mario.actions.airborne;
 
-import com.fqf.charapoweract_api.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.GroundedActionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.BappingRule;
-import com.fqf.charapoweract_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.LimbAnimation;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.PlayermodelAnimation;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.ProgressHandler;
-import com.fqf.charapoweract_api.cpadata.ICPATravelData;
-import com.fqf.charapoweract_api.util.CharaStat;
-import com.fqf.charapoweract_api.util.Easing;
+import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.BappingRule;
+import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.LimbAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.ProgressHandler;
+import com.fqf.charaformact_api.util.CfaStat;
+import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.util.MarioVars;
 import net.minecraft.util.Identifier;
@@ -20,8 +20,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.fqf.charapoweract_api.util.StatCategory.JUMPING_GRAVITY;
-import static com.fqf.charapoweract_api.util.StatCategory.JUMP_VELOCITY;
+import static com.fqf.charaformact_api.util.StatCategory.JUMPING_GRAVITY;
+import static com.fqf.charaformact_api.util.StatCategory.JUMP_VELOCITY;
 
 public class Jump extends Fall implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("jump");
@@ -74,12 +74,12 @@ public class Jump extends Fall implements AirborneActionDefinition {
 		return BappingRule.JUMPING;
 	}
 
-	public static final CharaStat JUMP_GRAVITY = new CharaStat(-0.095, JUMPING_GRAVITY);
+	public static final CfaStat JUMP_GRAVITY = new CfaStat(-0.095, JUMPING_GRAVITY);
 
-	public static final CharaStat JUMP_VEL = new CharaStat(0.858, JUMP_VELOCITY);
-	public static final CharaStat JUMP_ADDEND = new CharaStat(0.3, JUMP_VELOCITY);
+	public static final CfaStat JUMP_VEL = new CfaStat(0.858, JUMP_VELOCITY);
+	public static final CfaStat JUMP_ADDEND = new CfaStat(0.3, JUMP_VELOCITY);
 
-	@Override public void travelHook(ICPATravelData data, AirborneActionHelper helper) {
+	@Override public void travelHook(CfaTravelData data, AirborneActionHelper helper) {
 		helper.applyComplexGravity(data, Fall.FALL_ACCEL, JUMP_GRAVITY, Fall.FALL_SPEED);
 		Fall.drift(data, helper);
 	}

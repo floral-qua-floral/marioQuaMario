@@ -1,14 +1,14 @@
 package com.fqf.mario_qua_mario.actions.grounded;
 
-import com.fqf.charapoweract_api.definitions.states.actions.GroundedActionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.*;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charapoweract_api.cpadata.ICPAData;
-import com.fqf.charapoweract_api.cpadata.ICPAAuthoritativeData;
-import com.fqf.charapoweract_api.cpadata.ICPAClientData;
-import com.fqf.charapoweract_api.cpadata.ICPATravelData;
-import com.fqf.charapoweract_api.util.CharaStat;
+import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
+import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.charaformact_api.cfadata.CfaData;
+import com.fqf.charaformact_api.cfadata.CfaClientData;
+import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.BonkAir;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-import static com.fqf.charapoweract_api.util.StatCategory.*;
+import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class BonkGroundBackward implements GroundedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("bonk_ground_backward");
@@ -67,27 +67,27 @@ public class BonkGroundBackward implements GroundedActionDefinition {
 		return null;
 	}
 
-	public static final CharaStat BONK_DRAG = new CharaStat(0.185, RUNNING, DRAG);
-	public static final CharaStat BONK_DRAG_MIN = new CharaStat(0.045, RUNNING, DRAG);
+	public static final CfaStat BONK_DRAG = new CfaStat(0.185, RUNNING, DRAG);
+	public static final CfaStat BONK_DRAG_MIN = new CfaStat(0.045, RUNNING, DRAG);
 
 	public static final int STANDUP_TICKS = 8;
 
-	@Override public @Nullable Object provideStateData(ICPAData data) {
+	@Override public @Nullable Object provideStateData(CfaData data) {
 		return new ActionTimerVars();
 	}
-	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
+	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 
 	}
-	@Override public void serverTick(ICPAAuthoritativeData data) {
+	@Override public void serverTick(CfaAuthoritativeData data) {
 
 	}
-	@Override public void travelHook(ICPATravelData data, GroundedActionHelper helper) {
+	@Override public void travelHook(CfaTravelData data, GroundedActionHelper helper) {
 		if(data.getHorizVelSquared() == 0) data.retrieveStateData(ActionTimerVars.class).actionTimer++;
 		else data.retrieveStateData(ActionTimerVars.class).actionTimer = 0;
 		helper.applyDrag(
 				data, BONK_DRAG, BONK_DRAG_MIN,
 				-data.getInputs().getForwardInput(), data.getInputs().getStrafeInput(),
-				CharaStat.ZERO
+				CfaStat.ZERO
 		);
 	}
 

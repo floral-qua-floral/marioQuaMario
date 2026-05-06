@@ -1,13 +1,13 @@
 package com.fqf.mario_qua_mario.powerups;
 
-import com.fqf.charapoweract_api.definitions.states.PowerFormDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.ActionCategory;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimation;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
-import com.fqf.charapoweract_api.cpadata.*;
-import com.fqf.charapoweract_api.util.Easing;
+import com.fqf.charaformact_api.definitions.states.FormDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
+import com.fqf.charaformact_api.cfadata.*;
+import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.actions.power.TailSpinFall;
@@ -35,7 +35,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-public class Raccoon implements PowerFormDefinition {
+public class Raccoon implements FormDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("raccoon");
 	@Override public @NotNull Identifier getID() {
 	    return ID;
@@ -85,7 +85,7 @@ public class Raccoon implements PowerFormDefinition {
 		);
 	}
 
-	@Override public @NotNull PowerHeart getPowerHeart(PowerHeartHelper helper) {
+	@Override public @NotNull FormDefinition.FormHeart getFormHeart(FormHeartHelper helper) {
 		return helper.auto();
 	}
 
@@ -98,10 +98,10 @@ public class Raccoon implements PowerFormDefinition {
 		public @Nullable Double stallStartVel;
 	}
 
-	@Override public @Nullable Object provideStateData(ICPAData data) {
+	@Override public @Nullable Object provideStateData(CfaData data) {
 		return new RaccoonVars();
 	}
-	private void tick(ICPAData data) {
+	private void tick(CfaData data) {
 		RaccoonVars vars = data.retrieveStateData(RaccoonVars.class);
 		if(data.getActionCategory() != ActionCategory.AIRBORNE && data.getActionCategory() != ActionCategory.WALLBOUND) {
 			vars.stallStartVel = null;
@@ -113,10 +113,10 @@ public class Raccoon implements PowerFormDefinition {
 			vars.flightTicks--;
 		}
 	}
-	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
+	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 		tick(data);
 	}
-	@Override public void serverTick(ICPAAuthoritativeData data) {
+	@Override public void serverTick(CfaAuthoritativeData data) {
 		tick(data);
 	}
 
@@ -149,24 +149,24 @@ public class Raccoon implements PowerFormDefinition {
 		}
 
 		@Override
-		public boolean shouldInterceptAttack(ICPAReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
+		public boolean shouldInterceptAttack(CfaReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
 			return weapon.isEmpty() && attackCooldownProgress >= 1 && this.testSwing(data);
 		}
 
-		protected abstract boolean testSwing(ICPAReadableMotionData data);
+		protected abstract boolean testSwing(CfaReadableMotionData data);
 
 		@Override
-		public @NotNull MiningHandling shouldSuppressMining(ICPAReadableMotionData data, ItemStack weapon, @NotNull BlockHitResult blockHitResult, int miningTicks) {
+		public @NotNull MiningHandling shouldSuppressMining(CfaReadableMotionData data, ItemStack weapon, @NotNull BlockHitResult blockHitResult, int miningTicks) {
 			return miningTicks <= 3 ? MiningHandling.HOLD : MiningHandling.MINE;
 		}
 
 		@Override
-		public void executeTravellers(ICPATravelData data, ItemStack weapon, float attackCooldownProgress, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget) {
+		public void executeTravellers(CfaTravelData data, ItemStack weapon, float attackCooldownProgress, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget) {
 
 		}
 
 		@Override
-		public void executeClients(ICPAClientData data, ItemStack weapon, float attackCooldownProgress, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget, long seed) {
+		public void executeClients(CfaClientData data, ItemStack weapon, float attackCooldownProgress, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget, long seed) {
 			data.forceBodyAlignment(false);
 			data.playSound(MarioSFX.TAIL_WHIP, seed);
 //			if(entityTarget != null) data.playSound(MarioSFX.KICK, seed);
@@ -179,7 +179,7 @@ public class Raccoon implements PowerFormDefinition {
 		}
 
 		@Override
-		public void executeServer(ICPAAuthoritativeData data, ItemStack weapon, float attackCooldownProgress, ServerWorld world, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget) {
+		public void executeServer(CfaAuthoritativeData data, ItemStack weapon, float attackCooldownProgress, ServerWorld world, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget) {
 			data.getPlayer().spawnSweepAttackParticles();
 			if(entityTarget != null) {
 				ServerPlayerEntity mario = data.getPlayer();
@@ -211,23 +211,23 @@ public class Raccoon implements PowerFormDefinition {
 
 		return List.of(
 				new TailAttack(TailSpinGround.ID, null, null) {
-					@Override protected boolean testSwing(ICPAReadableMotionData data) {
+					@Override protected boolean testSwing(CfaReadableMotionData data) {
 						return data.getPlayer().isOnGround() && data.getPlayer().isInSneakingPose();
 					}
 				},
 				new TailAttack(TailSpinFall.ID, null, null) {
-					@Override protected boolean testSwing(ICPAReadableMotionData data) {
+					@Override protected boolean testSwing(CfaReadableMotionData data) {
 						return !data.getPlayer().isOnGround() && data.getPlayer().isInSneakingPose();
 					}
 				},
 				new TailAttack(null, tailWhipAnimation, tailWhipCameraAnimation) {
-					@Override protected boolean testSwing(ICPAReadableMotionData data) {
+					@Override protected boolean testSwing(CfaReadableMotionData data) {
 						return true;
 					}
 				},
 				new PreventAttack() {
 					@Override
-					public boolean shouldInterceptAttack(ICPAReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
+					public boolean shouldInterceptAttack(CfaReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
 						return weapon.isEmpty() && blockHitResult == null;
 					}
 				}

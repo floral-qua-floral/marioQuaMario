@@ -1,9 +1,9 @@
 package com.fqf.mario_qua_mario.util;
 
-import com.fqf.charapoweract_api.HelperGetter;
-import com.fqf.charapoweract_api.definitions.states.actions.WallboundActionDefinition;
-import com.fqf.charapoweract_api.cpadata.ICPAClientData;
-import com.fqf.charapoweract_api.cpadata.ICPAReadableMotionData;
+import com.fqf.charaformact_api.HelperGetter;
+import com.fqf.charaformact_api.cfadata.CfaClientData;
+import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
+import com.fqf.charaformact_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import net.minecraft.block.BlockState;
 import net.minecraft.sound.BlockSoundGroup;
@@ -15,10 +15,10 @@ public class ClimbVars {
 	public float progress;
 	private boolean ticked;
 
-	public void clientTick(ICPAClientData data) {
+	public void clientTick(CfaClientData data) {
 		if(!ticked) {
 			ticked = true;
-			WallboundActionDefinition.WallInfo wall = HelperGetter.getWallboundActionHelper().getWallInfo((ICPAReadableMotionData) data);
+			WallboundActionDefinition.WallInfo wall = HelperGetter.getWallboundActionHelper().getWallInfo((CfaReadableMotionData) data);
 			World world = data.getPlayer().getWorld();
 			BlockSoundGroup wallSoundGroup = null;
 			for(BlockPos block : wall.getWallBlocks(1)) {

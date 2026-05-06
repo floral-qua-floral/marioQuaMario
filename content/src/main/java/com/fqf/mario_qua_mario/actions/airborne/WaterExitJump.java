@@ -1,12 +1,12 @@
 package com.fqf.mario_qua_mario.actions.airborne;
 
-import com.fqf.charapoweract_api.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.ActionCategory;
-import com.fqf.charapoweract_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionInjectionDefinition;
-import com.fqf.charapoweract_api.util.CharaStat;
-import com.fqf.charapoweract_api.util.StatCategory;
+import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
+import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.TransitionInjectionDefinition;
+import com.fqf.charaformact_api.util.CfaStat;
+import com.fqf.charaformact_api.util.StatCategory;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +19,7 @@ public class WaterExitJump extends Jump implements AirborneActionDefinition {
 	    return ID;
 	}
 
-	public static final CharaStat WATER_EXIT_JUMP_VEL = new CharaStat(0.939, StatCategory.JUMP_VELOCITY);
+	public static final CfaStat WATER_EXIT_JUMP_VEL = new CfaStat(0.939, StatCategory.JUMP_VELOCITY);
 
 	@Override protected double getJumpCapThreshold() {
 		return Double.POSITIVE_INFINITY;

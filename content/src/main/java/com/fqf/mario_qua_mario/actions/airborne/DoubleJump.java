@@ -1,14 +1,14 @@
 package com.fqf.mario_qua_mario.actions.airborne;
 
-import com.fqf.charapoweract_api.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.GroundedActionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.ActionCategory;
-import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionInjectionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charapoweract_api.util.CharaStat;
-import com.fqf.charapoweract_api.util.Easing;
+import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
+import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.TransitionInjectionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.charaformact_api.util.CfaStat;
+import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.util.MarioVars;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-import static com.fqf.charapoweract_api.util.StatCategory.*;
+import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class DoubleJump extends Jump implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("double_jump");
@@ -65,9 +65,9 @@ public class DoubleJump extends Jump implements AirborneActionDefinition {
 		return null;
 	}
 
-	public static final CharaStat DOUBLE_JUMP_VEL = new CharaStat(0.939, JUMP_VELOCITY);
-	public static final CharaStat DOUBLE_JUMP_ADDEND = new CharaStat(0.3, JUMP_VELOCITY);
-	public static CharaStat DOUBLE_JUMP_SPEED_THRESHOLD = new CharaStat(0, WALKING, FORWARD, THRESHOLD);
+	public static final CfaStat DOUBLE_JUMP_VEL = new CfaStat(0.939, JUMP_VELOCITY);
+	public static final CfaStat DOUBLE_JUMP_ADDEND = new CfaStat(0.3, JUMP_VELOCITY);
+	public static CfaStat DOUBLE_JUMP_SPEED_THRESHOLD = new CfaStat(0, WALKING, FORWARD, THRESHOLD);
 
 	public static final TransitionDefinition TRIPLE_JUMPABLE_LANDING = Fall.LANDING.variate(
 			null, null, null,

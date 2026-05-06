@@ -1,13 +1,13 @@
 package com.fqf.mario_qua_mario.actions.grounded;
 
-import com.fqf.charapoweract_api.definitions.states.actions.GroundedActionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.*;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charapoweract_api.cpadata.*;
-import com.fqf.charapoweract_api.cpadata.ICPAClientData;
-import com.fqf.charapoweract_api.cpadata.ICPAData;
-import com.fqf.charapoweract_api.util.CharaStat;
+import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.charaformact_api.cfadata.*;
+import com.fqf.charaformact_api.cfadata.CfaClientData;
+import com.fqf.charaformact_api.cfadata.CfaData;
+import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.actions.airborne.BonkAir;
@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-import static com.fqf.charapoweract_api.util.StatCategory.*;
+import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class Skid implements GroundedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("skid");
@@ -109,28 +109,28 @@ public class Skid implements GroundedActionDefinition {
 	}
 
 	@Override public @Nullable BappingRule getBappingRule() {
-		return new BappingRule(0, 0, 3, new CharaStat(0, THRESHOLD));
+		return new BappingRule(0, 0, 3, new CfaStat(0, THRESHOLD));
 	}
 	@Override public @Nullable Identifier getCollisionAttackTypeID() {
 		return null;
 	}
 
-	public static final CharaStat SKID_THRESHOLD = new CharaStat(0.285, RUNNING, THRESHOLD);
+	public static final CfaStat SKID_THRESHOLD = new CfaStat(0.285, RUNNING, THRESHOLD);
 
-	public static final CharaStat SKID_DRAG = new CharaStat(0.185, RUNNING, DRAG);
-	public static final CharaStat SKID_DRAG_MIN = new CharaStat(0.045, RUNNING, DRAG);
-	public static final CharaStat SKID_REDIRECTION = new CharaStat(4.5, RUNNING, REDIRECTION);
+	public static final CfaStat SKID_DRAG = new CfaStat(0.185, RUNNING, DRAG);
+	public static final CfaStat SKID_DRAG_MIN = new CfaStat(0.045, RUNNING, DRAG);
+	public static final CfaStat SKID_REDIRECTION = new CfaStat(4.5, RUNNING, REDIRECTION);
 
-	@Override public @Nullable Object provideStateData(ICPAData data) {
+	@Override public @Nullable Object provideStateData(CfaData data) {
 		return new ActionTimerVars();
 	}
-	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
+	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 
 	}
-	@Override public void serverTick(ICPAAuthoritativeData data) {
+	@Override public void serverTick(CfaAuthoritativeData data) {
 
 	}
-	@Override public void travelHook(ICPATravelData data, GroundedActionHelper helper) {
+	@Override public void travelHook(CfaTravelData data, GroundedActionHelper helper) {
 		data.retrieveStateData(ActionTimerVars.class).actionTimer++;
 		helper.applyDrag(
 				data, SKID_DRAG, SKID_DRAG_MIN,

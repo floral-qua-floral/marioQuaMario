@@ -1,11 +1,11 @@
 package com.fqf.mario_qua_mario.actions.aquatic;
 
-import com.fqf.charapoweract_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.PlayermodelAnimation;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.ProgressHandler;
-import com.fqf.charapoweract_api.util.CharaStat;
+import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.ProgressHandler;
+import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.MarioSFX;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-import static com.fqf.charapoweract_api.util.StatCategory.*;
+import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class Swim extends Submerged {
 	public static final Identifier ID = MarioQuaMario.makeID("swim");
@@ -38,8 +38,8 @@ public class Swim extends Submerged {
 		));
 	}
 
-	public static final CharaStat SWIM_ACCEL = new CharaStat(0.4, SWIMMING, UP, ACCELERATION);
-	public static final CharaStat SWIM_MAX_ASCENSION_SPEED = new CharaStat(0.45, SWIMMING, UP, SPEED);
+	public static final CfaStat SWIM_ACCEL = new CfaStat(0.4, SWIMMING, UP, ACCELERATION);
+	public static final CfaStat SWIM_MAX_ASCENSION_SPEED = new CfaStat(0.45, SWIMMING, UP, SPEED);
 
 	public static final TransitionDefinition SWIM = new TransitionDefinition(
 			ID,

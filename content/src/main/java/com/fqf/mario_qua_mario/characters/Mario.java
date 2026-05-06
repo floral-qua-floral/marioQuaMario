@@ -1,6 +1,6 @@
 package com.fqf.mario_qua_mario.characters;
 
-import com.fqf.charapoweract_api.definitions.states.CharacterDefinition;
+import com.fqf.charaformact_api.definitions.states.CharacterDefinition;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import com.fqf.mario_qua_mario.util.Powers;

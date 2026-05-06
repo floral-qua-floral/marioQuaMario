@@ -1,10 +1,10 @@
 package com.fqf.mario_qua_mario.actions.wallbound;
 
-import com.fqf.charapoweract_api.HelperGetter;
-import com.fqf.charapoweract_api.cpadata.*;
+import com.fqf.charaformact_api.HelperGetter;
+import com.fqf.charaformact_api.cfadata.*;
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.charapoweract_api.definitions.states.actions.WallboundActionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.WallboundActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario.util.ClimbTransitions;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -22,23 +22,23 @@ public class ClimbIntangibleDirectional extends ClimbWall implements WallboundAc
 	}
 
 	@Override
-	protected float getEntireBodyZOffset(ICPAReadableMotionData data) {
+	protected float getEntireBodyZOffset(CfaReadableMotionData data) {
 		return data.retrieveStateData(ClimbOmniDirectionalVars.class).ALTERNATE_OFFSET ? -1.75F : 0;
 	}
 
 	private static float getYawOf(PlayerEntity mario, BlockPos pos, BlockState state) {
 		return ClimbTransitions.yawOf(ClimbTransitions.getIntangibleClimbableDirectionality(mario, pos, state));
 	}
-	protected static float currentBlockYaw(ICPAReadableMotionData data) {
+	protected static float currentBlockYaw(CfaReadableMotionData data) {
 		return getYawOf(data.getPlayer(), data.getPlayer().getBlockPos(), data.getPlayer().getBlockStateAtPos());
 	}
 
 	@Override
-	public float getWallYaw(ICPAReadableMotionData data) {
+	public float getWallYaw(CfaReadableMotionData data) {
 		return currentBlockYaw(data);
 	}
 
-	public static boolean checkLegalityStatic(ICPAReadableMotionData data, WallInfo wall, Vec3d checkOffset) {
+	public static boolean checkLegalityStatic(CfaReadableMotionData data, WallInfo wall, Vec3d checkOffset) {
 		Vec3d alteredPos = data.getPlayer().getPos().add(checkOffset);
 		BlockPos blockPos = new BlockPos(
 				MathHelper.floor(alteredPos.x),
@@ -50,23 +50,23 @@ public class ClimbIntangibleDirectional extends ClimbWall implements WallboundAc
 //		return wall.getWallYaw() == getYawOf(data.getPlayer(), blockPos, state);
 	}
 
-	public static boolean useAlternateOffset(ICPAReadableMotionData data) {
+	public static boolean useAlternateOffset(CfaReadableMotionData data) {
 		return !ClimbTransitions.verifyIntangibleDirectionalClimbingLegality(data.getPlayer(), data.getPlayer().getBlockPos(),
 				Direction.fromRotation(HelperGetter.getWallboundActionHelper().getWallInfo(data).getWallYaw()),
 				false);
 	}
 
 	@Override
-	protected boolean useAlternateOffset(ICPAData data) {
-		return useAlternateOffset((ICPAReadableMotionData) data);
+	protected boolean useAlternateOffset(CfaData data) {
+		return useAlternateOffset((CfaReadableMotionData) data);
 	}
 
-	@Override public boolean checkLegality(ICPAReadableMotionData data, WallInfo wall, Vec3d checkOffset) {
+	@Override public boolean checkLegality(CfaReadableMotionData data, WallInfo wall, Vec3d checkOffset) {
 		return checkLegalityStatic(data, wall, checkOffset);
 	}
 
 	@Override
-	public void clientTick(ICPAClientData data, boolean isSelf) {
+	public void clientTick(CfaClientData data, boolean isSelf) {
 
 	}
 

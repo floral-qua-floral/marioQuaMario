@@ -1,0 +1,22 @@
+{
+  "required": true,
+  "package": "com.fqf.charaformact.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "AbstractBlockStateMixin",
+    "DamageSourceMixin",
+    "LivingEntityStompabilityMixin",
+    "PlayerEntityCfaDataMixin",
+    "PlayerEntityMixin",
+    "RedstoneViewMixin",
+    "ServerPlayerCfaDataMixin",
+    "ServerPlayerEntityMixin",
+    "ServerPlayNetworkHandlerMixin",
+    "compat.CPMCommonBaseMixin",
+    "compat.CPMNetHandlerMixin",
+    "compat.LivingEntityEmptyTravelMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

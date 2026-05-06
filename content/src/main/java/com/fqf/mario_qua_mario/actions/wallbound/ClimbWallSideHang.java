@@ -1,10 +1,10 @@
 package com.fqf.mario_qua_mario.actions.wallbound;
 
-import com.fqf.charapoweract_api.definitions.states.actions.WallboundActionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.*;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
-import com.fqf.charapoweract_api.cpadata.ICPAReadableMotionData;
-import com.fqf.charapoweract_api.cpadata.ICPATravelData;
+import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.fqf.charaformact_api.definitions.states.actions.WallboundActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
+import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -43,7 +43,7 @@ public class ClimbWallSideHang extends ClimbWall implements WallboundActionDefin
 			}
 	    });
 	}
-	protected float getEntireBodyXOffset(ICPAReadableMotionData data) {
+	protected float getEntireBodyXOffset(CfaReadableMotionData data) {
 		return -1.25F;
 	}
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
@@ -67,7 +67,7 @@ public class ClimbWallSideHang extends ClimbWall implements WallboundActionDefin
 		return WallBodyAlignment.SIDEWAYS;
 	}
 
-	public static void sideHangTravelHook(ICPATravelData data, WallInfo wall, WallboundActionHelper helper, ClimbWall baseAction) {
+	public static void sideHangTravelHook(CfaTravelData data, WallInfo wall, WallboundActionHelper helper, ClimbWall baseAction) {
 		helper.setTowardsWallVel(data, baseAction.TOWARDS_WALL_VEL);
 		if(data.getYVel() < -0.05) {
 			data.setYVel(data.getYVel() * 0.775);
@@ -79,7 +79,7 @@ public class ClimbWallSideHang extends ClimbWall implements WallboundActionDefin
 	}
 
 	@Override
-	public void travelHook(ICPATravelData data, WallInfo wall, WallboundActionHelper helper) {
+	public void travelHook(CfaTravelData data, WallInfo wall, WallboundActionHelper helper) {
 		sideHangTravelHook(data, wall, helper, this);
 	}
 

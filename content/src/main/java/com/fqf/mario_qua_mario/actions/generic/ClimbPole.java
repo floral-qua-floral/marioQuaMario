@@ -1,19 +1,18 @@
 package com.fqf.mario_qua_mario.actions.generic;
 
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimation;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationOption;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
-import com.fqf.charapoweract_api.cpadata.ICPATravelData;
-import com.fqf.charapoweract_api.util.CharaStat;
-import com.fqf.charapoweract_api.util.StatCategory;
+import com.fqf.charaformact_api.cfadata.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationOption;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
+import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.fqf.charaformact_api.util.CfaStat;
+import com.fqf.charaformact_api.util.StatCategory;
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.charapoweract_api.definitions.states.actions.GenericActionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.*;
-import com.fqf.charapoweract_api.cpadata.ICPAAuthoritativeData;
-import com.fqf.charapoweract_api.cpadata.ICPAClientData;
-import com.fqf.charapoweract_api.cpadata.ICPAData;
+import com.fqf.charaformact_api.definitions.states.actions.GenericActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.actions.airborne.*;
 import com.fqf.mario_qua_mario.actions.grounded.SubWalk;
@@ -36,7 +35,7 @@ public class ClimbPole implements GenericActionDefinition {
 		return ID;
 	}
 
-	private static Vec3d getMaximumOffset(ICPAData data, double contraction) {
+	private static Vec3d getMaximumOffset(CfaData data, double contraction) {
 		Box cameraBox = data.getPlayer().getBoundingBox().contract(contraction, 0, contraction);
 		Vec3d offset = Vec3d.fromPolar(0, data.getPlayer().getYaw()).multiply(-0.7);
 		return Entity.adjustMovementForCollisions(data.getPlayer(), offset, cameraBox, data.getPlayer().getWorld(), List.of());
@@ -115,18 +114,18 @@ public class ClimbPole implements GenericActionDefinition {
 		return null;
 	}
 
-	public static final CharaStat CLIMB_SPEED = new CharaStat(0.2, StatCategory.UP, StatCategory.SPEED, StatCategory.CLIMBING);
+	public static final CfaStat CLIMB_SPEED = new CfaStat(0.2, StatCategory.UP, StatCategory.SPEED, StatCategory.CLIMBING);
 
-	@Override public @Nullable Object provideStateData(ICPAData data) {
+	@Override public @Nullable Object provideStateData(CfaData data) {
 		return new ClimbVars();
 	}
-	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
+	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 		data.forceBodyAlignment(true);
 	}
-	@Override public void serverTick(ICPAAuthoritativeData data) {
+	@Override public void serverTick(CfaAuthoritativeData data) {
 
 	}
-	@Override public boolean travelHook(ICPATravelData data) {
+	@Override public boolean travelHook(CfaTravelData data) {
 		double forwardInput = data.getInputs().getForwardInput() * (data.getInputs().DUCK.isHeld() ? 0.3 : 1);
 		data.setYVel(forwardInput * CLIMB_SPEED.get(data));
 		data.centerLaterally();
@@ -135,7 +134,7 @@ public class ClimbPole implements GenericActionDefinition {
 		return true;
 	}
 
-	private static void releasePole(ICPATravelData data) {
+	private static void releasePole(CfaTravelData data) {
 		data.goTo(data.getPlayer().getPos().add(getMaximumOffset(data, 0)));
 	}
 

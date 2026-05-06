@@ -1,9 +1,9 @@
 {
 	"schemaVersion": 1,
-	"id": "charapoweract",
+	"id": "charaformact",
 	"version": "${version}",
-	"name": "CharaPowerAct",
-	"description": "The engine that powers the character-power-action framework under the hood. Separate from the API to keep things clean.",
+	"name": "CharaFormAct",
+	"description": "The engine that powers the character-form-action framework under the hood. Separate from the API to keep things clean.",
 	"authors": [
 		"Floral qua Floral"
 	],
@@ -13,30 +13,30 @@
 		"issues": "https://github.com/floral-qua-floral/marioQuaMario/issues"
 	},
 	"license": "GPL-3.0-only",
-	"icon": "assets/charapoweract/icon.png",
+	"icon": "assets/charaformact/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.fqf.charapoweract.CharaPowerAct"
+			"com.fqf.charaformact.CharaFormAct"
 		],
 		"client": [
-			"com.fqf.charapoweract.CharaPowerActClient"
+			"com.fqf.charaformact.CharaFormActClient"
 		],
 		"fabric-datagen": [
-			"com.fqf.charapoweract.CharaPowerActDataGenerator"
+			"com.fqf.charaformact.CharaFormActDataGenerator"
 		],
 
 		"cpmapi": [
-			"com.fqf.charapoweract.compat.required.CPMCompat"
+			"com.fqf.charaformact.compat.required.CPMCompat"
 		],
 		"modmenu": [
-			"com.fqf.charapoweract.util.ModMenuIntegration"
+			"com.fqf.charaformact.util.ModMenuIntegration"
 		]
 	},
 	"mixins": [
-		"charapoweract.mixins.json",
+		"charaformact.mixins.json",
 		{
-			"config": "charapoweract.client.mixins.json",
+			"config": "charaformact.client.mixins.json",
 			"environment": "client"
 		}
 	],
@@ -47,21 +47,21 @@
 		"fabric-api": "*",
 		"cloth-config": "*",
 		"cpm": "*",
-		"charapoweract_api": "*"
+		"charaformact_api": "*"
 	},
 	"suggests": {
 
 	},
 	"custom": {
 		"loom:injected_interfaces": {
-			"net/minecraft/class_1657": ["com/fqf/charapoweract/cpadata/injections/AdvCPADataHolder"],
-			"net/minecraft/class_3222": ["com/fqf/charapoweract/cpadata/injections/AdvCPAServerDataHolder"],
+			"net/minecraft/class_1657": ["com/fqf/charaformact/cfadata/injections/AdvCfaDataHolder"],
+			"net/minecraft/class_3222": ["com/fqf/charaformact/cfadata/injections/AdvCfaServerDataHolder"],
 
-			"net/minecraft/class_742": ["com/fqf/charapoweract/cpadata/injections/AdvCPAAbstractClientDataHolder"],
-			"net/minecraft/class_746": ["com/fqf/charapoweract/cpadata/injections/AdvCPAMainClientDataHolder"],
-			"net/minecraft/class_745": ["com/fqf/charapoweract/cpadata/injections/AdvCPAOtherClientDataHolder"]
+			"net/minecraft/class_742": ["com/fqf/charaformact/cfadata/injections/AdvCfaAbstractClientDataHolder"],
+			"net/minecraft/class_746": ["com/fqf/charaformact/cfadata/injections/AdvCfaMainClientDataHolder"],
+			"net/minecraft/class_745": ["com/fqf/charaformact/cfadata/injections/AdvCfaOtherClientDataHolder"]
 		}
 	},
 
-	"accessWidener" : "charapoweract.accesswidener"
+	"accessWidener" : "charaformact.accesswidener"
 }

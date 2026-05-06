@@ -1,6 +1,6 @@
 package com.fqf.mario_qua_mario.characters;
 
-import com.fqf.charapoweract_api.definitions.states.CharacterDefinition;
+import com.fqf.charaformact_api.definitions.states.CharacterDefinition;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import net.minecraft.sound.SoundEvent;
@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-import static com.fqf.charapoweract_api.util.StatCategory.*;
+import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class BlueToad extends AbstractMario implements CharacterDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("blue_toad");

@@ -22,7 +22,7 @@ loom {
 	splitEnvironmentSourceSets()
 
 	mods {
-		"mario_qua_mario_api" {
+		"charaformact_api" {
 			sourceSet sourceSets.main
 			sourceSet sourceSets.client
 		}

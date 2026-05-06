@@ -47,11 +47,11 @@ repositories {
 }
 
 loom {
-	accessWidenerPath = file("src/main/resources/charapoweract.accesswidener")
+	accessWidenerPath = file("src/main/resources/charaformact.accesswidener")
 	splitEnvironmentSourceSets()
 
 	mods {
-		"charapoweract" {
+		"charaformact" {
 			sourceSet sourceSets.main
 			sourceSet sourceSets.client
 		}

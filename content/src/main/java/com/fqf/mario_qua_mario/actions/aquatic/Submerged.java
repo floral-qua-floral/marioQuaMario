@@ -1,13 +1,13 @@
 package com.fqf.mario_qua_mario.actions.aquatic;
 
-import com.fqf.charapoweract_api.definitions.states.actions.AquaticActionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.*;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charapoweract_api.cpadata.*;
-import com.fqf.charapoweract_api.cpadata.ICPAClientData;
-import com.fqf.charapoweract_api.cpadata.ICPAData;
-import com.fqf.charapoweract_api.util.CharaStat;
+import com.fqf.charaformact_api.definitions.states.actions.AquaticActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.charaformact_api.cfadata.*;
+import com.fqf.charaformact_api.cfadata.CfaClientData;
+import com.fqf.charaformact_api.cfadata.CfaData;
+import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.airborne.GroundPoundFlip;
@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-import static com.fqf.charapoweract_api.util.StatCategory.*;
+import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class Submerged implements AquaticActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("submerged");
@@ -110,29 +110,29 @@ public class Submerged implements AquaticActionDefinition {
 		return null;
 	}
 
-	public static final CharaStat FALL_ACCEL = new CharaStat(-0.035, AQUATIC_GRAVITY);
-	public static final CharaStat FALL_SPEED = new CharaStat(-0.675, AQUATIC_TERMINAL_VELOCITY);
+	public static final CfaStat FALL_ACCEL = new CfaStat(-0.035, AQUATIC_GRAVITY);
+	public static final CfaStat FALL_SPEED = new CfaStat(-0.675, AQUATIC_TERMINAL_VELOCITY);
 
-	public static final CharaStat DRAG = new CharaStat(0.11, WATER_DRAG);
-	public static final CharaStat DRAG_MIN = new CharaStat(0.01, WATER_DRAG);
+	public static final CfaStat DRAG = new CfaStat(0.11, WATER_DRAG);
+	public static final CfaStat DRAG_MIN = new CfaStat(0.01, WATER_DRAG);
 
-	public static final CharaStat FORWARD_SWIM_ACCEL = new CharaStat(0.025, SWIMMING, FORWARD, ACCELERATION);
-	public static final CharaStat FORWARD_SWIM_SPEED = new CharaStat(0.25, SWIMMING, FORWARD, SPEED);
+	public static final CfaStat FORWARD_SWIM_ACCEL = new CfaStat(0.025, SWIMMING, FORWARD, ACCELERATION);
+	public static final CfaStat FORWARD_SWIM_SPEED = new CfaStat(0.25, SWIMMING, FORWARD, SPEED);
 
-	public static final CharaStat BACKWARD_SWIM_ACCEL = new CharaStat(0.035, SWIMMING, BACKWARD, ACCELERATION);
-	public static final CharaStat BACKWARD_SWIM_SPEED = new CharaStat(0.2, SWIMMING, BACKWARD, SPEED);
+	public static final CfaStat BACKWARD_SWIM_ACCEL = new CfaStat(0.035, SWIMMING, BACKWARD, ACCELERATION);
+	public static final CfaStat BACKWARD_SWIM_SPEED = new CfaStat(0.2, SWIMMING, BACKWARD, SPEED);
 
-	public static final CharaStat STRAFE_SWIM_ACCEL = new CharaStat(0.025, SWIMMING, STRAFE, ACCELERATION);
-	public static final CharaStat STRAFE_SWIM_SPEED = new CharaStat(0.25, SWIMMING, STRAFE, SPEED);
+	public static final CfaStat STRAFE_SWIM_ACCEL = new CfaStat(0.025, SWIMMING, STRAFE, ACCELERATION);
+	public static final CfaStat STRAFE_SWIM_SPEED = new CfaStat(0.25, SWIMMING, STRAFE, SPEED);
 
-	public static final CharaStat SWIM_REDIRECTION = new CharaStat(2.0, SWIMMING, REDIRECTION);
+	public static final CfaStat SWIM_REDIRECTION = new CfaStat(2.0, SWIMMING, REDIRECTION);
 
-	public static void waterMove(ICPATravelData data, AquaticActionHelper helper) {
+	public static void waterMove(CfaTravelData data, AquaticActionHelper helper) {
 		helper.applyGravity(data, FALL_ACCEL, FALL_SPEED);
 		helper.applyWaterDrag(data, DRAG, DRAG_MIN);
 	}
 
-	public static void drift(ICPATravelData data, AquaticActionHelper helper) {
+	public static void drift(CfaTravelData data, AquaticActionHelper helper) {
 		helper.aquaticAccel(data,
 				FORWARD_SWIM_ACCEL, FORWARD_SWIM_SPEED,
 				BACKWARD_SWIM_ACCEL, BACKWARD_SWIM_SPEED,
@@ -142,16 +142,16 @@ public class Submerged implements AquaticActionDefinition {
 		);
 	}
 
-	@Override public @Nullable Object provideStateData(ICPAData data) {
+	@Override public @Nullable Object provideStateData(CfaData data) {
 		return null;
 	}
-	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
+	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 
 	}
-	@Override public void serverTick(ICPAAuthoritativeData data) {
+	@Override public void serverTick(CfaAuthoritativeData data) {
 
 	}
-	@Override public void travelHook(ICPATravelData data, AquaticActionHelper helper) {
+	@Override public void travelHook(CfaTravelData data, AquaticActionHelper helper) {
 		waterMove(data, helper);
 		drift(data, helper);
 	}

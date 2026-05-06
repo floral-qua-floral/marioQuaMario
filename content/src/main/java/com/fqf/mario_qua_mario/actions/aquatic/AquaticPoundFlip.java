@@ -1,15 +1,15 @@
 package com.fqf.mario_qua_mario.actions.aquatic;
 
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.ProgressHandler;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charapoweract_api.cpadata.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.ProgressHandler;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.charaformact_api.cfadata.*;
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.charapoweract_api.definitions.states.actions.AquaticActionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.*;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.PlayermodelAnimation;
-import com.fqf.charapoweract_api.cpadata.ICPAClientData;
-import com.fqf.charapoweract_api.cpadata.ICPAData;
+import com.fqf.charaformact_api.definitions.states.actions.AquaticActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charaformact_api.cfadata.CfaClientData;
+import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.mario_qua_mario.actions.airborne.GroundPoundFlip;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import net.minecraft.util.Identifier;
@@ -56,16 +56,16 @@ public class AquaticPoundFlip implements AquaticActionDefinition {
 		return null;
 	}
 
-	@Override public @Nullable Object provideStateData(ICPAData data) {
+	@Override public @Nullable Object provideStateData(CfaData data) {
 		return new GroundPoundFlip.FlipTimerVars(data);
 	}
-	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
+	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 
 	}
-	@Override public void serverTick(ICPAAuthoritativeData data) {
+	@Override public void serverTick(CfaAuthoritativeData data) {
 
 	}
-	@Override public void travelHook(ICPATravelData data, AquaticActionHelper helper) {
+	@Override public void travelHook(CfaTravelData data, AquaticActionHelper helper) {
 		data.retrieveStateData(GroundPoundFlip.FlipTimerVars.class).actionTimer++;
 		data.setYVel(0.075);
 	}

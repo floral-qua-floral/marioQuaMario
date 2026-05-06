@@ -1,6 +1,6 @@
 package com.fqf.mario_qua_mario.util;
 
-import com.fqf.charapoweract_api.cpadata.ICPAData;
+import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.characters.Mario;
 import com.fqf.mario_qua_mario.collision_attacks.JumpStomp;
@@ -23,7 +23,7 @@ public class MQMEventListeners {
 	public static void register() {
 		ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
 			if(entity instanceof ServerPlayerEntity mario) {
-				ICPAData data = mario.cpa$getICPAData();
+				CfaData data = mario.cfa$getCfaData();
 				if(data.isEnabled() && data.hasPower(Powers.STOMP_GUARD) && source.isDirect() && !source.isIn(MQMTags.BYPASSES_STOMP_GUARD)) {
 					Entity attacker = source.getAttacker();
 					if(attacker != null) {
@@ -48,7 +48,7 @@ public class MQMEventListeners {
 			int timesDisconnected = handler.player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.LEAVE_GAME));
 			if(timesDisconnected == 0 && MarioQuaMario.CONFIG.isWelcomeMessageEnabled()) {
 				// Player joined for the first time; say hi and tell them how to enable the mod
-				String marioCommand = "/cpa set character " + Mario.ID;
+				String marioCommand = "/cfa set character " + Mario.ID;
 				Text marioCommandText = Text.literal(marioCommand)
 						.formatted(Formatting.UNDERLINE)
 						.styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, marioCommand)));

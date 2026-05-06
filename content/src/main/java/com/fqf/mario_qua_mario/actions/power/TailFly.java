@@ -1,16 +1,16 @@
 package com.fqf.mario_qua_mario.actions.power;
 
-import com.fqf.charapoweract_api.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionInjectionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.PlayermodelAnimation;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.ProgressHandler;
-import com.fqf.charapoweract_api.cpadata.ICPAClientData;
-import com.fqf.charapoweract_api.cpadata.ICPAData;
-import com.fqf.charapoweract_api.cpadata.ICPATravelData;
-import com.fqf.charapoweract_api.util.CharaStat;
+import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.TransitionInjectionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.ProgressHandler;
+import com.fqf.charaformact_api.cfadata.CfaClientData;
+import com.fqf.charaformact_api.cfadata.CfaData;
+import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.airborne.GroundPoundFlip;
@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import static com.fqf.charapoweract_api.util.StatCategory.JUMP_VELOCITY;
-import static com.fqf.charapoweract_api.util.StatCategory.POWER_UP;
+import static com.fqf.charaformact_api.util.StatCategory.JUMP_VELOCITY;
+import static com.fqf.charaformact_api.util.StatCategory.POWER_UP;
 
 public class TailFly extends PJump implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("tail_fly");
@@ -49,15 +49,15 @@ public class TailFly extends PJump implements AirborneActionDefinition {
 		);
 	}
 
-	public static final CharaStat FLIGHT_VEL = new CharaStat(0.41, JUMP_VELOCITY, POWER_UP);
+	public static final CfaStat FLIGHT_VEL = new CfaStat(0.41, JUMP_VELOCITY, POWER_UP);
 
-	@Override public @Nullable Object provideStateData(ICPAData data) {
+	@Override public @Nullable Object provideStateData(CfaData data) {
 		return new ActionTimerVars();
 	}
-	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
+	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 		TailStall.tailWaggleTick(data);
 	}
-	@Override public void travelHook(ICPATravelData data, AirborneActionHelper helper) {
+	@Override public void travelHook(CfaTravelData data, AirborneActionHelper helper) {
 		data.retrieveStateData(Raccoon.RaccoonVars.class).flightTicks--;
 		data.setYVel(FLIGHT_VEL.get(data));
 		Fall.drift(data, helper);

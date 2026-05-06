@@ -1,18 +1,18 @@
 package com.fqf.mario_qua_mario.actions.airborne;
 
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
-import com.fqf.charapoweract_api.cpadata.ICPAClientData;
+import com.fqf.charaformact_api.cfadata.CfaClientData;
+import com.fqf.charaformact_api.cfadata.CfaData;
+import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.charapoweract_api.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.charapoweract_api.cpadata.ICPAData;
-import com.fqf.charapoweract_api.cpadata.ICPATravelData;
-import com.fqf.charapoweract_api.util.CharaStat;
+import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
+import com.fqf.charaformact_api.util.CfaStat;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.fqf.charapoweract_api.util.StatCategory.*;
+import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class WallJump extends Jump implements AirborneActionDefinition {
     public static final Identifier ID = MarioQuaMario.makeID("wall_jump");
@@ -143,22 +143,22 @@ public class WallJump extends Jump implements AirborneActionDefinition {
 		);
 	}
 
-	public static final CharaStat WALL_JUMP_VEL = new CharaStat(0.78, JUMP_VELOCITY, CLIMBING);
-	public static final CharaStat WALL_JUMP_SPEED = new CharaStat(0.4, DRIFTING);
+	public static final CfaStat WALL_JUMP_VEL = new CfaStat(0.78, JUMP_VELOCITY, CLIMBING);
+	public static final CfaStat WALL_JUMP_SPEED = new CfaStat(0.4, DRIFTING);
 
 	@Override
-	public void clientTick(ICPAClientData data, boolean isSelf) {
+	public void clientTick(CfaClientData data, boolean isSelf) {
 		data.forceBodyAlignment(true);
 	}
 
 	@Override
-	public void travelHook(ICPATravelData data, AirborneActionHelper helper) {
+	public void travelHook(CfaTravelData data, AirborneActionHelper helper) {
 		helper.applyComplexGravity(data, Fall.FALL_ACCEL, JUMP_GRAVITY, Fall.FALL_SPEED);
 		BonkAir.BonkVars vars = data.retrieveStateData(BonkAir.BonkVars.class);
 		if(vars.noInputTicks-- <= 0) Fall.drift(data, helper);
 	}
 
-	@Override public @Nullable Object provideStateData(ICPAData data) {
+	@Override public @Nullable Object provideStateData(CfaData data) {
 		return new BonkAir.BonkVars(data);
 	}
 }

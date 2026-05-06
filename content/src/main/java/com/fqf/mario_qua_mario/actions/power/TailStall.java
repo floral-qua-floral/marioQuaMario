@@ -1,18 +1,18 @@
 package com.fqf.mario_qua_mario.actions.power;
 
-import com.fqf.charapoweract_api.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.ActionCategory;
-import com.fqf.charapoweract_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionInjectionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.LimbAnimation;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.PlayermodelAnimation;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.ProgressHandler;
-import com.fqf.charapoweract_api.cpadata.*;
-import com.fqf.charapoweract_api.cpadata.ICPAClientData;
-import com.fqf.charapoweract_api.cpadata.ICPATravelData;
-import com.fqf.charapoweract_api.util.CharaStat;
+import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
+import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.TransitionInjectionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.LimbAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.ProgressHandler;
+import com.fqf.charaformact_api.cfadata.*;
+import com.fqf.charaformact_api.cfadata.CfaClientData;
+import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.airborne.GroundPoundFlip;
@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-import static com.fqf.charapoweract_api.util.StatCategory.*;
+import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class TailStall extends Fall implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("tail_stall");
@@ -77,22 +77,22 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 		);
 	}
 
-	public static final CharaStat FALL_ACCEL = new CharaStat(-0.013775, NORMAL_GRAVITY, POWER_UP);
-	public static final CharaStat FALL_SPEED = new CharaStat(-0.445, TERMINAL_VELOCITY, POWER_UP);
+	public static final CfaStat FALL_ACCEL = new CfaStat(-0.013775, NORMAL_GRAVITY, POWER_UP);
+	public static final CfaStat FALL_SPEED = new CfaStat(-0.445, TERMINAL_VELOCITY, POWER_UP);
 
-	public static void tailWaggleTick(ICPAClientData data) {
+	public static void tailWaggleTick(CfaClientData data) {
 		if(data.retrieveStateData(ActionTimerVars.class).actionTimer++ % 4 == 0)
 			data.playSound(MarioSFX.TAIL_FLY, 1F, 0.2F, data.getPlayer().getRandom().nextLong());
 	}
 
-	@Override public @Nullable Object provideStateData(ICPAData data) {
+	@Override public @Nullable Object provideStateData(CfaData data) {
 		return new ActionTimerVars();
 	}
-	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
+	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 		tailWaggleTick(data);
 	}
-	@Override public void serverTick(ICPAAuthoritativeData data) {}
-	@Override public void travelHook(ICPATravelData data, AirborneActionHelper helper) {
+	@Override public void serverTick(CfaAuthoritativeData data) {}
+	@Override public void travelHook(CfaTravelData data, AirborneActionHelper helper) {
 		helper.applyComplexGravity(data, FALL_ACCEL, null, FALL_SPEED);
 		drift(data, helper);
 		if(data.getYVel() > FALL_SPEED.get(data)) data.getPlayer().fallDistance = 0;
@@ -120,7 +120,7 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 		);
 	}
 
-	public static final CharaStat STALL_THRESHOLD = new CharaStat(-0.31, THRESHOLD, POWER_UP);
+	public static final CfaStat STALL_THRESHOLD = new CfaStat(-0.31, THRESHOLD, POWER_UP);
 	private static final TransitionDefinition STALL_TRANSITION = new TransitionDefinition(
 			TailStall.ID,
 			data ->

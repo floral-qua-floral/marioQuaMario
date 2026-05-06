@@ -223,4 +223,4 @@ if __name__ == "__main__":
 
     handle_sound_set("mario_qua_mario", True, content_subtitles, get_sounds_dot_json_location("content", "mario_qua_mario"), "Input/MarioContentSfxClass.txt", get_java_file_location("content", "MarioSFX", "mario_qua_mario"))
 
-    handle_sound_set("charapoweract", False, mod_subtitles, get_sounds_dot_json_location("mod", "charapoweract"), "Input/MarioModSfxClass.txt", get_java_file_location("mod", "CPASounds", "charapoweract"))
+    handle_sound_set("charaformact", False, mod_subtitles, get_sounds_dot_json_location("mod", "charaformact"), "Input/MarioModSfxClass.txt", get_java_file_location("mod", "CfaSounds", "charaformact"))

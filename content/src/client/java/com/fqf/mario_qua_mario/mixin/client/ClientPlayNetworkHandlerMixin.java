@@ -27,7 +27,7 @@ public class ClientPlayNetworkHandlerMixin {
 	@WrapOperation(method = "onEntityDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;onDamaged(Lnet/minecraft/entity/damage/DamageSource;)V"))
 	private void squashFromSquashingDamage(Entity instance, DamageSource damageSource, Operation<Void> original) {
 		if(instance instanceof LivingEntity livingInstance && damageSource.isIn(MQMTags.FLATTENS_ENTITIES))
-			((Squashable) livingInstance).cpa$squash();
+			((Squashable) livingInstance).cfa$squash();
 		original.call(instance, damageSource);
 	}
 

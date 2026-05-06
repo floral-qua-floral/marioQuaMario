@@ -1,11 +1,11 @@
 package com.fqf.mario_qua_mario.actions.generic;
 
-import com.fqf.charapoweract_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.charapoweract_api.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charapoweract_api.cpadata.*;
-import com.fqf.charapoweract_api.cpadata.ICPAClientData;
-import com.fqf.charapoweract_api.cpadata.ICPAReadableMotionData;
+import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.charaformact_api.cfadata.*;
+import com.fqf.charaformact_api.cfadata.CfaClientData;
+import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import net.minecraft.entity.Entity;
@@ -27,7 +27,7 @@ public class DebugSprint extends Debug {
 	    return ID;
 	}
 
-	@Override public boolean travelHook(ICPATravelData data) {
+	@Override public boolean travelHook(CfaTravelData data) {
 		data.setStrafeVel(data.getInputs().getStrafeInput() * 0.5);
 
 		double pitchRadians = Math.toRadians(data.getPlayer().getPitch());
@@ -61,27 +61,27 @@ public class DebugSprint extends Debug {
 					}
 
 					@Override public boolean shouldInterceptAttack(
-							ICPAReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
+							CfaReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
 							@Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult
 					) {
 						return weapon.isEmpty();
 					}
 
 					@Override public @NotNull MiningHandling shouldSuppressMining(
-							ICPAReadableMotionData data, ItemStack weapon,
+							CfaReadableMotionData data, ItemStack weapon,
 							@NotNull BlockHitResult blockHitResult, int miningTicks
 					) {
 						return miningTicks < 20 ? MiningHandling.HOLD : MiningHandling.MINE;
 					}
 
 					@Override public void executeTravellers(
-							ICPATravelData data, ItemStack weapon, float attackCooldownProgress,
+							CfaTravelData data, ItemStack weapon, float attackCooldownProgress,
 							@Nullable BlockPos blockTarget, @Nullable Entity entityTarget
 					) {
 
 					}
 					@Override public void executeClients(
-							ICPAClientData data, ItemStack weapon, float attackCooldownProgress,
+							CfaClientData data, ItemStack weapon, float attackCooldownProgress,
 							@Nullable BlockPos blockTarget, @Nullable Entity entityTarget,
 							long seed
 					) {
@@ -89,7 +89,7 @@ public class DebugSprint extends Debug {
 					}
 
 					@Override public void executeServer(
-							ICPAAuthoritativeData data, ItemStack weapon, float attackCooldownProgress,
+							CfaAuthoritativeData data, ItemStack weapon, float attackCooldownProgress,
 							ServerWorld world, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget
 					) {
 

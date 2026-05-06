@@ -1,8 +1,8 @@
 package com.fqf.mario_qua_mario.powerups;
 
-import com.fqf.charapoweract_api.definitions.states.PowerFormDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charapoweract_api.cpadata.*;
+import com.fqf.charaformact_api.definitions.states.FormDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.charaformact_api.cfadata.*;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.entity.custom.MarioFireballProjectileEntity;
@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-public class Fire implements PowerFormDefinition {
+public class Fire implements FormDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("fire");
 	@Override public @NotNull Identifier getID() {
 	    return ID;
@@ -70,7 +70,7 @@ public class Fire implements PowerFormDefinition {
 		return Set.of();
 	}
 
-	@Override public @NotNull PowerHeart getPowerHeart(PowerHeartHelper helper) {
+	@Override public @NotNull FormDefinition.FormHeart getFormHeart(FormHeartHelper helper) {
 		return helper.auto();
 	}
 
@@ -78,13 +78,13 @@ public class Fire implements PowerFormDefinition {
 		return Set.of();
 	}
 
-	@Override public @Nullable Object provideStateData(ICPAData data) {
+	@Override public @Nullable Object provideStateData(CfaData data) {
 		return new FireFlowerData();
 	}
-	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
+	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 
 	}
-	@Override public void serverTick(ICPAAuthoritativeData data) {
+	@Override public void serverTick(CfaAuthoritativeData data) {
 
 	}
 
@@ -112,7 +112,7 @@ public class Fire implements PowerFormDefinition {
 		}
 
 		@Override public boolean shouldInterceptAttack(
-				ICPAReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
+				CfaReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
 				@Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult
 		) {
 			return canFireballEntity(entityHitResult)
@@ -120,18 +120,18 @@ public class Fire implements PowerFormDefinition {
 		}
 
 		protected abstract boolean canThrowFireball(
-				ICPAReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
+				CfaReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
 				@Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult
 		);
 
 		@Override public void executeTravellers(
-				ICPATravelData data, ItemStack weapon, float attackCooldownProgress,
+				CfaTravelData data, ItemStack weapon, float attackCooldownProgress,
 				@Nullable BlockPos blockTarget, @Nullable Entity entityTarget
 		) {
 
 		}
 		@Override public void executeClients(
-				ICPAClientData data, ItemStack weapon, float attackCooldownProgress,
+				CfaClientData data, ItemStack weapon, float attackCooldownProgress,
 				@Nullable BlockPos blockTarget, @Nullable Entity entityTarget,
 				long seed
 		) {
@@ -151,7 +151,7 @@ public class Fire implements PowerFormDefinition {
 		}
 
 		@Override public void executeServer(
-				ICPAAuthoritativeData data, ItemStack weapon, float attackCooldownProgress,
+				CfaAuthoritativeData data, ItemStack weapon, float attackCooldownProgress,
 				ServerWorld world, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget
 		) {
 			ServerPlayerEntity mario = data.getPlayer();
@@ -175,19 +175,19 @@ public class Fire implements PowerFormDefinition {
 		return List.of(
 				new FireballDefinition(Hand.MAIN_HAND) {
 					@Override
-					public boolean canThrowFireball(ICPAReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
+					public boolean canThrowFireball(CfaReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
 						return weapon.isEmpty() && data.getPlayer().getWorld().getTime() > data.retrieveStateData(FireFlowerData.class).noMainFireballsUntil
 								&& attackCooldownProgress >= 1;
 					}
 
 					@Override
-					public @NotNull MiningHandling shouldSuppressMining(ICPAReadableMotionData data, ItemStack weapon, @NotNull BlockHitResult blockHitResult, int miningTicks) {
+					public @NotNull MiningHandling shouldSuppressMining(CfaReadableMotionData data, ItemStack weapon, @NotNull BlockHitResult blockHitResult, int miningTicks) {
 						return miningTicks <= 3 ? MiningHandling.INTERCEPT : MiningHandling.MINE;
 					}
 				},
 				new FireballDefinition(Hand.OFF_HAND) {
 					@Override
-					public boolean canThrowFireball(ICPAReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
+					public boolean canThrowFireball(CfaReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
 						long time = data.getPlayer().getWorld().getTime();
 						return time > data.retrieveStateData(FireFlowerData.class).noSecondaryFireballsUntil
 								// Only after throwing a first fireball, or any time if holding an item
@@ -197,13 +197,13 @@ public class Fire implements PowerFormDefinition {
 					}
 
 					@Override
-					public @NotNull MiningHandling shouldSuppressMining(ICPAReadableMotionData data, ItemStack weapon, @NotNull BlockHitResult blockHitResult, int miningTicks) {
+					public @NotNull MiningHandling shouldSuppressMining(CfaReadableMotionData data, ItemStack weapon, @NotNull BlockHitResult blockHitResult, int miningTicks) {
 						return miningTicks <= 3 ? MiningHandling.INTERCEPT : MiningHandling.MINE;
 					}
 				},
 				new PreventAttack() {
 					@Override
-					public boolean shouldInterceptAttack(ICPAReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
+					public boolean shouldInterceptAttack(CfaReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
 						long time = data.getPlayer().getWorld().getTime();
 						return attackCooldownProgress < 1 && weapon.isEmpty() && canFireballEntity(entityHitResult)
 								&& (time < data.retrieveStateData(FireFlowerData.class).noSecondaryFireballsUntil || time > data.retrieveStateData(FireFlowerData.class).noMainFireballsUntil);

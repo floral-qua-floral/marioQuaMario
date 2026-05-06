@@ -1,12 +1,12 @@
 package com.fqf.mario_qua_mario.actions.wallbound;
 
-import com.fqf.charapoweract_api.HelperGetter;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charapoweract_api.cpadata.*;
+import com.fqf.charaformact_api.HelperGetter;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.charaformact_api.cfadata.*;
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.charapoweract_api.definitions.states.actions.WallboundActionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.WallboundActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.actions.airborne.*;
 import com.fqf.mario_qua_mario.actions.generic.ClimbPole;
@@ -59,7 +59,7 @@ public class ClimbWall implements WallboundActionDefinition {
 			arrangement.z -= 3.7F;
 	    });
 	}
-	protected float getEntireBodyZOffset(ICPAReadableMotionData data) {
+	protected float getEntireBodyZOffset(CfaReadableMotionData data) {
 		return 2.25F;
 	}
 	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
@@ -129,17 +129,17 @@ public class ClimbWall implements WallboundActionDefinition {
 		return 360;
 	}
 
-	public static Direction getWallDirection(ICPAReadableMotionData data) {
+	public static Direction getWallDirection(CfaReadableMotionData data) {
 		return data.getRecordedCollisions().getDirectionOfCollisionsWith((collision, block) -> ClimbTransitions.canClimbBlock(collision.state(), collision.direction()), false);
 	}
 
 	@Override
-	public float getWallYaw(ICPAReadableMotionData data) {
+	public float getWallYaw(CfaReadableMotionData data) {
 		return ClimbTransitions.yawOf(getWallDirection(data));
 	}
 
 	@Override
-	public boolean checkLegality(ICPAReadableMotionData data, WallInfo wall, Vec3d checkOffset) {
+	public boolean checkLegality(CfaReadableMotionData data, WallInfo wall, Vec3d checkOffset) {
 		World world = data.getPlayer().getWorld();
 		for(BlockPos wallBlock : wall.getWallBlocks(0.4)) {
 			if(ClimbTransitions.canClimbBlock(world.getBlockState(wallBlock), Direction.fromRotation(wall.getWallYaw())))
@@ -163,20 +163,20 @@ public class ClimbWall implements WallboundActionDefinition {
 	}
 	protected final double TOWARDS_WALL_VEL = this.getConstantTowardsWallVel();
 
-	protected boolean useAlternateOffset(ICPAData data) {
+	protected boolean useAlternateOffset(CfaData data) {
 		return false;
 	}
 
-	@Override public @Nullable Object provideStateData(ICPAData data) {
+	@Override public @Nullable Object provideStateData(CfaData data) {
 		return new ClimbOmniDirectionalVars(this.useAlternateOffset(data));
 	}
-	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
+	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 		data.retrieveStateData(ClimbOmniDirectionalVars.class).clientTick(data);
 	}
-	@Override public void serverTick(ICPAAuthoritativeData data) {
+	@Override public void serverTick(CfaAuthoritativeData data) {
 
 	}
-	@Override public void travelHook(ICPATravelData data, WallInfo wall, WallboundActionHelper helper) {
+	@Override public void travelHook(CfaTravelData data, WallInfo wall, WallboundActionHelper helper) {
 		helper.setTowardsWallVel(data, TOWARDS_WALL_VEL);
 		data.getPlayer().fallDistance = 0;
 		double climbInput = wall.getTowardsWallInput() * (data.getInputs().DUCK.isHeld() ? 0.3 : 1);

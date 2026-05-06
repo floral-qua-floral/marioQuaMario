@@ -1,9 +1,9 @@
 package com.fqf.mario_qua_mario.characters;
 
-import com.fqf.charapoweract_api.definitions.states.CharacterDefinition;
-import com.fqf.charapoweract_api.cpadata.ICPAClientData;
-import com.fqf.charapoweract_api.cpadata.ICPAData;
-import com.fqf.charapoweract_api.cpadata.ICPAAuthoritativeData;
+import com.fqf.charaformact_api.cfadata.CfaClientData;
+import com.fqf.charaformact_api.cfadata.CfaData;
+import com.fqf.charaformact_api.definitions.states.CharacterDefinition;
+import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.airborne.LavaBoost;
 import com.fqf.mario_qua_mario.actions.generic.Debug;
@@ -25,7 +25,7 @@ public abstract class AbstractMario implements CharacterDefinition {
 	@Override public @NotNull Identifier getInitialAction() {
 		return Fall.ID;
 	}
-	@Override public @NotNull Identifier getInitialPowerUp() {
+	@Override public @NotNull Identifier getInitialForm() {
 		return Super.ID;
 	}
 
@@ -34,7 +34,7 @@ public abstract class AbstractMario implements CharacterDefinition {
 	}
 
 	@Override
-	public float modifyIncomingDamage(ICPAAuthoritativeData data, DamageSource source, float amount) {
+	public float modifyIncomingDamage(CfaAuthoritativeData data, DamageSource source, float amount) {
 		if(source.getTypeRegistryEntry().matchesKey(DamageTypes.LAVA)) {
 			data.forceActionTransition(Debug.ID, LavaBoost.ID);
 			return 10;
@@ -72,10 +72,10 @@ public abstract class AbstractMario implements CharacterDefinition {
 		);
 	}
 
-	@Override public @Nullable Object provideStateData(ICPAData data) {
+	@Override public @Nullable Object provideStateData(CfaData data) {
 		return new MarioVars();
 	}
-	private static void commonTick(ICPAData data) {
+	private static void commonTick(CfaData data) {
 		MarioVars vars = data.retrieveStateData(MarioVars.class);
 		vars.canDoubleJumpTicks--;
 		vars.canTripleJumpTicks--;
@@ -92,10 +92,10 @@ public abstract class AbstractMario implements CharacterDefinition {
 					vars.pSpeed = 0;
 		}
 	}
-	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
+	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 		commonTick(data);
 	}
-	@Override public void serverTick(ICPAAuthoritativeData data) {
+	@Override public void serverTick(CfaAuthoritativeData data) {
 		commonTick(data);
 		data.retrieveStateData(MarioVars.class).stompGuardRemainingTicks--;
 	}

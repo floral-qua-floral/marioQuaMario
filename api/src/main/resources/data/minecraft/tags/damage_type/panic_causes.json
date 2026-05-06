@@ -1,6 +1,6 @@
 {
   "replace": false,
   "values": [
-    "#charapoweract:collision_attacks"
+    "#charaformact:collision_attacks"
   ]
 }

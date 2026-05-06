@@ -1,11 +1,11 @@
 package com.fqf.mario_qua_mario.actions.airborne;
 
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charapoweract_api.cpadata.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.charaformact_api.cfadata.*;
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.charapoweract_api.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario.actions.grounded.BonkGroundBackward;
@@ -182,18 +182,18 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 		public float bonkYaw;
 		public int noInputTicks;
 
-		public BonkVars(ICPAData data) {
+		public BonkVars(CfaData data) {
 			this.noInputTicks = 2;
 			BonkVars oldVars = data.retrieveStateData(BonkVars.class);
 			if(oldVars != null)
 				this.bonkYaw = oldVars.bonkYaw;
-			else if(data instanceof ICPAReadableMotionData motionData)
+			else if(data instanceof CfaReadableMotionData motionData)
 				this.recalculateBonkYaw(motionData);
 			else
 				this.bonkYaw = data.getPlayer().bodyYaw;
 		}
 
-		public float recalculateBonkYaw(ICPAReadableMotionData data) {
+		public float recalculateBonkYaw(CfaReadableMotionData data) {
 			if(data.getHorizVelSquared() != 0) {
 				this.bonkYaw = yawFromVec3d(data.getVelocity());
 			}
@@ -201,17 +201,17 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 		}
 	}
 
-	@Override public @Nullable Object provideStateData(ICPAData data) {
+	@Override public @Nullable Object provideStateData(CfaData data) {
 		return new BonkVars(data);
 	}
-	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
+	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 //		data.forceBodyAlignment(true);
 //		data.getPlayer().setBodyYaw(data.retrieveStateData(BonkVars.class).BONK_YAW);
 	}
-	@Override public void serverTick(ICPAAuthoritativeData data) {
+	@Override public void serverTick(CfaAuthoritativeData data) {
 
 	}
-	@Override public void travelHook(ICPATravelData data, AirborneActionHelper helper) {
+	@Override public void travelHook(CfaTravelData data, AirborneActionHelper helper) {
 		helper.applyComplexGravity(data, Fall.FALL_ACCEL, null, Fall.FALL_SPEED);
 	}
 

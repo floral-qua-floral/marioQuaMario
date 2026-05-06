@@ -1,12 +1,12 @@
 package com.fqf.mario_qua_mario.actions.grounded;
 
-import com.fqf.charapoweract_api.definitions.states.actions.GroundedActionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.*;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charapoweract_api.cpadata.*;
-import com.fqf.charapoweract_api.util.CharaStat;
-import com.fqf.charapoweract_api.util.Easing;
+import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.charaformact_api.cfadata.*;
+import com.fqf.charaformact_api.util.CfaStat;
+import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.airborne.Jump;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-import static com.fqf.charapoweract_api.util.StatCategory.*;
+import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class PRun implements GroundedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("p_run");
@@ -57,9 +57,9 @@ public class PRun implements GroundedActionDefinition {
 		return SprintingRule.ALLOW;
 	}
 
-	public static final CharaStat P_SPEED = new CharaStat(0.5875, P_RUNNING, FORWARD, SPEED);
-	public static final CharaStat P_ACCEL = new CharaStat(0.13, P_RUNNING, FORWARD, ACCELERATION);
-	public static final CharaStat P_REDIRECTION = new CharaStat(6.0, P_RUNNING, FORWARD, REDIRECTION);
+	public static final CfaStat P_SPEED = new CfaStat(0.5875, P_RUNNING, FORWARD, SPEED);
+	public static final CfaStat P_ACCEL = new CfaStat(0.13, P_RUNNING, FORWARD, ACCELERATION);
+	public static final CfaStat P_REDIRECTION = new CfaStat(6.0, P_RUNNING, FORWARD, REDIRECTION);
 
 	@Override public @Nullable BappingRule getBappingRule() {
 		return null;
@@ -68,27 +68,27 @@ public class PRun implements GroundedActionDefinition {
 		return null;
 	}
 
-	@Override public @Nullable Object provideStateData(ICPAData data) {
+	@Override public @Nullable Object provideStateData(CfaData data) {
 		return null;
 	}
-	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
+	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 
 	}
-	@Override public void serverTick(ICPAAuthoritativeData data) {
+	@Override public void serverTick(CfaAuthoritativeData data) {
 
 	}
-	@Override public void travelHook(ICPATravelData data, GroundedActionHelper helper) {
+	@Override public void travelHook(CfaTravelData data, GroundedActionHelper helper) {
 		boolean sprinting = data.getPlayer().isSprinting();
 		helper.groundAccel(data,
 				sprinting ? WalkRun.OVERRUN_ACCEL : WalkRun.OVERWALK_ACCEL,
 				sprinting ? P_SPEED : SubWalk.WALK_SPEED,
-				CharaStat.ZERO, CharaStat.ZERO,
+				CfaStat.ZERO, CfaStat.ZERO,
 				1, data.getInputs().getStrafeInput() * 0.5,
 				P_REDIRECTION
 		);
 	}
 
-	public static boolean meetsPRunRequirements(ICPAReadableMotionData data) {
+	public static boolean meetsPRunRequirements(CfaReadableMotionData data) {
 		return data.getInputs().getForwardInput() > 0 &&
 				data.getForwardVel() > SubWalk.WALK_SPEED.get(data) &&
 				data.getHorizVelSquared() > WalkRun.RUN_SPEED.getAsSquaredThreshold(data);

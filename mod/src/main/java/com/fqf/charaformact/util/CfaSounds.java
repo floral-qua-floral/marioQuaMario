@@ -1,0 +1,44 @@
+package com.fqf.charaformact.util;
+
+import com.fqf.charaformact.CharaFormAct;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.Identifier;
+
+public class CfaSounds {
+	public static final SoundEvent BUMP = makeMovementSound("bump");
+	public static final SoundEvent SKID = makeMovementSound("skid");
+	public static final SoundEvent SKID_ICE = makeMovementSound("skid_ice");
+	public static final SoundEvent SKID_SAND = makeMovementSound("skid_sand");
+	public static final SoundEvent SKID_SNOW = makeMovementSound("skid_snow");
+	public static final SoundEvent SKID_WALL = makeMovementSound("skid_wall");
+
+	public static final SoundEvent EMPOWER = makeFormSound("empower");
+	public static final SoundEvent REVERT = makeFormSound("revert");
+
+	private static SoundEvent makeMovementSound(String name) {
+		return makeAndRegisterSound("sfx.movement." + name);
+	}
+	private static SoundEvent makeFormSound(String name) {
+		return makeAndRegisterSound("sfx.form." + name);
+	}
+	private static SoundEvent makeStompSound(String name) {
+		return makeAndRegisterSound("sfx.stomp." + name);
+	}
+	private static SoundEvent makeActionSound(String name) {
+		return makeAndRegisterSound("sfx.action." + name);
+	}
+
+	private static SoundEvent makeAndRegisterSound(String path) {
+		Identifier identifier = CharaFormAct.makeResID(path);
+		SoundEvent event = SoundEvent.of(identifier);
+
+		Registry.register(Registries.SOUND_EVENT, identifier, event);
+
+		return event;
+	}
+	public static void staticInitialize() {
+
+	}
+}

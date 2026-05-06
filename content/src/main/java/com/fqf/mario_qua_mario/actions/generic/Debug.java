@@ -1,10 +1,10 @@
 package com.fqf.mario_qua_mario.actions.generic;
 
-import com.fqf.charapoweract_api.definitions.states.actions.GenericActionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.*;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charapoweract_api.cpadata.*;
+import com.fqf.charaformact_api.definitions.states.actions.GenericActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.charaformact_api.cfadata.*;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.actions.airborne.LavaBoost;
@@ -74,16 +74,16 @@ public class Debug implements GenericActionDefinition {
 		return null;
 	}
 
-	@Override public @Nullable Object provideStateData(ICPAData data) {
+	@Override public @Nullable Object provideStateData(CfaData data) {
 		return new ActionTimerVars();
 	}
-	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
+	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 
 	}
-	@Override public void serverTick(ICPAAuthoritativeData data) {
+	@Override public void serverTick(CfaAuthoritativeData data) {
 		data.getPlayer().setHealth(20);
 	}
-	@Override public boolean travelHook(ICPATravelData data) {
+	@Override public boolean travelHook(CfaTravelData data) {
 		ActionTimerVars.get(data).actionTimer++;
 		data.setForwardStrafeVel(data.getInputs().getForwardInput() * 0.5, data.getInputs().getStrafeInput() * 0.5);
 		data.setYVel(data.getInputs().JUMP.isHeld() ? 0.4 : (data.getInputs().DUCK.isHeld() ? -0.4 : (0.03 * Math.sin(ActionTimerVars.get(data).actionTimer++ / 16.0))));
@@ -144,30 +144,30 @@ public class Debug implements GenericActionDefinition {
 					}
 
 					@Override
-					public boolean shouldInterceptAttack(ICPAReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
+					public boolean shouldInterceptAttack(CfaReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
 						return weapon.isOf(Items.WOODEN_AXE);
 					}
 
 					@Override
-					public @NotNull MiningHandling shouldSuppressMining(ICPAReadableMotionData data, ItemStack weapon, @NotNull BlockHitResult blockHitResult, int miningTicks) {
+					public @NotNull MiningHandling shouldSuppressMining(CfaReadableMotionData data, ItemStack weapon, @NotNull BlockHitResult blockHitResult, int miningTicks) {
 						return MiningHandling.INTERCEPT;
 					}
 
 					@Override
-					public void executeTravellers(ICPATravelData data, ItemStack weapon, float attackCooldownProgress, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget) {
+					public void executeTravellers(CfaTravelData data, ItemStack weapon, float attackCooldownProgress, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget) {
 
 						data.getPlayer().setYaw(data.getPlayer().getYaw() + 90);
 					}
 
 					@Override
-					public void executeClients(ICPAClientData data, ItemStack weapon, float attackCooldownProgress, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget, long seed) {
+					public void executeClients(CfaClientData data, ItemStack weapon, float attackCooldownProgress, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget, long seed) {
 						data.forceBodyAlignment(true);
 						data.instantVisualRotate(90, true);
 						data.playAnimation(DebugSideTurn.ANIMATION, -1);
 					}
 
 					@Override
-					public void executeServer(ICPAAuthoritativeData data, ItemStack weapon, float attackCooldownProgress, ServerWorld world, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget) {
+					public void executeServer(CfaAuthoritativeData data, ItemStack weapon, float attackCooldownProgress, ServerWorld world, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget) {
 
 					}
 				},
@@ -183,27 +183,27 @@ public class Debug implements GenericActionDefinition {
 					}
 
 					@Override public boolean shouldInterceptAttack(
-							ICPAReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
+							CfaReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
 							@Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult
 					) {
 						return weapon.isEmpty();
 					}
 
 					@Override public @NotNull MiningHandling shouldSuppressMining(
-							ICPAReadableMotionData data, ItemStack weapon,
+							CfaReadableMotionData data, ItemStack weapon,
 							@NotNull BlockHitResult blockHitResult, int miningTicks
 					) {
 						return miningTicks < 20 ? MiningHandling.INTERCEPT : MiningHandling.MINE;
 					}
 
 					@Override public void executeTravellers(
-							ICPATravelData data, ItemStack weapon, float attackCooldownProgress,
+							CfaTravelData data, ItemStack weapon, float attackCooldownProgress,
 							@Nullable BlockPos blockTarget, @Nullable Entity entityTarget
 					) {
 
 					}
 					@Override public void executeClients(
-							ICPAClientData data, ItemStack weapon, float attackCooldownProgress,
+							CfaClientData data, ItemStack weapon, float attackCooldownProgress,
 							@Nullable BlockPos blockTarget, @Nullable Entity entityTarget,
 							long seed
 					) {
@@ -211,7 +211,7 @@ public class Debug implements GenericActionDefinition {
 					}
 
 					@Override public void executeServer(
-							ICPAAuthoritativeData data, ItemStack weapon, float attackCooldownProgress,
+							CfaAuthoritativeData data, ItemStack weapon, float attackCooldownProgress,
 							ServerWorld world, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget
 					) {
 

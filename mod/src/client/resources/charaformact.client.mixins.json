@@ -1,0 +1,28 @@
+{
+  "required": true,
+  "package": "com.fqf.charaformact.mixin.client",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "AbstractClientPlayerEntityCfaDataMixin",
+    "BipedEntityModelMixin",
+    "CameraMixin",
+    "ChunkRendererRegionMixin",
+    "ClientPlayerEntityCfaDataMixin",
+    "ClientPlayerEntityMixin",
+    "ClientPlayNetworkHandlerMixin",
+    "EntityRenderDispatcherMixin",
+    "GameRendererMixin",
+    "HeldItemRendererMixin",
+    "InGameHudMixin",
+    "MinecraftClientMixin",
+    "OtherClientPlayerEntityCfaDataMixin",
+    "PlayerEntityModelMixin",
+    "PlayerEntityRendererMixin",
+    "compat.CPMClientBaseMixin",
+    "compat.FlashbackSyncOnRecordingStartMixin",
+    "compat.SodiumLevelSliceMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

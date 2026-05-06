@@ -1,14 +1,14 @@
 package com.fqf.mario_qua_mario.actions.grounded;
 
-import com.fqf.charapoweract_api.definitions.states.actions.GroundedActionDefinition;
-import com.fqf.charapoweract_api.definitions.states.actions.util.*;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.*;
-import com.fqf.charapoweract_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charapoweract_api.cpadata.*;
-import com.fqf.charapoweract_api.cpadata.ICPAClientData;
-import com.fqf.charapoweract_api.cpadata.ICPATravelData;
-import com.fqf.charapoweract_api.util.CharaStat;
-import com.fqf.charapoweract_api.util.Easing;
+import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.charaformact_api.cfadata.*;
+import com.fqf.charaformact_api.cfadata.CfaClientData;
+import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.fqf.charaformact_api.util.CfaStat;
+import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.actions.airborne.Backflip;
@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-import static com.fqf.charapoweract_api.util.StatCategory.*;
+import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class DuckWaddle implements GroundedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("duck_waddle");
@@ -102,27 +102,27 @@ public class DuckWaddle implements GroundedActionDefinition {
 		return null;
 	}
 
-	public static final CharaStat WADDLE_ACCEL = new CharaStat(0.06, DUCKING, FORWARD, ACCELERATION);
-	public static final CharaStat WADDLE_SPEED = new CharaStat(0.08, DUCKING, FORWARD, SPEED);
+	public static final CfaStat WADDLE_ACCEL = new CfaStat(0.06, DUCKING, FORWARD, ACCELERATION);
+	public static final CfaStat WADDLE_SPEED = new CfaStat(0.08, DUCKING, FORWARD, SPEED);
 
-	public static final CharaStat WADDLE_BACKPEDAL_ACCEL = new CharaStat(0.0725, DUCKING, BACKWARD, ACCELERATION);
-	public static final CharaStat WADDLE_BACKPEDAL_SPEED = new CharaStat(0.06, DUCKING, BACKWARD, SPEED);
+	public static final CfaStat WADDLE_BACKPEDAL_ACCEL = new CfaStat(0.0725, DUCKING, BACKWARD, ACCELERATION);
+	public static final CfaStat WADDLE_BACKPEDAL_SPEED = new CfaStat(0.06, DUCKING, BACKWARD, SPEED);
 
-	public static final CharaStat WADDLE_STRAFE_ACCEL = new CharaStat(0.06, DUCKING, STRAFE, ACCELERATION);
-	public static final CharaStat WADDLE_STRAFE_SPEED = new CharaStat(0.06, DUCKING, STRAFE, SPEED);
+	public static final CfaStat WADDLE_STRAFE_ACCEL = new CfaStat(0.06, DUCKING, STRAFE, ACCELERATION);
+	public static final CfaStat WADDLE_STRAFE_SPEED = new CfaStat(0.06, DUCKING, STRAFE, SPEED);
 
-	public static final CharaStat WADDLE_REDIRECTION = new CharaStat(0.0, DUCKING, REDIRECTION);
+	public static final CfaStat WADDLE_REDIRECTION = new CfaStat(0.0, DUCKING, REDIRECTION);
 
-	@Override public @Nullable Object provideStateData(ICPAData data) {
+	@Override public @Nullable Object provideStateData(CfaData data) {
 		return null;
 	}
-	@Override public void clientTick(ICPAClientData data, boolean isSelf) {
+	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 
 	}
-	@Override public void serverTick(ICPAAuthoritativeData data) {
+	@Override public void serverTick(CfaAuthoritativeData data) {
 
 	}
-	@Override public void travelHook(ICPATravelData data, GroundedActionHelper helper) {
+	@Override public void travelHook(CfaTravelData data, GroundedActionHelper helper) {
 		boolean waddlingForward = data.getInputs().getForwardInput() > 0;
 		helper.groundAccel(data,
 				waddlingForward ? WADDLE_ACCEL : WADDLE_BACKPEDAL_ACCEL,
