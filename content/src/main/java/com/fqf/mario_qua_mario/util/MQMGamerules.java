@@ -7,11 +7,11 @@ import net.minecraft.world.GameRules;
 
 public class MQMGamerules {
 	public static final GameRules.Key<GameRules.BooleanRule> ALLOW_RISING_STOMPS =
-			GameRuleRegistry.register("marioDoesRisingStomps", GameRules.Category.PLAYER,
+			GameRuleRegistry.register("mqmDoRisingStomps", GameRules.Category.PLAYER,
 					GameRuleFactory.createBooleanRule(true));
 
 	public static final GameRules.Key<DoubleRule> INCOMING_DAMAGE_MULTIPLIER =
-			GameRuleRegistry.register("marioIncomingDamageMultiplier", GameRules.Category.PLAYER,
+			GameRuleRegistry.register("mqmIncomingDamageMultiplier", GameRules.Category.PLAYER,
 					GameRuleFactory.createDoubleRule(2.5));
 
 //	public static final GameRules.Key<DoubleRule> OUTGOING_DAMAGE_MULTIPLIER =
