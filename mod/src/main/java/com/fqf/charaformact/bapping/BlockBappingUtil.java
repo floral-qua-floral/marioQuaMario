@@ -11,8 +11,11 @@ import com.fqf.charaformact_api.util.CfaTags;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.OperatorBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundCategory;
@@ -128,12 +131,44 @@ public class BlockBappingUtil {
 				return new BapBreakingBlockInfo(world, pos, result, direction, bapper);
 			}
 			case BUST -> {
-				world.breakBlock(pos, true, bapper);
+				if(bapper instanceof PlayerEntity player) mineBlockWithBap(world, pos, player);
+				else world.breakBlock(pos, true, bapper);
 				return null;
 			}
 			default -> {
 				return null;
 			}
+		}
+	}
+
+	public static void mineBlockWithBap(World world, BlockPos pos, PlayerEntity player) {
+		// Code taken from ServerPlayerInteractionManager and ClientPlayerInteractionManager.
+		BlockState blockState = world.getBlockState(pos);
+		Block block = blockState.getBlock();
+
+		if(block instanceof OperatorBlock && player.isCreativeLevelTwoOp()) {
+			if(!world.isClient)
+				world.updateListeners(pos, blockState, blockState, Block.NOTIFY_ALL);
+			return;
+		}
+
+		BlockState iDunnoWhatThisDoes = block.onBreak(world, pos, blockState, player);
+
+		boolean removedSuccessfully;
+
+		if(world.isClient) {
+			FluidState fluidState = world.getFluidState(pos);
+			removedSuccessfully = world.setBlockState(pos, fluidState.getBlockState(), Block.NOTIFY_ALL_AND_REDRAW);
+		}
+		else {
+			removedSuccessfully = world.removeBlock(pos, false);
+		}
+
+		if(removedSuccessfully) {
+			block.onBroken(world, pos, iDunnoWhatThisDoes);
+
+			if(!world.isClient && !player.isCreative())
+				block.afterBreak(world, player, pos, iDunnoWhatThisDoes, world.getBlockEntity(pos), ItemStack.EMPTY);
 		}
 	}
 

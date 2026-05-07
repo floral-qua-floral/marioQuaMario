@@ -32,37 +32,7 @@ public class BapBreakingBlockInfo extends BumpingBlockInfo {
 	public AbstractBapInfo finishAndGetReplacement() {
 		super.finishAndGetReplacement();
 
-		if(this.BAPPER instanceof PlayerEntity player) {
-			// Code taken from ServerPlayerInteractionManager and ClientPlayerInteractionManager.
-
-			BlockState blockState = this.WORLD.getBlockState(this.POS);
-			Block block = blockState.getBlock();
-
-			if(block instanceof OperatorBlock && !player.isCreativeLevelTwoOp()) {
-				if(!this.WORLD.isClient)
-					this.WORLD.updateListeners(this.POS, blockState, blockState, Block.NOTIFY_ALL);
-				return null;
-			}
-
-			BlockState iDunnoWhatThisDoes = block.onBreak(this.WORLD, this.POS, blockState, player);
-
-			boolean removedSuccessfully;
-
-			if(this.WORLD.isClient) {
-				FluidState fluidState = this.WORLD.getFluidState(this.POS);
-				removedSuccessfully = this.WORLD.setBlockState(this.POS, fluidState.getBlockState(), Block.NOTIFY_ALL_AND_REDRAW);
-			}
-			else {
-				removedSuccessfully = this.WORLD.removeBlock(this.POS, false);
-			}
-
-			if(removedSuccessfully) {
-				block.onBroken(this.WORLD, this.POS, iDunnoWhatThisDoes);
-
-				if(!this.WORLD.isClient && !player.isCreative())
-					block.afterBreak(this.WORLD, player, this.POS, iDunnoWhatThisDoes, this.WORLD.getBlockEntity(this.POS), ItemStack.EMPTY);
-			}
-		}
+		if(this.BAPPER instanceof PlayerEntity player) BlockBappingUtil.mineBlockWithBap(this.WORLD, this.POS, player);
 		else this.WORLD.breakBlock(this.POS, true, this.BAPPER);
 
 
