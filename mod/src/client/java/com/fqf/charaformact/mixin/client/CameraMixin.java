@@ -49,26 +49,30 @@ public abstract class CameraMixin {
 			boolean thirdPerson, boolean inverseView, float tickDelta,
 			CallbackInfo ci
 	) {
-		if(!thirdPerson && focusedEntity instanceof ClientPlayerEntity player && player.cfa$getCfaData().animatingCamera()) {
-			Vec3d playerPos = new Vec3d(
-					MathHelper.lerp(tickDelta, focusedEntity.prevX, focusedEntity.getX()),
-					MathHelper.lerp(tickDelta, focusedEntity.prevY, focusedEntity.getY()),
-					MathHelper.lerp(tickDelta, focusedEntity.prevZ, focusedEntity.getZ())
-			);
-			Vec3d cameraRelativePos = this.getPos().subtract(playerPos);
-			this.CAMERA_ARRANGEMENT.setPos((float) cameraRelativePos.x, (float) cameraRelativePos.y, (float) cameraRelativePos.z);
-			this.CAMERA_ARRANGEMENT.setAngles(this.getPitch() * MathHelper.RADIANS_PER_DEGREE, this.getYaw() * MathHelper.RADIANS_PER_DEGREE, 0);
-			player.cfa$getCfaData().mutateCamera(this.CAMERA_ARRANGEMENT, tickDelta);
-			this.setPos(playerPos.add(this.CAMERA_ARRANGEMENT.x, this.CAMERA_ARRANGEMENT.y, this.CAMERA_ARRANGEMENT.z));
-			this.setRotationRads(this.CAMERA_ARRANGEMENT.pitch, MathHelper.PI + this.CAMERA_ARRANGEMENT.yaw, this.CAMERA_ARRANGEMENT.roll);
-			MinecraftClient.getInstance().worldRenderer.scheduleTerrainUpdate();
+		if(!thirdPerson) {
+			if(focusedEntity instanceof ClientPlayerEntity player && player.cfa$getCfaData().animatingCamera()) {
+				Vec3d playerPos = new Vec3d(
+						MathHelper.lerp(tickDelta, focusedEntity.prevX, focusedEntity.getX()),
+						MathHelper.lerp(tickDelta, focusedEntity.prevY, focusedEntity.getY()),
+						MathHelper.lerp(tickDelta, focusedEntity.prevZ, focusedEntity.getZ())
+				);
+				Vec3d cameraRelativePos = this.getPos().subtract(playerPos);
+				this.CAMERA_ARRANGEMENT.setPos((float) cameraRelativePos.x, (float) cameraRelativePos.y, (float) cameraRelativePos.z);
+				this.CAMERA_ARRANGEMENT.setAngles(this.getPitch() * MathHelper.RADIANS_PER_DEGREE, this.getYaw() * MathHelper.RADIANS_PER_DEGREE, 0);
+				player.cfa$getCfaData().mutateCamera(this.CAMERA_ARRANGEMENT, tickDelta);
+				this.setPos(playerPos.add(this.CAMERA_ARRANGEMENT.x, this.CAMERA_ARRANGEMENT.y, this.CAMERA_ARRANGEMENT.z));
+				this.setRotationRads(this.CAMERA_ARRANGEMENT.pitch, MathHelper.PI + this.CAMERA_ARRANGEMENT.yaw, this.CAMERA_ARRANGEMENT.roll);
+				MinecraftClient.getInstance().worldRenderer.scheduleTerrainUpdate();
+			}
+
+			Vec3d bumpingOffset = BlockBappingClientUtil.calculateDubiousOffsetUnder(focusedEntity, tickDelta);
+			if(bumpingOffset != Vec3d.ZERO) {
+				this.setPos(this.getPos().add(bumpingOffset));
+				MinecraftClient.getInstance().worldRenderer.scheduleTerrainUpdate();
+			}
 		}
 
-		Vec3d bumpingOffset = BlockBappingClientUtil.calculateDubiousOffsetUnder(focusedEntity, tickDelta);
-		if(bumpingOffset != Vec3d.ZERO) {
-			this.setPos(this.getPos().add(bumpingOffset));
-			MinecraftClient.getInstance().worldRenderer.scheduleTerrainUpdate();
-		}
+
 	}
 
 	@Unique
