@@ -7,12 +7,12 @@ sfx_movement = {
   "bump": "Block bumped",
 }
 
-sfx_power_up = {
+sfx_form = {
   "empower": "Powering up",
   "revert": "Powering down",
 }
 
-sfx_stomp = {
+sfx_collision_attack = {
 }
 
 sfx_action = {

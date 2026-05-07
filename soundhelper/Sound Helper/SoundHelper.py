@@ -12,8 +12,8 @@ def make_subtitles(namespace, include_voicelines, copy_to, subtitle_source):
     voicelines = []
 
     movement_sfx = []
-    power_up_sfx = []
-    stomp_sfx = []
+    form_sfx = []
+    collision_attack_sfx = []
     action_sfx = []
 
     empty_sound = ""
@@ -24,8 +24,8 @@ def make_subtitles(namespace, include_voicelines, copy_to, subtitle_source):
         # print(f"Checking '{file_name}'...")
 
         attempt_sfx(namespace, file_name, subtitle_source.sfx_movement, "movement", movement_sfx, copy_to)
-        attempt_sfx(namespace, file_name, subtitle_source.sfx_power_up, "power_up", power_up_sfx, copy_to)
-        attempt_sfx(namespace, file_name, subtitle_source.sfx_stomp, "stomp", stomp_sfx, copy_to)
+        attempt_sfx(namespace, file_name, subtitle_source.sfx_form, "form", form_sfx, copy_to)
+        attempt_sfx(namespace, file_name, subtitle_source.sfx_collision_attack, "collision_attack", collision_attack_sfx, copy_to)
         attempt_sfx(namespace, file_name, subtitle_source.sfx_action, "action", action_sfx, copy_to)
 
         if(include_voicelines):
@@ -57,8 +57,8 @@ def make_subtitles(namespace, include_voicelines, copy_to, subtitle_source):
 
     returnValue = []
     if movement_sfx: returnValue += movement_sfx
-    if power_up_sfx: returnValue += [empty_sound] + power_up_sfx
-    if stomp_sfx: returnValue += [empty_sound] + stomp_sfx
+    if form_sfx: returnValue += [empty_sound] + form_sfx
+    if collision_attack_sfx: returnValue += [empty_sound] + collision_attack_sfx
     if action_sfx: returnValue += [empty_sound] + action_sfx
     if voicelines: returnValue += voicelines
     return returnValue
@@ -187,7 +187,7 @@ def add_sound_to_json(namespace, sounds_dot_json, sfx_category, original_name, s
         ]
     }
     java_category = sfx_category
-    if java_category == "power_up": java_category = "PowerUp"
+    if java_category == "collision_attack": java_category = "CollisionAttack"
     else: java_category = java_category.capitalize()
     java_lines.append(f'\tpublic static final SoundEvent {sfx_name.upper()} = make{java_category}Sound("{sfx_name}");\n')
 

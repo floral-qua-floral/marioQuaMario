@@ -36,7 +36,7 @@ sfx_movement = {
   "wall_jump": "Wall jumping"
 }
 
-sfx_power_up = {
+sfx_form = {
   "coin": "Coin collected",
   "coin_use": "Coins spent",
   "fireball": "Fireball thrown",
@@ -48,7 +48,7 @@ sfx_power_up = {
   "tail_empower": "Powering up"
 }
 
-sfx_stomp = {
+sfx_collision_attack = {
   "stomp": "Something gets stomped",
   "last": "Something gets stomped flat",
   "pointy": "Something pointy gets stomped",
