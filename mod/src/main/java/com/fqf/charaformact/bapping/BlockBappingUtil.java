@@ -8,6 +8,7 @@ import com.fqf.charaformact.util.CfaSounds;
 import com.fqf.charaformact_api.interfaces.BapResult;
 import com.fqf.charaformact_api.interfaces.Bappable;
 import com.fqf.charaformact_api.util.CfaTags;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -21,6 +22,7 @@ import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.PalettedContainer;
 import net.minecraft.world.chunk.WorldChunk;
@@ -53,11 +55,26 @@ public class BlockBappingUtil {
 	public static boolean shouldApplyHardnessMixin() {
 		return !forcingVanillaHardnessCheck;
 	}
-	private static float getVanillaHardness(World world, BlockPos pos, BlockState state) {
+	private static float getVanillaHardness(BlockView world, BlockPos pos, BlockState state) {
 		forcingVanillaHardnessCheck = true;
-		float hardness = state.getHardness(world, pos);
-		forcingVanillaHardnessCheck = false;
-		return hardness;
+		try {
+			return state.getHardness(world, pos);
+		}
+		finally {
+			forcingVanillaHardnessCheck = false;
+		}
+	}
+	public static float getVanillaHardnessForMixin(BlockState instance, BlockView blockView, BlockPos blockPos, Operation<Float> original) {
+		// This is silly duplicated code and it's not good, but I wanted to make sure that the mixin still calls the original operation.
+		// Just in case another mod's mixin wants to do something there...??????
+		// Hopefully this will make it more compatible? If anyone decides they want to do that ever in the whole world???
+		forcingVanillaHardnessCheck = true;
+		try {
+			return original.call(instance, blockView, blockPos);
+		}
+		finally {
+			forcingVanillaHardnessCheck = false;
+		}
 	}
 
 	private static BapResult handleBapResultForAdventureMode(BapResult original, BlockState state, PlayerEntity bapper) {
@@ -205,19 +222,22 @@ public class BlockBappingUtil {
 			container.set(info.POS.getX() & 15, info.POS.getY() & 15, info.POS.getZ() & 15,
 					Blocks.AIR.getDefaultState());
 
-			Direction opposite = bumping.DISPLACEMENT_DIRECTION.getOpposite();
+			try {
+				Direction opposite = bumping.DISPLACEMENT_DIRECTION.getOpposite();
 
-			if(propagations == 0) {
-				for(Direction direction : Direction.values()) {
-					if(direction != opposite)
-						indirectBap(bumping, direction, propagations);
+				if(propagations == 0) {
+					for(Direction direction : Direction.values()) {
+						if(direction != opposite)
+							indirectBap(bumping, direction, propagations);
+					}
 				}
+
+				indirectBap(bumping, opposite, propagations);
 			}
-
-			indirectBap(bumping, opposite, propagations);
-
-			container.set(info.POS.getX() & 15, info.POS.getY() & 15, info.POS.getZ() & 15,
-					bappedState);
+			finally {
+				container.set(info.POS.getX() & 15, info.POS.getY() & 15, info.POS.getZ() & 15,
+						bappedState);
+			}
 		}
 
 		WorldBapsInfo worldBaps = getBapsInfoNullable(info.WORLD);

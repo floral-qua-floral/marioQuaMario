@@ -5,6 +5,7 @@
   "mixins": [
     "AbstractBlockStateMixin",
     "DamageSourceMixin",
+    "ItemTakeDurabilityFromBrittleBlocksMixin",
     "LivingEntityResistFriendlyCollisionAttacksMixin",
     "PlayerEntityCfaDataMixin",
     "PlayerEntityMixin",
