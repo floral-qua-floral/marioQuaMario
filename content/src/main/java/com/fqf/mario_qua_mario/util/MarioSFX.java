@@ -19,12 +19,13 @@ public class MarioSFX {
 	public static final SoundEvent SWIM_PADDLE = makeActionSound("swim_paddle");
 	public static final SoundEvent UNDUCK = makeActionSound("unduck");
 
-	public static final SoundEvent FLIP = makeMovementSound("flip");
-	public static final SoundEvent MARIO_JUMP = makeMovementSound("mario_jump");
-	public static final SoundEvent LUIGI_JUMP = makeMovementSound("luigi_jump");
-	public static final SoundEvent TOAD_JUMP = makeMovementSound("toad_jump");
-	public static final SoundEvent TOADETTE_JUMP = makeMovementSound("toadette_jump");
-	public static final SoundEvent WALL_JUMP = makeMovementSound("wall_jump");
+	public static final SoundEvent HARMLESS = makeCollisionAttackSound("harmless");
+	public static final SoundEvent HEAVY = makeCollisionAttackSound("heavy");
+	public static final SoundEvent KICK = makeCollisionAttackSound("kick");
+	public static final SoundEvent LAST = makeCollisionAttackSound("last");
+	public static final SoundEvent SPIN = makeCollisionAttackSound("spin");
+	public static final SoundEvent STOMP = makeCollisionAttackSound("stomp");
+	public static final SoundEvent YOSHI = makeCollisionAttackSound("yoshi");
 
 	public static final SoundEvent BURN_OBJECT = makeFormSound("burn_object");
 	public static final SoundEvent COIN = makeFormSound("coin");
@@ -36,13 +37,12 @@ public class MarioSFX {
 	public static final SoundEvent TAIL_FLY = makeFormSound("tail_fly");
 	public static final SoundEvent TAIL_WHIP = makeFormSound("tail_whip");
 
-	public static final SoundEvent HARMLESS = makeCollisionAttackSound("harmless");
-	public static final SoundEvent HEAVY = makeCollisionAttackSound("heavy");
-	public static final SoundEvent KICK = makeCollisionAttackSound("kick");
-	public static final SoundEvent LAST = makeCollisionAttackSound("last");
-	public static final SoundEvent SPIN = makeCollisionAttackSound("spin");
-	public static final SoundEvent STOMP = makeCollisionAttackSound("stomp");
-	public static final SoundEvent YOSHI = makeCollisionAttackSound("yoshi");
+	public static final SoundEvent FLIP = makeMovementSound("flip");
+	public static final SoundEvent MARIO_JUMP = makeMovementSound("mario_jump");
+	public static final SoundEvent LUIGI_JUMP = makeMovementSound("luigi_jump");
+	public static final SoundEvent TOAD_JUMP = makeMovementSound("toad_jump");
+	public static final SoundEvent TOADETTE_JUMP = makeMovementSound("toadette_jump");
+	public static final SoundEvent WALL_JUMP = makeMovementSound("wall_jump");
 
 	private static SoundEvent makeMovementSound(String name) {
 		return makeAndRegisterSound("sfx.movement." + name);

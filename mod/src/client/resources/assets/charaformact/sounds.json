@@ -1,4 +1,16 @@
 {
+	"sfx.form.empower": {
+		"subtitle": "subtitles.charaformact.form.empower",
+		"sounds": [
+			"charaformact:sfx/form/empower"
+		]
+	},
+	"sfx.form.revert": {
+		"subtitle": "subtitles.charaformact.form.revert",
+		"sounds": [
+			"charaformact:sfx/form/revert"
+		]
+	},
 	"sfx.movement.bump": {
 		"subtitle": "subtitles.charaformact.movement.bump",
 		"sounds": [
@@ -33,18 +45,6 @@
 		"subtitle": "subtitles.charaformact.movement.skid_wall",
 		"sounds": [
 			"charaformact:sfx/movement/skid_wall"
-		]
-	},
-	"sfx.form.empower": {
-		"subtitle": "subtitles.charaformact.form.empower",
-		"sounds": [
-			"charaformact:sfx/form/empower"
-		]
-	},
-	"sfx.form.revert": {
-		"subtitle": "subtitles.charaformact.form.revert",
-		"sounds": [
-			"charaformact:sfx/form/revert"
 		]
 	}
 }

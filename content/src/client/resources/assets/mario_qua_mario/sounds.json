@@ -65,40 +65,46 @@
 			"mario_qua_mario:sfx/action/unduck"
 		]
 	},
-	"sfx.movement.flip": {
-		"subtitle": "subtitles.mario_qua_mario.movement.flip",
+	"sfx.collision_attack.harmless": {
+		"subtitle": "subtitles.mario_qua_mario.collision_attack.harmless",
 		"sounds": [
-			"mario_qua_mario:sfx/movement/flip"
+			"mario_qua_mario:sfx/collision_attack/harmless"
 		]
 	},
-	"sfx.movement.mario_jump": {
-		"subtitle": "subtitles.mario_qua_mario.movement.jump",
+	"sfx.collision_attack.heavy": {
+		"subtitle": "subtitles.mario_qua_mario.collision_attack.heavy",
 		"sounds": [
-			"mario_qua_mario:sfx/movement/jump"
+			"mario_qua_mario:sfx/collision_attack/heavy"
 		]
 	},
-	"sfx.movement.luigi_jump": {
-		"subtitle": "subtitles.mario_qua_mario.movement.jump",
+	"sfx.collision_attack.kick": {
+		"subtitle": "subtitles.mario_qua_mario.collision_attack.kick",
 		"sounds": [
-			"mario_qua_mario:sfx/movement/jump"
+			"mario_qua_mario:sfx/collision_attack/kick"
 		]
 	},
-	"sfx.movement.toad_jump": {
-		"subtitle": "subtitles.mario_qua_mario.movement.jump",
+	"sfx.collision_attack.last": {
+		"subtitle": "subtitles.mario_qua_mario.collision_attack.last",
 		"sounds": [
-			"mario_qua_mario:sfx/movement/jump"
+			"mario_qua_mario:sfx/collision_attack/last"
 		]
 	},
-	"sfx.movement.toadette_jump": {
-		"subtitle": "subtitles.mario_qua_mario.movement.jump",
+	"sfx.collision_attack.spin": {
+		"subtitle": "subtitles.mario_qua_mario.collision_attack.spin",
 		"sounds": [
-			"mario_qua_mario:sfx/movement/jump"
+			"mario_qua_mario:sfx/collision_attack/spin"
 		]
 	},
-	"sfx.movement.wall_jump": {
-		"subtitle": "subtitles.mario_qua_mario.movement.wall_jump",
+	"sfx.collision_attack.stomp": {
+		"subtitle": "subtitles.mario_qua_mario.collision_attack.stomp",
 		"sounds": [
-			"mario_qua_mario:sfx/movement/wall_jump"
+			"mario_qua_mario:sfx/collision_attack/stomp"
+		]
+	},
+	"sfx.collision_attack.yoshi": {
+		"subtitle": "subtitles.mario_qua_mario.collision_attack.yoshi",
+		"sounds": [
+			"mario_qua_mario:sfx/collision_attack/yoshi"
 		]
 	},
 	"sfx.form.burn_object": {
@@ -155,46 +161,40 @@
 			"mario_qua_mario:sfx/form/tail_whip"
 		]
 	},
-	"sfx.collision_attack.harmless": {
-		"subtitle": "subtitles.mario_qua_mario.collision_attack.harmless",
+	"sfx.movement.flip": {
+		"subtitle": "subtitles.mario_qua_mario.movement.flip",
 		"sounds": [
-			"mario_qua_mario:sfx/collision_attack/harmless"
+			"mario_qua_mario:sfx/movement/flip"
 		]
 	},
-	"sfx.collision_attack.heavy": {
-		"subtitle": "subtitles.mario_qua_mario.collision_attack.heavy",
+	"sfx.movement.mario_jump": {
+		"subtitle": "subtitles.mario_qua_mario.movement.jump",
 		"sounds": [
-			"mario_qua_mario:sfx/collision_attack/heavy"
+			"mario_qua_mario:sfx/movement/jump"
 		]
 	},
-	"sfx.collision_attack.kick": {
-		"subtitle": "subtitles.mario_qua_mario.collision_attack.kick",
+	"sfx.movement.luigi_jump": {
+		"subtitle": "subtitles.mario_qua_mario.movement.jump",
 		"sounds": [
-			"mario_qua_mario:sfx/collision_attack/kick"
+			"mario_qua_mario:sfx/movement/jump"
 		]
 	},
-	"sfx.collision_attack.last": {
-		"subtitle": "subtitles.mario_qua_mario.collision_attack.last",
+	"sfx.movement.toad_jump": {
+		"subtitle": "subtitles.mario_qua_mario.movement.jump",
 		"sounds": [
-			"mario_qua_mario:sfx/collision_attack/last"
+			"mario_qua_mario:sfx/movement/jump"
 		]
 	},
-	"sfx.collision_attack.spin": {
-		"subtitle": "subtitles.mario_qua_mario.collision_attack.spin",
+	"sfx.movement.toadette_jump": {
+		"subtitle": "subtitles.mario_qua_mario.movement.jump",
 		"sounds": [
-			"mario_qua_mario:sfx/collision_attack/spin"
+			"mario_qua_mario:sfx/movement/jump"
 		]
 	},
-	"sfx.collision_attack.stomp": {
-		"subtitle": "subtitles.mario_qua_mario.collision_attack.stomp",
+	"sfx.movement.wall_jump": {
+		"subtitle": "subtitles.mario_qua_mario.movement.wall_jump",
 		"sounds": [
-			"mario_qua_mario:sfx/collision_attack/stomp"
-		]
-	},
-	"sfx.collision_attack.yoshi": {
-		"subtitle": "subtitles.mario_qua_mario.collision_attack.yoshi",
-		"sounds": [
-			"mario_qua_mario:sfx/collision_attack/yoshi"
+			"mario_qua_mario:sfx/movement/wall_jump"
 		]
 	},
 	"voice.luigi.bonk": {

@@ -7,15 +7,15 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
 public class CfaSounds {
+	public static final SoundEvent EMPOWER = makeFormSound("empower");
+	public static final SoundEvent REVERT = makeFormSound("revert");
+
 	public static final SoundEvent BUMP = makeMovementSound("bump");
 	public static final SoundEvent SKID = makeMovementSound("skid");
 	public static final SoundEvent SKID_ICE = makeMovementSound("skid_ice");
 	public static final SoundEvent SKID_SAND = makeMovementSound("skid_sand");
 	public static final SoundEvent SKID_SNOW = makeMovementSound("skid_snow");
 	public static final SoundEvent SKID_WALL = makeMovementSound("skid_wall");
-
-	public static final SoundEvent EMPOWER = makeFormSound("empower");
-	public static final SoundEvent REVERT = makeFormSound("revert");
 
 	private static SoundEvent makeMovementSound(String name) {
 		return makeAndRegisterSound("sfx.movement." + name);
@@ -31,7 +31,7 @@ public class CfaSounds {
 	}
 
 	private static SoundEvent makeAndRegisterSound(String path) {
-		Identifier identifier = CharaFormAct.makeResID(path);
+		Identifier identifier = CharaFormAct.makeID(path);
 		SoundEvent event = SoundEvent.of(identifier);
 
 		Registry.register(Registries.SOUND_EVENT, identifier, event);
