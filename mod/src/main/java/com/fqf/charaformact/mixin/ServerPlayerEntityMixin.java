@@ -35,28 +35,23 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 		super(world, pos, yaw, gameProfile);
 	}
 
-	@Unique private long tickAfterStomp;
+	@Unique private long ticksAfterCollisionAttack;
 
 	@Override
 	public void move(MovementType movementType, Vec3d movement) {
 		CfaServerPlayerData data = this.cfa$getCfaData();
 		Vec3d oldMovement = movement;
 		Vec3d oldPos = this.getPos();
-		// Only perform stomp checks on movement that comes from a player packet (as opposed to server-side travel).
+		// Only perform collision attack checks on movement that comes from a player packet (as opposed to server-side travel).
 		// Should this change??
 		long time = this.getWorld().getTime();
 		if(data.isEnabled() && data.doCustomTravel() && data.getAction().COLLISION_ATTACK_TYPE != null
 				&& (movementType == MovementType.PLAYER || movementType == MovementType.SELF)
-				&& time != this.tickAfterStomp && time != this.tickAfterStomp - 1)
+				&& time != this.ticksAfterCollisionAttack && time != this.ticksAfterCollisionAttack - 1)
 			movement = data.getAction().COLLISION_ATTACK_TYPE.moveHook(data, movement);
 
 		super.move(movementType, movement);
-		if(!oldMovement.equals(movement)) {
-//			CharaFormAct.LOGGER.info("Server-sided stomp after move completion:\nTick: {}\tForbiddenTick: {}\tMovetype: {}\nOld position: {}\nMovement: {}\nNew position: {}\nDifference: {}",
-//					this.getWorld().getTime(), this.tickAfterStomp, movementType, oldPos, movement, this.getPos(), this.getPos().subtract(oldPos));
-			this.tickAfterStomp = time + 1;
-		}
-//		else CharaFormAct.LOGGER.info("Movement: {}->{}", oldPos, this.getPos());
+		if(!oldMovement.equals(movement)) this.ticksAfterCollisionAttack = time + 1;
 	}
 
 	@Inject(method = "readCustomDataFromNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;readCustomDataFromNbt(Lnet/minecraft/nbt/NbtCompound;)V", shift = At.Shift.AFTER))
@@ -67,10 +62,10 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 			NbtCompound persistentCfaData = nbt.getCompound(CfaNbtKeys.DATA);
 
 			boolean extraLogging = CharaFormAct.CONFIG.logNBTReadWrite();
-			if(extraLogging) CharaFormAct.LOGGER.info("Reading player NBT:\nEnabled: {}\nCharacter: {}\nPower-up: {}",
+			if(extraLogging) CharaFormAct.LOGGER.info("Reading player NBT:\nEnabled: {}\nCharacter: {}\nForm: {}",
 					persistentCfaData.getBoolean(CfaNbtKeys.ENABLED),
 					persistentCfaData.getString(CfaNbtKeys.CHARACTER),
-					persistentCfaData.getString(CfaNbtKeys.POWER_FORM));
+					persistentCfaData.getString(CfaNbtKeys.FORM));
 
 			if(persistentCfaData.getBoolean(CfaNbtKeys.ENABLED)) {
 				String storedCharacterID = persistentCfaData.getString(CfaNbtKeys.CHARACTER);
@@ -79,19 +74,19 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 				}
 				else if(RegistryManager.CHARACTERS.containsId(Identifier.of(storedCharacterID))) {
 					ParsedCharacter storedCharacter = Objects.requireNonNull(RegistryManager.CHARACTERS.get(Identifier.of(storedCharacterID)));
-					String storedPowerUpID = persistentCfaData.getString(CfaNbtKeys.POWER_FORM);
-					if(storedPowerUpID.isEmpty()) {
-						CharaFormAct.LOGGER.error("Shocking error: A player's NBT data claims the mod is enabled, and a character ID is stored, but no power-up ID is stored?!");
+					String storedFormID = persistentCfaData.getString(CfaNbtKeys.FORM);
+					if(storedFormID.isEmpty()) {
+						CharaFormAct.LOGGER.error("Shocking error: A player's NBT data claims the mod is enabled, and a character ID is stored, but no form ID is stored?!");
 					}
 					else {
-						if(!RegistryManager.FORMS.containsId(Identifier.of(storedPowerUpID))) {
-							CharaFormAct.LOGGER.error("A player's NBT data contains an invalid Power-up ID: {}." +
-									"The player will instead be set to their character's default power-up state.", storedPowerUpID);
-							storedPowerUpID = storedCharacter.INITIAL_FORM.ID.toString();
+						if(!RegistryManager.FORMS.containsId(Identifier.of(storedFormID))) {
+							CharaFormAct.LOGGER.error("A player's NBT data contains an invalid Form ID: {}." +
+									"The player will instead be set to their character's default form state.", storedFormID);
+							storedFormID = storedCharacter.INITIAL_FORM.ID.toString();
 						}
 
 						if(extraLogging)
-							CharaFormAct.LOGGER.info("Loaded a full set of CFA Data from NBT. This is {} in {} form.", storedCharacterID, storedPowerUpID);
+							CharaFormAct.LOGGER.info("Loaded a full set of CFA Data from NBT. This is {} in {} form.", storedCharacterID, storedFormID);
 
 						CfaServerPlayerData data = this.cfa$getCfaData();
 						if(this.networkHandler == null) {
@@ -99,13 +94,13 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 								CharaFormAct.LOGGER.info("Player is not yet ready for networking. Assigning silently for later synchronization...");
 							data.setupVariablesBeforeInitialApply(
 									storedCharacter,
-									RegistryManager.FORMS.get(Identifier.of(storedPowerUpID))
+									RegistryManager.FORMS.get(Identifier.of(storedFormID))
 							);
 						}
 						else {
 							if(extraLogging) CharaFormAct.LOGGER.info("Syncing data from NBT...");
 							data.assignCharacter(storedCharacterID);
-							data.assignForm(storedPowerUpID);
+							data.assignForm(storedFormID);
 						}
 					}
 				}

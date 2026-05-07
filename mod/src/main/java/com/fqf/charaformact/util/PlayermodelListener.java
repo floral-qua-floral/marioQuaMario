@@ -43,14 +43,14 @@ public class PlayermodelListener implements SimpleSynchronousResourceReloadListe
 
 					int separationPoint = fileName.indexOf('/');
 
-					String power_namespace = fileName.substring(0, separationPoint);
-					String power_path = fileName.substring(separationPoint + 1);
+					String form_namespace = fileName.substring(0, separationPoint);
+					String form_path = fileName.substring(separationPoint + 1);
 
-					Identifier powerUpID = Identifier.of(power_namespace, power_path);
-					ParsedForm powerUp = RegistryManager.FORMS.get(powerUpID);
+					Identifier formID = Identifier.of(form_namespace, form_path);
+					ParsedForm form = RegistryManager.FORMS.get(formID);
 
-					if(powerUp != null) {
-						CharaFormAct.LOGGER.info("Found model for character {} in form {}!", character.ID, powerUpID);
+					if(form != null) {
+						CharaFormAct.LOGGER.info("Found model for character {} in form {}!", character.ID, formID);
 						ModelFile model = ModelFile.load(stream);
 //						ModelDefinition definition = MinecraftClientAccess.get().getDefinitionLoader().loadModel(model.getDataBlock(), MinecraftClientAccess.get().getClientPlayer());
 
@@ -65,17 +65,17 @@ public class PlayermodelListener implements SimpleSynchronousResourceReloadListe
 //						Vec3f i = MinecraftClientAccess.get().getDefinitionLoader().loadModel(model.getDataBlock(), MinecraftClientAccess.get().getClientPlayer()).getModelElementFor(RootModelType.CAPE).get().getPos();
 //						CharaFormAct.LOGGER.info("Cape position for this model: {}", i);
 
-						character.MODELS.put(powerUp, model);
-						if(!character.ID.getNamespace().equals(powerUp.ID.getNamespace()))
+						character.MODELS.put(form, model);
+						if(!character.ID.getNamespace().equals(form.ID.getNamespace()))
 							CharaFormAct.LOGGER.info("They have different namespaces too! Look at you, being so compatible!");
 					}
-					else CharaFormAct.LOGGER.warn("Ignoring model for character {} in unregistered power-up form {}.",
-							character.ID, powerUpID);
+					else CharaFormAct.LOGGER.warn("Ignoring model for character {} in unregistered form {}.",
+							character.ID, formID);
 				}
 				catch(Exception exception) {
 					CharaFormAct.LOGGER.error(
 							"""
-									Error occurred while attempting to load Mario Qua Mario playermodels.
+									Error occurred while attempting to load CharaFormAct playermodels.
 									Namespace (this mod is responsible!!): {}
 									Json file: {}
 									Exception: {}""",

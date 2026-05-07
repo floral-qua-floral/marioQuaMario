@@ -1,11 +1,10 @@
-package com.fqf.mario_qua_mario.powerups;
+package com.fqf.mario_qua_mario.forms;
 
-import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.definitions.states.FormDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charaformact_api.cfadata.CfaData;
-import com.fqf.charaformact_api.util.StatCategory;
+import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
@@ -15,17 +14,17 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-public class Mini implements FormDefinition {
-	public static final Identifier ID = MarioQuaMario.makeID("mini");
+public class Super implements FormDefinition {
+	public static final Identifier ID = MarioQuaMario.makeID("super");
 	@Override public @NotNull Identifier getID() {
 	    return ID;
 	}
 
 	@Override public @Nullable Identifier getReversionTarget() {
-		return null;
+		return Small.ID;
 	}
 	@Override public int getValue() {
-		return 0;
+		return 1;
 	}
 
 	@Override public @Nullable SoundEvent getAcquisitionSound() {
@@ -33,27 +32,27 @@ public class Mini implements FormDefinition {
 	}
 
 	@Override public float getWidthFactor() {
-		return 0.5F;
+		return 1;
 	}
 	@Override public float getHeightFactor() {
-		return 0.25F;
+		return 1;
 	}
 	@Override public float getAnimationWidthFactor() {
-		return 0.5F;
+		return 1;
 	}
 	@Override public float getAnimationHeightFactor() {
-		return 0.25F;
+		return 1;
 	}
 
-	@Override public int getBumpStrengthModifier() {
-		return -2;
+	@Override public int getBapStrengthModifier() {
+		return 0;
 	}
 
 	@Override public float getVoicePitch() {
-		return 1.545F;
+		return 1;
 	}
 	@Override public float getJumpPitch() {
-		return 1.5F;
+		return 1F;
 	}
 
 	@Override public Set<String> getPowers() {
@@ -62,29 +61,21 @@ public class Mini implements FormDefinition {
 
 	@Override public @NotNull FormDefinition.FormHeart getFormHeart(FormHeartHelper helper) {
 		return new FormHeart(
-				MarioQuaMario.makeResID("hud/power_hearts/small/full"),
-				MarioQuaMario.makeResID("hud/power_hearts/small/full_blinking"),
-
-				MarioQuaMario.makeResID("hud/power_hearts/small/half"),
-				MarioQuaMario.makeResID("hud/power_hearts/small/half_blinking"),
-
-				MarioQuaMario.makeResID("hud/power_hearts/small/hardcore/full"),
-				MarioQuaMario.makeResID("hud/power_hearts/small/hardcore/full_blinking"),
-
-				MarioQuaMario.makeResID("hud/power_hearts/small/hardcore/half"),
-				MarioQuaMario.makeResID("hud/power_hearts/small/hardcore/half_blinking"),
-
-				MarioQuaMario.makeResID("hud/power_hearts/small/container"),
-				MarioQuaMario.makeResID("hud/power_hearts/small/container_blinking")
+				Identifier.ofVanilla("hud/heart/full"),
+				Identifier.ofVanilla("hud/heart/full_blinking"),
+				Identifier.ofVanilla("hud/heart/half"),
+				Identifier.ofVanilla("hud/heart/half_blinking"),
+				Identifier.ofVanilla("hud/heart/hardcore_full"),
+				Identifier.ofVanilla("hud/heart/hardcore_full_blinking"),
+				Identifier.ofVanilla("hud/heart/hardcore_half"),
+				Identifier.ofVanilla("hud/heart/hardcore_half_blinking"),
+				Identifier.ofVanilla("hud/heart/container"),
+				Identifier.ofVanilla("hud/heart/container_blinking")
 		);
 	}
 
 	@Override public Set<StatModifier> getStatModifiers() {
-		return Set.of(
-				new StatModifier(Set.of(StatCategory.NORMAL_GRAVITY), 0.6),
-				new StatModifier(Set.of(StatCategory.JUMPING_GRAVITY), 0.375),
-				new StatModifier(Set.of(StatCategory.JUMP_VELOCITY), 0.75)
-		);
+		return Set.of();
 	}
 
 	@Override public @Nullable Object provideStateData(CfaData data) {

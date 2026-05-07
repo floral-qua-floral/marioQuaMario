@@ -11,10 +11,10 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.Player
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario.actions.grounded.PRun;
-import com.fqf.mario_qua_mario.actions.power.TailFly;
-import com.fqf.mario_qua_mario.actions.power.TailStall;
+import com.fqf.mario_qua_mario.actions.form.TailFly;
+import com.fqf.mario_qua_mario.actions.form.TailStall;
 import com.fqf.mario_qua_mario.actions.wallbound.WallSlide;
-import com.fqf.mario_qua_mario.powerups.Raccoon;
+import com.fqf.mario_qua_mario.forms.Raccoon;
 import com.fqf.mario_qua_mario.util.ClimbTransitions;
 import com.fqf.mario_qua_mario.util.Powers;
 import net.minecraft.util.Identifier;

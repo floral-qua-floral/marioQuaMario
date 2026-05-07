@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(DamageSource.class)
 public class DamageSourceMixin {
 	@WrapOperation(method = "getDeathMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;getMainHandStack()Lnet/minecraft/item/ItemStack;"))
-	private ItemStack useStompWeapon(LivingEntity killed, Operation<ItemStack> original) {
+	private ItemStack useCollisionAttackWeapon(LivingEntity killed, Operation<ItemStack> original) {
 		if((DamageSource) (Object) this instanceof CollisionAttackDamageSource collisionAttackDamageSource)
 			return collisionAttackDamageSource.WEAPON_STACK;
 		return original.call(killed);

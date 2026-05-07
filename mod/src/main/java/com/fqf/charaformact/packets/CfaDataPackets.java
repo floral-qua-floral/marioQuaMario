@@ -50,11 +50,11 @@ public class CfaDataPackets {
 	}
 
 	public static void empowerRevertS2C(
-			ServerPlayerEntity player, ParsedForm toPower, boolean isReversion, long seed
+			ServerPlayerEntity player, ParsedForm toForm, boolean isReversion, long seed
 	) {
 		CfaPackets.sendToTrackers(
 				player,
-				new EmpowerRevertS2CPayload(player.getId(), RegistryManager.FORMS.getRawIdOrThrow(toPower), isReversion, seed),
+				new EmpowerRevertS2CPayload(player.getId(), RegistryManager.FORMS.getRawIdOrThrow(toForm), isReversion, seed),
 				true
 		);
 	}
@@ -187,11 +187,11 @@ public class CfaDataPackets {
 		}
 	}
 
-	protected record EmpowerRevertS2CPayload(int playerID, int toPower, boolean isReversion, long seed) implements CustomPayload {
+	protected record EmpowerRevertS2CPayload(int playerID, int toForm, boolean isReversion, long seed) implements CustomPayload {
 		public static final Id<EmpowerRevertS2CPayload> ID = CfaPackets.makeID("empower_s2c");
 		public static final PacketCodec<RegistryByteBuf, EmpowerRevertS2CPayload> CODEC = PacketCodec.tuple(
 				PacketCodecs.INTEGER, EmpowerRevertS2CPayload::playerID,
-				PacketCodecs.INTEGER, EmpowerRevertS2CPayload::toPower,
+				PacketCodecs.INTEGER, EmpowerRevertS2CPayload::toForm,
 				PacketCodecs.BOOL, EmpowerRevertS2CPayload::isReversion,
 				PacketCodecs.VAR_LONG, EmpowerRevertS2CPayload::seed,
 				EmpowerRevertS2CPayload::new
@@ -205,11 +205,11 @@ public class CfaDataPackets {
 		}
 	}
 
-	protected record AssignFormS2CPayload(int playerID, int newPower) implements CustomPayload {
+	protected record AssignFormS2CPayload(int playerID, int newForm) implements CustomPayload {
 		public static final Id<AssignFormS2CPayload> ID = CfaPackets.makeID("assign_form_s2c");
 		public static final PacketCodec<RegistryByteBuf, AssignFormS2CPayload> CODEC = PacketCodec.tuple(
 				PacketCodecs.INTEGER, AssignFormS2CPayload::playerID,
-				PacketCodecs.INTEGER, AssignFormS2CPayload::newPower,
+				PacketCodecs.INTEGER, AssignFormS2CPayload::newForm,
 				AssignFormS2CPayload::new
 		);
 

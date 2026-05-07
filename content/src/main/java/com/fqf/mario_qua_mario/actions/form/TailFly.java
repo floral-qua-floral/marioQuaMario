@@ -1,4 +1,4 @@
-package com.fqf.mario_qua_mario.actions.power;
+package com.fqf.mario_qua_mario.actions.form;
 
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
@@ -17,7 +17,7 @@ import com.fqf.mario_qua_mario.actions.airborne.GroundPoundFlip;
 import com.fqf.mario_qua_mario.actions.airborne.PJump;
 import com.fqf.mario_qua_mario.actions.airborne.SpecialFall;
 import com.fqf.mario_qua_mario.actions.aquatic.Submerged;
-import com.fqf.mario_qua_mario.powerups.Raccoon;
+import com.fqf.mario_qua_mario.forms.Raccoon;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.Powers;
 import net.minecraft.util.Identifier;
@@ -29,7 +29,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import static com.fqf.charaformact_api.util.StatCategory.JUMP_VELOCITY;
-import static com.fqf.charaformact_api.util.StatCategory.POWER_UP;
+import static com.fqf.charaformact_api.util.StatCategory.FORM;
 
 public class TailFly extends PJump implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("tail_fly");
@@ -49,7 +49,7 @@ public class TailFly extends PJump implements AirborneActionDefinition {
 		);
 	}
 
-	public static final CfaStat FLIGHT_VEL = new CfaStat(0.41, JUMP_VELOCITY, POWER_UP);
+	public static final CfaStat FLIGHT_VEL = new CfaStat(0.41, JUMP_VELOCITY, FORM);
 
 	@Override public @Nullable Object provideStateData(CfaData data) {
 		return new ActionTimerVars();

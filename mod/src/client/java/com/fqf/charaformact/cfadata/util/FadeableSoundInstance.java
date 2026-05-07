@@ -10,11 +10,11 @@ import net.minecraft.sound.SoundEvent;
 public class FadeableSoundInstance extends PositionedSoundInstance implements TickableSoundInstance {
 	private boolean isFading = false;
 
-	public FadeableSoundInstance(CfaPlayerData mario) {
-		this(mario.getCharacter().JUMP_SOUND, mario.getPlayer(), 1F, mario.getForm().JUMP_PITCH);
+	public FadeableSoundInstance(CfaPlayerData data) {
+		this(data.getCharacter().JUMP_SOUND, data.getPlayer(), 1F, data.getForm().JUMP_PITCH);
 	}
-	public FadeableSoundInstance(SoundEvent sound, PlayerEntity mario, float volume, float pitch) {
-		super(sound, SoundCategory.PLAYERS, volume, pitch, mario.getRandom(), mario.getX(), mario.getY(), mario.getZ());
+	public FadeableSoundInstance(SoundEvent sound, PlayerEntity player, float volume, float pitch) {
+		super(sound, SoundCategory.PLAYERS, volume, pitch, player.getRandom(), player.getX(), player.getY(), player.getZ());
 	}
 
 	public void fade() {

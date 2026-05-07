@@ -185,13 +185,13 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDa
 		persistentData.putBoolean(CfaNbtKeys.ENABLED, enabled);
 		if(enabled) {
 			persistentData.putString(CfaNbtKeys.CHARACTER, data.getCharacterID().toString());
-			persistentData.putString(CfaNbtKeys.POWER_FORM, data.getFormID().toString());
+			persistentData.putString(CfaNbtKeys.FORM, data.getFormID().toString());
 		}
 
-		if(CharaFormAct.CONFIG.logNBTReadWrite()) CharaFormAct.LOGGER.info("Writing player NBT:\nEnabled: {}\nCharacter: {}\nPower-up: {}",
+		if(CharaFormAct.CONFIG.logNBTReadWrite()) CharaFormAct.LOGGER.info("Writing player NBT:\nEnabled: {}\nCharacter: {}\nForm: {}",
 				persistentData.getBoolean(CfaNbtKeys.ENABLED),
 				persistentData.getString(CfaNbtKeys.CHARACTER),
-				persistentData.getString(CfaNbtKeys.POWER_FORM));
+				persistentData.getString(CfaNbtKeys.FORM));
 
 		nbt.put(CfaNbtKeys.DATA, persistentData);
 	}

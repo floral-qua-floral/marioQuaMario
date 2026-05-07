@@ -88,14 +88,14 @@ public class CfaClientPacketHelper implements CfaClientHelperManager.ClientPacke
 		// EmpowerRevertS2CPayload Receiver
 		ClientPlayNetworking.registerGlobalReceiver(CfaDataPackets.EmpowerRevertS2CPayload.ID, (payload, context) ->
 				getPlayerFromID(context, payload.playerID()).cfa$getCfaData().setForm(
-						RegistryManager.FORMS.get(payload.toPower()), payload.isReversion(), payload.seed()
+						RegistryManager.FORMS.get(payload.toForm()), payload.isReversion(), payload.seed()
 				)
 		);
 
 		// AssignFormS2CPayload Receiver
 		ClientPlayNetworking.registerGlobalReceiver(CfaDataPackets.AssignFormS2CPayload.ID, (payload, context) ->
 				getPlayerFromID(context, payload.playerID()).cfa$getCfaData().setFormTransitionless(
-						RegistryManager.FORMS.get(payload.newPower())
+						RegistryManager.FORMS.get(payload.newForm())
 				)
 		);
 
@@ -237,7 +237,6 @@ public class CfaClientPacketHelper implements CfaClientHelperManager.ClientPacke
 			int attackerID, Entity target,
 			int collisionAttackID, int collisionAttackResultIndex, boolean affectAttacker, long seed
 	) {
-//		CharaFormAct.LOGGER.info("Stomping target: {}", target);
 		PlayerEntity attacker = getPlayerFromID(context, attackerID);
 		CfaPlayerData data = attacker.cfa$getCfaData();
 		CollisionAttackResult.ExecutableResult result = CollisionAttackResult.ExecutableResult.values()[collisionAttackResultIndex];

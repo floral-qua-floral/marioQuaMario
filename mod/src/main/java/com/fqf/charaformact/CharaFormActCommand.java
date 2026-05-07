@@ -33,7 +33,7 @@ import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
 public class CharaFormActCommand {
-	public static void registerMarioCommand() {
+	public static void registerCharaFormActCommand() {
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 			LiteralCommandNode<ServerCommandSource> literalCommandNode = dispatcher.register(literal("charaformact")
 				.then(literal("disable")
@@ -53,12 +53,12 @@ public class CharaFormActCommand {
 							)
 						)
 					)
-					.then(literal("powerForm")
+					.then(literal("form")
 						.requires(source -> source.hasPermissionLevel(2))
-						.then(argument("power-form", RegistryEntryReferenceArgumentType.registryEntry(registryAccess, RegistryManager.FORMS_KEY))
-							.executes(context -> setPowerForm(context, false))
+						.then(argument("form", RegistryEntryReferenceArgumentType.registryEntry(registryAccess, RegistryManager.FORMS_KEY))
+							.executes(context -> setForm(context, false))
 							.then(argument("player", EntityArgumentType.player())
-								.executes(context -> setPowerForm(context, true))
+								.executes(context -> setForm(context, true))
 							)
 						)
 					)
@@ -169,24 +169,21 @@ public class CharaFormActCommand {
 		};
 	}
 
-	private static int setPowerForm(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
+	private static int setForm(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
 		ServerPlayerEntity player = getPlayerFromCmd(context, playerArgumentGiven);
-		Identifier newPowerFormID =
-				RegistryEntryReferenceArgumentType.getRegistryEntry(context, "power-form", RegistryManager.FORMS_KEY).value().ID;
+		Identifier newFormID = RegistryEntryReferenceArgumentType.getRegistryEntry(context, "form", RegistryManager.FORMS_KEY).value().ID;
 		CfaServerPlayerData data = player.cfa$getCfaData();
 
 		String name = player.getName().getString();
-		return switch(player.cfa$getCfaData().assignForm(newPowerFormID)) {
+		return switch(player.cfa$getCfaData().assignForm(newFormID)) {
 			case SUCCESS ->
-					sendFeedback(context, "Changed " + name + "'s power form to " + newPowerFormID + ".");
+					sendFeedback(context, "Changed " + name + "'s form to " + newFormID + ".");
 			case NOT_ENABLED ->
 					sendFeedback(context, name + " is not playing as a character, and so cannot take on any form!", false);
 			case MISSING_PLAYERMODEL ->
 					sendFeedback(context, name + "'s character (" + data.getCharacterID()
-							+ ") does not have a playermodel for the form " + newPowerFormID + ".", false);
+							+ ") does not have a playermodel for the form " + newFormID + ".", false);
 		};
-
-//		return sendFeedback(context, "Changed " + player.getName().getString() + "'s power-up to " + newPowerFormID + ".");
 	}
 
 	private static int setCharacter(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven) throws CommandSyntaxException {
@@ -307,9 +304,9 @@ public class CharaFormActCommand {
 				AttackInterceptionPackets.handleInterceptionCommandAction(player, action, index, targetEntity, targetBlock);
 			}
 			else {
-				ParsedForm powerForm = RegistryEntryReferenceArgumentType.getRegistryEntry(context, "powerForm", RegistryManager.FORMS_KEY).value();
-				interceptionSourceID = powerForm.ID;
-				AttackInterceptionPackets.handleInterceptionCommandPowerForm(player, powerForm, index, targetEntity, targetBlock);
+				ParsedForm form = RegistryEntryReferenceArgumentType.getRegistryEntry(context, "form", RegistryManager.FORMS_KEY).value();
+				interceptionSourceID = form.ID;
+				AttackInterceptionPackets.handleInterceptionCommandForm(player, form, index, targetEntity, targetBlock);
 			}
 			return sendFeedback(context, "Made " + name + " perform Attack Interception number " + index + " from " + interceptionSourceID);
 		}
@@ -318,9 +315,9 @@ public class CharaFormActCommand {
 		}
 	}
 	private static LiteralArgumentBuilder<ServerCommandSource> makeInterceptionTypeFork(boolean isAction, CommandRegistryAccess registryAccess) {
-		String type = isAction ? "action" : "powerForm";
+		String type = isAction ? "action" : "form";
 		return literal(type)
-			.then(argument(type, actionOrPowerFormRegistryArgument(isAction, registryAccess))
+			.then(argument(type, actionOrFormRegistryArgument(isAction, registryAccess))
 				.then(argument("index", IntegerArgumentType.integer(0))
 					.executes(context -> executeAttackInterception(context, isAction, null))
 					.then(literal("entity")
@@ -336,7 +333,7 @@ public class CharaFormActCommand {
 				)
 			);
 	}
-	private static RegistryEntryReferenceArgumentType<?> actionOrPowerFormRegistryArgument(boolean isAction, CommandRegistryAccess registryAccess) {
+	private static RegistryEntryReferenceArgumentType<?> actionOrFormRegistryArgument(boolean isAction, CommandRegistryAccess registryAccess) {
 		if(isAction) return RegistryEntryReferenceArgumentType.registryEntry(registryAccess, RegistryManager.ACTIONS_KEY);
 		else return RegistryEntryReferenceArgumentType.registryEntry(registryAccess, RegistryManager.FORMS_KEY);
 	}
@@ -368,15 +365,15 @@ public class CharaFormActCommand {
 		if(!data.isEnabled())
 			return sendFeedback(context, name + " is not playing as a character, and as such cannot revert forms.", false);
 
-		Identifier previousPowerForm = data.getFormID();
+		Identifier previousForm = data.getFormID();
 		CfaAuthoritativeData.ReversionResult result = data.executeReversion();
-		Identifier newPowerForm = data.getFormID();
+		Identifier newForm = data.getFormID();
 
 		return sendFeedback(context, switch(result) {
-			case SUCCESS -> "Successfully reverted " + name + " from form " + previousPowerForm + " to " + newPowerForm + ".";
-			case NO_WEAKER_FORM -> "Unable to execute reversion; " + name + "'s current power form (" + previousPowerForm + ") has no reversion target.";
+			case SUCCESS -> "Successfully reverted " + name + " from form " + previousForm + " to " + newForm + ".";
+			case NO_WEAKER_FORM -> "Unable to execute reversion; " + name + "'s current form (" + previousForm + ") has no reversion target.";
 			case MISSING_PLAYERMODEL ->
-					"Unable to execute reversion; " + name + "'s current power form (" + previousPowerForm + ") reverts into form "
+					"Unable to execute reversion; " + name + "'s current form (" + previousForm + ") reverts into "
 					+ data.getForm().REVERSION_TARGET_ID + ", for which their character (" + data.getCharacterID() + ") has no playermodel.";
 			case NOT_ENABLED -> "Unable to execute reversion; " + name + " is not playing as a character.";
 		}, result == CfaAuthoritativeData.ReversionResult.SUCCESS);

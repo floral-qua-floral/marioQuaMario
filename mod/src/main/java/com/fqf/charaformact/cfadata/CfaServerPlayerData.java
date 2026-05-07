@@ -45,9 +45,9 @@ public class CfaServerPlayerData extends CfaMoveableData implements CfaAuthorita
 
 	@Override public void initialApply() {
 		if(this.isEnabled()) {
-			ParsedForm preApplyPowerUp = this.getForm();
+			ParsedForm preApplyForm = this.getForm();
 			this.setCharacter(this.getCharacter());
-			this.setFormTransitionless(preApplyPowerUp);
+			this.setFormTransitionless(preApplyForm);
 			CfaDataPackets.syncCfaDataToPlayerS2C(this.getPlayer(), this.getPlayer());
 		}
 		else super.initialApply();
@@ -152,16 +152,16 @@ public class CfaServerPlayerData extends CfaMoveableData implements CfaAuthorita
 	}
 
 	@Override
-	public boolean setFormTransitionless(ParsedForm newPowerUp) {
-		if(!this.updatePlayerModel(newPowerUp)) return false;
-		return super.setFormTransitionless(newPowerUp);
+	public boolean setFormTransitionless(ParsedForm form) {
+		if(!this.updatePlayerModel(form)) return false;
+		return super.setFormTransitionless(form);
 	}
 
-	private boolean updatePlayerModel(ParsedForm newPowerUp) {
-		ModelFile newModel = this.getCharacter().MODELS.get(newPowerUp);
+	private boolean updatePlayerModel(ParsedForm form) {
+		ModelFile newModel = this.getCharacter().MODELS.get(form);
 		if(newModel == null) {
-			CharaFormAct.LOGGER.error("Attempting to set {}'s power-up, however there is no model for combination {} + {}!",
-					this.getPlayer().getName().getString(), this.getCharacterID(), newPowerUp.ID);
+			CharaFormAct.LOGGER.error("Attempting to set {}'s form, however there is no model for combination {} + {}!",
+					this.getPlayer().getName().getString(), this.getCharacterID(), form.ID);
 			return false;
 		}
 		if(this.getPlayer().networkHandler != null)
@@ -297,12 +297,12 @@ public class CfaServerPlayerData extends CfaMoveableData implements CfaAuthorita
 
 	@Override public FormChangeOperationResult empowerTo(Identifier formID) {
 		if(!this.isEnabled()) return FormChangeOperationResult.NOT_ENABLED;
-		ParsedForm newPowerUp = Objects.requireNonNull(RegistryManager.FORMS.get(formID),
-				"Target power-up (" + formID + ") doesn't exist!");
+		ParsedForm newForm = Objects.requireNonNull(RegistryManager.FORMS.get(formID),
+				"Target form (" + formID + ") doesn't exist!");
 
 		long seed = RandomSeed.getSeed();
-		if(!this.setForm(newPowerUp, false, seed)) return FormChangeOperationResult.MISSING_PLAYERMODEL;
-		CfaDataPackets.empowerRevertS2C(this.getPlayer(), newPowerUp, false, seed);
+		if(!this.setForm(newForm, false, seed)) return FormChangeOperationResult.MISSING_PLAYERMODEL;
+		CfaDataPackets.empowerRevertS2C(this.getPlayer(), newForm, false, seed);
 		return FormChangeOperationResult.SUCCESS;
 	}
 	@Override public FormChangeOperationResult empowerTo(String formID) {
@@ -324,7 +324,7 @@ public class CfaServerPlayerData extends CfaMoveableData implements CfaAuthorita
 		}
 		if(this.revertTo(reversionTarget) == FormChangeOperationResult.MISSING_PLAYERMODEL) {
 			CharaFormAct.LOGGER.warn(
-					"{}'s current power up ({}) should revert to {}, however this is illegal for their character! ({})",
+					"{}'s current form ({}) should revert to {}, however this is illegal for their character! ({})",
 					player.getName().getString(), this.getFormID(), reversionTarget, this.getCharacterID()
 			);
 			return ReversionResult.MISSING_PLAYERMODEL;
@@ -335,12 +335,12 @@ public class CfaServerPlayerData extends CfaMoveableData implements CfaAuthorita
 
 	@Override public FormChangeOperationResult revertTo(Identifier formID) {
 		if(!this.isEnabled()) return FormChangeOperationResult.NOT_ENABLED;
-		ParsedForm newPowerUp = Objects.requireNonNull(RegistryManager.FORMS.get(formID),
-				"Target power-up (" + formID + ") doesn't exist!");
+		ParsedForm newForm = Objects.requireNonNull(RegistryManager.FORMS.get(formID),
+				"Target form (" + formID + ") doesn't exist!");
 
 		long seed = RandomSeed.getSeed();
-		if(!this.setForm(newPowerUp, true, seed)) return FormChangeOperationResult.MISSING_PLAYERMODEL;
-		CfaDataPackets.empowerRevertS2C(this.getPlayer(), newPowerUp, true, seed);
+		if(!this.setForm(newForm, true, seed)) return FormChangeOperationResult.MISSING_PLAYERMODEL;
+		CfaDataPackets.empowerRevertS2C(this.getPlayer(), newForm, true, seed);
 		return FormChangeOperationResult.SUCCESS;
 	}
 	@Override public FormChangeOperationResult revertTo(String formID) {
@@ -349,11 +349,11 @@ public class CfaServerPlayerData extends CfaMoveableData implements CfaAuthorita
 
 	@Override public FormChangeOperationResult assignForm(Identifier formID) {
 		if(!this.isEnabled()) return FormChangeOperationResult.NOT_ENABLED;
-		ParsedForm newPowerUp = Objects.requireNonNull(RegistryManager.FORMS.get(formID),
-				"Target power-up (" + formID + ") doesn't exist!");
+		ParsedForm newForm = Objects.requireNonNull(RegistryManager.FORMS.get(formID),
+				"Target form (" + formID + ") doesn't exist!");
 
-		if(!this.setFormTransitionless(newPowerUp)) return FormChangeOperationResult.MISSING_PLAYERMODEL;
-		CfaDataPackets.assignFormS2C(this.getPlayer(), newPowerUp);
+		if(!this.setFormTransitionless(newForm)) return FormChangeOperationResult.MISSING_PLAYERMODEL;
+		CfaDataPackets.assignFormS2C(this.getPlayer(), newForm);
 		return FormChangeOperationResult.SUCCESS;
 	}
 	@Override public FormChangeOperationResult assignForm(String formID) {

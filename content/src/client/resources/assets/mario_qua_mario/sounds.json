@@ -101,100 +101,100 @@
 			"mario_qua_mario:sfx/movement/wall_jump"
 		]
 	},
-	"sfx.power_up.burn_object": {
-		"subtitle": "subtitles.mario_qua_mario.power_up.burn_object",
+	"sfx.form.burn_object": {
+		"subtitle": "subtitles.mario_qua_mario.form.burn_object",
 		"sounds": [
-			"mario_qua_mario:sfx/power_up/burn_object"
+			"mario_qua_mario:sfx/form/burn_object"
 		]
 	},
-	"sfx.power_up.coin": {
-		"subtitle": "subtitles.mario_qua_mario.power_up.coin",
+	"sfx.form.coin": {
+		"subtitle": "subtitles.mario_qua_mario.form.coin",
 		"sounds": [
-			"mario_qua_mario:sfx/power_up/coin"
+			"mario_qua_mario:sfx/form/coin"
 		]
 	},
-	"sfx.power_up.coin_use": {
-		"subtitle": "subtitles.mario_qua_mario.power_up.coin_use",
+	"sfx.form.coin_use": {
+		"subtitle": "subtitles.mario_qua_mario.form.coin_use",
 		"sounds": [
-			"mario_qua_mario:sfx/power_up/coin_use"
+			"mario_qua_mario:sfx/form/coin_use"
 		]
 	},
-	"sfx.power_up.fireball": {
-		"subtitle": "subtitles.mario_qua_mario.power_up.fireball",
+	"sfx.form.fireball": {
+		"subtitle": "subtitles.mario_qua_mario.form.fireball",
 		"sounds": [
-			"mario_qua_mario:sfx/power_up/fireball"
+			"mario_qua_mario:sfx/form/fireball"
 		]
 	},
-	"sfx.power_up.fireball_enemy": {
-		"subtitle": "subtitles.mario_qua_mario.power_up.fireball_enemy",
+	"sfx.form.fireball_enemy": {
+		"subtitle": "subtitles.mario_qua_mario.form.fireball_enemy",
 		"sounds": [
-			"mario_qua_mario:sfx/power_up/fireball_enemy"
+			"mario_qua_mario:sfx/form/fireball_enemy"
 		]
 	},
-	"sfx.power_up.fireball_wall": {
-		"subtitle": "subtitles.mario_qua_mario.power_up.fireball_wall",
+	"sfx.form.fireball_wall": {
+		"subtitle": "subtitles.mario_qua_mario.form.fireball_wall",
 		"sounds": [
-			"mario_qua_mario:sfx/power_up/fireball_wall"
+			"mario_qua_mario:sfx/form/fireball_wall"
 		]
 	},
-	"sfx.power_up.tail_empower": {
-		"subtitle": "subtitles.mario_qua_mario.power_up.tail_empower",
+	"sfx.form.tail_empower": {
+		"subtitle": "subtitles.mario_qua_mario.form.tail_empower",
 		"sounds": [
-			"mario_qua_mario:sfx/power_up/tail_empower"
+			"mario_qua_mario:sfx/form/tail_empower"
 		]
 	},
-	"sfx.power_up.tail_fly": {
-		"subtitle": "subtitles.mario_qua_mario.power_up.tail_fly",
+	"sfx.form.tail_fly": {
+		"subtitle": "subtitles.mario_qua_mario.form.tail_fly",
 		"sounds": [
-			"mario_qua_mario:sfx/power_up/tail_fly"
+			"mario_qua_mario:sfx/form/tail_fly"
 		]
 	},
-	"sfx.power_up.tail_whip": {
-		"subtitle": "subtitles.mario_qua_mario.power_up.tail_whip",
+	"sfx.form.tail_whip": {
+		"subtitle": "subtitles.mario_qua_mario.form.tail_whip",
 		"sounds": [
-			"mario_qua_mario:sfx/power_up/tail_whip"
+			"mario_qua_mario:sfx/form/tail_whip"
 		]
 	},
-	"sfx.stomp.harmless": {
-		"subtitle": "subtitles.mario_qua_mario.stomp.harmless",
+	"sfx.collision_attack.harmless": {
+		"subtitle": "subtitles.mario_qua_mario.collision_attack.harmless",
 		"sounds": [
-			"mario_qua_mario:sfx/stomp/harmless"
+			"mario_qua_mario:sfx/collision_attack/harmless"
 		]
 	},
-	"sfx.stomp.heavy": {
-		"subtitle": "subtitles.mario_qua_mario.stomp.heavy",
+	"sfx.collision_attack.heavy": {
+		"subtitle": "subtitles.mario_qua_mario.collision_attack.heavy",
 		"sounds": [
-			"mario_qua_mario:sfx/stomp/heavy"
+			"mario_qua_mario:sfx/collision_attack/heavy"
 		]
 	},
-	"sfx.stomp.kick": {
-		"subtitle": "subtitles.mario_qua_mario.stomp.kick",
+	"sfx.collision_attack.kick": {
+		"subtitle": "subtitles.mario_qua_mario.collision_attack.kick",
 		"sounds": [
-			"mario_qua_mario:sfx/stomp/kick"
+			"mario_qua_mario:sfx/collision_attack/kick"
 		]
 	},
-	"sfx.stomp.last": {
-		"subtitle": "subtitles.mario_qua_mario.stomp.last",
+	"sfx.collision_attack.last": {
+		"subtitle": "subtitles.mario_qua_mario.collision_attack.last",
 		"sounds": [
-			"mario_qua_mario:sfx/stomp/last"
+			"mario_qua_mario:sfx/collision_attack/last"
 		]
 	},
-	"sfx.stomp.spin": {
-		"subtitle": "subtitles.mario_qua_mario.stomp.spin",
+	"sfx.collision_attack.spin": {
+		"subtitle": "subtitles.mario_qua_mario.collision_attack.spin",
 		"sounds": [
-			"mario_qua_mario:sfx/stomp/spin"
+			"mario_qua_mario:sfx/collision_attack/spin"
 		]
 	},
-	"sfx.stomp.stomp": {
-		"subtitle": "subtitles.mario_qua_mario.stomp.stomp",
+	"sfx.collision_attack.stomp": {
+		"subtitle": "subtitles.mario_qua_mario.collision_attack.stomp",
 		"sounds": [
-			"mario_qua_mario:sfx/stomp/stomp"
+			"mario_qua_mario:sfx/collision_attack/stomp"
 		]
 	},
-	"sfx.stomp.yoshi": {
-		"subtitle": "subtitles.mario_qua_mario.stomp.yoshi",
+	"sfx.collision_attack.yoshi": {
+		"subtitle": "subtitles.mario_qua_mario.collision_attack.yoshi",
 		"sounds": [
-			"mario_qua_mario:sfx/stomp/yoshi"
+			"mario_qua_mario:sfx/collision_attack/yoshi"
 		]
 	},
 	"voice.luigi.bonk": {

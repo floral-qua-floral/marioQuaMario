@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(NetHandler.class)
 public class CPMNetHandlerMixin<RL, P, NET> {
 	@Inject(method = "onJoin", at = @At("TAIL"), remap = false)
-	private void activateServerMarioData(P player, CallbackInfo ci) {
+	private void activateServerCfaData(P player, CallbackInfo ci) {
 		((ServerPlayerEntity) player).cfa$getCfaData().initialApply();
 	}
 }

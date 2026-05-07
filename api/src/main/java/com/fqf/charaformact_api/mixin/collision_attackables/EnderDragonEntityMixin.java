@@ -12,6 +12,6 @@ import org.spongepowered.asm.mixin.Mixin;
 public class EnderDragonEntityMixin implements CollisionAttackable {
 	@Override
 	public @NotNull CollisionAttackResult cfa$processCollisionAttack(CfaAuthoritativeData data, boolean attemptMount, float damageAmount, DamageSource damageSource) {
-		return CollisionAttackResult.FAIL; // EnderDragonPart should be stomped instead!
+		return CollisionAttackResult.FAIL; // This behaviour is handled by EnderDragonPart instead. The Dragon's own hitbox is much too large.
 	}
 }

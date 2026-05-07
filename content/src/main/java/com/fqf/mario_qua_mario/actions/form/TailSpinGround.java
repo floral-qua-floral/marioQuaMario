@@ -1,4 +1,4 @@
-package com.fqf.mario_qua_mario.actions.power;
+package com.fqf.mario_qua_mario.actions.form;
 
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
@@ -19,7 +19,7 @@ import com.fqf.mario_qua_mario.actions.airborne.DuckFall;
 import com.fqf.mario_qua_mario.actions.airborne.DuckJump;
 import com.fqf.mario_qua_mario.actions.grounded.DuckSlide;
 import com.fqf.mario_qua_mario.actions.grounded.DuckWaddle;
-import com.fqf.mario_qua_mario.powerups.Raccoon;
+import com.fqf.mario_qua_mario.forms.Raccoon;
 import com.fqf.mario_qua_mario.util.Powers;
 import com.fqf.mario_qua_mario.util.TailSpinActionTimerVars;
 import net.minecraft.entity.Entity;

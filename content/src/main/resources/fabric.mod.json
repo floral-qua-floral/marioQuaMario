@@ -45,8 +45,8 @@
 			"com.fqf.mario_qua_mario.actions.grounded.BonkGroundBackward",
 			"com.fqf.mario_qua_mario.actions.grounded.BonkGroundForward",
 
-			"com.fqf.mario_qua_mario.actions.power.RetroIdle",
-			"com.fqf.mario_qua_mario.actions.power.TailSpinGround"
+			"com.fqf.mario_qua_mario.actions.form.RetroIdle",
+			"com.fqf.mario_qua_mario.actions.form.TailSpinGround"
 		],
 		"cfa-airborne-actions": [
 			"com.fqf.mario_qua_mario.actions.airborne.Fall",
@@ -68,11 +68,11 @@
 			"com.fqf.mario_qua_mario.actions.airborne.BonkAir",
 			"com.fqf.mario_qua_mario.actions.airborne.WallJump",
 
-			"com.fqf.mario_qua_mario.actions.power.TailStall",
-			"com.fqf.mario_qua_mario.actions.power.TailStallDucking",
-			"com.fqf.mario_qua_mario.actions.power.TailFly",
-			"com.fqf.mario_qua_mario.actions.power.TailSpinFall",
-			"com.fqf.mario_qua_mario.actions.power.TailSpinJump"
+			"com.fqf.mario_qua_mario.actions.form.TailStall",
+			"com.fqf.mario_qua_mario.actions.form.TailStallDucking",
+			"com.fqf.mario_qua_mario.actions.form.TailFly",
+			"com.fqf.mario_qua_mario.actions.form.TailSpinFall",
+			"com.fqf.mario_qua_mario.actions.form.TailSpinJump"
 		],
 		"cfa-aquatic-actions": [
 			"com.fqf.mario_qua_mario.actions.aquatic.Submerged",
@@ -95,10 +95,10 @@
 		],
 
 		"cfa-forms": [
-			"com.fqf.mario_qua_mario.powerups.Small",
-			"com.fqf.mario_qua_mario.powerups.Super",
-			"com.fqf.mario_qua_mario.powerups.Fire",
-			"com.fqf.mario_qua_mario.powerups.Raccoon"
+			"com.fqf.mario_qua_mario.forms.Small",
+			"com.fqf.mario_qua_mario.forms.Super",
+			"com.fqf.mario_qua_mario.forms.Fire",
+			"com.fqf.mario_qua_mario.forms.Raccoon"
 		],
 
 		"cfa-characters": [

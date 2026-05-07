@@ -35,16 +35,16 @@
 			"charaformact:sfx/movement/skid_wall"
 		]
 	},
-	"sfx.power_up.empower": {
-		"subtitle": "subtitles.charaformact.power_up.empower",
+	"sfx.form.empower": {
+		"subtitle": "subtitles.charaformact.form.empower",
 		"sounds": [
-			"charaformact:sfx/power_up/empower"
+			"charaformact:sfx/form/empower"
 		]
 	},
-	"sfx.power_up.revert": {
-		"subtitle": "subtitles.charaformact.power_up.revert",
+	"sfx.form.revert": {
+		"subtitle": "subtitles.charaformact.form.revert",
 		"sounds": [
-			"charaformact:sfx/power_up/revert"
+			"charaformact:sfx/form/revert"
 		]
 	}
 }

@@ -26,13 +26,13 @@ public class AttackInterceptionPackets {
 		AttackInterceptionPayload dummyPayload = new MissedAttackInterceptedC2SPayload(true, RegistryManager.ACTIONS.getRawIdOrThrow(fromAction), index, seed);
 		CfaPackets.sendToTrackers(player, convertPayloadToS2C(player, dummyPayload, targetEntity, targetBlock), true);
 	}
-	public static void handleInterceptionCommandPowerForm(
-			ServerPlayerEntity player, ParsedForm fromPowerUp, int index,
+	public static void handleInterceptionCommandForm(
+			ServerPlayerEntity player, ParsedForm fromForm, int index,
 			@Nullable Entity targetEntity, @Nullable BlockPos targetBlock
 	) {
 		long seed = player.getRandom().nextLong();
-		fromPowerUp.INTERCEPTIONS.get(index).execute(player.cfa$getCfaData(), targetEntity, targetBlock, seed);
-		AttackInterceptionPayload dummyPayload = new MissedAttackInterceptedC2SPayload(false, RegistryManager.FORMS.getRawIdOrThrow(fromPowerUp), index, seed);
+		fromForm.INTERCEPTIONS.get(index).execute(player.cfa$getCfaData(), targetEntity, targetBlock, seed);
+		AttackInterceptionPayload dummyPayload = new MissedAttackInterceptedC2SPayload(false, RegistryManager.FORMS.getRawIdOrThrow(fromForm), index, seed);
 		CfaPackets.sendToTrackers(player, convertPayloadToS2C(player, dummyPayload, targetEntity, targetBlock), true);
 	}
 	private static void handleAttackInterception(

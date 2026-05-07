@@ -42,9 +42,9 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 		return PLAYER;
 	}
 
-	@Override public boolean setForm(ParsedForm newPowerUp, boolean isReversion, long seed) {
-		this.handlePowerTransitionSound(isReversion, newPowerUp, seed);
-		return super.setForm(newPowerUp, isReversion, seed);
+	@Override public boolean setForm(ParsedForm newForm, boolean isReversion, long seed) {
+		this.handlePowerTransitionSound(isReversion, newForm, seed);
+		return super.setForm(newForm, isReversion, seed);
 	}
 
 	private CameraAnimation currentCameraAnimation;

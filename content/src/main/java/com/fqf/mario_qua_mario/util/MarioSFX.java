@@ -26,32 +26,32 @@ public class MarioSFX {
 	public static final SoundEvent TOADETTE_JUMP = makeMovementSound("toadette_jump");
 	public static final SoundEvent WALL_JUMP = makeMovementSound("wall_jump");
 
-	public static final SoundEvent BURN_OBJECT = makePowerUpSound("burn_object");
-	public static final SoundEvent COIN = makePowerUpSound("coin");
-	public static final SoundEvent COIN_USE = makePowerUpSound("coin_use");
-	public static final SoundEvent FIREBALL = makePowerUpSound("fireball");
-	public static final SoundEvent FIREBALL_ENEMY = makePowerUpSound("fireball_enemy");
-	public static final SoundEvent FIREBALL_WALL = makePowerUpSound("fireball_wall");
-	public static final SoundEvent TAIL_EMPOWER = makePowerUpSound("tail_empower");
-	public static final SoundEvent TAIL_FLY = makePowerUpSound("tail_fly");
-	public static final SoundEvent TAIL_WHIP = makePowerUpSound("tail_whip");
+	public static final SoundEvent BURN_OBJECT = makeFormSound("burn_object");
+	public static final SoundEvent COIN = makeFormSound("coin");
+	public static final SoundEvent COIN_USE = makeFormSound("coin_use");
+	public static final SoundEvent FIREBALL = makeFormSound("fireball");
+	public static final SoundEvent FIREBALL_ENEMY = makeFormSound("fireball_enemy");
+	public static final SoundEvent FIREBALL_WALL = makeFormSound("fireball_wall");
+	public static final SoundEvent TAIL_EMPOWER = makeFormSound("tail_empower");
+	public static final SoundEvent TAIL_FLY = makeFormSound("tail_fly");
+	public static final SoundEvent TAIL_WHIP = makeFormSound("tail_whip");
 
-	public static final SoundEvent HARMLESS = makeStompSound("harmless");
-	public static final SoundEvent HEAVY = makeStompSound("heavy");
-	public static final SoundEvent KICK = makeStompSound("kick");
-	public static final SoundEvent LAST = makeStompSound("last");
-	public static final SoundEvent SPIN = makeStompSound("spin");
-	public static final SoundEvent STOMP = makeStompSound("stomp");
-	public static final SoundEvent YOSHI = makeStompSound("yoshi");
+	public static final SoundEvent HARMLESS = makeCollisionAttackSound("harmless");
+	public static final SoundEvent HEAVY = makeCollisionAttackSound("heavy");
+	public static final SoundEvent KICK = makeCollisionAttackSound("kick");
+	public static final SoundEvent LAST = makeCollisionAttackSound("last");
+	public static final SoundEvent SPIN = makeCollisionAttackSound("spin");
+	public static final SoundEvent STOMP = makeCollisionAttackSound("stomp");
+	public static final SoundEvent YOSHI = makeCollisionAttackSound("yoshi");
 
 	private static SoundEvent makeMovementSound(String name) {
 		return makeAndRegisterSound("sfx.movement." + name);
 	}
-	private static SoundEvent makePowerUpSound(String name) {
-		return makeAndRegisterSound("sfx.power_up." + name);
+	private static SoundEvent makeFormSound(String name) {
+		return makeAndRegisterSound("sfx.form." + name);
 	}
-	private static SoundEvent makeStompSound(String name) {
-		return makeAndRegisterSound("sfx.stomp." + name);
+	private static SoundEvent makeCollisionAttackSound(String name) {
+		return makeAndRegisterSound("sfx.collision_attack." + name);
 	}
 	private static SoundEvent makeActionSound(String name) {
 		return makeAndRegisterSound("sfx.action." + name);

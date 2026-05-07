@@ -26,9 +26,9 @@ public class CfaOtherClientData extends CfaPlayerData implements CfaClientDataIm
 	}
 
 	@Override
-	public boolean setForm(ParsedForm newPowerUp, boolean isReversion, long seed) {
-		this.handlePowerTransitionSound(isReversion, newPowerUp, seed);
-		return super.setForm(newPowerUp, isReversion, seed);
+	public boolean setForm(ParsedForm newForm, boolean isReversion, long seed) {
+		this.handlePowerTransitionSound(isReversion, newForm, seed);
+		return super.setForm(newForm, isReversion, seed);
 	}
 
 	private boolean replaceAnimationNextTick;

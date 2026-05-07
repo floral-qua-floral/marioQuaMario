@@ -13,14 +13,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(value = Recorder.class, remap = false)
 public class FlashbackSyncOnRecordingStartMixin {
 //	@Inject(method = "startRecordingReplay()V", at = @At("RETURN"))
-//	private static void injectSyncMarioDataAtRecordingStart(CallbackInfo ci) {
-//		CharaFormAct.LOGGER.info("Syncing MarioData of tracked players in world to newly started replay...");
+//	private static void injectSyncCfaDataAtRecordingStart(CallbackInfo ci) {
+//		CharaFormAct.LOGGER.info("Syncing CfaData of tracked players in world to newly started replay...");
 //		CfaClientPacketHelper.syncCfaDatasToReplay();
 //	}
 //
 //	@Inject(method = "pauseRecordingReplay", at = @At("RETURN"))
-//	private static void injectSyncMarioDataAtRecordingUnpause(boolean pause, CallbackInfo ci) {
-//		CharaFormAct.LOGGER.info("Syncing MarioData of tracked players in world to resumed replay...");
+//	private static void injectSyncCfaDataAtRecordingUnpause(boolean pause, CallbackInfo ci) {
+//		CharaFormAct.LOGGER.info("Syncing CfaData of tracked players in world to resumed replay...");
 //		if(!pause) CfaClientPacketHelper.syncCfaDatasToReplay();
 //	}
 
@@ -28,7 +28,7 @@ public class FlashbackSyncOnRecordingStartMixin {
 
 	@Inject(method = "writeSnapshot", at = @At("RETURN"))
 	private void syncAfterSnapshot(boolean asActualSnapshot, CallbackInfo ci) {
-		CharaFormAct.LOGGER.info("Syncing MarioData of tracked players after snapshot recorded...");
+		CharaFormAct.LOGGER.info("Syncing CfaData of tracked players after snapshot recorded...");
 		CfaClientPacketHelper.syncCfaDatasToReplay();
 	}
 }

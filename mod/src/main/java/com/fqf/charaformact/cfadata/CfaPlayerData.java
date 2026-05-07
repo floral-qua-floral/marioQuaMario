@@ -106,12 +106,12 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 		return this.isEnabled() ? this.getForm().VALUE : -1;
 	}
 
-	public boolean setForm(ParsedForm newPowerUp, boolean isReversion, long seed) {
-		return this.setFormTransitionless(newPowerUp);
+	public boolean setForm(ParsedForm newForm, boolean isReversion, long seed) {
+		return this.setFormTransitionless(newForm);
 	}
-	public boolean setFormTransitionless(ParsedForm newPowerUp) {
-		this.setupCustomVars(this.form, newPowerUp);
-		this.form = newPowerUp;
+	public boolean setFormTransitionless(ParsedForm newForm) {
+		this.setupCustomVars(this.form, newForm);
+		this.form = newForm;
 		updateCharacterFormCombo();
 		return true;
 	}
@@ -157,9 +157,9 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 		return this.isEnabled() && this.POWERS.contains(power);
 	}
 
-	public void setupVariablesBeforeInitialApply(ParsedCharacter character, ParsedForm powerUp) {
+	public void setupVariablesBeforeInitialApply(ParsedCharacter character, ParsedForm form) {
 		this.character = character;
-		this.form = powerUp;
+		this.form = form;
 		this.action = character.getInitialAction(this);
 	}
 	public void initialApply() {

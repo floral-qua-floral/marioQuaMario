@@ -8,7 +8,7 @@ import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.airborne.LavaBoost;
 import com.fqf.mario_qua_mario.actions.generic.Debug;
 import com.fqf.mario_qua_mario.actions.mounted.Mounted;
-import com.fqf.mario_qua_mario.powerups.Super;
+import com.fqf.mario_qua_mario.forms.Super;
 import com.fqf.mario_qua_mario.util.MQMGamerules;
 import com.fqf.mario_qua_mario.util.MarioVars;
 import com.fqf.mario_qua_mario.util.Powers;
@@ -59,7 +59,7 @@ public abstract class AbstractMario implements CharacterDefinition {
 		return 1;
 	}
 
-	@Override public int getBumpStrengthModifier() {
+	@Override public int getBapStrengthModifier() {
 		return 0;
 	}
 

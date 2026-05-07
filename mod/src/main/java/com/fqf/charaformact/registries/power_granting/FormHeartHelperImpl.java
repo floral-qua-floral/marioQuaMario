@@ -16,7 +16,7 @@ public class FormHeartHelperImpl implements FormDefinition.FormHeartHelper {
 
 	@Override
 	public FormDefinition.FormHeart standard(String namespace, String folder) {
-		return this.fromRoot(Identifier.of(namespace, "hud/power_hearts/" + folder));
+		return this.fromRoot(Identifier.of(namespace, "hud/form_hearts/" + folder));
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package com.fqf.mario_qua_mario.powerups;
+package com.fqf.mario_qua_mario.forms;
 
 import com.fqf.charaformact_api.definitions.states.FormDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
@@ -55,7 +55,7 @@ public class Fire implements FormDefinition {
 		return 1;
 	}
 
-	@Override public int getBumpStrengthModifier() {
+	@Override public int getBapStrengthModifier() {
 		return 0;
 	}
 

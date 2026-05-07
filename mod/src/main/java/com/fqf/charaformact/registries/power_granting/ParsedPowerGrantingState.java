@@ -33,7 +33,7 @@ public class ParsedPowerGrantingState extends ParsedCfaState {
 		this.ANIMATION_WIDTH_FACTOR = definition.getAnimationWidthFactor();
 		this.ANIMATION_HEIGHT_FACTOR = definition.getAnimationHeightFactor();
 
-		this.BUMP_STRENGTH_MODIFIER = definition.getBumpStrengthModifier();
+		this.BUMP_STRENGTH_MODIFIER = definition.getBapStrengthModifier();
 
 		this.STAT_MODIFIERS = definition.getStatModifiers();
 

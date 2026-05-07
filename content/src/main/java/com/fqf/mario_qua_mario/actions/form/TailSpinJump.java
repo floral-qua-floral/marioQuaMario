@@ -1,4 +1,4 @@
-package com.fqf.mario_qua_mario.actions.power;
+package com.fqf.mario_qua_mario.actions.form;
 
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.charaformact_api.util.CfaStat;
@@ -16,5 +16,5 @@ public class TailSpinJump extends TailSpinFall implements AirborneActionDefiniti
 	    return ID;
 	}
 
-	public static final CfaStat JUMP_VEL = Jump.JUMP_VEL.variateAndReplaceCategories(0.7, DUCKING, JUMP_VELOCITY, POWER_UP);
+	public static final CfaStat JUMP_VEL = Jump.JUMP_VEL.variateAndReplaceCategories(0.7, DUCKING, JUMP_VELOCITY, FORM);
 }

@@ -39,11 +39,4 @@ public interface CfaReadableMotionData extends CfaData {
 			SPIN = spin;
 		}
 	}
-
-	class MarioPublicVariables {
-		public final long[] ACTION_TIMERS = new long[8];
-		public final long[] POWER_UP_TIMERS = new long[8];
-
-		public boolean jumpCapped;
-	}
 }

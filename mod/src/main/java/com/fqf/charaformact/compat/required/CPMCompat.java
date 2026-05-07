@@ -21,10 +21,10 @@ public class CPMCompat implements ICPMPlugin {
 	}
 
 	public static IClientAPI getClientAPI() {
-		return Objects.requireNonNull(clientAPI, "Client API is null; Mario qua Mario CPM Plugin not registered?!");
+		return Objects.requireNonNull(clientAPI, "Client API is null; CharaFormAct CPM Plugin not registered?!");
 	}
 	public static @NotNull ICommonAPI getCommonAPI() {
-		return Objects.requireNonNull(commonAPI, "Common API is null; Mario qua Mario CPM Plugin not registered?!");
+		return Objects.requireNonNull(commonAPI, "Common API is null; CharaFormAct CPM Plugin not registered?!");
 	}
 
 	@Override public String getOwnerModId() {

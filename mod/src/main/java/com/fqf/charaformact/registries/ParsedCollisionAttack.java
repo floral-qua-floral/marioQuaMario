@@ -121,19 +121,19 @@ public class ParsedCollisionAttack extends ParsedCfaThing {
 			}
 		}
 
-		boolean affectingMario = true;
-		boolean canHurtMario = true;
+		boolean affectingAttacker = true;
+		boolean canHurtAttacker = true;
 		@Nullable Vec3d targetPos = null;
 		for (Map.Entry<CollisionAttackResult.ExecutableResult, Set<Entity>> executableResultSetEntry : collidedEntities.entrySet()) {
 			CollisionAttackResult.ExecutableResult currentCollisionResult = executableResultSetEntry.getKey();
 			for(Entity affectEntity : executableResultSetEntry.getValue()) {
-				Vec3d providedTargetPos = this.executeServerAndNetwork(data, affectEntity, currentCollisionResult, goingToPos, affectingMario);
-				if(affectingMario) {
-					affectingMario = false;
+				Vec3d providedTargetPos = this.executeServerAndNetwork(data, affectEntity, currentCollisionResult, goingToPos, affectingAttacker);
+				if(affectingAttacker) {
+					affectingAttacker = false;
 					targetPos = providedTargetPos;
 				}
-				if(currentCollisionResult == CollisionAttackResult.ExecutableResult.PAINFUL && canHurtMario) {
-					canHurtMario = false;
+				if(currentCollisionResult == CollisionAttackResult.ExecutableResult.PAINFUL && canHurtAttacker) {
+					canHurtAttacker = false;
 					player.damage(player.getDamageSources().thorns(affectEntity), 4);
 				}
 			}
@@ -152,13 +152,13 @@ public class ParsedCollisionAttack extends ParsedCfaThing {
 			Entity target,
 			CollisionAttackResult.ExecutableResult result,
 			Vec3d targetPos,
-			boolean affectMario
+			boolean affectAttacker
 	) {
-		this.DEFINITION.executeServer(data, data.getPlayer().getEquippedStack(this.USE_EQUIPMENT_SLOT), target, result, affectMario);
-		if(affectMario) this.transitionAction(data, result);
+		this.DEFINITION.executeServer(data, data.getPlayer().getEquippedStack(this.USE_EQUIPMENT_SLOT), target, result, affectAttacker);
+		if(affectAttacker) this.transitionAction(data, result);
 
-		CfaPackets.collisionAttackS2C(data.getPlayer(), this, target, result, affectMario);
-		return this.executeTravellersAndGetTargetPos(data, target, result, targetPos, affectMario);
+		CfaPackets.collisionAttackS2C(data.getPlayer(), this, target, result, affectAttacker);
+		return this.executeTravellersAndGetTargetPos(data, target, result, targetPos, affectAttacker);
 	}
 
 	public Vec3d executeTravellersAndGetTargetPos(
@@ -166,9 +166,9 @@ public class ParsedCollisionAttack extends ParsedCfaThing {
 			Entity target,
 			CollisionAttackResult.ExecutableResult result,
 			Vec3d targetPos,
-			boolean affectMario
+			boolean affectAttacker
 	) {
-		Vec3d value = this.DEFINITION.executeTravellersAndModifyTargetPos(data, data.getPlayer().getEquippedStack(this.USE_EQUIPMENT_SLOT), target, result, targetPos, affectMario);
+		Vec3d value = this.DEFINITION.executeTravellersAndModifyTargetPos(data, data.getPlayer().getEquippedStack(this.USE_EQUIPMENT_SLOT), target, result, targetPos, affectAttacker);
 		data.applyModifiedVelocity();
 		return value;
 	}
@@ -177,9 +177,9 @@ public class ParsedCollisionAttack extends ParsedCfaThing {
 			CfaClientData data,
 			Entity target,
 			CollisionAttackResult.ExecutableResult result,
-			boolean affectMario,
+			boolean affectAttacker,
 			long seed
 	) {
-		this.DEFINITION.executeClients(data, data.getPlayer().getEquippedStack(this.USE_EQUIPMENT_SLOT), target, result, affectMario, seed);
+		this.DEFINITION.executeClients(data, data.getPlayer().getEquippedStack(this.USE_EQUIPMENT_SLOT), target, result, affectAttacker, seed);
 	}
 }

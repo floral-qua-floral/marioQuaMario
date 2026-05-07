@@ -1,4 +1,4 @@
-package com.fqf.mario_qua_mario.powerups;
+package com.fqf.mario_qua_mario.forms;
 
 import com.fqf.charaformact_api.definitions.states.FormDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
@@ -10,9 +10,9 @@ import com.fqf.charaformact_api.cfadata.*;
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
-import com.fqf.mario_qua_mario.actions.power.TailSpinFall;
-import com.fqf.mario_qua_mario.actions.power.TailSpinGround;
-import com.fqf.mario_qua_mario.actions.power.TailStall;
+import com.fqf.mario_qua_mario.actions.form.TailSpinFall;
+import com.fqf.mario_qua_mario.actions.form.TailSpinGround;
+import com.fqf.mario_qua_mario.actions.form.TailStall;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import com.fqf.mario_qua_mario.util.Powers;
 import net.minecraft.entity.Entity;
@@ -65,7 +65,7 @@ public class Raccoon implements FormDefinition {
 		return 1;
 	}
 
-	@Override public int getBumpStrengthModifier() {
+	@Override public int getBapStrengthModifier() {
 		return 0;
 	}
 

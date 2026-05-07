@@ -23,8 +23,8 @@ public class CfaSounds {
 	private static SoundEvent makeFormSound(String name) {
 		return makeAndRegisterSound("sfx.form." + name);
 	}
-	private static SoundEvent makeStompSound(String name) {
-		return makeAndRegisterSound("sfx.stomp." + name);
+	private static SoundEvent makeCollisionAttackSound(String name) {
+		return makeAndRegisterSound("sfx.collision_attack." + name);
 	}
 	private static SoundEvent makeActionSound(String name) {
 		return makeAndRegisterSound("sfx.action." + name);

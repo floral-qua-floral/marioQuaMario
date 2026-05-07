@@ -1,4 +1,4 @@
-package com.fqf.mario_qua_mario.actions.power;
+package com.fqf.mario_qua_mario.actions.form;
 
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;

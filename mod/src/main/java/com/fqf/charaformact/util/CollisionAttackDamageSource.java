@@ -13,10 +13,10 @@ public class CollisionAttackDamageSource extends DamageSource {
 	public final float PIERCING;
 	public final ItemStack WEAPON_STACK;
 
-	public CollisionAttackDamageSource(ServerWorld world, RegistryKey<DamageType> key, @Nullable Entity attacker, float piercing, ItemStack stompEquipment) {
+	public CollisionAttackDamageSource(ServerWorld world, RegistryKey<DamageType> key, @Nullable Entity attacker, float piercing, ItemStack collisionAttackEquipment) {
 		super(world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(key), attacker);
 		this.PIERCING = piercing;
-		this.WEAPON_STACK = stompEquipment;
+		this.WEAPON_STACK = collisionAttackEquipment;
 	}
 
 	@Override

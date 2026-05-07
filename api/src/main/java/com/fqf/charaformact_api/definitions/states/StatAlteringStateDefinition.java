@@ -10,7 +10,7 @@ public interface StatAlteringStateDefinition extends CfaStateDefinition {
 	float getAnimationWidthFactor();
 	float getAnimationHeightFactor();
 
-	int getBumpStrengthModifier();
+	int getBapStrengthModifier();
 
 	Set<String> getPowers();
 

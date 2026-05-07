@@ -67,9 +67,9 @@ public class CfaAnimationData {
 			return this.currentAnim.progressHandler().resetter().shouldReset(data, null);
 		return this.currentAnim.progressHandler().resetter().shouldReset(data, this.prevAnim.progressHandler().animationID());
 	}
-	public void tick(AbstractClientPlayerEntity mario) {
+	public void tick(AbstractClientPlayerEntity player) {
 		if(--this.ticksUntilAutoReplaceAnimation == 0) {
-			this.replaceAnimation(mario.cfa$getCfaData(), mario.cfa$getCfaData().getAction().ANIMATION, -1);
+			this.replaceAnimation(player.cfa$getCfaData(), player.cfa$getCfaData().getAction().ANIMATION, -1);
 		}
 
 		this.isAnimating = false;
@@ -79,8 +79,8 @@ public class CfaAnimationData {
 			this.changingAnim = false;
 			if(this.currentAnim == null && this.prevAnim == null) return;
 			else if(this.currentAnim == null) {
-				// For one more tick, Mario should interpolate from the last pose given by his previous animation, to
-				// whatever his true pose actually is at the current frame.
+				// For one more tick, the player should interpolate from the last pose given by her previous animation,
+				// to whatever her true pose actually is at the current frame.
 				this.prevTickPose = this.thisTickPose;
 				this.trailingTick = true;
 				this.isAnimating = true;
@@ -89,8 +89,8 @@ public class CfaAnimationData {
 			else {
 				this.reevaluateMirroring = true;
 				if (this.prevAnim == null) {
-					// Set up prevTickArrangements to accurately reflect Mario's current pose
-					this.prevTickPose = new Pose(mario);
+					// Set up prevTickArrangements to accurately reflect the player's current pose
+					this.prevTickPose = new Pose(player);
 				} else {
 					this.prevTickPose = this.thisTickPose; // Interpolation starts from 0
 				}
@@ -114,28 +114,28 @@ public class CfaAnimationData {
 		this.animationTicks++;
 	}
 
-	public boolean isAnimating(AbstractClientPlayerEntity mario) {
-		return this.isAnimating && mario.cfa$getCfaData().isEnabled();
+	public boolean isAnimating(AbstractClientPlayerEntity player) {
+		return this.isAnimating && player.cfa$getCfaData().isEnabled();
 	}
 
 	public void setAngles(
-			float tickDelta, AbstractClientPlayerEntity mario,
+			float tickDelta, AbstractClientPlayerEntity player,
 			ModelPart head, ModelPart torso,
 			ModelPart rightArm, ModelPart leftArm,
 			ModelPart rightLeg, ModelPart leftLeg,
 			BipedEntityModel.ArmPose rightArmPose, BipedEntityModel.ArmPose leftArmPose
 	) {
-		if(this.isAnimating(mario) && !CfaAnimationData.renderingFirstPersonArm) {
+		if(this.isAnimating(player) && !CfaAnimationData.renderingFirstPersonArm) {
 			if (this.reevaluateMirroring && this.currentAnim != null) {
 				this.reevaluateMirroring = false;
 				this.isMirrored = this.currentAnim.mirroringEvaluator() != null &&
-						this.currentAnim.mirroringEvaluator().shouldMirror(mario.cfa$getCfaData(),
+						this.currentAnim.mirroringEvaluator().shouldMirror(player.cfa$getCfaData(),
 								isArmBusy(rightArmPose, leftArmPose), isArmBusy(leftArmPose, rightArmPose),
 								head.yaw - torso.yaw);
 			}
 
-			if (this.prevTickPose == null) this.prevTickPose = new Pose(mario);
-			if (this.thisTickPose == null) this.thisTickPose = this.makeAnimatedPose(mario, rightArmPose, leftArmPose);
+			if (this.prevTickPose == null) this.prevTickPose = new Pose(player);
+			if (this.thisTickPose == null) this.thisTickPose = this.makeAnimatedPose(player, rightArmPose, leftArmPose);
 
 			this.lerpPart(tickDelta, head, this.prevTickPose.HEAD, this.thisTickPose.HEAD);
 			this.lerpPart(tickDelta, torso, this.prevTickPose.TORSO, this.thisTickPose.TORSO);
@@ -146,10 +146,10 @@ public class CfaAnimationData {
 		}
 	}
 
-	private Pose makeAnimatedPose(AbstractClientPlayerEntity mario, BipedEntityModel.ArmPose rightArmPose, BipedEntityModel.ArmPose leftArmPose) {
-		Pose newPose = new Pose(mario);
+	private Pose makeAnimatedPose(AbstractClientPlayerEntity player, BipedEntityModel.ArmPose rightArmPose, BipedEntityModel.ArmPose leftArmPose) {
+		Pose newPose = new Pose(player);
 		if(this.currentAnim != null) {
-			CfaPlayerData data = mario.cfa$getCfaData();
+			CfaPlayerData data = player.cfa$getCfaData();
 
 			float progress = this.calculateProgress(data);
 
@@ -268,14 +268,14 @@ public class CfaAnimationData {
 		}
 	}
 	public void animateTail(
-			float tickDelta, AbstractClientPlayerEntity mario,
+			float tickDelta, AbstractClientPlayerEntity player,
 			ModelPart tail, ModelPart torso, ModelPart rightLeg, ModelPart leftLeg
 	) {
-		boolean animating = this.isAnimating(mario);
+		boolean animating = this.isAnimating(player);
 
 		if(!animating || this.trailingTick) {
 			this.setupTailArrangement(
-					this.TAIL_ARRANGEMENT, mario.cfa$getCfaData(),
+					this.TAIL_ARRANGEMENT, player.cfa$getCfaData(),
 					torso.pivotX, torso.pivotY, torso.pivotZ, torso.pitch, torso.yaw, torso.roll,
 					rightLeg.pitch, leftLeg.pitch
 			);
@@ -352,9 +352,9 @@ public class CfaAnimationData {
 	}
 
 	public void rotateTotalPlayermodel(
-			float tickDelta, AbstractClientPlayerEntity mario, MatrixStack matrixStack
+			float tickDelta, AbstractClientPlayerEntity player, MatrixStack matrixStack
 	) {
-		if(!this.isAnimating(mario)) return;
+		if(!this.isAnimating(player)) return;
 
 		Arrangement prevTickArrangement, thisTickArrangement;
 		if(this.prevTickPose == null) prevTickArrangement = new Arrangement();
@@ -364,7 +364,7 @@ public class CfaAnimationData {
 		else if(this.thisTickPose == null) {
 			thisTickArrangement = new Arrangement();
 			if(this.currentAnim != null) {
-				CfaPlayerData data = mario.cfa$getCfaData();
+				CfaPlayerData data = player.cfa$getCfaData();
 				this.mutate(thisTickArrangement, this.currentAnim.entireBodyAnimation(), data, this.calculateProgress(data));
 			}
 		}
@@ -401,7 +401,7 @@ public class CfaAnimationData {
 			}
 			else pivotHeightFactor = this.currentAnim.entireBodyAnimation().pivotHeightFactor();
 
-			double halfHeight = mario.getBoundingBox(EntityPose.STANDING).getLengthY() * pivotHeightFactor;
+			double halfHeight = player.getBoundingBox(EntityPose.STANDING).getLengthY() * pivotHeightFactor;
 			matrixStack.translate(0, halfHeight, 0);
 			matrixStack.multiply(RotationAxis.POSITIVE_X.rotation(pitch));
 			matrixStack.multiply(RotationAxis.POSITIVE_Z.rotation(roll));
@@ -444,8 +444,8 @@ public class CfaAnimationData {
 		this.thisTickPose.EVERYTHING.yaw -= HALF_PI;
 	}
 
-	private static PlayerEntityModel<AbstractClientPlayerEntity> getModel(AbstractClientPlayerEntity mario) {
-		return ((PlayerEntityRenderer) MinecraftClient.getInstance().getEntityRenderDispatcher().getRenderer(mario)).getModel();
+	private static PlayerEntityModel<AbstractClientPlayerEntity> getModel(AbstractClientPlayerEntity player) {
+		return ((PlayerEntityRenderer) MinecraftClient.getInstance().getEntityRenderDispatcher().getRenderer(player)).getModel();
 	}
 
 	private static class Pose {
@@ -465,8 +465,8 @@ public class CfaAnimationData {
 
 		}
 
-		public Pose(AbstractClientPlayerEntity mario) {
-			PlayerEntityModel<AbstractClientPlayerEntity> model = getModel(mario);
+		public Pose(AbstractClientPlayerEntity player) {
+			PlayerEntityModel<AbstractClientPlayerEntity> model = getModel(player);
 			setupArrangement(model.head, this.HEAD);
 			this.HEAD.pitch = MathHelper.clamp(this.HEAD.pitch, HALF_PI * -0.99F, HALF_PI * 0.99F);
 			setupArrangement(model.body, this.TORSO);
@@ -474,7 +474,7 @@ public class CfaAnimationData {
 			setupArrangement(model.leftArm, this.LEFT_ARM);
 			setupArrangement(model.rightLeg, this.RIGHT_LEG);
 			setupArrangement(model.leftLeg, this.LEFT_LEG);
-			Arrangement oldTailArrangement = mario.cfa$getAnimationData().TAIL_ARRANGEMENT;
+			Arrangement oldTailArrangement = player.cfa$getAnimationData().TAIL_ARRANGEMENT;
 			this.TAIL.setPos(oldTailArrangement.x, oldTailArrangement.y, oldTailArrangement.z);
 			this.TAIL.setAngles(oldTailArrangement.pitch, oldTailArrangement.yaw, oldTailArrangement.roll);
 		}

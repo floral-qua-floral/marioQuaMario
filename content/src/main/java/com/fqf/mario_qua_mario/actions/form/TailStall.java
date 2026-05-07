@@ -1,4 +1,4 @@
-package com.fqf.mario_qua_mario.actions.power;
+package com.fqf.mario_qua_mario.actions.form;
 
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
@@ -18,7 +18,7 @@ import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.airborne.GroundPoundFlip;
 import com.fqf.mario_qua_mario.actions.airborne.Jump;
 import com.fqf.mario_qua_mario.actions.airborne.SpecialFall;
-import com.fqf.mario_qua_mario.powerups.Raccoon;
+import com.fqf.mario_qua_mario.forms.Raccoon;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import com.fqf.mario_qua_mario.util.Powers;
@@ -77,8 +77,8 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 		);
 	}
 
-	public static final CfaStat FALL_ACCEL = new CfaStat(-0.013775, NORMAL_GRAVITY, POWER_UP);
-	public static final CfaStat FALL_SPEED = new CfaStat(-0.445, TERMINAL_VELOCITY, POWER_UP);
+	public static final CfaStat FALL_ACCEL = new CfaStat(-0.013775, NORMAL_GRAVITY, FORM);
+	public static final CfaStat FALL_SPEED = new CfaStat(-0.445, TERMINAL_VELOCITY, FORM);
 
 	public static void tailWaggleTick(CfaClientData data) {
 		if(data.retrieveStateData(ActionTimerVars.class).actionTimer++ % 4 == 0)
@@ -120,7 +120,7 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 		);
 	}
 
-	public static final CfaStat STALL_THRESHOLD = new CfaStat(-0.31, THRESHOLD, POWER_UP);
+	public static final CfaStat STALL_THRESHOLD = new CfaStat(-0.31, THRESHOLD, FORM);
 	private static final TransitionDefinition STALL_TRANSITION = new TransitionDefinition(
 			TailStall.ID,
 			data ->

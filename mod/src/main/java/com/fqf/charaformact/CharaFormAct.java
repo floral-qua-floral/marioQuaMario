@@ -30,7 +30,7 @@ public class CharaFormAct implements ModInitializer {
 
 		RegistryManager.registerAll();
 
-		CharaFormActCommand.registerMarioCommand();
+		CharaFormActCommand.registerCharaFormActCommand();
 
 		CfaPackets.register();
 
