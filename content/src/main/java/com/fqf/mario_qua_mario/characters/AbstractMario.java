@@ -4,6 +4,7 @@ import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.definitions.states.CharacterDefinition;
 import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
+import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.airborne.LavaBoost;
 import com.fqf.mario_qua_mario.actions.generic.Debug;
@@ -13,6 +14,8 @@ import com.fqf.mario_qua_mario.util.MQMGamerules;
 import com.fqf.mario_qua_mario.util.MarioVars;
 import com.fqf.mario_qua_mario.util.Powers;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.util.Identifier;
@@ -69,6 +72,13 @@ public abstract class AbstractMario implements CharacterDefinition {
 				Powers.LIGHTNING_SHRINKS,
 				Powers.CEILING_CLIPPING,
 				Powers.STOMP_GUARD
+		);
+	}
+
+	@Override public Set<AttributeModifierInstruction> getAttributeModifiers() {
+		return Set.of(
+				new AttributeModifierInstruction(EntityAttributes.GENERIC_SAFE_FALL_DISTANCE, 8, EntityAttributeModifier.Operation.ADD_VALUE),
+				new AttributeModifierInstruction(EntityAttributes.GENERIC_ATTACK_SPEED, -0.5, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
 		);
 	}
 

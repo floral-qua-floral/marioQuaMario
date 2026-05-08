@@ -59,6 +59,16 @@ public class Mini implements FormDefinition {
 	@Override public Set<String> getPowers() {
 		return Set.of();
 	}
+	@Override public Set<AttributeModifierInstruction> getAttributeModifiers() {
+		return Set.of();
+	}
+	@Override public Set<StatModifier> getStatModifiers() {
+		return Set.of(
+				new StatModifier(Set.of(StatCategory.NORMAL_GRAVITY), 0.6),
+				new StatModifier(Set.of(StatCategory.JUMPING_GRAVITY), 0.375),
+				new StatModifier(Set.of(StatCategory.JUMP_VELOCITY), 0.75)
+		);
+	}
 
 	@Override public @NotNull FormDefinition.FormHeart getFormHeart(FormHeartHelper helper) {
 		return new FormHeart(
@@ -79,13 +89,6 @@ public class Mini implements FormDefinition {
 		);
 	}
 
-	@Override public Set<StatModifier> getStatModifiers() {
-		return Set.of(
-				new StatModifier(Set.of(StatCategory.NORMAL_GRAVITY), 0.6),
-				new StatModifier(Set.of(StatCategory.JUMPING_GRAVITY), 0.375),
-				new StatModifier(Set.of(StatCategory.JUMP_VELOCITY), 0.75)
-		);
-	}
 
 	@Override public @Nullable Object provideStateData(CfaData data) {
 		return null;

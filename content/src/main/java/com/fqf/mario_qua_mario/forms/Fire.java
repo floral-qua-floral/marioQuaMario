@@ -69,13 +69,15 @@ public class Fire implements FormDefinition {
 	@Override public Set<String> getPowers() {
 		return Set.of();
 	}
+	@Override public Set<AttributeModifierInstruction> getAttributeModifiers() {
+		return Set.of();
+	}
+	@Override public Set<StatModifier> getStatModifiers() {
+		return Set.of();
+	}
 
 	@Override public @NotNull FormDefinition.FormHeart getFormHeart(FormHeartHelper helper) {
 		return helper.auto();
-	}
-
-	@Override public Set<StatModifier> getStatModifiers() {
-		return Set.of();
 	}
 
 	@Override public @Nullable Object provideStateData(CfaData data) {

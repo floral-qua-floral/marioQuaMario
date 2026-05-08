@@ -19,10 +19,11 @@ public class ParsedPowerGrantingState extends ParsedCfaState {
 	public final int BUMP_STRENGTH_MODIFIER;
 	public final Identifier RESOURCE_ID;
 
-	private final Set<StatAlteringStateDefinition.StatModifier> STAT_MODIFIERS;
-	private final Map<Set<StatCategory>, Double> STAT_MULTIPLIERS_CACHE = new HashMap<>();
 
 	public final Set<String> POWERS;
+	public final Set<StatAlteringStateDefinition.AttributeModifierInstruction> ATTRIBUTE_MODIFIERS;
+	private final Set<StatAlteringStateDefinition.StatModifier> STAT_MODIFIERS;
+	private final Map<Set<StatCategory>, Double> STAT_MULTIPLIERS_CACHE = new HashMap<>();
 
 	public ParsedPowerGrantingState(StatAlteringStateDefinition definition) {
 		super(definition);
@@ -35,9 +36,9 @@ public class ParsedPowerGrantingState extends ParsedCfaState {
 
 		this.BUMP_STRENGTH_MODIFIER = definition.getBapStrengthModifier();
 
-		this.STAT_MODIFIERS = definition.getStatModifiers();
-
 		this.POWERS = definition.getPowers();
+		this.ATTRIBUTE_MODIFIERS = definition.getAttributeModifiers();
+		this.STAT_MODIFIERS = definition.getStatModifiers();
 	}
 
 	public double adjustStat(CfaStat stat, double startingValue) {

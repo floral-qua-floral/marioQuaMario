@@ -6,6 +6,7 @@ import com.fqf.charaformact.registries.power_granting.ParsedForm;
 import com.fqf.charaformact.util.CfaStatCalculationHelper;
 import com.fqf.charaformact.util.DirectionBasedWallInfo;
 import com.fqf.charaformact.util.AdvancedWallInfo;
+import com.fqf.charaformact_api.definitions.states.StatAlteringStateDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.definitions.states.actions.util.WallBodyAlignment;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
@@ -33,16 +34,6 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 	protected CfaPlayerData() {
 		CharaFormAct.LOGGER.info("Created new CFA Player Data: {}", this);
 	}
-
-	private static final Identifier FALL_RESISTANCE_ID = CharaFormAct.makeID("mario_fall_resistance");
-	private static final EntityAttributeModifier FALL_RESISTANCE = new EntityAttributeModifier(
-			FALL_RESISTANCE_ID, 8, EntityAttributeModifier.Operation.ADD_VALUE
-	);
-
-	private static final Identifier ATTACK_SLOWDOWN_ID = CharaFormAct.makeID("mario_fall_resistance");
-	private static final EntityAttributeModifier ATTACK_SLOWDOWN = new EntityAttributeModifier(
-			ATTACK_SLOWDOWN_ID, -0.5, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
-	);
 	@Override public boolean isEnabled() {
 		return this.character != null;
 	}
@@ -50,18 +41,10 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 		this.character = null;
 		this.form = null;
 		this.action = null;
+		this.updateCharacterFormCombo();
 		this.updatePassiveUniversalTraits(false);
 	}
 	public void updatePassiveUniversalTraits(boolean enabled) {
-		EntityAttributeInstance safeFallAttributeInstance = this.getPlayer().getAttributeInstance(EntityAttributes.GENERIC_SAFE_FALL_DISTANCE);
-		EntityAttributeInstance attackSpeedAttributeInstance = this.getPlayer().getAttributeInstance(EntityAttributes.GENERIC_ATTACK_SPEED);
-		assert safeFallAttributeInstance != null && attackSpeedAttributeInstance != null;
-		safeFallAttributeInstance.removeModifier(FALL_RESISTANCE_ID);
-		attackSpeedAttributeInstance.removeModifier(ATTACK_SLOWDOWN_ID);
-		if(enabled) { // TODO: These should be handled by the character rather than being universal!
-			safeFallAttributeInstance.addPersistentModifier(FALL_RESISTANCE);
-			attackSpeedAttributeInstance.addPersistentModifier(ATTACK_SLOWDOWN);
-		}
 	}
 
 	private AbstractParsedAction action;
@@ -147,10 +130,60 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 			this.customVars.remove(oldThingVarsClass); // If we didn't already just replace the vars, delete the old ones
 	}
 	private final Set<String> POWERS = new HashSet<>();
+	private final List<StatAlteringStateDefinition.AttributeModifierInstruction> ATTRIBUTE_MODIFIERS = new ArrayList<>();
 	public void updateCharacterFormCombo() {
+		// Clear all power strings
 		this.POWERS.clear();
-		this.POWERS.addAll(this.getForm().POWERS);
-		this.POWERS.addAll(this.getCharacter().POWERS);
+
+		// Remove all attribute modifiers
+		int removingIndex = 0;
+		for(StatAlteringStateDefinition.AttributeModifierInstruction removeModifier : this.ATTRIBUTE_MODIFIERS) {
+			EntityAttributeInstance attributeInstance = this.getPlayer().getAttributeInstance(removeModifier.attribute());
+			if(attributeInstance == null) {
+				CharaFormAct.LOGGER.error("Trying to remove a generated attribute modifier from attribute {}, however" +
+						" the player has no instance of this attribute?!\n\tPlayer: {}",
+						removeModifier.attribute().getIdAsString(),
+						this.getPlayer());
+				removingIndex++;
+			}
+			else {
+				attributeInstance.removeModifier(CharaFormAct.makeID("generated_modifier_" + removingIndex++));
+			}
+		}
+
+		// Clear attribute modifier instructions
+		this.ATTRIBUTE_MODIFIERS.clear();
+
+		if(this.isEnabled()) {
+			// Store new power strings
+			this.POWERS.addAll(this.getCharacter().POWERS);
+			this.POWERS.addAll(this.getForm().POWERS);
+
+			// Store new attribute modifier instructions
+			this.ATTRIBUTE_MODIFIERS.addAll(this.getCharacter().ATTRIBUTE_MODIFIERS);
+			this.ATTRIBUTE_MODIFIERS.addAll(this.getForm().ATTRIBUTE_MODIFIERS);
+
+			// Create new attribute modifiers
+			int addingIndex = 0;
+			for(StatAlteringStateDefinition.AttributeModifierInstruction addModifier : this.ATTRIBUTE_MODIFIERS) {
+				EntityAttributeInstance attributeInstance = this.getPlayer().getAttributeInstance(addModifier.attribute());
+				if(attributeInstance == null) {
+					CharaFormAct.LOGGER.error("Trying to add a generated attribute modifier to attribute {}, however" +
+									" the player has no instance of this attribute?!\n\tPlayer: {}",
+							addModifier.attribute().getIdAsString(),
+							this.getPlayer());
+					addingIndex++;
+				}
+				else {
+					attributeInstance.addTemporaryModifier(new EntityAttributeModifier(
+							CharaFormAct.makeID("generated_modifier_" + addingIndex++),
+							addModifier.d(),
+							addModifier.operation()
+					));
+				}
+			}
+		}
+
 		this.getPlayer().calculateDimensions();
 	}
 	@Override public boolean hasPower(String power) {

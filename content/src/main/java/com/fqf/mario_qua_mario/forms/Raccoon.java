@@ -84,13 +84,15 @@ public class Raccoon implements FormDefinition {
 				Powers.TAIL_FLY
 		);
 	}
+	@Override public Set<AttributeModifierInstruction> getAttributeModifiers() {
+		return Set.of();
+	}
+	@Override public Set<StatModifier> getStatModifiers() {
+		return Set.of();
+	}
 
 	@Override public @NotNull FormDefinition.FormHeart getFormHeart(FormHeartHelper helper) {
 		return helper.auto();
-	}
-
-	@Override public Set<StatModifier> getStatModifiers() {
-		return Set.of();
 	}
 
 	public static class RaccoonVars {

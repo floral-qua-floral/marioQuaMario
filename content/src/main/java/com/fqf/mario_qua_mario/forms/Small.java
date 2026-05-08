@@ -58,6 +58,12 @@ public class Small implements FormDefinition {
 	@Override public Set<String> getPowers() {
 		return Set.of();
 	}
+	@Override public Set<AttributeModifierInstruction> getAttributeModifiers() {
+		return Set.of();
+	}
+	@Override public Set<StatModifier> getStatModifiers() {
+		return Set.of();
+	}
 
 	@Override public @NotNull FormDefinition.FormHeart getFormHeart(FormHeartHelper helper) {
 		return new FormHeart(
@@ -76,10 +82,6 @@ public class Small implements FormDefinition {
 				MarioQuaMario.makeResID("hud/form_hearts/small/container"),
 				MarioQuaMario.makeResID("hud/form_hearts/small/container_blinking")
 		);
-	}
-
-	@Override public Set<StatModifier> getStatModifiers() {
-		return Set.of();
 	}
 
 	@Override public @Nullable Object provideStateData(CfaData data) {
