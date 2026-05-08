@@ -55,5 +55,7 @@ public class CfaEventListeners {
 		});
 
 		ServerTickEvents.START_WORLD_TICK.register(BlockBappingUtil::serverWorldTick);
+
+
 	}
 }

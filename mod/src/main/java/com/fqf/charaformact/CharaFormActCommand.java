@@ -3,6 +3,7 @@ package com.fqf.charaformact;
 import com.fqf.charaformact.bapping.BlockBappingUtil;
 import com.fqf.charaformact.cfadata.CfaServerPlayerData;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
+import com.fqf.charaformact.util.ItemStackArmorReader;
 import com.fqf.charaformact_api.interfaces.BapResult;
 import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact.packets.AttackInterceptionPackets;
@@ -14,12 +15,18 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import it.unimi.dsi.fastutil.floats.FloatFloatImmutablePair;
+import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.BlockPosArgumentType;
 import net.minecraft.command.argument.EntityArgumentType;
+import net.minecraft.command.argument.EnumArgumentType;
 import net.minecraft.command.argument.RegistryEntryReferenceArgumentType;
+import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -34,6 +41,11 @@ import static net.minecraft.server.command.CommandManager.literal;
 
 public class CharaFormActCommand {
 	public static void registerCharaFormActCommand() {
+		ArgumentTypeRegistry.registerArgumentType(CharaFormAct.makeID("direction"), DirectionArgumentType.class,
+				ConstantArgumentSerializer.of(DirectionArgumentType::direction));
+		ArgumentTypeRegistry.registerArgumentType(CharaFormAct.makeID("equipment_slot"), EquipmentSlotArgumentType.class,
+				ConstantArgumentSerializer.of(EquipmentSlotArgumentType::equipmentSlot));
+
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 			LiteralCommandNode<ServerCommandSource> literalCommandNode = dispatcher.register(literal("charaformact")
 				.then(literal("disable")
@@ -119,6 +131,13 @@ public class CharaFormActCommand {
 						.executes(context -> executeReversion(context, false))
 						.then(argument("player", EntityArgumentType.player())
 							.executes(context -> executeReversion(context, true))
+						)
+					)
+				)
+				.then(literal("debug")
+					.then(literal("getEquipmentArmor")
+						.then(argument("slot", EquipmentSlotArgumentType.equipmentSlot())
+							.executes(CharaFormActCommand::getHeldItemArmorAttributes)
 						)
 					)
 				)
@@ -377,5 +396,42 @@ public class CharaFormActCommand {
 					+ data.getForm().REVERSION_TARGET_ID + ", for which their character (" + data.getCharacterID() + ") has no playermodel.";
 			case NOT_ENABLED -> "Unable to execute reversion; " + name + " is not playing as a character.";
 		}, result == CfaAuthoritativeData.ReversionResult.SUCCESS);
+	}
+
+	private static class DirectionArgumentType extends EnumArgumentType<Direction> {
+		protected DirectionArgumentType() {
+			super(Direction.CODEC, Direction::values);
+		}
+
+		public static EnumArgumentType<Direction> direction() {
+			return new DirectionArgumentType();
+		}
+
+		public static Direction getDirection(CommandContext<ServerCommandSource> context, String id) {
+			return context.getArgument(id, Direction.class);
+		}
+	}
+
+	private static class EquipmentSlotArgumentType extends EnumArgumentType<EquipmentSlot> {
+		protected EquipmentSlotArgumentType() {
+			super(EquipmentSlot.CODEC, EquipmentSlot::values);
+		}
+
+		public static EnumArgumentType<EquipmentSlot> equipmentSlot() {
+			return new EquipmentSlotArgumentType();
+		}
+
+		public static EquipmentSlot getEquipmentSlot(CommandContext<ServerCommandSource> context, String id) {
+			return context.getArgument(id, EquipmentSlot.class);
+		}
+	}
+
+	private static int getHeldItemArmorAttributes(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+		ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
+		EquipmentSlot slot = EquipmentSlotArgumentType.getEquipmentSlot(context, "slot");
+		ItemStack equipment = player.getEquippedStack(slot);
+		FloatFloatImmutablePair result = ItemStackArmorReader.read(equipment, slot);
+		return sendFeedback(context, player.getName().getString() + "'s " + equipment.getItem().toString()
+				+ " seems to provide " + result.leftFloat() + " armor and " + result.rightFloat() + " toughness.", (int) result.leftFloat());
 	}
 }
