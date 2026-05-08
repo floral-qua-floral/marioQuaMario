@@ -70,6 +70,14 @@ public class AquaticPoundFlip implements AquaticActionDefinition {
 		data.setYVel(0.075);
 	}
 
+	public static final TransitionDefinition AQUATIC_GROUND_POUND = GroundPoundFlip.GROUND_POUND.variate(
+			AquaticPoundFlip.ID,
+			null,
+			null,
+			null,
+			(data, isSelf, seed) -> data.playSound(MarioSFX.AQUATIC_GROUND_POUND_FLIP, seed)
+	);
+
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(AquaticActionHelper helper) {
 		return List.of(
 				GroundPoundFlip.makeDropTransition(AquaticPoundDrop.ID, AQUATIC_FLIP_DURATION, MarioSFX.AQUATIC_GROUND_POUND_DROP)

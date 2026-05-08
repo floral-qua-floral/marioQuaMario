@@ -12,6 +12,7 @@ import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.airborne.GroundPoundFlip;
 import com.fqf.mario_qua_mario.actions.airborne.SpecialFall;
+import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -143,13 +144,13 @@ public class Submerged implements AquaticActionDefinition {
 	}
 
 	@Override public @Nullable Object provideStateData(CfaData data) {
-		return null;
+		return new ActionTimerVars();
 	}
 	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-
+		data.retrieveStateData(ActionTimerVars.class).actionTimer++;
 	}
 	@Override public void serverTick(CfaAuthoritativeData data) {
-
+		data.retrieveStateData(ActionTimerVars.class).actionTimer++;
 	}
 	@Override public void travelHook(CfaTravelData data, AquaticActionHelper helper) {
 		waterMove(data, helper);
@@ -176,12 +177,18 @@ public class Submerged implements AquaticActionDefinition {
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AquaticActionHelper helper) {
 		return List.of(
 				Swim.SWIM,
-				GroundPoundFlip.GROUND_POUND.variate(
-						AquaticPoundFlip.ID,
-						null,
-						null,
-						null,
-						(data, isSelf, seed) -> data.playSound(MarioSFX.AQUATIC_GROUND_POUND_FLIP, seed)
+				AquaticPoundFlip.AQUATIC_GROUND_POUND,
+				new TransitionDefinition(
+						Paddle.ID,
+						data -> {
+							ActionTimerVars vars = data.retrieveStateData(ActionTimerVars.class);
+							return (vars == null || vars.actionTimer > 7) && data.getInputs().JUMP.isHeld() && data.getForwardVel() > -0.1;
+						},
+						EvaluatorEnvironment.CLIENT_ONLY,
+						data -> {
+							data.setYVel(Math.max(Paddle.PADDLE_FALL_SPEED.get(data), data.getYVel()));
+						},
+						null
 				)
 		);
 	}

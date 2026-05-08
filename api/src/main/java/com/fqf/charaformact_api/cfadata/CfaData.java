@@ -28,6 +28,11 @@ public interface CfaData {
 	float getEyeHeightScale();
 	int getBapStrength(Direction direction);
 
+	/**
+	 * @param clazz The class of the state data you intend to retrieve. Data of this class MUST have already been
+	 *              provided through CfaStateDefinition.provideStateData; consequences otherwise are unspecified!
+	 * @return The state data of the requested class.
+	 */
 	<T> T retrieveStateData(Class<T> clazz);
 
 	void forceBodyAlignment(boolean urgent);
