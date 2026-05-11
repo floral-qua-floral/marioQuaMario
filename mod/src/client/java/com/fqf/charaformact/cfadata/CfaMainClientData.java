@@ -48,7 +48,7 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 	}
 
 	private CameraAnimation currentCameraAnimation;
-	private float cameraAnimationTime;
+	private long cameraAnimationStartTime;
 	private boolean attemptFinish;
 	private boolean readyForReplacement;
 
@@ -78,7 +78,7 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 
 		if(newAnim != null) {
 			this.currentCameraAnimation = newAnim;
-			this.cameraAnimationTime = 0;
+			this.cameraAnimationStartTime = this.getPlayer().getWorld().getTime();
 			this.attemptFinish = false;
 			this.readyForReplacement = false;
 		}
@@ -90,8 +90,9 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 	}
 
 	public void mutateCamera(Arrangement cameraArrangement, float tickDelta) {
-		this.cameraAnimationTime += MinecraftClient.getInstance().getRenderTickCounter().getLastFrameDuration();
-		float progress = this.currentCameraAnimation.progressHandler().progressCalculator().calculateProgress(this, this.cameraAnimationTime);
+		float cameraAnimationTime = (float) (this.getPlayer().getWorld().getTime() - this.cameraAnimationStartTime - 1) + tickDelta;
+
+		float progress = this.currentCameraAnimation.progressHandler().progressCalculator().calculateProgress(this, cameraAnimationTime);
 
 		this.readyForReplacement = progress >= this.currentCameraAnimation.progressHandler().minProgressToFinish();
 
@@ -107,8 +108,6 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 		this.getAction().clientTick(this, true);
 		this.getForm().clientTick(this, true);
 		this.getCharacter().clientTick(this, true);
-		if(!MinecraftClient.getInstance().options.getPerspective().isFirstPerson())
-			this.currentCameraAnimation = null;
 	}
 
 	private final WallInfoWithInputs WALL_INFO = new WallInfoWithInputs(this);
