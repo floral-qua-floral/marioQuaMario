@@ -15,7 +15,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-import it.unimi.dsi.fastutil.floats.FloatFloatImmutablePair;
+import it.unimi.dsi.fastutil.floats.FloatFloatPair;
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.command.CommandRegistryAccess;
@@ -430,7 +430,7 @@ public class CharaFormActCommand {
 		ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
 		EquipmentSlot slot = EquipmentSlotArgumentType.getEquipmentSlot(context, "slot");
 		ItemStack equipment = player.getEquippedStack(slot);
-		FloatFloatImmutablePair result = ItemStackArmorReader.getArmorAndToughness(equipment, slot);
+		FloatFloatPair result = ItemStackArmorReader.getArmorAndToughness(equipment, slot);
 		return sendFeedback(context, player.getName().getString() + "'s " + equipment.getItem().toString()
 				+ " seems to provide " + result.leftFloat() + " armor and " + result.rightFloat() + " toughness.", (int) result.leftFloat());
 	}

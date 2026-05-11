@@ -9,7 +9,7 @@ import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import com.fqf.charaformact.util.ItemStackArmorReader;
 import com.fqf.charaformact.util.CollisionAttackDamageSource;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
-import it.unimi.dsi.fastutil.floats.FloatFloatImmutablePair;
+import it.unimi.dsi.fastutil.floats.FloatFloatPair;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.damage.DamageSource;
@@ -86,7 +86,7 @@ public class ParsedCollisionAttack extends ParsedCfaThing {
 	public Vec3d hitEntitiesAndGetTargetPos(CfaServerPlayerData data, List<Entity> entities, @Nullable Vec3d goingToPos) {
 		ServerPlayerEntity player = data.getPlayer();
 		ItemStack collisionEquipment = player.getEquippedStack(this.USE_EQUIPMENT_SLOT);
-		FloatFloatImmutablePair equipmentArmor = ItemStackArmorReader.getArmorAndToughness(collisionEquipment, this.USE_EQUIPMENT_SLOT);
+		FloatFloatPair equipmentArmor = ItemStackArmorReader.getArmorAndToughness(collisionEquipment, this.USE_EQUIPMENT_SLOT);
 		float collisionDamageAmount = this.DEFINITION.calculateDamage(data, collisionEquipment, equipmentArmor.leftFloat(), equipmentArmor.rightFloat());
 		float collisionDamagePiercing = Math.min(collisionDamageAmount, this.DEFINITION.calculatePiercing(data, collisionEquipment, equipmentArmor.leftFloat(), equipmentArmor.rightFloat()));
 		DamageSource collisionDamageSource = new CollisionAttackDamageSource(player.getServerWorld(), this.DAMAGE_TYPE, player, collisionDamagePiercing, collisionEquipment);
