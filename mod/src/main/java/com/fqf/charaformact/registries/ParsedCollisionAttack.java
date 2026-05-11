@@ -86,7 +86,7 @@ public class ParsedCollisionAttack extends ParsedCfaThing {
 	public Vec3d hitEntitiesAndGetTargetPos(CfaServerPlayerData data, List<Entity> entities, @Nullable Vec3d goingToPos) {
 		ServerPlayerEntity player = data.getPlayer();
 		ItemStack collisionEquipment = player.getEquippedStack(this.USE_EQUIPMENT_SLOT);
-		FloatFloatImmutablePair equipmentArmor = ItemStackArmorReader.read(collisionEquipment, this.USE_EQUIPMENT_SLOT);
+		FloatFloatImmutablePair equipmentArmor = ItemStackArmorReader.getArmorAndToughness(collisionEquipment, this.USE_EQUIPMENT_SLOT);
 		float collisionDamageAmount = this.DEFINITION.calculateDamage(data, collisionEquipment, equipmentArmor.leftFloat(), equipmentArmor.rightFloat());
 		float collisionDamagePiercing = Math.min(collisionDamageAmount, this.DEFINITION.calculatePiercing(data, collisionEquipment, equipmentArmor.leftFloat(), equipmentArmor.rightFloat()));
 		DamageSource collisionDamageSource = new CollisionAttackDamageSource(player.getServerWorld(), this.DAMAGE_TYPE, player, collisionDamagePiercing, collisionEquipment);

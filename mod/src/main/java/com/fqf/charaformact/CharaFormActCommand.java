@@ -430,7 +430,7 @@ public class CharaFormActCommand {
 		ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
 		EquipmentSlot slot = EquipmentSlotArgumentType.getEquipmentSlot(context, "slot");
 		ItemStack equipment = player.getEquippedStack(slot);
-		FloatFloatImmutablePair result = ItemStackArmorReader.read(equipment, slot);
+		FloatFloatImmutablePair result = ItemStackArmorReader.getArmorAndToughness(equipment, slot);
 		return sendFeedback(context, player.getName().getString() + "'s " + equipment.getItem().toString()
 				+ " seems to provide " + result.leftFloat() + " armor and " + result.rightFloat() + " toughness.", (int) result.leftFloat());
 	}
