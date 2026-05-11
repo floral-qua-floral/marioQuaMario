@@ -27,9 +27,7 @@ import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 
 public class MarioFireballProjectileEntity extends ProjectileEntity {
-	private float rotation;
 	private int bounces;
-	private boolean prevTickWallUpped;
 	public float angle;
 	public float renderYaw;
 	public float prevAngle;
@@ -67,6 +65,8 @@ public class MarioFireballProjectileEntity extends ProjectileEntity {
 		super.tick();
 		this.prevAngle = this.angle;
 		this.angle += 28F;
+
+		// TODO: Fix Enderman dodging
 
 		if(!this.getWorld().isClient() && ProjectileUtil.getCollision(this, this::canHit, RaycastContext.ShapeType.OUTLINE) instanceof BlockHitResult blockHitResult) {
 			if(this.getWorld().getBlockState(blockHitResult.getBlockPos()).isIn(MQMTags.DESTROYED_BY_FIREBALL)) {
