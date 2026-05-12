@@ -99,6 +99,9 @@ public class MarioFireballProjectileEntity extends ProjectileEntity {
 				source, attacker
 		), 5);
 
+		if(damaged && target.getType().isIn(MQMTags.DODGES_MARIO_FIREBALL))
+			return false;
+
 		if(!source.getWorld().isClient()) {
 			SoundEvent event;
 			if(!damaged) event = MarioSFX.FIREBALL_WALL;
@@ -114,7 +117,8 @@ public class MarioFireballProjectileEntity extends ProjectileEntity {
 	protected void onEntityHit(EntityHitResult entityHitResult) {
 		super.onEntityHit(entityHitResult);
 		hitEntity(entityHitResult.getEntity(), this, this.getOwner(), this);
-		if(!this.getWorld().isClient()) this.discard();
+		if(!this.getWorld().isClient() && !entityHitResult.getEntity().getType().isIn(MQMTags.DODGES_MARIO_FIREBALL))
+			this.discard();
 	}
 
 	private static final double FIREBALL_STEP_HEIGHT = 1.2;
