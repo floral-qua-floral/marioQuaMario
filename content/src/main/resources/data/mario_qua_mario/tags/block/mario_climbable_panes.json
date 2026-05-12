@@ -26,6 +26,10 @@
     {
       "id": "quark:gold_bars",
       "required": false
+    },
+    {
+      "id": "#immersive_weathering:bars",
+      "required": false
     }
   ]
 }
