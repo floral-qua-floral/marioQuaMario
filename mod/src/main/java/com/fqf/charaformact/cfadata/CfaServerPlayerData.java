@@ -39,8 +39,6 @@ public class CfaServerPlayerData extends CfaMoveableData implements CfaAuthorita
 		return this.PLAYER;
 	}
 
-	public boolean cancelNextRequestTeleportPacket;
-
 	private final Set<Pair<AbstractParsedAction, Long>> RECENT_ACTIONS = new HashSet<>();
 
 	@Override public void initialApply() {
@@ -186,6 +184,8 @@ public class CfaServerPlayerData extends CfaMoveableData implements CfaAuthorita
 
 		long worldTime = this.getPlayer().getWorld().getTime();
 		this.RECENT_ACTIONS.removeIf(pair -> worldTime > pair.getRight());
+
+		this.skipDismountRepositioningTicks--;
 	}
 
 	private float lastReceivedWallYaw = Float.NaN;
@@ -247,13 +247,13 @@ public class CfaServerPlayerData extends CfaMoveableData implements CfaAuthorita
 		};
 	}
 
-	//	public void syncToClient(ServerPlayerEntity toWhom) {
-//		this.setEnabled(this.isEnabled());
-//		CfaDataPackets.assignCharacterS2C(this.getPlayer(), this.getCharacter());
-//		CfaDataPackets.assignFormS2C(this.getPlayer(), this.getForm());
-//		CfaDataPackets.assignActionS2C(this.getPlayer(), true, this.getAction());
-////		CfaDataPackets.updatePlayermodelS2C(this.getPlayer());
-//	}
+	private int skipDismountRepositioningTicks;
+	public void skipDismountRepositioning() {
+		this.skipDismountRepositioningTicks = 10;
+	}
+	public boolean isSkippingDismountRepositioning() {
+		return this.isEnabled() && this.skipDismountRepositioningTicks > 0;
+	}
 
 	// CUTOFF FOR CfaAuthoritativeData IMPLEMENTATION:---------------------------------------------------------------
 	@Override public void disable() {

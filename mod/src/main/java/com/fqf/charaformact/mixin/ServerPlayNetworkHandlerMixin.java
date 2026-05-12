@@ -1,5 +1,6 @@
 package com.fqf.charaformact.mixin;
 
+import com.fqf.charaformact.registries.actions.UniversalActionDefinitionHelper;
 import com.fqf.charaformact.util.CfaGamerules;
 import com.fqf.charaformact.util.CfaPositionSettable;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
@@ -37,13 +38,11 @@ public class ServerPlayNetworkHandlerMixin implements CfaPositionSettable {
 //	}
 
 
-	@WrapMethod(method = "requestTeleport(DDDFFLjava/util/Set;)V")
-	private void requestTeleportHook(double x, double y, double z, float yaw, float pitch, Set<PositionFlag> flags, Operation<Void> original) {
-		if(this.player.cfa$getCfaData().cancelNextRequestTeleportPacket)
-			this.player.cfa$getCfaData().cancelNextRequestTeleportPacket = false;
-		else
-			original.call(x, y, z, yaw, pitch, flags);
-	}
+//	@WrapMethod(method = "requestTeleport(DDDFFLjava/util/Set;)V")
+//	private void requestTeleportHook(double x, double y, double z, float yaw, float pitch, Set<PositionFlag> flags, Operation<Void> original) {
+//		if(!this.player.cfa$getCfaData().skipDismountRelatedTeleports)
+//			original.call(x, y, z, yaw, pitch, flags);
+//	}
 
 	@Override
 	public void cfa$setPos(Vec3d pos) {

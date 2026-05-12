@@ -289,15 +289,12 @@ public class UniversalActionDefinitionHelper implements
 		return data.getPlayer().getVehicle();
 	}
 
-
 	@Override
 	public void dismount(CfaTravelData data, boolean reposition) {
-		data.getPlayer().stopRiding();
 		if(!reposition && data instanceof CfaServerPlayerData serverData)
-			serverData.cancelNextRequestTeleportPacket = true;
-//		((CfaPlayerData) data).attemptDismount = reposition
-//				? CfaPlayerData.DismountType.VANILLA_DISMOUNT
-//				: CfaPlayerData.DismountType.DISMOUNT_IN_PLACE;
+			serverData.skipDismountRepositioning();
+
+		data.getPlayer().stopRiding();
 	}
 
 	@Override

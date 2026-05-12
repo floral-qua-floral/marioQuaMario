@@ -5,8 +5,11 @@ import com.fqf.charaformact.cfadata.CfaServerPlayerData;
 import com.fqf.charaformact.cfadata.injections.AdvCfaServerDataHolder;
 import com.fqf.charaformact.packets.CfaDataPackets;
 import com.fqf.charaformact.registries.RegistryManager;
+import com.fqf.charaformact.registries.actions.UniversalActionDefinitionHelper;
 import com.fqf.charaformact.registries.power_granting.ParsedCharacter;
 import com.fqf.charaformact.util.CfaNbtKeys;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -113,5 +116,12 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 	public void onStartedTrackingBy(ServerPlayerEntity player) {
 		super.onStartedTrackingBy(player);
 		CfaDataPackets.syncCfaDataToPlayerS2C((ServerPlayerEntity) (Object) this, player);
+	}
+
+	@WrapOperation(method="requestTeleportAndDismount", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;setPosition(DDD)V"))
+	private void preventSetPositionWhileDismounting(ServerPlayerEntity instance, double x, double y, double z, Operation<Void> original) {
+		CfaServerPlayerData data = this.cfa$getCfaData();
+		if(!data.isSkippingDismountRepositioning())
+			original.call(instance, x, y, z);
 	}
 }

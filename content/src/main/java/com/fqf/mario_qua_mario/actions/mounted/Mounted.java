@@ -76,7 +76,7 @@ public class Mounted implements MountedActionDefinition {
 						data -> helper.getMount(data) == null,
 						EvaluatorEnvironment.COMMON,
 						data -> {
-							MarioQuaMario.LOGGER.info("Transitioned to SubWalk because mount was null?");
+							MarioQuaMario.LOGGER.warn("Transitioned to SubWalk because mount was null?");
 						},
 						(data, isSelf, seed) -> {}
 				)
