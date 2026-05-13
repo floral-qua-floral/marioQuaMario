@@ -21,6 +21,8 @@ public class BlockCollisionFinder {
 		return getCollidedBlockPositions(movingEntity, movingEntity.getBoundingBox(), motion, axis).left();
 	}
 
+	// Get a list of collided block positions AND the maximum distance that the bounding box can move on the given axis
+	// until it hits those block positions.
 	public static ObjectDoublePair<Set<BlockPos>> getCollidedBlockPositions(Entity movingEntity, Box box, double motion, Direction.Axis axis) {
 		Box stretchedBox = box.stretch(Vec3d.ZERO.withAxis(axis, motion));
 

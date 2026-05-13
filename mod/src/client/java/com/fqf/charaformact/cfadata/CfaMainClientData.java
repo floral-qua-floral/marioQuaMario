@@ -18,7 +18,6 @@ import com.fqf.charaformact_api.cfadata.util.CollisionMatcher;
 import com.fqf.charaformact_api.cfadata.util.RecordedCollision;
 import com.fqf.charaformact_api.cfadata.util.RecordedCollisionSet;
 import it.unimi.dsi.fastutil.objects.ObjectDoublePair;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.input.Input;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.sound.SoundInstance;
@@ -447,12 +446,16 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 			movedBox = bapAlongAxis(movedBox, movement, Direction.Axis.X);
 			if(movedBox == null) return true;
 		}
+
 		movedBox = bapAlongAxis(movedBox, movement, Direction.Axis.Z);
 		if(movedBox == null) return true;
+
 		if(!doXFirst) {
 			movedBox = bapAlongAxis(movedBox, movement, Direction.Axis.X);
-			return movedBox == null;
+			//noinspection RedundantIfStatement
+			if(movedBox == null) return true;
 		}
+
 		return false;
 	}
 
@@ -464,16 +467,18 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 
 		ObjectDoublePair<Set<BlockPos>> pair = BlockCollisionFinder.getCollidedBlockPositions(this.getPlayer(), box, motion, axis);
 		Set<BlockPos> collideWithBlockPositions = pair.left();
-		double absSmallestOffsetFound = pair.rightDouble();
+		double smallestOffsetFound = pair.rightDouble();
 
 		if(!collideWithBlockPositions.isEmpty()) {
 			for(BlockPos pos : collideWithBlockPositions) {
 				if(this.collideWithBlockAndOptionallyRecalculate(pos, dir))
 					return null; // Force recalculation from the beginning
 			}
+
+			return box.offset(Vec3d.ZERO.withAxis(axis, smallestOffsetFound));
 		}
 
-		return box.offset(Vec3d.ZERO.withAxis(axis, absSmallestOffsetFound * Math.signum(motion)));
+		return box;
 	}
 
 	public boolean collideWithBlockAndOptionallyRecalculate(BlockPos pos, Direction direction) {
