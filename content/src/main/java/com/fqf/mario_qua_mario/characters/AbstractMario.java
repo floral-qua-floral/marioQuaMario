@@ -78,7 +78,8 @@ public abstract class AbstractMario implements CharacterDefinition {
 	@Override public Set<AttributeModifierInstruction> getAttributeModifiers() {
 		return Set.of(
 				new AttributeModifierInstruction(EntityAttributes.GENERIC_SAFE_FALL_DISTANCE, 8, EntityAttributeModifier.Operation.ADD_VALUE),
-				new AttributeModifierInstruction(EntityAttributes.GENERIC_ATTACK_SPEED, -0.5, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
+				new AttributeModifierInstruction(EntityAttributes.GENERIC_ATTACK_SPEED, 1.7, EntityAttributeModifier.Operation.ADD_VALUE),
+				new AttributeModifierInstruction(EntityAttributes.GENERIC_ATTACK_SPEED, -0.7, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
 		);
 	}
 
