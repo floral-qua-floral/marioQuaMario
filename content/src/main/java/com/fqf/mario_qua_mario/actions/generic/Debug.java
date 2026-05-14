@@ -19,6 +19,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -103,6 +104,13 @@ public class Debug implements GenericActionDefinition {
 						data -> false,
 						EvaluatorEnvironment.SERVER_ONLY,
 						data -> {
+							Vec3d lavaBoostEjectionPos = LavaBoost.findLavaBoostEjectionSpot(data);
+							if(lavaBoostEjectionPos == null)
+								MarioQuaMario.LOGGER.error("Triggered Lava Boost transition, but then couldn't find" +
+										" the ejection pos?! Player is at {}", data.getPlayer().getPos());
+							else
+								data.goTo(lavaBoostEjectionPos);
+
 							data.setYVel(LavaBoost.BOOST_VEL.get(data));
 							data.setForwardStrafeVel(0, 0);
 						},

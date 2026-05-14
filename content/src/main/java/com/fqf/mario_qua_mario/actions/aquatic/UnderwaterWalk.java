@@ -11,6 +11,7 @@ import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
+import com.fqf.mario_qua_mario.actions.airborne.LavaBoost;
 import com.fqf.mario_qua_mario.actions.grounded.DuckWaddle;
 import com.fqf.mario_qua_mario.actions.grounded.SubWalk;
 import com.fqf.mario_qua_mario.util.MarioSFX;
@@ -122,7 +123,7 @@ public class UnderwaterWalk implements AquaticActionDefinition {
 
 	public static final TransitionDefinition SUBMERGE = new TransitionDefinition(
 			ID,
-			data -> data.getImmersionPercent() > 0.5,
+			data -> data.getImmersionPercent() > 0.5 && (data.getActionID() != LavaBoost.ID || data.getYVel() < 0),
 			EvaluatorEnvironment.COMMON
 	);
 

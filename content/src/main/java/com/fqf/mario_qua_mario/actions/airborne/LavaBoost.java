@@ -11,8 +11,12 @@ import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario.util.ClimbTransitions;
+import com.fqf.mario_qua_mario.util.MQMTags;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.*;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -111,6 +115,83 @@ public class LavaBoost extends Fall implements AirborneActionDefinition {
 		);
 	}
 
+	private static final double MAX_EJECTION_DISTANCE = 5;
+	private static final double EJECTION_STEP_DISTANCE = 0.5;
+
+	private static boolean positionHasProhibitiveFluid(CfaData data, Box box) {
+		int minX = MathHelper.floor(box.minX); int maxX = MathHelper.ceil(box.maxX);
+		int minY = MathHelper.floor(box.minY); int maxY = MathHelper.ceil(box.maxY);
+		int minZ = MathHelper.floor(box.minZ); int maxZ = MathHelper.ceil(box.maxZ);
+		World world = data.getPlayer().getWorld();
+		BlockPos.Mutable mutable = new BlockPos.Mutable();
+
+		for(int checkX = minX; checkX < maxX; checkX++) {
+			for(int checkY = minY; checkY < maxY; checkY++) {
+				for(int checkZ = minZ; checkZ < maxZ; checkZ++) {
+					mutable.set(checkX, checkY, checkZ);
+					FluidState fluidState = world.getFluidState(mutable);
+					if(fluidState.isIn(MQMTags.PROHIBITS_LAVA_BOOST_EJECTION)) {
+						if(checkY + fluidState.getHeight(world, mutable) >= box.minY) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+	public static @Nullable Vec3d findLavaBoostEjectionSpot(CfaData data) {
+		PlayerEntity player = data.getPlayer();
+		Box playerBoundingBox = player.getBoundingBox();
+		Box ejectionCheckBox = playerBoundingBox.withMaxY(playerBoundingBox.minY + MAX_EJECTION_DISTANCE);
+
+		int minX = MathHelper.floor(ejectionCheckBox.minX); int maxX = MathHelper.ceil(ejectionCheckBox.maxX);
+		int minY = MathHelper.floor(ejectionCheckBox.minY); int maxY = MathHelper.ceil(ejectionCheckBox.maxY);
+		int minZ = MathHelper.floor(ejectionCheckBox.minZ); int maxZ = MathHelper.ceil(ejectionCheckBox.maxZ);
+		World world = data.getPlayer().getWorld();
+		BlockPos.Mutable mutable = new BlockPos.Mutable();
+
+		for(int checkX = minX; checkX < maxX; checkX++) {
+			for(int checkY = maxY; checkY >= minY; checkY--) {
+				for(int checkZ = minZ; checkZ < maxZ; checkZ++) {
+					mutable.set(checkX, checkY, checkZ);
+					FluidState fluidState = world.getFluidState(mutable);
+					if(fluidState.isIn(MQMTags.PROHIBITS_LAVA_BOOST_EJECTION)) {
+						double fluidSurface = checkY + fluidState.getHeight(world, mutable);
+						if(fluidSurface < ejectionCheckBox.maxY) {
+							// We've found the top of the liquid!
+							// Now check if it's actually possible for the player to rise up to this height.
+							Box checkCollisionsBox = playerBoundingBox.withMaxY(fluidSurface + player.getHeight());
+							if(world.isSpaceEmpty(player, checkCollisionsBox))
+								return player.getPos().withAxis(Direction.Axis.Y, fluidSurface);
+						}
+
+						return null;
+					}
+				}
+			}
+		}
+
+		return player.getPos();
+	}
+
+	public static final TransitionDefinition LAVA_BOOST = new TransitionDefinition(
+			LavaBoost.ID,
+			data -> {
+//				data.getPlayer().isInLava()
+				return false;
+			},
+			EvaluatorEnvironment.COMMON,
+			data -> {
+
+			},
+			(data, isSelf, seed) -> {
+
+			}
+	);
+
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(AirborneActionHelper helper) {
 		return List.of();
 	}
@@ -121,7 +202,7 @@ public class LavaBoost extends Fall implements AirborneActionDefinition {
 		return List.of(
 				Submerged.SUBMERGE,
 				Fall.LANDING.variate(
-						ID,
+						LavaBoost.ID,
 						data ->
 								data.getYVel() <= 0
 								&& data.retrieveStateData(LavaBoostVars.class).bounceVel > 0.06
@@ -142,7 +223,14 @@ public class LavaBoost extends Fall implements AirborneActionDefinition {
 	}
 
 	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
-		return Set.of();
+		return Set.of(
+				new TransitionInjectionDefinition(
+						TransitionInjectionDefinition.InjectionPlacement.BEFORE,
+						Submerged.ID,
+						(fromAction, fromCategory, existingTransitions) -> true,
+						(nearbyTransition, castableHelper) -> LAVA_BOOST
+				)
+		);
 	}
 
 	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {

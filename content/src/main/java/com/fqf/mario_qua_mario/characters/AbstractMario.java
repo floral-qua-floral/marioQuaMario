@@ -11,14 +11,16 @@ import com.fqf.mario_qua_mario.actions.generic.Debug;
 import com.fqf.mario_qua_mario.actions.mounted.Mounted;
 import com.fqf.mario_qua_mario.forms.Super;
 import com.fqf.mario_qua_mario.util.MQMGamerules;
+import com.fqf.mario_qua_mario.util.MQMTags;
 import com.fqf.mario_qua_mario.util.MarioVars;
 import com.fqf.mario_qua_mario.util.Powers;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageTypes;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,12 +40,21 @@ public abstract class AbstractMario implements CharacterDefinition {
 
 	@Override
 	public float modifyIncomingDamage(CfaAuthoritativeData data, DamageSource source, float amount) {
-		if(source.getTypeRegistryEntry().matchesKey(DamageTypes.LAVA)) {
-			data.forceActionTransition(Debug.ID, LavaBoost.ID);
-			return 10;
+		float multiplier = (float) data.getPlayer().getWorld().getGameRules().get(MQMGamerules.INCOMING_DAMAGE_MULTIPLIER).get();
+
+		if(source.isIn(MQMTags.TRIGGERS_LAVA_BOOST)) {
+			// See if we can find a spot to eject Mario to?
+			Vec3d ejectionLocation = LavaBoost.findLavaBoostEjectionSpot(data);
+
+			if(ejectionLocation != null) {
+				ServerPlayerEntity player = data.getPlayer();
+				player.requestTeleport(player.getX(), player.getY(), player.getZ());
+				data.forceActionTransition(Debug.ID, LavaBoost.ID);
+				return 4 * multiplier;
+			}
 		}
 
-		return amount * (float) data.getPlayer().getWorld().getGameRules().get(MQMGamerules.INCOMING_DAMAGE_MULTIPLIER).get();
+		return amount * multiplier;
 	}
 
 	@Override public float getWidthFactor() {

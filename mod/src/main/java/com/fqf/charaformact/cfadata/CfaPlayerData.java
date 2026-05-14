@@ -16,13 +16,14 @@ import com.fqf.charaformact.registries.actions.ParsedActionHelper;
 import com.fqf.charaformact.registries.power_granting.ParsedCharacter;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.charaformact_api.util.CfaStat;
+import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
-import net.minecraft.registry.tag.FluidTags;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
@@ -303,14 +304,26 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 		this.headRestricted = urgent ? HeadRestrictionType.URGENT : HeadRestrictionType.NORMAL;
 	}
 
+	private @Nullable Object2DoubleMap.Entry<TagKey<Fluid>> getHighestFluid() {
+		Object2DoubleMap.Entry<TagKey<Fluid>> highestFluid = null;
+		for(Object2DoubleMap.Entry<TagKey<Fluid>> entry : this.getPlayer().fluidHeight.object2DoubleEntrySet()) {
+			if(entry.getDoubleValue() == 0) continue;
+
+			if(highestFluid == null || entry.getDoubleValue() > highestFluid.getDoubleValue())
+				highestFluid = entry;
+		}
+		return highestFluid;
+	}
+
 	@Override
 	public double getImmersionLevel() {
-		return Math.max(this.getPlayer().getFluidHeight(FluidTags.WATER), this.getPlayer().getFluidHeight(FluidTags.LAVA));
+		Object2DoubleMap.Entry<TagKey<Fluid>> highestFluid = this.getHighestFluid();
+		return highestFluid == null ? 0 : highestFluid.getDoubleValue();
 	}
 
 	@Override
 	public double getImmersionPercent() {
-		return this.getImmersionLevel() / this.getPlayer().getHeight();
+		return Math.min(this.getImmersionLevel() / this.getPlayer().getHeight(), 1);
 	}
 
 	@Override

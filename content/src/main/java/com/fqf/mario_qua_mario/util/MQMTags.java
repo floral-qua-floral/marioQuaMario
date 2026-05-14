@@ -3,18 +3,18 @@ package com.fqf.mario_qua_mario.util;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageType;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 
-import static net.minecraft.registry.RegistryKeys.BLOCK;
-import static net.minecraft.registry.RegistryKeys.ENTITY_TYPE;
-import static net.minecraft.registry.RegistryKeys.DAMAGE_TYPE;
+import static net.minecraft.registry.RegistryKeys.*;
 
 public interface MQMTags {
 	TagKey<DamageType> FLATTENS_ENTITIES = getTag(DAMAGE_TYPE, "flattens_entities");
 	TagKey<DamageType> BYPASSES_STOMP_GUARD = getTag(DAMAGE_TYPE, "bypasses_stomp_guard");
+	TagKey<DamageType> TRIGGERS_LAVA_BOOST = getTag(DAMAGE_TYPE, "triggers_lava_boost");
 
 	TagKey<EntityType<?>> RISING_STOMPABLE_NONMONSTERS = getTag(ENTITY_TYPE, "rising_stompable_nonmonsters");
 	TagKey<EntityType<?>> DODGES_MARIO_FIREBALL = getTag(ENTITY_TYPE, "dodges_mario_fireball");
@@ -24,6 +24,8 @@ public interface MQMTags {
 	TagKey<Block> SOMETIMES_CLIMBABLE_PANES = getTag(BLOCK, "mario_sometimes_climbable_panes");
 	TagKey<Block> UNSLIDEABLE_WALLS = getTag(BLOCK, "mario_unslideable_walls");
 	TagKey<Block> DESTROYED_BY_FIREBALL = getTag(BLOCK, "destroyed_by_mario_fireball");
+
+	TagKey<Fluid> PROHIBITS_LAVA_BOOST_EJECTION = getTag(FLUID, "prohibits_lava_boost_ejection");
 
 	private static <T> TagKey<T> getTag(RegistryKey<Registry<T>> key, String name) {
 		return TagKey.of(key, Identifier.of("mario_qua_mario", name));

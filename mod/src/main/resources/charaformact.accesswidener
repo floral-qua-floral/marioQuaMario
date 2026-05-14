@@ -7,3 +7,4 @@ extendable method net/minecraft/entity/LivingEntity onDismounted (Lnet/minecraft
 accessible field net/minecraft/client/render/entity/model/PlayerEntityModel cloak Lnet/minecraft/client/model/ModelPart;
 accessible method net/minecraft/client/render/entity/model/BipedEntityModel positionRightArm (Lnet/minecraft/entity/LivingEntity;)V
 accessible method net/minecraft/client/render/entity/model/BipedEntityModel positionLeftArm (Lnet/minecraft/entity/LivingEntity;)V
+accessible field net/minecraft/entity/Entity fluidHeight Lit/unimi/dsi/fastutil/objects/Object2DoubleMap;

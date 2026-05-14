@@ -30,9 +30,10 @@ public class ParsedGroundedAction extends AbstractParsedAction {
 	public boolean travelHook(CfaMoveableData data) {
 		data.jumpCapped = false;
 		this.GROUNDED_DEFINITION.travelHook(data, UniversalActionDefinitionHelper.INSTANCE);
-		if(data.isClient())
+		if(data.isClient() || data.getYVel() > 0)
 			UniversalActionDefinitionHelper.INSTANCE.applyGravity(data, GROUNDED_GRAVITY, GROUNDED_TERMINAL_VELOCITY);
-		else if(data.getYVel() <= 0) data.setYVel(-0.1);
+		else
+			if(data.getYVel() <= 0) data.setYVel(-0.1);
 		if(data.applyLevitation() && data.getYVel() < 0.05) data.setYVel(0.05);
 		return true;
 	}
