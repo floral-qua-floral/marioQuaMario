@@ -29,8 +29,10 @@ public interface CfaData {
 	int getBapStrength(Direction direction);
 
 	/**
-	 * @param clazz The class of the state data you intend to retrieve. Data of this class MUST have already been
-	 *              provided through CfaStateDefinition.provideStateData; consequences otherwise are unspecified!
+	 * @param clazz The class of the state data you intend to retrieve. Returns null if none of the player's current
+	 *              states have provided it via CfaStateDefinition.provideStateData. Unfortunately because of how this
+	 *              works, you must provide the exact class of the stored state data; trying to get a parent or child
+	 *              class will not find the data.
 	 * @return The state data of the requested class.
 	 */
 	<T> T retrieveStateData(Class<T> clazz);
