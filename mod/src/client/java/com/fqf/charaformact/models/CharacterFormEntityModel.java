@@ -36,7 +36,7 @@ public abstract class CharacterFormEntityModel extends PlayerEntityModel<Abstrac
 
 	public static TexturedModelData getTexturedModelData() {
 		Dilation dilation = Dilation.NONE;
-		ModelData modelData = BipedEntityModel.getModelData(dilation, 0.0F);
+		ModelData modelData = new ModelData();
 		ModelPartData modelPartData = modelData.getRoot();
 		modelPartData.addChild("ear", ModelPartBuilder.create().uv(24, 0).cuboid(-3.0F, -6.0F, -1.0F, 6.0F, 6.0F, 1.0F, dilation), ModelTransform.NONE);
 		modelPartData.addChild(

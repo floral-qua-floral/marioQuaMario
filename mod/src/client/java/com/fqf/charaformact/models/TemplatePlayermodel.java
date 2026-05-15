@@ -1,0 +1,67 @@
+package com.fqf.charaformact.models;
+
+import com.fqf.charaformact.CharaFormAct;
+import com.fqf.charaformact_api.model.CharacterFormModelDefinition;
+import com.fqf.charaformact_api.model.CharacterFormModelHelper;
+import net.minecraft.client.model.TexturedModelData;
+import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.NotNull;
+import org.joml.Vector2i;
+
+public class TemplatePlayermodel implements CharacterFormModelDefinition {
+	@Override
+	public @NotNull Identifier getID() {
+		return CharaFormAct.makeID("test_model");
+	}
+
+	@Override
+	public @NotNull Vector2i getTextureSize() {
+		return new Vector2i(64, 64);
+	}
+
+	@Override
+	public @NotNull Identifier getTextureLocation() {
+		return CharaFormAct.makeID("textures/entity/player/uwu/template.png");
+	}
+
+	@Override
+	public TexturedModelData getTexturedModelData(CharacterFormModelHelper helper) {
+		CharaFormAct.LOGGER.info("""
+				Test model information:
+				\tHead UV @ {}, {}  ->  {}, {}
+				\tHat UV @ {}, {}  ->  {}, {}
+				\tTorso UV @ {}, {}  ->  {}, {}
+				\tJacket UV @ {}, {}  ->  {}, {}
+				\tLeg UV @ {}, {}  ->  {}, {}
+				\tPants UV @ {}, {}  ->  {}, {}
+				\tArm UV @ {}, {}  ->  {}, {}
+				\tSleeve UV @ {}, {}  ->  {}, {}""",
+				this.getHeadUV().x, this.getHeadUV().y,
+				helper.getBottomRightCorner(getHeadUV(), getHeadSize()).x,
+				helper.getBottomRightCorner(getHeadUV(), getHeadSize()).y,
+				this.getHatUV(helper).x, this.getHatUV(helper).y,
+				helper.getBottomRightCorner(getHatUV(helper), getHeadSize()).x,
+				helper.getBottomRightCorner(getHatUV(helper), getHeadSize()).y,
+				this.getTorsoUV(helper).x, this.getTorsoUV(helper).y,
+				helper.getBottomRightCorner(getTorsoUV(helper), getTorsoSize()).x,
+				helper.getBottomRightCorner(getTorsoUV(helper), getTorsoSize()).y,
+				this.getJacketUV(helper).x, this.getJacketUV(helper).y,
+				helper.getBottomRightCorner(getJacketUV(helper), getTorsoSize()).x,
+				helper.getBottomRightCorner(getJacketUV(helper), getTorsoSize()).y,
+				this.getRightLegUV(helper).x, this.getRightLegUV(helper).y,
+				helper.getBottomRightCorner(getRightLegUV(helper), getLegSize()).x,
+				helper.getBottomRightCorner(getRightLegUV(helper), getLegSize()).y,
+				this.getRightPantsUV(helper).x, this.getRightPantsUV(helper).y,
+				helper.getBottomRightCorner(getRightPantsUV(helper), getLegSize()).x,
+				helper.getBottomRightCorner(getRightPantsUV(helper), getLegSize()).y,
+				this.getRightArmUV(helper).x, this.getRightArmUV(helper).y,
+				helper.getBottomRightCorner(getRightArmUV(helper), getArmSize()).x,
+				helper.getBottomRightCorner(getRightArmUV(helper), getArmSize()).y,
+				this.getRightSleeveUV(helper).x, this.getRightSleeveUV(helper).y,
+				helper.getBottomRightCorner(getRightSleeveUV(helper), getArmSize()).x,
+				helper.getBottomRightCorner(getRightSleeveUV(helper), getArmSize()).y
+		);
+
+		return CharacterFormModelDefinition.super.getTexturedModelData(helper);
+	}
+}

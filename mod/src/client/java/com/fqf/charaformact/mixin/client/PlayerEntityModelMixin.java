@@ -42,11 +42,11 @@ public abstract class PlayerEntityModelMixin<T extends LivingEntity> extends Bip
 	@Inject(method = "setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/BipedEntityModel;setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V", shift = At.Shift.AFTER))
 	private void handleCfaAnimations(T livingEntity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch, CallbackInfo ci) {
 		if(livingEntity instanceof AbstractClientPlayerEntity player && player.cfa$getCfaData().isEnabled()) {
-			player.cfa$getAnimationData().setAngles(
-					MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(true), player,
-					this.head, this.body, this.rightArm, this.leftArm, this.rightLeg, this.leftLeg,
-					this.rightArmPose, this.leftArmPose
-			);
+//			player.cfa$getAnimationData().setAngles(
+//					MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(true), player,
+//					this.head, this.body, this.rightArm, this.leftArm, this.rightLeg, this.leftLeg,
+//					this.rightArmPose, this.leftArmPose
+//			);
 		}
 	}
 }

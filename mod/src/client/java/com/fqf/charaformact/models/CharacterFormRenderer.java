@@ -6,12 +6,12 @@ import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.util.Identifier;
 
-public class CustomPlayerEntityRenderer extends PlayerEntityRenderer {
+public class CharacterFormRenderer extends PlayerEntityRenderer {
 	private final Identifier TEXTURE;
 
-	public CustomPlayerEntityRenderer(EntityRendererFactory.Context ctx) {
+	public CharacterFormRenderer(EntityRendererFactory.Context ctx, Identifier textureLocation) {
 		super(ctx, false);
-		this.TEXTURE = CharaFormAct.makeID("textures/entity/player/skeleton/skeleton.png");
+		this.TEXTURE = textureLocation;
 	}
 
 	@Override

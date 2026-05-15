@@ -1,7 +1,9 @@
 package com.fqf.charaformact.models;
 
-public class CharacterFormCombo {
+public record CharacterFormCombo(int numberoo) {
+
+
 	public String getName() {
-		return "placeholder";
+		return "placeholder " + this.numberoo;
 	}
 }
