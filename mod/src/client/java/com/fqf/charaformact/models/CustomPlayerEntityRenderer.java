@@ -1,5 +1,6 @@
 package com.fqf.charaformact.models;
 
+import com.fqf.charaformact.CharaFormAct;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
@@ -10,7 +11,7 @@ public class CustomPlayerEntityRenderer extends PlayerEntityRenderer {
 
 	public CustomPlayerEntityRenderer(EntityRendererFactory.Context ctx) {
 		super(ctx, false);
-		this.TEXTURE = Identifier.ofVanilla("textures/entity/goat/goat.png");
+		this.TEXTURE = CharaFormAct.makeID("textures/entity/player/skeleton/skeleton.png");
 	}
 
 	@Override

@@ -1,18 +1,17 @@
 package com.fqf.charaformact.mixin.client;
 
 import com.fqf.charaformact.CharaFormAct;
-import com.fqf.charaformact.CharaFormActClient;
 import com.fqf.charaformact.models.CfaPlayerModelHelper;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
-import net.minecraft.client.render.entity.model.PiglinEntityModel;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.mob.PiglinEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,10 +20,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(PlayerEntityRenderer.class)
 public class PlayerEntityRendererMixin {
 	@WrapOperation(method = "<init>", at = @At(value = "NEW", target = "(Lnet/minecraft/client/model/ModelPart;Z)Lnet/minecraft/client/render/entity/model/PlayerEntityModel;"))
-	private static PlayerEntityModel<AbstractClientPlayerEntity> uwu(ModelPart root, boolean thinArms, Operation<PlayerEntityModel<AbstractClientPlayerEntity>> original) {
+	private static PlayerEntityModel<AbstractClientPlayerEntity> uwu(ModelPart root, boolean thinArms, Operation<PlayerEntityModel<AbstractClientPlayerEntity>> original, @Local(argsOnly = true) EntityRendererFactory.Context ctx) {
 		if(CfaPlayerModelHelper.isMakingCustomRenderer()) {
 			CharaFormAct.LOGGER.info("Instantiating a custom player renderer! HOLY SMOKES!!!!");
-			return original.call(root, true);
+			return CfaPlayerModelHelper.getCustomModelForRenderer();
 		}
 		else {
 			CharaFormAct.LOGGER.info("Instantiating a vanilla player renderer, with {} arms!", thinArms ? "thin" : "wide");

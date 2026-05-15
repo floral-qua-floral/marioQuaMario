@@ -42,7 +42,4 @@ public class CharaFormAct implements ModInitializer {
 	public static Identifier makeID(String path) {
 		return Identifier.of("charaformact", path);
 	}
-	public static Identifier makeResID(String path) {
-		return Identifier.of(MOD_ID, path);
-	}
 }

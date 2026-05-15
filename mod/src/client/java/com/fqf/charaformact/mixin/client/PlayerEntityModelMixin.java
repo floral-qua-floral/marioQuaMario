@@ -47,7 +47,6 @@ public abstract class PlayerEntityModelMixin<T extends LivingEntity> extends Bip
 					this.head, this.body, this.rightArm, this.leftArm, this.rightLeg, this.leftLeg,
 					this.rightArmPose, this.leftArmPose
 			);
-			this.storedCloakTransform = this.cloak.getTransform();
 		}
 	}
 }
