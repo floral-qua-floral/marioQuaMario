@@ -7,15 +7,18 @@ import com.fqf.charaformact.util.CfaGamerules;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.hit.BlockHitResult;
+import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Objects;
@@ -23,6 +26,11 @@ import java.util.Objects;
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
 	@Shadow @Final MinecraftClient client;
+
+	@Inject(method = "renderHand", at = @At("HEAD"), cancellable = true)
+	private void skipRenderHandForNow(Camera camera, float tickDelta, Matrix4f matrix4f, CallbackInfo ci) {
+		ci.cancel();
+	}
 
 	@WrapOperation(method = "bobView", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(FFF)V"))
 	private void scaleBobbing(MatrixStack instance, float x, float y, float z, Operation<Void> original) {

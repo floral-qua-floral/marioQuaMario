@@ -4,7 +4,6 @@ import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.registries.RegistryManager;
 import com.fqf.charaformact.registries.power_granting.ParsedCharacter;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
-import com.tom.cpm.shared.io.ModelFile;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
@@ -51,7 +50,7 @@ public class PlayermodelListener implements SimpleSynchronousResourceReloadListe
 
 					if(form != null) {
 						CharaFormAct.LOGGER.info("Found model for character {} in form {}!", character.ID, formID);
-						ModelFile model = ModelFile.load(stream);
+//						ModelFile model = ModelFile.load(stream);
 //						ModelDefinition definition = MinecraftClientAccess.get().getDefinitionLoader().loadModel(model.getDataBlock(), MinecraftClientAccess.get().getClientPlayer());
 
 //						if(definition.hasRoot(RootModelType.CAPE)) {
@@ -65,7 +64,7 @@ public class PlayermodelListener implements SimpleSynchronousResourceReloadListe
 //						Vec3f i = MinecraftClientAccess.get().getDefinitionLoader().loadModel(model.getDataBlock(), MinecraftClientAccess.get().getClientPlayer()).getModelElementFor(RootModelType.CAPE).get().getPos();
 //						CharaFormAct.LOGGER.info("Cape position for this model: {}", i);
 
-						character.MODELS.put(form, model);
+//						character.MODELS.put(form, model);
 						if(!character.ID.getNamespace().equals(form.ID.getNamespace()))
 							CharaFormAct.LOGGER.info("They have different namespaces too! Look at you, being so compatible!");
 					}

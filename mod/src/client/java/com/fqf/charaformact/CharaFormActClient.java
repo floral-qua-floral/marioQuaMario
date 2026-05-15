@@ -6,7 +6,7 @@ import com.fqf.charaformact.util.CfaClientHelperManager;
 import net.fabricmc.api.ClientModInitializer;
 
 public class CharaFormActClient implements ClientModInitializer {
-	// This is in the client sources
+	public static boolean doingCustomPlayerModels = false;
 
 	@Override
 	public void onInitializeClient() {

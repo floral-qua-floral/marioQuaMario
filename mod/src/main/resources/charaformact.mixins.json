@@ -14,8 +14,6 @@
     "ServerPlayerCfaDataMixin",
     "ServerPlayerEntityMixin",
     "ServerPlayNetworkHandlerMixin",
-    "compat.CPMCommonBaseMixin",
-    "compat.CPMNetHandlerMixin",
     "compat.LivingEntityEmptyTravelMixin"
   ],
   "injectors": {

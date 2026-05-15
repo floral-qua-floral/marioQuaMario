@@ -11,6 +11,7 @@
     "ClientPlayerEntityMixin",
     "ClientPlayNetworkHandlerMixin",
     "EntityRenderDispatcherMixin",
+    "EntityRenderersMixin",
     "GameRendererMixin",
     "HeldItemRendererMixin",
     "InGameHudMixin",
@@ -18,7 +19,6 @@
     "OtherClientPlayerEntityCfaDataMixin",
     "PlayerEntityModelMixin",
     "PlayerEntityRendererMixin",
-    "compat.CPMClientBaseMixin",
     "compat.FlashbackSyncOnRecordingStartMixin",
     "compat.SodiumLevelSliceMixin"
   ],

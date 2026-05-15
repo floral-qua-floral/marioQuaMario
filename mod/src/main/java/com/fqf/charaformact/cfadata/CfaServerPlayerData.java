@@ -4,7 +4,6 @@ import com.fqf.charaformact.packets.CfaDataPackets;
 import com.fqf.charaformact.util.CfaGamerules;
 import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact.CharaFormAct;
-import com.fqf.charaformact.compat.required.CPMCompat;
 import com.fqf.charaformact.registries.RegistryManager;
 import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import com.fqf.charaformact.registries.actions.ParsedActionHelper;
@@ -14,9 +13,7 @@ import com.fqf.charaformact.registries.actions.parsed.ParsedWallboundAction;
 import com.fqf.charaformact.registries.power_granting.ParsedCharacter;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
-import com.tom.cpm.shared.io.ModelFile;
 import net.minecraft.entity.MovementType;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
@@ -56,7 +53,7 @@ public class CfaServerPlayerData extends CfaMoveableData implements CfaAuthorita
 	public void updatePassiveUniversalTraits(boolean enabled) {
 		super.updatePassiveUniversalTraits(enabled);
 		if(enabled) this.updatePlayerModel();
-		else CPMCompat.getCommonAPI().resetPlayerModel(PlayerEntity.class, this.getPlayer());
+//		else CPMCompat.getCommonAPI().resetPlayerModel(PlayerEntity.class, this.getPlayer());
 	}
 
 	@Override
@@ -156,14 +153,14 @@ public class CfaServerPlayerData extends CfaMoveableData implements CfaAuthorita
 	}
 
 	private boolean updatePlayerModel(ParsedForm form) {
-		ModelFile newModel = this.getCharacter().MODELS.get(form);
-		if(newModel == null) {
-			CharaFormAct.LOGGER.error("Attempting to set {}'s form, however there is no model for combination {} + {}!",
-					this.getPlayer().getName().getString(), this.getCharacterID(), form.ID);
-			return false;
-		}
-		if(this.getPlayer().networkHandler != null)
-			CPMCompat.getCommonAPI().setPlayerModel(PlayerEntity.class, this.getPlayer(), newModel, true);
+//		ModelFile newModel = this.getCharacter().MODELS.get(form);
+//		if(newModel == null) {
+//			CharaFormAct.LOGGER.error("Attempting to set {}'s form, however there is no model for combination {} + {}!",
+//					this.getPlayer().getName().getString(), this.getCharacterID(), form.ID);
+//			return false;
+//		}
+//		if(this.getPlayer().networkHandler != null)
+//			CPMCompat.getCommonAPI().setPlayerModel(PlayerEntity.class, this.getPlayer(), newModel, true);
 		return true;
 	}
 	public void updatePlayerModel() {
