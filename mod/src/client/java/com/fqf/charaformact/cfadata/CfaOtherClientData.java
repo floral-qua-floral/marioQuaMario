@@ -1,11 +1,14 @@
 package com.fqf.charaformact.cfadata;
 
+import com.fqf.charaformact.models.CfaPlayerModelHelper;
 import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.cfadata.util.RecordedCollisionSet;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.OtherClientPlayerEntity;
+import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
@@ -40,6 +43,15 @@ public class CfaOtherClientData extends CfaPlayerData implements CfaClientDataIm
 		this.replaceAnimationNextTick = true;
 		this.nextTickAnimation = action.ANIMATION;
 		super.setActionTransitionless(action);
+	}
+
+	private EntityRenderer<AbstractClientPlayerEntity> storedRenderer;
+	@Override public void updateCharacterFormCombo() {
+		super.updateCharacterFormCombo();
+		this.storedRenderer = CfaPlayerModelHelper.findCustomRendererFor(this);
+	}
+	@Override public EntityRenderer<AbstractClientPlayerEntity> getStoredRenderer() {
+		return this.storedRenderer;
 	}
 
 	private double prevX, prevY, prevZ, deltaX, deltaY, deltaZ;

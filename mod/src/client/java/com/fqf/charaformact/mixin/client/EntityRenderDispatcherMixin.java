@@ -1,6 +1,7 @@
 package com.fqf.charaformact.mixin.client;
 
 import com.fqf.charaformact.bapping.BlockBappingClientUtil;
+import com.fqf.charaformact.cfadata.CfaClientDataImpl;
 import com.fqf.charaformact.cfadata.CfaPlayerData;
 import com.fqf.charaformact.models.CfaPlayerModelHelper;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -32,13 +33,10 @@ public class EntityRenderDispatcherMixin {
 	@Inject(method = "getRenderer", at = @At("HEAD"), cancellable = true)
 	private <T extends Entity> void getAlternateRendererForCharacters(T entity, CallbackInfoReturnable<EntityRenderer<? super T>> cir) {
 		if(entity instanceof AbstractClientPlayerEntity player) {
-			CfaPlayerData data = player.cfa$getCfaData();
-			if(data.isEnabled()) {
-				// Try to find a custom renderer associated with the player's current Character and Form.
-				// If that fails, try to find one associated with the player's Character and its default Form.
-				// If that also fails, just let the player use a vanilla renderer. :/
-
-				cir.setReturnValue((EntityRenderer<? super T>) CfaPlayerModelHelper.getRenderer(player));
+			EntityRenderer<AbstractClientPlayerEntity> storedRenderer = ((CfaClientDataImpl) player.cfa$getCfaClientData()).getStoredRenderer();
+			if(storedRenderer != null) {
+				//noinspection unchecked
+				cir.setReturnValue((EntityRenderer<? super T>) storedRenderer);
 			}
 		}
 	}

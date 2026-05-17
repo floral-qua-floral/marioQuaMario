@@ -28,6 +28,12 @@
 
 		"modmenu": [
 			"com.fqf.charaformact.util.ModMenuIntegration"
+		],
+
+		"cfa-character-form-models": [
+			"com.fqf.charaformact.models.temp.TemplatePlayermodel",
+			"com.fqf.charaformact.models.temp.GradientPlayermodel",
+			"com.fqf.charaformact.models.temp.SmallPlayermodel"
 		]
 	},
 	"mixins": [

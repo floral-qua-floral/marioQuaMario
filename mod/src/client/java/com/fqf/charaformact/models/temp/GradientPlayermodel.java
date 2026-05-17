@@ -1,18 +1,23 @@
-package com.fqf.charaformact.models;
+package com.fqf.charaformact.models.temp;
 
 import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact_api.model.CharacterFormModelDefinition;
 import com.fqf.charaformact_api.model.CharacterFormModelHelper;
-import net.minecraft.client.model.TexturedModelData;
+import net.minecraft.client.model.ModelData;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2i;
 import org.joml.Vector3i;
 
 public class GradientPlayermodel implements CharacterFormModelDefinition {
-	@Override
-	public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier getID() {
 		return CharaFormAct.makeID("gradient");
+	}
+	@Override public @NotNull Identifier getCharacterID() {
+		return Identifier.of("mario_qua_mario", "toadette");
+	}
+	@Override public @NotNull Identifier getFormID() {
+		return Identifier.of("mario_qua_mario", "super");
 	}
 
 	@Override
@@ -46,7 +51,7 @@ public class GradientPlayermodel implements CharacterFormModelDefinition {
 	}
 
 	@Override
-	public TexturedModelData getTexturedModelData(CharacterFormModelHelper helper) {
+	public ModelData getModelData(CharacterFormModelHelper helper) {
 		CharaFormAct.LOGGER.info("""
 				Gradient model information:
 				\tHead UV @ {}, {}  ->  {}, {}
@@ -83,6 +88,6 @@ public class GradientPlayermodel implements CharacterFormModelDefinition {
 				helper.getBottomRightCorner(getRightSleeveUV(helper), getArmSize()).y
 		);
 
-		return CharacterFormModelDefinition.super.getTexturedModelData(helper);
+		return CharacterFormModelDefinition.super.getModelData(helper);
 	}
 }

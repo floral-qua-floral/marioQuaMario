@@ -2,6 +2,7 @@ package com.fqf.charaformact.cfadata;
 
 import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.registries.actions.parsed.ParsedWallboundAction;
+import com.fqf.charaformact.registries.power_granting.CharacterFormCombo;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
 import com.fqf.charaformact.util.CfaStatCalculationHelper;
 import com.fqf.charaformact.util.DirectionBasedWallInfo;
@@ -132,7 +133,10 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 	}
 	private final Set<String> POWERS = new HashSet<>();
 	private final List<StatAlteringStateDefinition.AttributeModifierInstruction> ATTRIBUTE_MODIFIERS = new ArrayList<>();
+	private CharacterFormCombo characterFormCombo;
 	public void updateCharacterFormCombo() {
+		this.characterFormCombo = new CharacterFormCombo(this.getCharacter(), this.getForm());
+
 		// Clear all power strings
 		this.POWERS.clear();
 
@@ -189,6 +193,9 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 	}
 	@Override public boolean hasPower(String power) {
 		return this.isEnabled() && this.POWERS.contains(power);
+	}
+	public CharacterFormCombo getCharacterFormCombo() {
+		return this.characterFormCombo;
 	}
 
 	public void setupVariablesBeforeInitialApply(ParsedCharacter character, ParsedForm form) {

@@ -6,6 +6,7 @@
   "text.autoconfig.charaformact.option.bufferLength": "Input buffer length (ticks)",
   "text.autoconfig.charaformact.option.specialHUD": "Debugging HUD",
   "text.autoconfig.charaformact.option.logAllActionTransitions": "Log all action transitions",
+  "text.autoconfig.charaformact.option.logCharacterFormModelUVs": "Log custom playermodel UVs",
   "text.autoconfig.charaformact.option.logNBTReadWrite": "Log reads & writes to NBT",
   "text.autoconfig.charaformact.option.logActionTransitionInjections": "Log action transition injections",
   "text.autoconfig.charaformact.option.allowIllegalTransitionsInSingleplayer": "Skip transition verification in Singleplayer",

@@ -2,6 +2,7 @@ package com.fqf.charaformact.cfadata;
 
 import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.bapping.BlockBappingUtil;
+import com.fqf.charaformact.models.CfaPlayerModelHelper;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
 import com.fqf.charaformact.util.BlockCollisionFinder;
 import com.fqf.charaformact.util.DirectionBasedWallInfo;
@@ -19,7 +20,9 @@ import com.fqf.charaformact_api.cfadata.util.RecordedCollision;
 import com.fqf.charaformact_api.cfadata.util.RecordedCollisionSet;
 import it.unimi.dsi.fastutil.objects.ObjectDoublePair;
 import net.minecraft.client.input.Input;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.entity.MovementType;
 import net.minecraft.network.packet.CustomPayload;
@@ -100,6 +103,15 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 			this.attemptFinish = false;
 		}
 		else this.getPlayer().cfa$getAnimationData().mutate(cameraArrangement, this.currentCameraAnimation.mutator(), this, progress);
+	}
+
+	private EntityRenderer<AbstractClientPlayerEntity> storedRenderer;
+	@Override public void updateCharacterFormCombo() {
+		super.updateCharacterFormCombo();
+		this.storedRenderer = CfaPlayerModelHelper.findCustomRendererFor(this);
+	}
+	@Override public EntityRenderer<AbstractClientPlayerEntity> getStoredRenderer() {
+		return this.storedRenderer;
 	}
 
 	@Override public void tick() {
