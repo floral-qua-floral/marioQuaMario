@@ -34,14 +34,12 @@ public class ArmorFeatureRendererMixin<T extends LivingEntity, A extends BipedEn
 			Operation<Void> original
 	) {
 		if(ModelPartMover.instance != null) {
-			switch(armorSlot) {
-				case HEAD, FEET -> {
-					ModelPartMover.instance.setTo(TransformationContext.ARMOR_OUTER);
-				}
-				case LEGS -> {
-					ModelPartMover.instance.setTo(TransformationContext.ARMOR_INNER);
-				}
-			}
+			TransformationContext context = switch(armorSlot) {
+				case LEGS -> TransformationContext.ARMOR_INNER;
+				case FEET, CHEST, HEAD -> TransformationContext.ARMOR_OUTER;
+				default -> null;
+			};
+			if(context != null) ModelPartMover.instance.setTo(context);
 		}
 		original.call(instance, matrices, vertexConsumers, entity, armorSlot, light, model);
 	}

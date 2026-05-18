@@ -195,8 +195,8 @@ public interface CharacterFormModelDefinition {
 	}
 
 	// Methods for transforming features on various parts of the body such as armor and other equipment.
-	// This is meant to be maximally compatible. Default implementations try to find a balance between not scaling
-	// features too heavily if possible, while also making sure they fit well enough.
+	// This is meant to be maximally compatible. Default implementations tries to maintain armor's aspect ratio when
+	// possible, and attempts sensible defaults for other features.
 	default FeatureTransformationInstructions getHelmetTransformation() {
 		return new FeatureTransformationInstructions(
 				0, 0, 0,
@@ -206,6 +206,10 @@ public interface CharacterFormModelDefinition {
 	}
 	default FeatureTransformationInstructions getHatTransformation() {
 		// Not the 3D hat layer. This is for mods which add hats, such as the Villager Hats or Simple Hats mods.
+		Vector3i headSize = this.getHeadSize();
+		if(Math.abs(headSize.x - headSize.z) <= 2) {
+			// Attempt to preserve the aspect ratio
+		}
 		return this.getHelmetTransformation();
 	}
 	default FeatureTransformationInstructions getUnknownHeadFeatureTransformation() {
@@ -219,9 +223,9 @@ public interface CharacterFormModelDefinition {
 	default FeatureTransformationInstructions getCuirassTransformation() {
 		// A cuirass is the largest part of a chestplate, that covers the whole torso.
 		return new FeatureTransformationInstructions(
+				30, 0, 20,
 				0, 0, 0,
-				0, 0, 0,
-				1, 1, 1
+				1, 2, 1
 		);
 	}
 	default FeatureTransformationInstructions getFauldTransformation() {

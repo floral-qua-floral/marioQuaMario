@@ -63,9 +63,6 @@ public class LivingEntityRendererMixin<T extends LivingEntity> {
 		if(applyRef.get()) {
 			TransformationContext context = getTransformationContext(instance);
 			if(context != null) ModelPartMover.instance.setTo(context);
-			// Decide which transformation context to use
-//			TransformationContext context;
-//			if(featureIsArmor(instance)) context = ARMO
 		}
 		original.call(instance, matrices, vertexConsumers, light, entity, limbAngle, limbDistance, tickDelta, animationProgress, headYaw, headPitch);
 	}
@@ -73,7 +70,7 @@ public class LivingEntityRendererMixin<T extends LivingEntity> {
 	@Unique
 	private static TransformationContext getTransformationContext(FeatureRenderer<?, ?> feature) {
 		if(feature instanceof HeldItemFeatureRenderer<?, ?>) return TransformationContext.ORIGINAL;
-		if(featureIsArmor(feature)) return null; // If it's armor, we want to handle it piece by piece!
+		if(featureIsArmor(feature)) return null; // If it's armor, we'll handle it slot-by-slot in ArmorFeatureRendererMixin.
 		if(featureIsSpecial(feature)) return TransformationContext.SPECIAL;
 		return TransformationContext.UNKNOWN;
 	}

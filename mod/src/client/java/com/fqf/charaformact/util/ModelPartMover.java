@@ -134,9 +134,8 @@ public class ModelPartMover {
 	public void setTo(TransformationContext context) {
 		// There's no need to reset everything again if we're already there! Take it easy!
 		if(context == this.currentContext) return;
+
 		this.TRANSFORMATIONS.forEach((vanillaPart, elaborateTransformationGroup) -> {
-//			CharaFormAct.LOGGER.info("Transforming {} with context {}!\n\tNew status: {}",
-//					vanillaPart, context, this.TRANSFORMATIONS.get(vanillaPart).get(context));
 			UsableTransformation transformation = this.TRANSFORMATIONS.get(vanillaPart).get(context);
 			if(transformation != null) transformation.apply(vanillaPart.of(this.ENTITY_MODEL));
 		});
