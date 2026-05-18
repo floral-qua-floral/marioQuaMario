@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_21",
   "client": [
     "AbstractClientPlayerEntityCfaDataMixin",
+    "AbstractClientPlayerEntityMixin",
     "BipedEntityModelMixin",
     "CameraMixin",
     "ChunkRendererRegionMixin",
@@ -13,6 +14,7 @@
     "EntityRenderDispatcherMixin",
     "EntityRenderersMixin",
     "GameRendererMixin",
+    "HeldItemFeatureRendererMixin",
     "HeldItemRendererMixin",
     "InGameHudMixin",
     "MinecraftClientMixin",

@@ -1,7 +1,7 @@
 package com.fqf.charaformact.mixin.client;
 
 import com.fqf.charaformact.CharaFormAct;
-import com.fqf.charaformact.models.CfaPlayerModelHelper;
+import com.fqf.charaformact.models.PlayerModelCollector;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -20,9 +20,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class PlayerEntityRendererMixin {
 	@WrapOperation(method = "<init>", at = @At(value = "NEW", target = "(Lnet/minecraft/client/model/ModelPart;Z)Lnet/minecraft/client/render/entity/model/PlayerEntityModel;"))
 	private static PlayerEntityModel<AbstractClientPlayerEntity> uwu(ModelPart root, boolean thinArms, Operation<PlayerEntityModel<AbstractClientPlayerEntity>> original, @Local(argsOnly = true) EntityRendererFactory.Context ctx) {
-		if(CfaPlayerModelHelper.isMakingCustomRenderer()) {
+		if(PlayerModelCollector.isMakingCustomRenderer()) {
 			CharaFormAct.LOGGER.info("Instantiating a custom player renderer! HOLY SMOKES!!!!");
-			return CfaPlayerModelHelper.getCustomModelForRenderer();
+			return PlayerModelCollector.getCustomModelForRenderer();
 		}
 		else {
 			CharaFormAct.LOGGER.info("Instantiating a vanilla player renderer, with {} arms!", thinArms ? "thin" : "wide");

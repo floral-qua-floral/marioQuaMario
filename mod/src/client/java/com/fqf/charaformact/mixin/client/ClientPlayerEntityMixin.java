@@ -58,11 +58,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 		return (!this.cfa$getCfaData().doCustomTravel() || instance.isOnGround()) && original.call(instance);
 	}
 
-	@Override
-	public @NotNull CfaMainClientData cfa$getCfaData() {
-		throw new AssertionError("?!");
-	}
-
 	@Inject(method = "shouldSlowDown", at = @At("HEAD"), cancellable = true)
 	private void preventSlowDown(CallbackInfoReturnable<Boolean> cir) {
 		if(this.cfa$getCfaData().doCustomTravel()) cir.setReturnValue(false);

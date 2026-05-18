@@ -2,8 +2,6 @@ package com.fqf.charaformact.mixin.client;
 
 import com.fqf.charaformact.bapping.BlockBappingClientUtil;
 import com.fqf.charaformact.cfadata.CfaClientDataImpl;
-import com.fqf.charaformact.cfadata.CfaPlayerData;
-import com.fqf.charaformact.models.CfaPlayerModelHelper;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -12,7 +10,6 @@ import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.math.Vec3d;
-import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -33,7 +30,7 @@ public class EntityRenderDispatcherMixin {
 	@Inject(method = "getRenderer", at = @At("HEAD"), cancellable = true)
 	private <T extends Entity> void getAlternateRendererForCharacters(T entity, CallbackInfoReturnable<EntityRenderer<? super T>> cir) {
 		if(entity instanceof AbstractClientPlayerEntity player) {
-			EntityRenderer<AbstractClientPlayerEntity> storedRenderer = ((CfaClientDataImpl) player.cfa$getCfaClientData()).getStoredRenderer();
+			EntityRenderer<AbstractClientPlayerEntity> storedRenderer = player.cfa$getModelData().getRenderer();
 			if(storedRenderer != null) {
 				//noinspection unchecked
 				cir.setReturnValue((EntityRenderer<? super T>) storedRenderer);

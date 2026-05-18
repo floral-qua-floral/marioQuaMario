@@ -13,24 +13,23 @@ import com.google.common.collect.ImmutableMap;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.minecraft.client.model.ModelData;
 import net.minecraft.client.model.TexturedModelData;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Pair;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
 import java.util.Map;
 
-public class CfaPlayerModelHelper {
-	private static Map<CharacterFormCombo, CharacterFormModelDefinition> modelDefinitions;
-	private static Map<CharacterFormCombo, EntityRenderer<AbstractClientPlayerEntity>> renderers;
+public class PlayerModelCollector {
+	private static Map<CharacterFormCombo, ParsedCharacterFormModel> parsedModels;
+	private static Map<CharacterFormCombo, Pair<ParsedCharacterFormModel, CharacterFormRenderer>> modelsAndRenderers;
 
 	private static @Nullable CharacterFormEntityModel customModelForRenderer;
 
-	public static void registerCharacterFormCombos() {
-		ImmutableMap.Builder<CharacterFormCombo, CharacterFormModelDefinition> builder = ImmutableMap.builder();
+	public static void parseModelDefinitions() {
+		ImmutableMap.Builder<CharacterFormCombo, ParsedCharacterFormModel> builder = ImmutableMap.builder();
 
 		for(CharacterFormModelDefinition definition : RegistryManager.getEntrypoints("cfa-character-form-models", CharacterFormModelDefinition.class)) {
 			Identifier modelID = definition.getID();
@@ -49,11 +48,11 @@ public class CfaPlayerModelHelper {
 				CharaFormAct.LOGGER.info("Found a playermodel with ID {}, for the character {} in the form {}. Yay!",
 						modelID, characterID, formID);
 				EntityModelLayerRegistry.registerModelLayer(definition.getModelLayer(), () -> getTexturedModelDataFor(definition));
-				builder.put(new CharacterFormCombo(character, form), definition);
+				builder.put(new CharacterFormCombo(character, form), new ParsedCharacterFormModel(definition, character, form));
 			}
 		};
 
-		modelDefinitions = builder.build();
+		parsedModels = builder.build();
 	}
 
 	private static TexturedModelData getTexturedModelDataFor(CharacterFormModelDefinition definition) {
@@ -64,7 +63,7 @@ public class CfaPlayerModelHelper {
 			// i'm sorry this code is unbearably garbage but i just mashed it together for a quick test and i don't wanna rewrite it
 			CharacterFormModelHelper helper = CharacterFormModelHelperImpl.INSTANCE;
 			CharaFormAct.LOGGER.info("""
-				Test model information:
+				{}'s UV information:
 				\tHead UV @ {}, {}  ->  {}, {}
 				\tHat UV @ {}, {}  ->  {}, {}
 				\tTorso UV @ {}, {}  ->  {}, {}
@@ -73,6 +72,7 @@ public class CfaPlayerModelHelper {
 				\tPants UV @ {}, {}  ->  {}, {}
 				\tArm UV @ {}, {}  ->  {}, {}
 				\tSleeve UV @ {}, {}  ->  {}, {}""",
+					definition.getID(),
 					definition.getHeadUV().x, definition.getHeadUV().y,
 					helper.getBottomRightCorner(definition.getHeadUV(), definition.getHeadSize()).x,
 					helper.getBottomRightCorner(definition.getHeadUV(), definition.getHeadSize()).y,
@@ -101,39 +101,34 @@ public class CfaPlayerModelHelper {
 		}
 
 		// Add deadmau5's stupid ear which is required or else the game will crash
-		CharacterFormModelHelperImpl.INSTANCE.makeInvisiblePart(modelData.getRoot(), "ear", new Vector3f(), false);
+		if(modelData.getRoot().getChild("ear") == null)
+			CharacterFormModelHelperImpl.INSTANCE.makeInvisiblePart(modelData.getRoot(), "ear", new Vector3f(), false);
 
 		return TexturedModelData.of(modelData, textureSize.x, textureSize.y);
 	}
 
 	public static void reloadCustomPlayerRenderers(EntityRendererFactory.Context ctx) {
 		try {
-			ImmutableMap.Builder<CharacterFormCombo, EntityRenderer<AbstractClientPlayerEntity>> builder = ImmutableMap.builder();
-			for(Map.Entry<CharacterFormCombo, CharacterFormModelDefinition> entry : modelDefinitions.entrySet()) {
+			ImmutableMap.Builder<CharacterFormCombo, Pair<ParsedCharacterFormModel, CharacterFormRenderer>> builder = ImmutableMap.builder();
+			for(Map.Entry<CharacterFormCombo, ParsedCharacterFormModel> entry : parsedModels.entrySet()) {
 				try {
-					CharacterFormModelDefinition def = entry.getValue();
-					customModelForRenderer = def.getModel(ctx.getPart(def.getModelLayer()));
-					builder.put(entry.getKey(), new CharacterFormRenderer(ctx, def.getTextureLocation()));
+					ParsedCharacterFormModel model = entry.getValue();
+					customModelForRenderer = model.getModel(ctx);
+					CharacterFormRenderer renderer = new CharacterFormRenderer(ctx, model.TEXTURE_LOCATION);
+					builder.put(entry.getKey(), new Pair<>(model, renderer));
 				} catch(Exception exception) {
 					throw new IllegalArgumentException("Failed to create player model for " + entry.getKey(), exception);
 				}
 			}
-			renderers = builder.build();
+			modelsAndRenderers = builder.build();
 		}
 		finally {
 			customModelForRenderer = null;
 		}
 	}
 
-	public static @Nullable EntityRenderer<AbstractClientPlayerEntity> findCustomRendererFor(CfaPlayerData data) {
-		if(!data.isEnabled()) return null;
-		EntityRenderer<AbstractClientPlayerEntity> renderer = renderers.get(new CharacterFormCombo(
-				data.getCharacter(), data.getForm()
-		));
-		if(renderer == null) return renderers.get(new CharacterFormCombo(
-				data.getCharacter(), data.getCharacter().INITIAL_FORM
-		));
-		return renderer;
+	public static @Nullable Pair<ParsedCharacterFormModel, CharacterFormRenderer> getModelAndRenderer(CharacterFormCombo combo) {
+		return modelsAndRenderers.get(combo);
 	}
 
 	public static @Nullable CharacterFormEntityModel getCustomModelForRenderer() {

@@ -25,7 +25,7 @@ public class SmallPlayermodel implements CharacterFormModelDefinition {
 
 	@Override
 	public @NotNull Identifier getTextureLocation() {
-		return CharaFormAct.makeID("textures/entity/player/uwu/gradient.png");
+		return CharaFormAct.makeID("textures/entity/player/uwu/template_small.png");
 	}
 
 	@Override

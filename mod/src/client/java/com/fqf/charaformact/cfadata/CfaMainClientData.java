@@ -2,7 +2,8 @@ package com.fqf.charaformact.cfadata;
 
 import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.bapping.BlockBappingUtil;
-import com.fqf.charaformact.models.CfaPlayerModelHelper;
+import com.fqf.charaformact.models.PlayerModelCollector;
+import com.fqf.charaformact.models.CharacterFormRenderer;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
 import com.fqf.charaformact.util.BlockCollisionFinder;
 import com.fqf.charaformact.util.DirectionBasedWallInfo;
@@ -36,9 +37,11 @@ import java.util.*;
 
 public class CfaMainClientData extends CfaMoveableData implements CfaClientDataImpl {
 	private final ClientPlayerEntity PLAYER;
+	public final CfaModelData<CfaMainClientData> MODEL_DATA;
 	public CfaMainClientData(ClientPlayerEntity player) {
 		super();
 		this.PLAYER = player;
+		this.MODEL_DATA = new CfaModelData<>(this);
 	}
 	@Override public ClientPlayerEntity getPlayer() {
 		return PLAYER;
@@ -105,13 +108,9 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 		else this.getPlayer().cfa$getAnimationData().mutate(cameraArrangement, this.currentCameraAnimation.mutator(), this, progress);
 	}
 
-	private EntityRenderer<AbstractClientPlayerEntity> storedRenderer;
 	@Override public void updateCharacterFormCombo() {
 		super.updateCharacterFormCombo();
-		this.storedRenderer = CfaPlayerModelHelper.findCustomRendererFor(this);
-	}
-	@Override public EntityRenderer<AbstractClientPlayerEntity> getStoredRenderer() {
-		return this.storedRenderer;
+		this.MODEL_DATA.updateCharacterFormCombo();
 	}
 
 	@Override public void tick() {
@@ -119,6 +118,7 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 		this.getAction().clientTick(this, true);
 		this.getForm().clientTick(this, true);
 		this.getCharacter().clientTick(this, true);
+		this.MODEL_DATA.tick();
 	}
 
 	private final WallInfoWithInputs WALL_INFO = new WallInfoWithInputs(this);

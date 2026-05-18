@@ -1,7 +1,5 @@
 package com.fqf.charaformact.cfadata;
 
-import com.fqf.charaformact.models.CfaPlayerModelHelper;
-import com.fqf.charaformact.registries.power_granting.CharacterFormCombo;
 import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.HandPreference;
@@ -21,7 +19,6 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -169,6 +166,4 @@ public interface CfaClientDataImpl extends CfaAnimatingData {
 	default float getRelativeHeadYaw() {
 		return 0;
 	}
-
-	EntityRenderer<AbstractClientPlayerEntity> getStoredRenderer();
 }

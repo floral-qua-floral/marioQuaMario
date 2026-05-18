@@ -24,4 +24,6 @@ public class AbstractClientPlayerEntityCfaDataMixin implements AdvCfaAbstractCli
 	private void tickAnimationData(CallbackInfo ci) {
 		this.cfa$getAnimationData().tick((AbstractClientPlayerEntity) (Object) this);
 	}
+
+
 }

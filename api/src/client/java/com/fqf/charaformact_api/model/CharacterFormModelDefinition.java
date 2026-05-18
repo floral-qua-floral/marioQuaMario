@@ -1,7 +1,6 @@
 package com.fqf.charaformact_api.model;
 
 import net.minecraft.client.model.*;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.client.render.entity.model.EntityModelPartNames;
 import net.minecraft.util.Identifier;
@@ -104,7 +103,7 @@ public interface CharacterFormModelDefinition {
 	}
 	default Vector3f getRightLegPivot() {
 		Vector3i torsoSize = this.getTorsoSize();
-		return new Vector3f(torsoSize.x / 4F, torsoSize.y + getYOffset(), 0);
+		return new Vector3f(torsoSize.x / -4F, torsoSize.y + getYOffset(), 0);
 	}
 
 	// Methods for creating the vanilla parts.
@@ -171,8 +170,28 @@ public interface CharacterFormModelDefinition {
 	// Please feel free to override this to return a custom class extending CharaFormEntityModel, if you like.
 	// This will give you lots of control over the player's rendering logic.
 	// If you do, I'd recommend still calling super on any methods you override.
-	default CharacterFormEntityModel getModel(ModelPart root) {
+	default CharacterFormEntityModel createModel(ModelPart root) {
 		return new CharacterFormEntityModel(root);
+	}
+
+	// Affects how the vanilla walk animation scales with the player's motion. This won't affect the maximum magnitude
+	// of the swinging, only how much speed is required to reach that maximum magnitude.
+	default float getLimbSwingMultiplier() {
+		return 12F / this.getLegSize().y;
+	}
+
+	// Methods for deciding where on the arm held items will render.
+	// Default implementation imitates vanilla logic, although getHeldShieldPosition has special behavior to prevent
+	// an issue where especially short-armed models (~4 px) would hold a shield above their shoulder.
+	default Vector3f getHeldItemPosition() {
+		Vector3i armSize = this.getArmSize();
+		return new Vector3f(0.25F * armSize.x, armSize.y * -0.8333333F, 0.5F * armSize.z);
+	}
+	default Vector3f getHeldShieldPosition() {
+		Vector3f heldItemPosition = this.getHeldItemPosition();
+		Vector3i armSize = this.getArmSize();
+
+		return new Vector3f(heldItemPosition.x, Math.min(heldItemPosition.y, -3.25F - armSize.y / 2F), heldItemPosition.z);
 	}
 
 	default ModelData getModelData(CharacterFormModelHelper helper) {

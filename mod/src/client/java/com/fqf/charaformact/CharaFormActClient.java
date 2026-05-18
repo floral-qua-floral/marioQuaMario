@@ -1,6 +1,6 @@
 package com.fqf.charaformact;
 
-import com.fqf.charaformact.models.CfaPlayerModelHelper;
+import com.fqf.charaformact.models.PlayerModelCollector;
 import com.fqf.charaformact.packets.CfaClientPacketHelper;
 import com.fqf.charaformact.util.CfaClientEventListeners;
 import com.fqf.charaformact.util.CfaClientHelperManager;
@@ -18,6 +18,6 @@ public class CharaFormActClient implements ClientModInitializer {
 
 		CfaClientEventListeners.register();
 
-		CfaPlayerModelHelper.registerCharacterFormCombos();
+		PlayerModelCollector.parseModelDefinitions();
 	}
 }

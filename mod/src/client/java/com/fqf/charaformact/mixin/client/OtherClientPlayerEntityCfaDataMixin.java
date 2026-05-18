@@ -1,9 +1,9 @@
 package com.fqf.charaformact.mixin.client;
 
+import com.fqf.charaformact.cfadata.CfaModelData;
 import com.fqf.charaformact.cfadata.CfaOtherClientData;
 import com.fqf.charaformact.cfadata.injections.AdvCfaOtherClientDataHolder;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
-import com.fqf.charaformact.cfadata.CfaPlayerData;
 import com.fqf.charaformact_api.cfadata.injections.CfaClientDataHolder;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.network.OtherClientPlayerEntity;
@@ -25,7 +25,7 @@ public class OtherClientPlayerEntityCfaDataMixin implements AdvCfaOtherClientDat
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void constructorHook(ClientWorld clientWorld, GameProfile gameProfile, CallbackInfo ci) {
-		this.cfa$setCfaData(this.cfaData);
+		this.cfaData.initialApply();
 	}
 
 	@Override
@@ -34,8 +34,8 @@ public class OtherClientPlayerEntityCfaDataMixin implements AdvCfaOtherClientDat
 	}
 
 	@Override
-	public void cfa$setCfaData(CfaPlayerData replacementData) {
-		this.cfaData = (CfaOtherClientData) replacementData;
-		replacementData.initialApply();
+	public @NotNull CfaModelData<CfaOtherClientData> cfa$getModelData() {
+		return this.cfaData.MODEL_DATA;
 	}
+
 }
