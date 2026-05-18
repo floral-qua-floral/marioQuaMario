@@ -29,6 +29,16 @@ public class CharacterFormEntityModel extends PlayerEntityModel<AbstractClientPl
 		ModelPart wingsParent = this.getWingsParent(root);
 		this.rightWing = this.getOptionalModelPart(wingsParent, EntityModelPartNames.RIGHT_WING);
 		this.leftWing = this.getOptionalModelPart(wingsParent, EntityModelPartNames.LEFT_WING);
+
+		this.head.xScale = 2;
+
+		// Plan:
+		// See if I can achieve universal armor fitting!
+		// I might be able to get away with it if I use two mixins.
+		// First: Jump in around line 130 of LivingEntityRenderer.
+		//  Move the player's parts around! Specifically move their pivots & muck up their scale.
+		// Second: Jump in around line 136.
+		//  Reset everything!
 	}
 
 	protected ModelPart getTailParent(ModelPart root) {
@@ -50,5 +60,13 @@ public class CharacterFormEntityModel extends PlayerEntityModel<AbstractClientPl
 		catch(NoSuchElementException exception) {
 			return null;
 		}
+	}
+
+	@Override
+	public void setAngles(AbstractClientPlayerEntity livingEntity, float f, float g, float h, float i, float j) {
+		super.setAngles(livingEntity, f, g, h, i, j);
+//		this.head.yScale = 3;
+//		this.rightArm.xScale = 4;
+//		this.body.zScale = 3;
 	}
 }

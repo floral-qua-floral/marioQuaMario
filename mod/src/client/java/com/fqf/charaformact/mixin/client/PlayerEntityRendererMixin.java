@@ -22,6 +22,7 @@ public class PlayerEntityRendererMixin {
 	private static PlayerEntityModel<AbstractClientPlayerEntity> uwu(ModelPart root, boolean thinArms, Operation<PlayerEntityModel<AbstractClientPlayerEntity>> original, @Local(argsOnly = true) EntityRendererFactory.Context ctx) {
 		if(PlayerModelCollector.isMakingCustomRenderer()) {
 			CharaFormAct.LOGGER.info("Instantiating a custom player renderer! HOLY SMOKES!!!!");
+//			return original.call(root, thinArms);
 			return PlayerModelCollector.getCustomModelForRenderer();
 		}
 		else {

@@ -8,6 +8,7 @@ import com.fqf.charaformact.registries.power_granting.CharacterFormCombo;
 import com.fqf.charaformact.registries.power_granting.ParsedCharacter;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Contract;
@@ -18,7 +19,7 @@ public class CfaModelData<CfaDataType extends CfaPlayerData & CfaClientDataImpl>
 	private final CfaDataType DATA;
 
 	private @Nullable ParsedCharacterFormModel model, flickerModel;
-	private @Nullable CharacterFormRenderer renderer, flickerRenderer;
+	private @Nullable PlayerEntityRenderer renderer, flickerRenderer;
 
 	private long flickerUntil;
 	private boolean flickering;
@@ -48,7 +49,7 @@ public class CfaModelData<CfaDataType extends CfaPlayerData & CfaClientDataImpl>
 		return this.model;
 	}
 
-	public CharacterFormRenderer getRenderer() {
+	public PlayerEntityRenderer getRenderer() {
 		if(this.flickering) return this.flickerRenderer;
 		return this.renderer;
 	}
@@ -61,7 +62,7 @@ public class CfaModelData<CfaDataType extends CfaPlayerData & CfaClientDataImpl>
 		this.flickerModel = this.model;
 		this.flickerRenderer = this.renderer;
 
-		@Nullable Pair<ParsedCharacterFormModel, CharacterFormRenderer> newModelAndRenderer = null;
+		@Nullable Pair<ParsedCharacterFormModel, PlayerEntityRenderer> newModelAndRenderer = null;
 
 		if(this.DATA.isEnabled()) {
 			ParsedCharacter character = this.DATA.getCharacter();

@@ -5,6 +5,7 @@
   "client": [
     "AbstractClientPlayerEntityCfaDataMixin",
     "AbstractClientPlayerEntityMixin",
+    "ArmorFeatureRendererMixin",
     "BipedEntityModelMixin",
     "CameraMixin",
     "ChunkRendererRegionMixin",
@@ -17,6 +18,7 @@
     "HeldItemFeatureRendererMixin",
     "HeldItemRendererMixin",
     "InGameHudMixin",
+    "LivingEntityRendererMixin",
     "MinecraftClientMixin",
     "OtherClientPlayerEntityCfaDataMixin",
     "PlayerEntityModelMixin",

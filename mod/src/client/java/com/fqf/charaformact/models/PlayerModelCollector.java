@@ -14,6 +14,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.minecraft.client.model.ModelData;
 import net.minecraft.client.model.TexturedModelData;
 import net.minecraft.client.render.entity.EntityRendererFactory;
+import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import org.jetbrains.annotations.Nullable;
@@ -24,7 +25,7 @@ import java.util.Map;
 
 public class PlayerModelCollector {
 	private static Map<CharacterFormCombo, ParsedCharacterFormModel> parsedModels;
-	private static Map<CharacterFormCombo, Pair<ParsedCharacterFormModel, CharacterFormRenderer>> modelsAndRenderers;
+	private static Map<CharacterFormCombo, Pair<ParsedCharacterFormModel, PlayerEntityRenderer>> modelsAndRenderers;
 
 	private static @Nullable CharacterFormEntityModel customModelForRenderer;
 
@@ -109,12 +110,12 @@ public class PlayerModelCollector {
 
 	public static void reloadCustomPlayerRenderers(EntityRendererFactory.Context ctx) {
 		try {
-			ImmutableMap.Builder<CharacterFormCombo, Pair<ParsedCharacterFormModel, CharacterFormRenderer>> builder = ImmutableMap.builder();
+			ImmutableMap.Builder<CharacterFormCombo, Pair<ParsedCharacterFormModel, PlayerEntityRenderer>> builder = ImmutableMap.builder();
 			for(Map.Entry<CharacterFormCombo, ParsedCharacterFormModel> entry : parsedModels.entrySet()) {
 				try {
 					ParsedCharacterFormModel model = entry.getValue();
 					customModelForRenderer = model.getModel(ctx);
-					CharacterFormRenderer renderer = new CharacterFormRenderer(ctx, model.TEXTURE_LOCATION);
+					PlayerEntityRenderer renderer = new CharacterFormRenderer(ctx, model.TEXTURE_LOCATION);
 					builder.put(entry.getKey(), new Pair<>(model, renderer));
 				} catch(Exception exception) {
 					throw new IllegalArgumentException("Failed to create player model for " + entry.getKey(), exception);
@@ -127,7 +128,7 @@ public class PlayerModelCollector {
 		}
 	}
 
-	public static @Nullable Pair<ParsedCharacterFormModel, CharacterFormRenderer> getModelAndRenderer(CharacterFormCombo combo) {
+	public static @Nullable Pair<ParsedCharacterFormModel, PlayerEntityRenderer> getModelAndRenderer(CharacterFormCombo combo) {
 		return modelsAndRenderers.get(combo);
 	}
 
