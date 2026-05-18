@@ -61,12 +61,4 @@ public class CharacterFormEntityModel extends PlayerEntityModel<AbstractClientPl
 			return null;
 		}
 	}
-
-	@Override
-	public void setAngles(AbstractClientPlayerEntity livingEntity, float f, float g, float h, float i, float j) {
-		super.setAngles(livingEntity, f, g, h, i, j);
-//		this.head.yScale = 3;
-//		this.rightArm.xScale = 4;
-//		this.body.zScale = 3;
-	}
 }

@@ -194,6 +194,106 @@ public interface CharacterFormModelDefinition {
 		return new Vector3f(heldItemPosition.x, Math.min(heldItemPosition.y, -3.25F - armSize.y / 2F), heldItemPosition.z);
 	}
 
+	// Methods for transforming features on various parts of the body such as armor and other equipment.
+	// This is meant to be maximally compatible. Default implementations try to find a balance between not scaling
+	// features too heavily if possible, while also making sure they fit well enough.
+	default FeatureTransformationInstructions getHelmetTransformation() {
+		return new FeatureTransformationInstructions(
+				0, 0, 0,
+				0, 0, 0,
+				1, 1, 1
+		);
+	}
+	default FeatureTransformationInstructions getHatTransformation() {
+		// Not the 3D hat layer. This is for mods which add hats, such as the Villager Hats or Simple Hats mods.
+		return this.getHelmetTransformation();
+	}
+	default FeatureTransformationInstructions getUnknownHeadFeatureTransformation() {
+		// Transformation to apply to features which attach to the head but are otherwise unknown.
+		return new FeatureTransformationInstructions(
+				0, 0, 0,
+				0, 0, 0,
+				1, 1, 1
+		);
+	}
+	default FeatureTransformationInstructions getCuirassTransformation() {
+		// A cuirass is the largest part of a chestplate, that covers the whole torso.
+		return new FeatureTransformationInstructions(
+				0, 0, 0,
+				0, 0, 0,
+				1, 1, 1
+		);
+	}
+	default FeatureTransformationInstructions getFauldTransformation() {
+		// A fauld is a piece of armor for protecting the hip. It's the highest cuboid of vanilla leggings.
+		return new FeatureTransformationInstructions(
+				0, 0, 0,
+				0, 0, 0,
+				1, 1, 1
+		);
+	}
+	default FeatureTransformationInstructions getBackEquipmentTransformation() {
+		// Applies to things like Elytra and modded backpacks.
+		return new FeatureTransformationInstructions(
+				0, 0, 0,
+				0, 0, 0,
+				1, 1, 1
+		);
+	}
+	default FeatureTransformationInstructions getUnknownChestFeatureTransformation() {
+		// Applies to things like Elytra and modded backpacks.
+		return new FeatureTransformationInstructions(
+				0, 0, 0,
+				0, 0, 0,
+				1, 1, 1
+		);
+	}
+	default FeatureTransformationInstructions getPauldronTransformation() {
+		// Applies to the shoulder piece of a chestplate.
+		return new FeatureTransformationInstructions(
+				0, 0, 0,
+				0, 0, 0,
+				1, 1, 1
+		);
+	}
+	default FeatureTransformationInstructions getGlovesTransformation() {
+		// Applies to gloves from mods, such as from The Aether.
+		return new FeatureTransformationInstructions(
+				0, 0, 0,
+				0, 0, 0,
+				1, 1, 1
+		);
+	}
+	default FeatureTransformationInstructions getUnknownArmsFeatureTransformation() {
+		return new FeatureTransformationInstructions(
+				0, 0, 0,
+				0, 0, 0,
+				1, 1, 1
+		);
+	}
+	default FeatureTransformationInstructions getBootsTransformation() {
+		return new FeatureTransformationInstructions(
+				0, 0, 0,
+				0, 0, 0,
+				1, 1, 1
+		);
+	}
+	default FeatureTransformationInstructions getChaussesTransformation() {
+		// Chausses are the part of the leggings that guards the legs.
+		return new FeatureTransformationInstructions(
+				0, 0, 0,
+				0, 0, 0,
+				1, 1, 1
+		);
+	}
+	default FeatureTransformationInstructions getUnknownLegsFeatureTransformation() {
+		return new FeatureTransformationInstructions(
+				0, 0, 0,
+				0, 0, 0,
+				1, 1, 1
+		);
+	}
+
 	default ModelData getModelData(CharacterFormModelHelper helper) {
 		ModelData modelData = new ModelData();
 		ModelPartData root = modelData.getRoot();

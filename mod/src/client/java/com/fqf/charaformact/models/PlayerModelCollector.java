@@ -1,7 +1,6 @@
 package com.fqf.charaformact.models;
 
 import com.fqf.charaformact.CharaFormAct;
-import com.fqf.charaformact.cfadata.CfaPlayerData;
 import com.fqf.charaformact.registries.power_granting.CharacterFormCombo;
 import com.fqf.charaformact.registries.RegistryManager;
 import com.fqf.charaformact.registries.power_granting.ParsedCharacter;
@@ -114,7 +113,7 @@ public class PlayerModelCollector {
 			for(Map.Entry<CharacterFormCombo, ParsedCharacterFormModel> entry : parsedModels.entrySet()) {
 				try {
 					ParsedCharacterFormModel model = entry.getValue();
-					customModelForRenderer = model.getModel(ctx);
+					customModelForRenderer = model.makeAndGetModel(ctx);
 					PlayerEntityRenderer renderer = new CharacterFormRenderer(ctx, model.TEXTURE_LOCATION);
 					builder.put(entry.getKey(), new Pair<>(model, renderer));
 				} catch(Exception exception) {
