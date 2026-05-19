@@ -1,5 +1,6 @@
 package com.fqf.charaformact.mixin.client;
 
+import com.fqf.charaformact.models.FeatureRendererWithContext;
 import com.fqf.charaformact.models.ParsedCharacterFormModel;
 import com.fqf.charaformact.util.ModelPartMover;
 import com.fqf.charaformact.util.TransformationContext;
@@ -12,15 +13,11 @@ import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
-import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
-import net.minecraft.client.render.entity.feature.ElytraFeatureRenderer;
-import net.minecraft.client.render.entity.feature.FeatureRenderer;
-import net.minecraft.client.render.entity.feature.HeldItemFeatureRenderer;
+import net.minecraft.client.render.entity.feature.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -61,29 +58,10 @@ public class LivingEntityRendererMixin<T extends LivingEntity> {
 			Operation<Void> original, @Share("apply") LocalBooleanRef applyRef, @Share(namespace = "cfa", value = "mover") LocalRef<ModelPartMover> moverRef
 	) {
 		if(applyRef.get()) {
-			TransformationContext context = getTransformationContext(instance);
+			TransformationContext context = ((FeatureRendererWithContext) instance).cfa$getContext();
 			if(context != null) ModelPartMover.instance.setTo(context);
 		}
 		original.call(instance, matrices, vertexConsumers, light, entity, limbAngle, limbDistance, tickDelta, animationProgress, headYaw, headPitch);
 	}
 
-	@Unique
-	private static TransformationContext getTransformationContext(FeatureRenderer<?, ?> feature) {
-		if(feature instanceof HeldItemFeatureRenderer<?, ?>) return TransformationContext.ORIGINAL;
-		if(featureIsArmor(feature)) return null; // If it's armor, we'll handle it slot-by-slot in ArmorFeatureRendererMixin.
-		if(featureIsSpecial(feature)) return TransformationContext.SPECIAL;
-		return TransformationContext.UNKNOWN;
-	}
-
-	@Unique
-	private static boolean featureIsArmor(FeatureRenderer<?, ?> feature) {
-		if(feature instanceof ArmorFeatureRenderer<?,?,?>) return true;
-		return false;
-	}
-
-	@Unique
-	private static boolean featureIsSpecial(FeatureRenderer<?, ?> feature) {
-		if(feature instanceof ElytraFeatureRenderer<?, ?>) return true;
-		return false;
-	}
 }

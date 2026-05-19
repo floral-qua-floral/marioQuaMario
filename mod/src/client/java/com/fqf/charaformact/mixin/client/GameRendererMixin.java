@@ -3,10 +3,13 @@ package com.fqf.charaformact.mixin.client;
 import com.fqf.charaformact.bapping.BlockBappingUtil;
 import com.fqf.charaformact.bapping.WorldBapsInfo;
 import com.fqf.charaformact.cfadata.CfaPlayerData;
+import com.fqf.charaformact.models.ParsedCharacterFormModel;
 import com.fqf.charaformact.util.CfaGamerules;
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -30,6 +33,24 @@ public class GameRendererMixin {
 	@Inject(method = "renderHand", at = @At("HEAD"), cancellable = true)
 	private void skipRenderHandForNow(Camera camera, float tickDelta, Matrix4f matrix4f, CallbackInfo ci) {
 		ci.cancel();
+	}
+
+	@WrapMethod(method = "bobView")
+	private void scaleMovementSpeedAroundBobbing(MatrixStack matrices, float tickDelta, Operation<Void> original) {
+		if(this.client.getCameraEntity() instanceof AbstractClientPlayerEntity player) {
+			ParsedCharacterFormModel model = player.cfa$getModelData().getModel();
+			if(model != null) {
+				float realSpeed = player.horizontalSpeed;
+				float realPreviousSpeed = player.prevHorizontalSpeed;
+				player.horizontalSpeed *= model.LIMB_SWING_MULTIPLIER;
+				player.prevHorizontalSpeed *= model.LIMB_SWING_MULTIPLIER;
+				original.call(matrices, tickDelta);
+				player.horizontalSpeed = realSpeed;
+				player.prevHorizontalSpeed = realPreviousSpeed;
+				return;
+			}
+		}
+		original.call(matrices, tickDelta);
 	}
 
 	@WrapOperation(method = "bobView", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(FFF)V"))

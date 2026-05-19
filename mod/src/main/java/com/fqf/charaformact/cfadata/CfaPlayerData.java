@@ -1,6 +1,7 @@
 package com.fqf.charaformact.cfadata;
 
 import com.fqf.charaformact.CharaFormAct;
+import com.fqf.charaformact.model.ParsedCommonCharaFormModel;
 import com.fqf.charaformact.registries.actions.parsed.ParsedWallboundAction;
 import com.fqf.charaformact.registries.power_granting.CharacterFormCombo;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
@@ -131,12 +132,12 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 		if(oldThingVarsClass != null && !oldThingVarsClass.equals(newThingVarsClass))
 			this.customVars.remove(oldThingVarsClass); // If we didn't already just replace the vars, delete the old ones
 	}
+
+	protected ParsedCommonCharaFormModel commonModel;
 	private final Set<String> POWERS = new HashSet<>();
 	private final List<StatAlteringStateDefinition.AttributeModifierInstruction> ATTRIBUTE_MODIFIERS = new ArrayList<>();
-	private CharacterFormCombo characterFormCombo;
-	public void updateCharacterFormCombo() {
-		this.characterFormCombo = new CharacterFormCombo(this.getCharacter(), this.getForm());
 
+	public void updateCharacterFormCombo() {
 		// Clear all power strings
 		this.POWERS.clear();
 
@@ -193,9 +194,6 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 	}
 	@Override public boolean hasPower(String power) {
 		return this.isEnabled() && this.POWERS.contains(power);
-	}
-	public CharacterFormCombo getCharacterFormCombo() {
-		return this.characterFormCombo;
 	}
 
 	public void setupVariablesBeforeInitialApply(ParsedCharacter character, ParsedForm form) {

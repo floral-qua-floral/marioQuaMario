@@ -14,6 +14,7 @@
     "ClientPlayNetworkHandlerMixin",
     "EntityRenderDispatcherMixin",
     "EntityRenderersMixin",
+    "FeatureRendererContextMixin",
     "GameRendererMixin",
     "HeldItemFeatureRendererMixin",
     "HeldItemRendererMixin",
@@ -23,6 +24,7 @@
     "OtherClientPlayerEntityCfaDataMixin",
     "PlayerEntityModelMixin",
     "PlayerEntityRendererMixin",
+    "ShoulderParrotFeatureRendererMixin",
     "compat.FlashbackSyncOnRecordingStartMixin",
     "compat.SodiumLevelSliceMixin"
   ],

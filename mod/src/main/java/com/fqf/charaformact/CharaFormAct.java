@@ -36,7 +36,6 @@ public class CharaFormAct implements ModInitializer {
 
 		CfaGamerules.register();
 		CfaEventListeners.register();
-
 	}
 
 	public static Identifier makeID(String path) {

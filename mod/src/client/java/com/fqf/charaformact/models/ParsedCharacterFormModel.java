@@ -1,6 +1,7 @@
 package com.fqf.charaformact.models;
 
 import com.fqf.charaformact.CharaFormAct;
+import com.fqf.charaformact.model.ParsedCommonCharaFormModel;
 import com.fqf.charaformact.registries.power_granting.ParsedCharacter;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
 import com.fqf.charaformact.util.TransformationContext;
@@ -19,12 +20,8 @@ import org.joml.Vector3f;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class ParsedCharacterFormModel {
+public class ParsedCharacterFormModel extends ParsedCommonCharaFormModel {
 	private final CharacterFormModelDefinition DEFINITION;
-
-	public final Identifier ID;
-	public final ParsedCharacter CHARACTER;
-	public final ParsedForm FORM;
 
 	public final EntityModelLayer LAYER;
 	public final Identifier TEXTURE_LOCATION;
@@ -35,17 +32,16 @@ public class ParsedCharacterFormModel {
 
 	public final float HELD_ITEM_X_TRANSLATION, HELD_ITEM_Y_TRANSLATION, HELD_ITEM_Z_TRANSLATION;
 	public final float HELD_SHIELD_X_TRANSLATION, HELD_SHIELD_Y_TRANSLATION, HELD_SHIELD_Z_TRANSLATION;
+	public final float SHOULDER_PARROT_X_TRANSLATION, SHOULDER_PARROT_Y_TRANSLATION, SHOULDER_PARROT_Z_TRANSLATION;
 
 	public final float LIMB_SWING_MULTIPLIER;
+	public final float VIEW_BOB_MULTIPLIER;
 
 	public final Map<VanillaPart, Map<TransformationContext, FeatureTransformationInstructions>> FEATURE_TRANSFORMATION_INSTRUCTIONS;
 
 	public ParsedCharacterFormModel(CharacterFormModelDefinition definition, ParsedCharacter character, ParsedForm form) {
+		super(definition, character, form);
 		DEFINITION = definition;
-
-		this.ID = definition.getCharacterID();
-		this.CHARACTER = character;
-		this.FORM = form;
 
 		this.LAYER = definition.getModelLayer();
 		this.TEXTURE_LOCATION = definition.getTextureLocation();
@@ -63,6 +59,10 @@ public class ParsedCharacterFormModel {
 		this.HELD_SHIELD_X_TRANSLATION = shieldOffset.x;
 		this.HELD_SHIELD_Y_TRANSLATION = shieldOffset.z; // swapped with Z
 		this.HELD_SHIELD_Z_TRANSLATION = shieldOffset.y; // swapped with Y
+		Vector3f shoulderParrotOffset = definition.getShoulderParrotPosition().div(16);
+		this.SHOULDER_PARROT_X_TRANSLATION = shoulderParrotOffset.x;
+		this.SHOULDER_PARROT_Y_TRANSLATION = shoulderParrotOffset.y;
+		this.SHOULDER_PARROT_Z_TRANSLATION = shoulderParrotOffset.z;
 
 		this.FEATURE_TRANSFORMATION_INSTRUCTIONS = new EnumMap<>(VanillaPart.class);
 		this.populateTransformationInstructions(VanillaPart.HEAD,
@@ -84,7 +84,8 @@ public class ParsedCharacterFormModel {
 		);
 		this.mirrorTransformationInstructions(VanillaPart.RIGHT_LEG, VanillaPart.LEFT_LEG);
 
-		this.LIMB_SWING_MULTIPLIER = definition.getLimbSwingMultiplier();
+		this.LIMB_SWING_MULTIPLIER = 1 / this.STRIDE_LENGTH;
+		this.VIEW_BOB_MULTIPLIER = this.LIMB_SWING_MULTIPLIER;
 	}
 
 	public CharacterFormEntityModel makeAndGetModel(EntityRendererFactory.Context ctx) {

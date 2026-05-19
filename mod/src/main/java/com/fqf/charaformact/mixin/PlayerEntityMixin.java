@@ -31,6 +31,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameMode;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -137,14 +138,19 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDa
 
 	@Inject(method = "tickMovement", at = @At("TAIL"))
 	private void preventViewBobbing(CallbackInfo ci) {
-		CfaPlayerData data = cfa$getCfaData();
+		CfaPlayerData data = this.cfa$getCfaData();
 		if(data.isClient() && data.isEnabled() && data.getAction().SLIDING_STATUS != SlidingStatus.NOT_SLIDING)
 			strideDistance = prevStrideDistance * 0.6F;
 	}
 
 	@Override
+	protected float calculateNextStepSoundDistance() {
+		return super.calculateNextStepSoundDistance();
+	}
+
+	@Override
 	public boolean startRiding(Entity entity, boolean force) {
-		CfaPlayerData data = cfa$getCfaData();
+		CfaPlayerData data = this.cfa$getCfaData();
 		if(data.isEnabled()) {
 			AbstractParsedAction mountedAction = data.getCharacter().getMountedAction(entity);
 			boolean mounted = mountedAction != null && super.startRiding(entity, force);

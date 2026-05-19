@@ -9,14 +9,10 @@ import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
-public interface CharacterFormModelDefinition {
-	@NotNull Identifier getID();
+public interface CharacterFormModelDefinition extends CommonSidedCharaFormModelDefinition {
 	default @NotNull EntityModelLayer getModelLayer() {
 		return new EntityModelLayer(this.getID(), "main");
 	}
-
-	@NotNull Identifier getCharacterID();
-	@NotNull Identifier getFormID();
 
 	@NotNull Vector2i getTextureSize();
 	@NotNull Identifier getTextureLocation();
@@ -174,10 +170,11 @@ public interface CharacterFormModelDefinition {
 		return new CharacterFormEntityModel(root);
 	}
 
-	// Affects how the vanilla walk animation scales with the player's motion. This won't affect the maximum magnitude
-	// of the swinging, only how much speed is required to reach that maximum magnitude.
-	default float getLimbSwingMultiplier() {
-		return 12F / this.getLegSize().y;
+	// Affects how the vanilla walk animation and view bobbing scale with the player's motion. This has no effect on the
+	// magnitude of the swinging or bobbing, only on how much speed is required to reach that maximum magnitude.
+	@Override
+	default float getStrideLength() {
+		return this.getLegSize().y / 12F;
 	}
 
 	// Methods for deciding where on the arm held items will render.
@@ -194,10 +191,23 @@ public interface CharacterFormModelDefinition {
 		return new Vector3f(heldItemPosition.x, Math.min(heldItemPosition.y, -3.25F - armSize.y / 2F), heldItemPosition.z);
 	}
 
+	// Method for positioning shoulder parrots.
+	// Unfortunately I don't think this applies to other shoulder mounts such as Cobblemon. :(
+	// Parrots always render 24 pixels below the shoulder, regardless of the scaling of any model parts. As a result,
+	// the Y position given by the default implementation does not scale either.
+	default Vector3f getShoulderParrotPosition() {
+		return new Vector3f(Math.max(this.getTorsoSize().x, this.getHeadSize().x) / 2F + 2.4F, -24.0F, 0);
+//		return new Vector3f(0.8F * this.getTorsoSize().x, -24.0F, 0);
+	}
+
 	// Methods for transforming features on various parts of the body such as armor and other equipment.
 	// This is meant to be maximally compatible. Default implementations tries to maintain armor's aspect ratio when
 	// possible, and attempts sensible defaults for other features.
 	default FeatureTransformationInstructions getHelmetTransformation() {
+		Vector3i headSize = this.getHeadSize();
+		if(Math.abs(headSize.x - headSize.z) <= 2) {
+			// Attempt to preserve the aspect ratio
+		}
 		return new FeatureTransformationInstructions(
 				0, 0, 0,
 				0, 0, 0,
@@ -206,10 +216,6 @@ public interface CharacterFormModelDefinition {
 	}
 	default FeatureTransformationInstructions getHatTransformation() {
 		// Not the 3D hat layer. This is for mods which add hats, such as the Villager Hats or Simple Hats mods.
-		Vector3i headSize = this.getHeadSize();
-		if(Math.abs(headSize.x - headSize.z) <= 2) {
-			// Attempt to preserve the aspect ratio
-		}
 		return this.getHelmetTransformation();
 	}
 	default FeatureTransformationInstructions getUnknownHeadFeatureTransformation() {
