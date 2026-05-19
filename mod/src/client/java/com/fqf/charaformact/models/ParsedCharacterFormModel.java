@@ -112,10 +112,20 @@ public class ParsedCharacterFormModel extends ParsedCommonCharaFormModel {
 	) {
 		EnumMap<TransformationContext, FeatureTransformationInstructions> map = new EnumMap<>(TransformationContext.class);
 		this.FEATURE_TRANSFORMATION_INSTRUCTIONS.put(part, map);
-		map.put(TransformationContext.ARMOR_OUTER, outerArmor);
-		if(innerArmor != null) map.put(TransformationContext.ARMOR_INNER, innerArmor);
-		if(special != null) map.put(TransformationContext.SPECIAL, special);
-		map.put(TransformationContext.UNKNOWN, unknown);
+		map.put(TransformationContext.ARMOR_OUTER, fixInstructions(outerArmor));
+		if(innerArmor != null) map.put(TransformationContext.ARMOR_INNER, fixInstructions(innerArmor));
+		if(special != null) map.put(TransformationContext.SPECIAL, fixInstructions(special));
+		map.put(TransformationContext.UNKNOWN, fixInstructions(unknown));
+	}
+
+	private static FeatureTransformationInstructions fixInstructions(FeatureTransformationInstructions instructions) {
+		return new FeatureTransformationInstructions(
+				instructions.forwards() * -1,
+				instructions.upwards() * -1,
+				instructions.rightwards() * -1,
+				instructions.pitch(), instructions.yaw(), instructions.roll(),
+				instructions.xScale(), instructions.yScale(), instructions.zScale()
+		);
 	}
 
 	private void mirrorTransformationInstructions(VanillaPart right, VanillaPart left) {
@@ -124,7 +134,7 @@ public class ParsedCharacterFormModel extends ParsedCommonCharaFormModel {
 		this.FEATURE_TRANSFORMATION_INSTRUCTIONS.get(right).forEach((context, instructions) -> {
 			CharaFormAct.LOGGER.info("Mirroring transformation instructions for {}'s {}...", right, context);
 			if(instructions != null) leftInstructions.put(context, new FeatureTransformationInstructions(
-					instructions.backwards(), instructions.downwards(), -instructions.leftwards(),
+					instructions.forwards(), instructions.upwards(), -instructions.rightwards(),
 					instructions.pitch(), -instructions.yaw(), -instructions.roll(),
 					instructions.xScale(), instructions.yScale(), instructions.zScale()
 			));

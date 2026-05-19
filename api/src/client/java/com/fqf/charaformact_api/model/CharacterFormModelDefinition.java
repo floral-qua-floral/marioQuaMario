@@ -18,18 +18,13 @@ public interface CharacterFormModelDefinition extends CommonSidedCharaFormModelD
 	@NotNull Identifier getTextureLocation();
 
 	// Methods for getting the size of vanilla parts.
-	// The default implementation imitates vanilla proportions.
+	// The default implementation imitates vanilla proportions. Note: getLegSize is common-sided, as it is expected to
+	// be used for getStrideDistance, which the server needs to know. Sorry. I know it's wonky.
 	default Vector3i getHeadSize() {
 		return new Vector3i(8, 8, 8);
 	}
 	default Vector3i getTorsoSize() {
 		return new Vector3i(8, 12, 4);
-	}
-	default Vector3i getArmSize() {
-		return new Vector3i(4, 12, 4);
-	}
-	default Vector3i getLegSize() {
-		return new Vector3i(4, 12, 4);
 	}
 
 	// The pivot of every part attached to root should be offset by this value. The default implementation does that.
@@ -170,13 +165,6 @@ public interface CharacterFormModelDefinition extends CommonSidedCharaFormModelD
 		return new CharacterFormEntityModel(root);
 	}
 
-	// Affects how the vanilla walk animation and view bobbing scale with the player's motion. This has no effect on the
-	// magnitude of the swinging or bobbing, only on how much speed is required to reach that maximum magnitude.
-	@Override
-	default float getStrideLength() {
-		return this.getLegSize().y / 12F;
-	}
-
 	// Methods for deciding where on the arm held items will render.
 	// Default implementation imitates vanilla logic, although getHeldShieldPosition has special behavior to prevent
 	// an issue where especially short-armed models (~4 px) would hold a shield above their shoulder.
@@ -197,21 +185,32 @@ public interface CharacterFormModelDefinition extends CommonSidedCharaFormModelD
 	// the Y position given by the default implementation does not scale either.
 	default Vector3f getShoulderParrotPosition() {
 		return new Vector3f(Math.max(this.getTorsoSize().x, this.getHeadSize().x) / 2F + 2.4F, -24.0F, 0);
-//		return new Vector3f(0.8F * this.getTorsoSize().x, -24.0F, 0);
 	}
 
 	// Methods for transforming features on various parts of the body such as armor and other equipment.
 	// This is meant to be maximally compatible. Default implementations tries to maintain armor's aspect ratio when
 	// possible, and attempts sensible defaults for other features.
+	// The elaborate logic in all of these default implementations is only necessary to account for the unknown size of
+	// the body parts. If you're overriding any of these in your own model, it would make more sense to just return a
+	// FeatureTransformationInstructions object constructed from 9 raw, hard-coded floats, without doing any
+	// calculations at all. That said, these methods only run a single time while preparing the model data during
+	// startup, and are then cached forever, so there is no performance cost to any logic done here.
 	default FeatureTransformationInstructions getHelmetTransformation() {
 		Vector3i headSize = this.getHeadSize();
+		Vector3f scale;
 		if(Math.abs(headSize.x - headSize.z) <= 2) {
-			// Attempt to preserve the aspect ratio
+			// We can preserve the horizontal aspect ratio, so maybe we can keep the vertical ratio intact too!
+			int horizontalSize = Math.max(headSize.x, headSize.z);
+			float horizontalScale = horizontalSize / 8F;
+			if(headSize.y >= horizontalSize - 2) scale = new Vector3f(horizontalScale, horizontalScale, horizontalScale);
+			else scale = new Vector3f(horizontalScale, headSize.y / 8F, horizontalScale);
 		}
+		else scale = new Vector3f(headSize.x / 8F, headSize.y / 8F, headSize.z / 8F);
+
 		return new FeatureTransformationInstructions(
+				0, headSize.y - 8 + 8 * (1 - scale.y), 0,
 				0, 0, 0,
-				0, 0, 0,
-				1, 1, 1
+				scale.x, scale.y, scale.z
 		);
 	}
 	default FeatureTransformationInstructions getHatTransformation() {
@@ -220,30 +219,51 @@ public interface CharacterFormModelDefinition extends CommonSidedCharaFormModelD
 	}
 	default FeatureTransformationInstructions getUnknownHeadFeatureTransformation() {
 		// Transformation to apply to features which attach to the head but are otherwise unknown.
+		Vector3i headSize = this.getHeadSize();
 		return new FeatureTransformationInstructions(
+				0, headSize.y - 8, 0,
 				0, 0, 0,
-				0, 0, 0,
-				1, 1, 1
+				headSize.x / 8F, headSize.y / 8F, headSize.z / 8F
 		);
 	}
 	default FeatureTransformationInstructions getCuirassTransformation() {
 		// A cuirass is the largest part of a chestplate, that covers the whole torso.
+		Vector3i torsoSize = this.getTorsoSize();
+		float horizontalScale;
+		Vector3f scale;
+		if(Math.abs(torsoSize.x - 2 * torsoSize.z) <= 2) {
+			horizontalScale = Math.max(torsoSize.x, 2 * torsoSize.z) / 8F;
+			if(torsoSize.y >= horizontalScale * 9) scale = new Vector3f(horizontalScale, horizontalScale, horizontalScale);
+			else scale = new Vector3f(horizontalScale, torsoSize.y / 12F, horizontalScale);
+		}
+		else {
+			horizontalScale = torsoSize.x / 8F;
+			if(torsoSize.y >= horizontalScale * 9)
+				scale = new Vector3f(horizontalScale, horizontalScale, torsoSize.z / 4F);
+			else
+				scale = new Vector3f(torsoSize.x / 8F, torsoSize.y / 12F, torsoSize.z / 4F);
+		}
 		return new FeatureTransformationInstructions(
-				30, 0, 20,
 				0, 0, 0,
-				1, 2, 1
+				0, 0, 0,
+				scale.x, scale.y, scale.z
 		);
 	}
 	default FeatureTransformationInstructions getFauldTransformation() {
 		// A fauld is a piece of armor for protecting the hip. It's the highest cuboid of vanilla leggings.
+		Vector3i torsoSize = this.getTorsoSize();
+		FeatureTransformationInstructions cuirassTransformation = this.getCuirassTransformation();
 		return new FeatureTransformationInstructions(
-				0, 0, 0,
-				0, 0, 0,
-				1, 1, 1
+				cuirassTransformation.forwards(),
+				cuirassTransformation.upwards() + 12 - torsoSize.y - 12 * (1 - cuirassTransformation.yScale()),
+				cuirassTransformation.rightwards(),
+				cuirassTransformation.pitch(), cuirassTransformation.yaw(), cuirassTransformation.roll(),
+				cuirassTransformation.xScale(), cuirassTransformation.yScale(), cuirassTransformation.zScale()
 		);
 	}
 	default FeatureTransformationInstructions getBackEquipmentTransformation() {
 		// Applies to things like Elytra and modded backpacks.
+		Vector3i torsoSize = this.getTorsoSize();
 		return new FeatureTransformationInstructions(
 				0, 0, 0,
 				0, 0, 0,

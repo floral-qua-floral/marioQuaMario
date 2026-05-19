@@ -1,6 +1,5 @@
 package com.fqf.charaformact.util;
 
-import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.models.ParsedCharacterFormModel;
 import com.fqf.charaformact_api.model.CharacterFormEntityModel;
 import com.fqf.charaformact_api.model.FeatureTransformationInstructions;
@@ -76,7 +75,7 @@ public class ModelPartMover {
 			this.xScale = part.xScale; this.yScale = part.yScale; this.zScale = part.zScale;
 		}
 		public UsableTransformation(ModelPart part, FeatureTransformationInstructions instruction) {
-			Vector3f pos = movePointLocally(part, instruction.backwards(), instruction.downwards(), instruction.leftwards());
+			Vector3f pos = movePointLocally(part, instruction.forwards(), instruction.upwards(), instruction.rightwards());
 			this.x = pos.x; this.y = pos.y; this.z = pos.z;
 			this.pitch = part.pitch + instruction.pitch();
 			this.yaw = part.yaw + instruction.yaw();
