@@ -27,7 +27,6 @@ public class ParsedClientAppearance extends ParsedCommonAppearance {
 	public final int TEXTURE_WIDTH, TEXTURE_HEIGHT;
 
 	private AppearanceModel model;
-	private AppearanceRenderer renderer;
 
 	public final float HELD_ITEM_X_TRANSLATION, HELD_ITEM_Y_TRANSLATION, HELD_ITEM_Z_TRANSLATION;
 	public final float HELD_SHIELD_X_TRANSLATION, HELD_SHIELD_Y_TRANSLATION, HELD_SHIELD_Z_TRANSLATION;
@@ -84,24 +83,16 @@ public class ParsedClientAppearance extends ParsedCommonAppearance {
 		this.mirrorTransformationInstructions(VanillaPart.RIGHT_LEG, VanillaPart.LEFT_LEG);
 
 		this.LIMB_SWING_MULTIPLIER = 1 / this.STRIDE_LENGTH;
-		this.VIEW_BOB_MULTIPLIER = this.LIMB_SWING_MULTIPLIER;
+		this.VIEW_BOB_MULTIPLIER = Math.min(1, this.LIMB_SWING_MULTIPLIER);
 	}
 
 	public AppearanceModel makeAndGetModel(EntityRendererFactory.Context ctx) {
 		if(this.model == null) this.model = this.DEFINITION.createModel(ctx.getPart(this.LAYER));
-		return this.model;
+		return this.getModel();
 	}
 
 	public AppearanceModel getModel() {
 		return this.model;
-	}
-
-	public void setRenderer(AppearanceRenderer renderer) {
-		this.renderer = renderer;
-	}
-
-	public AppearanceRenderer getRenderer() {
-		return this.renderer;
 	}
 
 	private void populateTransformationInstructions(

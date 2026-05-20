@@ -1,7 +1,6 @@
 package com.fqf.charaformact.mixin.client;
 
 import com.fqf.charaformact.bapping.BlockBappingClientUtil;
-import com.fqf.charaformact.cfadata.CfaClientDataImpl;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -30,7 +29,7 @@ public class EntityRenderDispatcherMixin {
 	@Inject(method = "getRenderer", at = @At("HEAD"), cancellable = true)
 	private <T extends Entity> void getAlternateRendererForCharacters(T entity, CallbackInfoReturnable<EntityRenderer<? super T>> cir) {
 		if(entity instanceof AbstractClientPlayerEntity player) {
-			EntityRenderer<AbstractClientPlayerEntity> storedRenderer = player.cfa$getModelData().getRenderer();
+			EntityRenderer<AbstractClientPlayerEntity> storedRenderer = player.cfa$getAppearanceData().getRenderer();
 			if(storedRenderer != null) {
 				//noinspection unchecked
 				cir.setReturnValue((EntityRenderer<? super T>) storedRenderer);

@@ -1,6 +1,7 @@
 package com.fqf.charaformact.mixin;
 
 import com.fqf.charaformact.CharaFormAct;
+import com.fqf.charaformact.appearance.ParsedCommonAppearance;
 import com.fqf.charaformact.bapping.BlockBappingUtil;
 import com.fqf.charaformact.bapping.WorldBapsInfo;
 import com.fqf.charaformact.cfadata.CfaMoveableData;
@@ -145,7 +146,9 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDa
 
 	@Override
 	protected float calculateNextStepSoundDistance() {
-		return super.calculateNextStepSoundDistance();
+		ParsedCommonAppearance appearance = this.cfa$getCfaData().getAppearance();
+		if(appearance == null) return super.calculateNextStepSoundDistance();
+		else return this.distanceTraveled + appearance.STRIDE_LENGTH;
 	}
 
 	@Override

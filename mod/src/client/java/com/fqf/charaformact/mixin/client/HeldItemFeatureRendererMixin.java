@@ -54,7 +54,7 @@ public abstract class HeldItemFeatureRendererMixin<T extends LivingEntity, M ext
 			@Local(argsOnly = true) LivingEntity entity, @Local(argsOnly = true) ItemStack itemStack
 	) {
 		if(entity instanceof AbstractClientPlayerEntity player) {
-			ParsedClientAppearance model = player.cfa$getModelData().getModel();
+			ParsedClientAppearance model = player.cfa$getAppearanceData().getAppearance();
 			if(model != null) {
 				float factor = Math.signum(x);
 				if(itemStack.getItem() instanceof ShieldItem)

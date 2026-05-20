@@ -12,10 +12,10 @@ public class WonkyCommonAppearance implements CommonAppearanceDefinition {
 	}
 
 	@Override public @NotNull Identifier getCharacterID() {
-		return Identifier.of("mario_qua_mario", "toadette");
+		return Identifier.of("mario_qua_mario", "mario");
 	}
 	@Override public @NotNull Identifier getFormID() {
-		return Identifier.of("mario_qua_mario", "super");
+		return Identifier.of("mario_qua_mario", "raccoon");
 	}
 
 	@Override public Vector3i getArmSize() {

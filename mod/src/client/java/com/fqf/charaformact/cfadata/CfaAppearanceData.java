@@ -40,10 +40,10 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaClientData
 	}
 
 	public boolean hasCustomModel() {
-		return this.getModel() != null;
+		return this.getAppearance() != null;
 	}
 
-	public ParsedClientAppearance getModel() {
+	public ParsedClientAppearance getAppearance() {
 		if(this.flickering) return this.flickerModel;
 		return this.appearance;
 	}
@@ -57,7 +57,7 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaClientData
 		this.flickerUntil = this.PLAYER.getWorld().getTime() + 9L;
 	}
 
-	public void updateCharacterFormCombo() {
+	public void update() {
 		this.flickerModel = this.appearance;
 		this.flickerRenderer = this.renderer;
 

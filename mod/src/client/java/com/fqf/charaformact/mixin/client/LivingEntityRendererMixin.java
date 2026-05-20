@@ -31,7 +31,7 @@ public class LivingEntityRendererMixin<T extends LivingEntity> {
 			CallbackInfo ci, @Share("apply") LocalBooleanRef applyRef
 			) {
 		if(livingEntity instanceof AbstractClientPlayerEntity player) {
-			ParsedClientAppearance parsedModel = player.cfa$getModelData().getModel();
+			ParsedClientAppearance parsedModel = player.cfa$getAppearanceData().getAppearance();
 			if(parsedModel != null) {
 				applyRef.set(true);
 				AppearanceModel entityModel = parsedModel.getModel();

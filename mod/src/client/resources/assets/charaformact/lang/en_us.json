@@ -15,14 +15,14 @@
   "text.autoconfig.charaformact.option.spinputType": "Spin Input Type",
   "fabric.mods.charaformact.spin": "Spin",
 
-  "gamerule.mqmUseCharacterStats": "Apply character-specific stat modifiers",
-  "gamerule.mqmRestrictBapsInAdventureMode": "Allow characters in Adventure Mode to break blocks with collisions",
-  "gamerule.mqmBreakBrittleBlocksInAdventureMode": "Allow characters in Adventure Mode to break blocks which have been embrittled",
-  "gamerule.mqmFriendliesResistCollisionAttacks": "Collision attacks don't damage pets and teammates",
-  "gamerule.mqmRejectInvalidActionTransitions": "Only allow legal action transitions",
-  "gamerule.mqmDisableCharacterMovementCheck": "Disable movement checks when playing as any character",
-  "gamerule.mqmRequirePlayermodels": "Only allow characters to enter forms that they have a playermodel for",
-  "gamerule.mqmAlwaysRevertToWeakestForm": "Players revert to weakest possible form at 0 health",
+  "gamerule.cfaAllowNullAppearance": "Allow characters to enter forms for which they have no valid model",
+  "gamerule.cfaUseCharacterStats": "Apply character-specific stat modifiers",
+  "gamerule.cfaRestrictBapsInAdventureMode": "Adventure mode players' baps embrittle blocks instead of breaking them",
+  "gamerule.cfaBreakBrittleBlocksInAdventureMode": "Players in adventure mode may break embrittled blocks",
+  "gamerule.cfaFriendliesResistCollisionAttacks": "Collision attacks don't damage pets and teammates",
+  "gamerule.cfaRejectInvalidActionTransitions": "Only allow legal action transitions",
+  "gamerule.cfaDisableCharacterMovementCheck": "Disable movement checks when playing as any character",
+  "gamerule.cfaAlwaysRevertToWeakestForm": "Characters revert to weakest possible form at 0 health",
 
   "tag.item.charaformact.enchantable.pulverizing": "Enchantable with Pulverizing",
 

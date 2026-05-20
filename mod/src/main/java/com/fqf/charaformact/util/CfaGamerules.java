@@ -11,6 +11,14 @@ public class CfaGamerules {
 	public static boolean restrictAdventureBapping;
 	public static boolean adventurePlayersBreakBrittleBlocks;
 
+	public static final GameRules.Key<GameRules.BooleanRule> ALLOW_NULL_APPEARANCE =
+			GameRuleRegistry.register("cfaAllowNullAppearance", GameRules.Category.PLAYER,
+					GameRuleFactory.createBooleanRule(false, (server, booleanRule) -> {
+						useCharacterStats = booleanRule.get();
+						CfaPackets.syncUseCharacterStatsS2C(server, useCharacterStats);
+					})
+			);
+
 	public static final GameRules.Key<GameRules.BooleanRule> USE_CHARACTER_STATS =
 			GameRuleRegistry.register("cfaUseCharacterStatModifiers", GameRules.Category.PLAYER,
 					GameRuleFactory.createBooleanRule(true, (server, booleanRule) -> {

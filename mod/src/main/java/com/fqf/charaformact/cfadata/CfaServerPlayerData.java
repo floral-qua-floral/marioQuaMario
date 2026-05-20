@@ -1,6 +1,9 @@
 package com.fqf.charaformact.cfadata;
 
+import com.fqf.charaformact.appearance.CommonAppearanceCollector;
+import com.fqf.charaformact.appearance.ParsedCommonAppearance;
 import com.fqf.charaformact.packets.CfaDataPackets;
+import com.fqf.charaformact.registries.power_granting.CharacterFormCombo;
 import com.fqf.charaformact.util.CfaGamerules;
 import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact.CharaFormAct;
@@ -47,13 +50,6 @@ public class CfaServerPlayerData extends CfaMoveableData implements CfaAuthorita
 		}
 		else super.initialApply();
 //		this.syncToClient(this.getPlayer());
-	}
-
-	@Override
-	public void updatePassiveUniversalTraits(boolean enabled) {
-		super.updatePassiveUniversalTraits(enabled);
-		if(enabled) this.updatePlayerModel();
-//		else CPMCompat.getCommonAPI().resetPlayerModel(PlayerEntity.class, this.getPlayer());
 	}
 
 	@Override
@@ -148,23 +144,23 @@ public class CfaServerPlayerData extends CfaMoveableData implements CfaAuthorita
 
 	@Override
 	public boolean setFormTransitionless(ParsedForm form) {
-		if(!this.updatePlayerModel(form)) return false;
+		if(!this.canEnterForm(form)) return false;
 		return super.setFormTransitionless(form);
 	}
 
-	private boolean updatePlayerModel(ParsedForm form) {
-//		ModelFile newModel = this.getCharacter().MODELS.get(form);
-//		if(newModel == null) {
-//			CharaFormAct.LOGGER.error("Attempting to set {}'s form, however there is no model for combination {} + {}!",
-//					this.getPlayer().getName().getString(), this.getCharacterID(), form.ID);
-//			return false;
-//		}
-//		if(this.getPlayer().networkHandler != null)
-//			CPMCompat.getCommonAPI().setPlayerModel(PlayerEntity.class, this.getPlayer(), newModel, true);
-		return true;
+	private ParsedCommonAppearance appearance;
+	@Override public void updateAppearance() {
+		this.appearance = CommonAppearanceCollector.INSTANCE.get(new CharacterFormCombo(
+				this.getCharacter(), this.getForm()
+		));
 	}
-	public void updatePlayerModel() {
-		this.updatePlayerModel(this.getForm());
+	@Override public @Nullable ParsedCommonAppearance getAppearance() {
+		return this.appearance;
+	}
+
+	private boolean canEnterForm(ParsedForm form) {
+		return this.getPlayer().getWorld().getGameRules().getBoolean(CfaGamerules.ALLOW_NULL_APPEARANCE)
+				|| CommonAppearanceCollector.INSTANCE.get(new CharacterFormCombo(this.getCharacter(), form)) != null;
 	}
 
 	@Override
@@ -298,7 +294,7 @@ public class CfaServerPlayerData extends CfaMoveableData implements CfaAuthorita
 				"Target form (" + formID + ") doesn't exist!");
 
 		long seed = RandomSeed.getSeed();
-		if(!this.setForm(newForm, false, seed)) return FormChangeOperationResult.MISSING_PLAYERMODEL;
+		if(!this.setForm(newForm, false, seed)) return FormChangeOperationResult.NO_VALID_APPEARANCE;
 		CfaDataPackets.empowerRevertS2C(this.getPlayer(), newForm, false, seed);
 		return FormChangeOperationResult.SUCCESS;
 	}
@@ -319,12 +315,12 @@ public class CfaServerPlayerData extends CfaMoveableData implements CfaAuthorita
 				reversionTarget = Objects.requireNonNull(RegistryManager.FORMS.get(reversionTarget)).REVERSION_TARGET_ID;
 			}
 		}
-		if(this.revertTo(reversionTarget) == FormChangeOperationResult.MISSING_PLAYERMODEL) {
+		if(this.revertTo(reversionTarget) == FormChangeOperationResult.NO_VALID_APPEARANCE) {
 			CharaFormAct.LOGGER.warn(
 					"{}'s current form ({}) should revert to {}, however this is illegal for their character! ({})",
 					player.getName().getString(), this.getFormID(), reversionTarget, this.getCharacterID()
 			);
-			return ReversionResult.MISSING_PLAYERMODEL;
+			return ReversionResult.NO_VALID_APPEARANCE;
 		}
 		player.setHealth(player.getMaxHealth());
 		return ReversionResult.SUCCESS;
@@ -336,7 +332,7 @@ public class CfaServerPlayerData extends CfaMoveableData implements CfaAuthorita
 				"Target form (" + formID + ") doesn't exist!");
 
 		long seed = RandomSeed.getSeed();
-		if(!this.setForm(newForm, true, seed)) return FormChangeOperationResult.MISSING_PLAYERMODEL;
+		if(!this.setForm(newForm, true, seed)) return FormChangeOperationResult.NO_VALID_APPEARANCE;
 		CfaDataPackets.empowerRevertS2C(this.getPlayer(), newForm, true, seed);
 		return FormChangeOperationResult.SUCCESS;
 	}
@@ -349,7 +345,7 @@ public class CfaServerPlayerData extends CfaMoveableData implements CfaAuthorita
 		ParsedForm newForm = Objects.requireNonNull(RegistryManager.FORMS.get(formID),
 				"Target form (" + formID + ") doesn't exist!");
 
-		if(!this.setFormTransitionless(newForm)) return FormChangeOperationResult.MISSING_PLAYERMODEL;
+		if(!this.setFormTransitionless(newForm)) return FormChangeOperationResult.NO_VALID_APPEARANCE;
 		CfaDataPackets.assignFormS2C(this.getPlayer(), newForm);
 		return FormChangeOperationResult.SUCCESS;
 	}

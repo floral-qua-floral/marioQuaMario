@@ -199,9 +199,9 @@ public class CharaFormActCommand {
 					sendFeedback(context, "Changed " + name + "'s form to " + newFormID + ".");
 			case NOT_ENABLED ->
 					sendFeedback(context, name + " is not playing as a character, and so cannot take on any form!", false);
-			case MISSING_PLAYERMODEL ->
+			case NO_VALID_APPEARANCE ->
 					sendFeedback(context, name + "'s character (" + data.getCharacterID()
-							+ ") does not have a playermodel for the form " + newFormID + ".", false);
+							+ ") does not have any appearance for the form " + newFormID + ".", false);
 		};
 	}
 
@@ -391,9 +391,10 @@ public class CharaFormActCommand {
 		return sendFeedback(context, switch(result) {
 			case SUCCESS -> "Successfully reverted " + name + " from form " + previousForm + " to " + newForm + ".";
 			case NO_WEAKER_FORM -> "Unable to execute reversion; " + name + "'s current form (" + previousForm + ") has no reversion target.";
-			case MISSING_PLAYERMODEL ->
+			case NO_VALID_APPEARANCE ->
 					"Unable to execute reversion; " + name + "'s current form (" + previousForm + ") reverts into "
-					+ data.getForm().REVERSION_TARGET_ID + ", for which their character (" + data.getCharacterID() + ") has no playermodel.";
+					+ data.getForm().REVERSION_TARGET_ID + ", for which their character (" + data.getCharacterID()
+					+ ") has no appearance.";
 			case NOT_ENABLED -> "Unable to execute reversion; " + name + " is not playing as a character.";
 		}, result == CfaAuthoritativeData.ReversionResult.SUCCESS);
 	}

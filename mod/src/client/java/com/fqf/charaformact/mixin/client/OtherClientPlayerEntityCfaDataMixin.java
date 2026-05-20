@@ -34,8 +34,8 @@ public class OtherClientPlayerEntityCfaDataMixin implements AdvCfaOtherClientDat
 	}
 
 	@Override
-	public @NotNull CfaAppearanceData<CfaOtherClientData> cfa$getModelData() {
-		return this.cfaData.MODEL_DATA;
+	public @NotNull CfaAppearanceData<CfaOtherClientData> cfa$getAppearanceData() {
+		return this.cfaData.APPEARANCE_DATA;
 	}
 
 }

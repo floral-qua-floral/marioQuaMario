@@ -10,6 +10,7 @@ import com.fqf.charaformact_api.appearance.ClientAppearanceDefinition;
 import com.google.common.collect.ImmutableMap;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.minecraft.client.model.ModelData;
+import net.minecraft.client.model.ModelPartData;
 import net.minecraft.client.model.TexturedModelData;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.util.Identifier;
@@ -17,6 +18,7 @@ import net.minecraft.util.Pair;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 
 public class ClientAppearanceCollector extends AbstractAppearanceCollector<ClientAppearanceDefinition, Pair<ParsedClientAppearance, AppearanceRenderer>> {
 	public static ClientAppearanceCollector INSTANCE = new ClientAppearanceCollector();
@@ -77,9 +79,18 @@ public class ClientAppearanceCollector extends AbstractAppearanceCollector<Clien
 			);
 		}
 
+		ModelPartData modelRoot = modelData.getRoot();
+
 		// Add deadmau5's stupid ear which is required or else the game will crash
-		if(modelData.getRoot().getChild("ear") == null)
-			AppearanceHelperImpl.INSTANCE.makeInvisiblePart(modelData.getRoot(), "ear", new Vector3f(), false);
+		if(modelRoot.getChild("ear") == null)
+			AppearanceHelperImpl.INSTANCE.makeInvisiblePart(modelRoot, "ear", new Vector3f(), false);
+
+		// Add cape with default geometry. Its positioning will be handled using the feature rendering system.
+		if(modelRoot.getChild("cloak") == null) AppearanceHelperImpl.INSTANCE.makePart(
+				modelRoot, AppearanceHelper.CAPE, false,
+				new Vector3f(), new Vector3f(-5, 0, -1),
+				0, new Vector3i(10, 16, 1), new Vector2i()
+		);
 
 		return TexturedModelData.of(modelData, textureSize.x, textureSize.y);
 	}

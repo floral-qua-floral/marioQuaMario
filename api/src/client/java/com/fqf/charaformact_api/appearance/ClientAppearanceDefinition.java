@@ -149,18 +149,6 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 		);
 	}
 
-	// CharaFormAct does not affect the player's cape, so it's generally best to make one that matches the vanilla cape.
-	// That means you aren't providing the texture! It uses a vanilla texture! So if you change the UV or the size of
-	// its cuboid, it'll probably mess it up and look gross. I wouldn't recommend overriding this method.
-	// The cape probably won't play nice with custom models anyway.
-	default ModelPartData makeCape(ModelPartData root, AppearanceHelper helper) {
-		return helper.makePart(
-				root, AppearanceHelper.CAPE, false,
-				new Vector3f(0, getYOffset(), 0), new Vector3f(-5, 0, -1),
-				0, new Vector3i(10, 16, 1), new Vector2i()
-		);
-	}
-
 	// Please feel free to override this to return a custom class extending CharaFormEntityModel, if you like.
 	// This will give you lots of control over the player's rendering logic.
 	// If you do, I'd recommend still calling super on any methods you override.
@@ -339,8 +327,6 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 
 		this.makeLeg(root, helper, false);
 		this.makeLeg(root, helper, true);
-
-		this.makeCape(root, helper);
 
 		return modelData;
 	}

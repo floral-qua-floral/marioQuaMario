@@ -38,12 +38,12 @@ public class GameRendererMixin {
 	@WrapMethod(method = "bobView")
 	private void scaleMovementSpeedAroundBobbing(MatrixStack matrices, float tickDelta, Operation<Void> original) {
 		if(this.client.getCameraEntity() instanceof AbstractClientPlayerEntity player) {
-			ParsedClientAppearance model = player.cfa$getModelData().getModel();
+			ParsedClientAppearance model = player.cfa$getAppearanceData().getAppearance();
 			if(model != null) {
 				float realSpeed = player.horizontalSpeed;
 				float realPreviousSpeed = player.prevHorizontalSpeed;
-				player.horizontalSpeed *= model.LIMB_SWING_MULTIPLIER;
-				player.prevHorizontalSpeed *= model.LIMB_SWING_MULTIPLIER;
+				player.horizontalSpeed *= model.VIEW_BOB_MULTIPLIER;
+				player.prevHorizontalSpeed *= model.VIEW_BOB_MULTIPLIER;
 				original.call(matrices, tickDelta);
 				player.horizontalSpeed = realSpeed;
 				player.prevHorizontalSpeed = realPreviousSpeed;

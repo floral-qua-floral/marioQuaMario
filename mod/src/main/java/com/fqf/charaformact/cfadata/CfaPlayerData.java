@@ -132,11 +132,12 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 			this.customVars.remove(oldThingVarsClass); // If we didn't already just replace the vars, delete the old ones
 	}
 
-	protected ParsedCommonAppearance commonModel;
 	private final Set<String> POWERS = new HashSet<>();
 	private final List<StatAlteringStateDefinition.AttributeModifierInstruction> ATTRIBUTE_MODIFIERS = new ArrayList<>();
 
 	public void updateCharacterFormCombo() {
+		this.updateAppearance();
+
 		// Clear all power strings
 		this.POWERS.clear();
 
@@ -194,6 +195,9 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 	@Override public boolean hasPower(String power) {
 		return this.isEnabled() && this.POWERS.contains(power);
 	}
+
+	public abstract void updateAppearance();
+	public abstract @Nullable ParsedCommonAppearance getAppearance();
 
 	public void setupVariablesBeforeInitialApply(ParsedCharacter character, ParsedForm form) {
 		this.character = character;

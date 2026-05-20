@@ -1,5 +1,6 @@
 package com.fqf.charaformact.cfadata;
 
+import com.fqf.charaformact.appearance.ParsedCommonAppearance;
 import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
@@ -9,6 +10,7 @@ import net.minecraft.client.network.OtherClientPlayerEntity;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2d;
 
 import java.util.HashMap;
@@ -16,11 +18,11 @@ import java.util.Map;
 
 public class CfaOtherClientData extends CfaPlayerData implements CfaClientDataImpl {
 	private final OtherClientPlayerEntity PLAYER;
-	public final CfaAppearanceData<CfaOtherClientData> MODEL_DATA;
+	public final CfaAppearanceData<CfaOtherClientData> APPEARANCE_DATA;
 	public CfaOtherClientData(OtherClientPlayerEntity player) {
 		super();
 		this.PLAYER = player;
-		this.MODEL_DATA = new CfaAppearanceData<>(this);
+		this.APPEARANCE_DATA = new CfaAppearanceData<>(this);
 	}
 	@Override public OtherClientPlayerEntity getPlayer() {
 		return this.PLAYER;
@@ -43,9 +45,11 @@ public class CfaOtherClientData extends CfaPlayerData implements CfaClientDataIm
 		super.setActionTransitionless(action);
 	}
 
-	@Override public void updateCharacterFormCombo() {
-		super.updateCharacterFormCombo();
-		this.MODEL_DATA.updateCharacterFormCombo();
+	@Override public void updateAppearance() {
+		this.APPEARANCE_DATA.update();
+	}
+	@Override public @Nullable ParsedCommonAppearance getAppearance() {
+		return this.APPEARANCE_DATA.getAppearance();
 	}
 
 	private double prevX, prevY, prevZ, deltaX, deltaY, deltaZ;
@@ -76,7 +80,7 @@ public class CfaOtherClientData extends CfaPlayerData implements CfaClientDataIm
 			this.nextTickAnimation = this.nextNextTickAnimation;
 		}
 
-		this.MODEL_DATA.tick();
+		this.APPEARANCE_DATA.tick();
 	}
 
 	private final InferredVelocities VELOCITIES = new InferredVelocities();

@@ -1,6 +1,7 @@
 package com.fqf.charaformact.cfadata;
 
 import com.fqf.charaformact.CharaFormAct;
+import com.fqf.charaformact.appearance.ParsedCommonAppearance;
 import com.fqf.charaformact.bapping.BlockBappingUtil;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
 import com.fqf.charaformact.util.BlockCollisionFinder;
@@ -33,11 +34,11 @@ import java.util.*;
 
 public class CfaMainClientData extends CfaMoveableData implements CfaClientDataImpl {
 	private final ClientPlayerEntity PLAYER;
-	public final CfaAppearanceData<CfaMainClientData> MODEL_DATA;
+	public final CfaAppearanceData<CfaMainClientData> APPEARANCE_DATA;
 	public CfaMainClientData(ClientPlayerEntity player) {
 		super();
 		this.PLAYER = player;
-		this.MODEL_DATA = new CfaAppearanceData<>(this);
+		this.APPEARANCE_DATA = new CfaAppearanceData<>(this);
 	}
 	@Override public ClientPlayerEntity getPlayer() {
 		return PLAYER;
@@ -104,9 +105,11 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 		else this.getPlayer().cfa$getAnimationData().mutate(cameraArrangement, this.currentCameraAnimation.mutator(), this, progress);
 	}
 
-	@Override public void updateCharacterFormCombo() {
-		super.updateCharacterFormCombo();
-		this.MODEL_DATA.updateCharacterFormCombo();
+	@Override public void updateAppearance() {
+		this.APPEARANCE_DATA.update();
+	}
+	@Override public @Nullable ParsedCommonAppearance getAppearance() {
+		return this.APPEARANCE_DATA.getAppearance();
 	}
 
 	@Override public void tick() {
@@ -114,7 +117,7 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 		this.getAction().clientTick(this, true);
 		this.getForm().clientTick(this, true);
 		this.getCharacter().clientTick(this, true);
-		this.MODEL_DATA.tick();
+		this.APPEARANCE_DATA.tick();
 	}
 
 	private final WallInfoWithInputs WALL_INFO = new WallInfoWithInputs(this);

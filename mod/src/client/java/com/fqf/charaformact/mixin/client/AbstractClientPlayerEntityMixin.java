@@ -17,7 +17,7 @@ public abstract class AbstractClientPlayerEntityMixin extends PlayerEntity imple
 
 	@Override
 	protected void updateLimbs(float posDelta) {
-		ParsedClientAppearance model = this.cfa$getModelData().getModel();
+		ParsedClientAppearance model = this.cfa$getAppearanceData().getAppearance();
 		super.updateLimbs((model == null ? 1 : model.LIMB_SWING_MULTIPLIER) * posDelta);
 	}
 }

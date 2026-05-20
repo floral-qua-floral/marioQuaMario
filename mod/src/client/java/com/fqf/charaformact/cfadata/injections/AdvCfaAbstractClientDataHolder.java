@@ -14,7 +14,7 @@ public interface AdvCfaAbstractClientDataHolder extends AdvCfaDataHolder {
 		throw new AssertionError("AdvCfaAbstractClientDataHolder default method (animation) called?!");
 	}
 
-	default @NotNull CfaAppearanceData<?> cfa$getModelData() {
-		throw new AssertionError("AdvCfaAbstractClientDataHolder default method (model) called?!");
+	default @NotNull CfaAppearanceData<?> cfa$getAppearanceData() {
+		throw new AssertionError("AdvCfaAbstractClientDataHolder default method (appearance) called?!");
 	}
 }
