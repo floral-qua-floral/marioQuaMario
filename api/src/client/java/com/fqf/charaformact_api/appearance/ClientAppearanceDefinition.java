@@ -210,12 +210,7 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 	}
 	default FeatureTransformationInstructions getUnknownHeadFeatureTransformation() {
 		// Transformation to apply to features which attach to the head but are otherwise unknown.
-		Vector3i headSize = this.getHeadSize();
-		return new FeatureTransformationInstructions(
-				0, headSize.y - 8, 0,
-				0, 0, 0,
-				headSize.x / 8F, headSize.y / 8F, headSize.z / 8F
-		);
+		return FeatureTransformationInstructions.stretchToCover(this.getHeadSize(), new Vector3i(8, 8, 8));
 	}
 	default FeatureTransformationInstructions getCuirassTransformation() {
 		// A cuirass is the largest part of a chestplate, that covers the whole torso.
@@ -242,77 +237,50 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 	}
 	default FeatureTransformationInstructions getFauldTransformation() {
 		// A fauld is a piece of armor for protecting the hip. It's the highest cuboid of vanilla leggings.
-		Vector3i torsoSize = this.getTorsoSize();
-		FeatureTransformationInstructions cuirassTransformation = this.getCuirassTransformation();
-		return new FeatureTransformationInstructions(
-				cuirassTransformation.forwards(),
-				cuirassTransformation.upwards() + 12 - torsoSize.y - 12 * (1 - cuirassTransformation.yScale()),
-				cuirassTransformation.rightwards(),
-				cuirassTransformation.pitch(), cuirassTransformation.yaw(), cuirassTransformation.roll(),
-				cuirassTransformation.xScale(), cuirassTransformation.yScale(), cuirassTransformation.zScale()
-		);
+		return this.getCuirassTransformation().flip(this.getTorsoSize(), 12);
 	}
 	default FeatureTransformationInstructions getBackEquipmentTransformation() {
 		// Applies to things like Elytra and modded backpacks.
 		Vector3i torsoSize = this.getTorsoSize();
+		float scale = Math.min(1, (torsoSize.y + this.getLegSize().y) / 8F);
 		return new FeatureTransformationInstructions(
+				2 - torsoSize.z / 2F, 0, 0,
 				0, 0, 0,
-				0, 0, 0,
-				1, 1, 1
+				scale, scale, scale
 		);
 	}
 	default FeatureTransformationInstructions getUnknownChestFeatureTransformation() {
 		// Applies to things like Elytra and modded backpacks.
-		return new FeatureTransformationInstructions(
-				0, 0, 0,
-				0, 0, 0,
-				1, 1, 1
-		);
+		return FeatureTransformationInstructions.stretchToCover(this.getTorsoSize(), new Vector3i(8, 12, 4));
 	}
 	default FeatureTransformationInstructions getPauldronTransformation() {
 		// Applies to the shoulder piece of a chestplate.
+		Vector3i armSize = this.getArmSize();
+		FeatureTransformationInstructions base = FeatureTransformationInstructions.attemptMaintainAspectRatio(
+				armSize, new Vector3i(4, 12, 4), 2, 0.5F);
+
 		return new FeatureTransformationInstructions(
+				0, armSize.y / 6F - 2, 0,
 				0, 0, 0,
-				0, 0, 0,
-				1, 1, 1
+				base.xScale(), base.yScale(), base.zScale()
 		);
 	}
 	default FeatureTransformationInstructions getGlovesTransformation() {
 		// Applies to gloves from mods, such as from The Aether.
-		return new FeatureTransformationInstructions(
-				0, 0, 0,
-				0, 0, 0,
-				1, 1, 1
-		);
+		return this.getPauldronTransformation().flip(this.getArmSize(), 12);
 	}
 	default FeatureTransformationInstructions getUnknownArmsFeatureTransformation() {
-		return new FeatureTransformationInstructions(
-				0, 0, 0,
-				0, 0, 0,
-				1, 1, 1
-		);
+		return FeatureTransformationInstructions.stretchToCover(this.getArmSize(), new Vector3i(4, 12, 4));
 	}
 	default FeatureTransformationInstructions getBootsTransformation() {
-		return new FeatureTransformationInstructions(
-				0, 0, 0,
-				0, 0, 0,
-				1, 1, 1
-		);
+		return this.getChaussesTransformation().flip(this.getLegSize(), 12);
 	}
 	default FeatureTransformationInstructions getChaussesTransformation() {
 		// Chausses are the part of the leggings that guards the legs.
-		return new FeatureTransformationInstructions(
-				0, 0, 0,
-				0, 0, 0,
-				1, 1, 1
-		);
+		return FeatureTransformationInstructions.attemptMaintainAspectRatio(this.getLegSize(), new Vector3i(4, 12, 4), 3, 1);
 	}
 	default FeatureTransformationInstructions getUnknownLegsFeatureTransformation() {
-		return new FeatureTransformationInstructions(
-				0, 0, 0,
-				0, 0, 0,
-				1, 1, 1
-		);
+		return FeatureTransformationInstructions.stretchToCover(this.getLegSize(), new Vector3i(4, 12, 4));
 	}
 
 	default ModelData getModelData(AppearanceHelper helper) {

@@ -1,21 +1,24 @@
-package com.fqf.charaformact.appearance.temp;
+package com.fqf.mario_qua_mario.appearances;
 
-import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact_api.appearance.CommonAppearanceDefinition;
+import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.characters.Mario;
+import com.fqf.mario_qua_mario.forms.Raccoon;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3i;
 
 public class WonkyCommonAppearance implements CommonAppearanceDefinition {
+	public static final Identifier ID = MarioQuaMario.makeID("wonky");
 	@Override public @NotNull Identifier getID() {
-		return CharaFormAct.makeID("wonky");
+	    return ID;
 	}
 
 	@Override public @NotNull Identifier getCharacterID() {
-		return Identifier.of("mario_qua_mario", "mario");
+		return Mario.ID;
 	}
 	@Override public @NotNull Identifier getFormID() {
-		return Identifier.of("mario_qua_mario", "raccoon");
+		return Raccoon.ID;
 	}
 
 	@Override public Vector3i getArmSize() {

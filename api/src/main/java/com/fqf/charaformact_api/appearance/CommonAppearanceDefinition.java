@@ -17,7 +17,7 @@ public interface CommonAppearanceDefinition {
 		return new Vector3i(4, 12, 4);
 	}
 	default float getStrideLength() {
-		return this.getLegSize().y / 12F;
+		return 0.5F + this.getLegSize().y / 24F;
 	}
 
 

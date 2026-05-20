@@ -1,7 +1,7 @@
-package com.fqf.charaformact.appearance.temp;
+package com.fqf.mario_qua_mario.appearances;
 
-import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact_api.appearance.ClientAppearanceDefinition;
+import com.fqf.mario_qua_mario.MarioQuaMario;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2i;
@@ -14,6 +14,6 @@ public class TemplateClientAppearance extends TemplateCommonAppearance implement
 
 	@Override
 	public @NotNull Identifier getTextureLocation() {
-		return CharaFormAct.makeID("textures/entity/player/uwu/template.png");
+		return MarioQuaMario.makeID("textures/entity/player/appearance/template.png");
 	}
 }

@@ -107,6 +107,18 @@
 			"com.fqf.mario_qua_mario.characters.Toadette"
 		],
 
+		"cfa-common-appearances": [
+			"com.fqf.mario_qua_mario.appearances.TemplateCommonAppearance",
+			"com.fqf.mario_qua_mario.appearances.WonkyCommonAppearance",
+			"com.fqf.mario_qua_mario.appearances.SmallCommonAppearance"
+		],
+
+		"cfa-client-appearances": [
+			"com.fqf.mario_qua_mario.appearances.TemplateClientAppearance",
+			"com.fqf.mario_qua_mario.appearances.WonkyClientAppearance",
+			"com.fqf.mario_qua_mario.appearances.SmallClientAppearance"
+		],
+
 		"cfa-voicelines": [
 			"com.fqf.mario_qua_mario.Voicelines"
 		],

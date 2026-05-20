@@ -28,18 +28,6 @@
 
 		"modmenu": [
 			"com.fqf.charaformact.util.ModMenuIntegration"
-		],
-
-		"cfa-common-appearances": [
-			"com.fqf.charaformact.appearance.temp.TemplateCommonAppearance",
-			"com.fqf.charaformact.appearance.temp.WonkyCommonAppearance",
-			"com.fqf.charaformact.appearance.temp.SmallCommonAppearance"
-		],
-
-		"cfa-client-appearances": [
-			"com.fqf.charaformact.appearance.temp.TemplateClientAppearance",
-			"com.fqf.charaformact.appearance.temp.WonkyClientAppearance",
-			"com.fqf.charaformact.appearance.temp.SmallClientAppearance"
 		]
 	},
 	"mixins": [
