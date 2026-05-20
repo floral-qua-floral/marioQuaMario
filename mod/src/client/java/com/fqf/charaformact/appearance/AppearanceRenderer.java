@@ -1,4 +1,4 @@
-package com.fqf.charaformact.models;
+package com.fqf.charaformact.appearance;
 
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
 import net.fabricmc.fabric.impl.client.rendering.RegistrationHelperImpl;
@@ -9,10 +9,10 @@ import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.Identifier;
 
-public class CharacterFormRenderer extends PlayerEntityRenderer {
+public class AppearanceRenderer extends PlayerEntityRenderer {
 	private final Identifier TEXTURE;
 
-	public CharacterFormRenderer(EntityRendererFactory.Context ctx, Identifier textureLocation) {
+	public AppearanceRenderer(EntityRendererFactory.Context ctx, Identifier textureLocation) {
 		super(ctx, false);
 		this.TEXTURE = textureLocation;
 

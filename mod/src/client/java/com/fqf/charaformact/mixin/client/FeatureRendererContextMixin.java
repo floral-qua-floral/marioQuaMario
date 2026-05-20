@@ -1,6 +1,6 @@
 package com.fqf.charaformact.mixin.client;
 
-import com.fqf.charaformact.models.FeatureRendererWithContext;
+import com.fqf.charaformact.appearance.FeatureRendererWithContext;
 import com.fqf.charaformact.util.TransformationContext;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import org.jetbrains.annotations.Nullable;

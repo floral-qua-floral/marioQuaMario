@@ -1,14 +1,13 @@
-package com.fqf.charaformact.models;
+package com.fqf.charaformact.appearance;
 
 import com.fqf.charaformact.CharaFormAct;
-import com.fqf.charaformact.model.ParsedCommonCharaFormModel;
 import com.fqf.charaformact.registries.power_granting.ParsedCharacter;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
 import com.fqf.charaformact.util.TransformationContext;
-import com.fqf.charaformact_api.model.FeatureTransformationInstructions;
+import com.fqf.charaformact_api.appearance.ClientAppearanceDefinition;
+import com.fqf.charaformact_api.appearance.FeatureTransformationInstructions;
 import com.fqf.charaformact.util.VanillaPart;
-import com.fqf.charaformact_api.model.CharacterFormEntityModel;
-import com.fqf.charaformact_api.model.CharacterFormModelDefinition;
+import com.fqf.charaformact_api.appearance.AppearanceModel;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.util.Identifier;
@@ -20,15 +19,15 @@ import org.joml.Vector3f;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class ParsedCharacterFormModel extends ParsedCommonCharaFormModel {
-	private final CharacterFormModelDefinition DEFINITION;
+public class ParsedClientAppearance extends ParsedCommonAppearance {
+	private final ClientAppearanceDefinition DEFINITION;
 
 	public final EntityModelLayer LAYER;
 	public final Identifier TEXTURE_LOCATION;
 	public final int TEXTURE_WIDTH, TEXTURE_HEIGHT;
 
-	private CharacterFormEntityModel model;
-	private CharacterFormRenderer renderer;
+	private AppearanceModel model;
+	private AppearanceRenderer renderer;
 
 	public final float HELD_ITEM_X_TRANSLATION, HELD_ITEM_Y_TRANSLATION, HELD_ITEM_Z_TRANSLATION;
 	public final float HELD_SHIELD_X_TRANSLATION, HELD_SHIELD_Y_TRANSLATION, HELD_SHIELD_Z_TRANSLATION;
@@ -39,7 +38,7 @@ public class ParsedCharacterFormModel extends ParsedCommonCharaFormModel {
 
 	public final Map<VanillaPart, Map<TransformationContext, FeatureTransformationInstructions>> FEATURE_TRANSFORMATION_INSTRUCTIONS;
 
-	public ParsedCharacterFormModel(CharacterFormModelDefinition definition, ParsedCharacter character, ParsedForm form) {
+	public ParsedClientAppearance(ClientAppearanceDefinition definition, ParsedCharacter character, ParsedForm form) {
 		super(definition, character, form);
 		DEFINITION = definition;
 
@@ -49,7 +48,7 @@ public class ParsedCharacterFormModel extends ParsedCommonCharaFormModel {
 		this.TEXTURE_WIDTH = textureSize.x;
 		this.TEXTURE_HEIGHT = textureSize.y;
 
-		// CharacterFormModelDefinition's held item offsets are at a different orientation than vanilla uses in its held
+		// ClientAppearanceDefinition's held item offsets are at a different orientation than vanilla uses in its held
 		// item render logic. Account for that here.
 		Vector3f itemOffset = definition.getHeldItemPosition().div(16);
 		this.HELD_ITEM_X_TRANSLATION = itemOffset.x;
@@ -88,20 +87,20 @@ public class ParsedCharacterFormModel extends ParsedCommonCharaFormModel {
 		this.VIEW_BOB_MULTIPLIER = this.LIMB_SWING_MULTIPLIER;
 	}
 
-	public CharacterFormEntityModel makeAndGetModel(EntityRendererFactory.Context ctx) {
+	public AppearanceModel makeAndGetModel(EntityRendererFactory.Context ctx) {
 		if(this.model == null) this.model = this.DEFINITION.createModel(ctx.getPart(this.LAYER));
 		return this.model;
 	}
 
-	public CharacterFormEntityModel getModel() {
+	public AppearanceModel getModel() {
 		return this.model;
 	}
 
-	public void setRenderer(CharacterFormRenderer renderer) {
+	public void setRenderer(AppearanceRenderer renderer) {
 		this.renderer = renderer;
 	}
 
-	public CharacterFormRenderer getRenderer() {
+	public AppearanceRenderer getRenderer() {
 		return this.renderer;
 	}
 

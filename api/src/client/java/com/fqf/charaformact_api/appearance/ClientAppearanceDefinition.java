@@ -1,4 +1,4 @@
-package com.fqf.charaformact_api.model;
+package com.fqf.charaformact_api.appearance;
 
 import net.minecraft.client.model.*;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
@@ -9,7 +9,10 @@ import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
-public interface CharacterFormModelDefinition extends CommonSidedCharaFormModelDefinition {
+/**
+ * An Appearance is essentially a playermodel that is associated with a single Character + Form intersection.
+ */
+public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 	default @NotNull EntityModelLayer getModelLayer() {
 		return new EntityModelLayer(this.getID(), "main");
 	}
@@ -39,34 +42,34 @@ public interface CharacterFormModelDefinition extends CommonSidedCharaFormModelD
 	default Vector2i getHeadUV() {
 		return new Vector2i(0, 0);
 	}
-	default Vector2i getHatUV(CharacterFormModelHelper helper) {
+	default Vector2i getHatUV(AppearanceHelper helper) {
 		return new Vector2i(helper.getBottomRightCorner(getHeadUV(), getHeadSize()).x, 0);
 	}
-	default Vector2i getRightLegUV(CharacterFormModelHelper helper) {
+	default Vector2i getRightLegUV(AppearanceHelper helper) {
 		return new Vector2i(0, helper.getBottomRightCorner(getHeadUV(), getHeadSize()).y);
 	}
-	default Vector2i getRightPantsUV(CharacterFormModelHelper helper) {
+	default Vector2i getRightPantsUV(AppearanceHelper helper) {
 		return new Vector2i(0, helper.getBottomRightCorner(getRightLegUV(helper), getLegSize()).y);
 	}
-	default Vector2i getTorsoUV(CharacterFormModelHelper helper) {
+	default Vector2i getTorsoUV(AppearanceHelper helper) {
 		return new Vector2i(
 				helper.getBottomRightCorner(getRightLegUV(helper), getLegSize()).x,
 				this.getRightLegUV(helper).y
 		);
 	}
-	default Vector2i getJacketUV(CharacterFormModelHelper helper) {
+	default Vector2i getJacketUV(AppearanceHelper helper) {
 		return new Vector2i(
 				getRightLegUV(helper).x,
 				helper.getBottomRightCorner(getTorsoUV(helper), getTorsoSize()).y
 		);
 	}
-	default Vector2i getRightArmUV(CharacterFormModelHelper helper) {
+	default Vector2i getRightArmUV(AppearanceHelper helper) {
 		return new Vector2i(
 				helper.getBottomRightCorner(getRightLegUV(helper), getLegSize()).x,
 				this.getRightLegUV(helper).y
 		);
 	}
-	default Vector2i getRightSleeveUV(CharacterFormModelHelper helper) {
+	default Vector2i getRightSleeveUV(AppearanceHelper helper) {
 		return new Vector2i(
 				getRightArmUV(helper).x,
 				helper.getBottomRightCorner(getRightArmUV(helper), getArmSize()).y
@@ -101,7 +104,7 @@ public interface CharacterFormModelDefinition extends CommonSidedCharaFormModelD
 	// The default implementation creates two cuboids per part: One for the actual part, and another for its 3D layer
 	// (hat, jacket, sleeve, or pants). You only need to override any of these if you want to replace the geometry
 	// of a part entirely in some way, such as by splitting the torso into multiple cuboids.
-	default ModelPartData makeHead(ModelPartData root, CharacterFormModelHelper helper) {
+	default ModelPartData makeHead(ModelPartData root, AppearanceHelper helper) {
 		Vector3i headSize = this.getHeadSize();
 		return helper.makePartAndHat(
 				root, false, EntityModelPartNames.HEAD, EntityModelPartNames.HAT,
@@ -111,7 +114,7 @@ public interface CharacterFormModelDefinition extends CommonSidedCharaFormModelD
 				headSize, getHeadUV(), getHatUV(helper), true
 		);
 	}
-	default ModelPartData makeTorso(ModelPartData root, CharacterFormModelHelper helper) {
+	default ModelPartData makeTorso(ModelPartData root, AppearanceHelper helper) {
 		Vector3i torsoSize = this.getTorsoSize();
 		return helper.makePartAndHat(
 				root, false, EntityModelPartNames.BODY, EntityModelPartNames.JACKET,
@@ -121,24 +124,24 @@ public interface CharacterFormModelDefinition extends CommonSidedCharaFormModelD
 				torsoSize, getTorsoUV(helper), getJacketUV(helper), true
 		);
 	}
-	default ModelPartData makeArm(ModelPartData root, CharacterFormModelHelper helper, boolean isLeft) {
+	default ModelPartData makeArm(ModelPartData root, AppearanceHelper helper, boolean isLeft) {
 		Vector3i armSize = this.getArmSize();
 		return helper.makePartAndHat(
 				root, isLeft,
 				isLeft ? EntityModelPartNames.LEFT_ARM : EntityModelPartNames.RIGHT_ARM,
-				isLeft ? CharacterFormModelHelper.LEFT_SLEEVE : CharacterFormModelHelper.RIGHT_SLEEVE,
+				isLeft ? AppearanceHelper.LEFT_SLEEVE : AppearanceHelper.RIGHT_SLEEVE,
 				this.getRightArmPivot(), // pivot
 				new Vector3f(armSize.x / -2F, armSize.y / -6F, armSize.z / -2F), // offset
 				armSize.x / -4F, // mirrorable offset
 				getArmSize(), getRightArmUV(helper), getRightSleeveUV(helper), true
 		);
 	}
-	default ModelPartData makeLeg(ModelPartData root, CharacterFormModelHelper helper, boolean isLeft) {
+	default ModelPartData makeLeg(ModelPartData root, AppearanceHelper helper, boolean isLeft) {
 		Vector3i legSize = this.getLegSize();
 		return helper.makePartAndHat(
 				root, isLeft,
 				isLeft ? EntityModelPartNames.LEFT_LEG : EntityModelPartNames.RIGHT_LEG,
-				isLeft ? CharacterFormModelHelper.LEFT_PANTS : CharacterFormModelHelper.RIGHT_PANTS,
+				isLeft ? AppearanceHelper.LEFT_PANTS : AppearanceHelper.RIGHT_PANTS,
 				this.getRightLegPivot(), // pivot
 				new Vector3f(legSize.x / -2F, 0, legSize.z / -2F), // offset
 				legSize.x / 40F, // mirrorable offset
@@ -150,9 +153,9 @@ public interface CharacterFormModelDefinition extends CommonSidedCharaFormModelD
 	// That means you aren't providing the texture! It uses a vanilla texture! So if you change the UV or the size of
 	// its cuboid, it'll probably mess it up and look gross. I wouldn't recommend overriding this method.
 	// The cape probably won't play nice with custom models anyway.
-	default ModelPartData makeCape(ModelPartData root, CharacterFormModelHelper helper) {
+	default ModelPartData makeCape(ModelPartData root, AppearanceHelper helper) {
 		return helper.makePart(
-				root, CharacterFormModelHelper.CAPE, false,
+				root, AppearanceHelper.CAPE, false,
 				new Vector3f(0, getYOffset(), 0), new Vector3f(-5, 0, -1),
 				0, new Vector3i(10, 16, 1), new Vector2i()
 		);
@@ -161,8 +164,8 @@ public interface CharacterFormModelDefinition extends CommonSidedCharaFormModelD
 	// Please feel free to override this to return a custom class extending CharaFormEntityModel, if you like.
 	// This will give you lots of control over the player's rendering logic.
 	// If you do, I'd recommend still calling super on any methods you override.
-	default CharacterFormEntityModel createModel(ModelPart root) {
-		return new CharacterFormEntityModel(root);
+	default AppearanceModel createModel(ModelPart root) {
+		return new AppearanceModel(root);
 	}
 
 	// Methods for deciding where on the arm held items will render.
@@ -324,7 +327,7 @@ public interface CharacterFormModelDefinition extends CommonSidedCharaFormModelD
 		);
 	}
 
-	default ModelData getModelData(CharacterFormModelHelper helper) {
+	default ModelData getModelData(AppearanceHelper helper) {
 		ModelData modelData = new ModelData();
 		ModelPartData root = modelData.getRoot();
 

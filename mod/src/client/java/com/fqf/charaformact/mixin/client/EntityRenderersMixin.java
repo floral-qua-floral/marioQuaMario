@@ -1,6 +1,6 @@
 package com.fqf.charaformact.mixin.client;
 
-import com.fqf.charaformact.models.PlayerModelCollector;
+import com.fqf.charaformact.appearance.ClientAppearanceCollector;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.EntityRenderers;
@@ -17,6 +17,6 @@ import java.util.Map;
 public class EntityRenderersMixin {
 	@Inject(method = "reloadPlayerRenderers", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableMap$Builder;build()Lcom/google/common/collect/ImmutableMap;"))
 	private static void addCfaPlayermodels(EntityRendererFactory.Context ctx, CallbackInfoReturnable<Map<SkinTextures.Model, EntityRenderer<? extends PlayerEntity>>> cir) {
-		PlayerModelCollector.reloadCustomPlayerRenderers(ctx);
+		ClientAppearanceCollector.INSTANCE.reloadAppearanceRenderers(ctx);
 	}
 }

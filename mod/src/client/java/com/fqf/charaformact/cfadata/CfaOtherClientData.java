@@ -16,11 +16,11 @@ import java.util.Map;
 
 public class CfaOtherClientData extends CfaPlayerData implements CfaClientDataImpl {
 	private final OtherClientPlayerEntity PLAYER;
-	public final CfaModelData<CfaOtherClientData> MODEL_DATA;
+	public final CfaAppearanceData<CfaOtherClientData> MODEL_DATA;
 	public CfaOtherClientData(OtherClientPlayerEntity player) {
 		super();
 		this.PLAYER = player;
-		this.MODEL_DATA = new CfaModelData<>(this);
+		this.MODEL_DATA = new CfaAppearanceData<>(this);
 	}
 	@Override public OtherClientPlayerEntity getPlayer() {
 		return this.PLAYER;

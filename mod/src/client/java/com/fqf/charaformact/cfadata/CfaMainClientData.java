@@ -2,8 +2,6 @@ package com.fqf.charaformact.cfadata;
 
 import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.bapping.BlockBappingUtil;
-import com.fqf.charaformact.models.PlayerModelCollector;
-import com.fqf.charaformact.models.CharacterFormRenderer;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
 import com.fqf.charaformact.util.BlockCollisionFinder;
 import com.fqf.charaformact.util.DirectionBasedWallInfo;
@@ -21,9 +19,7 @@ import com.fqf.charaformact_api.cfadata.util.RecordedCollision;
 import com.fqf.charaformact_api.cfadata.util.RecordedCollisionSet;
 import it.unimi.dsi.fastutil.objects.ObjectDoublePair;
 import net.minecraft.client.input.Input;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.entity.MovementType;
 import net.minecraft.network.packet.CustomPayload;
@@ -37,11 +33,11 @@ import java.util.*;
 
 public class CfaMainClientData extends CfaMoveableData implements CfaClientDataImpl {
 	private final ClientPlayerEntity PLAYER;
-	public final CfaModelData<CfaMainClientData> MODEL_DATA;
+	public final CfaAppearanceData<CfaMainClientData> MODEL_DATA;
 	public CfaMainClientData(ClientPlayerEntity player) {
 		super();
 		this.PLAYER = player;
-		this.MODEL_DATA = new CfaModelData<>(this);
+		this.MODEL_DATA = new CfaAppearanceData<>(this);
 	}
 	@Override public ClientPlayerEntity getPlayer() {
 		return PLAYER;

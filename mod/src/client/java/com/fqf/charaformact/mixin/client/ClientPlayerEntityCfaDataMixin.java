@@ -1,7 +1,7 @@
 package com.fqf.charaformact.mixin.client;
 
 import com.fqf.charaformact.cfadata.CfaMainClientData;
-import com.fqf.charaformact.cfadata.CfaModelData;
+import com.fqf.charaformact.cfadata.CfaAppearanceData;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact.cfadata.injections.AdvCfaMainClientDataHolder;
 import com.fqf.charaformact_api.cfadata.injections.CfaClientDataHolder;
@@ -38,7 +38,7 @@ public class ClientPlayerEntityCfaDataMixin implements AdvCfaMainClientDataHolde
 	}
 
 	@Override
-	public @NotNull CfaModelData<CfaMainClientData> cfa$getModelData() {
+	public @NotNull CfaAppearanceData<CfaMainClientData> cfa$getModelData() {
 		return this.CFA_DATA.MODEL_DATA;
 	}
 }

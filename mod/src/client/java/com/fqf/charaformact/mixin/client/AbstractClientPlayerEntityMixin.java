@@ -1,7 +1,7 @@
 package com.fqf.charaformact.mixin.client;
 
 import com.fqf.charaformact.cfadata.injections.AdvCfaAbstractClientDataHolder;
-import com.fqf.charaformact.models.ParsedCharacterFormModel;
+import com.fqf.charaformact.appearance.ParsedClientAppearance;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -17,7 +17,7 @@ public abstract class AbstractClientPlayerEntityMixin extends PlayerEntity imple
 
 	@Override
 	protected void updateLimbs(float posDelta) {
-		ParsedCharacterFormModel model = this.cfa$getModelData().getModel();
+		ParsedClientAppearance model = this.cfa$getModelData().getModel();
 		super.updateLimbs((model == null ? 1 : model.LIMB_SWING_MULTIPLIER) * posDelta);
 	}
 }

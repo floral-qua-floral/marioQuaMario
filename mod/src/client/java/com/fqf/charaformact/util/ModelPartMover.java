@@ -1,8 +1,8 @@
 package com.fqf.charaformact.util;
 
-import com.fqf.charaformact.models.ParsedCharacterFormModel;
-import com.fqf.charaformact_api.model.CharacterFormEntityModel;
-import com.fqf.charaformact_api.model.FeatureTransformationInstructions;
+import com.fqf.charaformact.appearance.ParsedClientAppearance;
+import com.fqf.charaformact_api.appearance.AppearanceModel;
+import com.fqf.charaformact_api.appearance.FeatureTransformationInstructions;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.util.math.MathHelper;
 import org.joml.Vector3f;
@@ -98,22 +98,22 @@ public class ModelPartMover {
 	}
 
 	private final Map<VanillaPart, Map<TransformationContext, UsableTransformation>> TRANSFORMATIONS;
-	private final CharacterFormEntityModel ENTITY_MODEL;
+	private final AppearanceModel MODEL;
 	private TransformationContext currentContext = TransformationContext.ORIGINAL;
 
-	public ModelPartMover(ParsedCharacterFormModel parsedModel, CharacterFormEntityModel entityModel) {
-		this.ENTITY_MODEL = entityModel;
+	public ModelPartMover(ParsedClientAppearance appearance, AppearanceModel model) {
+		this.MODEL = model;
 		this.TRANSFORMATIONS = new EnumMap<>(VanillaPart.class);
 		for(VanillaPart vanillaPart : VanillaPart.values()) {
 			// First record the original position, orientation, and scale of every single model vanillaPart
-			ModelPart modelPart = vanillaPart.of(entityModel);
+			ModelPart modelPart = vanillaPart.of(model);
 			Map<TransformationContext, UsableTransformation> transformations = new EnumMap<>(TransformationContext.class);
 			this.TRANSFORMATIONS.put(vanillaPart, transformations);
 			UsableTransformation original = new UsableTransformation(modelPart);
 			transformations.put(TransformationContext.ORIGINAL, original);
 
 			// Calculate the different transformations we'll be using for this part
-			Map<TransformationContext, FeatureTransformationInstructions> instructions = parsedModel.FEATURE_TRANSFORMATION_INSTRUCTIONS.get(vanillaPart);
+			Map<TransformationContext, FeatureTransformationInstructions> instructions = appearance.FEATURE_TRANSFORMATION_INSTRUCTIONS.get(vanillaPart);
 			this.populateTransformationsMap(TransformationContext.ARMOR_OUTER, transformations, modelPart, instructions);
 			if(vanillaPart.HAS_INNER_ARMOR)
 				this.populateTransformationsMap(TransformationContext.ARMOR_INNER, transformations, modelPart, instructions);
@@ -136,7 +136,7 @@ public class ModelPartMover {
 
 		this.TRANSFORMATIONS.forEach((vanillaPart, elaborateTransformationGroup) -> {
 			UsableTransformation transformation = this.TRANSFORMATIONS.get(vanillaPart).get(context);
-			if(transformation != null) transformation.apply(vanillaPart.of(this.ENTITY_MODEL));
+			if(transformation != null) transformation.apply(vanillaPart.of(this.MODEL));
 		});
 		this.currentContext = context;
 	}

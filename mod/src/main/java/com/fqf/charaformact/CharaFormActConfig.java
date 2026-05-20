@@ -8,7 +8,7 @@ import me.shedaniel.autoconfig.annotation.Config;
 public class CharaFormActConfig implements ConfigData {
 	private int bufferLength = 3;
 	private boolean logAllActionTransitions = false;
-	private boolean logCharacterFormModelUVs = false;
+	private boolean logAppearancesUVs = false;
 	private boolean logNBTReadWrite = false;
 	private boolean logActionTransitionInjections = false;
 	private boolean specialHUD = false;
@@ -19,7 +19,7 @@ public class CharaFormActConfig implements ConfigData {
 		return this.logAllActionTransitions;
 	}
 	public boolean logCharacterFormModelUVs() {
-		return this.logCharacterFormModelUVs;
+		return this.logAppearancesUVs;
 	}
 	public boolean logNBTReadWrite() {
 		return this.logNBTReadWrite;

@@ -3,7 +3,7 @@ package com.fqf.charaformact.mixin.client;
 import com.fqf.charaformact.bapping.BlockBappingUtil;
 import com.fqf.charaformact.bapping.WorldBapsInfo;
 import com.fqf.charaformact.cfadata.CfaPlayerData;
-import com.fqf.charaformact.models.ParsedCharacterFormModel;
+import com.fqf.charaformact.appearance.ParsedClientAppearance;
 import com.fqf.charaformact.util.CfaGamerules;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -38,7 +38,7 @@ public class GameRendererMixin {
 	@WrapMethod(method = "bobView")
 	private void scaleMovementSpeedAroundBobbing(MatrixStack matrices, float tickDelta, Operation<Void> original) {
 		if(this.client.getCameraEntity() instanceof AbstractClientPlayerEntity player) {
-			ParsedCharacterFormModel model = player.cfa$getModelData().getModel();
+			ParsedClientAppearance model = player.cfa$getModelData().getModel();
 			if(model != null) {
 				float realSpeed = player.horizontalSpeed;
 				float realPreviousSpeed = player.prevHorizontalSpeed;

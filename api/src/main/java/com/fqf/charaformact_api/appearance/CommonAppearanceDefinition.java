@@ -1,14 +1,13 @@
-package com.fqf.charaformact_api.model;
+package com.fqf.charaformact_api.appearance;
 
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3i;
 
-public interface CommonSidedCharaFormModelDefinition {
+public interface CommonAppearanceDefinition {
 	@NotNull Identifier getID();
 
 	@NotNull Identifier getCharacterID();
-
 	@NotNull Identifier getFormID();
 
 	default Vector3i getLegSize() {

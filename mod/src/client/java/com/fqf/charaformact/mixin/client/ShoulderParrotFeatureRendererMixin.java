@@ -1,7 +1,7 @@
 package com.fqf.charaformact.mixin.client;
 
-import com.fqf.charaformact.models.FeatureRendererWithContext;
-import com.fqf.charaformact.models.ParsedCharacterFormModel;
+import com.fqf.charaformact.appearance.FeatureRendererWithContext;
+import com.fqf.charaformact.appearance.ParsedClientAppearance;
 import com.fqf.charaformact.util.TransformationContext;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -19,8 +19,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyArgs;
-import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(ShoulderParrotFeatureRenderer.class)
 public abstract class ShoulderParrotFeatureRendererMixin<T extends PlayerEntity> extends FeatureRenderer<T, PlayerEntityModel<T>> implements FeatureRendererWithContext {
@@ -40,7 +38,7 @@ public abstract class ShoulderParrotFeatureRendererMixin<T extends PlayerEntity>
 			Operation<Void> original, @Local(argsOnly = true) T player
 	) {
 		if(player instanceof AbstractClientPlayerEntity abstractPlayer) {
-			ParsedCharacterFormModel model = abstractPlayer.cfa$getModelData().getModel();
+			ParsedClientAppearance model = abstractPlayer.cfa$getModelData().getModel();
 			if(model != null) {
 				this.getContextModel().body.rotate(instance);
 				original.call(instance,

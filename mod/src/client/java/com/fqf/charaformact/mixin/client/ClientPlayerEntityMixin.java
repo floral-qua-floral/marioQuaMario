@@ -1,7 +1,6 @@
 package com.fqf.charaformact.mixin.client;
 
 import com.fqf.charaformact.cfadata.injections.AdvCfaMainClientDataHolder;
-import com.fqf.charaformact.models.ParsedCharacterFormModel;
 import com.fqf.charaformact.util.CfaPositionSettable;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;

@@ -1,10 +1,10 @@
 package com.fqf.charaformact.mixin.client;
 
-import com.fqf.charaformact.models.FeatureRendererWithContext;
-import com.fqf.charaformact.models.ParsedCharacterFormModel;
+import com.fqf.charaformact.appearance.FeatureRendererWithContext;
+import com.fqf.charaformact.appearance.ParsedClientAppearance;
 import com.fqf.charaformact.util.ModelPartMover;
 import com.fqf.charaformact.util.TransformationContext;
-import com.fqf.charaformact_api.model.CharacterFormEntityModel;
+import com.fqf.charaformact_api.appearance.AppearanceModel;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Share;
@@ -31,10 +31,10 @@ public class LivingEntityRendererMixin<T extends LivingEntity> {
 			CallbackInfo ci, @Share("apply") LocalBooleanRef applyRef
 			) {
 		if(livingEntity instanceof AbstractClientPlayerEntity player) {
-			ParsedCharacterFormModel parsedModel = player.cfa$getModelData().getModel();
+			ParsedClientAppearance parsedModel = player.cfa$getModelData().getModel();
 			if(parsedModel != null) {
 				applyRef.set(true);
-				CharacterFormEntityModel entityModel = parsedModel.getModel();
+				AppearanceModel entityModel = parsedModel.getModel();
 				ModelPartMover.instance = new ModelPartMover(parsedModel, entityModel);
 			}
 		}

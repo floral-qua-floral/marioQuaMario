@@ -1,9 +1,9 @@
 package com.fqf.charaformact.cfadata;
 
 import com.fqf.charaformact.CharaFormAct;
-import com.fqf.charaformact.models.CharacterFormRenderer;
-import com.fqf.charaformact.models.ParsedCharacterFormModel;
-import com.fqf.charaformact.models.PlayerModelCollector;
+import com.fqf.charaformact.appearance.AppearanceRenderer;
+import com.fqf.charaformact.appearance.ClientAppearanceCollector;
+import com.fqf.charaformact.appearance.ParsedClientAppearance;
 import com.fqf.charaformact.registries.power_granting.CharacterFormCombo;
 import com.fqf.charaformact.registries.power_granting.ParsedCharacter;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
@@ -11,20 +11,19 @@ import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.MathHelper;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
-public class CfaModelData<CfaDataType extends CfaPlayerData & CfaClientDataImpl> {
+public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaClientDataImpl> {
 	private final AbstractClientPlayerEntity PLAYER;
 	private final CfaDataType DATA;
 
-	private @Nullable ParsedCharacterFormModel model, flickerModel;
+	private @Nullable ParsedClientAppearance appearance, flickerModel;
 	private @Nullable PlayerEntityRenderer renderer, flickerRenderer;
 
 	private long flickerUntil;
 	private boolean flickering;
 
-	public CfaModelData(CfaDataType data) {
+	public CfaAppearanceData(CfaDataType data) {
 		PLAYER = data.getPlayer();
 		DATA = data;
 
@@ -44,9 +43,9 @@ public class CfaModelData<CfaDataType extends CfaPlayerData & CfaClientDataImpl>
 		return this.getModel() != null;
 	}
 
-	public ParsedCharacterFormModel getModel() {
+	public ParsedClientAppearance getModel() {
 		if(this.flickering) return this.flickerModel;
-		return this.model;
+		return this.appearance;
 	}
 
 	public PlayerEntityRenderer getRenderer() {
@@ -59,26 +58,26 @@ public class CfaModelData<CfaDataType extends CfaPlayerData & CfaClientDataImpl>
 	}
 
 	public void updateCharacterFormCombo() {
-		this.flickerModel = this.model;
+		this.flickerModel = this.appearance;
 		this.flickerRenderer = this.renderer;
 
-		@Nullable Pair<ParsedCharacterFormModel, PlayerEntityRenderer> newModelAndRenderer = null;
+		@Nullable Pair<ParsedClientAppearance, AppearanceRenderer> newModelAndRenderer = null;
 
 		if(this.DATA.isEnabled()) {
 			ParsedCharacter character = this.DATA.getCharacter();
 			ParsedForm form = this.DATA.getForm();
-			newModelAndRenderer = PlayerModelCollector.getModelAndRenderer(
+			newModelAndRenderer = ClientAppearanceCollector.INSTANCE.get(
 					new CharacterFormCombo(character, form));
 			if(newModelAndRenderer == null) {
 				CharaFormAct.LOGGER.warn("Player {} could not find a playermodel for {} in form {}!",
 						this.PLAYER, character, form);
-				newModelAndRenderer = PlayerModelCollector.getModelAndRenderer(
+				newModelAndRenderer = ClientAppearanceCollector.INSTANCE.get(
 						new CharacterFormCombo(character, character.INITIAL_FORM));
 			}
 		}
 
 		if(newModelAndRenderer == null) newModelAndRenderer = new Pair<>(null, null);
-		this.model = newModelAndRenderer.getLeft();
+		this.appearance = newModelAndRenderer.getLeft();
 		this.renderer = newModelAndRenderer.getRight();
 
 		this.conditionallyFlicker();

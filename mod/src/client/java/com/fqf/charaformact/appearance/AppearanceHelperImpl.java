@@ -1,6 +1,6 @@
-package com.fqf.charaformact.models;
+package com.fqf.charaformact.appearance;
 
-import com.fqf.charaformact_api.model.CharacterFormModelHelper;
+import com.fqf.charaformact_api.appearance.AppearanceHelper;
 import net.minecraft.client.model.Dilation;
 import net.minecraft.client.model.ModelPartBuilder;
 import net.minecraft.client.model.ModelPartData;
@@ -9,9 +9,9 @@ import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
-public class CharacterFormModelHelperImpl implements CharacterFormModelHelper {
-	public static final CharacterFormModelHelper INSTANCE = new CharacterFormModelHelperImpl();
-	private CharacterFormModelHelperImpl() {
+public class AppearanceHelperImpl implements AppearanceHelper {
+	public static final AppearanceHelper INSTANCE = new AppearanceHelperImpl();
+	private AppearanceHelperImpl() {
 
 	}
 

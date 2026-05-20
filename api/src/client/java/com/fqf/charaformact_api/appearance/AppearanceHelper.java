@@ -1,4 +1,4 @@
-package com.fqf.charaformact_api.model;
+package com.fqf.charaformact_api.appearance;
 
 import net.minecraft.client.model.*;
 import net.minecraft.client.render.entity.model.EntityModelPartNames;
@@ -6,7 +6,7 @@ import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
-public interface CharacterFormModelHelper {
+public interface AppearanceHelper {
 	String RIGHT_PANTS = "right_pants";
 	String LEFT_PANTS = "left_pants";
 	String RIGHT_SLEEVE = "right_sleeve";

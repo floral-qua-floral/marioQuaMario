@@ -1,25 +1,19 @@
 package com.fqf.charaformact.mixin.client;
 
-import com.fqf.charaformact.CharaFormAct;
-import com.fqf.charaformact.models.FeatureRendererWithContext;
+import com.fqf.charaformact.appearance.FeatureRendererWithContext;
 import com.fqf.charaformact.util.ModelPartMover;
 import com.fqf.charaformact.util.TransformationContext;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.llamalad7.mixinextras.sugar.Share;
-import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ArmorFeatureRenderer.class)
 public class ArmorFeatureRendererMixin<T extends LivingEntity, A extends BipedEntityModel<T>> implements FeatureRendererWithContext {

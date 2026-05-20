@@ -1,8 +1,7 @@
 package com.fqf.charaformact.cfadata.injections;
 
 import com.fqf.charaformact.cfadata.CfaAnimationData;
-import com.fqf.charaformact.cfadata.CfaClientDataImpl;
-import com.fqf.charaformact.cfadata.CfaModelData;
+import com.fqf.charaformact.cfadata.CfaAppearanceData;
 import com.fqf.charaformact.cfadata.CfaPlayerData;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +14,7 @@ public interface AdvCfaAbstractClientDataHolder extends AdvCfaDataHolder {
 		throw new AssertionError("AdvCfaAbstractClientDataHolder default method (animation) called?!");
 	}
 
-	default @NotNull CfaModelData<?> cfa$getModelData() {
+	default @NotNull CfaAppearanceData<?> cfa$getModelData() {
 		throw new AssertionError("AdvCfaAbstractClientDataHolder default method (model) called?!");
 	}
 }

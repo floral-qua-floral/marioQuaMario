@@ -1,4 +1,4 @@
-package com.fqf.charaformact_api.model;
+package com.fqf.charaformact_api.appearance;
 
 public record FeatureTransformationInstructions(
 		float forwards, float upwards, float rightwards,

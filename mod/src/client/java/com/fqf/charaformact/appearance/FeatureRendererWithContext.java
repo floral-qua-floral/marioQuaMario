@@ -1,10 +1,8 @@
-package com.fqf.charaformact.models;
+package com.fqf.charaformact.appearance;
 
-import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.util.TransformationContext;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

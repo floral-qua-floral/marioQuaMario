@@ -1,23 +1,21 @@
-package com.fqf.charaformact_api.model;
+package com.fqf.charaformact_api.appearance;
 
 import net.minecraft.client.model.*;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.entity.model.EntityModelPartNames;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
-import net.minecraft.client.util.math.MatrixStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.NoSuchElementException;
 
-public class CharacterFormEntityModel extends PlayerEntityModel<AbstractClientPlayerEntity> {
+public class AppearanceModel extends PlayerEntityModel<AbstractClientPlayerEntity> {
 	public final @Nullable ModelPart tail;
 	public final @Nullable ModelPart rightEar;
 	public final @Nullable ModelPart leftEar;
 	public final @Nullable ModelPart rightWing;
 	public final @Nullable ModelPart leftWing;
 
-	public CharacterFormEntityModel(ModelPart root) {
+	public AppearanceModel(ModelPart root) {
 		super(root, false);
 
 		this.tail = this.getOptionalModelPart(this.getTailParent(root), EntityModelPartNames.TAIL);
@@ -31,14 +29,6 @@ public class CharacterFormEntityModel extends PlayerEntityModel<AbstractClientPl
 		this.leftWing = this.getOptionalModelPart(wingsParent, EntityModelPartNames.LEFT_WING);
 
 		this.head.xScale = 2;
-
-		// Plan:
-		// See if I can achieve universal armor fitting!
-		// I might be able to get away with it if I use two mixins.
-		// First: Jump in around line 130 of LivingEntityRenderer.
-		//  Move the player's parts around! Specifically move their pivots & muck up their scale.
-		// Second: Jump in around line 136.
-		//  Reset everything!
 	}
 
 	protected ModelPart getTailParent(ModelPart root) {
