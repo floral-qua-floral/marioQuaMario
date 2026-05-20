@@ -257,10 +257,10 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 		// Applies to the shoulder piece of a chestplate.
 		Vector3i armSize = this.getArmSize();
 		FeatureTransformationInstructions base = FeatureTransformationInstructions.attemptMaintainAspectRatio(
-				armSize, new Vector3i(4, 12, 4), 2, 0.5F);
+				armSize, new Vector3i(4, 12, 4), 2, 0.25F);
 
 		return new FeatureTransformationInstructions(
-				0, armSize.y / 6F - 2, 0,
+				0, Math.max(0, armSize.y / 6F - 2), 0,
 				0, 0, 0,
 				base.xScale(), base.yScale(), base.zScale()
 		);
@@ -273,11 +273,13 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 		return FeatureTransformationInstructions.stretchToCover(this.getArmSize(), new Vector3i(4, 12, 4));
 	}
 	default FeatureTransformationInstructions getBootsTransformation() {
-		return this.getChaussesTransformation().flip(this.getLegSize(), 12);
+		return FeatureTransformationInstructions.attemptMaintainAspectRatio(
+				this.getLegSize(), new Vector3i(4, 12, 4), 2, 0.3F)
+				.flip(this.getLegSize(), 12);
 	}
 	default FeatureTransformationInstructions getChaussesTransformation() {
 		// Chausses are the part of the leggings that guards the legs.
-		return FeatureTransformationInstructions.attemptMaintainAspectRatio(this.getLegSize(), new Vector3i(4, 12, 4), 3, 1);
+		return FeatureTransformationInstructions.attemptMaintainAspectRatio(this.getLegSize(), new Vector3i(4, 12, 4), 2, 0.25F);
 	}
 	default FeatureTransformationInstructions getUnknownLegsFeatureTransformation() {
 		return FeatureTransformationInstructions.stretchToCover(this.getLegSize(), new Vector3i(4, 12, 4));

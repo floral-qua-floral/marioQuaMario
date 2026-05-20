@@ -28,10 +28,11 @@ public record FeatureTransformationInstructions(
 		);
 	}
 
-	public static FeatureTransformationInstructions attemptMaintainAspectRatio(Vector3i cuboid, Vector3i vanillaCuboid, int allowance, float targetHeightFactor) {
+	public static FeatureTransformationInstructions attemptMaintainAspectRatio(Vector3i cuboid, Vector3i vanillaCuboid, int allowance, float overhangPercentage) {
 		// wrote this method while extremely tired and confused
+		// overhangPercentage - the feature is allowed to overhang past the part that supports it up to this percentage of its vanilla size? i think??
 		Vector3f scale;
-		float targetHeight = Math.max(cuboid.y, vanillaCuboid.y * targetHeightFactor);
+		float targetHeight = Math.max(cuboid.y, vanillaCuboid.y * (1 - overhangPercentage));
 		if(Math.abs(cuboid.x - cuboid.z) <= allowance) {
 			// We can preserve the horizontal aspect ratio, so maybe we can keep the vertical ratio intact too!
 			int horizontalSize = Math.max(cuboid.x, cuboid.z);
@@ -44,7 +45,7 @@ public record FeatureTransformationInstructions(
 			else
 				horizontalScale = (float) horizontalSize / vanillaCuboid.x;
 
-			if(cuboid.y * ((float) vanillaCuboid.y / vanillaCuboid.x) >= horizontalSize - allowance)
+			if(cuboid.y * ((float) vanillaCuboid.x / targetHeight) >= horizontalSize - allowance)
 				scale = new Vector3f(horizontalScale, horizontalScale, horizontalScale);
 			else
 				scale = new Vector3f(horizontalScale, (float) cuboid.y / targetHeight, horizontalScale);

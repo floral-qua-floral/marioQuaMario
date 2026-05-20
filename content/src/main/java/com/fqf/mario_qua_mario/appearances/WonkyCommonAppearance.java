@@ -22,7 +22,7 @@ public class WonkyCommonAppearance implements CommonAppearanceDefinition {
 	}
 
 	@Override public Vector3i getArmSize() {
-		return new Vector3i(6, 12*3, 2);
+		return new Vector3i(6, 12 * 3, 2);
 	}
 	@Override public Vector3i getLegSize() {
 		return new Vector3i(2, 36, 2);
