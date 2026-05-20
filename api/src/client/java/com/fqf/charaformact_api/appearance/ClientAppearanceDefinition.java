@@ -59,13 +59,13 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 	}
 	default Vector2i getJacketUV(AppearanceHelper helper) {
 		return new Vector2i(
-				getRightLegUV(helper).x,
+				getTorsoUV(helper).x,
 				helper.getBottomRightCorner(getTorsoUV(helper), getTorsoSize()).y
 		);
 	}
 	default Vector2i getRightArmUV(AppearanceHelper helper) {
 		return new Vector2i(
-				helper.getBottomRightCorner(getRightLegUV(helper), getLegSize()).x,
+				helper.getBottomRightCorner(getTorsoUV(helper), getTorsoSize()).x,
 				this.getRightLegUV(helper).y
 		);
 	}

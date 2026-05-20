@@ -61,11 +61,13 @@ public class AppearanceHelperImpl implements AppearanceHelper {
 	}
 
 	@Override
+	public Vector2i getUVDimensions(Vector3i cuboidSize) {
+		return new Vector2i(cuboidSize.x * 2 + cuboidSize.z * 2, cuboidSize.y + cuboidSize.z);
+	}
+
+	@Override
 	public Vector2i getBottomRightCorner(Vector2i uv, Vector3i cuboidSize) {
-		return new Vector2i(
-				uv.x + cuboidSize.x * 2 + cuboidSize.z * 2,
-				uv.y + cuboidSize.y + cuboidSize.z
-		);
+		return uv.add(this.getUVDimensions(cuboidSize));
 	}
 
 	@Override

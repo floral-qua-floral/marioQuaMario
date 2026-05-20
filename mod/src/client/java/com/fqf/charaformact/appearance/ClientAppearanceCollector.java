@@ -49,14 +49,14 @@ public class ClientAppearanceCollector extends AbstractAppearanceCollector<Clien
 		if(CharaFormAct.CONFIG.logCharacterFormModelUVs()) {
 			// i'm sorry this code is unbearably ugly but i just mashed it together for a quick test and i don't wanna rewrite it
 			AppearanceHelper helper = AppearanceHelperImpl.INSTANCE;
-			Vector2i headCorner = helper.getBottomRightCorner(definition.getHeadUV(), definition.getHeadSize());
-			Vector2i hatCorner = helper.getBottomRightCorner(definition.getHatUV(helper), definition.getHeadSize());
-			Vector2i torsoCorner = helper.getBottomRightCorner(definition.getTorsoUV(helper), definition.getTorsoSize());
-			Vector2i jacketCorner = helper.getBottomRightCorner(definition.getJacketUV(helper), definition.getTorsoSize());
-			Vector2i rightLegCorner = helper.getBottomRightCorner(definition.getRightLegUV(helper), definition.getLegSize());
-			Vector2i rightPantsCorner = helper.getBottomRightCorner(definition.getRightPantsUV(helper), definition.getLegSize());
-			Vector2i rightArmCorner = helper.getBottomRightCorner(definition.getRightArmUV(helper), definition.getArmSize());
-			Vector2i rightSleeveCorner = helper.getBottomRightCorner(definition.getRightSleeveUV(helper), definition.getArmSize());
+			Vector2i headCorner = helper.getUVDimensions(definition.getHeadSize());
+			Vector2i hatCorner = helper.getUVDimensions(definition.getHeadSize());
+			Vector2i torsoCorner = helper.getUVDimensions(definition.getTorsoSize());
+			Vector2i jacketCorner = helper.getUVDimensions(definition.getTorsoSize());
+			Vector2i rightLegCorner = helper.getUVDimensions(definition.getLegSize());
+			Vector2i rightPantsCorner = helper.getUVDimensions(definition.getLegSize());
+			Vector2i rightArmCorner = helper.getUVDimensions(definition.getArmSize());
+			Vector2i rightSleeveCorner = helper.getUVDimensions(definition.getArmSize());
 			CharaFormAct.LOGGER.info("""
 				{}'s vanilla part UV information:
 				\tHead UV @ {}, {}  ->  {}, {}

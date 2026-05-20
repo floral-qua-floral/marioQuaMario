@@ -39,6 +39,8 @@ public interface AppearanceHelper {
 			Vector3i size, Vector2i uv, float dilation
 	);
 
+	Vector2i getUVDimensions(Vector3i cuboidSize);
+
 	Vector2i getBottomRightCorner(Vector2i uv, Vector3i cuboidSize);
 
 	ModelPartData makeInvisiblePart(ModelPartData root, String name, Vector3f pivot, boolean isLeft);
