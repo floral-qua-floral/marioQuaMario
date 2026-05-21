@@ -18,7 +18,10 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 	}
 
 	@NotNull Vector2i getTextureSize();
-	@NotNull Identifier getTextureLocation();
+	default @NotNull Identifier getTextureLocation() {
+		return Identifier.of(this.getID().getNamespace(), "textures/entity/player/appearance/"
+				+ this.getCharacterID().getPath() + "/" + this.getFormID().getPath() + ".png");
+	}
 
 	// Methods for getting the size of vanilla parts.
 	// The default implementation imitates vanilla proportions. Note: getLegSize is common-sided, as it is expected to

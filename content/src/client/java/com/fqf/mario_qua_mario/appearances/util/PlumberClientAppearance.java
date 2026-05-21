@@ -5,9 +5,7 @@ import com.fqf.charaformact_api.appearance.AppearanceModel;
 import com.fqf.charaformact_api.appearance.ClientAppearanceDefinition;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.model.ModelPartBuilder;
 import net.minecraft.client.model.ModelPartData;
-import net.minecraft.client.model.ModelTransform;
 import net.minecraft.client.render.entity.model.EntityModelPartNames;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
@@ -41,13 +39,6 @@ public abstract class PlumberClientAppearance implements ClientAppearanceDefinit
 	}
 	protected Vector3i getCapTopSize() {
 		return new Vector3i(this.getHeadSize().x, 1, 4);
-	}
-
-	@Override
-	public Vector2i getRightPantsUV(AppearanceHelper helper) {
-		Vector2i uv = ClientAppearanceDefinition.super.getRightPantsUV(helper);
-		MarioQuaMario.LOGGER.info("Plumber right pants UV: {}, {}", uv.x, uv.y);
-		return uv;
 	}
 
 	protected Vector2i getCapfulHeadUV(AppearanceHelper helper) {
@@ -93,16 +84,7 @@ public abstract class PlumberClientAppearance implements ClientAppearanceDefinit
 				hasCap ? this.getCapfulHatUV(helper) : this.getHatUV(helper),
 				false
 		);
-		Vector3i noseSize = this.getNoseSize();
-		helper.makePart(
-				capStateHead,
-				EntityModelPartNames.NOSE,
-				false,
-				new Vector3f(0, -3, this.getHeadSize().z / -2F), // pivot
-				new Vector3f(noseSize.x / -2F, noseSize.y / -2F, -noseSize.z), // offset
-				0, // mirrorable offset
-				noseSize, this.getNoseUV(helper)
-		);
+		addNose(capStateHead, this.getHeadSize(), this.getNoseSize(), this.getNoseUV(helper), helper);
 		if(hasCap) {
 			Vector2i topUV = this.getCapTopUV(helper);
 			Vector3i topSize = this.getCapTopSize();
@@ -123,5 +105,17 @@ public abstract class PlumberClientAppearance implements ClientAppearanceDefinit
 					brimSize, brimUV
 			);
 		}
+	}
+
+	public static void addNose(ModelPartData head, Vector3i headSize, Vector3i noseSize, Vector2i noseUV, AppearanceHelper helper) {
+		helper.makePart(
+				head,
+				EntityModelPartNames.NOSE,
+				false,
+				new Vector3f(0, -3, headSize.z / -2F), // pivot
+				new Vector3f(noseSize.x / -2F, noseSize.y / -2F, -noseSize.z), // offset
+				0, // mirrorable offset
+				noseSize, noseUV
+		);
 	}
 }

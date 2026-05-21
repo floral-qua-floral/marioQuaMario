@@ -5,7 +5,7 @@ import com.fqf.mario_qua_mario.forms.Raccoon;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
-public class RaccoonMarioClientAppearance extends SuperMarioClientAppearance {
+public class RaccoonMarioClientAppearance extends AbstractMarioClientAppearance {
 	public static final Identifier ID = MarioQuaMario.makeID("raccoon_mario");
 	@Override public @NotNull Identifier getID() {
 	    return ID;

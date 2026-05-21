@@ -2,6 +2,7 @@ package com.fqf.mario_qua_mario.appearances.mario;
 
 import com.fqf.charaformact_api.appearance.AppearanceHelper;
 import com.fqf.charaformact_api.appearance.AppearanceModel;
+import com.fqf.charaformact_api.appearance.ClientAppearanceDefinition;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.MarioQuaMarioClient;
 import com.fqf.mario_qua_mario.appearances.util.MqmAppearanceModel;
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2i;
 import org.joml.Vector3i;
 
-public class SmallMarioClientAppearance extends PlumberClientAppearance {
+public class SmallMarioClientAppearance implements ClientAppearanceDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("small_mario");
 	@Override public @NotNull Identifier getID() {
 	    return ID;
@@ -28,28 +29,8 @@ public class SmallMarioClientAppearance extends PlumberClientAppearance {
 		return Small.ID;
 	}
 
-	@Override public @NotNull Identifier getTextureLocation() {
-		return MarioQuaMarioClient.makeAppearanceTextureID(this);
-	}
 	@Override public @NotNull Vector2i getTextureSize() {
 		return new Vector2i(64, 64);
-	}
-
-	@Override
-	protected void makeCapStates(ModelPartData head, AppearanceHelper helper) {
-		this.makeCapStateHead(head, helper, false);
-	}
-
-	@Override
-	public AppearanceModel createModel(ModelPart root) {
-		// Don't use the plumber model because it assumes there are multiple cap states!
-		// We don't have a tail either so there's no need for MqmAppearanceModel's tail-animating code.
-		return new AppearanceModel(root);
-	}
-
-	@Override
-	protected Vector2i getNoseUV(AppearanceHelper helper) {
-		return new Vector2i(0, 36);
 	}
 
 	@Override
@@ -65,5 +46,12 @@ public class SmallMarioClientAppearance extends PlumberClientAppearance {
 	@Override
 	public Vector3i getLegSize() {
 		return SmallMarioCommonAppearance.LEG_SIZE;
+	}
+
+	@Override
+	public ModelPartData makeHead(ModelPartData root, AppearanceHelper helper) {
+		ModelPartData head = ClientAppearanceDefinition.super.makeHead(root, helper);
+		PlumberClientAppearance.addNose(head, this.getHeadSize(), new Vector3i(3, 2, 2), new Vector2i(12, 16), helper);
+		return head;
 	}
 }
