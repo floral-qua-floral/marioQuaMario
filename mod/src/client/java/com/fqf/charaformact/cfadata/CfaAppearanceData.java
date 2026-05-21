@@ -39,12 +39,16 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaClientData
 		else this.flickering = false;
 	}
 
-	public boolean hasCustomModel() {
+	public boolean hasAppearance() {
 		return this.getAppearance() != null;
 	}
 
 	public ParsedClientAppearance getAppearance() {
-		if(this.flickering) return this.flickerModel;
+		return this.getAppearance(true);
+	}
+
+	public ParsedClientAppearance getAppearance(boolean allowFlicker) {
+		if(allowFlicker && this.flickering) return this.flickerModel;
 		return this.appearance;
 	}
 

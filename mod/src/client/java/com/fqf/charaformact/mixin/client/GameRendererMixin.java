@@ -1,11 +1,10 @@
 package com.fqf.charaformact.mixin.client;
 
+import com.fqf.charaformact.appearance.ParsedClientAppearance;
 import com.fqf.charaformact.bapping.BlockBappingUtil;
 import com.fqf.charaformact.bapping.WorldBapsInfo;
 import com.fqf.charaformact.cfadata.CfaPlayerData;
-import com.fqf.charaformact.appearance.ParsedClientAppearance;
 import com.fqf.charaformact.util.CfaGamerules;
-import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.MinecraftClient;
@@ -19,6 +18,7 @@ import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -35,22 +35,26 @@ public class GameRendererMixin {
 		ci.cancel();
 	}
 
-	@WrapMethod(method = "bobView")
-	private void scaleMovementSpeedAroundBobbing(MatrixStack matrices, float tickDelta, Operation<Void> original) {
-		if(this.client.getCameraEntity() instanceof AbstractClientPlayerEntity player) {
-			ParsedClientAppearance model = player.cfa$getAppearanceData().getAppearance();
-			if(model != null) {
-				float realSpeed = player.horizontalSpeed;
-				float realPreviousSpeed = player.prevHorizontalSpeed;
-				player.horizontalSpeed *= model.VIEW_BOB_MULTIPLIER;
-				player.prevHorizontalSpeed *= model.VIEW_BOB_MULTIPLIER;
-				original.call(matrices, tickDelta);
-				player.horizontalSpeed = realSpeed;
-				player.prevHorizontalSpeed = realPreviousSpeed;
-				return;
-			}
+	@WrapOperation(method = "bobView", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;sin(F)F"))
+	private float scaleViewBobbingTimescaleOnlySin(float value, Operation<Float> original) {
+		return this.scaleTrigonometryMethod(value, original);
+	}
+
+	@WrapOperation(method = "bobView", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;cos(F)F"))
+	private float scaleViewBobbingTimescaleOnlyCos(float value, Operation<Float> original) {
+		return this.scaleTrigonometryMethod(value, original);
+	}
+
+	@Unique
+	private float scaleTrigonometryMethod(float value, Operation<Float> original) {
+		// We know for sure going into this that the camera entity is a player! No need to check!
+		assert this.client.getCameraEntity() != null;
+		ParsedClientAppearance appearance = ((AbstractClientPlayerEntity) this.client.getCameraEntity())
+				.cfa$getAppearanceData().getAppearance(false);
+		if(appearance != null) {
+			return original.call(value * appearance.VIEW_BOB_MULTIPLIER);
 		}
-		original.call(matrices, tickDelta);
+		return original.call(value);
 	}
 
 	@WrapOperation(method = "bobView", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(FFF)V"))

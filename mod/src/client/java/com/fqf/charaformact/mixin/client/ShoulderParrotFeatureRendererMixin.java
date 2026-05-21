@@ -60,7 +60,7 @@ public abstract class ShoulderParrotFeatureRendererMixin<T extends PlayerEntity>
 			int danceAngle,
 			Operation<Void> original, @Local(argsOnly = true) T player
 	) {
-		if(player instanceof AbstractClientPlayerEntity abstractPlayer && abstractPlayer.cfa$getAppearanceData().hasCustomModel()) {
+		if(player instanceof AbstractClientPlayerEntity abstractPlayer && abstractPlayer.cfa$getAppearanceData().hasAppearance()) {
 			ModelPart body = this.getContextModel().body;
 			headYaw -= body.yaw;
 			headPitch -= body.pitch;

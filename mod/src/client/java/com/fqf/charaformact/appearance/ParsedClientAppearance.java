@@ -83,7 +83,7 @@ public class ParsedClientAppearance extends ParsedCommonAppearance {
 		this.mirrorTransformationInstructions(VanillaPart.RIGHT_LEG, VanillaPart.LEFT_LEG);
 
 		this.LIMB_SWING_MULTIPLIER = 1 / this.STRIDE_LENGTH;
-		this.VIEW_BOB_MULTIPLIER = Math.min(1, this.LIMB_SWING_MULTIPLIER);
+		this.VIEW_BOB_MULTIPLIER = this.LIMB_SWING_MULTIPLIER;
 	}
 
 	public AppearanceModel makeAndGetModel(EntityRendererFactory.Context ctx) {
