@@ -266,11 +266,7 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 		FeatureTransformationInstructions base = FeatureTransformationInstructions.attemptMaintainAspectRatio(
 				armSize, new Vector3i(4, 12, 4), 2, 0.25F);
 
-		return new FeatureTransformationInstructions(
-				0, Math.max(0, armSize.y / 6F - 2), 0,
-				0, 0, 0,
-				base.xScale(), base.yScale(), base.zScale()
-		);
+		return base.offset(0, Math.max(0, armSize.y / 6F - 2), 0);
 	}
 	default FeatureTransformationInstructions getGlovesTransformation() {
 		// Applies to gloves from mods, such as from The Aether.

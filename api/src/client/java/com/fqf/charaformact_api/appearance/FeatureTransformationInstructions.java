@@ -8,14 +8,47 @@ public record FeatureTransformationInstructions(
 		float pitch, float yaw, float roll,
 		float xScale, float yScale, float zScale
 ) {
-	public FeatureTransformationInstructions flip(Vector3i cuboid, int vanillaHeight) {
+	public static final FeatureTransformationInstructions VANILLA = new FeatureTransformationInstructions(
+			0, 0, 0, 0, 0, 0, 0, 0, 0);
+
+	public FeatureTransformationInstructions withPos(float forwards, float upwards, float rightwards) {
 		return new FeatureTransformationInstructions(
-				this.forwards(),
-				this.upwards() + vanillaHeight - cuboid.y - vanillaHeight * (1 - this.yScale()),
-				this.rightwards(),
+				forwards, upwards, rightwards,
 				this.pitch(), this.yaw(), this.roll(),
 				this.xScale(), this.yScale(), this.zScale()
 		);
+	}
+
+	public FeatureTransformationInstructions offset(float forwards, float upwards, float rightwards) {
+		return this.withPos(this.forwards() + forwards, this.upwards() + upwards, this.rightwards() + rightwards);
+	}
+
+	public FeatureTransformationInstructions withAngles(float pitch, float yaw, float roll) {
+		return new FeatureTransformationInstructions(
+				this.forwards(), this.upwards(), this.rightwards(),
+				pitch, yaw, roll,
+				this.xScale(), this.yScale(), this.zScale()
+		);
+	}
+
+	public FeatureTransformationInstructions rotate(float pitch, float yaw, float roll) {
+		return this.withAngles(this.pitch() + pitch, this.yaw() + yaw, this.roll() + roll);
+	}
+
+	public FeatureTransformationInstructions withScale(float xScale, float yScale, float zScale) {
+		return new FeatureTransformationInstructions(
+				this.forwards(), this.upwards(), this.rightwards(),
+				this.pitch(), this.yaw(), this.roll(),
+				xScale, yScale, zScale
+		);
+	}
+
+	public FeatureTransformationInstructions scale(float xScale, float yScale, float zScale) {
+		return this.withScale(this.xScale() + xScale, this.yScale() + yScale, this.zScale() + zScale);
+	}
+
+	public FeatureTransformationInstructions flip(Vector3i cuboid, int vanillaHeight) {
+		return this.offset(0, vanillaHeight - cuboid.y - vanillaHeight * (1 - this.yScale()), 0);
 	}
 
 	public static FeatureTransformationInstructions stretchToCover(Vector3i cuboid, Vector3i vanillaCuboid) {

@@ -108,17 +108,27 @@
 		],
 
 		"cfa-common-appearances": [
-			"com.fqf.mario_qua_mario.appearances.TemplateCommonAppearance",
-			"com.fqf.mario_qua_mario.appearances.AlexCommonAppearance",
-			"com.fqf.mario_qua_mario.appearances.WonkyCommonAppearance",
-			"com.fqf.mario_qua_mario.appearances.SmallCommonAppearance"
+			"com.fqf.mario_qua_mario.appearances.mario.SmallMarioCommonAppearance",
+			"com.fqf.mario_qua_mario.appearances.mario.SuperMarioCommonAppearance",
+			"com.fqf.mario_qua_mario.appearances.mario.FireMarioCommonAppearance",
+			"com.fqf.mario_qua_mario.appearances.mario.RaccoonMarioCommonAppearance",
+
+			"com.fqf.mario_qua_mario.appearances.test.TemplateCommonAppearance",
+			"com.fqf.mario_qua_mario.appearances.test.AlexCommonAppearance",
+			"com.fqf.mario_qua_mario.appearances.test.WonkyCommonAppearance",
+			"com.fqf.mario_qua_mario.appearances.test.SmallCommonAppearance"
 		],
 
 		"cfa-client-appearances": [
-			"com.fqf.mario_qua_mario.appearances.TemplateClientAppearance",
-			"com.fqf.mario_qua_mario.appearances.AlexClientAppearance",
-			"com.fqf.mario_qua_mario.appearances.WonkyClientAppearance",
-			"com.fqf.mario_qua_mario.appearances.SmallClientAppearance"
+			"com.fqf.mario_qua_mario.appearances.mario.SmallMarioClientAppearance",
+			"com.fqf.mario_qua_mario.appearances.mario.SuperMarioClientAppearance",
+			"com.fqf.mario_qua_mario.appearances.mario.FireMarioClientAppearance",
+			"com.fqf.mario_qua_mario.appearances.mario.RaccoonMarioClientAppearance",
+
+			"com.fqf.mario_qua_mario.appearances.test.TemplateClientAppearance",
+			"com.fqf.mario_qua_mario.appearances.test.AlexClientAppearance",
+			"com.fqf.mario_qua_mario.appearances.test.WonkyClientAppearance",
+			"com.fqf.mario_qua_mario.appearances.test.SmallClientAppearance"
 		],
 
 		"cfa-voicelines": [

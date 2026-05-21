@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario;
 
+import com.fqf.charaformact_api.appearance.ClientAppearanceDefinition;
 import com.fqf.mario_qua_mario.entity.ModEntities;
 import com.fqf.mario_qua_mario.entity.MarioFireballModel;
 import com.fqf.mario_qua_mario.entity.MarioFireballRenderer;
@@ -39,5 +40,10 @@ public class MarioQuaMarioClient implements ClientModInitializer {
 			GameOptions options = MinecraftClient.getInstance().options;
 			return Text.translatable("mount.onboard.mario", options.sneakKey.getBoundKeyLocalizedText(), options.jumpKey.getBoundKeyLocalizedText());
 		}
+	}
+
+	public static Identifier makeAppearanceTextureID(ClientAppearanceDefinition definition) {
+		return MarioQuaMario.makeID("textures/entity/player/appearance/" + definition.getCharacterID().getPath()
+				+ "/" + definition.getFormID().getPath() + ".png");
 	}
 }

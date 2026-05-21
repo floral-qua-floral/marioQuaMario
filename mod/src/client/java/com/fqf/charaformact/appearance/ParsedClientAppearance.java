@@ -102,20 +102,40 @@ public class ParsedClientAppearance extends ParsedCommonAppearance {
 	) {
 		EnumMap<TransformationContext, FeatureTransformationInstructions> map = new EnumMap<>(TransformationContext.class);
 		this.FEATURE_TRANSFORMATION_INSTRUCTIONS.put(part, map);
-		map.put(TransformationContext.ARMOR_OUTER, fixInstructions(outerArmor));
-		if(innerArmor != null) map.put(TransformationContext.ARMOR_INNER, fixInstructions(innerArmor));
+		map.put(TransformationContext.ARMOR_OUTER, fixArmorInstructions(outerArmor, part, 1));
+		if(innerArmor != null) map.put(TransformationContext.ARMOR_INNER, fixArmorInstructions(innerArmor, part, 0.5F));
 		if(special != null) map.put(TransformationContext.SPECIAL, fixInstructions(special));
 		map.put(TransformationContext.UNKNOWN, fixInstructions(unknown));
 	}
 
+	private static Vector3f getVanillaPartSize(VanillaPart part) {
+		return switch(part) {
+			case HEAD -> new Vector3f(8);
+			case TORSO -> new Vector3f(8, 12, 4);
+			case RIGHT_ARM, RIGHT_LEG -> new Vector3f(4, 12, 4);
+			case LEFT_ARM, LEFT_LEG -> throw new IllegalStateException("Don't use this to get information about a mirrored limb!!");
+		};
+	}
+
+	private static FeatureTransformationInstructions fixArmorInstructions(FeatureTransformationInstructions instructions, VanillaPart part, float inflation) {
+		FeatureTransformationInstructions basicFix = fixInstructions(instructions);
+
+		float addend = inflation * 2;
+
+		Vector3f vanillaCuboidSize = getVanillaPartSize(part);
+		Vector3f vanillaArmorSize = new Vector3f(vanillaCuboidSize).add(addend, addend, addend);
+
+		Vector3f modelCuboidSize = new Vector3f(vanillaCuboidSize).mul(basicFix.xScale(), basicFix.yScale(), basicFix.zScale());
+		Vector3f modelArmorSize = new Vector3f(modelCuboidSize).add(addend, addend, addend);
+
+		Vector3f newScale = new Vector3f(basicFix.xScale(), basicFix.yScale(), basicFix.zScale())
+				.mul(vanillaCuboidSize).div(vanillaArmorSize).mul(modelArmorSize).div(modelCuboidSize);
+
+		return basicFix.withScale(newScale.x, newScale.y, newScale.z);
+	}
+
 	private static FeatureTransformationInstructions fixInstructions(FeatureTransformationInstructions instructions) {
-		return new FeatureTransformationInstructions(
-				instructions.forwards() * -1,
-				instructions.upwards() * -1,
-				instructions.rightwards() * -1,
-				instructions.pitch(), instructions.yaw(), instructions.roll(),
-				instructions.xScale(), instructions.yScale(), instructions.zScale()
-		);
+		return instructions.withPos(-instructions.forwards(), -instructions.upwards(), -instructions.rightwards());
 	}
 
 	private void mirrorTransformationInstructions(VanillaPart right, VanillaPart left) {
@@ -123,11 +143,9 @@ public class ParsedClientAppearance extends ParsedCommonAppearance {
 		this.FEATURE_TRANSFORMATION_INSTRUCTIONS.put(left, leftInstructions);
 		this.FEATURE_TRANSFORMATION_INSTRUCTIONS.get(right).forEach((context, instructions) -> {
 			CharaFormAct.LOGGER.info("Mirroring transformation instructions for {}'s {}...", right, context);
-			if(instructions != null) leftInstructions.put(context, new FeatureTransformationInstructions(
-					instructions.forwards(), instructions.upwards(), -instructions.rightwards(),
-					instructions.pitch(), -instructions.yaw(), -instructions.roll(),
-					instructions.xScale(), instructions.yScale(), instructions.zScale()
-			));
+			if(instructions != null) leftInstructions.put(context, instructions
+					.withPos(instructions.forwards(), instructions.upwards(), -instructions.rightwards())
+					.withAngles(instructions.pitch(), -instructions.yaw(), -instructions.roll()));
 		});
 	}
 }

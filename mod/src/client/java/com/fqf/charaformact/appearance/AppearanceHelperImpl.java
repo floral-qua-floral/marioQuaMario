@@ -27,9 +27,9 @@ public class AppearanceHelperImpl implements AppearanceHelper {
 	) {
 		ModelPartData mainPart = this.makePart(root, name, isLeft, pivot, offset, mirrorableXOffset, size, uv);
 		if(isVanillaPart) // Attach the hat-like part to the root with the main part's offsets & pivot. Vanilla code will make it mirror the main part.
-			this.makePart(root, hatName, isLeft, pivot, offset, mirrorableXOffset, size, hatUV, 0.5F);
+			this.makePart(root, hatName, isLeft, pivot, offset, mirrorableXOffset, size, hatUV, 0.25F);
 		else // Attach the hat-like layer directly to the main part with no offset or pivot
-			this.makePart(mainPart, hatName, isLeft, new Vector3f(), new Vector3f(), mirrorableXOffset, size, hatUV, 0.5F);
+			this.makePart(mainPart, hatName, isLeft, new Vector3f(), offset, mirrorableXOffset, size, hatUV, 0.25F);
 		return mainPart;
 	}
 
@@ -67,7 +67,7 @@ public class AppearanceHelperImpl implements AppearanceHelper {
 
 	@Override
 	public Vector2i getBottomRightCorner(Vector2i uv, Vector3i cuboidSize) {
-		return uv.add(this.getUVDimensions(cuboidSize));
+		return new Vector2i(uv).add(this.getUVDimensions(cuboidSize));
 	}
 
 	@Override

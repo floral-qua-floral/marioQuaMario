@@ -1,15 +1,19 @@
-package com.fqf.mario_qua_mario.appearances;
+package com.fqf.mario_qua_mario.appearances.mario;
 
 import com.fqf.charaformact_api.appearance.CommonAppearanceDefinition;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.characters.Mario;
-import com.fqf.mario_qua_mario.forms.Raccoon;
+import com.fqf.mario_qua_mario.forms.Fire;
+import com.fqf.mario_qua_mario.forms.Small;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3i;
 
-public class WonkyCommonAppearance implements CommonAppearanceDefinition {
-	public static final Identifier ID = MarioQuaMario.makeID("wonky");
+public class SmallMarioCommonAppearance implements CommonAppearanceDefinition {
+	public static final Vector3i ARM_SIZE = new Vector3i(4, 5, 4);
+	public static final Vector3i LEG_SIZE = new Vector3i(4, 5, 4);
+
+	public static final Identifier ID = MarioQuaMario.makeID("small_mario");
 	@Override public @NotNull Identifier getID() {
 	    return ID;
 	}
@@ -18,13 +22,13 @@ public class WonkyCommonAppearance implements CommonAppearanceDefinition {
 		return Mario.ID;
 	}
 	@Override public @NotNull Identifier getFormID() {
-		return Raccoon.ID;
+		return Small.ID;
 	}
 
 	@Override public Vector3i getArmSize() {
-		return new Vector3i(6, 12 * 3, 2);
+		return ARM_SIZE;
 	}
 	@Override public Vector3i getLegSize() {
-		return new Vector3i(2, 36, 2);
+		return LEG_SIZE;
 	}
 }

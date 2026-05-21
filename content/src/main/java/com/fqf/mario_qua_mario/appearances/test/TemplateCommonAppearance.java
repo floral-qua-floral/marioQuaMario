@@ -1,8 +1,8 @@
-package com.fqf.mario_qua_mario.appearances;
+package com.fqf.mario_qua_mario.appearances.test;
 
 import com.fqf.charaformact_api.appearance.CommonAppearanceDefinition;
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario.characters.Mario;
+import com.fqf.mario_qua_mario.characters.Toadette;
 import com.fqf.mario_qua_mario.forms.Super;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +14,7 @@ public class TemplateCommonAppearance implements CommonAppearanceDefinition {
 	}
 
 	@Override public @NotNull Identifier getCharacterID() {
-		return Mario.ID;
+		return Toadette.ID;
 	}
 	@Override public @NotNull Identifier getFormID() {
 		return Super.ID;
