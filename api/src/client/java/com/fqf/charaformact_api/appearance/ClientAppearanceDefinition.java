@@ -249,7 +249,7 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 	default FeatureTransformationInstructions getBackEquipmentTransformation() {
 		// Applies to things like Elytra and modded backpacks.
 		Vector3i torsoSize = this.getTorsoSize();
-		float scale = Math.min(1, (torsoSize.y + this.getLegSize().y) / 8F);
+		float scale = Math.min(1, (torsoSize.y + this.getLegSize().y) / 12F);
 		return new FeatureTransformationInstructions(
 				2 - torsoSize.z / 2F, 0, 0,
 				0, 0, 0,
