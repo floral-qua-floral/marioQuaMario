@@ -215,24 +215,31 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 	default FeatureTransformationInstructions getCuirassTransformation() {
 		// A cuirass is the largest part of a chestplate, that covers the whole torso.
 		Vector3i torsoSize = this.getTorsoSize();
-		float horizontalScale;
-		Vector3f scale;
-		if(Math.abs(torsoSize.x - 2 * torsoSize.z) <= 2) {
-			horizontalScale = Math.max(torsoSize.x, 2 * torsoSize.z) / 8F;
-			if(torsoSize.y >= horizontalScale * 9) scale = new Vector3f(horizontalScale, horizontalScale, horizontalScale);
-			else scale = new Vector3f(horizontalScale, torsoSize.y / 12F, horizontalScale);
-		}
-		else {
-			horizontalScale = torsoSize.x / 8F;
-			if(torsoSize.y >= horizontalScale * 9)
-				scale = new Vector3f(horizontalScale, horizontalScale, torsoSize.z / 4F);
-			else
-				scale = new Vector3f(torsoSize.x / 8F, torsoSize.y / 12F, torsoSize.z / 4F);
-		}
+
+		float xScale, yScale, zScale;
+
+		// Must ALWAYS perfectly match torso width.
+		xScale = torsoSize.x / 8F;
+
+		// Match aspect ratio on Z if possible.
+		int torsoDoubleDepth = torsoSize.z * 2;
+		if(torsoDoubleDepth <= xScale && torsoDoubleDepth >= xScale - 2)
+			zScale = xScale;
+		else
+			zScale = torsoSize.z / 4F;
+
+		// Match aspect ratio on Y if possible.
+		float desirableCuirassHeight = 12 * xScale;
+		if(torsoSize.y >= desirableCuirassHeight)
+			//noinspection SuspiciousNameCombination
+			yScale = xScale;
+		else
+			yScale = torsoSize.y / 12F;
+
 		return new FeatureTransformationInstructions(
 				0, 0, 0,
 				0, 0, 0,
-				scale.x, scale.y, scale.z
+				xScale, yScale, zScale
 		);
 	}
 	default FeatureTransformationInstructions getFauldTransformation() {
