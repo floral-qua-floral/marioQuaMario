@@ -104,6 +104,7 @@
 
 		"cfa-characters": [
 			"com.fqf.mario_qua_mario.characters.Mario",
+			"com.fqf.mario_qua_mario.characters.Luigi",
 			"com.fqf.mario_qua_mario.characters.Toadette"
 		],
 
@@ -113,10 +114,10 @@
 			"com.fqf.mario_qua_mario.appearances.mario.FireMarioCommonAppearance",
 			"com.fqf.mario_qua_mario.appearances.mario.RaccoonMarioCommonAppearance",
 
-			"com.fqf.mario_qua_mario.appearances.test.TemplateCommonAppearance",
-			"com.fqf.mario_qua_mario.appearances.test.AlexCommonAppearance",
-			"com.fqf.mario_qua_mario.appearances.test.WonkyCommonAppearance",
-			"com.fqf.mario_qua_mario.appearances.test.SmallCommonAppearance"
+			"com.fqf.mario_qua_mario.appearances.luigi.SmallLuigiCommonAppearance",
+			"com.fqf.mario_qua_mario.appearances.luigi.SuperLuigiCommonAppearance",
+			"com.fqf.mario_qua_mario.appearances.luigi.FireLuigiCommonAppearance",
+			"com.fqf.mario_qua_mario.appearances.luigi.FoxLuigiCommonAppearance"
 		],
 
 		"cfa-client-appearances": [
@@ -125,10 +126,10 @@
 			"com.fqf.mario_qua_mario.appearances.mario.FireMarioClientAppearance",
 			"com.fqf.mario_qua_mario.appearances.mario.RaccoonMarioClientAppearance",
 
-			"com.fqf.mario_qua_mario.appearances.test.TemplateClientAppearance",
-			"com.fqf.mario_qua_mario.appearances.test.AlexClientAppearance",
-			"com.fqf.mario_qua_mario.appearances.test.WonkyClientAppearance",
-			"com.fqf.mario_qua_mario.appearances.test.SmallClientAppearance"
+			"com.fqf.mario_qua_mario.appearances.luigi.SmallLuigiClientAppearance",
+			"com.fqf.mario_qua_mario.appearances.luigi.SuperLuigiClientAppearance",
+			"com.fqf.mario_qua_mario.appearances.luigi.FireLuigiClientAppearance",
+			"com.fqf.mario_qua_mario.appearances.luigi.FoxLuigiClientAppearance"
 		],
 
 		"cfa-voicelines": [
