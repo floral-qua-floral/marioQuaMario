@@ -51,4 +51,12 @@ public class AppearanceModel extends PlayerEntityModel<AbstractClientPlayerEntit
 			return null;
 		}
 	}
+
+	protected void preActionAnimation() {
+		// This method is called after vanilla has posed the model, but before CFA has applied Action animations.
+	}
+
+	protected void postActionAnimation() {
+		// This method is called after CFA has applied Action animations. Use this sparingly!
+	}
 }

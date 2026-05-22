@@ -22,6 +22,7 @@ public interface AppearanceHelper {
 			String name, String hatName,
 			Vector3f pivot,
 			Vector3f offset, float mirrorableXOffset,
+			Vector3f rotation,
 			Vector3i size,
 			Vector2i uv, Vector2i hatUV,
 			boolean isVanillaPart
@@ -30,13 +31,13 @@ public interface AppearanceHelper {
 	ModelPartData makePart(
 			ModelPartData root, String name, boolean isLeft,
 			Vector3f pivot, Vector3f offset, float mirrorableXOffset,
-			Vector3i size, Vector2i uv
+			Vector3f rotation, Vector3i size, Vector2i uv
 	);
 
 	ModelPartData makePart(
 			ModelPartData root, String name, boolean isLeft,
 			Vector3f pivot, Vector3f offset, float mirrorableXOffset,
-			Vector3i size, Vector2i uv, float dilation
+			Vector3f rotation, Vector3i size, Vector2i uv, float dilation
 	);
 
 	Vector2i getUVDimensions(Vector3i cuboidSize);
@@ -44,4 +45,7 @@ public interface AppearanceHelper {
 	Vector2i getBottomRightCorner(Vector2i uv, Vector3i cuboidSize);
 
 	ModelPartData makeInvisiblePart(ModelPartData root, String name, Vector3f pivot, boolean isLeft);
+
+	Vector3f toRadians(float pitch, float yaw, float roll);
+	Vector3f toRadians(Vector3f degrees);
 }

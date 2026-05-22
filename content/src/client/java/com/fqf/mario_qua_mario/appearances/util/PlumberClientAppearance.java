@@ -3,7 +3,6 @@ package com.fqf.mario_qua_mario.appearances.util;
 import com.fqf.charaformact_api.appearance.AppearanceHelper;
 import com.fqf.charaformact_api.appearance.AppearanceModel;
 import com.fqf.charaformact_api.appearance.ClientAppearanceDefinition;
-import com.fqf.mario_qua_mario.MarioQuaMario;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.model.ModelPartData;
 import net.minecraft.client.render.entity.model.EntityModelPartNames;
@@ -72,14 +71,14 @@ public abstract class PlumberClientAppearance implements ClientAppearanceDefinit
 		this.makeCapStateHead(head, helper, false);
 	}
 
-	protected void makeCapStateHead(ModelPartData headPart, AppearanceHelper helper, boolean hasCap) {
+	protected ModelPartData makeCapStateHead(ModelPartData headPart, AppearanceHelper helper, boolean hasCap) {
 		Vector3i headSize = this.getHeadSize();
 		ModelPartData capStateHead = helper.makePartAndHat(
 				headPart, false, hasCap ? CAPFUL_HEAD : CAPLESS_HEAD, EntityModelPartNames.HAT,
 				new Vector3f(), // pivot (handled with root part)
 				new Vector3f(headSize.x / -2F, -headSize.y, headSize.z / -2F), // offset
 				0, // mirrorable offset
-				headSize,
+				new Vector3f(), headSize,
 				hasCap ? this.getCapfulHeadUV(helper) : this.getHeadUV(),
 				hasCap ? this.getCapfulHatUV(helper) : this.getHatUV(helper),
 				false
@@ -95,16 +94,17 @@ public abstract class PlumberClientAppearance implements ClientAppearanceDefinit
 					new Vector3f(0, -headSize.y, headSize.z / -2F + topSize.z / 2F), // pivot
 					new Vector3f(topSize.x / -2F, -topSize.y, topSize.z / -2F), // offset
 					0, // mirrorable offset
-					topSize, topUV
+					new Vector3f(), topSize, topUV
 			);
 			helper.makePart(
 					capStateHead, CAP_BRIM, false,
 					new Vector3f(0, -headSize.y + 1 + brimSize.y / 2F, headSize.z / -2F), // pivot
 					new Vector3f(brimSize.x / -2F, brimSize.y / -2F, -brimSize.z), // offset
 					0, // mirrorable offset
-					brimSize, brimUV
+					new Vector3f(), brimSize, brimUV
 			);
 		}
+		return capStateHead;
 	}
 
 	public static void addNose(ModelPartData head, Vector3i headSize, Vector3i noseSize, Vector2i noseUV, AppearanceHelper helper) {
@@ -115,7 +115,7 @@ public abstract class PlumberClientAppearance implements ClientAppearanceDefinit
 				new Vector3f(0, -3, headSize.z / -2F), // pivot
 				new Vector3f(noseSize.x / -2F, noseSize.y / -2F, -noseSize.z), // offset
 				0, // mirrorable offset
-				noseSize, noseUV
+				new Vector3f(), noseSize, noseUV
 		);
 	}
 }

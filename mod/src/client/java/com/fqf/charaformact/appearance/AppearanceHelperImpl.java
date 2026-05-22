@@ -5,6 +5,7 @@ import net.minecraft.client.model.Dilation;
 import net.minecraft.client.model.ModelPartBuilder;
 import net.minecraft.client.model.ModelPartData;
 import net.minecraft.client.model.ModelTransform;
+import net.minecraft.util.math.MathHelper;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
@@ -21,15 +22,16 @@ public class AppearanceHelperImpl implements AppearanceHelper {
 			String name, String hatName,
 			Vector3f pivot,
 			Vector3f offset, float mirrorableXOffset,
+			Vector3f rotation,
 			Vector3i size,
 			Vector2i uv, Vector2i hatUV,
 			boolean isVanillaPart
 	) {
-		ModelPartData mainPart = this.makePart(root, name, isLeft, pivot, offset, mirrorableXOffset, size, uv);
+		ModelPartData mainPart = this.makePart(root, name, isLeft, pivot, offset, mirrorableXOffset, new Vector3f(), size, uv);
 		if(isVanillaPart) // Attach the hat-like part to the root with the main part's offsets & pivot. Vanilla code will make it mirror the main part.
-			this.makePart(root, hatName, isLeft, pivot, offset, mirrorableXOffset, size, hatUV, 0.25F);
+			this.makePart(root, hatName, isLeft, pivot, offset, mirrorableXOffset, rotation, size, hatUV, 0.25F);
 		else // Attach the hat-like layer directly to the main part with no offset or pivot
-			this.makePart(mainPart, hatName, isLeft, new Vector3f(), offset, mirrorableXOffset, size, hatUV, 0.25F);
+			this.makePart(mainPart, hatName, isLeft, new Vector3f(), offset, mirrorableXOffset, new Vector3f(), size, hatUV, 0.25F);
 		return mainPart;
 	}
 
@@ -37,16 +39,16 @@ public class AppearanceHelperImpl implements AppearanceHelper {
 	public ModelPartData makePart(
 			ModelPartData root, String name, boolean isLeft,
 			Vector3f pivot, Vector3f offset, float mirrorableXOffset,
-			Vector3i size, Vector2i uv
+			Vector3f rotation, Vector3i size, Vector2i uv
 	) {
-		return this.makePart(root, name, isLeft, pivot, offset, mirrorableXOffset, size, uv, 0);
+		return this.makePart(root, name, isLeft, pivot, offset, mirrorableXOffset, rotation, size, uv, 0);
 	}
 
 	@Override
 	public ModelPartData makePart(
 			ModelPartData root, String name, boolean isLeft,
 			Vector3f pivot, Vector3f offset, float mirrorableXOffset,
-			Vector3i size, Vector2i uv, float dilation
+			Vector3f rotation, Vector3i size, Vector2i uv, float dilation
 	) {
 		int factor = isLeft ? -1 : 1;
 		return root.addChild(
@@ -56,7 +58,7 @@ public class AppearanceHelperImpl implements AppearanceHelper {
 						.mirrored(isLeft)
 						.cuboid(offset.x + mirrorableXOffset * factor, offset.y, offset.z, size.x, size.y, size.z,
 								new Dilation(dilation)),
-				ModelTransform.pivot(pivot.x * factor, pivot.y, pivot.z)
+				ModelTransform.of(pivot.x * factor, pivot.y, pivot.z, rotation.x, factor * rotation.y, factor * rotation.z)
 		);
 	}
 
@@ -77,5 +79,12 @@ public class AppearanceHelperImpl implements AppearanceHelper {
 				ModelPartBuilder.create(),
 				ModelTransform.pivot(pivot.x * (isLeft ? -1 : 1), pivot.y, pivot.z)
 		);
+	}
+
+	@Override public Vector3f toRadians(float pitch, float yaw, float roll) {
+		return new Vector3f(pitch, yaw, roll).mul(MathHelper.RADIANS_PER_DEGREE);
+	}
+	@Override public Vector3f toRadians(Vector3f degrees) {
+		return this.toRadians(degrees.x, degrees.y, degrees.z);
 	}
 }

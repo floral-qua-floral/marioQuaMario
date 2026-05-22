@@ -89,7 +89,7 @@ public class ClientAppearanceCollector extends AbstractAppearanceCollector<Clien
 		if(modelRoot.getChild("cloak") == null) AppearanceHelperImpl.INSTANCE.makePart(
 				modelRoot, AppearanceHelper.CAPE, false,
 				new Vector3f(), new Vector3f(-5, 0, -1),
-				0, new Vector3i(10, 16, 1), new Vector2i()
+				0, new Vector3f(), new Vector3i(10, 16, 1), new Vector2i()
 		);
 
 		return TexturedModelData.of(modelData, textureSize.x, textureSize.y);

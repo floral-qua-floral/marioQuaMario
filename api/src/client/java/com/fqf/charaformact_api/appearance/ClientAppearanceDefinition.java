@@ -114,7 +114,7 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 				this.getHeadPivot(), // pivot
 				new Vector3f(headSize.x / -2F, -headSize.y, headSize.z / -2F), // offset
 				0, // mirrorable offset
-				headSize, getHeadUV(), getHatUV(helper), true
+				new Vector3f(), headSize, getHeadUV(), getHatUV(helper), true
 		);
 	}
 	default ModelPartData makeTorso(ModelPartData root, AppearanceHelper helper) {
@@ -124,7 +124,7 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 				this.getTorsoPivot(), // pivot
 				new Vector3f(torsoSize.x / -2F, 0, torsoSize.z / -2F), // offset
 				0, // mirrorable offset
-				torsoSize, getTorsoUV(helper), getJacketUV(helper), true
+				new Vector3f(), torsoSize, getTorsoUV(helper), getJacketUV(helper), true
 		);
 	}
 	default ModelPartData makeArm(ModelPartData root, AppearanceHelper helper, boolean isLeft) {
@@ -136,7 +136,7 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 				this.getRightArmPivot(), // pivot
 				new Vector3f(armSize.x / -2F, armSize.y / -6F, armSize.z / -2F), // offset
 				armSize.x / -4F, // mirrorable offset
-				getArmSize(), getRightArmUV(helper), getRightSleeveUV(helper), true
+				new Vector3f(), getArmSize(), getRightArmUV(helper), getRightSleeveUV(helper), true
 		);
 	}
 	default ModelPartData makeLeg(ModelPartData root, AppearanceHelper helper, boolean isLeft) {
@@ -148,7 +148,7 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 				this.getRightLegPivot(), // pivot
 				new Vector3f(legSize.x / -2F, 0, legSize.z / -2F), // offset
 				legSize.x / 40F, // mirrorable offset
-				getLegSize(), getRightLegUV(helper), getRightPantsUV(helper), true
+				new Vector3f(), getLegSize(), getRightLegUV(helper), getRightPantsUV(helper), true
 		);
 	}
 

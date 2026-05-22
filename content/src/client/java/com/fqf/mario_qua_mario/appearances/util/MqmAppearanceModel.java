@@ -4,6 +4,7 @@ import com.fqf.charaformact_api.appearance.AppearanceModel;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.util.math.MathHelper;
 
 public abstract class MqmAppearanceModel extends AppearanceModel {
 	public MqmAppearanceModel(ModelPart root) {
@@ -19,7 +20,7 @@ public abstract class MqmAppearanceModel extends AppearanceModel {
 		super.setAngles(player, limbAngle, limbDistance, animationProgress, headYaw, headPitch);
 
 		if(this.tail != null) {
-			this.tail.pitch = 45;
+//			this.tail.pitch = 45;
 		}
 	}
 }

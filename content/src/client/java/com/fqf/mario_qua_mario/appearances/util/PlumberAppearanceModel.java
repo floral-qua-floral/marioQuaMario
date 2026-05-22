@@ -2,6 +2,7 @@ package com.fqf.mario_qua_mario.appearances.util;
 
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.render.entity.model.EntityModelPartNames;
 import net.minecraft.entity.EquipmentSlot;
 
 public class PlumberAppearanceModel extends MqmAppearanceModel {
@@ -14,6 +15,11 @@ public class PlumberAppearanceModel extends MqmAppearanceModel {
 		this.capfulHead = this.head.getChild(PlumberClientAppearance.CAPFUL_HEAD);
 		this.caplessHead = this.head.getChild(PlumberClientAppearance.CAPLESS_HEAD);
 		this.caplessHead.visible = false;
+	}
+
+	@Override
+	protected ModelPart getEarsParent(ModelPart root) {
+		return this.head.getChild(PlumberClientAppearance.CAPFUL_HEAD);
 	}
 
 	@Override
