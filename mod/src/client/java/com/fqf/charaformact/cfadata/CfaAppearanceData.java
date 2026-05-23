@@ -5,25 +5,35 @@ import com.fqf.charaformact.appearance.AppearanceRenderer;
 import com.fqf.charaformact.appearance.ClientAppearanceCollector;
 import com.fqf.charaformact.appearance.ParsedClientAppearance;
 import com.fqf.charaformact.cfadata.util.ActiveAnimation;
+import com.fqf.charaformact.cfadata.util.AdvancedArrangement;
 import com.fqf.charaformact.cfadata.util.AdvancedPosture;
 import com.fqf.charaformact.registries.actions.ParsedAnimation;
 import com.fqf.charaformact.registries.power_granting.CharacterFormCombo;
 import com.fqf.charaformact.registries.power_granting.ParsedCharacter;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
+import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.Arrangement;
+import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
+import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Pair;
 import net.minecraft.util.crash.CrashException;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.crash.CrashReportSection;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RotationAxis;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaClientDataImpl> {
+import static net.minecraft.util.math.MathHelper.*;
+import static net.minecraft.util.math.MathHelper.HALF_PI;
+
+public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingData & CfaClientDataImpl> {
 	public final AbstractClientPlayerEntity PLAYER;
 	public final CfaDataType DATA;
 
@@ -37,6 +47,7 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaClientData
 	private long prevTick;
 	private AdvancedPosture prevTickPosture;
 	private long forceInterpolationTime;
+	public Arrangement everythingArrangement;
 
 	private long flickerUntil;
 	private boolean flickering;
@@ -46,6 +57,7 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaClientData
 		this.DATA = data;
 
 		this.flickerUntil = Long.MIN_VALUE;
+		this.everythingArrangement = new AdvancedArrangement();
 	}
 
 	public void tick() {
@@ -128,7 +140,13 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaClientData
 	}
 
 	public void animate(PlayerEntityModel<?> model, float tickDelta) {
+		boolean rightArmBusy = isArmBusy(model.rightArmPose, model.leftArmPose);
+		boolean leftArmBusy = isArmBusy(model.leftArmPose, model.rightArmPose);
+		this.DATA.updateHandPreference(rightArmBusy, leftArmBusy);
 		AdvancedPosture thisFramePosture = AdvancedPosture.from(model);
+
+		if(rightArmBusy) ((AdvancedArrangement) thisFramePosture.RIGHT_ARM).store(AdvancedArrangement.BUSY_ARMS_SLOT);
+		if(leftArmBusy) ((AdvancedArrangement) thisFramePosture.LEFT_ARM).store(AdvancedArrangement.BUSY_ARMS_SLOT);
 
 		if(this.prevTickPosture == null) // measure to prevent NPE; don't rely on this logic for animating!
 			this.prevTickPosture = thisFramePosture;
@@ -152,12 +170,13 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaClientData
 				// Interpolate from last tick's thisFramePosture, to the CURRENTLY CALCULATED thisFramePosture.
 				AdvancedPosture lerpTo = AdvancedPosture.from(thisFramePosture);
 				thisFramePosture.lerp(this.prevTickPosture, lerpTo, tickDelta);
-
-				thisFramePosture.HEAD.x = 6;
-				model.head.pivotX = 6;
 			}
 
+			if(rightArmBusy) ((AdvancedArrangement) thisFramePosture.RIGHT_ARM).resetTo(AdvancedArrangement.BUSY_ARMS_SLOT);
+			if(leftArmBusy) ((AdvancedArrangement) thisFramePosture.LEFT_ARM).resetTo(AdvancedArrangement.BUSY_ARMS_SLOT);
+
 			thisFramePosture.apply(model);
+			this.everythingArrangement = thisFramePosture.EVERYTHING;
 		}
 		catch(Throwable error) {
 			CrashReport report = CrashReport.create(error, "Animating CFA Appearance");
@@ -172,5 +191,38 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaClientData
 		if(worldTime > this.forceInterpolationTime) this.prevTickPosture = thisFramePosture;
 
 //		if(this.forcedAnimation != null)
+	}
+
+	public void rotateTotalRender(MatrixStack matrices) {
+		matrices.translate(this.everythingArrangement.x / 16F, this.everythingArrangement.y / 16F, this.everythingArrangement.z / 16F);
+		matrices.multiply(RotationAxis.POSITIVE_Y.rotation(this.everythingArrangement.yaw));
+		double halfHeight = this.PLAYER.getHeight() * 0.5F;
+		matrices.translate(0, halfHeight, 0);
+		matrices.multiply(RotationAxis.POSITIVE_X.rotation(this.everythingArrangement.pitch));
+		matrices.multiply(RotationAxis.POSITIVE_Z.rotation(this.everythingArrangement.roll));
+		matrices.translate(0, -halfHeight, 0);
+	}
+
+	private static final float ALMOST_HALF_PI = 0.99F * HALF_PI;
+	private static final float MAX_HEAD_YAW = HALF_PI * 0.66F;
+	public float counterRotateHead(
+			ModelPart head, float assigningPitch
+	) {
+		head.yaw = MathHelper.clamp(wrapRadians(head.yaw + this.everythingArrangement.yaw), -MAX_HEAD_YAW, MAX_HEAD_YAW);
+		return MathHelper.clamp(wrapRadians(assigningPitch + this.everythingArrangement.pitch), -ALMOST_HALF_PI, ALMOST_HALF_PI);
+	}
+
+	private static float wrapRadians(float radians) {
+		float wrapped = radians % TAU;
+		if(wrapped >= PI) wrapped -= TAU;
+		if(wrapped < -PI) wrapped += TAU;
+		return wrapped;
+	}
+
+	private static boolean isArmBusy(BipedEntityModel.ArmPose thisArmPose, BipedEntityModel.ArmPose otherArmPose) {
+		return thisArmPose.isTwoHanded() || otherArmPose.isTwoHanded() || switch (thisArmPose) {
+			case EMPTY, ITEM -> false;
+			default -> true;
+		};
 	}
 }

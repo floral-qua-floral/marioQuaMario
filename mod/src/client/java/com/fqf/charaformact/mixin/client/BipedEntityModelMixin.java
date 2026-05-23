@@ -2,7 +2,6 @@ package com.fqf.charaformact.mixin.client;
 
 import com.fqf.charaformact.cfadata.util.ActiveAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -63,25 +62,26 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Anim
 				if(animation != null) {
 					EnumSet<AnimationFlag> flags = animation.ANIMATION.FLAGS;
 					boolean mirrored = animation.EXECUTION_FLAGS.contains(AnimationFlag.Execution.MIRROR);
-					setMirroredFlagRef(rightArmRef, flags, AnimationFlag.NO_RIGHT_ARM_SWING, mirrored);
-					setMirroredFlagRef(leftArmRef, flags, AnimationFlag.NO_LEFT_ARM_SWING, mirrored);
-					setMirroredFlagRef(rightLegRef, flags, AnimationFlag.NO_RIGHT_LEG_SWING, mirrored);
-					setMirroredFlagRef(leftLegRef, flags, AnimationFlag.NO_LEFT_LEG_SWING, mirrored);
+					rightArmRef.set(getMirroredFlagStatus(flags, AnimationFlag.NO_RIGHT_ARM_SWING, mirrored));
+					leftArmRef.set(getMirroredFlagStatus(flags, AnimationFlag.NO_LEFT_ARM_SWING, mirrored));
+					rightLegRef.set(getMirroredFlagStatus(flags, AnimationFlag.NO_RIGHT_LEG_SWING, mirrored));
+					leftLegRef.set(getMirroredFlagStatus(flags, AnimationFlag.NO_LEFT_LEG_SWING, mirrored));
 				}
+				return;
 			}
 		}
 		applyRef.set(false);
 	}
 
 	@Unique
-	private static void setMirroredFlagRef(LocalBooleanRef ref, EnumSet<AnimationFlag> flags, AnimationFlag flag, boolean mirror) {
-		ref.set(flags.contains(switch(flag) {
+	private static boolean getMirroredFlagStatus(EnumSet<AnimationFlag> flags, AnimationFlag flag, boolean mirror) {
+		return flags.contains(switch(flag) {
 			case NO_RIGHT_ARM_SWING -> AnimationFlag.NO_LEFT_ARM_SWING;
 			case NO_LEFT_ARM_SWING -> AnimationFlag.NO_RIGHT_ARM_SWING;
 			case NO_RIGHT_LEG_SWING -> AnimationFlag.NO_LEFT_LEG_SWING;
 			case NO_LEFT_LEG_SWING -> AnimationFlag.NO_RIGHT_LEG_SWING;
 			default -> throw new IllegalArgumentException("Trying to mirror non-mirrorable animation flag");
-		}));
+		});
 	}
 
 	@WrapOperation(method = "setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V", at = @At(value = "FIELD", target = "Lnet/minecraft/client/model/ModelPart;pitch:F", opcode = Opcodes.PUTFIELD))
@@ -96,7 +96,7 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Anim
 	) {
 		if(applyRef.get()) {
 			if(instance == this.head) {
-				newValue = playerRef.get().cfa$getOldAnimationData().counterRotateHead(this.head, newValue);
+				newValue = playerRef.get().cfa$getAppearanceData().counterRotateHead(instance, newValue);
 			}
 			else if(
 					attemptSuppression(rightArmRef, instance, this.rightArm)
@@ -166,11 +166,6 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Anim
 			this.leftArm.pivotX = MathHelper.cos(this.body.yaw) * armDefaultTransform.pivotX;
 			this.leftArm.pivotZ = -MathHelper.sin(this.body.yaw) * armDefaultTransform.pivotX;
 		}
-	}
-
-	@Unique
-	private static boolean animationSuppressesSwinging(LimbAnimation animation) {
-		return animation != null && !animation.shouldSwingWithMovement();
 	}
 
 	@Unique

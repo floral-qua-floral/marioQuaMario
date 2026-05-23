@@ -1,5 +1,7 @@
 package com.fqf.mario_qua_mario.actions.generic;
 
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.EntireBodyAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
@@ -19,16 +21,13 @@ public class DebugSpinPitch extends Debug {
 	}
 
 	@Override
-	public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
-		return new PiecemealPlayermodelAnimation(
-				null, new ProgressHandler((data, ticksPassed) -> ticksPassed / 40F),
-				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) ->
-						arrangement.pitch = MathHelper.sin(progress) * 90),
-
-				null, null,
-				null, null,
-				null, null,
-				null
+	public @Nullable AnimationDefinition getAnimation() {
+		return AnimationDefinition.of(
+				AnimationFlag.NO_SWING_LIMBS,
+				(posture, data, animationTime, helper) -> {
+					Debug.tPose(posture);
+					posture.EVERYTHING.pitch = MathHelper.sin(animationTime / 40F) * MathHelper.HALF_PI;
+				}
 		);
 	}
 

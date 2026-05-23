@@ -9,6 +9,7 @@ import com.fqf.charaformact.util.DirectionBasedWallInfo;
 import com.fqf.charaformact.util.AdvancedWallInfo;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.Arrangement;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.HandPreference;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimation;
 import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import com.fqf.charaformact.registries.actions.ParsedActionHelper;
@@ -506,5 +507,13 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 		this.RECORDED_COLLISIONS.COLLIDED[direction.getAxis().ordinal()] = true;
 		this.RECORDED_COLLISIONS.add(new RecordedCollision(pos, this.getPlayer().clientWorld.getBlockState(pos), direction, bapResult));
 		return bapResult == BapResult.BUST;
+	}
+
+	private HandPreference handPreference;
+	@Override public void setHandPreference(HandPreference preference) {
+		this.handPreference = preference;
+	}
+	@Override public HandPreference getCurrentHandPreference() {
+		return this.handPreference;
 	}
 }

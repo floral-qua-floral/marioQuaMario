@@ -25,6 +25,7 @@ public abstract class ActiveAnimation {
 	private ActiveAnimation(CfaAppearanceData<?> owner, ParsedAnimation animation) {
 		this.OWNER = owner;
 		this.ANIMATION = animation;
+
 		Identifier previousAnimationID;
 		if(this.OWNER.actionAnimation == null) previousAnimationID = null;
 		else previousAnimationID = this.OWNER.actionAnimation.ANIMATION.ID;
@@ -34,6 +35,14 @@ public abstract class ActiveAnimation {
 			this.START_TIME = owner.actionAnimation.START_TIME;
 		else
 			this.START_TIME = this.getCurrentTime();
+
+		if(this.OWNER.actionAnimation != null && this.OWNER.actionAnimation.ANIMATION == animation) {
+			// If this is the exact same animation, then force MIRROR to match.
+			if(this.OWNER.actionAnimation.EXECUTION_FLAGS.contains(AnimationFlag.Execution.MIRROR))
+				this.EXECUTION_FLAGS.add(AnimationFlag.Execution.MIRROR);
+			else
+				this.EXECUTION_FLAGS.remove(AnimationFlag.Execution.MIRROR);
+		}
 	}
 
 	protected long getCurrentTime() {
@@ -42,9 +51,14 @@ public abstract class ActiveAnimation {
 
 	public void calculateMutations(AdvancedPosture mutate, long worldTime, float tickDelta) {
 		boolean mirroring = this.EXECUTION_FLAGS.contains(AnimationFlag.Execution.MIRROR);
-		if(mirroring) mutate.store(0);
+//		if(mirroring) mutate.store(AdvancedArrangement.MIRRORING_SLOT);
+		if(mirroring) mutate.swapSidedParts();
 		this.ANIMATION.mutate(mutate, this.OWNER.DATA, (worldTime - this.START_TIME) + tickDelta);
-		if(mirroring) mutate.mirrorChanges(0);
+		if(mirroring) {
+			mutate.swapSidedParts();
+			mutate.mirrorNonSidedChanges(AdvancedArrangement.MIRRORING_SLOT);
+		}
+//		if(mirroring) mutate.mirrorChanges(AdvancedArrangement.MIRRORING_SLOT);
 	}
 
 	public abstract void apply(AdvancedPosture mutate, long worldTime, float tickDelta, boolean isFirstOfTick);

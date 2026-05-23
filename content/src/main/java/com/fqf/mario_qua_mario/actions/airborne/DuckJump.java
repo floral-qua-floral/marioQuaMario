@@ -16,6 +16,7 @@ import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.actions.grounded.DuckWaddle;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,6 +34,7 @@ public class DuckJump extends Jump implements AirborneActionDefinition {
 		return AnimationDefinition.of(
 				AnimationFlag.NO_SWING_ARMS,
 				(posture, data, animationTime, helper) -> {
+					posture.EVERYTHING.yaw += MathHelper.HALF_PI / 3;
 					posture.TORSO.setAnglesDegrees(90, 0, 0);
 				}
 		);

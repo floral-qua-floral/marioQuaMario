@@ -1,5 +1,7 @@
 package com.fqf.mario_qua_mario.actions.generic;
 
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.EntireBodyAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
@@ -7,6 +9,7 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.Progre
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,16 +22,13 @@ public class DebugSpinRoll extends Debug {
 	}
 
 	@Override
-	public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
-		return new PiecemealPlayermodelAnimation(
-				null, new ProgressHandler(40F, true, Easing.LINEAR),
-				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) ->
-						arrangement.roll = progress * 360),
-
-				null, null,
-				null, null,
-				null, null,
-				null
+	public @Nullable AnimationDefinition getAnimation() {
+		return AnimationDefinition.of(
+				AnimationFlag.NO_SWING_LIMBS,
+				(posture, data, animationTime, helper) -> {
+					Debug.tPose(posture);
+					posture.EVERYTHING.roll = MathHelper.sin(animationTime / 40F) * MathHelper.HALF_PI;
+				}
 		);
 	}
 

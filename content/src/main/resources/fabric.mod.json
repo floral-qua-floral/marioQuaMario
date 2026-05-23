@@ -30,7 +30,6 @@
 			"com.fqf.mario_qua_mario.actions.generic.DebugSpinPitch",
 			"com.fqf.mario_qua_mario.actions.generic.DebugSpinYaw",
 			"com.fqf.mario_qua_mario.actions.generic.DebugSpinRoll",
-			"com.fqf.mario_qua_mario.actions.generic.DebugSideTurn",
 			"com.fqf.mario_qua_mario.actions.generic.DebugVanillaTravel"
 		],
 		"cfa-grounded-actions": [

@@ -5,10 +5,14 @@ import net.minecraft.client.model.ModelPart;
 import org.jetbrains.annotations.Nullable;
 
 public class AdvancedArrangement extends Arrangement {
+	public static final int BUSY_ARMS_SLOT = 0;
+	public static final int MIRRORING_SLOT = 1;
+	public static final int HELPER_SLOT = 2;
+
 	private final Arrangement[] STORAGE;
 
 	public AdvancedArrangement() {
-		this.STORAGE = new Arrangement[2];
+		this.STORAGE = new Arrangement[3];
 	}
 
 	public static @Nullable AdvancedArrangement of(ModelPart part) {
@@ -30,6 +34,14 @@ public class AdvancedArrangement extends Arrangement {
 		Arrangement loadFrom = this.STORAGE[slot];
 		this.setPos(loadFrom.x, loadFrom.y, loadFrom.z);
 		this.setAngles(loadFrom.pitch, loadFrom.yaw, loadFrom.roll);
+	}
+
+	public Arrangement getDeltas(int slot) {
+		Arrangement changesFrom = this.STORAGE[slot];
+		Arrangement deltas = new Arrangement();
+		deltas.setPos(this.x - changesFrom.x, this.y - changesFrom.y, this.z - changesFrom.z);
+		deltas.setAngles(this.pitch - changesFrom.pitch, this.yaw - changesFrom.yaw, this.roll - changesFrom.roll);
+		return deltas;
 	}
 
 	public void mirrorChanges(int slot) {

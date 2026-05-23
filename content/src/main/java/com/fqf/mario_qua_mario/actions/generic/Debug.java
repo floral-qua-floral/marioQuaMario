@@ -21,6 +21,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,25 +35,21 @@ public class Debug implements GenericActionDefinition {
 	    return ID;
 	}
 
-	public static final PiecemealPlayermodelAnimation T_POSE = new PiecemealPlayermodelAnimation(
-		null,
-		new ProgressHandler(null, (data, prevAnimationID) -> true, (data, ticksPassed) -> ticksPassed / 25F),
-		null,
-
-		null,
-		null,
-
-		new LimbAnimation(false, (data, arrangement, progress) -> arrangement.roll += 90),
-		new LimbAnimation(false, (data, arrangement, progress) -> arrangement.roll -= 90),
-
-		new LimbAnimation(false, null),
-		new LimbAnimation(false, null),
-
-		new LimbAnimation(false, null)
-	);
-	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
-		return T_POSE;
+	public static void tPose(Posture posture) {
+		posture.RIGHT_ARM.roll = MathHelper.HALF_PI;
+		posture.LEFT_ARM.roll = -MathHelper.HALF_PI;
 	}
+
+	@Override
+	public @Nullable AnimationDefinition getAnimation() {
+		return AnimationDefinition.of(
+				AnimationFlag.NO_SWING_LIMBS,
+				(posture, data, animationTime, helper) -> {
+					tPose(posture);
+				}
+		);
+	}
+
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
 		return null;
 	}
@@ -119,8 +116,7 @@ public class Debug implements GenericActionDefinition {
 						(data, isSelf, seed) -> {
 							data.voice(Voicelines.BURNT, seed);
 						}
-				),
-				DebugSideTurn.SIDE_TURN
+				)
 		);
 	}
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions() {
@@ -173,7 +169,6 @@ public class Debug implements GenericActionDefinition {
 					public void executeClients(CfaClientData data, ItemStack weapon, float attackCooldownProgress, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget, long seed) {
 						data.forceBodyAlignment(true);
 						data.instantVisualRotate(90, true);
-						data.playAnimation(DebugSideTurn.ANIMATION, -1);
 					}
 
 					@Override

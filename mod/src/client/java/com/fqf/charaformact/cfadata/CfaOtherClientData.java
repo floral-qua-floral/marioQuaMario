@@ -3,6 +3,7 @@ package com.fqf.charaformact.cfadata;
 import com.fqf.charaformact.appearance.ParsedCommonAppearance;
 import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.HandPreference;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.cfadata.util.RecordedCollisionSet;
@@ -166,5 +167,13 @@ public class CfaOtherClientData extends CfaPlayerData implements CfaClientDataIm
 	@Override
 	public Inputs getInputs() {
 		return CfaServerPlayerData.PHONY_INPUTS;
+	}
+
+	private HandPreference handPreference;
+	@Override public void setHandPreference(HandPreference preference) {
+		this.handPreference = preference;
+	}
+	@Override public HandPreference getCurrentHandPreference() {
+		return this.handPreference;
 	}
 }

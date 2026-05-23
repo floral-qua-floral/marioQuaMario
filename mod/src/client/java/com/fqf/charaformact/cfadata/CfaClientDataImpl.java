@@ -11,6 +11,7 @@ import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import com.fqf.charaformact.util.CfaSounds;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.entity.Entity;
@@ -163,16 +164,23 @@ public interface CfaClientDataImpl extends CfaAnimatingData {
 		}
 	}
 
-	@Override
-	default HandPreference getCurrentHandPreference() {
-		// TODO: Implement
-		CharaFormAct.LOGGER.error("Not implemented!");
-		return HandPreference.EITHER;
+	default void updateHandPreference(boolean rightArmBusy, boolean leftArmBusy) {
+		if(rightArmBusy) {
+			if(leftArmBusy) this.setHandPreference(HandPreference.NEITHER);
+			else this.setHandPreference(HandPreference.PREFER_LEFT);
+		}
+		else {
+			if(leftArmBusy) this.setHandPreference(HandPreference.PREFER_RIGHT);
+			else this.setHandPreference(HandPreference.EITHER);
+		}
 	}
+	void setHandPreference(HandPreference preference);
 
 	@Override
 	default float getRelativeHeadYaw() {
 		// TODO: Implement
 		return 0;
 	}
+
+
 }

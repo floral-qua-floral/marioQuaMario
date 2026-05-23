@@ -19,7 +19,7 @@ public class Arrangement {
 		this.pitch = pitch; this.yaw = yaw; this.roll = roll;
 	}
 	public void setAnglesDegrees(float pitch, float yaw, float roll) {
-		this.setAngles(toRads(pitch), toRads(yaw), toRads(roll));
+		this.setAngles(toRadians(pitch), toRadians(yaw), toRadians(roll));
 	}
 	public void addPos(float x, float y, float z) {
 		this.setPos(this.x + x, this.y + y, this.z + z);
@@ -28,10 +28,10 @@ public class Arrangement {
 		this.setAngles(this.pitch + pitch, this.yaw + yaw, this.roll + roll);
 	}
 	public void addAnglesDegrees(float pitch, float yaw, float roll) {
-		this.addAngles(toRads(pitch), toRads(yaw), toRads(roll));
+		this.addAngles(toRadians(pitch), toRadians(yaw), toRadians(roll));
 	}
 
-	private static float toRads(float degrees) {
+	private static float toRadians(float degrees) {
 		return degrees * MathHelper.RADIANS_PER_DEGREE;
 	}
 }

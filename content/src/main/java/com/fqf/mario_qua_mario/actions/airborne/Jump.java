@@ -6,18 +6,19 @@ import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinit
 import com.fqf.charaformact_api.definitions.states.actions.util.BappingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.ProgressHandler;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.util.MarioVars;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumSet;
 import java.util.List;
 
 import static com.fqf.charaformact_api.util.StatCategory.JUMPING_GRAVITY;
@@ -29,44 +30,50 @@ public class Jump extends Fall implements AirborneActionDefinition {
 	    return ID;
 	}
 
-	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
-		return new PiecemealPlayermodelAnimation(
-				(data, rightArmBusy, leftArmBusy, headRelativeYaw) -> {
-					if(leftArmBusy && !rightArmBusy) return false;
-					if(rightArmBusy && !leftArmBusy) return true;
-					if(Math.abs(headRelativeYaw) > 0.55F) return headRelativeYaw > 0;
-					return data.getPlayer().getRandom().nextBoolean();
+	@Override
+	public @Nullable AnimationDefinition getAnimation() {
+		return AnimationDefinition.of(
+				null,
+				AnimationFlag.NO_SWING_LIMBS,
+				(data, prevAnimationID) -> {
+					switch(data.getCurrentHandPreference()) {
+						case PREFER_RIGHT -> {
+							return EnumSet.noneOf(AnimationFlag.Execution.class);
+						}
+						case PREFER_LEFT -> {
+							return EnumSet.of(AnimationFlag.Execution.MIRROR);
+						}
+						default -> {
+							if(Math.abs(data.getRelativeHeadYaw()) > 0.009599311F) {
+								if(data.getRelativeHeadYaw() > 0) return EnumSet.of(AnimationFlag.Execution.MIRROR);
+								else return EnumSet.noneOf(AnimationFlag.Execution.class);
+							}
+							if(data.getPlayer().getRandom().nextBoolean()) return EnumSet.of(AnimationFlag.Execution.MIRROR);
+							else return EnumSet.noneOf(AnimationFlag.Execution.class);
+						}
+					}
 				},
-				new ProgressHandler(
-						(data, ticksPassed) ->
-								Easing.EXPO_IN_OUT.ease(Easing.clampedRangeToProgress(data.getYVel(), 0.87, -0.85))
-				),
-				null, null, null,
+				(posture, data, animationTime, helper) -> {
+					float progress = Easing.EXPO_IN_OUT.ease(Easing.clampedRangeToProgress(data.getYVel(), 0.87, -0.85));
 
-				new LimbAnimation(false, (data, arrangement, progress) -> {
 					float scalingFactor = 0.3F;
-
-					arrangement.setAngles(
-							arrangement.pitch * -0.8F + Easing.QUINT_IN.ease(progress, -160, -30),
-							arrangement.yaw * scalingFactor,
-							arrangement.roll * scalingFactor
+					posture.RIGHT_ARM.setAngles(
+							posture.RIGHT_ARM.pitch * -0.8F + Easing.QUINT_IN.ease(progress, -2.7925267F, -0.5235988F),
+							posture.RIGHT_ARM.yaw * scalingFactor,
+							posture.RIGHT_ARM.roll * scalingFactor
 					);
-				}),
-				new LimbAnimation(false, (data, arrangement, progress) ->
-						arrangement.setAngles(15 + 1.2F * arrangement.pitch, arrangement.yaw, arrangement.roll)),
 
-				new LimbAnimation(false, (data, arrangement, progress) ->
-						arrangement.addAngles(15, 0, 0)),
-				new LimbAnimation(false, (data, arrangement, progress) -> {
-					arrangement.setAngles(Easing.QUINT_IN.ease(progress, -30, -10), 0, 0);
-					arrangement.addPos(
+					posture.LEFT_ARM.pitch = 0.2617994F + 1.2F * posture.LEFT_ARM.pitch;
+
+					posture.RIGHT_LEG.pitch += 0.2617994F;
+
+					posture.LEFT_LEG.setAnglesDegrees(Easing.QUINT_IN.ease(progress, -30, -10), 0, 0);
+					posture.LEFT_LEG.addPos(
 							0,
 							Easing.EXPO_IN.ease(progress, -5, 0),
 							Easing.QUART_IN.ease(progress, -2.5F, 0)
 					);
-				}),
-
-				null
+				}
 		);
 	}
 

@@ -56,14 +56,52 @@ public class AdvancedPosture extends Posture {
 
 	public void store(int slot) {
 		for(AdvancedArrangement arrangement : this.ARRANGEMENTS) {
+			if(arrangement == null) continue;
 			arrangement.store(slot);
 		}
 	}
 
 	public void mirrorChanges(int slot) {
-		for(AdvancedArrangement arrangement : this.ARRANGEMENTS) {
-			arrangement.mirrorChanges(slot);
-		}
+		Arrangement rightArmDeltas = ((AdvancedArrangement) this.RIGHT_ARM).getDeltas(slot);
+		Arrangement leftArmDeltas = ((AdvancedArrangement) this.LEFT_ARM).getDeltas(slot);
+		Arrangement rightLegDeltas = ((AdvancedArrangement) this.RIGHT_LEG).getDeltas(slot);
+		Arrangement leftLegDeltas = ((AdvancedArrangement) this.LEFT_LEG).getDeltas(slot);
+		((AdvancedArrangement) this.RIGHT_ARM).resetTo(slot); ((AdvancedArrangement) this.LEFT_ARM).resetTo(slot);
+		((AdvancedArrangement) this.RIGHT_LEG).resetTo(slot); ((AdvancedArrangement) this.LEFT_LEG).resetTo(slot);
+
+		this.RIGHT_ARM.addPos(-leftArmDeltas.x, leftArmDeltas.y, leftArmDeltas.z);
+		this.RIGHT_ARM.addAngles(leftArmDeltas.pitch, -leftArmDeltas.yaw, leftArmDeltas.roll);
+		this.LEFT_ARM.addPos(-rightArmDeltas.x, rightArmDeltas.y, rightArmDeltas.z);
+		this.LEFT_ARM.addAngles(rightArmDeltas.pitch, -rightArmDeltas.yaw, rightArmDeltas.roll);
+		this.RIGHT_LEG.addPos(-leftLegDeltas.x, leftLegDeltas.y, leftLegDeltas.z);
+		this.RIGHT_LEG.addAngles(leftLegDeltas.pitch, -leftLegDeltas.yaw, leftLegDeltas.roll);
+		this.LEFT_LEG.addPos(-rightLegDeltas.x, rightLegDeltas.y, rightLegDeltas.z);
+		this.LEFT_LEG.addAngles(rightLegDeltas.pitch, -rightLegDeltas.yaw, rightLegDeltas.roll);
+	}
+
+	public void swapSidedParts() {
+		// TODO: Try just swapping the variables around instead of making new Arrangements
+
+		Arrangement rightArmCopy = new Arrangement();
+		rightArmCopy.setPos(this.RIGHT_ARM.x, this.RIGHT_ARM.y, this.RIGHT_ARM.z);
+		rightArmCopy.setAngles(this.RIGHT_ARM.pitch, this.RIGHT_ARM.yaw, this.RIGHT_ARM.roll);
+		Arrangement rightLegCopy = new Arrangement();
+		rightLegCopy.setPos(this.RIGHT_LEG.x, this.RIGHT_LEG.y, this.RIGHT_LEG.z);
+		rightLegCopy.setAngles(this.RIGHT_LEG.pitch, this.RIGHT_LEG.yaw, this.RIGHT_LEG.roll);
+
+		this.RIGHT_ARM.setPos(-this.LEFT_ARM.x, this.LEFT_ARM.y, this.LEFT_ARM.z);
+		this.RIGHT_ARM.setAngles(this.LEFT_ARM.pitch, -this.LEFT_ARM.yaw, -this.LEFT_ARM.roll);
+		this.LEFT_ARM.setPos(-rightArmCopy.x, rightArmCopy.y, rightArmCopy.z);
+		this.LEFT_ARM.setAngles(rightArmCopy.pitch, -rightArmCopy.yaw, -rightArmCopy.roll);
+
+		this.RIGHT_LEG.setPos(-this.LEFT_LEG.x, this.LEFT_LEG.y, this.LEFT_LEG.z);
+		this.RIGHT_LEG.setAngles(this.LEFT_LEG.pitch, -this.LEFT_LEG.yaw, -this.LEFT_LEG.roll);
+		this.LEFT_LEG.setPos(-rightLegCopy.x, rightLegCopy.y, rightLegCopy.z);
+		this.LEFT_LEG.setAngles(rightLegCopy.pitch, -rightLegCopy.yaw, -rightLegCopy.roll);
+	}
+
+	public void mirrorNonSidedChanges(int slot) {
+		// TODO: Implement head, torso, & tail mirroring
 	}
 
 	public void apply(PlayerEntityModel<?> model) {

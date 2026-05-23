@@ -19,6 +19,6 @@ public enum AnimationFlag {
 
 	public enum Execution {
 		MIRROR, // Mirrors the animation horizontally
-		DO_NOT_RESET_PROGRESS // Applying this while entering an animation prevents it from resetting tick progress!
+		DO_NOT_RESET_PROGRESS; // Applying this while entering an animation prevents it from resetting tick progress!
 	}
 }

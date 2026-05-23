@@ -15,7 +15,9 @@ public interface IncompleteActionDefinition extends AttackInterceptingStateDefin
 	default @Nullable AnimationDefinition getAnimation() {
 		return null;
 	}
-	@Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper);
+	default @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
+		return null;
+	}
 	@Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper);
 	@NotNull SlidingStatus getSlidingStatus();
 

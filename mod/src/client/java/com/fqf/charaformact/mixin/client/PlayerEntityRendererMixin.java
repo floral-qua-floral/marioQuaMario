@@ -35,6 +35,9 @@ public class PlayerEntityRendererMixin {
 
 	@Inject(method = "setupTransforms(Lnet/minecraft/client/network/AbstractClientPlayerEntity;Lnet/minecraft/client/util/math/MatrixStack;FFFF)V", at = @At("TAIL"))
 	private void applyEverythingMutator(AbstractClientPlayerEntity abstractClientPlayerEntity, MatrixStack matrixStack, float animationProgress, float bodyYaw, float tickDelta, float scale, CallbackInfo ci) {
+		if(abstractClientPlayerEntity.cfa$getCfaData().isEnabled()) {
+			abstractClientPlayerEntity.cfa$getAppearanceData().rotateTotalRender(matrixStack);
+		}
 //		abstractClientPlayerEntity.cfa$getAnimationData().rotateTotalPlayermodel(MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(true), abstractClientPlayerEntity, matrixStack);
 	}
 
