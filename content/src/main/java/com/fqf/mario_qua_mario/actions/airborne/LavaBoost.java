@@ -7,6 +7,9 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera
 import com.fqf.charaformact_api.cfadata.*;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.EntireBodyAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.aquatic.Submerged;
@@ -42,8 +45,8 @@ public class LavaBoost extends Fall implements AirborneActionDefinition {
 			arrangement.addAngles(-57.75F + factor * MathHelper.sin(progress) * 40, 0, 0);
 	    });
 	}
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-	    return new PlayermodelAnimation(
+	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
+	    return new PiecemealPlayermodelAnimation(
 	            null,
 	            new ProgressHandler((data, ticksPassed) -> ticksPassed / 2.2F),
 	            new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {

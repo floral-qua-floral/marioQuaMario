@@ -3,6 +3,10 @@ package com.fqf.mario_qua_mario.actions.generic;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.cfadata.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.BodyPartAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.EntireBodyAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.charaformact_api.definitions.states.actions.GenericActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
@@ -23,7 +27,7 @@ public class DebugSideTurn implements GenericActionDefinition {
 		return ID;
 	}
 
-	public static final PlayermodelAnimation ANIMATION = new PlayermodelAnimation(
+	public static final PiecemealPlayermodelAnimation ANIMATION = new PiecemealPlayermodelAnimation(
 			null,
 			new ProgressHandler(null, (data, prevAnimationID) -> true, (data, ticksPassed) -> Math.min(ticksPassed / 40F, 1)),
 			new EntireBodyAnimation(0.5F, false,
@@ -40,7 +44,7 @@ public class DebugSideTurn implements GenericActionDefinition {
 			new LimbAnimation(false, null)
 	);
 
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
+	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
 		return ANIMATION;
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {

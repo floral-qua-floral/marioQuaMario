@@ -90,7 +90,7 @@ public class InGameHudMixin {
 
 		renderText(context, 7, clientData.getActionID() + " VS " + serverData.getActionID(),
 				clientData.getActionID().equals(serverData.getActionID()) ? Colors.WHITE : Colors.LIGHT_RED);
-		renderText(context, 6, mainPlayer.cfa$getAnimationData().isAnimating(mainPlayer) ? "Animating" : "Not Animating");
+		renderText(context, 6, mainPlayer.cfa$getOldAnimationData().isAnimating(mainPlayer) ? "Animating" : "Not Animating");
 		renderText(context, 5, "FallDistance (C, S): ", mainPlayer.fallDistance, serverSidedMainPlayer.fallDistance);
 
 		renderText(context, 9, "In unloaded chunk: " + clientData.isInUnloadedChunks());

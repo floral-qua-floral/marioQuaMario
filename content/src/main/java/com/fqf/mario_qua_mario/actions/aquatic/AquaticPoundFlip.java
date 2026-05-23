@@ -7,7 +7,7 @@ import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.charaformact_api.definitions.states.actions.AquaticActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.mario_qua_mario.actions.airborne.GroundPoundFlip;
@@ -26,7 +26,7 @@ public class AquaticPoundFlip implements AquaticActionDefinition {
 	}
 
 	private static final float AQUATIC_FLIP_DURATION = 7;
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
+	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
 		return GroundPoundFlip.makeAnimation(helper).variate(
 				null,
 				new ProgressHandler((data, ticksPassed) -> Math.min(ticksPassed / AQUATIC_FLIP_DURATION, 1)),

@@ -10,7 +10,7 @@ import com.fqf.charaformact.util.AdvancedWallInfo;
 import com.fqf.charaformact_api.definitions.states.StatAlteringStateDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.definitions.states.actions.util.WallBodyAlignment;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact.registries.ParsedCfaState;
 import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import com.fqf.charaformact.registries.actions.ParsedActionHelper;
@@ -51,7 +51,7 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 
 	private AbstractParsedAction action;
 	public boolean resetAnimation;
-	public PlayermodelAnimation prevAnimation;
+	public PiecemealPlayermodelAnimation prevAnimation;
 	public boolean tickAnimation = true;
 	public AbstractParsedAction getAction() {
 		return this.action;
@@ -71,7 +71,7 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 	}
 	public void setActionTransitionless(AbstractParsedAction action) {
 		this.resetAnimation = true;
-		this.prevAnimation = this.action == null ? null : this.action.ANIMATION;
+		this.prevAnimation = this.action == null ? null : this.action.PIECEMEAL_ANIMATION;
 		this.setupCustomVars(this.action, action);
 		this.action = action;
 		this.getPlayer().calculateDimensions();

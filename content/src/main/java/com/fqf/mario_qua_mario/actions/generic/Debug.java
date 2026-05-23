@@ -5,6 +5,8 @@ import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.cfadata.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.actions.airborne.LavaBoost;
@@ -32,7 +34,7 @@ public class Debug implements GenericActionDefinition {
 	    return ID;
 	}
 
-	public static final PlayermodelAnimation T_POSE = new PlayermodelAnimation(
+	public static final PiecemealPlayermodelAnimation T_POSE = new PiecemealPlayermodelAnimation(
 		null,
 		new ProgressHandler(null, (data, prevAnimationID) -> true, (data, ticksPassed) -> ticksPassed / 25F),
 		null,
@@ -48,7 +50,7 @@ public class Debug implements GenericActionDefinition {
 
 		new LimbAnimation(false, null)
 	);
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
+	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
 		return T_POSE;
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {

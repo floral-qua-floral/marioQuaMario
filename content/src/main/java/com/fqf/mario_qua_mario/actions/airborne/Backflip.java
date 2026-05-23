@@ -9,6 +9,9 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.EntireBodyAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -77,8 +80,8 @@ public class Backflip extends Jump implements AirborneActionDefinition {
 			);
 		});
 	}
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return new PlayermodelAnimation(
+	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
+		return new PiecemealPlayermodelAnimation(
 				(data, rightArmBusy, leftArmBusy, headRelativeYaw) -> data.getPlayer().getRandom().nextBoolean(),
 				new ProgressHandler(
 						(data, ticksPassed) -> helper.sequencedEase(helper.sequencedEase(ticksPassed / 4.4F,

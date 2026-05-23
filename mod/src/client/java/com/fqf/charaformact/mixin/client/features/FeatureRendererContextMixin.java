@@ -1,4 +1,4 @@
-package com.fqf.charaformact.mixin.client;
+package com.fqf.charaformact.mixin.client.features;
 
 import com.fqf.charaformact.appearance.FeatureRendererWithContext;
 import com.fqf.charaformact.util.TransformationContext;

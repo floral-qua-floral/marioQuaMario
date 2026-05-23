@@ -1,6 +1,10 @@
 package com.fqf.mario_qua_mario.util;
 
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.BodyPartAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.EntireBodyAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.util.Easing;
 
 public class StandUpWithKneeAnimation {
@@ -82,7 +86,7 @@ public class StandUpWithKneeAnimation {
 		});
 	}
 
-	public static PlayermodelAnimation makeAnimation(
+	public static PiecemealPlayermodelAnimation makeAnimation(
 			AnimationHelper helper,
 			ProgressHandler.ProgressCalculator progressCalculator,
 			float everythingZ1, float bodyPitch1,
@@ -102,7 +106,7 @@ public class StandUpWithKneeAnimation {
 		);
 	}
 
-	public static PlayermodelAnimation makeAnimation(
+	public static PiecemealPlayermodelAnimation makeAnimation(
 			AnimationHelper helper,
 			ProgressHandler.ProgressCalculator progressCalculator,
 			float everythingZ1, float bodyPitch1,
@@ -113,7 +117,7 @@ public class StandUpWithKneeAnimation {
 			float armPitch3, float armYaw3, float armRoll3,
 			float legPitch3, float legRoll3, float legX3, float legY3, float legZ3
 	) {
-		return new PlayermodelAnimation(
+		return new PiecemealPlayermodelAnimation(
 				(data, rightArmBusy, leftArmBusy, headRelativeYaw) -> {
 					if(rightArmBusy && !leftArmBusy) return false;
 					if(leftArmBusy && !rightArmBusy) return true;

@@ -1,5 +1,7 @@
 package com.fqf.charaformact_api.appearance;
 
+import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
+import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import net.minecraft.client.model.*;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.model.EntityModelPartNames;
@@ -52,11 +54,11 @@ public class AppearanceModel extends PlayerEntityModel<AbstractClientPlayerEntit
 		}
 	}
 
-	protected void preActionAnimation() {
+	public void preActionAnimation(AbstractClientPlayerEntity player, CfaAnimatingData data) {
 		// This method is called after vanilla has posed the model, but before CFA has applied Action animations.
 	}
 
-	protected void postActionAnimation() {
+	public void postActionAnimation(AbstractClientPlayerEntity player, CfaAnimatingData data) {
 		// This method is called after CFA has applied Action animations. Use this sparingly!
 	}
 }

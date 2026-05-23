@@ -6,7 +6,7 @@ import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnviron
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.ProgressHandler;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
@@ -38,8 +38,8 @@ public class TailFly extends PJump implements AirborneActionDefinition {
 	}
 
 	@Override
-	public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return Objects.requireNonNull(super.getAnimation(helper)).variate(
+	public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
+		return Objects.requireNonNull(super.getOldAnimation(helper)).variate(
 			null,
 			new ProgressHandler((data, ticksPassed) -> ticksPassed * 1.1F),
 			null, null, null,

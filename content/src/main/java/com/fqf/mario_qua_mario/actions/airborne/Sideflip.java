@@ -9,6 +9,10 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
 import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.BodyPartAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.EntireBodyAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -28,8 +32,8 @@ public class Sideflip extends Backflip implements AirborneActionDefinition {
 		return ID;
 	}
 
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return new PlayermodelAnimation(
+	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
+		return new PiecemealPlayermodelAnimation(
 				null,
 				new ProgressHandler((data, ticksPassed) -> Easing.LINEAR.ease(Math.min(ticksPassed / 20F, 1))),
 				new EntireBodyAnimation(0.5F, false, (data, arrangement, progress) -> {

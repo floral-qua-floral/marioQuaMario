@@ -3,7 +3,7 @@ package com.fqf.mario_qua_mario.actions.grounded;
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.cfadata.*;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
@@ -32,7 +32,7 @@ public class DuckSlide implements GroundedActionDefinition {
 	    return ID;
 	}
 
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
+	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
 		return DuckWaddle.makeDuckAnimation(false, false);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {

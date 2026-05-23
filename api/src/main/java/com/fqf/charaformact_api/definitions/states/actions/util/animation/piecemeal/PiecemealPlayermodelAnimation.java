@@ -1,6 +1,8 @@
-package com.fqf.charaformact_api.definitions.states.actions.util.animation;
+package com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal;
 
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.Arrangement;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.ProgressHandler;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -26,8 +28,8 @@ import org.jetbrains.annotations.Nullable;
  * @param tailAnimation Primarily used for Raccoon Mario's tail. Using positional adjustments to lower the pivot down to
  *                      the player's waist is not necessary; the Raccoon Mario playermodel handles that already.
  */
-public record PlayermodelAnimation(
-		@Nullable PlayermodelAnimation.MirroringEvaluator mirroringEvaluator,
+public record PiecemealPlayermodelAnimation(
+		@Nullable PiecemealPlayermodelAnimation.MirroringEvaluator mirroringEvaluator,
 		@Nullable ProgressHandler progressHandler,
 
 		@Nullable EntireBodyAnimation entireBodyAnimation,
@@ -42,8 +44,8 @@ public record PlayermodelAnimation(
 
 		@Nullable LimbAnimation tailAnimation
 ) {
-	public PlayermodelAnimation variate(
-			@Nullable PlayermodelAnimation.MirroringEvaluator mirroringEvaluator,
+	public PiecemealPlayermodelAnimation variate(
+			@Nullable PiecemealPlayermodelAnimation.MirroringEvaluator mirroringEvaluator,
 			@Nullable ProgressHandler progressHandler,
 
 			@Nullable EntireBodyAnimation entireBodyAnimation,
@@ -58,7 +60,7 @@ public record PlayermodelAnimation(
 
 			@Nullable LimbAnimation tailAnimation
 	) {
-		return new PlayermodelAnimation(
+		return new PiecemealPlayermodelAnimation(
 				mirroringEvaluator == null ? this.mirroringEvaluator : mirroringEvaluator,
 				progressHandler == null ? this.progressHandler : progressHandler,
 

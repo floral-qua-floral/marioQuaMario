@@ -3,7 +3,7 @@ package com.fqf.charaformact.cfadata;
 import com.fqf.charaformact.appearance.ParsedCommonAppearance;
 import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.cfadata.util.RecordedCollisionSet;
 import net.minecraft.client.network.OtherClientPlayerEntity;
@@ -35,18 +35,18 @@ public class CfaOtherClientData extends CfaPlayerData implements CfaClientDataIm
 	}
 
 	private boolean replaceAnimationNextTick;
-	private PlayermodelAnimation nextTickAnimation;
+	private PiecemealPlayermodelAnimation nextTickAnimation;
 	private boolean replaceAnimationNextNextTick;
-	private PlayermodelAnimation nextNextTickAnimation;
+	private PiecemealPlayermodelAnimation nextNextTickAnimation;
 	@Override public void setActionTransitionless(AbstractParsedAction action) {
 		this.handleSlidingSound(action);
 		this.replaceAnimationNextTick = true;
-		this.nextTickAnimation = action.ANIMATION;
+		this.nextTickAnimation = action.PIECEMEAL_ANIMATION;
 		super.setActionTransitionless(action);
 	}
 
 	@Override public void updateAppearance() {
-		this.APPEARANCE_DATA.update();
+		this.APPEARANCE_DATA.updateAppearance();
 	}
 	@Override public @Nullable ParsedCommonAppearance getAppearance() {
 		return this.APPEARANCE_DATA.getAppearance();
@@ -72,7 +72,7 @@ public class CfaOtherClientData extends CfaPlayerData implements CfaClientDataIm
 
 		if(this.replaceAnimationNextTick) {
 			this.replaceAnimationNextTick = false;
-			this.PLAYER.cfa$getAnimationData().replaceAnimation(this, this.nextTickAnimation, -1);
+			this.PLAYER.cfa$getOldAnimationData().replaceAnimation(this, this.nextTickAnimation, -1);
 		}
 		if(this.replaceAnimationNextNextTick) {
 			this.replaceAnimationNextNextTick = false;

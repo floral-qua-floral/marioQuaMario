@@ -4,28 +4,46 @@ import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.appearance.AppearanceRenderer;
 import com.fqf.charaformact.appearance.ClientAppearanceCollector;
 import com.fqf.charaformact.appearance.ParsedClientAppearance;
+import com.fqf.charaformact.cfadata.util.ActiveAnimation;
+import com.fqf.charaformact.cfadata.util.AdvancedPosture;
+import com.fqf.charaformact.registries.actions.ParsedAnimation;
 import com.fqf.charaformact.registries.power_granting.CharacterFormCombo;
 import com.fqf.charaformact.registries.power_granting.ParsedCharacter;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
+import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.util.Pair;
+import net.minecraft.util.crash.CrashException;
+import net.minecraft.util.crash.CrashReport;
+import net.minecraft.util.crash.CrashReportSection;
 import net.minecraft.util.math.MathHelper;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaClientDataImpl> {
-	private final AbstractClientPlayerEntity PLAYER;
-	private final CfaDataType DATA;
+	public final AbstractClientPlayerEntity PLAYER;
+	public final CfaDataType DATA;
 
 	private @Nullable ParsedClientAppearance appearance, flickerModel;
 	private @Nullable PlayerEntityRenderer renderer, flickerRenderer;
+
+	public @Nullable ActiveAnimation actionAnimation;
+	public @Nullable ActiveAnimation forcedAnimation;
+	private float forcedAnimationDuration;
+
+	private long prevTick;
+	private AdvancedPosture prevTickPosture;
+	private long forceInterpolationTime;
 
 	private long flickerUntil;
 	private boolean flickering;
 
 	public CfaAppearanceData(CfaDataType data) {
-		PLAYER = data.getPlayer();
-		DATA = data;
+		this.PLAYER = data.getPlayer();
+		this.DATA = data;
 
 		this.flickerUntil = Long.MIN_VALUE;
 	}
@@ -61,7 +79,7 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaClientData
 		this.flickerUntil = this.PLAYER.getWorld().getTime() + 9L;
 	}
 
-	public void update() {
+	public void updateAppearance() {
 		this.flickerModel = this.appearance;
 		this.flickerRenderer = this.renderer;
 
@@ -85,5 +103,74 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaClientData
 		this.renderer = newModelAndRenderer.getRight();
 
 		this.conditionallyFlicker();
+	}
+
+	public void updateAction() {
+		ActiveAnimation newActionAnim = ActiveAnimation.of(this, this.DATA.getAction().ANIMATION, this.prevTickPosture);
+		boolean forceInterpolation = newActionAnim != null || actionAnimation != null;
+		this.actionAnimation = newActionAnim;
+		if(forceInterpolation) this.forceInterpolation();
+	}
+
+	public void triggerAnimation(@NotNull AnimationDefinition definition, float duration) {
+		this.forcedAnimation = ActiveAnimation.of(this, new ParsedAnimation(definition), this.prevTickPosture);
+		this.forcedAnimationDuration = duration;
+		this.forceInterpolation();
+	}
+
+	public @Nullable ActiveAnimation getCurrentAnimation() {
+		if(this.forcedAnimation != null) return this.forcedAnimation;
+		else return this.actionAnimation;
+	}
+
+	private void forceInterpolation() {
+		this.forceInterpolationTime = this.PLAYER.getWorld().getTime() + 1;
+	}
+
+	public void animate(PlayerEntityModel<?> model, float tickDelta) {
+		AdvancedPosture thisFramePosture = AdvancedPosture.from(model);
+
+		if(this.prevTickPosture == null) // measure to prevent NPE; don't rely on this logic for animating!
+			this.prevTickPosture = thisFramePosture;
+
+		long worldTime = this.PLAYER.getWorld().getTime();
+		boolean isFirstOfTick = worldTime > this.prevTick;
+		if(isFirstOfTick) {
+			this.prevTick = worldTime;
+		}
+
+		try {
+			boolean hasInterpolated;
+			ActiveAnimation currentAnimation = this.getCurrentAnimation();
+			if(currentAnimation != null) {
+				hasInterpolated = currentAnimation.ANIMATION.FLAGS.contains(AnimationFlag.NOT_INTERPOLATED);
+				currentAnimation.apply(thisFramePosture, worldTime, tickDelta, isFirstOfTick);
+			}
+			else hasInterpolated = false;
+
+			if(!hasInterpolated && worldTime <= this.forceInterpolationTime) {
+				// Interpolate from last tick's thisFramePosture, to the CURRENTLY CALCULATED thisFramePosture.
+				AdvancedPosture lerpTo = AdvancedPosture.from(thisFramePosture);
+				thisFramePosture.lerp(this.prevTickPosture, lerpTo, tickDelta);
+
+				thisFramePosture.HEAD.x = 6;
+				model.head.pivotX = 6;
+			}
+
+			thisFramePosture.apply(model);
+		}
+		catch(Throwable error) {
+			CrashReport report = CrashReport.create(error, "Animating CFA Appearance");
+			CrashReportSection appearanceSection = report.addElement("Player's model");
+			appearanceSection.add("Current appearance: ", this.getAppearance(true).ID);
+			appearanceSection.add("Current character: ", this.DATA.getCharacterID());
+			appearanceSection.add("Current form: ", this.DATA.getFormID());
+			appearanceSection.add("Current action: ", this.DATA.getActionID());
+			throw new CrashException(report);
+		}
+
+		if(worldTime > this.forceInterpolationTime) this.prevTickPosture = thisFramePosture;
+
+//		if(this.forcedAnimation != null)
 	}
 }

@@ -2,6 +2,7 @@ package com.fqf.mario_qua_mario.actions.grounded;
 
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.StandUpWithKneeAnimation;
@@ -15,7 +16,7 @@ public class BonkGroundForward extends BonkGroundBackward implements GroundedAct
 		return ID;
 	}
 
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
+	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
 		return StandUpWithKneeAnimation.makeAnimation(
 				helper, (data, ticksPassed) -> data.retrieveStateData(ActionTimerVars.class).actionTimer / (float) STANDUP_TICKS,
 				-3.25F, 40,

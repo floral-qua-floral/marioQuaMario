@@ -3,9 +3,9 @@ package com.fqf.mario_qua_mario.actions.form;
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.EntireBodyAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.LimbAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.EntireBodyAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
@@ -40,7 +40,7 @@ public class TailSpinGround implements GroundedActionDefinition {
 	}
 
 	private static final float TICKS_PER_REVOLUTION = 6;
-	public static final PlayermodelAnimation ANIMATION = DuckWaddle.makeDuckAnimation(false, true).variate(
+	public static final PiecemealPlayermodelAnimation ANIMATION = DuckWaddle.makeDuckAnimation(false, true).variate(
 			null,
 			null,
 			new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
@@ -74,7 +74,7 @@ public class TailSpinGround implements GroundedActionDefinition {
 		null
 	);
 
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
+	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
 		return ANIMATION;
 	}
 

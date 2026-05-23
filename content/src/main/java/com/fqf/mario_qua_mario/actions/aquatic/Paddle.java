@@ -9,8 +9,11 @@ import com.fqf.charaformact_api.definitions.states.actions.AquaticActionDefiniti
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.BodyPartAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.EntireBodyAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.util.CfaStat;
-import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import net.minecraft.entity.EntityPose;
@@ -20,10 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
-
-import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class Paddle implements AquaticActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("paddle");
@@ -56,8 +56,8 @@ public class Paddle implements AquaticActionDefinition {
 			);
 	    });
 	}
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return new PlayermodelAnimation(
+	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
+		return new PiecemealPlayermodelAnimation(
 				null,
 				new ProgressHandler((data, ticksPassed) -> ticksPassed / 1.5F),
 				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {

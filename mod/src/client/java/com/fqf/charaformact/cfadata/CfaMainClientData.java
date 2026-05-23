@@ -56,13 +56,14 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 
 	@Override public void setActionTransitionless(AbstractParsedAction action) {
 		this.handleSlidingSound(action);
-		this.PLAYER.cfa$getAnimationData().replaceAnimation(this, action.ANIMATION, -1);
+//		this.PLAYER.cfa$getOldAnimationData().replaceAnimation(this, action.PIECEMEAL_ANIMATION, -1);
 
 		if(action != this.getAction()) {
 			this.playCameraAnimation(action.CAMERA_ANIMATIONS);
 		}
 
 		super.setActionTransitionless(action);
+		this.APPEARANCE_DATA.updateAction();
 	}
 
 	@Override
@@ -102,11 +103,11 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 			this.currentCameraAnimation = null;
 			this.attemptFinish = false;
 		}
-		else this.getPlayer().cfa$getAnimationData().mutate(cameraArrangement, this.currentCameraAnimation.mutator(), this, progress);
+		else this.getPlayer().cfa$getOldAnimationData().mutate(cameraArrangement, this.currentCameraAnimation.mutator(), this, progress);
 	}
 
 	@Override public void updateAppearance() {
-		this.APPEARANCE_DATA.update();
+		this.APPEARANCE_DATA.updateAppearance();
 	}
 	@Override public @Nullable ParsedCommonAppearance getAppearance() {
 		return this.APPEARANCE_DATA.getAppearance();

@@ -3,6 +3,10 @@ package com.fqf.mario_qua_mario.actions.airborne;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.cfadata.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.BodyPartAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.EntireBodyAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
@@ -98,8 +102,8 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 			);
 		});
 	}
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return new PlayermodelAnimation(
+	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
+		return new PiecemealPlayermodelAnimation(
 				null,
 				new ProgressHandler((data, ticksPassed) -> {
 					float deviation = MathHelper.subtractAngles(data.getPlayer().bodyYaw,

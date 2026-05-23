@@ -1,16 +1,16 @@
 package com.fqf.charaformact.cfadata;
 
+import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.HandPreference;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact.cfadata.util.*;
 import com.fqf.charaformact.registries.RegistryManager;
 import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import com.fqf.charaformact.util.CfaSounds;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.entity.Entity;
@@ -32,8 +32,8 @@ public interface CfaClientDataImpl extends CfaAnimatingData {
 	AbstractClientPlayerEntity getPlayer();
 
 	@Override
-	default void playAnimation(PlayermodelAnimation animation, int ticks) {
-		this.getPlayer().cfa$getAnimationData().replaceAnimation((CfaPlayerData) this, animation, ticks);
+	default void playAnimation(PiecemealPlayermodelAnimation animation, int ticks) {
+		this.getPlayer().cfa$getOldAnimationData().replaceAnimation((CfaPlayerData) this, animation, ticks);
 	}
 
 	@Override
@@ -66,6 +66,12 @@ public interface CfaClientDataImpl extends CfaAnimatingData {
 	@Override
 	default SoundInstanceWrapperImpl playSound(SoundEvent event, Entity entity, SoundCategory category, long seed) {
 		return this.playSound(event, category, entity.getX(), entity.getY(), entity.getZ(), 1F, 1F, seed);
+	}
+
+	@Override
+	default void sustainSound(SoundEvent event, Entity entity, SoundCategory category, long seed) {
+		// TODO: Implement
+		CharaFormAct.LOGGER.error("Unimplemented!");
 	}
 
 	default void handlePowerTransitionSound(boolean isReversion, ParsedForm newPower, long seed) {
@@ -159,11 +165,14 @@ public interface CfaClientDataImpl extends CfaAnimatingData {
 
 	@Override
 	default HandPreference getCurrentHandPreference() {
+		// TODO: Implement
+		CharaFormAct.LOGGER.error("Not implemented!");
 		return HandPreference.EITHER;
 	}
 
 	@Override
 	default float getRelativeHeadYaw() {
+		// TODO: Implement
 		return 0;
 	}
 }

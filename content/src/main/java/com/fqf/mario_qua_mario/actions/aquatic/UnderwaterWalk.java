@@ -3,6 +3,10 @@ package com.fqf.mario_qua_mario.actions.aquatic;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.cfadata.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.BodyPartAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.EntireBodyAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.StatCategory;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -58,8 +62,8 @@ public class UnderwaterWalk implements AquaticActionDefinition {
 		});
 	}
 
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return new PlayermodelAnimation(
+	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
+		return new PiecemealPlayermodelAnimation(
 				null, null,
 				new EntireBodyAnimation(0.5F, true,
 						(data, arrangement, progress) -> arrangement.y += LEG_HEIGHT_OFFSET),

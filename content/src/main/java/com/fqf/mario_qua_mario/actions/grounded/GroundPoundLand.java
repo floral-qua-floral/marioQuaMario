@@ -7,6 +7,7 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera
 import com.fqf.charaformact_api.cfadata.*;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.airborne.GroundPoundDrop;
@@ -28,7 +29,7 @@ public class GroundPoundLand implements GroundedActionDefinition {
 
 	private static final float STANDUP_TICKS = 10;
 
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
+	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
 		return BonkGroundBackward.makeBonkStandupAnimation(helper, (data, ticksPassed) -> ticksPassed / STANDUP_TICKS);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {

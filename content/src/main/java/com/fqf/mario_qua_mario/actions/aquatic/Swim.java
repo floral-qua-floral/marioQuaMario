@@ -3,7 +3,7 @@ package com.fqf.mario_qua_mario.actions.aquatic;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.ProgressHandler;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -24,7 +24,7 @@ public class Swim extends Submerged {
 	}
 
 	@Override
-	public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
+	public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
 		return Objects.requireNonNull(Submerged.makeAnimation(helper).variate(
 				null,
 				new ProgressHandler(

@@ -8,6 +8,7 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.BonkAir;
@@ -30,7 +31,7 @@ public class BonkGroundBackward implements GroundedActionDefinition {
 		return ID;
 	}
 
-	public static PlayermodelAnimation makeBonkStandupAnimation(
+	public static PiecemealPlayermodelAnimation makeBonkStandupAnimation(
 			AnimationHelper helper, ProgressHandler.ProgressCalculator progressCalculator
 	) {
 		return StandUpWithKneeAnimation.makeAnimation(
@@ -42,7 +43,7 @@ public class BonkGroundBackward implements GroundedActionDefinition {
 		);
 	}
 
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
+	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
 		return makeBonkStandupAnimation(helper, (data, ticksPassed) -> data.retrieveStateData(ActionTimerVars.class).actionTimer / (float) STANDUP_TICKS);
 	}
 

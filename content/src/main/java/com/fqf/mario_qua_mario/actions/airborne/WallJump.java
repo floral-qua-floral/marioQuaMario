@@ -4,6 +4,10 @@ import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.BodyPartAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.EntireBodyAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.charaformact_api.util.CfaStat;
@@ -99,8 +103,8 @@ public class WallJump extends Jump implements AirborneActionDefinition {
 			);
 		});
 	}
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return new PlayermodelAnimation(
+	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
+		return new PiecemealPlayermodelAnimation(
 				null,
 				new ProgressHandler((data, ticksPassed) -> {
 					float deviation = MathHelper.subtractAngles(data.getPlayer().bodyYaw, data.retrieveStateData(BonkAir.BonkVars.class).recalculateBonkYaw(data));

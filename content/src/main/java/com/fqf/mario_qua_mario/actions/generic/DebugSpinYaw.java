@@ -1,8 +1,8 @@
 package com.fqf.mario_qua_mario.actions.generic;
 
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.EntireBodyAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.EntireBodyAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.ProgressHandler;
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -19,8 +19,8 @@ public class DebugSpinYaw extends Debug {
 	}
 
 	@Override
-	public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return new PlayermodelAnimation(
+	public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
+		return new PiecemealPlayermodelAnimation(
 				null, new ProgressHandler(80F, true, Easing.LINEAR),
 				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) ->
 						arrangement.yaw = progress * 360),

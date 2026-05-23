@@ -7,13 +7,15 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera
 import com.fqf.charaformact_api.cfadata.*;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.BodyPartAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.EntireBodyAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
-import com.fqf.mario_qua_mario.actions.airborne.GroundPoundFlip;
 import com.fqf.mario_qua_mario.actions.airborne.SpecialFall;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
-import com.fqf.mario_qua_mario.util.MarioSFX;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -70,8 +72,8 @@ public class Submerged implements AquaticActionDefinition {
 			);
 		});
 	}
-	public static PlayermodelAnimation makeAnimation(AnimationHelper helper) {
-		return new PlayermodelAnimation(
+	public static PiecemealPlayermodelAnimation makeAnimation(AnimationHelper helper) {
+		return new PiecemealPlayermodelAnimation(
 				null,
 				null,
 				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
@@ -87,7 +89,7 @@ public class Submerged implements AquaticActionDefinition {
 		);
 	}
 
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
+	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
 		return makeAnimation(helper);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {

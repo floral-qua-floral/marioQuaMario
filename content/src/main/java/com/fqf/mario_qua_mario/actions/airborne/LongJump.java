@@ -4,6 +4,9 @@ import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.BodyPartAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -60,8 +63,8 @@ public class LongJump extends Jump implements AirborneActionDefinition {
 			arrangement.z += helper.interpolateKeyframes(interpProgress * BODY_ROTATION_SPEED, 2, -4.2F, 5);
 		});
 	}
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-//		PlayermodelAnimation old = new PlayermodelAnimation(
+	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
+//		PiecemealPlayermodelAnimation old = new PiecemealPlayermodelAnimation(
 //				null,
 //				new ProgressHandler(
 //						(data, ticksPassed) ->
@@ -96,7 +99,7 @@ public class LongJump extends Jump implements AirborneActionDefinition {
 //				}),
 //				null
 //		);
-		return new PlayermodelAnimation(
+		return new PiecemealPlayermodelAnimation(
 				null,
 				new ProgressHandler(
 						(data, ticksPassed) ->

@@ -7,6 +7,10 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
 import com.fqf.charaformact_api.cfadata.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.BodyPartAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.EntireBodyAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
@@ -126,10 +130,10 @@ public class Raccoon implements FormDefinition {
 
 	private abstract static class TailAttack implements AttackInterceptionDefinition {
 		private final Identifier ACTION_TARGET;
-		private final PlayermodelAnimation ANIMATION;
+		private final PiecemealPlayermodelAnimation ANIMATION;
 		private final CameraAnimationSet CAMERA_ANIMATIONS;
 
-		private TailAttack(Identifier actionTarget, PlayermodelAnimation animation, CameraAnimationSet cameraAnimations) {
+		private TailAttack(Identifier actionTarget, PiecemealPlayermodelAnimation animation, CameraAnimationSet cameraAnimations) {
 			this.ACTION_TARGET = actionTarget;
 			this.ANIMATION = animation;
 			this.CAMERA_ANIMATIONS = cameraAnimations;
@@ -208,7 +212,7 @@ public class Raccoon implements FormDefinition {
 	}
 
 	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
-		PlayermodelAnimation tailWhipAnimation = makeTailWhipAnimation(animationHelper);
+		PiecemealPlayermodelAnimation tailWhipAnimation = makeTailWhipAnimation(animationHelper);
 		CameraAnimationSet tailWhipCameraAnimation = makeTailWhipCameraAnimationSet();
 
 		return List.of(
@@ -255,7 +259,7 @@ public class Raccoon implements FormDefinition {
 	}
 
 	private static final int TAIL_WHIP_ANIMATION_DURATION = 7;
-	private static PlayermodelAnimation makeTailWhipAnimation(AnimationHelper helper) {
+	private static PiecemealPlayermodelAnimation makeTailWhipAnimation(AnimationHelper helper) {
 		LimbAnimation armAnimation = new LimbAnimation(false, (data, arrangement, progress) -> {
 			float factor = progress < 0.5 ? progress * 2 : progress * -2 + 2;
 			arrangement.addPos(0, MathHelper.lerp(factor, 2, 4), MathHelper.lerp(factor, 2, 4));
@@ -266,7 +270,7 @@ public class Raccoon implements FormDefinition {
 			arrangement.addPos(0, factor * 2, factor * 6);
 			arrangement.pitch -= factor * 39;
 		});
-		return new PlayermodelAnimation(
+		return new PiecemealPlayermodelAnimation(
 				null,
 				new ProgressHandler(TAIL_WHIP_ANIMATION_DURATION, false, Easing.SINE_IN_OUT),
 

@@ -1,12 +1,10 @@
 package com.fqf.charaformact.cfadata;
 
 import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
-import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.Arrangement;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.LimbAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.ProgressHandler;
-import com.fqf.charaformact_api.util.Easing;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -18,17 +16,16 @@ import net.minecraft.entity.EntityPose;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
 
 import static net.minecraft.util.math.MathHelper.*;
 
-public class CfaAnimationData {
+public class CfaOldAnimationData {
 	private @Nullable Pose prevTickPose = new Pose();
 	private @Nullable Pose thisTickPose = new Pose();
 
 	private boolean changingAnim;
-	public PlayermodelAnimation currentAnim;
-	private PlayermodelAnimation prevAnim;
+	public PiecemealPlayermodelAnimation currentAnim;
+	private PiecemealPlayermodelAnimation prevAnim;
 	private boolean reevaluateMirroring;
 	private boolean isMirrored;
 	private boolean trailingTick;
@@ -43,7 +40,7 @@ public class CfaAnimationData {
 
 	public float everythingYawLerpDisplacement;
 
-	public void replaceAnimation(CfaPlayerData data, PlayermodelAnimation newAnim, int ticksUntilAutoReplace) {
+	public void replaceAnimation(CfaPlayerData data, PiecemealPlayermodelAnimation newAnim, int ticksUntilAutoReplace) {
 		if(this.ticksUntilAutoReplaceAnimation > 0) return;
 		this.prevAnim = this.currentAnim;
 		this.currentAnim = newAnim;
@@ -63,7 +60,7 @@ public class CfaAnimationData {
 	}
 	public void tick(AbstractClientPlayerEntity player) {
 		if(--this.ticksUntilAutoReplaceAnimation == 0) {
-			this.replaceAnimation(player.cfa$getCfaData(), player.cfa$getCfaData().getAction().ANIMATION, -1);
+			this.replaceAnimation(player.cfa$getCfaData(), player.cfa$getCfaData().getAction().PIECEMEAL_ANIMATION, -1);
 		}
 
 		this.isAnimating = false;
@@ -119,7 +116,7 @@ public class CfaAnimationData {
 			ModelPart rightLeg, ModelPart leftLeg,
 			BipedEntityModel.ArmPose rightArmPose, BipedEntityModel.ArmPose leftArmPose
 	) {
-		if(this.isAnimating(player) && !CfaAnimationData.renderingFirstPersonArm) {
+		if(this.isAnimating(player) && !CfaOldAnimationData.renderingFirstPersonArm) {
 			if (this.reevaluateMirroring && this.currentAnim != null) {
 				this.reevaluateMirroring = false;
 				this.isMirrored = this.currentAnim.mirroringEvaluator() != null &&
@@ -284,7 +281,7 @@ public class CfaAnimationData {
 		}
 		tail.yaw += PI;
 	}
-	private void mutate(Arrangement arrangement, PlayermodelAnimation.MutatorContainer container, CfaPlayerData data, float progress) {
+	private void mutate(Arrangement arrangement, PiecemealPlayermodelAnimation.MutatorContainer container, CfaPlayerData data, float progress) {
 		if(container == null) return;
 		Arrangement.Mutator mutator = container.mutator();
 		if(mutator != null) this.mutate(arrangement, mutator, data, progress);
@@ -468,7 +465,7 @@ public class CfaAnimationData {
 			setupArrangement(model.leftArm, this.LEFT_ARM);
 			setupArrangement(model.rightLeg, this.RIGHT_LEG);
 			setupArrangement(model.leftLeg, this.LEFT_LEG);
-			Arrangement oldTailArrangement = player.cfa$getAnimationData().TAIL_ARRANGEMENT;
+			Arrangement oldTailArrangement = player.cfa$getOldAnimationData().TAIL_ARRANGEMENT;
 			this.TAIL.setPos(oldTailArrangement.x, oldTailArrangement.y, oldTailArrangement.z);
 			this.TAIL.setAngles(oldTailArrangement.pitch, oldTailArrangement.yaw, oldTailArrangement.roll);
 		}

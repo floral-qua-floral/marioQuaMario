@@ -1,10 +1,14 @@
 package com.fqf.mario_qua_mario.appearances.util;
 
 import com.fqf.charaformact_api.appearance.AppearanceModel;
+import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
+import com.fqf.charaformact_api.util.Easing;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.util.math.MathHelper;
+
+import static net.minecraft.util.math.MathHelper.HALF_PI;
 
 public abstract class MqmAppearanceModel extends AppearanceModel {
 	public MqmAppearanceModel(ModelPart root) {
@@ -12,15 +16,23 @@ public abstract class MqmAppearanceModel extends AppearanceModel {
 	}
 
 	@Override
-	public void setAngles(
-			AbstractClientPlayerEntity player,
-			float limbAngle, float limbDistance, float animationProgress,
-			float headYaw, float headPitch
-	) {
-		super.setAngles(player, limbAngle, limbDistance, animationProgress, headYaw, headPitch);
-
+	public void preActionAnimation(AbstractClientPlayerEntity player, CfaAnimatingData data) {
 		if(this.tail != null) {
-//			this.tail.pitch = 45;
+			float swing = this.leftLeg.pitch - this.rightLeg.pitch;
+			float lift;
+			if(player.isOnGround() || data.getActionCategory() == ActionCategory.WALLBOUND) {
+				lift = Easing.SINE_IN_OUT.ease(Easing.clampedRangeToProgress(data.getForwardVel(), 0, 0.55));
+				swing += MathHelper.sin(data.getPlayer().age / 17F) * 0.5F * Math.max(0F, MathHelper.HALF_PI * 0.5F - Math.abs(swing));
+			}
+			else lift = Easing.EXPO_IN_OUT.ease(Easing.clampedRangeToProgress(data.getYVel(), 0.87, -0.85), 0.45F, 1.8F);
+
+			float inverseLift = 1 - lift;
+
+			this.tail.setAngles(
+					-0.65F * inverseLift * HALF_PI,
+					swing * -0.2028F,
+					swing * 0.312F * inverseLift
+			);
 		}
 	}
 }

@@ -7,8 +7,9 @@ import com.fqf.charaformact.registries.ParsedCollisionAttack;
 import com.fqf.charaformact_api.definitions.states.AttackInterceptingStateDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.GenericActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.charaformact.registries.ParsedAttackInterception;
 import com.fqf.charaformact.registries.RegistryManager;
 import net.minecraft.util.Identifier;
@@ -21,7 +22,8 @@ public abstract class AbstractParsedAction extends ParsedCfaState {
 	protected final IncompleteActionDefinition ACTION_DEFINITION;
 	public final ActionCategory CATEGORY;
 
-	public final @Nullable PlayermodelAnimation ANIMATION;
+	public final @Nullable ParsedAnimation ANIMATION;
+	public final @Nullable PiecemealPlayermodelAnimation PIECEMEAL_ANIMATION;
 	public final @Nullable CameraAnimationSet CAMERA_ANIMATIONS;
 	public final SlidingStatus SLIDING_STATUS;
 
@@ -50,7 +52,10 @@ public abstract class AbstractParsedAction extends ParsedCfaState {
 		this.ACTION_DEFINITION = definition;
 		this.CATEGORY = this.getCategory();
 
-		this.ANIMATION = definition.getAnimation(AnimationHelperImpl.INSTANCE);
+		AnimationDefinition animation = definition.getAnimation();
+		if(animation == null) this.ANIMATION = null;
+		else this.ANIMATION = new ParsedAnimation(animation);
+		this.PIECEMEAL_ANIMATION = null;
 		this.CAMERA_ANIMATIONS = definition.getCameraAnimations(AnimationHelperImpl.INSTANCE);
 		this.SLIDING_STATUS = definition.getSlidingStatus();
 

@@ -3,7 +3,7 @@ package com.fqf.mario_qua_mario.actions.airborne;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.ProgressHandler;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.cfadata.*;
@@ -31,7 +31,7 @@ public class GroundPoundDrop implements AirborneActionDefinition {
 	    return ID;
 	}
 
-	public static PlayermodelAnimation makeAnimation(AnimationHelper helper) {
+	public static PiecemealPlayermodelAnimation makeAnimation(AnimationHelper helper) {
 		return GroundPoundFlip.makeAnimation(helper).variate(
 				null,
 				new ProgressHandler((data, ticksPassed) -> 1),
@@ -41,7 +41,7 @@ public class GroundPoundDrop implements AirborneActionDefinition {
 		);
 	}
 
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
+	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
 		return makeAnimation(helper);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {

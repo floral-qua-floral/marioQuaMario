@@ -4,6 +4,10 @@ import com.fqf.charaformact_api.HelperGetter;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.cfadata.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.BodyPartAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.EntireBodyAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.charaformact_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
@@ -62,8 +66,8 @@ public class ClimbWall implements WallboundActionDefinition {
 	protected float getEntireBodyZOffset(CfaReadableMotionData data) {
 		return 2.25F;
 	}
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-	    return new PlayermodelAnimation(
+	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
+	    return new PiecemealPlayermodelAnimation(
 	            null,
 	            new ProgressHandler((data, ticksPassed) -> {
 					ClimbOmniDirectionalVars vars = data.retrieveStateData(ClimbOmniDirectionalVars.class);

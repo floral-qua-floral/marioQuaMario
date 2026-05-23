@@ -9,6 +9,9 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera
 import com.fqf.charaformact_api.cfadata.*;
 import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.EntireBodyAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.aquatic.AquaticPoundFlip;
@@ -55,8 +58,8 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 			);
 		});
 	}
-	public static PlayermodelAnimation makeAnimation(AnimationHelper helper) {
-		return new PlayermodelAnimation(
+	public static PiecemealPlayermodelAnimation makeAnimation(AnimationHelper helper) {
+		return new PiecemealPlayermodelAnimation(
 				null,
 				new ProgressHandler((data, ticksPassed) -> Math.min(ticksPassed / FLIP_DURATION, 1)),
 				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
@@ -70,7 +73,7 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 				null
 		);
 	}
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
+	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
 		return makeAnimation(helper);
 	}
 

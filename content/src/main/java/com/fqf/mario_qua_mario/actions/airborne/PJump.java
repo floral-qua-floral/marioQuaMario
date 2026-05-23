@@ -6,8 +6,8 @@ import com.fqf.charaformact_api.definitions.states.actions.util.SneakingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.LimbAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario.actions.grounded.PRun;
@@ -29,8 +29,8 @@ public class PJump extends Jump implements AirborneActionDefinition {
 		return ID;
 	}
 
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return new PlayermodelAnimation(
+	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
+		return new PiecemealPlayermodelAnimation(
 				null, null, null,
 				null, null,
 				new LimbAnimation(false, (data, arrangement, progress) -> {

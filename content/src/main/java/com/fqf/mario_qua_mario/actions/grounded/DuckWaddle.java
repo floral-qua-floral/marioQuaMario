@@ -7,6 +7,9 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera
 import com.fqf.charaformact_api.cfadata.*;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.BodyPartAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -20,6 +23,7 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
@@ -29,6 +33,18 @@ public class DuckWaddle implements GroundedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("duck_waddle");
 	@Override public @NotNull Identifier getID() {
 	    return ID;
+	}
+
+	@Override
+	public @Nullable AnimationDefinition getAnimation() {
+		return AnimationDefinition.of(
+				MarioQuaMario.makeID("testeroo"),
+				EnumSet.of(AnimationFlag.NO_RIGHT_ARM_SWING),
+				(data, prevAnimationID) -> EnumSet.noneOf(AnimationFlag.Execution.class),
+				(posture, data, animationTime, helper) -> {
+					posture.RIGHT_ARM.setAnglesDegrees(-90, 45, 0);
+				}
+		);
 	}
 
 	private static final LimbAnimation ARM = new LimbAnimation(false, (data, arrangement, progress) -> {
@@ -44,8 +60,8 @@ public class DuckWaddle implements GroundedActionDefinition {
 	}
 	private static final Identifier DUCK_ANIM_ID = MarioQuaMario.makeResID("duck");
 	private static final Identifier DUCK_AIR_ANIM_ID = MarioQuaMario.makeResID("duck_air");
-	public static PlayermodelAnimation makeDuckAnimation(boolean walking, boolean airborne) {
-		return new PlayermodelAnimation(
+	public static PiecemealPlayermodelAnimation makeDuckAnimation(boolean walking, boolean airborne) {
+		return new PiecemealPlayermodelAnimation(
 				null,
 				new ProgressHandler(
 						airborne ? DUCK_AIR_ANIM_ID : DUCK_ANIM_ID,
@@ -78,7 +94,7 @@ public class DuckWaddle implements GroundedActionDefinition {
 		);
 	}
 
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
+	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
 		return makeDuckAnimation(true, false);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {

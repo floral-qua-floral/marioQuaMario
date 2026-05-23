@@ -7,6 +7,9 @@ import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefini
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.BodyPartAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -35,7 +38,7 @@ public class DoubleJump extends Jump implements AirborneActionDefinition {
 			arrangement.y += Easing.BACK_OUT.ease(progress, 1.1F, -2.333F);
 		});
 	}
-	public static final PlayermodelAnimation ANIMATION = new PlayermodelAnimation(
+	public static final PiecemealPlayermodelAnimation ANIMATION = new PiecemealPlayermodelAnimation(
 			(data, rightArmBusy, leftArmBusy, headRelativeYaw) -> data.getPlayer().getRandom().nextBoolean(),
 			new ProgressHandler(
 					(data, ticksPassed) ->
@@ -58,7 +61,7 @@ public class DoubleJump extends Jump implements AirborneActionDefinition {
 			null
 	);
 
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
+	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
 		return ANIMATION;
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {

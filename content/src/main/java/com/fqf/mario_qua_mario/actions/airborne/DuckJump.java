@@ -6,9 +6,11 @@ import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnviron
 import com.fqf.charaformact_api.definitions.states.actions.util.SneakingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.EntireBodyAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.EntireBodyAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
@@ -25,7 +27,18 @@ public class DuckJump extends Jump implements AirborneActionDefinition {
 	    return ID;
 	}
 
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
+
+	@Override
+	public @Nullable AnimationDefinition getAnimation() {
+		return AnimationDefinition.of(
+				AnimationFlag.NO_SWING_ARMS,
+				(posture, data, animationTime, helper) -> {
+					posture.TORSO.setAnglesDegrees(90, 0, 0);
+				}
+		);
+	}
+
+	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
 		return DuckWaddle.makeDuckAnimation(false, true).variate(
 				null, null,
 				new EntireBodyAnimation(0.0F, true, (data, arrangement, progress) -> {

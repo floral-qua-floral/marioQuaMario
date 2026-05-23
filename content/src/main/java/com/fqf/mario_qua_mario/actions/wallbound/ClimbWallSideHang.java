@@ -5,6 +5,9 @@ import com.fqf.charaformact_api.definitions.states.actions.WallboundActionDefini
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.EntireBodyAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -46,8 +49,8 @@ public class ClimbWallSideHang extends ClimbWall implements WallboundActionDefin
 	protected float getEntireBodyXOffset(CfaReadableMotionData data) {
 		return -1.25F;
 	}
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return new PlayermodelAnimation(
+	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
+		return new PiecemealPlayermodelAnimation(
 				null,
 				new ProgressHandler((data, ticksPassed) -> Math.signum(Objects.requireNonNull(helper.getWallInfo(data)).getYawDeviation())),
 				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {

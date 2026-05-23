@@ -1,7 +1,8 @@
 package com.fqf.charaformact.mixin.client;
 
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.LimbAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charaformact.cfadata.util.ActiveAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -23,6 +24,8 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.EnumSet;
 
 @Mixin(BipedEntityModel.class)
 public abstract class BipedEntityModelMixin<T extends LivingEntity> extends AnimalModel<T> {
@@ -52,20 +55,33 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Anim
 			@Share("leftLeg") LocalBooleanRef leftLegRef
 			) {
 		if(entity instanceof AbstractClientPlayerEntity player) {
-			PlayermodelAnimation animation = player.cfa$getAnimationData().currentAnim;
-			if(animation != null) {
+			if(player.cfa$getCfaData().isEnabled()) {
 				applyRef.set(true);
 				playerRef.set(player);
 
-				rightArmRef.set(animationSuppressesSwinging(animation.rightArmAnimation()));
-				leftArmRef.set(animationSuppressesSwinging(animation.leftArmAnimation()));
-				rightLegRef.set(animationSuppressesSwinging(animation.rightLegAnimation()));
-				leftLegRef.set(animationSuppressesSwinging(animation.leftLegAnimation()));
-
-				return;
+				ActiveAnimation animation = player.cfa$getAppearanceData().getCurrentAnimation();
+				if(animation != null) {
+					EnumSet<AnimationFlag> flags = animation.ANIMATION.FLAGS;
+					boolean mirrored = animation.EXECUTION_FLAGS.contains(AnimationFlag.Execution.MIRROR);
+					setMirroredFlagRef(rightArmRef, flags, AnimationFlag.NO_RIGHT_ARM_SWING, mirrored);
+					setMirroredFlagRef(leftArmRef, flags, AnimationFlag.NO_LEFT_ARM_SWING, mirrored);
+					setMirroredFlagRef(rightLegRef, flags, AnimationFlag.NO_RIGHT_LEG_SWING, mirrored);
+					setMirroredFlagRef(leftLegRef, flags, AnimationFlag.NO_LEFT_LEG_SWING, mirrored);
+				}
 			}
 		}
 		applyRef.set(false);
+	}
+
+	@Unique
+	private static void setMirroredFlagRef(LocalBooleanRef ref, EnumSet<AnimationFlag> flags, AnimationFlag flag, boolean mirror) {
+		ref.set(flags.contains(switch(flag) {
+			case NO_RIGHT_ARM_SWING -> AnimationFlag.NO_LEFT_ARM_SWING;
+			case NO_LEFT_ARM_SWING -> AnimationFlag.NO_RIGHT_ARM_SWING;
+			case NO_RIGHT_LEG_SWING -> AnimationFlag.NO_LEFT_LEG_SWING;
+			case NO_LEFT_LEG_SWING -> AnimationFlag.NO_RIGHT_LEG_SWING;
+			default -> throw new IllegalArgumentException("Trying to mirror non-mirrorable animation flag");
+		}));
 	}
 
 	@WrapOperation(method = "setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V", at = @At(value = "FIELD", target = "Lnet/minecraft/client/model/ModelPart;pitch:F", opcode = Opcodes.PUTFIELD))
@@ -80,7 +96,7 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Anim
 	) {
 		if(applyRef.get()) {
 			if(instance == this.head) {
-				newValue = playerRef.get().cfa$getAnimationData().counterRotateHead(this.head, newValue);
+				newValue = playerRef.get().cfa$getOldAnimationData().counterRotateHead(this.head, newValue);
 			}
 			else if(
 					attemptSuppression(rightArmRef, instance, this.rightArm)

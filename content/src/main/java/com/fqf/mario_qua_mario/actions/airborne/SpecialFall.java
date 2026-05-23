@@ -4,8 +4,8 @@ import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinit
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.LimbAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -27,8 +27,8 @@ public class SpecialFall extends Fall implements AirborneActionDefinition {
 		});
 	}
 
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return new PlayermodelAnimation(
+	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
+		return new PiecemealPlayermodelAnimation(
 				(data, rightArmBusy, leftArmBusy, headRelativeYaw) -> data.getPlayer().getRandom().nextBoolean(),
 				null, null, null, null,
 				makeArmAnimation(1), makeArmAnimation(-1),
