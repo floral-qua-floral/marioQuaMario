@@ -8,14 +8,11 @@ import com.fqf.charaformact_api.definitions.states.actions.util.BappingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.util.MarioVars;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,7 +45,7 @@ public class Jump extends Fall implements AirborneActionDefinition {
 						}
 						default -> {
 							if(Math.abs(data.getRelativeHeadYawDegrees()) > 55) {
-								if(data.getRelativeHeadYaw() > 0) return EnumSet.of(AnimationFlag.Execution.MIRROR);
+								if(data.getRelativeHeadYawRadians() > 0) return EnumSet.of(AnimationFlag.Execution.MIRROR);
 								else return EnumSet.noneOf(AnimationFlag.Execution.class);
 							}
 							if(data.getPlayer().getRandom().nextBoolean()) return EnumSet.of(AnimationFlag.Execution.MIRROR);

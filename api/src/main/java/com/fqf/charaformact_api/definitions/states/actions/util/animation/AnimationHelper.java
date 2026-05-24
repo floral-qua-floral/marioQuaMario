@@ -25,6 +25,11 @@ public interface AnimationHelper {
 
 	@FunctionalInterface
 	interface SymmetricalAnimator {
-		void animate(Arrangement arrangement, boolean isLeft);
+		void animate(Arrangement arrangement, boolean isLeft, int leftFactor);
+	}
+
+	@FunctionalInterface
+	interface SymmetricalAnimatorInteger {
+		void animate(Arrangement arrangement, int isLeft);
 	}
 }

@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class AdvancedPosture extends Posture {
 	private final AdvancedArrangement[] ARRANGEMENTS;
+	private boolean isDegrees;
 
 	public AdvancedPosture(AdvancedArrangement[] arrangements) {
 		super(arrangements);
@@ -84,7 +85,18 @@ public class AdvancedPosture extends Posture {
 		this.LEFT_LEG.setAngles(rightLegCopy.pitch, -rightLegCopy.yaw, -rightLegCopy.roll);
 	}
 
-	public void multiplyAllAngles(float factor) {
+	public void toDegrees() {
+		if(this.isDegrees) return;
+		this.isDegrees = true;
+		this.multiplyAllAngles(MathHelper.DEGREES_PER_RADIAN);
+	}
+	public void toRadians() {
+		if(!this.isDegrees) return;
+		this.isDegrees = false;
+		this.multiplyAllAngles(MathHelper.RADIANS_PER_DEGREE);
+	}
+
+	private void multiplyAllAngles(float factor) {
 		for(AdvancedArrangement arrangement : ARRANGEMENTS) {
 			if(arrangement != null) arrangement.multiplyAngles(factor);
 		}
@@ -114,22 +126,29 @@ public class AdvancedPosture extends Posture {
 		part.setAngles(arrangement.pitch, arrangement.yaw, arrangement.roll);
 	}
 
-	public void lerp(AdvancedPosture from, AdvancedPosture to, float delta) {
+	public void lerp(float delta, AdvancedPosture from, AdvancedPosture to) {
 		for(int index = 0; index < this.ARRANGEMENTS.length; index++) {
 			AdvancedArrangement mutating = this.ARRANGEMENTS[index];
-			AdvancedArrangement fromArrangement = from.ARRANGEMENTS[index];
-			AdvancedArrangement toArrangement = to.ARRANGEMENTS[index];
-			if(mutating == null || fromArrangement == null || toArrangement == null) continue;
-			mutating.setPos(
-					MathHelper.lerp(delta, fromArrangement.x, toArrangement.x),
-					MathHelper.lerp(delta, fromArrangement.y, toArrangement.y),
-					MathHelper.lerp(delta, fromArrangement.z, toArrangement.z)
-			);
-			mutating.setAngles(
-					MathHelper.lerp(delta, fromArrangement.pitch, toArrangement.pitch),
-					MathHelper.lerp(delta, fromArrangement.yaw, toArrangement.yaw),
-					MathHelper.lerp(delta, fromArrangement.roll, toArrangement.roll)
-			);
+			if(mutating != null) mutating.lerp(delta, from.ARRANGEMENTS[index], to.ARRANGEMENTS[index]);
+		}
+	}
+
+	public void wrappedLerp(float delta, AdvancedPosture from, AdvancedPosture to) {
+		if(this.isDegrees) this.wrappedLerpDegrees(delta, from, to);
+		else this.wrappedLerpRadians(delta, from, to);
+	}
+
+	private void wrappedLerpRadians(float delta, AdvancedPosture from, AdvancedPosture to) {
+		for(int index = 0; index < this.ARRANGEMENTS.length; index++) {
+			AdvancedArrangement mutating = this.ARRANGEMENTS[index];
+			if(mutating != null) mutating.wrappedLerpRadians(delta, from.ARRANGEMENTS[index], to.ARRANGEMENTS[index]);
+		}
+	}
+
+	private void wrappedLerpDegrees(float delta, AdvancedPosture from, AdvancedPosture to) {
+		for(int index = 0; index < this.ARRANGEMENTS.length; index++) {
+			AdvancedArrangement mutating = this.ARRANGEMENTS[index];
+			if(mutating != null) mutating.wrappedLerpDegrees(delta, from.ARRANGEMENTS[index], to.ARRANGEMENTS[index]);
 		}
 	}
 }

@@ -4,6 +4,6 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.HandPr
 
 public interface CfaAnimatingData extends CfaReadableMotionData, CfaClientData {
 	HandPreference getCurrentHandPreference();
-	float getRelativeHeadYaw();
+	float getRelativeHeadYawRadians();
 	float getRelativeHeadYawDegrees();
 }

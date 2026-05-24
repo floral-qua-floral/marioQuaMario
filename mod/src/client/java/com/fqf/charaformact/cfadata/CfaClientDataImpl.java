@@ -11,7 +11,6 @@ import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import com.fqf.charaformact.util.CfaSounds;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.entity.Entity;
@@ -165,26 +164,20 @@ public interface CfaClientDataImpl extends CfaAnimatingData {
 		}
 	}
 
-	default void updateHandPreference(boolean rightArmBusy, boolean leftArmBusy) {
+	default void updateHandPreferenceAndRelativeHeadYaw(boolean rightArmBusy, boolean leftArmBusy, float headRelativeYaw) {
 		if(rightArmBusy) {
-			if(leftArmBusy) this.setHandPreference(HandPreference.NEITHER);
-			else this.setHandPreference(HandPreference.PREFER_LEFT);
+			if(leftArmBusy) this.setHandPreferenceAndRelativeHeadYaw(HandPreference.NEITHER, headRelativeYaw);
+			else this.setHandPreferenceAndRelativeHeadYaw(HandPreference.PREFER_LEFT, headRelativeYaw);
 		}
 		else {
-			if(leftArmBusy) this.setHandPreference(HandPreference.PREFER_RIGHT);
-			else this.setHandPreference(HandPreference.EITHER);
+			if(leftArmBusy) this.setHandPreferenceAndRelativeHeadYaw(HandPreference.PREFER_RIGHT, headRelativeYaw);
+			else this.setHandPreferenceAndRelativeHeadYaw(HandPreference.EITHER, headRelativeYaw);
 		}
 	}
-	void setHandPreference(HandPreference preference);
-
-	@Override
-	default float getRelativeHeadYaw() {
-		// TODO: Implement
-		return 0;
-	}
+	void setHandPreferenceAndRelativeHeadYaw(HandPreference preference, float relativeHeadYaw);
 
 	@Override
 	default float getRelativeHeadYawDegrees() {
-		return this.getRelativeHeadYaw() * MathHelper.DEGREES_PER_RADIAN;
+		return this.getRelativeHeadYawRadians() * MathHelper.DEGREES_PER_RADIAN;
 	}
 }

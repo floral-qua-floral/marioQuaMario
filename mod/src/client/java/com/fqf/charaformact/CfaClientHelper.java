@@ -19,7 +19,7 @@ public class CfaClientHelper implements CfaClientHelperManager.ClientHelper {
 	@Override
 	public void mirrorAndAnimate(Posture posture, Arrangement part, AnimationHelper.SymmetricalAnimator animator) {
 		mirrorPosture(posture);
-		animator.animate(part, true);
+		animator.animate(part, true, 1);
 		mirrorPosture(posture);
 	}
 

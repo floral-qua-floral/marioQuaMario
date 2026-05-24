@@ -119,15 +119,31 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 
 	public void updateAction() {
 		ActiveAnimation newActionAnim = ActiveAnimation.of(this, this.DATA.getAction().ANIMATION, this.prevTickPosture);
-		boolean forceInterpolation = newActionAnim != null || actionAnimation != null;
+		boolean isOrWasAnimating = newActionAnim != null || actionAnimation != null;
 		this.actionAnimation = newActionAnim;
-		if(forceInterpolation) this.forceInterpolation();
+		if(isOrWasAnimating) {
+			CharaFormAct.LOGGER.info("Player is or was animating.\n\tnewActionAnim: {}\n\tFlags: {}\n\tContains?: {}",
+					newActionAnim,
+					newActionAnim == null ? null : newActionAnim.EXECUTION_FLAGS,
+					newActionAnim == null ? null : newActionAnim.EXECUTION_FLAGS.contains(AnimationFlag.Execution.DO_NOT_RESET_PROGRESS));
+			if(newActionAnim == null || !newActionAnim.EXECUTION_FLAGS.contains(AnimationFlag.Execution.DO_NOT_RESET_PROGRESS)) {
+				CharaFormAct.LOGGER.info("Forcing interpolation between animations...!");
+				this.forceInterpolation();
+			}
+		}
+//		if(isOrWasAnimating) this.forceInterpolation();
 	}
 
+	// This is an animation triggered during client execution of an attack interception, as opposed to an animation
+	// that is registered to an Action. As a result, we can't really parse it in advance. Fortunately animation parsing
+	// is very light and easy and does not involve any actual registries, so we can just do it on the fly.
 	public void triggerAnimation(@NotNull AnimationDefinition definition, float duration) {
 		this.forcedAnimation = ActiveAnimation.of(this, new ParsedAnimation(definition), this.prevTickPosture);
 		this.forcedAnimationDuration = duration;
-		this.forceInterpolation();
+		// Attack interceptions, particularly those associated with an action instead of a form, may wish to continue from
+		// their action's current animation. We should respect this, this is perfectly legitimate!
+		if(!this.forcedAnimation.EXECUTION_FLAGS.contains(AnimationFlag.Execution.DO_NOT_RESET_PROGRESS))
+			this.forceInterpolation();
 	}
 
 	public @Nullable ActiveAnimation getCurrentAnimation() {
@@ -142,7 +158,7 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 	public void animate(PlayerEntityModel<?> model, float tickDelta) {
 		boolean rightArmBusy = isArmBusy(model.rightArmPose, model.leftArmPose);
 		boolean leftArmBusy = isArmBusy(model.leftArmPose, model.rightArmPose);
-		this.DATA.updateHandPreference(rightArmBusy, leftArmBusy);
+		this.DATA.updateHandPreferenceAndRelativeHeadYaw(rightArmBusy, leftArmBusy, model.head.yaw - model.body.yaw);
 		AdvancedPosture thisFramePosture = AdvancedPosture.from(model);
 
 		if(rightArmBusy) ((AdvancedArrangement) thisFramePosture.RIGHT_ARM).store(AdvancedArrangement.BUSY_ARMS_SLOT);
@@ -158,18 +174,20 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 		}
 
 		try {
+			// If we are transitioning into, out of, or between animations, then we MUST interpolate for 1 tick!
+			boolean forceWrappedInterpolation = worldTime <= this.forceInterpolationTime;
 			boolean hasInterpolated;
 			ActiveAnimation currentAnimation = this.getCurrentAnimation();
 			if(currentAnimation != null) {
 				hasInterpolated = currentAnimation.ANIMATION.FLAGS.contains(AnimationFlag.NOT_INTERPOLATED);
-				currentAnimation.apply(thisFramePosture, worldTime, tickDelta, isFirstOfTick);
+				currentAnimation.apply(thisFramePosture, worldTime, tickDelta, isFirstOfTick, forceWrappedInterpolation);
 			}
 			else hasInterpolated = false;
 
-			if(!hasInterpolated && worldTime <= this.forceInterpolationTime) {
+			if(!hasInterpolated && forceWrappedInterpolation) {
 				// Interpolate from last tick's thisFramePosture, to the CURRENTLY CALCULATED thisFramePosture.
 				AdvancedPosture lerpTo = AdvancedPosture.from(thisFramePosture);
-				thisFramePosture.lerp(this.prevTickPosture, lerpTo, tickDelta);
+				thisFramePosture.wrappedLerp(tickDelta, this.prevTickPosture, lerpTo);
 			}
 
 			if(rightArmBusy) ((AdvancedArrangement) thisFramePosture.RIGHT_ARM).resetTo(AdvancedArrangement.BUSY_ARMS_SLOT);

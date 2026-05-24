@@ -14,6 +14,10 @@ public enum AnimationFlag {
 
 	USE_RADIANS, // technically more performant i guess but god almighty i don't WANNA
 
+	ALWAYS_WRAP_ANGLES,
+
+	CAN_RESET_ON_SELF, // animation can have its progress reset when transitioning into the exact same animation
+
 //	CONTINUOUSLY_REEVALUATE_EPHEMERAL,
 
 	NOT_INTERPOLATED;

@@ -7,9 +7,6 @@ import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefini
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.BodyPartAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;

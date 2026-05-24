@@ -169,11 +169,16 @@ public class CfaOtherClientData extends CfaPlayerData implements CfaClientDataIm
 		return CfaServerPlayerData.PHONY_INPUTS;
 	}
 
-	private HandPreference handPreference;
-	@Override public void setHandPreference(HandPreference preference) {
+	private HandPreference handPreference = HandPreference.EITHER;
+	private float relativeHeadYaw;
+	@Override public void setHandPreferenceAndRelativeHeadYaw(HandPreference preference, float relativeHeadYaw) {
 		this.handPreference = preference;
+		this.relativeHeadYaw = relativeHeadYaw;
 	}
 	@Override public HandPreference getCurrentHandPreference() {
 		return this.handPreference;
+	}
+	@Override public float getRelativeHeadYawRadians() {
+		return this.relativeHeadYaw;
 	}
 }

@@ -75,7 +75,7 @@ public class AnimationHelperImpl implements AnimationHelper {
 
 	@Override
 	public void symmetricallyAnimate(Posture posture, Arrangement rightPart, SymmetricalAnimator animator) {
-		animator.animate(rightPart, false);
+		animator.animate(rightPart, false, 0);
 		CfaClientHelperManager.helper.mirrorAndAnimate(posture, rightPart, animator);
 	}
 

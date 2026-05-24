@@ -32,76 +32,67 @@ public class TripleJump extends Jump implements AirborneActionDefinition {
 	    return ID;
 	}
 
-	private static LimbAnimation makeArmAnimation(AnimationHelper helper, int factor) {
-		return new LimbAnimation(false, (data, arrangement, progress) -> {
-			arrangement.roll += helper.interpolateKeyframes(progress,
-					170 * factor,
-					90 * factor,
-					0,
-					0,
-					90 * factor,
-					107 * factor
-			);
-			arrangement.pitch += helper.interpolateKeyframes(progress,
-					0,
-					0,
-					-90,
-					-90,
-					0,
-					0
-			);
-		});
-	}
-	private static LimbAnimation makeLegAnimation(AnimationHelper helper, int factor, int offsetFactor) {
-		return new LimbAnimation(false, (data, arrangement, progress) -> {
-			arrangement.pitch += helper.interpolateKeyframes(progress,
-					0,
-					52,
-					0,
-					-90 + offsetFactor * 20,
-					offsetFactor * -38.5F,
-					(offsetFactor == 0) ? -9.5F : 9.1F
-			);
-			arrangement.z += helper.interpolateKeyframes(progress,
-					0,
-					0,
-					0,
-					0,
-					offsetFactor * -3.25F,
-					offsetFactor * -4.25F
-			);
-			arrangement.y += helper.interpolateKeyframes(progress,
-					0,
-					0,
-					0,
-					0,
-					offsetFactor * -3.5F,
-					offsetFactor * -4.5F
-			);
-		});
-	}
+	@Override
+	public @Nullable AnimationDefinition getAnimation() {
+		return AnimationDefinition.of(
+				AnimationFlag.NO_SWING_LIMBS, AnimationFlag.Execution.RANDOMLY_MIRROR,
+				(posture, data, animationTime, helper) -> {
+					float progress = helper.sequencedEase(helper.sequencedEase(animationTime / 5F,
+							Easing.LINEAR, Easing.LINEAR, Easing.LINEAR, Easing.LINEAR, Easing.LINEAR) / 3, Easing.LINEAR,
+							Easing.LINEAR) * 3; // ????
 
-	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
-		return new PiecemealPlayermodelAnimation(
-				(data, rightArmBusy, leftArmBusy, headRelativeYaw) -> data.getPlayer().getRandom().nextBoolean(),
-				new ProgressHandler(
-						(data, ticksPassed) -> helper.sequencedEase(helper.sequencedEase(ticksPassed / 5F,
-								Easing.LINEAR, Easing.LINEAR, Easing.LINEAR, Easing.LINEAR, Easing.LINEAR) / 3, Easing.LINEAR, Easing.LINEAR) * 3
-				),
-				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
-					arrangement.pitch -= Math.min(progress, 4) * 180;
-				}),
-				new BodyPartAnimation((data, arrangement, progress) -> {
+					posture.EVERYTHING.pitch -= Math.min(progress, 4) * 180;
 
-				}),
-				new BodyPartAnimation((data, arrangement, progress) -> {
+					helper.symmetricallyAnimate(posture, posture.RIGHT_ARM, arrangement -> arrangement.addAngles(
+							helper.interpolateKeyframes(progress,
+									0,
+									0,
+									-90,
+									-90,
+									0,
+									0
+							),
+							0,
+							helper.interpolateKeyframes(progress,
+									170,
+									90,
+									0,
+									0,
+									90,
+									107
+							)
+					));
 
-				}),
-				makeArmAnimation(helper, 1),
-				makeArmAnimation(helper, -1),
-				makeLegAnimation(helper, 1, 0),
-				makeLegAnimation(helper, -1, 1),
-				null
+					helper.symmetricallyAnimate(posture, posture.RIGHT_LEG, (arrangement, isLeft, leftFactor) -> {
+						arrangement.pitch += helper.interpolateKeyframes(progress,
+								0,
+								52,
+								0,
+								-90 + leftFactor * 20,
+								leftFactor * -38.5F,
+								isLeft ? -9.5F : 9.1F
+						);
+						arrangement.addPos(
+								0,
+								helper.interpolateKeyframes(progress,
+										0,
+										0,
+										0,
+										0,
+										leftFactor * -3.5F,
+										leftFactor * -4.5F
+								),
+								helper.interpolateKeyframes(progress,
+										0,
+										0,
+										0,
+										0,
+										leftFactor * -3.25F,
+										leftFactor * -4.25F
+								)
+						);
+					});
+				}
 		);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {

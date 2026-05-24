@@ -509,11 +509,16 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 		return bapResult == BapResult.BUST;
 	}
 
-	private HandPreference handPreference;
-	@Override public void setHandPreference(HandPreference preference) {
+	private HandPreference handPreference = HandPreference.EITHER;
+	private float relativeHeadYaw;
+	@Override public void setHandPreferenceAndRelativeHeadYaw(HandPreference preference, float relativeHeadYaw) {
 		this.handPreference = preference;
+		this.relativeHeadYaw = relativeHeadYaw;
 	}
 	@Override public HandPreference getCurrentHandPreference() {
 		return this.handPreference;
+	}
+	@Override public float getRelativeHeadYawRadians() {
+		return this.relativeHeadYaw;
 	}
 }

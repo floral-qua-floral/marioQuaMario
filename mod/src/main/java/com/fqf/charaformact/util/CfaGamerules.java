@@ -7,7 +7,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.GameRules;
 
 public class CfaGamerules {
-	public static boolean useCharacterStats;
+	public static boolean useCharacterStats; // FIXME: Doesn't seem to be applying??
 	public static boolean restrictAdventureBapping;
 	public static boolean adventurePlayersBreakBrittleBlocks;
 
