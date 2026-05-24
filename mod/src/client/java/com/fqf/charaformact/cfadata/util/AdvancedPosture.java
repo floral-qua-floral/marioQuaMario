@@ -79,8 +79,10 @@ public class AdvancedPosture extends Posture {
 		this.LEFT_LEG.addAngles(rightLegDeltas.pitch, -rightLegDeltas.yaw, rightLegDeltas.roll);
 	}
 
-	public void swapSidedParts() {
-		// TODO: Try just swapping the variables around instead of making new Arrangements
+	public void fullyMirror() {
+		this.EVERYTHING.x *= -1; this.EVERYTHING.yaw *= -1; this.EVERYTHING.roll *= -1;
+		this.HEAD.x *= -1; this.HEAD.yaw *= -1; this.HEAD.roll *= -1;
+		this.TORSO.x *= -1; this.TORSO.yaw *= -1; this.TORSO.roll *= -1;
 
 		Arrangement rightArmCopy = new Arrangement();
 		rightArmCopy.setPos(this.RIGHT_ARM.x, this.RIGHT_ARM.y, this.RIGHT_ARM.z);
@@ -98,10 +100,6 @@ public class AdvancedPosture extends Posture {
 		this.RIGHT_LEG.setAngles(this.LEFT_LEG.pitch, -this.LEFT_LEG.yaw, -this.LEFT_LEG.roll);
 		this.LEFT_LEG.setPos(-rightLegCopy.x, rightLegCopy.y, rightLegCopy.z);
 		this.LEFT_LEG.setAngles(rightLegCopy.pitch, -rightLegCopy.yaw, -rightLegCopy.roll);
-	}
-
-	public void mirrorNonSidedChanges(int slot) {
-		// TODO: Implement head, torso, & tail mirroring
 	}
 
 	public void apply(PlayerEntityModel<?> model) {

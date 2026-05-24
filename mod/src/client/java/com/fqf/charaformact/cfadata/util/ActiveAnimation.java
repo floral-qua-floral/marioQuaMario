@@ -51,14 +51,9 @@ public abstract class ActiveAnimation {
 
 	public void calculateMutations(AdvancedPosture mutate, long worldTime, float tickDelta) {
 		boolean mirroring = this.EXECUTION_FLAGS.contains(AnimationFlag.Execution.MIRROR);
-//		if(mirroring) mutate.store(AdvancedArrangement.MIRRORING_SLOT);
-		if(mirroring) mutate.swapSidedParts();
+		if(mirroring) mutate.fullyMirror();
 		this.ANIMATION.mutate(mutate, this.OWNER.DATA, (worldTime - this.START_TIME) + tickDelta);
-		if(mirroring) {
-			mutate.swapSidedParts();
-			mutate.mirrorNonSidedChanges(AdvancedArrangement.MIRRORING_SLOT);
-		}
-//		if(mirroring) mutate.mirrorChanges(AdvancedArrangement.MIRRORING_SLOT);
+		if(mirroring) mutate.fullyMirror();
 	}
 
 	public abstract void apply(AdvancedPosture mutate, long worldTime, float tickDelta, boolean isFirstOfTick);
