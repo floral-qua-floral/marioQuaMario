@@ -42,7 +42,7 @@ public class DuckWaddle implements GroundedActionDefinition {
 				EnumSet.of(AnimationFlag.NO_RIGHT_ARM_SWING),
 				(data, prevAnimationID) -> EnumSet.noneOf(AnimationFlag.Execution.class),
 				(posture, data, animationTime, helper) -> {
-					posture.RIGHT_ARM.setAnglesDegrees(-90, 45, 0);
+					posture.RIGHT_ARM.setAngles(-90, 45, 0);
 				}
 		);
 	}

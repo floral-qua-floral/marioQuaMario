@@ -35,7 +35,7 @@ public class DuckJump extends Jump implements AirborneActionDefinition {
 				AnimationFlag.NO_SWING_ARMS,
 				(posture, data, animationTime, helper) -> {
 					posture.EVERYTHING.yaw += MathHelper.HALF_PI / 3;
-					posture.TORSO.setAnglesDegrees(90, 0, 0);
+					posture.TORSO.setAngles(90, 0, 0);
 				}
 		);
 	}

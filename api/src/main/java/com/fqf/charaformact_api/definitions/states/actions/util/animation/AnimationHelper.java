@@ -7,7 +7,7 @@ import it.unimi.dsi.fastutil.floats.FloatObjectImmutablePair;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public interface AnimationHelper {
 	float interpolateKeyframes(float progress, float first, float second, float... more);
@@ -18,7 +18,10 @@ public interface AnimationHelper {
 
 	@Nullable WallboundActionDefinition.WallInfo getWallInfo(CfaReadableMotionData data);
 
-	void symmetricallyAnimate(Arrangement leftPart, Arrangement rightPart, SymmetricalAnimator animator);
+	void symmetricallyAnimate(Posture posture, Arrangement rightPart, Consumer<Arrangement> animator);
+	void symmetricallyAnimate(Posture posture, Arrangement rightPart, SymmetricalAnimator animator);
+
+	void multiAnimate(Consumer<Arrangement> animator, Arrangement... parts);
 
 	@FunctionalInterface
 	interface SymmetricalAnimator {

@@ -18,6 +18,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 
@@ -182,5 +183,8 @@ public interface CfaClientDataImpl extends CfaAnimatingData {
 		return 0;
 	}
 
-
+	@Override
+	default float getRelativeHeadYawDegrees() {
+		return this.getRelativeHeadYaw() * MathHelper.DEGREES_PER_RADIAN;
+	}
 }

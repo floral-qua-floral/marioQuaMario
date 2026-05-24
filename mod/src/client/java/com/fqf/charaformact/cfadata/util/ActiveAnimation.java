@@ -4,6 +4,7 @@ import com.fqf.charaformact.cfadata.CfaAppearanceData;
 import com.fqf.charaformact.registries.actions.ParsedAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
@@ -52,7 +53,9 @@ public abstract class ActiveAnimation {
 	public void calculateMutations(AdvancedPosture mutate, long worldTime, float tickDelta) {
 		boolean mirroring = this.EXECUTION_FLAGS.contains(AnimationFlag.Execution.MIRROR);
 		if(mirroring) mutate.fullyMirror();
+		if(this.ANIMATION.USE_DEGREES) mutate.multiplyAllAngles(MathHelper.DEGREES_PER_RADIAN);
 		this.ANIMATION.mutate(mutate, this.OWNER.DATA, (worldTime - this.START_TIME) + tickDelta);
+		if(this.ANIMATION.USE_DEGREES) mutate.multiplyAllAngles(MathHelper.RADIANS_PER_DEGREE);
 		if(mirroring) mutate.fullyMirror();
 	}
 

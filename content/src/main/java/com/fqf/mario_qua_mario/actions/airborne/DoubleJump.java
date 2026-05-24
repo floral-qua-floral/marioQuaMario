@@ -30,38 +30,28 @@ public class DoubleJump extends Jump implements AirborneActionDefinition {
 	    return ID;
 	}
 
-	private static LimbAnimation makeArmAnimation(int factor) {
-		return new LimbAnimation(false, (data, arrangement, progress) -> {
-			arrangement.roll += progress * 70 * factor;
-			arrangement.pitch += Easing.BACK_IN.ease((1 - progress)) * 26;
-			arrangement.x += progress * -1.345F * factor;
-			arrangement.y += Easing.BACK_OUT.ease(progress, 1.1F, -2.333F);
-		});
-	}
-	public static final PiecemealPlayermodelAnimation ANIMATION = new PiecemealPlayermodelAnimation(
-			(data, rightArmBusy, leftArmBusy, headRelativeYaw) -> data.getPlayer().getRandom().nextBoolean(),
-			new ProgressHandler(
-					(data, ticksPassed) ->
-							Easing.EXPO_IN_OUT.ease(Easing.QUAD_IN.ease(Easing.clampedRangeToProgress(data.getYVel(), 0.87F, -0.85F)))
-			),
-			null,
-			new BodyPartAnimation((data, arrangement, progress) ->
-					arrangement.pitch += MathHelper.lerp(progress, -13, 27.5F)),
-			new BodyPartAnimation((data, arrangement, progress) ->
-					arrangement.yaw += progress * -10),
-			makeArmAnimation(1),
-			makeArmAnimation(-1),
-			new LimbAnimation(false, (data, arrangement, progress) -> {
-				arrangement.pitch += MathHelper.lerp(progress, 20, 9.1F);
-				arrangement.z -= progress * 4.25F;
-				arrangement.y -= progress * 4.5F;
-			}),
-			new LimbAnimation(false, (data, arrangement, progress) ->
-					arrangement.pitch += MathHelper.lerp(progress, 20, -9.5F)),
-			null
-	);
+	public static final AnimationDefinition ANIMATION = AnimationDefinition.of(
+			AnimationFlag.NO_SWING_LIMBS,
+			AnimationFlag.Execution.RANDOMLY_MIRROR,
+			(posture, data, animationTime, helper) -> {
+				float progress = Jump.getAnimationProgress(data);
 
-	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
+				posture.HEAD.pitch += MathHelper.lerp(progress, -13, 27.5F);
+				posture.TORSO.yaw += progress * -10;
+
+				helper.symmetricallyAnimate(posture, posture.RIGHT_ARM, arrangement -> {
+					arrangement.addAngles(Easing.BACK_IN.ease((1 - progress)) * 26, 0, progress * 70);
+					arrangement.addPos(progress * -1.345F, Easing.BACK_OUT.ease(progress, 1.1F, -2.333F), 0);
+				});
+
+				posture.RIGHT_LEG.pitch += MathHelper.lerp(progress, 20, 9.1F);
+				posture.RIGHT_LEG.y -= progress * 4.5F;
+				posture.RIGHT_LEG.z -= progress * 4.25F;
+
+				posture.LEFT_LEG.pitch += MathHelper.lerp(progress, 20, -9.5F);
+			}
+	);
+	@Override public @Nullable AnimationDefinition getAnimation() {
 		return ANIMATION;
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {

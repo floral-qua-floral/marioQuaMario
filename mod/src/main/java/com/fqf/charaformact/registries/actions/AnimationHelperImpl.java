@@ -1,20 +1,20 @@
 package com.fqf.charaformact.registries.actions;
 
-import com.fqf.charaformact.CharaFormAct;
+import com.fqf.charaformact.util.CfaClientHelperManager;
 import com.fqf.charaformact_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.Arrangement;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.Posture;
 import com.fqf.charaformact_api.util.Easing;
 import it.unimi.dsi.fastutil.floats.FloatObjectImmutablePair;
-import net.minecraft.util.Pair;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public class AnimationHelperImpl implements AnimationHelper {
 	public static final AnimationHelperImpl INSTANCE = new AnimationHelperImpl();
@@ -68,8 +68,21 @@ public class AnimationHelperImpl implements AnimationHelper {
 	}
 
 	@Override
-	public void symmetricallyAnimate(Arrangement leftPart, Arrangement rightPart, SymmetricalAnimator animator) {
-		// TODO: Implement
-		CharaFormAct.LOGGER.error("Not implemented!");
+	public void symmetricallyAnimate(Posture posture, Arrangement rightPart, Consumer<Arrangement> animator) {
+		animator.accept(rightPart);
+		CfaClientHelperManager.helper.mirrorAndAnimate(posture, rightPart, animator);
+	}
+
+	@Override
+	public void symmetricallyAnimate(Posture posture, Arrangement rightPart, SymmetricalAnimator animator) {
+		animator.animate(rightPart, false);
+		CfaClientHelperManager.helper.mirrorAndAnimate(posture, rightPart, animator);
+	}
+
+	@Override
+	public void multiAnimate(Consumer<Arrangement> animator, Arrangement... parts) {
+		for(Arrangement part : parts) {
+			animator.accept(part);
+		}
 	}
 }

@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario.actions.airborne;
 
+import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
@@ -30,10 +31,12 @@ public class Jump extends Fall implements AirborneActionDefinition {
 	    return ID;
 	}
 
-	@Override
-	public @Nullable AnimationDefinition getAnimation() {
+	public static float getAnimationProgress(CfaAnimatingData data) {
+		return Easing.EXPO_IN_OUT.ease(Easing.clampedRangeToProgress(data.getYVel(), 0.87, -0.85));
+	}
+
+	@Override public @Nullable AnimationDefinition getAnimation() {
 		return AnimationDefinition.of(
-				null,
 				AnimationFlag.NO_SWING_LIMBS,
 				(data, prevAnimationID) -> {
 					switch(data.getCurrentHandPreference()) {
@@ -44,7 +47,7 @@ public class Jump extends Fall implements AirborneActionDefinition {
 							return EnumSet.of(AnimationFlag.Execution.MIRROR);
 						}
 						default -> {
-							if(Math.abs(data.getRelativeHeadYaw()) > 0.009599311F) {
+							if(Math.abs(data.getRelativeHeadYawDegrees()) > 55) {
 								if(data.getRelativeHeadYaw() > 0) return EnumSet.of(AnimationFlag.Execution.MIRROR);
 								else return EnumSet.noneOf(AnimationFlag.Execution.class);
 							}
@@ -54,20 +57,20 @@ public class Jump extends Fall implements AirborneActionDefinition {
 					}
 				},
 				(posture, data, animationTime, helper) -> {
-					float progress = Easing.EXPO_IN_OUT.ease(Easing.clampedRangeToProgress(data.getYVel(), 0.87, -0.85));
+					float progress = getAnimationProgress(data);
 
 					float scalingFactor = 0.3F;
 					posture.RIGHT_ARM.setAngles(
-							posture.RIGHT_ARM.pitch * -0.8F + Easing.QUINT_IN.ease(progress, -2.7925267F, -0.5235988F),
+							posture.RIGHT_ARM.pitch * -0.8F + Easing.QUINT_IN.ease(progress, -160, -30),
 							posture.RIGHT_ARM.yaw * scalingFactor,
 							posture.RIGHT_ARM.roll * scalingFactor
 					);
 
-					posture.LEFT_ARM.pitch = 0.2617994F + 1.2F * posture.LEFT_ARM.pitch;
+					posture.LEFT_ARM.pitch = 15 + 1.2F * posture.LEFT_ARM.pitch;
 
-					posture.RIGHT_LEG.pitch += 0.2617994F;
+					posture.RIGHT_LEG.pitch += 15;
 
-					posture.LEFT_LEG.setAnglesDegrees(Easing.QUINT_IN.ease(progress, -30, -10), 0, 0);
+					posture.LEFT_LEG.setAngles(Easing.QUINT_IN.ease(progress, -30, -10), 0, 0);
 					posture.LEFT_LEG.addPos(
 							0,
 							Easing.EXPO_IN.ease(progress, -5, 0),
@@ -76,7 +79,6 @@ public class Jump extends Fall implements AirborneActionDefinition {
 				}
 		);
 	}
-
 	@Override public @Nullable BappingRule getBappingRule() {
 		return BappingRule.JUMPING;
 	}

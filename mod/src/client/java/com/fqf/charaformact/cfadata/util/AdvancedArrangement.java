@@ -55,4 +55,8 @@ public class AdvancedArrangement extends Arrangement {
 		this.setPos(mirrorAcross.x - deltaX, mirrorAcross.y - deltaY, mirrorAcross.z - deltaZ);
 		this.setAngles(mirrorAcross.pitch - deltaPitch, mirrorAcross.yaw - deltaYaw, mirrorAcross.roll - deltaRoll);
 	}
+
+	public void multiplyAngles(float factor) {
+		this.pitch *= factor; this.roll *= factor; this.yaw *= factor;
+	}
 }

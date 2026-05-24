@@ -61,24 +61,6 @@ public class AdvancedPosture extends Posture {
 		}
 	}
 
-	public void mirrorChanges(int slot) {
-		Arrangement rightArmDeltas = ((AdvancedArrangement) this.RIGHT_ARM).getDeltas(slot);
-		Arrangement leftArmDeltas = ((AdvancedArrangement) this.LEFT_ARM).getDeltas(slot);
-		Arrangement rightLegDeltas = ((AdvancedArrangement) this.RIGHT_LEG).getDeltas(slot);
-		Arrangement leftLegDeltas = ((AdvancedArrangement) this.LEFT_LEG).getDeltas(slot);
-		((AdvancedArrangement) this.RIGHT_ARM).resetTo(slot); ((AdvancedArrangement) this.LEFT_ARM).resetTo(slot);
-		((AdvancedArrangement) this.RIGHT_LEG).resetTo(slot); ((AdvancedArrangement) this.LEFT_LEG).resetTo(slot);
-
-		this.RIGHT_ARM.addPos(-leftArmDeltas.x, leftArmDeltas.y, leftArmDeltas.z);
-		this.RIGHT_ARM.addAngles(leftArmDeltas.pitch, -leftArmDeltas.yaw, leftArmDeltas.roll);
-		this.LEFT_ARM.addPos(-rightArmDeltas.x, rightArmDeltas.y, rightArmDeltas.z);
-		this.LEFT_ARM.addAngles(rightArmDeltas.pitch, -rightArmDeltas.yaw, rightArmDeltas.roll);
-		this.RIGHT_LEG.addPos(-leftLegDeltas.x, leftLegDeltas.y, leftLegDeltas.z);
-		this.RIGHT_LEG.addAngles(leftLegDeltas.pitch, -leftLegDeltas.yaw, leftLegDeltas.roll);
-		this.LEFT_LEG.addPos(-rightLegDeltas.x, rightLegDeltas.y, rightLegDeltas.z);
-		this.LEFT_LEG.addAngles(rightLegDeltas.pitch, -rightLegDeltas.yaw, rightLegDeltas.roll);
-	}
-
 	public void fullyMirror() {
 		this.EVERYTHING.x *= -1; this.EVERYTHING.yaw *= -1; this.EVERYTHING.roll *= -1;
 		this.HEAD.x *= -1; this.HEAD.yaw *= -1; this.HEAD.roll *= -1;
@@ -100,6 +82,12 @@ public class AdvancedPosture extends Posture {
 		this.RIGHT_LEG.setAngles(this.LEFT_LEG.pitch, -this.LEFT_LEG.yaw, -this.LEFT_LEG.roll);
 		this.LEFT_LEG.setPos(-rightLegCopy.x, rightLegCopy.y, rightLegCopy.z);
 		this.LEFT_LEG.setAngles(rightLegCopy.pitch, -rightLegCopy.yaw, -rightLegCopy.roll);
+	}
+
+	public void multiplyAllAngles(float factor) {
+		for(AdvancedArrangement arrangement : ARRANGEMENTS) {
+			if(arrangement != null) arrangement.multiplyAngles(factor);
+		}
 	}
 
 	public void apply(PlayerEntityModel<?> model) {

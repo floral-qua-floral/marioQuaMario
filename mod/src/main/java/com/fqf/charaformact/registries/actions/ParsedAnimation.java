@@ -15,11 +15,13 @@ public class ParsedAnimation {
 
 	public final @Nullable Identifier ID;
 	public final @NotNull EnumSet<AnimationFlag> FLAGS;
+	public final boolean USE_DEGREES;
 
 	public ParsedAnimation(@NotNull AnimationDefinition definition) {
 		this.DEFINITION = definition;
 		this.ID = definition.getID();
 		this.FLAGS = definition.defineFlags();
+		this.USE_DEGREES = !this.FLAGS.contains(AnimationFlag.USE_RADIANS);
 	}
 
 	public @NotNull EnumSet<AnimationFlag.Execution> getExecutionFlags(CfaAnimatingData data, Identifier prevAnimationID) {
