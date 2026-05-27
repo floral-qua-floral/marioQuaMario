@@ -37,10 +37,10 @@ public class Small implements FormDefinition {
 	@Override public float getHeightFactor() {
 		return 0.5F;
 	}
-	@Override public float getAnimationWidthFactor() {
+	@Override public float getAnimationHorizontalScale() {
 		return 1;
 	}
-	@Override public float getAnimationHeightFactor() {
+	@Override public float getAnimationVerticalScale() {
 		return 0.45F;
 	}
 

@@ -26,7 +26,7 @@ public class Toadette extends AbstractMario implements CharacterDefinition {
 	}
 
 	@Override
-	public float getAnimationHeightFactor() {
+	public float getAnimationVerticalScale() {
 		return 0.8F;
 	}
 

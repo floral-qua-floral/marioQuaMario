@@ -18,6 +18,20 @@ public class AdvancedPosture extends Posture {
 		this.ARRANGEMENTS = arrangements;
 	}
 
+	public AdvancedPosture() {
+		this(new AdvancedArrangement[]{
+				new AdvancedArrangement(), // head
+				new AdvancedArrangement(), // torso
+				new AdvancedArrangement(), // right arm
+				new AdvancedArrangement(), // left arm
+				new AdvancedArrangement(), // right leg
+				new AdvancedArrangement(), // left leg
+				null, // tail
+				null, // right ear
+				null // left ear
+		});
+	}
+
 	public static AdvancedPosture from(PlayerEntityModel<?> model) {
 		@Nullable ModelPart tail, rightEar, leftEar;
 		if(model instanceof AppearanceModel appearanceModel) {
@@ -27,7 +41,6 @@ public class AdvancedPosture extends Posture {
 			tail = null; rightEar = null; leftEar = null;
 		}
 		return new AdvancedPosture(new AdvancedArrangement[]{
-				new AdvancedArrangement(), // everything
 				AdvancedArrangement.of(model.head),
 				AdvancedArrangement.of(model.body),
 				AdvancedArrangement.of(model.rightArm),
@@ -63,9 +76,9 @@ public class AdvancedPosture extends Posture {
 	}
 
 	public void fullyMirror() {
-		this.EVERYTHING.x *= -1; this.EVERYTHING.yaw *= -1; this.EVERYTHING.roll *= -1;
-		this.HEAD.x *= -1; this.HEAD.yaw *= -1; this.HEAD.roll *= -1;
-		this.TORSO.x *= -1; this.TORSO.yaw *= -1; this.TORSO.roll *= -1;
+		((AdvancedArrangement) this.HEAD).fullyMirror();
+		((AdvancedArrangement) this.TORSO).fullyMirror();
+		if(this.TAIL != null) ((AdvancedArrangement) this.TAIL).fullyMirror();
 
 		Arrangement rightArmCopy = new Arrangement();
 		rightArmCopy.setPos(this.RIGHT_ARM.x, this.RIGHT_ARM.y, this.RIGHT_ARM.z);
@@ -149,6 +162,12 @@ public class AdvancedPosture extends Posture {
 		for(int index = 0; index < this.ARRANGEMENTS.length; index++) {
 			AdvancedArrangement mutating = this.ARRANGEMENTS[index];
 			if(mutating != null) mutating.wrappedLerpDegrees(delta, from.ARRANGEMENTS[index], to.ARRANGEMENTS[index]);
+		}
+	}
+
+	public void scaleTranslations(float horizontalScale, float verticalScale) {
+		for(AdvancedArrangement arrangement : ARRANGEMENTS) {
+			if(arrangement != null) arrangement.scaleTranslations(horizontalScale, verticalScale);
 		}
 	}
 }

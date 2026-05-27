@@ -26,6 +26,7 @@ import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
@@ -36,8 +37,8 @@ public class Debug implements GenericActionDefinition {
 	}
 
 	public static void tPose(Posture posture) {
-		posture.RIGHT_ARM.roll = MathHelper.HALF_PI;
-		posture.LEFT_ARM.roll = -MathHelper.HALF_PI;
+		posture.RIGHT_ARM.roll = 90;
+		posture.LEFT_ARM.roll = -90;
 	}
 
 	@Override

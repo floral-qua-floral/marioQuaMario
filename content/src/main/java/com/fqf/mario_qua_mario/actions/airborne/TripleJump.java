@@ -35,13 +35,20 @@ public class TripleJump extends Jump implements AirborneActionDefinition {
 	@Override
 	public @Nullable AnimationDefinition getAnimation() {
 		return AnimationDefinition.of(
+				null,
 				AnimationFlag.NO_SWING_LIMBS, AnimationFlag.Execution.RANDOMLY_MIRROR,
+				(arrangement, data, animationTime, helper) -> {
+					float progress = helper.sequencedEase(helper.sequencedEase(animationTime / 5F,
+									Easing.LINEAR, Easing.LINEAR, Easing.LINEAR, Easing.LINEAR, Easing.LINEAR) / 3, Easing.LINEAR,
+							Easing.LINEAR) * 3; // ????
+					arrangement.pitch -= Math.min(progress, 4) * 180;
+				},
 				(posture, data, animationTime, helper) -> {
 					float progress = helper.sequencedEase(helper.sequencedEase(animationTime / 5F,
 							Easing.LINEAR, Easing.LINEAR, Easing.LINEAR, Easing.LINEAR, Easing.LINEAR) / 3, Easing.LINEAR,
 							Easing.LINEAR) * 3; // ????
 
-					posture.EVERYTHING.pitch -= Math.min(progress, 4) * 180;
+//					posture.EVERYTHING.pitch -= Math.min(progress, 4) * 180;
 
 					helper.symmetricallyAnimate(posture, posture.RIGHT_ARM, arrangement -> arrangement.addAngles(
 							helper.interpolateKeyframes(progress,

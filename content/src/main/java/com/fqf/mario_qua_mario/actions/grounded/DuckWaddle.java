@@ -41,6 +41,7 @@ public class DuckWaddle implements GroundedActionDefinition {
 				MarioQuaMario.makeID("testeroo"),
 				EnumSet.of(AnimationFlag.NO_RIGHT_ARM_SWING),
 				(data, prevAnimationID) -> EnumSet.noneOf(AnimationFlag.Execution.class),
+				null,
 				(posture, data, animationTime, helper) -> {
 					posture.RIGHT_ARM.setAngles(-90, 45, 0);
 				}

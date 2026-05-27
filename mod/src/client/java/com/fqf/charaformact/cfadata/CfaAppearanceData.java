@@ -14,7 +14,6 @@ import com.fqf.charaformact.registries.power_granting.ParsedForm;
 import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.Arrangement;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
@@ -30,7 +29,6 @@ import net.minecraft.util.math.RotationAxis;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static net.minecraft.util.math.MathHelper.*;
 import static net.minecraft.util.math.MathHelper.HALF_PI;
 
 public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingData & CfaClientDataImpl> {
@@ -44,10 +42,14 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 	public @Nullable ActiveAnimation forcedAnimation;
 	private float forcedAnimationDuration;
 
-	private long prevTick;
-	private AdvancedPosture prevTickPosture;
 	private long forceInterpolationTime;
-	public Arrangement everythingArrangement;
+
+	private long prevPosturingTick;
+	private AdvancedPosture prevFramePosture;
+
+	private long prevArrangingTick;
+	private AdvancedArrangement prevFrameModelArrangement;
+	private AdvancedArrangement thisFrameModelArrangement;
 
 	private long flickerUntil;
 	private boolean flickering;
@@ -57,7 +59,9 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 		this.DATA = data;
 
 		this.flickerUntil = Long.MIN_VALUE;
-		this.everythingArrangement = new AdvancedArrangement();
+		this.prevFramePosture = new AdvancedPosture();
+		this.prevFrameModelArrangement = new AdvancedArrangement();
+		this.thisFrameModelArrangement = new AdvancedArrangement();
 	}
 
 	public void tick() {
@@ -118,30 +122,22 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 	}
 
 	public void updateAction() {
-		ActiveAnimation newActionAnim = ActiveAnimation.of(this, this.DATA.getAction().ANIMATION, this.prevTickPosture);
+		ActiveAnimation newActionAnim = ActiveAnimation.of(this, this.DATA.getAction().ANIMATION,
+				this.prevFramePosture, this.prevFrameModelArrangement);
 		boolean isOrWasAnimating = newActionAnim != null || actionAnimation != null;
 		this.actionAnimation = newActionAnim;
-		if(isOrWasAnimating) {
-			CharaFormAct.LOGGER.info("Player is or was animating.\n\tnewActionAnim: {}\n\tFlags: {}\n\tContains?: {}",
-					newActionAnim,
-					newActionAnim == null ? null : newActionAnim.EXECUTION_FLAGS,
-					newActionAnim == null ? null : newActionAnim.EXECUTION_FLAGS.contains(AnimationFlag.Execution.DO_NOT_RESET_PROGRESS));
-			if(newActionAnim == null || !newActionAnim.EXECUTION_FLAGS.contains(AnimationFlag.Execution.DO_NOT_RESET_PROGRESS)) {
-				CharaFormAct.LOGGER.info("Forcing interpolation between animations...!");
-				this.forceInterpolation();
-			}
-		}
-//		if(isOrWasAnimating) this.forceInterpolation();
+		if(isOrWasAnimating) this.forceInterpolation();
 	}
 
-	// This is an animation triggered during client execution of an attack interception, as opposed to an animation
-	// that is registered to an Action. As a result, we can't really parse it in advance. Fortunately animation parsing
+	// This is an currentAnimation triggered during client execution of an attack interception, as opposed to an currentAnimation
+	// that is registered to an Action. As a result, we can't really parse it in advance. Fortunately currentAnimation parsing
 	// is very light and easy and does not involve any actual registries, so we can just do it on the fly.
 	public void triggerAnimation(@NotNull AnimationDefinition definition, float duration) {
-		this.forcedAnimation = ActiveAnimation.of(this, new ParsedAnimation(definition), this.prevTickPosture);
+		this.forcedAnimation = ActiveAnimation.of(this, new ParsedAnimation(definition),
+				this.prevFramePosture, this.prevFrameModelArrangement);
 		this.forcedAnimationDuration = duration;
 		// Attack interceptions, particularly those associated with an action instead of a form, may wish to continue from
-		// their action's current animation. We should respect this, this is perfectly legitimate!
+		// their action's current currentAnimation. We should respect this, this is perfectly legitimate!
 		if(!this.forcedAnimation.EXECUTION_FLAGS.contains(AnimationFlag.Execution.DO_NOT_RESET_PROGRESS))
 			this.forceInterpolation();
 	}
@@ -155,46 +151,121 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 		this.forceInterpolationTime = this.PLAYER.getWorld().getTime() + 1;
 	}
 
-	public void animate(PlayerEntityModel<?> model, float tickDelta) {
-		boolean rightArmBusy = isArmBusy(model.rightArmPose, model.leftArmPose);
-		boolean leftArmBusy = isArmBusy(model.leftArmPose, model.rightArmPose);
-		this.DATA.updateHandPreferenceAndRelativeHeadYaw(rightArmBusy, leftArmBusy, model.head.yaw - model.body.yaw);
-		AdvancedPosture thisFramePosture = AdvancedPosture.from(model);
+	public void arrangeModel(MatrixStack matrices, float tickDelta) {
+		// This occurs first in the frame, called by LivingEntityRenderer.render.
+		// Then it calls setAngles, which first executes BipedEntityModel.setAngles, triggering head counter-rotation.
+		// Last it does PlayerEntity.setAngles (post-super), which triggers posture animate.
 
-		if(rightArmBusy) ((AdvancedArrangement) thisFramePosture.RIGHT_ARM).store(AdvancedArrangement.BUSY_ARMS_SLOT);
-		if(leftArmBusy) ((AdvancedArrangement) thisFramePosture.LEFT_ARM).store(AdvancedArrangement.BUSY_ARMS_SLOT);
+		// As such, playermodel arrangement occurs before we know anything about the player's Posture. This is mostly
+		// unavoidable. We could probably adjust the MatrixStack later in rendering, after we've positioned the limbs,
+		// but at that point we've missed the correct timing for head counter-rotation, which we want to be applying
+		// BEFORE vanilla does its aiming animations. Head counter-rotation must occur before vanilla decides limb
+		// angles, but it can only be done after playermodel arrangement. And posture mutation must occur after vanilla
+		// decides limb angles, so this is the only possible order.
 
-		if(this.prevTickPosture == null) // measure to prevent NPE; don't rely on this logic for animating!
-			this.prevTickPosture = thisFramePosture;
+		this.thisFrameModelArrangement.setPos(0, 0, 0);
+		this.thisFrameModelArrangement.setAngles(0, 0, 0);
 
 		long worldTime = this.PLAYER.getWorld().getTime();
-		boolean isFirstOfTick = worldTime > this.prevTick;
+		boolean isFirstOfTick = worldTime > this.prevArrangingTick;
 		if(isFirstOfTick) {
-			this.prevTick = worldTime;
+			this.prevArrangingTick = worldTime;
 		}
 
+		this.thisFrameModelArrangement = new AdvancedArrangement();
+		boolean forceWrappedInterpolation = worldTime <= this.forceInterpolationTime;
+		boolean hasInterpolated;
+		ActiveAnimation currentAnimation = this.getCurrentAnimation();
+		if(currentAnimation != null) {
+			hasInterpolated = !currentAnimation.ANIMATION.FLAGS.contains(AnimationFlag.NOT_INTERPOLATED);
+			currentAnimation.mutateModelArrangement(this.thisFrameModelArrangement, worldTime, tickDelta, isFirstOfTick, forceWrappedInterpolation);
+		}
+		else hasInterpolated = false;
+
+		if(!hasInterpolated && forceWrappedInterpolation) {
+			// Maybe we don't actually need to make a new Arrangement as the lerp target? Feeding it itself should work?
+			AdvancedArrangement lerpTo = new AdvancedArrangement();
+			lerpTo.setPos(this.thisFrameModelArrangement.x, this.thisFrameModelArrangement.y, this.thisFrameModelArrangement.z);
+			lerpTo.setAngles(this.thisFrameModelArrangement.pitch, this.thisFrameModelArrangement.yaw, this.thisFrameModelArrangement.roll);
+			this.thisFrameModelArrangement.wrappedLerpRadians(tickDelta, this.prevFrameModelArrangement, lerpTo);
+		}
+
+		this.prevFrameModelArrangement = this.thisFrameModelArrangement;
+
+		matrices.translate(this.thisFrameModelArrangement.x / 16F, this.thisFrameModelArrangement.y / 16F, this.thisFrameModelArrangement.z / 16F);
+		matrices.multiply(RotationAxis.POSITIVE_Y.rotation(this.thisFrameModelArrangement.yaw));
+		double halfHeight = this.PLAYER.getHeight() * 0.5F;
+		matrices.translate(0, halfHeight, 0);
+		matrices.multiply(RotationAxis.POSITIVE_X.rotation(this.thisFrameModelArrangement.pitch));
+		matrices.multiply(RotationAxis.POSITIVE_Z.rotation(this.thisFrameModelArrangement.roll));
+		matrices.translate(0, -halfHeight, 0);
+	}
+
+	private float originalHeadPitch, originalHeadYaw;
+	private static final float ALMOST_HALF_PI = 0.99F * HALF_PI;
+	private static final float MAX_HEAD_YAW = HALF_PI * 0.66F;
+	public float counterRotateHead(ModelPart head, float assigningPitch) {
+		this.originalHeadPitch = head.pitch;
+		this.originalHeadYaw = head.yaw;
+
+		head.yaw = MathHelper.clamp(AdvancedArrangement.wrapRadians(head.yaw + this.thisFrameModelArrangement.yaw), -MAX_HEAD_YAW, MAX_HEAD_YAW);
+		return MathHelper.clamp(AdvancedArrangement.wrapRadians(assigningPitch + this.thisFrameModelArrangement.pitch), -ALMOST_HALF_PI, ALMOST_HALF_PI);
+	}
+
+	public void animate(PlayerEntityModel<?> model, float tickDelta) {
 		try {
+			// We have to undo head counter-rotation then redo it later, otherwise the counter-rotation will be
+			// mucked around with a little by Posture lerping, which will desynchronize it from playermodel arrangement.
+			float headPitchAdjustment = model.head.pitch - this.originalHeadPitch;
+			float headYawAdjustment = model.head.yaw - this.originalHeadYaw;
+			model.head.pitch = this.originalHeadPitch;
+			model.head.yaw = this.originalHeadYaw;
+
+			boolean rightArmBusy = isArmBusy(model.rightArmPose, model.leftArmPose);
+			boolean leftArmBusy = isArmBusy(model.leftArmPose, model.rightArmPose);
+			this.DATA.updateHandPreferenceAndRelativeHeadYaw(rightArmBusy, leftArmBusy, model.head.yaw - model.body.yaw);
+			AdvancedPosture thisFramePosture = AdvancedPosture.from(model);
+
+			thisFramePosture.store(AdvancedArrangement.BEFORE_CFA_ANIMATIONS);
+
+			if(this.prevFramePosture == null) // measure to prevent NPE; don't rely on this logic for animating!
+				this.prevFramePosture = thisFramePosture;
+
+			long worldTime = this.PLAYER.getWorld().getTime();
+			boolean isFirstOfTick = worldTime > this.prevPosturingTick;
+			if(isFirstOfTick) {
+				this.prevPosturingTick = worldTime;
+			}
+
 			// If we are transitioning into, out of, or between animations, then we MUST interpolate for 1 tick!
 			boolean forceWrappedInterpolation = worldTime <= this.forceInterpolationTime;
 			boolean hasInterpolated;
 			ActiveAnimation currentAnimation = this.getCurrentAnimation();
 			if(currentAnimation != null) {
-				hasInterpolated = currentAnimation.ANIMATION.FLAGS.contains(AnimationFlag.NOT_INTERPOLATED);
-				currentAnimation.apply(thisFramePosture, worldTime, tickDelta, isFirstOfTick, forceWrappedInterpolation);
+				hasInterpolated = !currentAnimation.ANIMATION.FLAGS.contains(AnimationFlag.NOT_INTERPOLATED);
+				currentAnimation.mutatePosture(thisFramePosture, worldTime, tickDelta, isFirstOfTick, forceWrappedInterpolation);
 			}
 			else hasInterpolated = false;
 
 			if(!hasInterpolated && forceWrappedInterpolation) {
 				// Interpolate from last tick's thisFramePosture, to the CURRENTLY CALCULATED thisFramePosture.
 				AdvancedPosture lerpTo = AdvancedPosture.from(thisFramePosture);
-				thisFramePosture.wrappedLerp(tickDelta, this.prevTickPosture, lerpTo);
+				thisFramePosture.wrappedLerp(tickDelta, this.prevFramePosture, lerpTo);
 			}
 
-			if(rightArmBusy) ((AdvancedArrangement) thisFramePosture.RIGHT_ARM).resetTo(AdvancedArrangement.BUSY_ARMS_SLOT);
-			if(leftArmBusy) ((AdvancedArrangement) thisFramePosture.LEFT_ARM).resetTo(AdvancedArrangement.BUSY_ARMS_SLOT);
+			if(rightArmBusy) ((AdvancedArrangement) thisFramePosture.RIGHT_ARM).resetTo(AdvancedArrangement.BEFORE_CFA_ANIMATIONS);
+			if(leftArmBusy) ((AdvancedArrangement) thisFramePosture.LEFT_ARM).resetTo(AdvancedArrangement.BEFORE_CFA_ANIMATIONS);
+
+			float horizontalScale = this.DATA.getCharacter().ANIMATION_HORIZONTAL_SCALE * this.DATA.getForm().ANIMATION_HORIZONTAL_SCALE;
+			float verticalScale = this.DATA.getCharacter().ANIMATION_VERTICAL_SCALE * this.DATA.getForm().ANIMATION_VERTICAL_SCALE;
+			thisFramePosture.scaleTranslations(horizontalScale, verticalScale);
 
 			thisFramePosture.apply(model);
-			this.everythingArrangement = thisFramePosture.EVERYTHING;
+
+			model.head.pitch += headPitchAdjustment;
+			model.head.yaw += headYawAdjustment;
+
+			this.prevFramePosture = thisFramePosture;
 		}
 		catch(Throwable error) {
 			CrashReport report = CrashReport.create(error, "Animating CFA Appearance");
@@ -205,36 +276,6 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 			appearanceSection.add("Current action: ", this.DATA.getActionID());
 			throw new CrashException(report);
 		}
-
-		if(worldTime > this.forceInterpolationTime) this.prevTickPosture = thisFramePosture;
-
-//		if(this.forcedAnimation != null)
-	}
-
-	public void rotateTotalRender(MatrixStack matrices) {
-		matrices.translate(this.everythingArrangement.x / 16F, this.everythingArrangement.y / 16F, this.everythingArrangement.z / 16F);
-		matrices.multiply(RotationAxis.POSITIVE_Y.rotation(this.everythingArrangement.yaw));
-		double halfHeight = this.PLAYER.getHeight() * 0.5F;
-		matrices.translate(0, halfHeight, 0);
-		matrices.multiply(RotationAxis.POSITIVE_X.rotation(this.everythingArrangement.pitch));
-		matrices.multiply(RotationAxis.POSITIVE_Z.rotation(this.everythingArrangement.roll));
-		matrices.translate(0, -halfHeight, 0);
-	}
-
-	private static final float ALMOST_HALF_PI = 0.99F * HALF_PI;
-	private static final float MAX_HEAD_YAW = HALF_PI * 0.66F;
-	public float counterRotateHead(
-			ModelPart head, float assigningPitch
-	) {
-		head.yaw = MathHelper.clamp(wrapRadians(head.yaw + this.everythingArrangement.yaw), -MAX_HEAD_YAW, MAX_HEAD_YAW);
-		return MathHelper.clamp(wrapRadians(assigningPitch + this.everythingArrangement.pitch), -ALMOST_HALF_PI, ALMOST_HALF_PI);
-	}
-
-	private static float wrapRadians(float radians) {
-		float wrapped = radians % TAU;
-		if(wrapped >= PI) wrapped -= TAU;
-		if(wrapped < -PI) wrapped += TAU;
-		return wrapped;
 	}
 
 	private static boolean isArmBusy(BipedEntityModel.ArmPose thisArmPose, BipedEntityModel.ArmPose otherArmPose) {

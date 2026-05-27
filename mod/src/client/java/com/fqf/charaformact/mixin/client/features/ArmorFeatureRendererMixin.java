@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.At;
 public class ArmorFeatureRendererMixin<T extends LivingEntity, A extends BipedEntityModel<T>> implements FeatureRendererWithContext {
 //	@Inject(method = "renderArmorParts", at = @At("HEAD"))
 //	private void test(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, A model, int i, Identifier identifier, CallbackInfo ci) {
-//		matrices.translate(0, -0.5, 0);
+//		matrices.arrangeModel(0, -0.5, 0);
 //		CharaFormAct.LOGGER.info("Model: {}", model);
 //	}
 

@@ -21,14 +21,11 @@ public class DebugSpinRoll extends Debug {
 	    return ID;
 	}
 
-	@Override
-	public @Nullable AnimationDefinition getAnimation() {
+	@Override public @Nullable AnimationDefinition getAnimation() {
 		return AnimationDefinition.of(
 				AnimationFlag.NO_SWING_LIMBS,
-				(posture, data, animationTime, helper) -> {
-					Debug.tPose(posture);
-					posture.EVERYTHING.roll = MathHelper.sin(animationTime / 40F) * MathHelper.HALF_PI;
-				}
+				(arrangement, data, animationTime, helper) -> arrangement.roll = MathHelper.sin(animationTime / 4F) * 35,
+				(posture, data, animationTime, helper) -> Debug.tPose(posture)
 		);
 	}
 

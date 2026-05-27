@@ -14,13 +14,11 @@ public enum AnimationFlag {
 
 	USE_RADIANS, // technically more performant i guess but god almighty i don't WANNA
 
-	ALWAYS_WRAP_ANGLES,
-
 	CAN_RESET_ON_SELF, // animation can have its progress reset when transitioning into the exact same animation
 
-//	CONTINUOUSLY_REEVALUATE_EPHEMERAL,
+	NOT_INTERPOLATED, // by default, animations are run once per tick, and the player interpolates between the poses. this disables that
 
-	NOT_INTERPOLATED;
+	ALWAYS_WRAP_ANGLES; // mostly relevant for interpolation
 
 	public static final EnumSet<AnimationFlag> NO_SWING_ARMS = EnumSet.of(NO_RIGHT_ARM_SWING, NO_LEFT_ARM_SWING);
 	public static final EnumSet<AnimationFlag> NO_SWING_LEGS = EnumSet.of(NO_RIGHT_LEG_SWING, NO_LEFT_LEG_SWING);

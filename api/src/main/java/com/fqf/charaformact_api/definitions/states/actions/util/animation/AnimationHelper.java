@@ -19,17 +19,12 @@ public interface AnimationHelper {
 	@Nullable WallboundActionDefinition.WallInfo getWallInfo(CfaReadableMotionData data);
 
 	void symmetricallyAnimate(Posture posture, Arrangement rightPart, Consumer<Arrangement> animator);
-	void symmetricallyAnimate(Posture posture, Arrangement rightPart, SymmetricalAnimator animator);
+	void symmetricallyAnimate(Posture posture, Arrangement rightPart, SemiSymmetricalAnimator animator);
 
 	void multiAnimate(Consumer<Arrangement> animator, Arrangement... parts);
 
 	@FunctionalInterface
-	interface SymmetricalAnimator {
+	interface SemiSymmetricalAnimator {
 		void animate(Arrangement arrangement, boolean isLeft, int leftFactor);
-	}
-
-	@FunctionalInterface
-	interface SymmetricalAnimatorInteger {
-		void animate(Arrangement arrangement, int isLeft);
 	}
 }

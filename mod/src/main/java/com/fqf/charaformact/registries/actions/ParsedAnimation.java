@@ -3,9 +3,9 @@ package com.fqf.charaformact.registries.actions;
 import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.Arrangement;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.Posture;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,6 +27,10 @@ public class ParsedAnimation {
 
 	public @NotNull EnumSet<AnimationFlag.Execution> getExecutionFlags(CfaAnimatingData data, Identifier prevAnimationID) {
 		return this.DEFINITION.chooseExecutionFlags(data, prevAnimationID);
+	}
+
+	public void arrangeModel(Arrangement modelTranslation, CfaAnimatingData data, float animationTime) {
+		this.DEFINITION.arrangeModel(modelTranslation, data, animationTime, AnimationHelperImpl.INSTANCE);
 	}
 
 	public void mutate(Posture posture, CfaAnimatingData data, float animationTime) {

@@ -46,7 +46,7 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Anim
 			float animationProgress,
 			float headYaw, float headPitch,
 			CallbackInfo ci,
-			@Share("apply") LocalBooleanRef applyRef,
+			@Share("mutatePosture") LocalBooleanRef applyRef,
 			@Share("player") LocalRef<AbstractClientPlayerEntity> playerRef,
 			@Share("rightArm") LocalBooleanRef rightArmRef,
 			@Share("leftArm") LocalBooleanRef leftArmRef,
@@ -87,7 +87,7 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Anim
 	@WrapOperation(method = "setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V", at = @At(value = "FIELD", target = "Lnet/minecraft/client/model/ModelPart;pitch:F", opcode = Opcodes.PUTFIELD))
 	private void preventLimbSwinging(
 			ModelPart instance, float newValue, Operation<Void> original,
-			@Share("apply") LocalBooleanRef applyRef,
+			@Share("mutatePosture") LocalBooleanRef applyRef,
 			@Share("player") LocalRef<AbstractClientPlayerEntity> playerRef,
 			@Share("rightArm") LocalBooleanRef rightArmRef,
 			@Share("leftArm") LocalBooleanRef leftArmRef,
@@ -110,7 +110,7 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Anim
 	}
 
 	@ModifyExpressionValue(method = "setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V", at = @At(value = "FIELD", target = "Lnet/minecraft/client/render/entity/model/BipedEntityModel;sneaking:Z"))
-	private boolean doNotApplySneaking(boolean original, @Share("apply") LocalBooleanRef applyRef) {
+	private boolean doNotApplySneaking(boolean original, @Share("mutatePosture") LocalBooleanRef applyRef) {
 		if(applyRef.get()) return false;
 		return original;
 	}

@@ -13,8 +13,8 @@ import java.util.Set;
 public class ParsedPowerGrantingState extends ParsedCfaState {
 	public final float WIDTH_FACTOR;
 	public final float HEIGHT_FACTOR;
-	public final float ANIMATION_WIDTH_FACTOR;
-	public final float ANIMATION_HEIGHT_FACTOR;
+	public final float ANIMATION_HORIZONTAL_SCALE;
+	public final float ANIMATION_VERTICAL_SCALE;
 
 	public final int BUMP_STRENGTH_MODIFIER;
 	public final Identifier RESOURCE_ID;
@@ -31,8 +31,8 @@ public class ParsedPowerGrantingState extends ParsedCfaState {
 
 		this.WIDTH_FACTOR = definition.getWidthFactor();
 		this.HEIGHT_FACTOR = definition.getHeightFactor();
-		this.ANIMATION_WIDTH_FACTOR = definition.getAnimationWidthFactor();
-		this.ANIMATION_HEIGHT_FACTOR = definition.getAnimationHeightFactor();
+		this.ANIMATION_HORIZONTAL_SCALE = definition.getAnimationHorizontalScale();
+		this.ANIMATION_VERTICAL_SCALE = definition.getAnimationVerticalScale();
 
 		this.BUMP_STRENGTH_MODIFIER = definition.getBapStrengthModifier();
 

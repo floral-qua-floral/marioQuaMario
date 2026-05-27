@@ -301,8 +301,8 @@ public class CfaOldAnimationData {
 			arrangement.yaw -= 2 * (arrangement.yaw - unmutatedYaw);
 			arrangement.roll -= 2 * (arrangement.roll - unmutatedRoll);
 		}
-		float horizontalScale = data.getForm().ANIMATION_WIDTH_FACTOR * data.getCharacter().ANIMATION_WIDTH_FACTOR;
-		float verticalScale = data.getForm().ANIMATION_HEIGHT_FACTOR * data.getCharacter().ANIMATION_HEIGHT_FACTOR;
+		float horizontalScale = data.getForm().ANIMATION_HORIZONTAL_SCALE * data.getCharacter().ANIMATION_HORIZONTAL_SCALE;
+		float verticalScale = data.getForm().ANIMATION_VERTICAL_SCALE * data.getCharacter().ANIMATION_VERTICAL_SCALE;
 		arrangement.x = unmutatedX + (arrangement.x - unmutatedX) * horizontalScale;
 		arrangement.y = unmutatedY + (arrangement.y - unmutatedY) * verticalScale;
 		arrangement.z = unmutatedZ + (arrangement.z - unmutatedZ) * horizontalScale;

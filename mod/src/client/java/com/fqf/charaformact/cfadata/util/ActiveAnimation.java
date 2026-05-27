@@ -1,10 +1,10 @@
 package com.fqf.charaformact.cfadata.util;
 
-import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.cfadata.CfaAppearanceData;
 import com.fqf.charaformact.registries.actions.ParsedAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,12 +17,15 @@ public abstract class ActiveAnimation {
 
 	private final long START_TIME;
 
-	@Contract("_, !null, _ -> !null")
-	public static @Nullable ActiveAnimation of(CfaAppearanceData<?> owner, ParsedAnimation animation, AdvancedPosture prevTickPosture) {
+	@Contract("_, !null, _, _ -> !null")
+	public static @Nullable ActiveAnimation of(
+			CfaAppearanceData<?> owner, ParsedAnimation animation,
+			AdvancedPosture prevFramePosture, AdvancedArrangement prevFrameTranslation
+	) {
 		if(animation == null) return null;
 		if(animation.FLAGS.contains(AnimationFlag.NOT_INTERPOLATED)) return new NonInterpolated(owner, animation);
 //		return new NonInterpolated(owner, animation);
-		return new Interpolated(owner, animation, prevTickPosture);
+		return new Interpolated(owner, animation, prevFramePosture, prevFrameTranslation);
 	}
 
 	private ActiveAnimation(CfaAppearanceData<?> owner, ParsedAnimation animation) {
@@ -40,10 +43,8 @@ public abstract class ActiveAnimation {
 				!animation.FLAGS.contains(AnimationFlag.CAN_RESET_ON_SELF)
 				&& this.OWNER.actionAnimation != null
 				&& this.OWNER.actionAnimation.ANIMATION == animation
-		) {
-			CharaFormAct.LOGGER.info("Transitioning from an animation into the exact same animation! We won't reset progress!");
+		)
 			this.EXECUTION_FLAGS.add(AnimationFlag.Execution.DO_NOT_RESET_PROGRESS);
-		}
 
 		if(this.EXECUTION_FLAGS.contains(AnimationFlag.Execution.DO_NOT_RESET_PROGRESS) && owner.actionAnimation != null) {
 			this.START_TIME = owner.actionAnimation.START_TIME;
@@ -52,58 +53,97 @@ public abstract class ActiveAnimation {
 			this.EXECUTION_FLAGS.add(AnimationFlag.Execution.DO_NOT_RESET_PROGRESS); // preserve this one too, even if prev didn't have it
 		}
 		else this.START_TIME = this.getCurrentTime();
-
-		CharaFormAct.LOGGER.info("Playing an animation with start time {}", this.START_TIME);
 	}
 
 	protected long getCurrentTime() {
 		return this.OWNER.PLAYER.getWorld().getTime();
 	}
 
-	public void calculateMutations(AdvancedPosture mutate, long worldTime, float tickDelta) {
+	private float getAnimationTime(long worldTime, float tickDelta) {
+		return (worldTime - this.START_TIME) + tickDelta;
+	}
+
+	protected void calculateModelArrangement(AdvancedArrangement mutate, long worldTime, float tickDelta) {
+		this.ANIMATION.arrangeModel(mutate, this.OWNER.DATA, this.getAnimationTime(worldTime, tickDelta));
+		if(!this.ANIMATION.FLAGS.contains(AnimationFlag.USE_RADIANS)) mutate.multiplyAngles(MathHelper.RADIANS_PER_DEGREE);
+		if(this.EXECUTION_FLAGS.contains(AnimationFlag.Execution.MIRROR)) mutate.fullyMirror();
+	}
+
+	protected void calculatePostureMutations(AdvancedPosture mutate, long worldTime, float tickDelta) {
 		boolean mirroring = this.EXECUTION_FLAGS.contains(AnimationFlag.Execution.MIRROR);
 		if(mirroring) mutate.fullyMirror();
 		if(this.ANIMATION.USE_DEGREES) mutate.toDegrees();
-		this.ANIMATION.mutate(mutate, this.OWNER.DATA, (worldTime - this.START_TIME) + tickDelta);
+		this.ANIMATION.mutate(mutate, this.OWNER.DATA, this.getAnimationTime(worldTime, tickDelta));
 		if(this.ANIMATION.USE_DEGREES) mutate.toRadians();
 		if(mirroring) mutate.fullyMirror();
 	}
 
-	public abstract void apply(AdvancedPosture mutate, long worldTime, float tickDelta, boolean isFirstOfTick, boolean forceWrappedInterpolation);
+	public abstract void mutateModelArrangement(AdvancedArrangement mutate, long worldTime, float tickDelta, boolean isFirstOfTick, boolean forceWrappedInterpolation);
+
+	public abstract void mutatePosture(AdvancedPosture mutate, long worldTime, float tickDelta, boolean isFirstOfTick, boolean forceWrappedInterpolation);
 
 	public static class Interpolated extends ActiveAnimation {
-		boolean isFirstTickOfAnimation;
-		public AdvancedPosture interpolateFrom;
-		public AdvancedPosture interpolateTo;
+		boolean isFirstTickOfPosturing, isFirstTickOfArranging;
+		public AdvancedPosture fromPosture, toPosture;
+		public AdvancedArrangement fromModelArrangement, toModelArrangement;
 
-		public Interpolated(CfaAppearanceData<?> owner, ParsedAnimation animation, AdvancedPosture prevTickPosture) {
+		public Interpolated(
+				CfaAppearanceData<?> owner, ParsedAnimation animation,
+				AdvancedPosture prevFramePosture, AdvancedArrangement prevFrameTranslation
+		) {
 			super(owner, animation);
 			if(this.EXECUTION_FLAGS.contains(AnimationFlag.Execution.DO_NOT_RESET_PROGRESS) && this.OWNER.actionAnimation != null) {
 				if(this.OWNER.actionAnimation instanceof Interpolated prevInterpolatedAction) {
-					this.isFirstTickOfAnimation = prevInterpolatedAction.isFirstTickOfAnimation;
-					this.interpolateFrom = prevInterpolatedAction.interpolateFrom;
-					this.interpolateTo = prevInterpolatedAction.interpolateTo;
+					this.isFirstTickOfPosturing = prevInterpolatedAction.isFirstTickOfPosturing;
+					this.fromPosture = prevInterpolatedAction.fromPosture;
+					this.toPosture = prevInterpolatedAction.toPosture;
+					this.fromModelArrangement = prevInterpolatedAction.fromModelArrangement;
+					this.toModelArrangement = prevInterpolatedAction.toModelArrangement;
 					return;
 				}
 			}
-			this.isFirstTickOfAnimation = true;
-			this.interpolateFrom = prevTickPosture;
+			this.isFirstTickOfPosturing = true;
+			this.isFirstTickOfArranging = true;
+			this.fromPosture = prevFramePosture;
+
+			// Why do we need to copy prevFrameTranslation instead of using it?? I don't understand...
+			this.fromModelArrangement = new AdvancedArrangement();
+			this.fromModelArrangement.setPos(prevFrameTranslation.x, prevFrameTranslation.y, prevFrameTranslation.z);
+			this.fromModelArrangement.setAngles(prevFrameTranslation.pitch, prevFrameTranslation.yaw, prevFrameTranslation.roll);
 		}
 
 		@Override
-		public void apply(AdvancedPosture mutate, long worldTime, float tickDelta, boolean isFirstOfTick, boolean forceWrappedInterpolation) {
-			if(isFirstOfTick || this.interpolateTo == null) {
-				if(this.isFirstTickOfAnimation) this.isFirstTickOfAnimation = false;
-				else this.interpolateFrom = this.interpolateTo;
+		public void mutateModelArrangement(AdvancedArrangement mutate, long worldTime, float tickDelta, boolean isFirstOfTick, boolean forceWrappedInterpolation) {
+			if(isFirstOfTick || this.toModelArrangement == null) {
+				if(this.isFirstTickOfArranging) this.isFirstTickOfArranging = false;
+				else this.fromModelArrangement = this.toModelArrangement;
 
-				this.interpolateTo = AdvancedPosture.from(mutate);
-				this.calculateMutations(this.interpolateTo, worldTime, tickDelta);
+				this.toModelArrangement = new AdvancedArrangement();
+				// Theoretically we should copy the data from mutate to interpolateToTranslation before calculating, but...
+				// it'll always be 0s across the board, anyways.
+				this.calculateModelArrangement(this.toModelArrangement, worldTime, tickDelta);
 			}
 
 			if(forceWrappedInterpolation || this.ANIMATION.FLAGS.contains(AnimationFlag.ALWAYS_WRAP_ANGLES))
-				mutate.wrappedLerp(tickDelta, this.interpolateFrom, this.interpolateTo);
+				mutate.wrappedLerpRadians(tickDelta, this.fromModelArrangement, this.toModelArrangement);
 			else
-				mutate.lerp(tickDelta, this.interpolateFrom, this.interpolateTo);
+				mutate.lerp(tickDelta, this.fromModelArrangement, this.toModelArrangement);
+		}
+
+		@Override
+		public void mutatePosture(AdvancedPosture mutate, long worldTime, float tickDelta, boolean isFirstOfTick, boolean forceWrappedInterpolation) {
+			if(isFirstOfTick || this.toPosture == null) {
+				if(this.isFirstTickOfPosturing) this.isFirstTickOfPosturing = false;
+				else this.fromPosture = this.toPosture;
+
+				this.toPosture = AdvancedPosture.from(mutate);
+				this.calculatePostureMutations(this.toPosture, worldTime, tickDelta);
+			}
+
+			if(forceWrappedInterpolation || this.ANIMATION.FLAGS.contains(AnimationFlag.ALWAYS_WRAP_ANGLES))
+				mutate.wrappedLerp(tickDelta, this.fromPosture, this.toPosture);
+			else
+				mutate.lerp(tickDelta, this.fromPosture, this.toPosture);
 		}
 	}
 
@@ -113,8 +153,13 @@ public abstract class ActiveAnimation {
 		}
 
 		@Override
-		public void apply(AdvancedPosture mutate, long worldTime, float tickDelta, boolean isFirstOfTick, boolean forceWrappedInterpolation) {
-			this.calculateMutations(mutate, worldTime, tickDelta);
+		public void mutateModelArrangement(AdvancedArrangement mutate, long worldTime, float tickDelta, boolean isFirstOfTick, boolean forceWrappedInterpolation) {
+			this.calculateModelArrangement(mutate, worldTime, tickDelta);
+		}
+
+		@Override
+		public void mutatePosture(AdvancedPosture mutate, long worldTime, float tickDelta, boolean isFirstOfTick, boolean forceWrappedInterpolation) {
+			this.calculatePostureMutations(mutate, worldTime, tickDelta);
 		}
 	}
 }

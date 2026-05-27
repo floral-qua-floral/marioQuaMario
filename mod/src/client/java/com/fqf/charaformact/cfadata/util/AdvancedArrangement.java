@@ -10,9 +10,7 @@ import static net.minecraft.util.math.MathHelper.PI;
 import static net.minecraft.util.math.MathHelper.TAU;
 
 public class AdvancedArrangement extends Arrangement {
-	public static final int BUSY_ARMS_SLOT = 0;
-	public static final int MIRRORING_SLOT = 1;
-	public static final int HELPER_SLOT = 2;
+	public static final int BEFORE_CFA_ANIMATIONS = 0;
 
 	private final Arrangement[] STORAGE;
 
@@ -61,8 +59,21 @@ public class AdvancedArrangement extends Arrangement {
 		this.setAngles(mirrorAcross.pitch - deltaPitch, mirrorAcross.yaw - deltaYaw, mirrorAcross.roll - deltaRoll);
 	}
 
+	public void scaleTranslations(float horizontalScale, float verticalScale) {
+		Arrangement beforeAnimation = this.STORAGE[BEFORE_CFA_ANIMATIONS];
+		this.setPos(
+				beforeAnimation.x + (this.x - beforeAnimation.x) * horizontalScale,
+				beforeAnimation.y + (this.y - beforeAnimation.y) * verticalScale,
+				beforeAnimation.z + (this.z - beforeAnimation.z) * horizontalScale
+		);
+	}
+
 	public void multiplyAngles(float factor) {
 		this.pitch *= factor; this.roll *= factor; this.yaw *= factor;
+	}
+
+	public void fullyMirror() {
+		this.x *= -1; this.yaw *= -1; this.roll *= -1;
 	}
 
 	private void lerpPos(float delta, @NotNull Arrangement from, @NotNull Arrangement to) {
@@ -103,7 +114,7 @@ public class AdvancedArrangement extends Arrangement {
 		);
 	}
 
-	private static float wrapRadians(float radians) {
+	public static float wrapRadians(float radians) {
 		float wrapped = radians % TAU;
 		if(wrapped >= PI) wrapped -= TAU;
 		if(wrapped < -PI) wrapped += TAU;

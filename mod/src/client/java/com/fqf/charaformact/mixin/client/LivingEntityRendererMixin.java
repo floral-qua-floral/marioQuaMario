@@ -28,7 +28,7 @@ public class LivingEntityRendererMixin<T extends LivingEntity> {
 	private void adjustBodyPartsForFeatures(
 			T livingEntity, float yaw,
 			float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light,
-			CallbackInfo ci, @Share("apply") LocalBooleanRef applyRef
+			CallbackInfo ci, @Share("mutatePosture") LocalBooleanRef applyRef
 			) {
 		if(livingEntity instanceof AbstractClientPlayerEntity player) {
 			ParsedClientAppearance parsedModel = player.cfa$getAppearanceData().getAppearance();
@@ -44,7 +44,7 @@ public class LivingEntityRendererMixin<T extends LivingEntity> {
 	private void killModelPartMover(
 			T livingEntity, float yaw,
 			float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light,
-			CallbackInfo ci, @Share("apply") LocalBooleanRef applyRef
+			CallbackInfo ci, @Share("mutatePosture") LocalBooleanRef applyRef
 	) {
 		if(applyRef.get()) ModelPartMover.instance = null;
 	}
@@ -55,7 +55,7 @@ public class LivingEntityRendererMixin<T extends LivingEntity> {
 			int light, Z entity,
 			float limbAngle, float limbDistance, float tickDelta, float animationProgress,
 			float headYaw, float headPitch,
-			Operation<Void> original, @Share("apply") LocalBooleanRef applyRef, @Share(namespace = "cfa", value = "mover") LocalRef<ModelPartMover> moverRef
+			Operation<Void> original, @Share("mutatePosture") LocalBooleanRef applyRef, @Share(namespace = "cfa", value = "mover") LocalRef<ModelPartMover> moverRef
 	) {
 		if(applyRef.get()) {
 			TransformationContext context = ((FeatureRendererWithContext) instance).cfa$getContext();

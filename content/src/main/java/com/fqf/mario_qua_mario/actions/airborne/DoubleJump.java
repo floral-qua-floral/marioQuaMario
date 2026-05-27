@@ -38,7 +38,7 @@ public class DoubleJump extends Jump implements AirborneActionDefinition {
 
 				helper.symmetricallyAnimate(posture, posture.RIGHT_ARM, arrangement -> {
 					arrangement.addAngles(Easing.BACK_IN.ease((1 - progress)) * 26, 0, progress * 70);
-					arrangement.addPos(progress * -1.345F, Easing.BACK_OUT.ease(progress, 1.1F, -2.333F), 0);
+					arrangement.addPos(progress * -0.345F, Easing.BACK_OUT.ease(progress, 1.1F, -2.333F), 0);
 				});
 
 				posture.RIGHT_LEG.pitch += MathHelper.lerp(progress, 20, 9.1F);

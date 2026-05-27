@@ -62,10 +62,10 @@ public class Raccoon implements FormDefinition {
 	@Override public float getHeightFactor() {
 		return 1;
 	}
-	@Override public float getAnimationWidthFactor() {
+	@Override public float getAnimationHorizontalScale() {
 		return 1;
 	}
-	@Override public float getAnimationHeightFactor() {
+	@Override public float getAnimationVerticalScale() {
 		return 1;
 	}
 
