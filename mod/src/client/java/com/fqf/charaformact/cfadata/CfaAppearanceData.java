@@ -198,7 +198,11 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 			this.thisFrameModelArrangement.wrappedLerpRadians(tickDelta, this.prevFrameModelArrangement, lerpTo);
 		}
 
-		this.prevFrameModelArrangement = this.thisFrameModelArrangement;
+		this.prevFrameModelArrangement = new AdvancedArrangement();
+		this.prevFrameModelArrangement.setPos(
+				this.thisFrameModelArrangement.x, this.thisFrameModelArrangement.y, this.thisFrameModelArrangement.z);
+		this.prevFrameModelArrangement.setAngles(
+				this.thisFrameModelArrangement.pitch, this.thisFrameModelArrangement.yaw, this.thisFrameModelArrangement.roll);
 
 		matrices.translate(this.thisFrameModelArrangement.x / 16F, this.thisFrameModelArrangement.y / 16F, this.thisFrameModelArrangement.z / 16F);
 		matrices.multiply(RotationAxis.POSITIVE_Y.rotation(this.thisFrameModelArrangement.yaw));

@@ -105,11 +105,7 @@ public abstract class ActiveAnimation {
 			this.isFirstTickOfPosturing = true;
 			this.isFirstTickOfArranging = true;
 			this.fromPosture = prevFramePosture;
-
-			// Why do we need to copy prevFrameTranslation instead of using it?? I don't understand...
-			this.fromModelArrangement = new AdvancedArrangement();
-			this.fromModelArrangement.setPos(prevFrameTranslation.x, prevFrameTranslation.y, prevFrameTranslation.z);
-			this.fromModelArrangement.setAngles(prevFrameTranslation.pitch, prevFrameTranslation.yaw, prevFrameTranslation.roll);
+			this.fromModelArrangement = prevFrameTranslation;
 		}
 
 		@Override

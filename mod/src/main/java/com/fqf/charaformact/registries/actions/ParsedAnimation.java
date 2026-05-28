@@ -26,7 +26,7 @@ public class ParsedAnimation {
 	}
 
 	public @NotNull EnumSet<AnimationFlag.Execution> getExecutionFlags(CfaAnimatingData data, Identifier prevAnimationID) {
-		return this.DEFINITION.chooseExecutionFlags(data, prevAnimationID);
+		return this.DEFINITION.chooseExecutionFlags(data, prevAnimationID).clone();
 	}
 
 	public void arrangeModel(Arrangement modelTranslation, CfaAnimatingData data, float animationTime) {
