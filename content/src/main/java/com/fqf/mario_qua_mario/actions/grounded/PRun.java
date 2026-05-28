@@ -40,8 +40,8 @@ public class PRun implements GroundedActionDefinition {
 				(arrangement, data, animationTime, helper) -> arrangement.roll = getTilt(data) * -5,
 				(posture, data, animationTime, helper) -> {
 					float tilt = getTilt(data);
-					helper.symmetricallyAnimate(posture, posture.RIGHT_ARM, (arrangement, isLeft, leftFactor) ->
-							arrangement.roll += 90 - tilt * 10 * leftFactor);
+					posture.RIGHT_ARM.roll += 90 - tilt * 10;
+					posture.LEFT_ARM.roll -= 90 + tilt * 10;
 
 					if(posture.TAIL != null)
 						posture.TAIL.setAngles(0, 0, 0);
