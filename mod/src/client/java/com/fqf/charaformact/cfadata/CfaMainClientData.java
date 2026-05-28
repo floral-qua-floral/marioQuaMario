@@ -3,11 +3,14 @@ package com.fqf.charaformact.cfadata;
 import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.appearance.ParsedCommonAppearance;
 import com.fqf.charaformact.bapping.BlockBappingUtil;
+import com.fqf.charaformact.cfadata.util.ActiveAnimation;
+import com.fqf.charaformact.cfadata.util.AdvancedArrangement;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
 import com.fqf.charaformact.util.BlockCollisionFinder;
 import com.fqf.charaformact.util.DirectionBasedWallInfo;
 import com.fqf.charaformact.util.AdvancedWallInfo;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.Arrangement;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.HandPreference;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimation;
@@ -93,7 +96,7 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 		return this.isEnabled() && this.currentCameraAnimation != null && !this.getPlayer().isSleeping();
 	}
 
-	public void mutateCamera(Arrangement cameraArrangement, float tickDelta) {
+	public void mutateCamera(AdvancedArrangement cameraArrangement, float tickDelta) {
 		float cameraAnimationTime = (float) (this.getPlayer().getWorld().getTime() - this.cameraAnimationStartTime - 1) + tickDelta;
 
 		float progress = this.currentCameraAnimation.progressHandler().progressCalculator().calculateProgress(this, cameraAnimationTime);
@@ -104,7 +107,21 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 			this.currentCameraAnimation = null;
 			this.attemptFinish = false;
 		}
-		else this.getPlayer().cfa$getOldAnimationData().mutate(cameraArrangement, this.currentCameraAnimation.mutator(), this, progress);
+		else {
+			// This could be modernized to use AppearanceData and be a part AnimationDefinition, but tbh i don't wanna
+			cameraArrangement.store(AdvancedArrangement.BEFORE_CFA_ANIMATIONS);
+			cameraArrangement.multiplyAngles(MathHelper.DEGREES_PER_RADIAN);
+			this.currentCameraAnimation.mutator().mutate(this, cameraArrangement, progress);
+			ActiveAnimation appearanceAnimation = this.APPEARANCE_DATA.getCurrentAnimation();
+			if(appearanceAnimation != null && appearanceAnimation.EXECUTION_FLAGS.contains(AnimationFlag.Execution.MIRROR))
+				cameraArrangement.fullyMirror();
+
+			cameraArrangement.scaleTranslations(
+					this.getCharacter().ANIMATION_HORIZONTAL_SCALE * this.getForm().ANIMATION_HORIZONTAL_SCALE,
+					this.getCharacter().ANIMATION_VERTICAL_SCALE * this.getForm().ANIMATION_VERTICAL_SCALE
+			);
+			cameraArrangement.multiplyAngles(MathHelper.RADIANS_PER_DEGREE);
+		}
 	}
 
 	@Override public void updateAppearance() {

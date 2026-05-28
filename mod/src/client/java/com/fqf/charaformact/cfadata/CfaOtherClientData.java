@@ -73,7 +73,7 @@ public class CfaOtherClientData extends CfaPlayerData implements CfaClientDataIm
 
 		if(this.replaceAnimationNextTick) {
 			this.replaceAnimationNextTick = false;
-			this.PLAYER.cfa$getOldAnimationData().replaceAnimation(this, this.nextTickAnimation, -1);
+//			this.PLAYER.cfa$getOldAnimationData().replaceAnimation(this, this.nextTickAnimation, -1);
 		}
 		if(this.replaceAnimationNextNextTick) {
 			this.replaceAnimationNextNextTick = false;

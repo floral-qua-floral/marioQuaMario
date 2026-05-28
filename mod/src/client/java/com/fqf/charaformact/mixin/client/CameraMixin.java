@@ -1,6 +1,7 @@
 package com.fqf.charaformact.mixin.client;
 
 import com.fqf.charaformact.bapping.BlockBappingClientUtil;
+import com.fqf.charaformact.cfadata.util.AdvancedArrangement;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.Arrangement;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -39,7 +40,7 @@ public abstract class CameraMixin {
 	@Shadow @Final private Vector3f verticalPlane;
 	@Shadow @Final private Vector3f horizontalPlane;
 	@Shadow private Entity focusedEntity;
-	@Unique private final Arrangement CAMERA_ARRANGEMENT = new Arrangement();
+	@Unique private final AdvancedArrangement CAMERA_ARRANGEMENT = new AdvancedArrangement();
 
 	// This is a bit of a weird way to do things, but I dunno, maybe it'll work better with other mods or something ???
 	@Inject(method = "update", at = @At("RETURN"))
