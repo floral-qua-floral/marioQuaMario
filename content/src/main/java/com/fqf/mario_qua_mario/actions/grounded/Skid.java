@@ -36,6 +36,33 @@ public class Skid implements GroundedActionDefinition {
 		return ID;
 	}
 
+	@Override public @Nullable AnimationDefinition getAnimation() {
+		return AnimationDefinition.of(
+				AnimationFlag.NO_SWING_LIMBS,
+				AnimationFlag.Execution.RANDOMLY_MIRROR,
+				(arrangement, data, animationTime, helper) -> {
+					arrangement.y -= 4;
+					arrangement.setAngles(
+							0,
+							42.5F,
+							17.5F
+					);
+				},
+				(posture, data, animationTime, helper) -> {
+					posture.HEAD.roll -= 15;
+
+					posture.RIGHT_ARM.addAngles(-32, -35, 80);
+					posture.LEFT_ARM.addAngles(-45, 0, -30);
+					posture.RIGHT_LEG.addAngles(-57.5F, 45F, -20);
+					posture.LEFT_LEG.addPos(0, -4.1F, -3.9F);
+					posture.LEFT_LEG.addAngles(5, 15, 0);
+
+					if(posture.TAIL != null)
+						posture.TAIL.setAngles(5, 42, -17.5F);
+				}
+		);
+	}
+
 	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
 		return new PiecemealPlayermodelAnimation(
 				null,

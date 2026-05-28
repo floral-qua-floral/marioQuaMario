@@ -30,20 +30,22 @@ public class PRun implements GroundedActionDefinition {
 	    return ID;
 	}
 
-	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
-		return new PiecemealPlayermodelAnimation(
-				null,
-				new ProgressHandler((data, ticksPassed) ->
-						Easing.clampedRangeToProgress(data.getDeltaYaw(), -1, 1) * 2 - 1),
-				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) ->
-						arrangement.roll = progress * -5),
-				null, null,
-				new LimbAnimation(false, (data, arrangement, progress) ->
-						arrangement.roll += 90 - progress * 10),
-				new LimbAnimation(false, (data, arrangement, progress) ->
-						arrangement.roll += -90 - progress * 10),
-				null, null,
-				new LimbAnimation(false, null)
+	private static float getTilt(CfaAnimatingData data) {
+		return Easing.clampedRangeToProgress(data.getDeltaYaw(), -1, 1) * 2 - 1;
+	}
+
+	@Override public @Nullable AnimationDefinition getAnimation() {
+		return AnimationDefinition.of(
+				AnimationFlag.NO_SWING_ARMS,
+				(arrangement, data, animationTime, helper) -> arrangement.roll = getTilt(data) * -5,
+				(posture, data, animationTime, helper) -> {
+					float tilt = getTilt(data);
+					helper.symmetricallyAnimate(posture, posture.RIGHT_ARM, (arrangement, isLeft, leftFactor) ->
+							arrangement.roll += 90 - tilt * 10 * leftFactor);
+
+					if(posture.TAIL != null)
+						posture.TAIL.setAngles(0, 0, 0);
+				}
 		);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
