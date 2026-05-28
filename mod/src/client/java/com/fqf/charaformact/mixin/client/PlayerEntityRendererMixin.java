@@ -1,7 +1,9 @@
 package com.fqf.charaformact.mixin.client;
 
 import com.fqf.charaformact.CharaFormAct;
+import com.fqf.charaformact.appearance.AppearanceRenderer;
 import com.fqf.charaformact.appearance.ClientAppearanceCollector;
+import com.fqf.charaformact.cfadata.CfaAppearanceData;
 import com.fqf.charaformact_api.appearance.AppearanceModel;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -11,14 +13,20 @@ import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
+import net.minecraft.client.util.SkinTextures;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PlayerEntityRenderer.class)
-public class PlayerEntityRendererMixin {
+public abstract class PlayerEntityRendererMixin {
+	@Shadow public abstract Identifier getTexture(AbstractClientPlayerEntity abstractClientPlayerEntity);
+
 	@WrapOperation(method = "<init>", at = @At(value = "NEW", target = "(Lnet/minecraft/client/model/ModelPart;Z)Lnet/minecraft/client/render/entity/model/PlayerEntityModel;"))
 	private static PlayerEntityModel<AbstractClientPlayerEntity> uwu(ModelPart root, boolean thinArms, Operation<PlayerEntityModel<AbstractClientPlayerEntity>> original, @Local(argsOnly = true) EntityRendererFactory.Context ctx) {
 		AppearanceModel currentCustomModel = ClientAppearanceCollector.INSTANCE.getCustomModelForRenderer();
@@ -44,5 +52,28 @@ public class PlayerEntityRendererMixin {
 	@WrapOperation(method = "getPositionOffset(Lnet/minecraft/client/network/AbstractClientPlayerEntity;F)Lnet/minecraft/util/math/Vec3d;", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/AbstractClientPlayerEntity;isInSneakingPose()Z"))
 	private boolean preventSneakingOffset(AbstractClientPlayerEntity instance, Operation<Boolean> original) {
 		return original.call(instance) && !instance.cfa$getCfaData().isEnabled();
+	}
+
+	@WrapOperation(method = "renderArm", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/PlayerEntityModel;setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V"))
+	private <T extends LivingEntity> void preventCfaAnimations(
+			PlayerEntityModel<?> instance, T entity,
+			float limbAngle, float limbDistance, float animationProgress,
+			float headYaw, float headPitch,
+			Operation<Void> original
+	) {
+		CfaAppearanceData<?> data;
+		if(entity instanceof AbstractClientPlayerEntity player) data = player.cfa$getAppearanceData();
+		else data = null;
+
+		if(data != null) data.doingFirstPersonHand = true;
+		original.call(instance, entity, limbAngle, limbDistance, animationProgress, headYaw, headPitch);
+		if(data != null) data.doingFirstPersonHand = false;
+	}
+
+	@WrapOperation(method = "renderArm", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/SkinTextures;texture()Lnet/minecraft/util/Identifier;"))
+	private Identifier getActualTexturePls(SkinTextures instance, Operation<Identifier> original) {
+		if((Object) this instanceof AppearanceRenderer appearanceRenderer)
+			return appearanceRenderer.TEXTURE;
+		return original.call(instance);
 	}
 }

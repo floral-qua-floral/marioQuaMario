@@ -1,6 +1,9 @@
 package com.fqf.charaformact.appearance;
 
-import com.fqf.charaformact_api.appearance.AppearanceHelper;
+import com.fqf.charaformact.CharaFormAct;
+import com.fqf.charaformact_api.appearance.AppearanceFeatureHelper;
+import com.fqf.charaformact_api.appearance.AppearanceGeometryHelper;
+import com.fqf.charaformact_api.appearance.TransformationInstructions;
 import net.minecraft.client.model.Dilation;
 import net.minecraft.client.model.ModelPartBuilder;
 import net.minecraft.client.model.ModelPartData;
@@ -10,8 +13,8 @@ import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
-public class AppearanceHelperImpl implements AppearanceHelper {
-	public static final AppearanceHelper INSTANCE = new AppearanceHelperImpl();
+public class AppearanceHelperImpl implements AppearanceGeometryHelper, AppearanceFeatureHelper {
+	public static final AppearanceHelperImpl INSTANCE = new AppearanceHelperImpl();
 	private AppearanceHelperImpl() {
 
 	}
@@ -86,5 +89,55 @@ public class AppearanceHelperImpl implements AppearanceHelper {
 	}
 	@Override public Vector3f toRadians(Vector3f degrees) {
 		return this.toRadians(degrees.x, degrees.y, degrees.z);
+	}
+
+	public TransformationInstructions getArmorTransformation(Vector3i cuboid, Vector3i vanillaCuboid, int allowance, float overhangPercentage) {
+		Vector3f scale = new Vector3f(cuboid).div(vanillaCuboid.x, vanillaCuboid.y, vanillaCuboid.z);
+		float vanillaCuboidHeight = vanillaCuboid.y * (overhangPercentage + 1);
+
+		// If part is just barely too small for vanilla armor, use vanilla armor size anyways
+		if(scale.x < 1 && scale.x >= 1 - (float) allowance / vanillaCuboid.x) {
+			if (scale.z < 1 && scale.z >= 1 - (float) allowance / vanillaCuboid.z) {
+				scale.x = 1;
+				scale.z = 1;
+			}
+		}
+		if(scale.y < 1 && scale.y >= 1 - (float) allowance / vanillaCuboidHeight)
+			scale.y = 1;
+
+		// If part is just barely too small for maintained horizontal aspect ratio, maintain horizontal aspect ratio anyways
+		if(scale.x < scale.z && scale.x >= scale.z - (float) allowance / vanillaCuboid.x) {
+			scale.x = scale.z;
+		}
+		if(scale.z < scale.x && scale.z >= scale.x - (float) allowance / vanillaCuboid.z) {
+			scale.z = scale.x;
+		}
+
+		// If part is tall enough to support the Y scale matching a horizontal scale, then do that. Prefer matching X.
+		if(cuboid.y * (1 + overhangPercentage) >= scale.x * vanillaCuboid.y)
+			//noinspection SuspiciousNameCombination
+			scale.y = scale.x;
+		else if(cuboid.y * (1 + overhangPercentage) >= scale.z * vanillaCuboid.y)
+			scale.y = scale.z;
+
+		// Return the new transformation
+		return new TransformationInstructions(
+				0, 0, 0,
+				0, 0, 0,
+				scale.x, scale.y, scale.z
+		);
+	}
+
+	public TransformationInstructions getStretchingTransformation(Vector3i cuboid, Vector3i vanillaCuboid) {
+		var uwu = new TransformationInstructions(
+				0, 0, 0,
+				0, 0, 0,
+				(float) cuboid.x / vanillaCuboid.x,
+				(float) cuboid.y / vanillaCuboid.y,
+				(float) cuboid.z / vanillaCuboid.z
+		);
+		CharaFormAct.LOGGER.info("STRETCHING TRANSFORMATION TIME!!!!\n\tVanilla part: {}, {}, {}\n\tCustom: {}, {}, {}\n\tResult: {}",
+				vanillaCuboid.x, vanillaCuboid.y, vanillaCuboid.z, cuboid.x, cuboid.y, cuboid.z, uwu);
+		return uwu;
 	}
 }

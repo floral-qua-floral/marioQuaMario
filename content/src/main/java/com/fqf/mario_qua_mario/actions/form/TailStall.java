@@ -82,7 +82,7 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 
 	public static void tailWaggleTick(CfaClientData data) {
 		if(data.retrieveStateData(ActionTimerVars.class).actionTimer++ % 4 == 0)
-			data.playSound(MarioSFX.TAIL_FLY, 1F, 0.2F, data.getPlayer().getRandom().nextLong());
+			data.playSound(MarioSFX.TAIL_FLY, 1F, 0.1F, data.getPlayer().getRandom().nextLong());
 	}
 
 	@Override public @Nullable Object provideStateData(CfaData data) {

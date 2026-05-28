@@ -4,7 +4,7 @@ import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.registries.power_granting.CharacterFormCombo;
 import com.fqf.charaformact.registries.power_granting.ParsedCharacter;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
-import com.fqf.charaformact_api.appearance.AppearanceHelper;
+import com.fqf.charaformact_api.appearance.AppearanceGeometryHelper;
 import com.fqf.charaformact_api.appearance.AppearanceModel;
 import com.fqf.charaformact_api.appearance.ClientAppearanceDefinition;
 import com.google.common.collect.ImmutableMap;
@@ -48,7 +48,7 @@ public class ClientAppearanceCollector extends AbstractAppearanceCollector<Clien
 
 		if(CharaFormAct.CONFIG.logCharacterFormModelUVs()) {
 			// i'm sorry this code is unbearably ugly but i just mashed it together for a quick test and i don't wanna rewrite it
-			AppearanceHelper helper = AppearanceHelperImpl.INSTANCE;
+			AppearanceGeometryHelper helper = AppearanceHelperImpl.INSTANCE;
 			Vector2i headCorner = helper.getUVDimensions(definition.getHeadSize());
 			Vector2i hatCorner = helper.getUVDimensions(definition.getHeadSize());
 			Vector2i torsoCorner = helper.getUVDimensions(definition.getTorsoSize());
@@ -87,7 +87,7 @@ public class ClientAppearanceCollector extends AbstractAppearanceCollector<Clien
 
 		// Add cape with default geometry. Its positioning will be handled using the feature rendering system.
 		if(modelRoot.getChild("cloak") == null) AppearanceHelperImpl.INSTANCE.makePart(
-				modelRoot, AppearanceHelper.CAPE, false,
+				modelRoot, AppearanceGeometryHelper.CAPE, false,
 				new Vector3f(), new Vector3f(-5, 0, -1),
 				0, new Vector3f(), new Vector3i(10, 16, 1), new Vector2i()
 		);

@@ -10,7 +10,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.util.Identifier;
 
 public class AppearanceRenderer extends PlayerEntityRenderer {
-	private final Identifier TEXTURE;
+	public final Identifier TEXTURE;
 
 	public AppearanceRenderer(EntityRendererFactory.Context ctx, Identifier textureLocation) {
 		super(ctx, false);

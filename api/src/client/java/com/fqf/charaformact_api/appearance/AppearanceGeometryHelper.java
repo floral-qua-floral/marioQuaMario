@@ -6,7 +6,7 @@ import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
-public interface AppearanceHelper {
+public interface AppearanceGeometryHelper {
 	String RIGHT_PANTS = "right_pants";
 	String LEFT_PANTS = "left_pants";
 	String RIGHT_SLEEVE = "right_sleeve";

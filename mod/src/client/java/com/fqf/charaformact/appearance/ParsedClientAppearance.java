@@ -4,10 +4,8 @@ import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.registries.power_granting.ParsedCharacter;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
 import com.fqf.charaformact.util.TransformationContext;
-import com.fqf.charaformact_api.appearance.ClientAppearanceDefinition;
-import com.fqf.charaformact_api.appearance.FeatureTransformationInstructions;
+import com.fqf.charaformact_api.appearance.*;
 import com.fqf.charaformact.util.VanillaPart;
-import com.fqf.charaformact_api.appearance.AppearanceModel;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.util.Identifier;
@@ -32,10 +30,13 @@ public class ParsedClientAppearance extends ParsedCommonAppearance {
 	public final float HELD_SHIELD_X_TRANSLATION, HELD_SHIELD_Y_TRANSLATION, HELD_SHIELD_Z_TRANSLATION;
 	public final float SHOULDER_PARROT_X_TRANSLATION, SHOULDER_PARROT_Y_TRANSLATION, SHOULDER_PARROT_Z_TRANSLATION;
 
+	public final TransformationInstructions FP_EMPTY_HAND_TRANSFORMATION;
+	public final TransformationInstructions FP_FILLED_HAND_TRANSFORMATION;
+
 	public final float LIMB_SWING_MULTIPLIER;
 	public final float VIEW_BOB_MULTIPLIER;
 
-	public final Map<VanillaPart, Map<TransformationContext, FeatureTransformationInstructions>> FEATURE_TRANSFORMATION_INSTRUCTIONS;
+	public final Map<VanillaPart, Map<TransformationContext, TransformationInstructions>> FEATURE_TRANSFORMATION_INSTRUCTIONS;
 
 	public ParsedClientAppearance(ClientAppearanceDefinition definition, ParsedCharacter character, ParsedForm form) {
 		super(definition, character, form);
@@ -62,23 +63,28 @@ public class ParsedClientAppearance extends ParsedCommonAppearance {
 		this.SHOULDER_PARROT_Y_TRANSLATION = shoulderParrotOffset.y;
 		this.SHOULDER_PARROT_Z_TRANSLATION = shoulderParrotOffset.z;
 
+		this.FP_EMPTY_HAND_TRANSFORMATION = fixInstructions(definition.getEmptyFpHandTransformation());
+		this.FP_FILLED_HAND_TRANSFORMATION = fixInstructions(definition.getFpHandWithMapTransformation());
+
+		AppearanceHelperImpl helper = AppearanceHelperImpl.INSTANCE;
+
 		this.FEATURE_TRANSFORMATION_INSTRUCTIONS = new EnumMap<>(VanillaPart.class);
 		this.populateTransformationInstructions(VanillaPart.HEAD,
-				definition.getHelmetTransformation(), null,
-				definition.getHatTransformation(), definition.getUnknownHeadFeatureTransformation()
+				definition.getHelmetTransformation(helper), null,
+				definition.getHatTransformation(helper), definition.getUnknownHeadFeatureTransformation(helper)
 		);
 		this.populateTransformationInstructions(VanillaPart.TORSO,
-				definition.getCuirassTransformation(), definition.getFauldTransformation(),
-				definition.getBackEquipmentTransformation(), definition.getUnknownChestFeatureTransformation()
+				definition.getCuirassTransformation(helper), definition.getFauldTransformation(helper),
+				definition.getBackEquipmentTransformation(helper), definition.getUnknownChestFeatureTransformation(helper)
 		);
 		this.populateTransformationInstructions(VanillaPart.RIGHT_ARM,
-				definition.getPauldronTransformation(), null,
-				definition.getGlovesTransformation(), definition.getUnknownArmsFeatureTransformation()
+				definition.getPauldronTransformation(helper), null,
+				definition.getGlovesTransformation(helper), definition.getUnknownArmsFeatureTransformation(helper)
 		);
 		this.mirrorTransformationInstructions(VanillaPart.RIGHT_ARM, VanillaPart.LEFT_ARM);
 		this.populateTransformationInstructions(VanillaPart.RIGHT_LEG,
-				definition.getBootsTransformation(), definition.getChaussesTransformation(),
-				null, definition.getUnknownLegsFeatureTransformation()
+				definition.getBootsTransformation(helper), definition.getChaussesTransformation(helper),
+				null, definition.getUnknownLegsFeatureTransformation(helper)
 		);
 		this.mirrorTransformationInstructions(VanillaPart.RIGHT_LEG, VanillaPart.LEFT_LEG);
 
@@ -97,10 +103,10 @@ public class ParsedClientAppearance extends ParsedCommonAppearance {
 
 	private void populateTransformationInstructions(
 			VanillaPart part,
-			@NotNull FeatureTransformationInstructions outerArmor, @Nullable FeatureTransformationInstructions innerArmor,
-			@Nullable FeatureTransformationInstructions special, @NotNull FeatureTransformationInstructions unknown
+			@NotNull TransformationInstructions outerArmor, @Nullable TransformationInstructions innerArmor,
+			@Nullable TransformationInstructions special, @NotNull TransformationInstructions unknown
 	) {
-		EnumMap<TransformationContext, FeatureTransformationInstructions> map = new EnumMap<>(TransformationContext.class);
+		EnumMap<TransformationContext, TransformationInstructions> map = new EnumMap<>(TransformationContext.class);
 		this.FEATURE_TRANSFORMATION_INSTRUCTIONS.put(part, map);
 		map.put(TransformationContext.ARMOR_OUTER, fixArmorInstructions(outerArmor, part, 1));
 		if(innerArmor != null) map.put(TransformationContext.ARMOR_INNER, fixArmorInstructions(innerArmor, part, 0.5F));
@@ -117,8 +123,8 @@ public class ParsedClientAppearance extends ParsedCommonAppearance {
 		};
 	}
 
-	private static FeatureTransformationInstructions fixArmorInstructions(FeatureTransformationInstructions instructions, VanillaPart part, float inflation) {
-		FeatureTransformationInstructions basicFix = fixInstructions(instructions);
+	private static TransformationInstructions fixArmorInstructions(TransformationInstructions instructions, VanillaPart part, float inflation) {
+		TransformationInstructions basicFix = fixInstructions(instructions);
 
 		float addend = inflation * 2;
 
@@ -134,12 +140,12 @@ public class ParsedClientAppearance extends ParsedCommonAppearance {
 		return basicFix.withScale(newScale.x, newScale.y, newScale.z);
 	}
 
-	private static FeatureTransformationInstructions fixInstructions(FeatureTransformationInstructions instructions) {
+	private static TransformationInstructions fixInstructions(TransformationInstructions instructions) {
 		return instructions.withPos(-instructions.forwards(), -instructions.upwards(), -instructions.rightwards());
 	}
 
 	private void mirrorTransformationInstructions(VanillaPart right, VanillaPart left) {
-		EnumMap<TransformationContext, FeatureTransformationInstructions> leftInstructions = new EnumMap<>(TransformationContext.class);
+		EnumMap<TransformationContext, TransformationInstructions> leftInstructions = new EnumMap<>(TransformationContext.class);
 		this.FEATURE_TRANSFORMATION_INSTRUCTIONS.put(left, leftInstructions);
 		this.FEATURE_TRANSFORMATION_INSTRUCTIONS.get(right).forEach((context, instructions) -> {
 			CharaFormAct.LOGGER.info("Mirroring transformation instructions for {}'s {}...", right, context);

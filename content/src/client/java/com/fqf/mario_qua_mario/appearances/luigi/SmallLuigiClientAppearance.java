@@ -1,11 +1,10 @@
 package com.fqf.mario_qua_mario.appearances.luigi;
 
-import com.fqf.charaformact_api.appearance.AppearanceHelper;
+import com.fqf.charaformact_api.appearance.AppearanceGeometryHelper;
 import com.fqf.charaformact_api.appearance.ClientAppearanceDefinition;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.appearances.util.PlumberClientAppearance;
 import com.fqf.mario_qua_mario.characters.Luigi;
-import com.fqf.mario_qua_mario.characters.Mario;
 import com.fqf.mario_qua_mario.forms.Small;
 import net.minecraft.client.model.ModelPartData;
 import net.minecraft.util.Identifier;
@@ -46,7 +45,7 @@ public class SmallLuigiClientAppearance implements ClientAppearanceDefinition {
 	}
 
 	@Override
-	public ModelPartData makeHead(ModelPartData root, AppearanceHelper helper) {
+	public ModelPartData makeHead(ModelPartData root, AppearanceGeometryHelper helper) {
 		ModelPartData head = ClientAppearanceDefinition.super.makeHead(root, helper);
 		PlumberClientAppearance.addNose(head, this.getHeadSize(), new Vector3i(3, 2, 2), new Vector2i(52, 16), helper);
 		return head;

@@ -34,7 +34,7 @@ public interface CfaClientDataImpl extends CfaAnimatingData {
 
 	@Override
 	default void playAnimation(PiecemealPlayermodelAnimation animation, int ticks) {
-		this.getPlayer().cfa$getOldAnimationData().replaceAnimation((CfaPlayerData) this, animation, ticks);
+//		this.getPlayer().cfa$getOldAnimationData().replaceAnimation((CfaPlayerData) this, animation, ticks);
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public interface CfaClientDataImpl extends CfaAnimatingData {
 
 	@Override
 	default SoundInstanceWrapperImpl playSound(SoundEvent event, long seed) {
-		return this.playSound(event, 1F, 1F, seed);
+		return this.playSound(event, 1F, 0.4F, seed);
 	}
 
 	@Override
@@ -66,11 +66,11 @@ public interface CfaClientDataImpl extends CfaAnimatingData {
 
 	@Override
 	default SoundInstanceWrapperImpl playSound(SoundEvent event, Entity entity, SoundCategory category, long seed) {
-		return this.playSound(event, category, entity.getX(), entity.getY(), entity.getZ(), 1F, 1F, seed);
+		return this.playSound(event, category, entity.getX(), entity.getY(), entity.getZ(), 1F, 0.4F, seed);
 	}
 
 	@Override
-	default void sustainSound(SoundEvent event, Entity entity, SoundCategory category, long seed) {
+	default void sustainSound(SoundEvent event, Entity entity, SoundCategory category, float pitch, float volume, long seed) {
 		// TODO: Implement
 		CharaFormAct.LOGGER.error("Unimplemented!");
 	}
@@ -122,11 +122,11 @@ public interface CfaClientDataImpl extends CfaAnimatingData {
 		MinecraftClient.getInstance().getSoundManager().stop(this.getStoredSounds().get(COMMON_VOICE_IDENTIFIER));
 		Vec3d position = this.getPlayer().getPos();
 		if(RegistryManager.VOICE_LINES.get(voiceline) == null)
-			throw new AssertionError("Voiceline " + voiceline + " isn't registered!!!");
+			throw new IllegalArgumentException("Voiceline " + voiceline + " isn't registered!!!");
 		SoundInstanceWrapperImpl newVoiceSound = this.playSound(
 				RegistryManager.VOICE_LINES.get(voiceline).get(((CfaPlayerData) this).getCharacter()), SoundCategory.VOICE,
 				position.x, position.y, position.z,
-				this.getVoicePitch(), 1.0F,
+				this.getVoicePitch(), 0.4F,
 				seed
 		);
 

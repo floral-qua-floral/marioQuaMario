@@ -1,10 +1,9 @@
 package com.fqf.mario_qua_mario.appearances.luigi;
 
-import com.fqf.charaformact_api.appearance.AppearanceHelper;
+import com.fqf.charaformact_api.appearance.AppearanceGeometryHelper;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.appearances.util.RaccoonUtil;
 import com.fqf.mario_qua_mario.forms.Raccoon;
-import com.fqf.mario_qua_mario.forms.Super;
 import net.minecraft.client.model.ModelPartData;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -22,14 +21,14 @@ public class FoxLuigiClientAppearance extends AbstractLuigiClientAppearance {
 	}
 
 	@Override
-	public ModelPartData makeTorso(ModelPartData root, AppearanceHelper helper) {
+	public ModelPartData makeTorso(ModelPartData root, AppearanceGeometryHelper helper) {
 		ModelPartData torso = super.makeTorso(root, helper);
 		RaccoonUtil.addTail(torso, this.getTorsoSize(), new Vector2i(0, 68), helper);
 		return torso;
 	}
 
 	@Override
-	protected ModelPartData makeCapStateHead(ModelPartData headPart, AppearanceHelper helper, boolean hasCap) {
+	protected ModelPartData makeCapStateHead(ModelPartData headPart, AppearanceGeometryHelper helper, boolean hasCap) {
 		ModelPartData capStateHead = super.makeCapStateHead(headPart, helper, hasCap);
 
 		Vector3f earPivot = new Vector3f(this.getHeadSize().x / 2F - 2.5F, -this.getHeadSize().y, 1);

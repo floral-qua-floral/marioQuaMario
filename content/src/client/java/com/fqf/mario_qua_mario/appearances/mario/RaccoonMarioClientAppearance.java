@@ -1,6 +1,6 @@
 package com.fqf.mario_qua_mario.appearances.mario;
 
-import com.fqf.charaformact_api.appearance.AppearanceHelper;
+import com.fqf.charaformact_api.appearance.AppearanceGeometryHelper;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.appearances.util.RaccoonUtil;
 import com.fqf.mario_qua_mario.forms.Raccoon;
@@ -9,7 +9,6 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
-import org.joml.Vector3i;
 
 public class RaccoonMarioClientAppearance extends AbstractMarioClientAppearance {
 	public static final Identifier ID = MarioQuaMario.makeID("raccoon_mario");
@@ -23,7 +22,7 @@ public class RaccoonMarioClientAppearance extends AbstractMarioClientAppearance 
 	}
 
 	@Override
-	public ModelPartData makeTorso(ModelPartData root, AppearanceHelper helper) {
+	public ModelPartData makeTorso(ModelPartData root, AppearanceGeometryHelper helper) {
 		ModelPartData torso = super.makeTorso(root, helper);
 
 		RaccoonUtil.addTail(torso, this.getTorsoSize(), new Vector2i(0, 70), helper);
@@ -32,7 +31,7 @@ public class RaccoonMarioClientAppearance extends AbstractMarioClientAppearance 
 	}
 
 	@Override
-	protected ModelPartData makeCapStateHead(ModelPartData headPart, AppearanceHelper helper, boolean hasCap) {
+	protected ModelPartData makeCapStateHead(ModelPartData headPart, AppearanceGeometryHelper helper, boolean hasCap) {
 		ModelPartData capStateHead = super.makeCapStateHead(headPart, helper, hasCap);
 
 		Vector3f earPivot = new Vector3f(this.getHeadSize().x / 2F - 2.5F, -this.getHeadSize().y, 1);

@@ -45,34 +45,34 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 	default Vector2i getHeadUV() {
 		return new Vector2i(0, 0);
 	}
-	default Vector2i getHatUV(AppearanceHelper helper) {
+	default Vector2i getHatUV(AppearanceGeometryHelper helper) {
 		return new Vector2i(helper.getBottomRightCorner(getHeadUV(), getHeadSize()).x, 0);
 	}
-	default Vector2i getRightLegUV(AppearanceHelper helper) {
+	default Vector2i getRightLegUV(AppearanceGeometryHelper helper) {
 		return new Vector2i(0, helper.getBottomRightCorner(getHeadUV(), getHeadSize()).y);
 	}
-	default Vector2i getRightPantsUV(AppearanceHelper helper) {
+	default Vector2i getRightPantsUV(AppearanceGeometryHelper helper) {
 		return new Vector2i(0, helper.getBottomRightCorner(getRightLegUV(helper), getLegSize()).y);
 	}
-	default Vector2i getTorsoUV(AppearanceHelper helper) {
+	default Vector2i getTorsoUV(AppearanceGeometryHelper helper) {
 		return new Vector2i(
 				helper.getBottomRightCorner(getRightLegUV(helper), getLegSize()).x,
 				this.getRightLegUV(helper).y
 		);
 	}
-	default Vector2i getJacketUV(AppearanceHelper helper) {
+	default Vector2i getJacketUV(AppearanceGeometryHelper helper) {
 		return new Vector2i(
 				getTorsoUV(helper).x,
 				helper.getBottomRightCorner(getTorsoUV(helper), getTorsoSize()).y
 		);
 	}
-	default Vector2i getRightArmUV(AppearanceHelper helper) {
+	default Vector2i getRightArmUV(AppearanceGeometryHelper helper) {
 		return new Vector2i(
 				helper.getBottomRightCorner(getTorsoUV(helper), getTorsoSize()).x,
 				this.getRightLegUV(helper).y
 		);
 	}
-	default Vector2i getRightSleeveUV(AppearanceHelper helper) {
+	default Vector2i getRightSleeveUV(AppearanceGeometryHelper helper) {
 		return new Vector2i(
 				getRightArmUV(helper).x,
 				helper.getBottomRightCorner(getRightArmUV(helper), getArmSize()).y
@@ -107,7 +107,7 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 	// The default implementation creates two cuboids per part: One for the actual part, and another for its 3D layer
 	// (hat, jacket, sleeve, or pants). You only need to override any of these if you want to replace the geometry
 	// of a part entirely in some way, such as by splitting the torso into multiple cuboids.
-	default ModelPartData makeHead(ModelPartData root, AppearanceHelper helper) {
+	default ModelPartData makeHead(ModelPartData root, AppearanceGeometryHelper helper) {
 		Vector3i headSize = this.getHeadSize();
 		return helper.makePartAndHat(
 				root, false, EntityModelPartNames.HEAD, EntityModelPartNames.HAT,
@@ -117,7 +117,7 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 				new Vector3f(), headSize, getHeadUV(), getHatUV(helper), true
 		);
 	}
-	default ModelPartData makeTorso(ModelPartData root, AppearanceHelper helper) {
+	default ModelPartData makeTorso(ModelPartData root, AppearanceGeometryHelper helper) {
 		Vector3i torsoSize = this.getTorsoSize();
 		return helper.makePartAndHat(
 				root, false, EntityModelPartNames.BODY, EntityModelPartNames.JACKET,
@@ -127,24 +127,24 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 				new Vector3f(), torsoSize, getTorsoUV(helper), getJacketUV(helper), true
 		);
 	}
-	default ModelPartData makeArm(ModelPartData root, AppearanceHelper helper, boolean isLeft) {
+	default ModelPartData makeArm(ModelPartData root, AppearanceGeometryHelper helper, boolean isLeft) {
 		Vector3i armSize = this.getArmSize();
 		return helper.makePartAndHat(
 				root, isLeft,
 				isLeft ? EntityModelPartNames.LEFT_ARM : EntityModelPartNames.RIGHT_ARM,
-				isLeft ? AppearanceHelper.LEFT_SLEEVE : AppearanceHelper.RIGHT_SLEEVE,
+				isLeft ? AppearanceGeometryHelper.LEFT_SLEEVE : AppearanceGeometryHelper.RIGHT_SLEEVE,
 				this.getRightArmPivot(), // pivot
 				new Vector3f(armSize.x / -2F, armSize.y / -6F, armSize.z / -2F), // offset
 				armSize.x / -4F, // mirrorable offset
 				new Vector3f(), getArmSize(), getRightArmUV(helper), getRightSleeveUV(helper), true
 		);
 	}
-	default ModelPartData makeLeg(ModelPartData root, AppearanceHelper helper, boolean isLeft) {
+	default ModelPartData makeLeg(ModelPartData root, AppearanceGeometryHelper helper, boolean isLeft) {
 		Vector3i legSize = this.getLegSize();
 		return helper.makePartAndHat(
 				root, isLeft,
 				isLeft ? EntityModelPartNames.LEFT_LEG : EntityModelPartNames.RIGHT_LEG,
-				isLeft ? AppearanceHelper.LEFT_PANTS : AppearanceHelper.RIGHT_PANTS,
+				isLeft ? AppearanceGeometryHelper.LEFT_PANTS : AppearanceGeometryHelper.RIGHT_PANTS,
 				this.getRightLegPivot(), // pivot
 				new Vector3f(legSize.x / -2F, 0, legSize.z / -2F), // offset
 				legSize.x / 40F, // mirrorable offset
@@ -159,7 +159,7 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 		return new AppearanceModel(root);
 	}
 
-	// Methods for deciding where on the arm held items will render.
+	// Methods for deciding where on the arm held items will render (third person).
 	// Default implementation imitates vanilla logic, although getHeldShieldPosition has special behavior to prevent
 	// an issue where especially short-armed models (~4 px) would hold a shield above their shoulder.
 	default Vector3f getHeldItemPosition() {
@@ -181,15 +181,40 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 		return new Vector3f(Math.max(this.getTorsoSize().x, this.getHeadSize().x) / 2F + 2.4F, -24.0F, 0);
 	}
 
-	// Methods for transforming features on various parts of the body such as armor and other equipment.
+	// Methods for positioning, rotating, and scaling the arm in first person.
+	// Default implementation translates the arm to put the shoulder of it at the same (off-screen) position as the
+	// vanilla first-person arm. If the arm is so short that this would put the whole arm off-screen, it is then
+	// adjusted back the other way to try and make sure the fist will still be visible.
+	// Due to some sort of scary matrix math, the First Person arm doesn't actually rotate around its pivot point?
+	default TransformationInstructions getEmptyFpHandTransformation() {
+		return TransformationInstructions.VANILLA.offset(
+				0,
+				this.getYOffset() - Math.max(0, 9.5F - this.getArmSize().y),
+				0
+		);
+	}
+	// The "With Map" version is used when the arm being transformed is holding an item. In vanilla, this is exclusively
+	// relevant for Filled Maps, hence the name. This is because the first-person hand does not render at all when
+	// holding any other item. The reason this applies to all items is to try and improve compatibility with Hold My
+	// Items and Punchy. As such, it's recommended that you try to maintain the default behavior if you must override
+	// the "With Map" method.
+	default TransformationInstructions getFpHandWithMapTransformation() {
+		return TransformationInstructions.VANILLA.offset(
+				0,
+				this.getYOffset() + this.getArmSize().y - 12,
+				0
+		);
+	}
+
+	// Methods for transforming features on various parts of the body, such as armor and other equipment.
 	// This is meant to be maximally compatible. Default implementations tries to maintain armor's aspect ratio when
 	// possible, and attempts sensible defaults for other features.
 	// The elaborate logic in all of these default implementations is only necessary to account for the unknown size of
 	// the body parts. If you're overriding any of these in your own model, it would make more sense to just return a
-	// FeatureTransformationInstructions object constructed from 9 raw, hard-coded floats, without doing any
+	// TransformationInstructions object constructed from 9 raw, hard-coded floats, without doing any
 	// calculations at all. That said, these methods only run a single time while preparing the model data during
 	// startup, and are then cached forever, so there is no performance cost to any logic done here.
-	default FeatureTransformationInstructions getHelmetTransformation() {
+	default TransformationInstructions getHelmetTransformation(AppearanceFeatureHelper helper) {
 		Vector3i headSize = this.getHeadSize();
 		Vector3f scale;
 		if(Math.abs(headSize.x - headSize.z) <= 2) {
@@ -201,21 +226,21 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 		}
 		else scale = new Vector3f(headSize.x / 8F, headSize.y / 8F, headSize.z / 8F);
 
-		return new FeatureTransformationInstructions(
+		return new TransformationInstructions(
 				0, headSize.y - 8 + 8 * (1 - scale.y), 0,
 				0, 0, 0,
 				scale.x, scale.y, scale.z
 		);
 	}
-	default FeatureTransformationInstructions getHatTransformation() {
+	default TransformationInstructions getHatTransformation(AppearanceFeatureHelper helper) {
 		// Not the 3D hat layer. This is for mods which add hats, such as the Villager Hats or Simple Hats mods.
-		return this.getHelmetTransformation();
+		return this.getHelmetTransformation(helper);
 	}
-	default FeatureTransformationInstructions getUnknownHeadFeatureTransformation() {
+	default TransformationInstructions getUnknownHeadFeatureTransformation(AppearanceFeatureHelper helper) {
 		// Transformation to apply to features which attach to the head but are otherwise unknown.
-		return FeatureTransformationInstructions.stretchToCover(this.getHeadSize(), new Vector3i(8, 8, 8));
+		return helper.getStretchingTransformation(this.getHeadSize(), new Vector3i(8, 8, 8));
 	}
-	default FeatureTransformationInstructions getCuirassTransformation() {
+	default TransformationInstructions getCuirassTransformation(AppearanceFeatureHelper helper) {
 		// A cuirass is the largest part of a chestplate, that covers the whole torso.
 		Vector3i torsoSize = this.getTorsoSize();
 
@@ -239,59 +264,59 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 		else
 			yScale = torsoSize.y / 12F;
 
-		return new FeatureTransformationInstructions(
+		return new TransformationInstructions(
 				0, 0, 0,
 				0, 0, 0,
 				xScale, yScale, zScale
 		);
 	}
-	default FeatureTransformationInstructions getFauldTransformation() {
+	default TransformationInstructions getFauldTransformation(AppearanceFeatureHelper helper) {
 		// A fauld is a piece of armor for protecting the hip. It's the highest cuboid of vanilla leggings.
-		return this.getCuirassTransformation().flip(this.getTorsoSize(), 12);
+		return this.getCuirassTransformation(helper).flip(this.getTorsoSize(), 12);
 	}
-	default FeatureTransformationInstructions getBackEquipmentTransformation() {
+	default TransformationInstructions getBackEquipmentTransformation(AppearanceFeatureHelper helper) {
 		// Applies to things like Elytra and modded backpacks.
 		Vector3i torsoSize = this.getTorsoSize();
 		float scale = Math.min(1, (torsoSize.y + this.getLegSize().y) / 12F);
-		return new FeatureTransformationInstructions(
+		return new TransformationInstructions(
 				2 - torsoSize.z / 2F, 0, 0,
 				0, 0, 0,
 				scale, scale, scale
 		);
 	}
-	default FeatureTransformationInstructions getUnknownChestFeatureTransformation() {
+	default TransformationInstructions getUnknownChestFeatureTransformation(AppearanceFeatureHelper helper) {
 		// Applies to things like Elytra and modded backpacks.
-		return FeatureTransformationInstructions.stretchToCover(this.getTorsoSize(), new Vector3i(8, 12, 4));
+		return helper.getStretchingTransformation(this.getTorsoSize(), new Vector3i(8, 12, 4));
 	}
-	default FeatureTransformationInstructions getPauldronTransformation() {
+	default TransformationInstructions getPauldronTransformation(AppearanceFeatureHelper helper) {
 		// Applies to the shoulder piece of a chestplate.
 		Vector3i armSize = this.getArmSize();
-		FeatureTransformationInstructions base = FeatureTransformationInstructions.attemptMaintainAspectRatio(
+		TransformationInstructions base = helper.getArmorTransformation(
 				armSize, new Vector3i(4, 12, 4), 2, 0.25F);
 
 		return base.offset(0, Math.max(0, armSize.y / 6F - 2), 0);
 	}
-	default FeatureTransformationInstructions getGlovesTransformation() {
+	default TransformationInstructions getGlovesTransformation(AppearanceFeatureHelper helper) {
 		// Applies to gloves from mods, such as from The Aether.
-		return this.getPauldronTransformation().flip(this.getArmSize(), 12);
+		return this.getPauldronTransformation(helper).flip(this.getArmSize(), 12);
 	}
-	default FeatureTransformationInstructions getUnknownArmsFeatureTransformation() {
-		return FeatureTransformationInstructions.stretchToCover(this.getArmSize(), new Vector3i(4, 12, 4));
+	default TransformationInstructions getUnknownArmsFeatureTransformation(AppearanceFeatureHelper helper) {
+		return helper.getStretchingTransformation(this.getArmSize(), new Vector3i(4, 12, 4));
 	}
-	default FeatureTransformationInstructions getBootsTransformation() {
-		return FeatureTransformationInstructions.attemptMaintainAspectRatio(
+	default TransformationInstructions getBootsTransformation(AppearanceFeatureHelper helper) {
+		return helper.getArmorTransformation(
 				this.getLegSize(), new Vector3i(4, 12, 4), 2, 0.3F)
 				.flip(this.getLegSize(), 12);
 	}
-	default FeatureTransformationInstructions getChaussesTransformation() {
+	default TransformationInstructions getChaussesTransformation(AppearanceFeatureHelper helper) {
 		// Chausses are the part of the leggings that guards the legs.
-		return FeatureTransformationInstructions.attemptMaintainAspectRatio(this.getLegSize(), new Vector3i(4, 12, 4), 2, 0.25F);
+		return helper.getArmorTransformation(this.getLegSize(), new Vector3i(4, 12, 4), 2, 0.25F);
 	}
-	default FeatureTransformationInstructions getUnknownLegsFeatureTransformation() {
-		return FeatureTransformationInstructions.stretchToCover(this.getLegSize(), new Vector3i(4, 12, 4));
+	default TransformationInstructions getUnknownLegsFeatureTransformation(AppearanceFeatureHelper helper) {
+		return helper.getStretchingTransformation(this.getLegSize(), new Vector3i(4, 12, 4));
 	}
 
-	default ModelData getModelData(AppearanceHelper helper) {
+	default ModelData getModelData(AppearanceGeometryHelper helper) {
 		ModelData modelData = new ModelData();
 		ModelPartData root = modelData.getRoot();
 

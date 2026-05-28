@@ -1,6 +1,6 @@
 package com.fqf.mario_qua_mario.appearances.util;
 
-import com.fqf.charaformact_api.appearance.AppearanceHelper;
+import com.fqf.charaformact_api.appearance.AppearanceGeometryHelper;
 import com.fqf.charaformact_api.appearance.AppearanceModel;
 import com.fqf.charaformact_api.appearance.ClientAppearanceDefinition;
 import net.minecraft.client.model.ModelPart;
@@ -18,7 +18,7 @@ public abstract class PlumberClientAppearance implements ClientAppearanceDefinit
 	public static final String CAP_EMBLEM = "emblem";
 
 	@Override
-	public ModelPartData makeHead(ModelPartData root, AppearanceHelper helper) {
+	public ModelPartData makeHead(ModelPartData root, AppearanceGeometryHelper helper) {
 		ModelPartData head = helper.makeInvisiblePart(root, EntityModelPartNames.HEAD, this.getHeadPivot(), false);
 		helper.makeInvisiblePart(root, EntityModelPartNames.HAT, this.getHeadPivot(), false);
 		this.makeCapStates(head, helper);
@@ -40,7 +40,7 @@ public abstract class PlumberClientAppearance implements ClientAppearanceDefinit
 		return new Vector3i(this.getHeadSize().x, 1, 4);
 	}
 
-	protected Vector2i getCapfulHeadUV(AppearanceHelper helper) {
+	protected Vector2i getCapfulHeadUV(AppearanceGeometryHelper helper) {
 		return new Vector2i(0, Math.max(
 				helper.getBottomRightCorner(this.getRightPantsUV(helper), this.getLegSize()).y,
 				Math.max(
@@ -50,28 +50,28 @@ public abstract class PlumberClientAppearance implements ClientAppearanceDefinit
 		));
 	}
 
-	protected Vector2i getCapfulHatUV(AppearanceHelper helper) {
+	protected Vector2i getCapfulHatUV(AppearanceGeometryHelper helper) {
 		Vector2i capfulHeadUV = this.getCapfulHeadUV(helper);
 		return new Vector2i(helper.getBottomRightCorner(capfulHeadUV, this.getHeadSize()).x, capfulHeadUV.y);
 	}
-	protected Vector2i getNoseUV(AppearanceHelper helper) {
+	protected Vector2i getNoseUV(AppearanceGeometryHelper helper) {
 		return new Vector2i(0, helper.getBottomRightCorner(this.getCapfulHeadUV(helper), this.getHeadSize()).y);
 	}
-	protected Vector2i getCapBrimUV(AppearanceHelper helper) {
+	protected Vector2i getCapBrimUV(AppearanceGeometryHelper helper) {
 		Vector2i noseUV = this.getNoseUV(helper);
 		return new Vector2i(helper.getBottomRightCorner(noseUV, this.getNoseSize()).x, noseUV.y);
 	}
-	protected Vector2i getCapTopUV(AppearanceHelper helper) {
+	protected Vector2i getCapTopUV(AppearanceGeometryHelper helper) {
 		Vector2i brimUV = this.getCapBrimUV(helper);
 		return new Vector2i(helper.getBottomRightCorner(brimUV, this.getCapBrimSize()).x, brimUV.y);
 	}
 
-	protected void makeCapStates(ModelPartData head, AppearanceHelper helper) {
+	protected void makeCapStates(ModelPartData head, AppearanceGeometryHelper helper) {
 		this.makeCapStateHead(head, helper, true);
 		this.makeCapStateHead(head, helper, false);
 	}
 
-	protected ModelPartData makeCapStateHead(ModelPartData headPart, AppearanceHelper helper, boolean hasCap) {
+	protected ModelPartData makeCapStateHead(ModelPartData headPart, AppearanceGeometryHelper helper, boolean hasCap) {
 		Vector3i headSize = this.getHeadSize();
 		ModelPartData capStateHead = helper.makePartAndHat(
 				headPart, false, hasCap ? CAPFUL_HEAD : CAPLESS_HEAD, EntityModelPartNames.HAT,
@@ -107,7 +107,7 @@ public abstract class PlumberClientAppearance implements ClientAppearanceDefinit
 		return capStateHead;
 	}
 
-	public static void addNose(ModelPartData head, Vector3i headSize, Vector3i noseSize, Vector2i noseUV, AppearanceHelper helper) {
+	public static void addNose(ModelPartData head, Vector3i headSize, Vector3i noseSize, Vector2i noseUV, AppearanceGeometryHelper helper) {
 		helper.makePart(
 				head,
 				EntityModelPartNames.NOSE,

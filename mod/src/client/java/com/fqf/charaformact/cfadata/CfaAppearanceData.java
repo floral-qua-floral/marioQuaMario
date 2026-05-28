@@ -11,15 +11,20 @@ import com.fqf.charaformact.registries.actions.ParsedAnimation;
 import com.fqf.charaformact.registries.power_granting.CharacterFormCombo;
 import com.fqf.charaformact.registries.power_granting.ParsedCharacter;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
+import com.fqf.charaformact_api.appearance.TransformationInstructions;
 import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.item.Items;
+import net.minecraft.util.Arm;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Pair;
 import net.minecraft.util.crash.CrashException;
 import net.minecraft.util.crash.CrashReport;
@@ -50,6 +55,9 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 	private long prevArrangingTick;
 	private AdvancedArrangement prevFrameModelArrangement;
 	private AdvancedArrangement thisFrameModelArrangement;
+	private float originalHeadPitch, originalHeadYaw;
+
+	public boolean doingFirstPersonHand;
 
 	private long flickerUntil;
 	private boolean flickering;
@@ -201,7 +209,6 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 		matrices.translate(0, -halfHeight, 0);
 	}
 
-	private float originalHeadPitch, originalHeadYaw;
 	private static final float ALMOST_HALF_PI = 0.99F * HALF_PI;
 	private static final float MAX_HEAD_YAW = HALF_PI * 0.66F;
 	public float counterRotateHead(ModelPart head, float assigningPitch) {
@@ -214,6 +221,11 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 
 	public void animate(PlayerEntityModel<?> model, float tickDelta) {
 		try {
+			if(this.doingFirstPersonHand) {
+				this.animateFirstPerson(model, tickDelta);
+				return;
+			}
+
 			// We have to undo head counter-rotation then redo it later, otherwise the counter-rotation will be
 			// mucked around with a little by Posture lerping, which will desynchronize it from playermodel arrangement.
 			float headPitchAdjustment = model.head.pitch - this.originalHeadPitch;
@@ -262,6 +274,8 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 
 			thisFramePosture.apply(model);
 
+//			model.body.zScale = 3;
+
 			model.head.pitch += headPitchAdjustment;
 			model.head.yaw += headYawAdjustment;
 
@@ -276,6 +290,35 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 			appearanceSection.add("Current action: ", this.DATA.getActionID());
 			throw new CrashException(report);
 		}
+	}
+
+	private void animateFirstPerson(PlayerEntityModel<?> model, float tickDelta) {
+		Hand rightHand = this.PLAYER.getMainArm() == Arm.RIGHT ? Hand.MAIN_HAND : Hand.OFF_HAND;
+		Hand leftHand = rightHand == Hand.MAIN_HAND ? Hand.OFF_HAND : Hand.MAIN_HAND;
+		boolean mapInBothHands = this.PLAYER.getMainHandStack().isOf(Items.FILLED_MAP)
+				&& this.PLAYER.getOffHandStack().isEmpty();
+		boolean itemInRightHand = mapInBothHands || !this.PLAYER.getStackInHand(rightHand).isEmpty();
+		boolean itemInLeftHand = mapInBothHands || !this.PLAYER.getStackInHand(leftHand).isEmpty();
+
+		model.rightArm.pitch = 0;
+		model.leftArm.pitch = 0;
+
+		// If I end up deciding to allow Actions to animate the first person hand, then that will go here.
+		// That sounds like kind of a nightmare though. ^^;
+
+		ParsedClientAppearance appearance = this.getAppearance(true);
+		if(appearance != null) {
+			TransformationInstructions empty = appearance.FP_EMPTY_HAND_TRANSFORMATION;
+			TransformationInstructions filled = appearance.FP_FILLED_HAND_TRANSFORMATION;
+			offsetArm(model.rightArm, 1, itemInRightHand ? filled : empty);
+			offsetArm(model.leftArm, -1, itemInLeftHand ? filled : empty);
+		}
+	}
+
+	private static void offsetArm(ModelPart arm, int factor, TransformationInstructions instructions) {
+		arm.pivotX += factor * instructions.rightwards(); arm.pivotY += instructions.upwards(); arm.pivotZ += instructions.forwards();
+		arm.pitch += instructions.pitch(); arm.yaw += instructions.yaw(); arm.roll += instructions.roll();
+		arm.xScale *= instructions.xScale(); arm.yScale *= instructions.yScale(); arm.zScale *= instructions.zScale();
 	}
 
 	private static boolean isArmBusy(BipedEntityModel.ArmPose thisArmPose, BipedEntityModel.ArmPose otherArmPose) {

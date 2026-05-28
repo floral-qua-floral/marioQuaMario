@@ -1,14 +1,20 @@
 package com.fqf.charaformact.appearance;
 
+import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.util.TransformationContext;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.fqf.charaformact.util.TransformationContext.*;
 
 public interface FeatureRendererWithContext {
+	boolean LOG_AUTO_CONTEXT_CHECKS = CharaFormAct.CONFIG.logFeatureContexts();
+	Set<String> FEATURES_PARSED = new HashSet<>();
+
 	@Nullable TransformationContext cfa$getContext();
 
 	static TransformationContext getAssumedContext(Class<?> clazz) {
@@ -20,9 +26,10 @@ public interface FeatureRendererWithContext {
 		)
 			return SPECIAL;
 
+		if(LOG_AUTO_CONTEXT_CHECKS && FEATURES_PARSED.add(name)) CharaFormAct.LOGGER.info("Could not find a match that would put {} in the Special" +
+				" transformation context, so its context will be UNKNOWN.", name);
 		return UNKNOWN;
 	}
-
 	private static boolean checkContains(String name, String substring, boolean mustOpenWord, boolean mustTerminateWord) {
 		Pattern pattern = Pattern.compile(substring, Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(name);
@@ -39,8 +46,14 @@ public interface FeatureRendererWithContext {
 						|| nextCharacterIndex >= name.length()
 						|| Character.isUpperCase(name.charAt(nextCharacterIndex))
 						|| Character.isDigit(name.charAt(nextCharacterIndex))
-				)
+				) {
+					if(LOG_AUTO_CONTEXT_CHECKS && FEATURES_PARSED.add(name)) {
+						CharaFormAct.LOGGER.info("The feature renderer {} contains substring {}, and as such has been" +
+								" identified as belonging to the SPECIAL transformation context.",
+								name, substring);
+					}
 					return true;
+				}
 			}
 		}
 

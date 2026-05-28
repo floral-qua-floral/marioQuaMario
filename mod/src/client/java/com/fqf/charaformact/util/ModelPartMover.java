@@ -2,7 +2,7 @@ package com.fqf.charaformact.util;
 
 import com.fqf.charaformact.appearance.ParsedClientAppearance;
 import com.fqf.charaformact_api.appearance.AppearanceModel;
-import com.fqf.charaformact_api.appearance.FeatureTransformationInstructions;
+import com.fqf.charaformact_api.appearance.TransformationInstructions;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.util.math.MathHelper;
 import org.joml.Vector3f;
@@ -10,6 +10,24 @@ import org.joml.Vector3f;
 import java.util.EnumMap;
 import java.util.Map;
 
+/**
+ * We transform Render Features by translating, rotating, and scaling the vanilla model parts right before every feature
+ * gets rendered. Thus, when it attaches itself to the vanilla part for the frame, it gets transformed the same way.
+ * This occurs after the player herself has been rendered, so we're free to just go crazy mucking up the body parts.
+ * <p>
+ * We don't have any way of knowing which body part a feature is rendering on, so instead we figure out its general
+ * nature, and then transform every single body part in a way that matches that nature. For instance, when we're
+ * rendering a helmet, we don't actually know it's a helmet, but we do know it's an ARMOR_OUTER. So we just transform
+ * every body part to its ARMOR_OUTER transformations, like a sort of shotgun approach. That way no matter what the
+ * feature is attaching to, it'll be affected the way we want.
+ * <p>
+ * We have no control over what order features will be rendered in. So we can't just do all the ARMOR_OUTER features,
+ * then all the SPECIAL features, and so on, even though that would be most efficient, since then we'd only need to
+ * calculate and apply each complete set of rotations a single time. We can't do that, though - we'll be going back and
+ * forth and back and forth many times per frame. So we just take our lumps and cache each full set of transformations
+ * for every context so that at least we only have to calculate each one once. I hope this doesn't incur a high
+ * performance cost :(
+ */
 public class ModelPartMover {
 	public static ModelPartMover instance;
 
@@ -74,7 +92,7 @@ public class ModelPartMover {
 			this.pitch = part.pitch; this.yaw = part.yaw; this.roll = part.roll;
 			this.xScale = part.xScale; this.yScale = part.yScale; this.zScale = part.zScale;
 		}
-		public UsableTransformation(ModelPart part, FeatureTransformationInstructions instruction) {
+		public UsableTransformation(ModelPart part, TransformationInstructions instruction) {
 			Vector3f pos = movePointLocally(part, instruction.forwards(), instruction.upwards(), instruction.rightwards());
 			this.x = pos.x; this.y = pos.y; this.z = pos.z;
 			this.pitch = part.pitch + instruction.pitch();
@@ -113,19 +131,20 @@ public class ModelPartMover {
 			transformations.put(TransformationContext.ORIGINAL, original);
 
 			// Calculate the different transformations we'll be using for this part
-			Map<TransformationContext, FeatureTransformationInstructions> instructions = appearance.FEATURE_TRANSFORMATION_INSTRUCTIONS.get(vanillaPart);
+			Map<TransformationContext, TransformationInstructions> instructions = appearance.FEATURE_TRANSFORMATION_INSTRUCTIONS.get(vanillaPart);
 			this.populateTransformationsMap(TransformationContext.ARMOR_OUTER, transformations, modelPart, instructions);
 			if(vanillaPart.HAS_INNER_ARMOR)
 				this.populateTransformationsMap(TransformationContext.ARMOR_INNER, transformations, modelPart, instructions);
 			if(vanillaPart.HAS_SPECIAL)
 				this.populateTransformationsMap(TransformationContext.SPECIAL, transformations, modelPart, instructions);
+			this.populateTransformationsMap(TransformationContext.UNKNOWN, transformations, modelPart, instructions);
 		}
 	}
 
 	private void populateTransformationsMap(
 			TransformationContext context,
 			Map<TransformationContext, UsableTransformation> transformations, ModelPart part,
-			Map<TransformationContext, FeatureTransformationInstructions> instructions
+			Map<TransformationContext, TransformationInstructions> instructions
 	) {
 		transformations.put(context, new UsableTransformation(part, instructions.get(context)));
 	}

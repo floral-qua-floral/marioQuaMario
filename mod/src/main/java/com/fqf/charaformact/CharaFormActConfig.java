@@ -14,7 +14,7 @@ public class CharaFormActConfig implements ConfigData {
 	private boolean specialHUD = false;
 	private boolean allowIllegalTransitionsInSingleplayer = true;
 	private float inherentBumpedBlockScale = 1.0001F;
-	private boolean fastHeadCounterRotation = false;
+	private boolean logFeatureContexts = true;
 
 	public boolean logAllActionTransitions() {
 		return this.logAllActionTransitions;
@@ -40,7 +40,7 @@ public class CharaFormActConfig implements ConfigData {
 	public float getInherentBumpedBlockScale() {
 		return this.inherentBumpedBlockScale;
 	}
-	public boolean doFastHeadCounterRotation() {
-		return this.fastHeadCounterRotation;
+	public boolean logFeatureContexts() {
+		return this.logFeatureContexts;
 	}
 }

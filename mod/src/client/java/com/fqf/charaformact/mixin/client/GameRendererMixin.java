@@ -30,11 +30,6 @@ import java.util.Objects;
 public class GameRendererMixin {
 	@Shadow @Final MinecraftClient client;
 
-	@Inject(method = "renderHand", at = @At("HEAD"), cancellable = true)
-	private void skipRenderHandForNow(Camera camera, float tickDelta, Matrix4f matrix4f, CallbackInfo ci) {
-		ci.cancel();
-	}
-
 	@WrapOperation(method = "bobView", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;sin(F)F"))
 	private float scaleViewBobbingTimescaleOnlySin(float value, Operation<Float> original) {
 		return this.scaleTrigonometryMethod(value, original);

@@ -11,7 +11,7 @@ public class FadeableSoundInstance extends PositionedSoundInstance implements Ti
 	private boolean isFading = false;
 
 	public FadeableSoundInstance(CfaPlayerData data) {
-		this(data.getCharacter().JUMP_SOUND, data.getPlayer(), 1F, data.getForm().JUMP_PITCH);
+		this(data.getCharacter().JUMP_SOUND, data.getPlayer(), 0.4F, data.getForm().JUMP_PITCH);
 	}
 	public FadeableSoundInstance(SoundEvent sound, PlayerEntity player, float volume, float pitch) {
 		super(sound, SoundCategory.PLAYERS, volume, pitch, player.getRandom(), player.getX(), player.getY(), player.getZ());
@@ -28,6 +28,6 @@ public class FadeableSoundInstance extends PositionedSoundInstance implements Ti
 
 	@Override
 	public void tick() {
-		if(this.isFading) this.volume -= 0.2F;
+		if(this.isFading) this.volume -= 0.08f;
 	}
 }
