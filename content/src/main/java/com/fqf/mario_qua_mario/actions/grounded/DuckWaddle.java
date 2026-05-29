@@ -20,6 +20,7 @@ import com.fqf.mario_qua_mario.actions.airborne.DuckJump;
 import com.fqf.mario_qua_mario.actions.aquatic.UnderwaterDuck;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,15 +36,53 @@ public class DuckWaddle implements GroundedActionDefinition {
 	    return ID;
 	}
 
-	@Override
-	public @Nullable AnimationDefinition getAnimation() {
+	public static final Identifier GROUNDED_DUCK_ID = MarioQuaMario.makeID("grounded_ducking");
+	private static float getDuckProgress(float animationTime) {
+		// We animate ducking tick by tick and rely on interpolation, rather than trying to model this using math. #lazy
+		return switch(MathHelper.floor(animationTime)) {
+			case 0 -> 0.6F;
+			case 1 -> 1.21F;
+			case 2 -> 1.45F;
+			default -> 1;
+		};
+	}
+	public static AnimationDefinition makeDuckAnimation2(boolean isGrounded, boolean isWaddle) {
 		return AnimationDefinition.of(
-				MarioQuaMario.makeID("testeroo"),
-				EnumSet.of(AnimationFlag.NO_RIGHT_ARM_SWING),
-				(data, prevAnimationID) -> EnumSet.noneOf(AnimationFlag.Execution.class),
-				null,
+				isGrounded ? GROUNDED_DUCK_ID : MarioQuaMario.makeID("airborne_ducking"),
+				isWaddle ? AnimationFlag.NO_SWING_ARMS : AnimationFlag.NO_SWING_LIMBS,
+				(data, prevID) -> // If previously in a grounded duck, then do not replay the squishy crouch anim. Otherwise, do.
+						GROUNDED_DUCK_ID.equals(prevID)
+								? EnumSet.of(AnimationFlag.Execution.DO_NOT_RESET_PROGRESS)
+								: EnumSet.noneOf(AnimationFlag.Execution.class),
+				isGrounded ? null : (arrangement, data, animationTime, helper) -> // Don't need a model arranger if grounded!
+						arrangement.pitch = (Easing.clampedRangeToProgress(data.getYVel(), -0.0, 0.4) * 2 - 1) * 15F,
 				(posture, data, animationTime, helper) -> {
-					posture.RIGHT_ARM.setAngles(-90, 45, 0);
+					float progress = getDuckProgress(animationTime);
+
+					posture.HEAD.addPos(0, progress * 14.2F, progress * -3.5F);
+					if(progress > 1) posture.HEAD.z -= 2 * (progress - 1);
+
+					posture.TORSO.pitch += progress * 41.65F;
+					posture.TORSO.addPos(0, progress * 11.9F, progress * -3F);
+
+					helper.symmetricallyAnimate(posture, posture.RIGHT_ARM, arrangement -> {
+						arrangement.addPos(0, progress * 14.2F, -1);
+						arrangement.pitch = Easing.LINEAR.ease(
+								Math.min(progress, 1),
+								arrangement.pitch,
+								-162.92F + 0.26F * Math.min(data.getPlayer().getPitch(), 0) + -1.15F * arrangement.pitch
+						);
+						if(Math.abs(arrangement.roll) < 10) arrangement.roll = 0;
+					});
+
+					helper.symmetricallyAnimate(posture, posture.RIGHT_LEG, arrangement -> {
+						arrangement.addPos(0, progress * 2.2F, progress * -4.4F);
+						arrangement.addAngles(progress * 25, 0, 0);
+					});
+
+					if(posture.TAIL != null) {
+						posture.TAIL.pitch = -posture.TORSO.pitch + (isGrounded ? -9 : posture.TAIL.pitch);
+					}
 				}
 		);
 	}
@@ -63,40 +102,14 @@ public class DuckWaddle implements GroundedActionDefinition {
 	private static final Identifier DUCK_AIR_ANIM_ID = MarioQuaMario.makeResID("duck_air");
 	public static PiecemealPlayermodelAnimation makeDuckAnimation(boolean walking, boolean airborne) {
 		return new PiecemealPlayermodelAnimation(
-				null,
-				new ProgressHandler(
-						airborne ? DUCK_AIR_ANIM_ID : DUCK_ANIM_ID,
-						(data, prevAnimationID) ->
-								!DUCK_ANIM_ID.equals(prevAnimationID) && !(airborne && DUCK_AIR_ANIM_ID.equals(prevAnimationID)),
-						(data, ticksPassed) -> switch(ticksPassed) {
-							case 0 -> 0.6F;
-							case 1 -> 1.21F;
-							case 2 -> 1.45F;
-							default -> 1;
-						}),
-				null,
-
-				new BodyPartAnimation((data, arrangement, progress) -> {
-					arrangement.addPos(0, progress * 12.2F, progress * -3.5F);
-					if(progress > 1) arrangement.z -= 2 * (progress - 1);
-				}),
-				new BodyPartAnimation((data, arrangement, progress) -> {
-					arrangement.addAngles(progress * 41.65F, 0, 0);
-					arrangement.addPos(0, progress * 9.9F, progress * -3F);
-				}),
-
-				ARM, ARM, makeLegAnimation(walking), makeLegAnimation(walking),
-				new LimbAnimation(true, airborne
-						? (data, arrangement, progress) ->
-								arrangement.pitch += progress * 41.65F
-						: (data, arrangement, progress) ->
-								arrangement.pitch = 9
-				)
+				null, null,
+				null, null, null,
+				null, null, null, null, null
 		);
 	}
 
-	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
-		return makeDuckAnimation(true, false);
+	@Override public @Nullable AnimationDefinition getAnimation() {
+		return makeDuckAnimation2(true, true);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
 		return null;

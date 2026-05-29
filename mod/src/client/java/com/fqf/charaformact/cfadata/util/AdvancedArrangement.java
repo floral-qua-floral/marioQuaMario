@@ -11,6 +11,7 @@ import static net.minecraft.util.math.MathHelper.TAU;
 
 public class AdvancedArrangement extends Arrangement {
 	public static final int BEFORE_CFA_ANIMATIONS = 0;
+	public static final int AFTER_CFA_ANIMATIONS = 1;
 
 	private final Arrangement[] STORAGE;
 
@@ -36,6 +37,11 @@ public class AdvancedArrangement extends Arrangement {
 	public void resetTo(int slot) {
 		Arrangement loadFrom = this.STORAGE[slot];
 		this.setPos(loadFrom.x, loadFrom.y, loadFrom.z);
+		this.setAngles(loadFrom.pitch, loadFrom.yaw, loadFrom.roll);
+	}
+
+	public void resetAnglesTo(int slot) {
+		Arrangement loadFrom = this.STORAGE[slot];
 		this.setAngles(loadFrom.pitch, loadFrom.yaw, loadFrom.roll);
 	}
 

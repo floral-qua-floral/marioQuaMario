@@ -4,6 +4,7 @@ import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinit
 import com.fqf.charaformact_api.definitions.states.actions.util.SneakingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -20,8 +21,8 @@ public class DuckFall extends Fall implements AirborneActionDefinition {
 	    return ID;
 	}
 
-	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
-		return DuckWaddle.makeDuckAnimation(false, true);
+	@Override public @Nullable AnimationDefinition getAnimation() {
+		return DuckWaddle.makeDuckAnimation2(false, false);
 	}
 
 	@Override public @NotNull SneakingRule getSneakingRule() {

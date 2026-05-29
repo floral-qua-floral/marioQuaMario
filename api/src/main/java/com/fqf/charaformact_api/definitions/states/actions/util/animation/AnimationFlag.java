@@ -14,9 +14,11 @@ public enum AnimationFlag {
 
 	USE_RADIANS, // technically more performant i guess but god almighty i don't WANNA
 
-	CAN_RESET_ON_SELF, // animation can have its progress reset when transitioning into the exact same animation
+	CAN_RESET_ON_SELF, // animation will reset its progress when transitioning into itself, unless given DO_NOT_RESET_PROGRESS execution flag
 
 	NOT_INTERPOLATED, // by default, animations are run once per tick, and the player interpolates between the poses. this disables that
+
+	// Maybe one day I should add flags that allow an animation to ignore busy arms? Or cancel busy arm auto-positioning?
 
 	ALWAYS_WRAP_ANGLES; // mostly relevant for interpolation
 

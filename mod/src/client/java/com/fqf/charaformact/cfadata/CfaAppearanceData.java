@@ -15,7 +15,7 @@ import com.fqf.charaformact_api.appearance.TransformationInstructions;
 import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
-import net.minecraft.client.MinecraftClient;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.Arrangement;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
@@ -33,6 +33,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 import static net.minecraft.util.math.MathHelper.HALF_PI;
 
@@ -269,12 +270,12 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 				thisFramePosture.wrappedLerp(tickDelta, this.prevFramePosture, lerpTo);
 			}
 
-			if(rightArmBusy) ((AdvancedArrangement) thisFramePosture.RIGHT_ARM).resetTo(AdvancedArrangement.BEFORE_CFA_ANIMATIONS);
-			if(leftArmBusy) ((AdvancedArrangement) thisFramePosture.LEFT_ARM).resetTo(AdvancedArrangement.BEFORE_CFA_ANIMATIONS);
-
 			float horizontalScale = this.DATA.getCharacter().ANIMATION_HORIZONTAL_SCALE * this.DATA.getForm().ANIMATION_HORIZONTAL_SCALE;
 			float verticalScale = this.DATA.getCharacter().ANIMATION_VERTICAL_SCALE * this.DATA.getForm().ANIMATION_VERTICAL_SCALE;
 			thisFramePosture.scaleTranslations(horizontalScale, verticalScale);
+
+			if(rightArmBusy) handleBusyArm(thisFramePosture.RIGHT_ARM, thisFramePosture.TORSO);
+			if(leftArmBusy) handleBusyArm(thisFramePosture.LEFT_ARM, thisFramePosture.TORSO);
 
 			thisFramePosture.apply(model);
 
@@ -294,6 +295,27 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 			appearanceSection.add("Current action: ", this.DATA.getActionID());
 			throw new CrashException(report);
 		}
+	}
+
+	private static void handleBusyArm(Arrangement arm, Arrangement torso) {
+		AdvancedArrangement advArm = (AdvancedArrangement) arm;
+		AdvancedArrangement advTorso = (AdvancedArrangement) torso;
+
+		// FIRST: Calculate how vanilla wanted this arm to be positioned relative to the body.
+		// We don't need to bother storing or restoring the arm's post-animation state since we'll be totally choosing
+		// its position ourselves later anyways, and we WANT to keep its pre-animation angles.
+		advTorso.store(AdvancedArrangement.AFTER_CFA_ANIMATIONS);
+		advArm.resetTo(AdvancedArrangement.BEFORE_CFA_ANIMATIONS);
+		advTorso.resetTo(AdvancedArrangement.BEFORE_CFA_ANIMATIONS);
+		Vector3f vanillaPreferredDelta = new Vector3f(arm.x - torso.x, arm.y - torso.y, arm.z - torso.z);
+
+		// SECOND: Put the torso back where the ActiveAnimation wanted it to be.
+		advTorso.resetTo(AdvancedArrangement.AFTER_CFA_ANIMATIONS);
+
+		// THIRD: Position the arm relative to the torso's animated position, maintaining the delta that vanilla wanted.
+		arm.setPos(torso.x + vanillaPreferredDelta.x, torso.y + vanillaPreferredDelta.y, torso.z + vanillaPreferredDelta.z);
+
+		// Arm's angles are already set properly due to advArm.resetTo earlier when calculating vanilla's delta! <3
 	}
 
 	private void animateFirstPerson(PlayerEntityModel<?> model, float tickDelta) {

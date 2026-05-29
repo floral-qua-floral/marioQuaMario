@@ -31,26 +31,7 @@ public class DuckJump extends Jump implements AirborneActionDefinition {
 
 	@Override
 	public @Nullable AnimationDefinition getAnimation() {
-		return AnimationDefinition.of(
-				AnimationFlag.NO_SWING_ARMS,
-				(arrangement, data, animationTime, helper) -> arrangement.yaw = 35,
-				(posture, data, animationTime, helper) -> {
-					posture.TORSO.setAngles(90, 0, 0);
-				}
-		);
-	}
-
-	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
-		return DuckWaddle.makeDuckAnimation(false, true).variate(
-				null, null,
-				new EntireBodyAnimation(0.0F, true, (data, arrangement, progress) -> {
-					float tilt_progress = Easing.clampedRangeToProgress(data.getYVel(), -0.0, 0.4);
-					arrangement.pitch = (tilt_progress * 2 - 1) * 15F;
-				}),
-				null, null,
-				null, null,
-				null, null, null
-		);
+		return DuckWaddle.makeDuckAnimation2(false, false);
 	}
 
 	@Override public @NotNull SneakingRule getSneakingRule() {
