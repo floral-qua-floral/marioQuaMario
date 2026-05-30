@@ -45,6 +45,48 @@ public class ClimbPole implements GenericActionDefinition {
 		return Entity.adjustMovementForCollisions(data.getPlayer(), offset, cameraBox, data.getPlayer().getWorld(), List.of());
 	}
 
+	@Override public @Nullable AnimationDefinition getAnimation() {
+		return AnimationDefinition.of(
+				AnimationFlag.NO_SWING_LIMBS,
+				(arrangement, data, animationTime, helper) -> {
+					Vec3d offset = getMaximumOffset(data, 0.1).multiply(16);
+					arrangement.z += (float) offset.horizontalLength();
+				},
+				(posture, data, animationTime, helper) -> {
+					ClimbVars vars = data.retrieveStateData(ClimbVars.class);
+					double factorForInput = 1 / ClimbPole.CLIMB_SPEED.get(data);
+					vars.progress += (float) (data.getYVel() * factorForInput) / 2;
+					float climbProgress = MathHelper.sin(vars.progress);
+
+					posture.TORSO.yaw += climbProgress * -15;
+
+					helper.asymmetricallyAnimate(posture.RIGHT_ARM, posture.LEFT_ARM, (arrangement, isLeft, sideFactor) -> {
+						arrangement.y += climbProgress * 1.9F * sideFactor;
+						arrangement.addAngles(
+								-140 + 20 * climbProgress * sideFactor,
+								-20 * sideFactor,
+								0
+						);
+					});
+
+					helper.asymmetricallyAnimate(posture.RIGHT_LEG, posture.LEFT_LEG, (arrangement, isLeft, sideFactor) -> {
+						arrangement.addPos(
+								0,
+								-3 + climbProgress * -3 * sideFactor,
+								-3.7F
+						);
+						arrangement.pitch -= 10 + climbProgress * 20 * sideFactor;
+					});
+
+					if(posture.TAIL != null) {
+						posture.TAIL.pitch = 60;
+						if(data.getVelocity().lengthSquared() > 0.1)
+							posture.TAIL.roll += climbProgress * 30;
+					}
+				}
+		);
+	}
+
 	private static LimbAnimation makeArmAnimation(int factor) {
 	    return new LimbAnimation(false, (data, arrangement, progress) -> {
 			arrangement.pitch -= 140 + progress * -20 * factor;

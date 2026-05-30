@@ -41,6 +41,13 @@ public abstract class AnimationDefinition {
 	}
 
 	public static AnimationDefinition of(
+			ArrangementMutator modelArranger,
+			PostureMutator mutator
+	) {
+		return of(null, null, null, modelArranger, mutator);
+	}
+
+	public static AnimationDefinition of(
 			EnumSet<AnimationFlag> flags,
 			BiFunction<CfaAnimatingData, Identifier, EnumSet<AnimationFlag.Execution>> executionFlagger,
 			PostureMutator mutator

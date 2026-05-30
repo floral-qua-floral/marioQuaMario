@@ -23,19 +23,8 @@ public class Swim extends Submerged {
 	    return ID;
 	}
 
-	@Override
-	public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
-		return Objects.requireNonNull(Submerged.makeAnimation(helper).variate(
-				null,
-				new ProgressHandler(
-						null,
-						(data, prevAnimationID) -> true, // Always reset animation progress when entering this action
-						(data, ticksPassed) -> Math.min(ticksPassed / 6F, 1)
-				),
-				null, null, null,
-				null, null, null, null,
-				null
-		));
+	@Override protected float getAnimationProgress(float animationTime) {
+		return Math.min(animationTime / 2, 3);
 	}
 
 	public static final CfaStat SWIM_ACCEL = new CfaStat(0.4, SWIMMING, UP, ACCELERATION);

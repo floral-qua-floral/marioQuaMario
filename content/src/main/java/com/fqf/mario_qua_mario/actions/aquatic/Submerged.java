@@ -20,6 +20,7 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
@@ -31,66 +32,56 @@ public class Submerged implements AquaticActionDefinition {
 		return ID;
 	}
 
-	private static LimbAnimation makeArmAnimation(int factor, AnimationHelper helper) {
-		return new LimbAnimation(false, (data, arrangement, progress) -> {
-			arrangement.roll *= -1;
-			float threeProgress = progress * 3;
-			arrangement.addAngles(
-					helper.interpolateKeyframes(threeProgress,
-							-75,
-							-75,
-							-75,
-							-50
-					),
-					helper.interpolateKeyframes(threeProgress,
-							factor * 5,
-							factor * 5,
-							factor * -165F,
-							factor * -40
-					),
-					helper.interpolateKeyframes(threeProgress,
-							factor * 125,
-							factor * 125,
-							factor * 100,
-							factor * 60
-					)
-			);
-		});
+	protected float getAnimationProgress(float animationTime) {
+		return 3;
 	}
-	private static LimbAnimation makeLegAnimation(int factor) {
-		return new LimbAnimation(true, (data, arrangement, progress) -> {
-			arrangement.pitch *= 0.5F;
-			arrangement.addPos(
-					factor * -0.675F,
-					-1.2F,
-					-1.8F
-			);
-			arrangement.addAngles(
-					50,
-					factor * 6,
-					0
-			);
-		});
-	}
-	public static PiecemealPlayermodelAnimation makeAnimation(AnimationHelper helper) {
-		return new PiecemealPlayermodelAnimation(
-				null,
-				null,
-				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
 
-				}),
-				null,
-				new BodyPartAnimation((data, arrangement, progress) -> {
-					arrangement.pitch += 15;
-				}),
-				makeArmAnimation(1, helper), makeArmAnimation(-1, helper),
-				makeLegAnimation(1), makeLegAnimation(-1),
-				null
+	@Override public @Nullable AnimationDefinition getAnimation() {
+		return AnimationDefinition.of(
+				EnumSet.of(AnimationFlag.NO_RIGHT_ARM_SWING, AnimationFlag.NO_LEFT_ARM_SWING, AnimationFlag.CAN_RESET_ON_SELF),
+				(posture, data, animationTime, helper) -> {
+					posture.TORSO.pitch += 15;
+
+					float progress = this.getAnimationProgress(animationTime);
+					helper.symmetricallyAnimate(posture, posture.RIGHT_ARM, arrangement -> {
+						arrangement.roll *= -1;
+						arrangement.addAngles(
+								helper.interpolateKeyframes(progress,
+										-75,
+										-75,
+										-75,
+										-50
+								),
+								helper.interpolateKeyframes(progress,
+										5,
+										5,
+										-165F,
+										-40
+								),
+								helper.interpolateKeyframes(progress,
+										125,
+										125,
+										100,
+										60
+								)
+						);
+					});
+
+					helper.symmetricallyAnimate(posture, posture.RIGHT_LEG, arrangement -> {
+						arrangement.pitch *= 0.5F;
+						arrangement.addPos(
+								-0.675F,
+								-1.2F,
+								-1.8F
+						);
+						arrangement.addAngles(
+								50,
+								6,
+								0
+						);
+					});
+				}
 		);
-	}
-
-	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
-		return makeAnimation(helper);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
 		return null;

@@ -3,7 +3,7 @@ package com.fqf.charaformact_api.definitions.states.actions.util.animation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class Posture {
+public abstract class Posture {
 	public final @NotNull Arrangement HEAD, TORSO;
 	public final @NotNull Arrangement RIGHT_ARM, LEFT_ARM;
 	public final @NotNull Arrangement RIGHT_LEG, LEFT_LEG;

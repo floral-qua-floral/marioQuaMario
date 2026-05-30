@@ -33,7 +33,44 @@ public class LongJump extends Jump implements AirborneActionDefinition {
 	    return ID;
 	}
 
-//	private static LimbAnimation makeArmAnimation(AnimationHelper helper, int factor) {
+	@Override public @Nullable AnimationDefinition getAnimation() {
+		return AnimationDefinition.of(
+				AnimationFlag.NO_SWING_LIMBS,
+				(posture, data, animationTime, helper) -> {
+					float progress = animationTime / 8;
+
+					positionOffset(helper, progress, posture.HEAD);
+
+					float interpProgress = interpProgress(helper, progress);
+					posture.TORSO.pitch += helper.interpolateKeyframes(interpProgress * BODY_ROTATION_SPEED, 33, -26, 36);
+					positionOffset(helper, interpProgress, posture.TORSO);
+
+					float rotationProgress = rotationProgress(progress);
+					posture.RIGHT_ARM.addAngles(
+							helper.interpolateKeyframes(interpProgress, 0, -75 + MathHelper.sin(rotationProgress) * 28.5F, 65),
+							helper.interpolateKeyframes(interpProgress, 0, 63 + MathHelper.cos(rotationProgress) * 41, -5),
+							helper.interpolateKeyframes(interpProgress, 70, 0, 30)
+					);
+					positionOffset(helper, interpProgress, posture.RIGHT_ARM);
+
+					float leftArmRotationProgress = rotationProgress + MathHelper.PI * 0.7F;
+					posture.LEFT_ARM.addAngles(
+							helper.interpolateKeyframes(interpProgress, -90, -75 + MathHelper.cos(leftArmRotationProgress) * 28.5F, 65),
+							helper.interpolateKeyframes(interpProgress, 0, -63 + MathHelper.sin(leftArmRotationProgress) * 41, 5),
+							helper.interpolateKeyframes(interpProgress, 0, 0, -30)
+					);
+					positionOffset(helper, interpProgress, posture.LEFT_ARM);
+
+					helper.symmetricallyAnimate(posture, posture.RIGHT_LEG, (arrangement, isLeft, sideFactor) -> {
+						arrangement.pitch += helper.interpolateKeyframes(interpProgress, 17, -5 + MathHelper.sin(rotationProgress) * sideFactor * 56.6F, -57);
+						arrangement.y += helper.interpolateKeyframes(interpProgress * BODY_ROTATION_SPEED, -1.92F, -0.8F, 0);
+						arrangement.z += helper.interpolateKeyframes(interpProgress * BODY_ROTATION_SPEED, 2, -4.2F, 5);
+					});
+				}
+		);
+	}
+
+	//	private static LimbAnimation makeArmAnimation(AnimationHelper helper, int factor) {
 //		return new LimbAnimation(false, (data, arrangement, progress) -> {
 //			arrangement.addAngles(
 //					helper.interpolateKeyframes(progress, 0, 0),

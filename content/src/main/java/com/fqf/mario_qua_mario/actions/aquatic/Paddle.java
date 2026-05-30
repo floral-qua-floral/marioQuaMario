@@ -31,47 +31,42 @@ public class Paddle implements AquaticActionDefinition {
 		return ID;
 	}
 
-	private static LimbAnimation makeArmAnimation(int factor) {
-	    return new LimbAnimation(false, (data, arrangement, progress) -> {
-			arrangement.roll *= -1;
-			arrangement.addAngles(
-					17.5F - factor * MathHelper.sin(progress) * 1,
-					0,
-					factor * 2
-			);
-	    });
-	}
-	private static LimbAnimation makeLegAnimation(int factor) {
-	    return new LimbAnimation(false, (data, arrangement, progress) -> {
-			arrangement.pitch *= 0.5F;
-			arrangement.addPos(
-					factor * -0.675F,
-					-2,
-					2F
-			);
-			arrangement.addAngles(
-					50 + factor * MathHelper.sin(progress) * 30,
-					factor * 6,
-					0
-			);
-	    });
-	}
-	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
-		return new PiecemealPlayermodelAnimation(
-				null,
-				new ProgressHandler((data, ticksPassed) -> ticksPassed / 1.5F),
-				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
-					arrangement.y -= 2;
-					arrangement.z -= 4;
-				}),
-				null,
-				new BodyPartAnimation((data, arrangement, progress) -> {
-					arrangement.pitch += 27.5F;
-					arrangement.yaw += MathHelper.sin(progress) * 5;
-				}),
-				makeArmAnimation(1), makeArmAnimation(-1),
-				makeLegAnimation(1), makeLegAnimation(-1),
-				null
+	@Override public @Nullable AnimationDefinition getAnimation() {
+		return AnimationDefinition.of(
+				AnimationFlag.NO_SWING_LIMBS,
+				(arrangement, data, animationTime, helper) -> arrangement.addPos(0, -2, -4),
+				(posture, data, animationTime, helper) -> {
+					float progress = animationTime / 1.5F;
+
+					posture.TORSO.addAngles(
+							27.5F,
+							MathHelper.sin(progress) * 5,
+							0
+					);
+
+					helper.asymmetricallyAnimate(posture.RIGHT_ARM, posture.LEFT_ARM, (arrangement, isLeft, sideFactor) -> {
+						arrangement.roll *= -1;
+						arrangement.addAngles(
+								17.5F - sideFactor * MathHelper.sin(progress) * 1,
+								0,
+								sideFactor * 2
+						);
+					});
+
+					helper.asymmetricallyAnimate(posture.RIGHT_LEG, posture.LEFT_LEG, (arrangement, isLeft, sideFactor) -> {
+						arrangement.addPos(
+								sideFactor * -0.675F,
+								-2,
+								2F
+						);
+						arrangement.pitch *= 0.5F;
+						arrangement.addAngles(
+								50 + sideFactor * MathHelper.sin(progress) * 30,
+								sideFactor * 6,
+								0
+						);
+					});
+				}
 		);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {

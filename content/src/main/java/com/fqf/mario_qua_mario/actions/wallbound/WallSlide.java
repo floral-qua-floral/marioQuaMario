@@ -35,154 +35,146 @@ public class WallSlide implements WallboundActionDefinition {
 		return ID;
 	}
 
-	private static LimbAnimation makeArmAnimation(AnimationHelper helper, int factor) {
-		return new LimbAnimation(false, (data, arrangement, progress) -> {
-			float poseProgress = Math.abs(progress);
-			float inversion = Math.signum(progress);
-			boolean isTrailingLimb = inversion == factor;
-
-			arrangement.addAngles(
-					helper.interpolateKeyframes(poseProgress,
-							0,
-							0,
-							isTrailingLimb ? 0 : 50
-					),
-					factor * helper.interpolateKeyframes(poseProgress,
-							isTrailingLimb ? 65 : 0,
-							0,
-							isTrailingLimb ? -54 : -38
-					),
-					factor * helper.interpolateKeyframes(poseProgress,
-							isTrailingLimb ? 175 : 0,
-							isTrailingLimb ? 175 : 0,
-							isTrailingLimb ? 175 : -50
-					)
-			);
-
-			arrangement.addPos(
-					helper.interpolateKeyframes(poseProgress,
-							factor * (isTrailingLimb ? -1 : 0),
-							inversion * (isTrailingLimb ? -1 : -0.8F),
-							0
-					),
-					helper.interpolateKeyframes(poseProgress,
-							0,
-							isTrailingLimb ? -0.5F : 1.5F,
-							isTrailingLimb ? 0 : -0.5F
-					),
-					helper.interpolateKeyframes(poseProgress,
-							isTrailingLimb ? -1.15F : 0,
-							0,
-							isTrailingLimb ? 0 : 1
-					)
-			);
-		});
+	private static float calculateDeviation(CfaAnimatingData data, AnimationHelper helper) {
+		return MathHelper.subtractAngles(data.getPlayer().bodyYaw,
+				Objects.requireNonNull(helper.getWallInfo(data)).getWallYaw()) / 180 * 2;
 	}
-	private static LimbAnimation makeLegAnimation(AnimationHelper helper, int factor) {
-		return new LimbAnimation(false, (data, arrangement, progress) -> {
-			float poseProgress = Math.abs(progress);
-			float inversion = Math.signum(progress);
-			boolean isTrailingLimb = inversion == factor;
-			boolean isRight = factor == 1;
 
-			arrangement.addAngles(
-					helper.interpolateKeyframes(poseProgress,
-							isTrailingLimb ? 27.5F : -25,
-							isTrailingLimb ? 10 : 20,
-							isTrailingLimb ? 25 : 12
-					),
-					helper.interpolateKeyframes(poseProgress,
-							factor * (isTrailingLimb ? -60 : 50),
-							inversion * (isTrailingLimb ? -3 : -60),
-							factor * (isTrailingLimb ? -23 : 30)
-					),
-					helper.interpolateKeyframes(poseProgress,
-							factor * (isTrailingLimb ? 0 : -30),
-							inversion * (isTrailingLimb ? 11 : 20),
-							0
-					)
-			);
-			arrangement.addPos(
-					helper.interpolateKeyframes(poseProgress,
-							factor * (isTrailingLimb ? 1.6F : 0),
-							inversion * (isTrailingLimb ? -1.4F : -2),
-							factor * (isTrailingLimb ? 0.4F : 0)
-					),
-					helper.interpolateKeyframes(poseProgress,
-							isTrailingLimb ? -4.6F : 0,
-							isTrailingLimb ? -4.6F : -0.5F,
-							isTrailingLimb ? -4.6F : -2F
-					),
-					helper.interpolateKeyframes(poseProgress,
-							isTrailingLimb ? -3.2F : 0,
-							isTrailingLimb ? -3.5F : 1.5F,
-							isTrailingLimb ? -3.5F : 0
-					)
-			);
-		});
-	}
-	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
-		return new PiecemealPlayermodelAnimation(
-				null,
-				new ProgressHandler((data, ticksPassed) -> {
-					float deviation = MathHelper.subtractAngles(data.getPlayer().bodyYaw, Objects.requireNonNull(helper.getWallInfo(data)).getWallYaw());
-					return deviation / 180 * 2;
-				}),
-				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
-					float poseProgress = Math.abs(progress);
-					float inversion = Math.signum(progress);
+	@Override public @Nullable AnimationDefinition getAnimation() {
+		return AnimationDefinition.of(
+				AnimationFlag.NO_SWING_LIMBS,
+				(arrangement, data, animationTime, helper) -> {
+					float deviation = calculateDeviation(data, helper);
+					float pose = Math.abs(deviation);
+					float inversion = Math.signum(deviation);
 
-					arrangement.yaw += helper.interpolateKeyframes(poseProgress,
+					arrangement.addPos(
+							helper.interpolateKeyframes(pose,
+									0,
+									inversion * -1.85F,
+									0
+							),
+							0,
+							helper.interpolateKeyframes(pose,
+									-0.5F,
+									0,
+									1
+							)
+					);
+					arrangement.yaw += helper.interpolateKeyframes(pose,
 							inversion * 25,
 							0,
 							inversion * -36
 					);
+				},
+				(posture, data, animationTime, helper) -> {
+					float deviation = calculateDeviation(data, helper);
+					float pose = Math.abs(deviation);
+					float inversion = Math.signum(deviation);
 
-					arrangement.x += helper.interpolateKeyframes(poseProgress,
-							0,
-							inversion * -1.85F,
-							0
-					);
-					arrangement.z += helper.interpolateKeyframes(poseProgress,
-							-0.5F,
-							0,
-							1
-					);
-				}),
-				null,
-				new BodyPartAnimation((data, arrangement, progress) -> {
-					float poseProgress = Math.abs(progress);
-					float inversion = Math.signum(progress);
+					/*TORSO*/ {
+						posture.TORSO.z += helper.interpolateKeyframes(pose,
+								1,
+								0,
+								0
+						);
+						posture.TORSO.addAngles(
+								helper.interpolateKeyframes(pose,
+										4,
+										10,
+										0
+								),
+								helper.interpolateKeyframes(pose,
+										inversion * -2,
+										inversion * -10,
+										0
+								),
+								helper.interpolateKeyframes(pose,
+										0,
+										inversion * 8,
+										0
+								)
+						);
+					}
 
-					arrangement.addAngles(
-							helper.interpolateKeyframes(poseProgress,
-									4,
-									10,
-									0
-							),
-							helper.interpolateKeyframes(poseProgress,
-									inversion * -2,
-									inversion * -10,
-									0
-							),
-							helper.interpolateKeyframes(poseProgress,
-									0,
-									inversion * 8,
-									0
-							)
-					);
-					arrangement.z += helper.interpolateKeyframes(poseProgress,
-							1,
-							0,
-							0
-					);
-				}),
-				makeArmAnimation(helper, 1), makeArmAnimation(helper, -1),
-				makeLegAnimation(helper, 1), makeLegAnimation(helper, -1),
-				null
+					helper.asymmetricallyAnimate(posture.RIGHT_ARM, posture.LEFT_ARM, (arrangement, isLeft, sideFactor) -> {
+						boolean isTrailingLimb = inversion == sideFactor;
+						arrangement.addPos(
+								helper.interpolateKeyframes(pose,
+										sideFactor * (isTrailingLimb ? -1 : 0),
+										inversion * (isTrailingLimb ? -1 : -0.8F),
+										0
+								),
+								helper.interpolateKeyframes(pose,
+										0,
+										isTrailingLimb ? -0.5F : 1.5F,
+										isTrailingLimb ? 0 : -0.5F
+								),
+								helper.interpolateKeyframes(pose,
+										isTrailingLimb ? -1.15F : 0,
+										0,
+										isTrailingLimb ? 0 : 1
+								)
+						);
+						arrangement.addAngles(
+								helper.interpolateKeyframes(pose,
+										0,
+										0,
+										isTrailingLimb ? 0 : 50
+								),
+								sideFactor * helper.interpolateKeyframes(pose,
+										isTrailingLimb ? 65 : 0,
+										0,
+										isTrailingLimb ? -54 : -38
+								),
+								sideFactor * helper.interpolateKeyframes(pose,
+										isTrailingLimb ? 175 : 0,
+										isTrailingLimb ? 175 : 0,
+										isTrailingLimb ? 175 : -50
+								)
+						);
+					});
+
+					helper.asymmetricallyAnimate(posture.RIGHT_LEG, posture.LEFT_LEG, (arrangement, isLeft, sideFactor) -> {
+						boolean isTrailingLimb = inversion == sideFactor;
+						arrangement.addPos(
+								helper.interpolateKeyframes(pose,
+										sideFactor * (isTrailingLimb ? 1.6F : 0),
+										inversion * (isTrailingLimb ? -1.4F : -2),
+										sideFactor * (isTrailingLimb ? 0.4F : 0)
+								),
+								helper.interpolateKeyframes(pose,
+										isTrailingLimb ? -4.6F : 0,
+										isTrailingLimb ? -4.6F : -0.5F,
+										isTrailingLimb ? -4.6F : -2F
+								),
+								helper.interpolateKeyframes(pose,
+										isTrailingLimb ? -3.2F : 0,
+										isTrailingLimb ? -3.5F : 1.5F,
+										isTrailingLimb ? -3.5F : 0
+								)
+						);
+						arrangement.addAngles(
+								helper.interpolateKeyframes(pose,
+										isTrailingLimb ? 27.5F : -25,
+										isTrailingLimb ? 10 : 20,
+										isTrailingLimb ? 25 : 12
+								),
+								helper.interpolateKeyframes(pose,
+										sideFactor * (isTrailingLimb ? -60 : 50),
+										inversion * (isTrailingLimb ? -3 : -60),
+										sideFactor * (isTrailingLimb ? -23 : 30)
+								),
+								helper.interpolateKeyframes(pose,
+										sideFactor * (isTrailingLimb ? 0 : -30),
+										inversion * (isTrailingLimb ? 11 : 20),
+										0
+								)
+						);
+					});
+				}
 		);
 	}
-
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
 		return null;
 	}

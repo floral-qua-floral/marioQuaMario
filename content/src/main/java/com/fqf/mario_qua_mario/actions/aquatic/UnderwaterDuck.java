@@ -26,7 +26,7 @@ public class UnderwaterDuck implements AquaticActionDefinition {
 	}
 
 	@Override public @Nullable AnimationDefinition getAnimation() {
-		return DuckWaddle.makeDuckAnimation2(true, true);
+		return DuckWaddle.makeDuckAnimation2(true, false);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
 		return null;

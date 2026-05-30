@@ -37,39 +37,14 @@ public class ClimbWall implements WallboundActionDefinition {
 		return ID;
 	}
 
-	private static LimbAnimation makeArmAnimation(int factor) {
-	    return new LimbAnimation(false, (data, arrangement, progress) -> {
-			ClimbOmniDirectionalVars vars = data.retrieveStateData(ClimbOmniDirectionalVars.class);
-			arrangement.addAngles(
-					-110 + (-30 * Math.abs(vars.yComponent) * (1 - Math.abs(vars.xComponent))) + (progress * -20 * factor * vars.yComponent),
-					factor * (24 * Math.abs(vars.xComponent) + 20 * progress * vars.xComponent),
-					0
-			);
-			arrangement.y -= progress * 1.9F * factor * vars.yComponent;
-	    });
-	}
-	private static LimbAnimation makeLegAnimation(int factor) {
-	    return new LimbAnimation(false, (data, arrangement, progress) -> {
-			ClimbOmniDirectionalVars vars = data.retrieveStateData(ClimbOmniDirectionalVars.class);
-//			boolean isRight = factor == 1;
-//			float pseudoProgress = isRight ? progress : MathHelper.cos(vars.progress);
-			float yawRollAdjustment = factor * (3 * Math.abs(vars.xComponent) + 16 * progress * vars.xComponent);
-			arrangement.addAngles(
-					-10 + progress * -20 * factor * vars.yComponent,
-					yawRollAdjustment,
-					yawRollAdjustment
-			);
-			arrangement.y -= 3 + progress * 3 * factor * vars.yComponent;
-			arrangement.z -= 3.7F;
-	    });
-	}
 	protected float getEntireBodyZOffset(CfaReadableMotionData data) {
 		return 2.25F;
 	}
-	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
-	    return new PiecemealPlayermodelAnimation(
-	            null,
-	            new ProgressHandler((data, ticksPassed) -> {
+	@Override public @Nullable AnimationDefinition getAnimation() {
+		return AnimationDefinition.of(
+				AnimationFlag.NO_SWING_LIMBS,
+				(arrangement, data, animationTime, helper) -> arrangement.z += this.getEntireBodyZOffset(data),
+				(posture, data, animationTime, helper) -> {
 					ClimbOmniDirectionalVars vars = data.retrieveStateData(ClimbOmniDirectionalVars.class);
 					WallInfo wall = helper.getWallInfo(data);
 					assert wall != null;
@@ -85,25 +60,41 @@ public class ClimbWall implements WallboundActionDefinition {
 						vars.yComponent = (float) climbInput / denominator;
 					}
 
-					return MathHelper.sin(data.retrieveStateData(ClimbOmniDirectionalVars.class).progress);
-				}),
-	            new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
-					arrangement.z += this.getEntireBodyZOffset(data);
-	            }),
-	            null,
-				new BodyPartAnimation((data, arrangement, progress) -> {
-					arrangement.yaw += progress * 15;
-				}),
-	            makeArmAnimation(1), makeArmAnimation(-1),
-	            makeLegAnimation(1), makeLegAnimation(-1),
-	            new LimbAnimation(true, (data, arrangement, progress) -> {
-					arrangement.pitch = 60;
-					if(data.getVelocity().lengthSquared() > 0.1)
-						arrangement.roll -= progress * 30;
-				})
-	    );
-	}
+					float progress = MathHelper.sin(data.retrieveStateData(ClimbOmniDirectionalVars.class).progress);
 
+					posture.TORSO.yaw += progress * 15;
+
+					helper.asymmetricallyAnimate(posture.RIGHT_ARM, posture.LEFT_ARM, (arrangement, isLeft, sideFactor) -> {
+						arrangement.y -= progress * 1.9F * sideFactor * vars.yComponent;
+						arrangement.addAngles(
+								-110 + (-30 * Math.abs(vars.yComponent) * (1 - Math.abs(vars.xComponent))) + (progress * -20 * sideFactor * vars.yComponent),
+								sideFactor * (24 * Math.abs(vars.xComponent) + 20 * progress * vars.xComponent),
+								0
+						);
+					});
+
+					helper.asymmetricallyAnimate(posture.RIGHT_LEG, posture.LEFT_LEG, (arrangement, isLeft, sideFactor) -> {
+						arrangement.addPos(
+								0,
+								-3 + progress * -3 * sideFactor * vars.yComponent,
+								-3.7F
+						);
+						float yawRollAdjustment = sideFactor * (3 * Math.abs(vars.xComponent) + 16 * progress * vars.xComponent);
+						arrangement.addAngles(
+								-10 + progress * -20 * sideFactor * vars.yComponent,
+								yawRollAdjustment,
+								yawRollAdjustment
+						);
+					});
+
+					if(posture.TAIL != null) {
+						posture.TAIL.pitch = 60;
+						if(data.getVelocity().lengthSquared() > 0.1)
+							posture.TAIL.roll -= progress * 30;
+					}
+				}
+		);
+	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
 		return null;
 	}
