@@ -96,9 +96,6 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 		return this.isEnabled() && this.currentCameraAnimation != null && !this.getPlayer().isSleeping();
 	}
 
-	public float preCameraAnimYaw;
-	public float postCameraAnimYaw;
-
 	public void mutateCamera(AdvancedArrangement cameraArrangement, float tickDelta) {
 		float cameraAnimationTime = (float) (this.getPlayer().getWorld().getTime() - this.cameraAnimationStartTime - 1) + tickDelta;
 

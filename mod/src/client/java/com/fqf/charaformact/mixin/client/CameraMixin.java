@@ -58,9 +58,6 @@ public abstract class CameraMixin {
 						MathHelper.lerp(tickDelta, focusedEntity.prevY, focusedEntity.getY()),
 						MathHelper.lerp(tickDelta, focusedEntity.prevZ, focusedEntity.getZ())
 				);
-
-				player.cfa$getCfaData().preCameraAnimYaw = this.getYaw();
-
 				Vec3d cameraRelativePos = this.getPos().subtract(playerPos);
 				this.CAMERA_ARRANGEMENT.setPos((float) cameraRelativePos.x, (float) cameraRelativePos.y, (float) cameraRelativePos.z);
 				this.CAMERA_ARRANGEMENT.setAngles(this.getPitch(), this.getYaw(), 0);
@@ -70,8 +67,6 @@ public abstract class CameraMixin {
 				this.setPos(playerPos.add(this.CAMERA_ARRANGEMENT.x, this.CAMERA_ARRANGEMENT.y, this.CAMERA_ARRANGEMENT.z));
 				this.CAMERA_ARRANGEMENT.multiplyAngles(MathHelper.RADIANS_PER_DEGREE);
 				this.setRotationRads(this.CAMERA_ARRANGEMENT.pitch, this.CAMERA_ARRANGEMENT.yaw, this.CAMERA_ARRANGEMENT.roll);
-
-				player.cfa$getCfaData().postCameraAnimYaw = this.getYaw();
 
 				MinecraftClient.getInstance().worldRenderer.scheduleTerrainUpdate();
 			}

@@ -2,8 +2,10 @@ package com.fqf.charaformact.mixin.client;
 
 import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.cfadata.CfaServerPlayerData;
+import com.fqf.charaformact.cfadata.util.ActiveAnimation;
 import com.fqf.charaformact_api.definitions.states.FormDefinition;
 import com.fqf.charaformact.cfadata.CfaMainClientData;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.MinecraftClient;
@@ -90,7 +92,15 @@ public class InGameHudMixin {
 
 		renderText(context, 7, clientData.getActionID() + " VS " + serverData.getActionID(),
 				clientData.getActionID().equals(serverData.getActionID()) ? Colors.WHITE : Colors.LIGHT_RED);
-		renderText(context, 6, "CameraYaw (Pre, Post): ", clientData.preCameraAnimYaw, clientData.postCameraAnimYaw);
+		ActiveAnimation currentAnimation = mainPlayer.cfa$getAppearanceData().getCurrentAnimation();
+		String animationString;
+		if(currentAnimation == null) animationString = "None";
+		else {
+			if(currentAnimation.ANIMATION.ID == null) animationString = "Unidentified";
+			else animationString = currentAnimation.ANIMATION.ID.toString();
+			if(currentAnimation.EXECUTION_FLAGS.contains(AnimationFlag.Execution.MIRROR)) animationString += " (Mirrored)";
+		}
+		renderText(context, 6, "Animation: " + animationString);
 		renderText(context, 5, "FallDistance (C, S): ", mainPlayer.fallDistance, serverSidedMainPlayer.fallDistance);
 
 		renderText(context, 9, "In unloaded chunk: " + clientData.isInUnloadedChunks());
