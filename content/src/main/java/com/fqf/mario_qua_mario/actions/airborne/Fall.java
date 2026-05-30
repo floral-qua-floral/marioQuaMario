@@ -28,16 +28,6 @@ public class Fall implements AirborneActionDefinition {
 	    return ID;
 	}
 
-	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
-		return new PiecemealPlayermodelAnimation(
-				null, null,
-				null,
-				null, null,
-				null, null,
-				null, null,
-				null
-		);
-	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
 		return null;
 	}

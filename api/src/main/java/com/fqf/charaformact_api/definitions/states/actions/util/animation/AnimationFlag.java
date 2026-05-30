@@ -29,7 +29,7 @@ public enum AnimationFlag {
 
 	public enum Execution {
 		MIRROR, // Mirrors the animation horizontally
-		PRESERVE_MIRRORING, // Copies the mirroring status of the previous animation. TODO: Implement???
+//		PRESERVE_MIRRORING, // Copies the mirroring status of the previous animation. TODO: Implement???
 		DO_NOT_RESET_PROGRESS; // Applying this while entering an animation prevents it from resetting tick progress!
 
 		public static final EnumSet<Execution> NONE = EnumSet.noneOf(Execution.class);

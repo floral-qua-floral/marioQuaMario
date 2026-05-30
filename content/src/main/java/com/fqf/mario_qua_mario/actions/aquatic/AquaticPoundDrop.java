@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario.actions.aquatic;
 
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.cfadata.*;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -30,9 +31,10 @@ public class AquaticPoundDrop implements AquaticActionDefinition {
 		return ID;
 	}
 
-	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
-		return GroundPoundDrop.makeAnimation(helper);
+	@Override public @Nullable AnimationDefinition getAnimation() {
+		return GroundPoundDrop.ANIMATION;
 	}
+
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
 		return null;
 	}

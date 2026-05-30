@@ -35,21 +35,21 @@ public class Jump extends Fall implements AirborneActionDefinition {
 	@Override public @Nullable AnimationDefinition getAnimation() {
 		return AnimationDefinition.of(
 				AnimationFlag.NO_SWING_LIMBS,
-				(data, prevAnimationID) -> {
+				(data, prevAnimationID) -> { // Tries to raise a non-busy hand that won't block player's face.
 					switch(data.getCurrentHandPreference()) {
 						case PREFER_RIGHT -> {
-							return EnumSet.noneOf(AnimationFlag.Execution.class);
+							return AnimationFlag.Execution.NONE;
 						}
 						case PREFER_LEFT -> {
-							return EnumSet.of(AnimationFlag.Execution.MIRROR);
+							return AnimationFlag.Execution.ONLY_MIRROR;
 						}
 						default -> {
-							if(Math.abs(data.getRelativeHeadYawDegrees()) > 55) {
-								if(data.getRelativeHeadYawRadians() > 0) return EnumSet.of(AnimationFlag.Execution.MIRROR);
-								else return EnumSet.noneOf(AnimationFlag.Execution.class);
+							if(Math.abs(data.getRelativeHeadYawDegrees()) > 50) {
+								if(data.getRelativeHeadYawRadians() > 0) return AnimationFlag.Execution.ONLY_MIRROR;
+								else return AnimationFlag.Execution.NONE;
 							}
-							if(data.getPlayer().getRandom().nextBoolean()) return EnumSet.of(AnimationFlag.Execution.MIRROR);
-							else return EnumSet.noneOf(AnimationFlag.Execution.class);
+							if(data.getPlayer().getRandom().nextBoolean()) return AnimationFlag.Execution.ONLY_MIRROR;
+							else return AnimationFlag.Execution.NONE;
 						}
 					}
 				},

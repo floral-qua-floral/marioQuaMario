@@ -2,6 +2,8 @@ package com.fqf.mario_qua_mario.actions.airborne;
 
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.ProgressHandler;
@@ -31,18 +33,10 @@ public class GroundPoundDrop implements AirborneActionDefinition {
 	    return ID;
 	}
 
-	public static PiecemealPlayermodelAnimation makeAnimation(AnimationHelper helper) {
-		return GroundPoundFlip.makeAnimation(helper).variate(
-				null,
-				new ProgressHandler((data, ticksPassed) -> 1),
-				null, null, null,
-				null, null, null, null,
-				null
-		);
-	}
+	public static final AnimationDefinition ANIMATION = GroundPoundFlip.makeAnimation(key -> 1);
 
-	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
-		return makeAnimation(helper);
+	@Override public @Nullable AnimationDefinition getAnimation() {
+		return ANIMATION;
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
 		return null;
@@ -89,7 +83,7 @@ public class GroundPoundDrop implements AirborneActionDefinition {
 						SpecialFall.ID,
 						data -> data.getYVel() > 0 || data.getInputs().JUMP.isPressed(),
 						EvaluatorEnvironment.CLIENT_ONLY,
-						data -> data.getInputs().DUCK.isPressed(), // Unbuffer duck to make Ground Pound stalling harder
+						data -> data.getInputs().DUCK.isPressed(), // Unbuffer duck to make Ground Pound stalling less trivial
 						(data, isSelf, seed) -> data.stopStoredSound(MarioSFX.GROUND_POUND_DROP)
 				)
 		);

@@ -8,8 +8,8 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.util.CfaStat;
+import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.BonkAir;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
@@ -31,11 +31,13 @@ public class BonkGroundBackward implements GroundedActionDefinition {
 		return ID;
 	}
 
-	public static PiecemealPlayermodelAnimation makeBonkStandupAnimation(
-			AnimationHelper helper, ProgressHandler.ProgressCalculator progressCalculator
-	) {
+	public static final float STANDUP_TICKS = 8;
+	protected static final StandUpWithKneeAnimation.ProgressCalculator PROGRESS_CALCULATOR = (data, animationTime) ->
+			2 * Easing.SINE_IN_OUT.ease(Math.min(1, data.retrieveStateData(ActionTimerVars.class).actionTimer / STANDUP_TICKS));
+
+	public static AnimationDefinition makeAnimation(StandUpWithKneeAnimation.ProgressCalculator progressCalculator) {
 		return StandUpWithKneeAnimation.makeAnimation(
-				helper, progressCalculator,
+				progressCalculator,
 				1.75F, 10,
 				22.5F, -20, 0, 2,
 				-90, 5, 1.5F,
@@ -43,8 +45,8 @@ public class BonkGroundBackward implements GroundedActionDefinition {
 		);
 	}
 
-	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
-		return makeBonkStandupAnimation(helper, (data, ticksPassed) -> data.retrieveStateData(ActionTimerVars.class).actionTimer / (float) STANDUP_TICKS);
+	@Override public @Nullable AnimationDefinition getAnimation() {
+		return makeAnimation(PROGRESS_CALCULATOR);
 	}
 
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
@@ -70,8 +72,6 @@ public class BonkGroundBackward implements GroundedActionDefinition {
 
 	public static final CfaStat BONK_DRAG = new CfaStat(0.185, RUNNING, DRAG);
 	public static final CfaStat BONK_DRAG_MIN = new CfaStat(0.045, RUNNING, DRAG);
-
-	public static final int STANDUP_TICKS = 8;
 
 	@Override public @Nullable Object provideStateData(CfaData data) {
 		return new ActionTimerVars();

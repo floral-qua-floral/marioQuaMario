@@ -7,7 +7,6 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera
 import com.fqf.charaformact_api.cfadata.*;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.BodyPartAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.util.CfaStat;
@@ -36,7 +35,7 @@ public class DuckWaddle implements GroundedActionDefinition {
 	    return ID;
 	}
 
-	public static final Identifier GROUNDED_DUCK_ID = MarioQuaMario.makeID("grounded_ducking");
+	public static final Identifier ANIMATION_ID = MarioQuaMario.makeID("grounded_ducking");
 	private static float getDuckProgress(float animationTime) {
 		// We animate ducking tick by tick and rely on interpolation, rather than trying to model this using math. #lazy
 		return switch(MathHelper.floor(animationTime)) {
@@ -48,12 +47,12 @@ public class DuckWaddle implements GroundedActionDefinition {
 	}
 	public static AnimationDefinition makeDuckAnimation2(boolean isGrounded, boolean isWaddle) {
 		return AnimationDefinition.of(
-				isGrounded ? GROUNDED_DUCK_ID : MarioQuaMario.makeID("airborne_ducking"),
+				isGrounded ? ANIMATION_ID : MarioQuaMario.makeID("airborne_ducking"),
 				isWaddle ? AnimationFlag.NO_SWING_ARMS : AnimationFlag.NO_SWING_LIMBS,
 				(data, prevID) -> // If previously in a grounded duck, then do not replay the squishy crouch anim. Otherwise, do.
-						GROUNDED_DUCK_ID.equals(prevID)
+						ANIMATION_ID.equals(prevID)
 								? EnumSet.of(AnimationFlag.Execution.DO_NOT_RESET_PROGRESS)
-								: EnumSet.noneOf(AnimationFlag.Execution.class),
+								: AnimationFlag.Execution.NONE,
 				isGrounded ? null : (arrangement, data, animationTime, helper) -> // Don't need a model arranger if grounded!
 						arrangement.pitch = (Easing.clampedRangeToProgress(data.getYVel(), -0.0, 0.4) * 2 - 1) * 15F,
 				(posture, data, animationTime, helper) -> {
@@ -87,19 +86,6 @@ public class DuckWaddle implements GroundedActionDefinition {
 		);
 	}
 
-	private static final LimbAnimation ARM = new LimbAnimation(false, (data, arrangement, progress) -> {
-		arrangement.addPos(0, progress * 12.2F, -1);
-		arrangement.pitch = Easing.LINEAR.ease(Math.min(progress, 1), arrangement.pitch, -162.92F + 0.26F * Math.min(data.getPlayer().getPitch(), 0) + -1.15F * arrangement.pitch);
-		if(Math.abs(arrangement.roll) < 10) arrangement.roll = 0;
-	});
-	private static LimbAnimation makeLegAnimation(boolean walking) {
-		return new LimbAnimation(walking, (data, arrangement, progress) -> {
-			arrangement.addPos(0, progress * 0.2F, progress * -4.4F);
-			arrangement.addAngles(progress * 25, 0, 0);
-		});
-	}
-	private static final Identifier DUCK_ANIM_ID = MarioQuaMario.makeResID("duck");
-	private static final Identifier DUCK_AIR_ANIM_ID = MarioQuaMario.makeResID("duck_air");
 	public static PiecemealPlayermodelAnimation makeDuckAnimation(boolean walking, boolean airborne) {
 		return new PiecemealPlayermodelAnimation(
 				null, null,

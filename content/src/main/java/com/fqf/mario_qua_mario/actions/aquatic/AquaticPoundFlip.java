@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario.actions.aquatic;
 
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.ProgressHandler;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.cfadata.*;
@@ -26,15 +27,10 @@ public class AquaticPoundFlip implements AquaticActionDefinition {
 	}
 
 	private static final float AQUATIC_FLIP_DURATION = 7;
-	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
-		return GroundPoundFlip.makeAnimation(helper).variate(
-				null,
-				new ProgressHandler((data, ticksPassed) -> Math.min(ticksPassed / AQUATIC_FLIP_DURATION, 1)),
-				null, null, null,
-				null, null,
-				null, null, null
-		);
+	@Override public @Nullable AnimationDefinition getAnimation() {
+		return GroundPoundFlip.makeAnimation(AQUATIC_FLIP_DURATION);
 	}
+
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
 		return GroundPoundFlip.makeCameraAnimations(AQUATIC_FLIP_DURATION + 2.5F);
 	}

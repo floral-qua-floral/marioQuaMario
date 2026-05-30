@@ -1,12 +1,12 @@
 package com.fqf.mario_qua_mario.actions.aquatic;
 
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.cfadata.*;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.charaformact_api.definitions.states.actions.AquaticActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
@@ -28,9 +28,9 @@ public class AquaticPoundLand implements AquaticActionDefinition {
 
 	private static final float AQUATIC_STANDUP_TICKS = 15;
 
-	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
+	@Override public @Nullable AnimationDefinition getAnimation() {
 		return StandUpWithKneeAnimation.makeAnimation(
-				helper, (data, ticksPassed) -> ticksPassed / AQUATIC_STANDUP_TICKS,
+				StandUpWithKneeAnimation.makeProgressCalculator(AQUATIC_STANDUP_TICKS),
 				1.75F, 10,
 				22.5F, -20, 0, 2,
 				-90, 5, 1.5F,

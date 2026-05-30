@@ -1,19 +1,13 @@
 package com.fqf.mario_qua_mario.actions.airborne;
 
-import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.BodyPartAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.EntireBodyAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.charaformact_api.util.CfaStat;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,15 +19,11 @@ public class WallJump extends Jump implements AirborneActionDefinition {
 		return ID;
 	}
 
-	public static float getProgress(CfaAnimatingData data) {
-		return MathHelper.subtractAngles(data.getPlayer().bodyYaw, data.retrieveStateData(BonkAir.BonkVars.class).recalculateBonkYaw(data)) / 180 * 2;
-	}
-
 	@Override public @Nullable AnimationDefinition getAnimation() {
 		return AnimationDefinition.of(
 				AnimationFlag.NO_SWING_LIMBS,
 				(arrangement, data, animationTime, helper) -> {
-					float progress = getProgress(data);
+					float progress = BonkAir.getDeviation(data);
 					float poseProgress = Math.abs(progress);
 					float inversion = Math.signum(progress);
 
@@ -52,7 +42,7 @@ public class WallJump extends Jump implements AirborneActionDefinition {
 					);
 				},
 				(posture, data, animationTime, helper) -> {
-					final float progress = getProgress(data);
+					final float progress = BonkAir.getDeviation(data);
 					final float poseProgress = Math.abs(progress);
 					final float inversion = Math.signum(progress);
 
@@ -71,7 +61,7 @@ public class WallJump extends Jump implements AirborneActionDefinition {
 					);
 
 					helper.asymmetricallyAnimate(posture.RIGHT_ARM, posture.LEFT_ARM, (arrangement, isLeft, sideFactor) -> {
-						boolean isTrailingLimb = inversion != sideFactor;
+						boolean isTrailingLimb = inversion == sideFactor;
 						arrangement.addPos(
 								helper.interpolateKeyframes(poseProgress,
 										0,
@@ -105,7 +95,7 @@ public class WallJump extends Jump implements AirborneActionDefinition {
 					});
 
 					helper.asymmetricallyAnimate(posture.RIGHT_LEG, posture.LEFT_LEG, (arrangement, isLeft, sideFactor) -> {
-						boolean isTrailingLimb = inversion != sideFactor;
+						boolean isTrailingLimb = inversion == sideFactor;
 						arrangement.addPos(
 								helper.interpolateKeyframes(poseProgress,
 										0,

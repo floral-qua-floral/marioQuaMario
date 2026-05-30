@@ -248,7 +248,12 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 	}
 
 	public boolean doCustomTravel() {
-		return this.isEnabled() && !this.getPlayer().getAbilities().flying && !this.getPlayer().isFallFlying() && !this.getPlayer().isUsingRiptide();
+		return
+				this.isEnabled()
+				&& !this.getPlayer().getAbilities().flying // this means "currently flying", not "can fly"
+				&& !this.getPlayer().isFallFlying()
+				&& !this.getPlayer().isUsingRiptide() // do i want to keep this here?
+				&& !this.getPlayer().isSleeping();
 	}
 
 	public Vec3d getFluidPushingVel() {
