@@ -96,6 +96,9 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 		return this.isEnabled() && this.currentCameraAnimation != null && !this.getPlayer().isSleeping();
 	}
 
+	public float preCameraAnimYaw;
+	public float postCameraAnimYaw;
+
 	public void mutateCamera(AdvancedArrangement cameraArrangement, float tickDelta) {
 		float cameraAnimationTime = (float) (this.getPlayer().getWorld().getTime() - this.cameraAnimationStartTime - 1) + tickDelta;
 
@@ -110,17 +113,17 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 		else {
 			// This could be modernized to use AppearanceData and be a part AnimationDefinition, but tbh i don't wanna
 			cameraArrangement.store(AdvancedArrangement.BEFORE_CFA_ANIMATIONS);
-			cameraArrangement.multiplyAngles(MathHelper.DEGREES_PER_RADIAN);
+
 			this.currentCameraAnimation.mutator().mutate(this, cameraArrangement, progress);
+
 			ActiveAnimation appearanceAnimation = this.APPEARANCE_DATA.getCurrentAnimation();
 			if(appearanceAnimation != null && appearanceAnimation.EXECUTION_FLAGS.contains(AnimationFlag.Execution.MIRROR))
-				cameraArrangement.fullyMirror();
+				cameraArrangement.mirrorChanges(AdvancedArrangement.BEFORE_CFA_ANIMATIONS);
 
 			cameraArrangement.scaleTranslations(
 					this.getCharacter().ANIMATION_HORIZONTAL_SCALE * this.getForm().ANIMATION_HORIZONTAL_SCALE,
 					this.getCharacter().ANIMATION_VERTICAL_SCALE * this.getForm().ANIMATION_VERTICAL_SCALE
 			);
-			cameraArrangement.multiplyAngles(MathHelper.RADIANS_PER_DEGREE);
 		}
 	}
 

@@ -3,6 +3,8 @@ package com.fqf.mario_qua_mario.actions.airborne;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionInjectionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
@@ -19,27 +21,21 @@ public class SpecialFall extends Fall implements AirborneActionDefinition {
 	    return ID;
 	}
 
-	private static LimbAnimation makeArmAnimation(int factor) {
-		return new LimbAnimation(false, (data, arrangement, progress) -> {
-			arrangement.roll += 70 * factor;
-			arrangement.x += -1.345F * factor;
-//			arrangement.y += -2.333F;
-		});
-	}
+	@Override public @Nullable AnimationDefinition getAnimation() {
+		return AnimationDefinition.of(
+				AnimationFlag.NO_SWING_LIMBS,
+				AnimationFlag.Execution.RANDOMLY_MIRROR,
+				(posture, data, animationTime, helper) -> {
+					helper.symmetricallyAnimate(posture, posture.RIGHT_ARM, arrangement -> {
+						arrangement.x += -1.345F;
+						arrangement.roll += 70;
+					});
 
-	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
-		return new PiecemealPlayermodelAnimation(
-				(data, rightArmBusy, leftArmBusy, headRelativeYaw) -> data.getPlayer().getRandom().nextBoolean(),
-				null, null, null, null,
-				makeArmAnimation(1), makeArmAnimation(-1),
-				new LimbAnimation(false, (data, arrangement, progress) -> {
-					arrangement.pitch += 9.1F;
-					arrangement.z -= 4.25F;
-					arrangement.y -= 4.5F;
-				}),
-				new LimbAnimation(false, (data, arrangement, progress) ->
-						arrangement.pitch -= 9.5F),
-				null
+					posture.RIGHT_LEG.addPos(0, -4.5F, -4.25F);
+					posture.RIGHT_LEG.pitch += 9.1F;
+
+					posture.LEFT_LEG.pitch -= 9.5F;
+				}
 		);
 	}
 

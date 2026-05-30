@@ -56,13 +56,10 @@ public class AdvancedArrangement extends Arrangement {
 	public void mirrorChanges(int slot) {
 		Arrangement mirrorAcross = this.STORAGE[slot];
 		float deltaX = this.x - mirrorAcross.x;
-		float deltaY = this.y - mirrorAcross.y;
-		float deltaZ = this.z - mirrorAcross.z;
-		float deltaPitch = this.pitch - mirrorAcross.pitch;
 		float deltaYaw = this.yaw - mirrorAcross.yaw;
 		float deltaRoll = this.roll - mirrorAcross.roll;
-		this.setPos(mirrorAcross.x - deltaX, mirrorAcross.y - deltaY, mirrorAcross.z - deltaZ);
-		this.setAngles(mirrorAcross.pitch - deltaPitch, mirrorAcross.yaw - deltaYaw, mirrorAcross.roll - deltaRoll);
+		this.x = mirrorAcross.x - deltaX;
+		this.setAngles(this.pitch, mirrorAcross.yaw - deltaYaw, mirrorAcross.roll - deltaRoll);
 	}
 
 	public void scaleTranslations(float horizontalScale, float verticalScale) {

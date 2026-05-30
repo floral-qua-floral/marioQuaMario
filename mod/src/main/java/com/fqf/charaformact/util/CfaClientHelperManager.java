@@ -19,7 +19,7 @@ public class CfaClientHelperManager {
 
 	public interface ClientHelper {
 		void mirrorAndAnimate(Posture posture, Arrangement part, Consumer<Arrangement> animator);
-		void mirrorAndAnimate(Posture posture, Arrangement part, AnimationHelper.SemiSymmetricalAnimator animator);
+		void mirrorAndAnimate(Posture posture, Arrangement part, AnimationHelper.DualPartAnimator animator);
 	}
 	public interface ClientPacketSender {
 		void setActionC2S(AbstractParsedAction fromAction, AbstractParsedAction toAction, long seed, TransitionPhase phase);
