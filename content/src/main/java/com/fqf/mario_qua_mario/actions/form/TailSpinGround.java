@@ -2,10 +2,8 @@ package com.fqf.mario_qua_mario.actions.form;
 
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.EntireBodyAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
@@ -40,31 +38,32 @@ public class TailSpinGround implements GroundedActionDefinition {
 	}
 
 	private static final float TICKS_PER_REVOLUTION = 6;
-	public static final PiecemealPlayermodelAnimation ANIMATION = DuckWaddle.makeDuckAnimation(false, true).variate(
-			null,
-			null,
-			new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
-				arrangement.yaw = Easing.LINEAR.ease((data.retrieveStateData(TailSpinActionTimerVars.class).actionTimer / TICKS_PER_REVOLUTION) % 1) * 360;
-			}),
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			new LimbAnimation(false, (data, arrangement, progress) -> {
-				arrangement.pitch = MathHelper.clamp(data.getPlayer().getPitch() - 10, -80, 10);
-			})
-	);
+	public static AnimationDefinition makeAnimation(boolean isGrounded) {
+		return AnimationDefinition.layerModelArranger(
+				AnimationDefinition.layerPostureMutator(
+						DuckWaddle.makeDuckAnimation2(isGrounded, false),
+						((posture, data, animationTime, helper) -> {
+							if(posture.TAIL != null)
+								posture.TAIL.pitch = -MathHelper.clamp(data.getPlayer().getPitch() - 10, -60, 10) - posture.TORSO.pitch;
+						})
+				),
+				(arrangement, data, animationTime, helper) -> {
+					arrangement.yaw = data.retrieveStateData(TailSpinActionTimerVars.class).actionTimer / TICKS_PER_REVOLUTION * 360;
+				}
+		);
+	}
+
+	@Override public @Nullable AnimationDefinition getAnimation() {
+		return makeAnimation(true);
+	}
+
 	private static CameraAnimation makeTailSpinCameraAnimation(float factor, Easing easing) {
 		return new CameraAnimation(
-				new CameraProgressHandler(2, (data, ticksPassed) ->
-				{
+				new CameraProgressHandler(2, (data, ticksPassed) -> {
 					if(data.retrieveStateData(TailSpinActionTimerVars.class) == null) return 4;
 					return (ticksPassed / (TICKS_PER_REVOLUTION - 0.5F) * factor) % 1;
 				}),
-				(data, arrangement, progress) ->
-						arrangement.yaw += easing.ease(progress % 1) * -360
+				(data, arrangement, progress) -> arrangement.yaw += easing.ease(progress % 1) * -360
 		);
 	}
 	public static final CameraAnimationSet CAMERA_ANIMATIONS = new CameraAnimationSet(
@@ -73,10 +72,6 @@ public class TailSpinGround implements GroundedActionDefinition {
 		makeTailSpinCameraAnimation(0.5F, Easing.SINE_IN_OUT),
 		null
 	);
-
-	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
-		return ANIMATION;
-	}
 
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
 		return CAMERA_ANIMATIONS;

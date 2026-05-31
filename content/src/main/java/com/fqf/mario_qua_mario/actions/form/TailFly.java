@@ -5,9 +5,8 @@ import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinit
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionInjectionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.ProgressHandler;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.util.CfaStat;
@@ -25,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 import static com.fqf.charaformact_api.util.StatCategory.JUMP_VELOCITY;
@@ -37,16 +35,8 @@ public class TailFly extends PJump implements AirborneActionDefinition {
 	    return ID;
 	}
 
-	@Override
-	public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
-		return Objects.requireNonNull(super.getOldAnimation(helper)).variate(
-			null,
-			new ProgressHandler((data, ticksPassed) -> ticksPassed * 1.1F),
-			null, null, null,
-			null, null,
-			null, null,
-			TailStall.makeTailAnimation(true)
-		);
+	@Override public @NotNull AnimationDefinition getAnimation() {
+		return AnimationDefinition.layerPostureMutator(super.getAnimation(), TailStall.POSTURE_MUTATOR);
 	}
 
 	public static final CfaStat FLIGHT_VEL = new CfaStat(0.41, JUMP_VELOCITY, FORM);

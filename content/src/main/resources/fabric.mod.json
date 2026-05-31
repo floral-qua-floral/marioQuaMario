@@ -44,7 +44,6 @@
 			"com.fqf.mario_qua_mario.actions.grounded.BonkGroundBackward",
 			"com.fqf.mario_qua_mario.actions.grounded.BonkGroundForward",
 
-			"com.fqf.mario_qua_mario.actions.form.RetroIdle",
 			"com.fqf.mario_qua_mario.actions.form.TailSpinGround"
 		],
 		"cfa-airborne-actions": [

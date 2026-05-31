@@ -17,6 +17,9 @@ public abstract class ActiveAnimation {
 
 	private final long START_TIME;
 
+	private boolean hasEnd;
+	private float endAfter;
+
 	@Contract("_, !null, _, _ -> !null")
 	public static @Nullable ActiveAnimation of(
 			CfaAppearanceData<?> owner, ParsedAnimation animation,
@@ -76,6 +79,10 @@ public abstract class ActiveAnimation {
 		this.ANIMATION.mutate(mutate, this.OWNER.DATA, this.getAnimationTime(worldTime, tickDelta));
 		if(this.ANIMATION.USE_DEGREES) mutate.toRadians();
 		if(mirroring) mutate.fullyMirror();
+	}
+
+	public boolean hasEnded(long worldTime, float tickDelta) {
+		return this.hasEnd && this.getAnimationTime(worldTime, tickDelta) > this.endAfter;
 	}
 
 	public abstract void mutateModelArrangement(AdvancedArrangement mutate, long worldTime, float tickDelta, boolean isFirstOfTick, boolean forceWrappedInterpolation);

@@ -104,7 +104,7 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 	}
 
 	// Methods for creating the vanilla parts.
-	// The default implementation creates two cuboids per part: One for the actual part, and another for its 3D layer
+	// The default implementation creates two cuboids per part: One for the actual part, and another for its 3D layerPostureMutator
 	// (hat, jacket, sleeve, or pants). You only need to override any of these if you want to replace the geometry
 	// of a part entirely in some way, such as by splitting the torso into multiple cuboids.
 	default ModelPartData makeHead(ModelPartData root, AppearanceGeometryHelper helper) {
@@ -233,7 +233,7 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 		);
 	}
 	default TransformationInstructions getHatTransformation(AppearanceFeatureHelper helper) {
-		// Not the 3D hat layer. This is for mods which add hats, such as the Villager Hats or Simple Hats mods.
+		// Not the 3D hat layerPostureMutator. This is for mods which add hats, such as the Villager Hats or Simple Hats mods.
 		return this.getHelmetTransformation(helper);
 	}
 	default TransformationInstructions getUnknownHeadFeatureTransformation(AppearanceFeatureHelper helper) {

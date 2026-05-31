@@ -75,6 +75,24 @@ public abstract class AnimationDefinition {
 		return of(null, null, null, null, mutator);
 	}
 
+	public static AnimationDefinition layerModelArranger(AnimationDefinition animation, ArrangementMutator modelArranger) {
+		return of(animation.getID(), animation.defineFlags().clone(), animation::chooseExecutionFlags,
+				(arrangement, data, animationTime, helper) -> {
+						animation.arrangeModel(arrangement, data, animationTime, helper);
+						modelArranger.mutateArrangement(arrangement, data, animationTime, helper);
+				}, animation::mutatePosture
+		);
+	}
+
+	public static AnimationDefinition layerPostureMutator(AnimationDefinition animation, PostureMutator mutator) {
+		return of(animation.getID(), animation.defineFlags().clone(), animation::chooseExecutionFlags, animation::arrangeModel,
+				(posture, data, animationTime, helper) -> {
+						animation.mutatePosture(posture, data, animationTime, helper);
+						mutator.mutatePosture(posture, data, animationTime, helper);
+				}
+		);
+	}
+
 	public abstract @Nullable Identifier getID(); // Optional. This is only here so it may be used by chooseExecutionFlags.
 	public abstract @NotNull EnumSet<AnimationFlag> defineFlags();
 

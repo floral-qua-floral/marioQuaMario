@@ -18,6 +18,8 @@ public enum AnimationFlag {
 
 	NOT_INTERPOLATED, // by default, animations are run once per tick, and the player interpolates between the poses. this disables that
 
+	NO_HEAD_COUNTERROTATION, // disables system that tries to keep the player's head aligned with their real look angle.
+
 	// Maybe one day I should add flags that allow an animation to ignore busy arms? Or cancel busy arm auto-positioning?
 
 	ALWAYS_WRAP_ANGLES; // mostly relevant for interpolation

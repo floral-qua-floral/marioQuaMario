@@ -5,8 +5,7 @@ import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnviron
 import com.fqf.charaformact_api.definitions.states.actions.util.SneakingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.mario_qua_mario.actions.airborne.DuckFall;
@@ -25,14 +24,8 @@ public class TailStallDucking extends TailStall implements AirborneActionDefinit
 	    return ID;
 	}
 
-	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
-		return DuckWaddle.makeDuckAnimation(false, true).variate(
-				null, null,
-				null, null, null,
-				null, null,
-				null, null,
-				TailStall.makeTailAnimation(false)
-		);
+	@Override public @Nullable AnimationDefinition getAnimation() {
+		return AnimationDefinition.layerPostureMutator(DuckWaddle.makeDuckAnimation2(false, false), TailStall.POSTURE_MUTATOR);
 	}
 
 	@Override public @NotNull SneakingRule getSneakingRule() {

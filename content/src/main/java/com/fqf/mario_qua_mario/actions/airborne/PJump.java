@@ -31,7 +31,7 @@ public class PJump extends Jump implements AirborneActionDefinition {
 		return ID;
 	}
 
-	@Override public @Nullable AnimationDefinition getAnimation() {
+	@Override public @NotNull AnimationDefinition getAnimation() {
 		return AnimationDefinition.of(
 				AnimationFlag.NO_SWING_LIMBS,
 				(posture, data, animationTime, helper) -> {

@@ -36,6 +36,7 @@ public class DuckWaddle implements GroundedActionDefinition {
 	}
 
 	public static final Identifier ANIMATION_ID = MarioQuaMario.makeID("grounded_ducking");
+	public static final Identifier AIRBORNE_ANIMATION_ID = MarioQuaMario.makeID("airborne_ducking");
 	private static float getDuckProgress(float animationTime) {
 		// We animate ducking tick by tick and rely on interpolation, rather than trying to model this using math. #lazy
 		return switch(MathHelper.floor(animationTime)) {
@@ -46,11 +47,12 @@ public class DuckWaddle implements GroundedActionDefinition {
 		};
 	}
 	public static AnimationDefinition makeDuckAnimation2(boolean isGrounded, boolean isWaddle) {
+		Identifier animationID = isGrounded ? ANIMATION_ID : AIRBORNE_ANIMATION_ID;
 		return AnimationDefinition.of(
-				isGrounded ? ANIMATION_ID : MarioQuaMario.makeID("airborne_ducking"),
+				animationID,
 				isWaddle ? AnimationFlag.NO_SWING_ARMS : AnimationFlag.NO_SWING_LIMBS,
 				(data, prevID) -> // If previously in a grounded duck, then do not replay the squishy crouch anim. Otherwise, do.
-						ANIMATION_ID.equals(prevID)
+						ANIMATION_ID.equals(prevID) || animationID.equals(prevID)
 								? EnumSet.of(AnimationFlag.Execution.DO_NOT_RESET_PROGRESS)
 								: AnimationFlag.Execution.NONE,
 				isGrounded ? null : (arrangement, data, animationTime, helper) -> // Don't need a model arranger if grounded!

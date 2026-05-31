@@ -88,7 +88,7 @@ public class ClimbWall implements WallboundActionDefinition {
 					});
 
 					if(posture.TAIL != null) {
-						posture.TAIL.pitch = 60;
+						posture.TAIL.pitch = -60;
 						if(data.getVelocity().lengthSquared() > 0.1)
 							posture.TAIL.roll -= progress * 30;
 					}

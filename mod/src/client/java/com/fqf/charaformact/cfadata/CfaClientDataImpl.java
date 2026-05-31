@@ -3,8 +3,8 @@ package com.fqf.charaformact.cfadata;
 import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.HandPreference;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact.cfadata.util.*;
 import com.fqf.charaformact.registries.RegistryManager;
 import com.fqf.charaformact.registries.actions.AbstractParsedAction;
@@ -33,7 +33,8 @@ public interface CfaClientDataImpl extends CfaAnimatingData {
 	AbstractClientPlayerEntity getPlayer();
 
 	@Override
-	default void playAnimation(PiecemealPlayermodelAnimation animation, int ticks) {
+	default void playAnimation(AnimationDefinition animation, int duration) {
+		this.getPlayer().cfa$getAppearanceData().triggerAnimation(animation, duration);
 //		this.getPlayer().cfa$getOldAnimationData().replaceAnimation((CfaPlayerData) this, animation, ticks);
 	}
 

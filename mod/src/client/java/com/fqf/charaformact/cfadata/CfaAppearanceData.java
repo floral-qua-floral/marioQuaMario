@@ -46,7 +46,7 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 
 	public @Nullable ActiveAnimation actionAnimation;
 	public @Nullable ActiveAnimation forcedAnimation;
-	private float forcedAnimationDuration;
+	private long forcedAnimationEndTime;
 
 	private long forceInterpolationTime;
 
@@ -75,6 +75,19 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 
 	public void tick() {
 		long time = this.PLAYER.getWorld().getTime();
+
+		if(this.forcedAnimation != null && time >= this.forcedAnimationEndTime) {
+			this.forcedAnimation = null;
+			this.forceInterpolation();
+			if(this.actionAnimation instanceof ActiveAnimation.Interpolated interpolatedAnimation) {
+				// Force the action animation to interpolate from the last frame of the override animation, rather than
+				// from its own last tick posture. We put these in the "to" variable because on the first frame of this
+				// tick it will be shifting these into the "from" variables.
+				interpolatedAnimation.toPosture = this.prevFramePosture;
+				interpolatedAnimation.toModelArrangement = this.prevFrameModelArrangement;
+			}
+		}
+
 		if(this.flickerUntil > time) {
 			long difference = this.flickerUntil - time;
 			this.flickering = MathHelper.floor(difference / 3F) % 2 == 0;
@@ -141,10 +154,11 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 	// This is an currentAnimation triggered during client execution of an attack interception, as opposed to an currentAnimation
 	// that is registered to an Action. As a result, we can't really parse it in advance. Fortunately currentAnimation parsing
 	// is very light and easy and does not involve any actual registries, so we can just do it on the fly.
-	public void triggerAnimation(@NotNull AnimationDefinition definition, float duration) {
+	public void triggerAnimation(@NotNull AnimationDefinition definition, int duration) {
 		this.forcedAnimation = ActiveAnimation.of(this, new ParsedAnimation(definition),
 				this.prevFramePosture, this.prevFrameModelArrangement);
-		this.forcedAnimationDuration = duration;
+		this.forcedAnimationEndTime = this.PLAYER.getWorld().getTime() + duration;
+
 		// Attack interceptions, particularly those associated with an action instead of a form, may wish to continue from
 		// their action's current currentAnimation. We should respect this, this is perfectly legitimate!
 		if(!this.forcedAnimation.EXECUTION_FLAGS.contains(AnimationFlag.Execution.DO_NOT_RESET_PROGRESS))
@@ -184,6 +198,7 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 		this.thisFrameModelArrangement = new AdvancedArrangement();
 		boolean forceWrappedInterpolation = worldTime <= this.forceInterpolationTime;
 		boolean hasInterpolated;
+
 		ActiveAnimation currentAnimation = this.getCurrentAnimation();
 		if(currentAnimation != null) {
 			hasInterpolated = !currentAnimation.ANIMATION.FLAGS.contains(AnimationFlag.NOT_INTERPOLATED);
@@ -219,6 +234,10 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 	public float counterRotateHead(ModelPart head, float assigningPitch) {
 		this.originalHeadPitch = head.pitch;
 		this.originalHeadYaw = head.yaw;
+
+		ActiveAnimation currentAnimation = this.getCurrentAnimation();
+		if(currentAnimation != null && currentAnimation.ANIMATION.FLAGS.contains(AnimationFlag.NO_HEAD_COUNTERROTATION))
+			return assigningPitch;
 
 		head.yaw = MathHelper.clamp(AdvancedArrangement.wrapRadians(head.yaw + this.thisFrameModelArrangement.yaw), -MAX_HEAD_YAW, MAX_HEAD_YAW);
 		return MathHelper.clamp(AdvancedArrangement.wrapRadians(assigningPitch + this.thisFrameModelArrangement.pitch), -ALMOST_HALF_PI, ALMOST_HALF_PI);
