@@ -13,6 +13,7 @@ import com.fqf.mario_qua_mario.actions.airborne.LavaBoost;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
@@ -163,13 +164,19 @@ public class Debug implements GenericActionDefinition {
 					@Override
 					public void executeTravellers(CfaTravelData data, ItemStack weapon, float attackCooldownProgress, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget) {
 
-						data.getPlayer().setYaw(data.getPlayer().getYaw() + 90);
+
+
+//						data.getPlayer().setYaw(data.getPlayer().getYaw() + 90);
+//						data.getPlayer().bodyYaw = 20;
+//						data.getPlayer().prevHeadYaw = -30;
+//						data.getPlayer().prevBodyYaw = 20;
+//						data.getPlayer().prevYaw = 0;
 					}
 
 					@Override
 					public void executeClients(CfaClientData data, ItemStack weapon, float attackCooldownProgress, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget, long seed) {
-						data.forceBodyAlignment(true);
-						data.instantVisualRotate(90, true);
+//						data.forceBodyAlignment(true);
+//						data.instantVisualRotate(90, true);
 					}
 
 					@Override

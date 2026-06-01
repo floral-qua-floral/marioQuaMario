@@ -1,14 +1,12 @@
 package com.fqf.mario_qua_mario.actions.airborne;
 
-import com.fqf.charaformact_api.cfadata.CfaClientData;
+import com.fqf.charaformact_api.cfadata.*;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
-import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
-import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.BodyPartAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.EntireBodyAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
@@ -16,6 +14,7 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecem
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
@@ -38,6 +37,10 @@ public class Sideflip extends Backflip implements AirborneActionDefinition {
 		return Easing.LINEAR.ease(Math.min(animationTime / 20F, 1));
 	}
 
+	private static void conditionallyFlip(CfaAnimatingData data, Arrangement arrangement) {
+		if(!data.retrieveStateData(SideflipVars.class).hasRotated) arrangement.yaw += 180;
+	}
+
 	@Override public @Nullable AnimationDefinition getAnimation() {
 		return AnimationDefinition.of(
 				EnumSet.of(NO_RIGHT_ARM_SWING, NO_LEFT_ARM_SWING, NO_RIGHT_LEG_SWING, NO_LEFT_LEG_SWING, NOT_INTERPOLATED, NO_HEAD_COUNTERROTATION),
@@ -49,9 +52,18 @@ public class Sideflip extends Backflip implements AirborneActionDefinition {
 							MathHelper.lerp(progress, -136.5F, 0),
 							Easing.mixedEase(Easing.LINEAR, Easing.QUAD_IN_OUT, progress, -342.5F, 0)
 					);
+					conditionallyFlip(data, arrangement);
 				},
 				(posture, data, animationTime, helper) -> {
-					float fourProgress = calculateProgress(animationTime) * 4;
+					float progress = calculateProgress(animationTime);
+					float fourProgress = progress * 4;
+
+					posture.HEAD.addAngles(
+							MathHelper.lerp(progress, 0, 0),
+							MathHelper.lerp(progress, 42.5F, 0),
+							MathHelper.lerp(progress, -15, 0)
+					);
+
 					posture.RIGHT_ARM.addAngles(
 							helper.interpolateKeyframes(fourProgress, -32, -85, 10, 24, 12),
 							helper.interpolateKeyframes(fourProgress, -35, 0, 47.5F, 20, 0),
@@ -94,6 +106,7 @@ public class Sideflip extends Backflip implements AirborneActionDefinition {
 				new CameraAnimation(
 						new CameraProgressHandler((data, ticksPassed) -> Math.min(ticksPassed / 16, 1)),
 						(data, arrangement, progress) -> {
+							conditionallyFlip(data, arrangement);
 							arrangement.yaw += MathHelper.lerp(Easing.SINE_IN_OUT.ease(progress), 180, 0);
 							arrangement.roll += Easing.QUAD_IN_OUT.ease(progress) * -360;
 						}
@@ -101,13 +114,17 @@ public class Sideflip extends Backflip implements AirborneActionDefinition {
 				new CameraAnimation(
 						new CameraProgressHandler((data, ticksPassed) -> Easing.QUAD_IN_OUT.ease(Math.min(ticksPassed / 14, 1))),
 						(data, arrangement, progress) -> {
+							conditionallyFlip(data, arrangement);
 							arrangement.pitch = MathHelper.lerp(progress, -180 - arrangement.pitch, arrangement.pitch);
 							arrangement.roll += MathHelper.lerp(progress, 180, 0);
 						}
 				),
 				new CameraAnimation(
 						new CameraProgressHandler((data, ticksPassed) -> Easing.SINE_IN_OUT.ease(Math.min(ticksPassed / 10, 1))),
-						(data, arrangement, progress) -> arrangement.yaw += MathHelper.lerp(progress, 180, 0)
+						(data, arrangement, progress) -> {
+							conditionallyFlip(data, arrangement);
+							arrangement.yaw += MathHelper.lerp(progress, 180, 0);
+						}
 				)
 		);
 	}
@@ -116,8 +133,21 @@ public class Sideflip extends Backflip implements AirborneActionDefinition {
 	public static CfaStat SIDEFLIP_BACKWARDS_SPEED = new CfaStat(-0.375, DRIFTING, BACKWARD, SPEED);
 	public static CfaStat SIDEFLIP_THRESHOLD = new CfaStat(0.2, WALKING, FRICTION, THRESHOLD);
 
-	@Override public void clientTick(CfaClientData data, boolean isSelf) {
+	private static class SideflipVars extends ActionTimerVars {
+		public boolean hasRotated;
+	}
 
+	@Override public @Nullable Object provideStateData(CfaData data) {
+		SideflipVars vars = data.retrieveStateData(SideflipVars.class);
+		if(vars == null) vars = new SideflipVars();
+		return vars;
+	}
+	@Override public void clientTick(CfaClientData data, boolean isSelf) {
+		SideflipVars sideflipVars = data.retrieveStateData(SideflipVars.class);
+		if(!sideflipVars.hasRotated && sideflipVars.actionTimer++ >= 3) {
+			sideflipVars.hasRotated = true;
+			data.instantVisualRotate(180, false);
+		}
 	}
 	@Override public void serverTick(CfaAuthoritativeData data) {
 

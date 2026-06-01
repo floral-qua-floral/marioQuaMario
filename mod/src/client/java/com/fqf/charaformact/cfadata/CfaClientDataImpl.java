@@ -14,6 +14,7 @@ import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
@@ -154,8 +155,15 @@ public interface CfaClientDataImpl extends CfaAnimatingData {
 
 	@Override
 	default void instantVisualRotate(float rotationDegrees, boolean counterRotateAnimation) {
-		if(!this.getPlayer().isMainPlayer())
-			this.getPlayer().setYaw(this.getPlayer().getYaw() + rotationDegrees);
+		PlayerEntity player = this.getPlayer();
+		float newYaw = player.getYaw() + rotationDegrees;
+		float newBodyYaw = player.getBodyYaw() + rotationDegrees;
+
+		player.setYaw(newYaw);
+		player.headYaw = newYaw;
+		player.prevHeadYaw = newYaw;
+		player.bodyYaw = newBodyYaw;
+		player.prevBodyYaw = newBodyYaw;
 	}
 
 	class SoundInstanceWrapperImpl implements SoundInstanceWrapper {

@@ -39,7 +39,6 @@ public class Skid implements GroundedActionDefinition {
 	@Override public @Nullable AnimationDefinition getAnimation() {
 		return AnimationDefinition.of(
 				AnimationFlag.NO_SWING_LIMBS,
-				AnimationFlag.Execution.RANDOMLY_MIRROR,
 				(arrangement, data, animationTime, helper) -> {
 					arrangement.y -= 4;
 					arrangement.setAngles(
@@ -60,69 +59,6 @@ public class Skid implements GroundedActionDefinition {
 					if(posture.TAIL != null)
 						posture.TAIL.setAngles(5, 42, -17.5F);
 				}
-		);
-	}
-
-	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
-		return new PiecemealPlayermodelAnimation(
-				null,
-				new ProgressHandler((data, ticksPassed) -> 1),
-				new EntireBodyAnimation(0.3F, true, (data, arrangement, progress) -> {
-					arrangement.y -= 4;
-					arrangement.setAngles(
-							0,
-							progress * 42.5F,
-							progress * 17.5F
-					);
-				}),
-				new BodyPartAnimation((data, arrangement, progress) -> {
-					arrangement.roll -= progress * 15;
-				}),
-				new BodyPartAnimation((data, arrangement, progress) -> {
-
-				}),
-				new LimbAnimation(false, (data, arrangement, progress) -> {
-					arrangement.addAngles(
-							progress * -32,
-							progress * -35,
-							progress * 80
-					);
-				}),
-				new LimbAnimation(false, (data, arrangement, progress) -> {
-					arrangement.addAngles(
-							-45,
-							0,
-							-30
-					);
-				}),
-
-				new LimbAnimation(false, (data, arrangement, progress) -> {
-					arrangement.addAngles(
-							progress * -57.5F,
-							progress * 45F,
-							progress * -20
-					);
-				}),
-				new LimbAnimation(false, (data, arrangement, progress) -> {
-					arrangement.addPos(
-							progress * 0,
-							progress * -4.1F,
-							progress * -3.9F
-					);
-					arrangement.addAngles(
-							progress * 5,
-							progress * 15,
-							progress * 0
-					);
-				}),
-
-				new LimbAnimation(false, (data, arrangement, progress) -> {
-					arrangement.setAngles(
-							5,
-							42,
-							-17.5F
-					);
-				})
 		);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
@@ -194,13 +130,10 @@ public class Skid implements GroundedActionDefinition {
 						data -> {
 							helper.performJump(data, Sideflip.SIDEFLIP_VEL, null);
 							data.setForwardStrafeVel(Sideflip.SIDEFLIP_BACKWARDS_SPEED.get(data), 0);
-							PlayerEntity mario = data.getPlayer();
-//							data.forceBodyAlignment(true);
-							mario.setYaw(mario.getYaw() - 178);
+							data.forceBodyAlignment(true);
 						},
 						(data, isSelf, seed) -> {
 							data.forceBodyAlignment(true);
-							data.instantVisualRotate(-178, true);
 							data.playJumpSound(seed);
 							data.voice(Voicelines.SIDEFLIP, seed);
 						}
