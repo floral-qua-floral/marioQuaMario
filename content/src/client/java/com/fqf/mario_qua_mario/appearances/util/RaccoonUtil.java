@@ -1,8 +1,15 @@
 package com.fqf.mario_qua_mario.appearances.util;
 
 import com.fqf.charaformact_api.appearance.AppearanceGeometryHelper;
+import com.fqf.charaformact_api.appearance.AppearanceModel;
+import com.fqf.charaformact_api.appearance.ClientAppearanceDefinition;
 import net.minecraft.client.model.ModelPartData;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.entity.feature.EyesFeatureRenderer;
+import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.EntityModelPartNames;
+import net.minecraft.util.Identifier;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
@@ -82,5 +89,20 @@ public class RaccoonUtil {
 				innerUV
 		);
 		return outer;
+	}
+
+	public static class RaccoonModelEyesFeatureRenderer extends EyesFeatureRenderer<AbstractClientPlayerEntity, AppearanceModel> {
+		private final RenderLayer TEXTURE;
+
+		public RaccoonModelEyesFeatureRenderer(FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel> featureRendererContext, ClientAppearanceDefinition definition) {
+			super(featureRendererContext);
+			Identifier textureLocation = definition.getTextureLocation();
+			this.TEXTURE = RenderLayer.getEyes(Identifier.of(textureLocation.getNamespace(), textureLocation.getPath().replace(".png", "_eyes.png")));
+		}
+
+		@Override
+		public RenderLayer getEyesTexture() {
+			return this.TEXTURE;
+		}
 	}
 }

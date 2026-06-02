@@ -117,10 +117,10 @@
 			"com.fqf.mario_qua_mario.appearances.luigi.FireLuigiCommonAppearance",
 			"com.fqf.mario_qua_mario.appearances.luigi.FoxLuigiCommonAppearance",
 
-			"com.fqf.mario_qua_mario.appearances.test.SmallCommonAppearance",
-			"com.fqf.mario_qua_mario.appearances.test.TemplateCommonAppearance",
-			"com.fqf.mario_qua_mario.appearances.test.AlexCommonAppearance",
-			"com.fqf.mario_qua_mario.appearances.test.WonkyCommonAppearance"
+			"com.fqf.mario_qua_mario.appearances.toads.toadette.SmallToadetteCommonAppearance",
+			"com.fqf.mario_qua_mario.appearances.toads.toadette.SuperToadetteCommonAppearance",
+			"com.fqf.mario_qua_mario.appearances.toads.toadette.FireToadetteCommonAppearance",
+			"com.fqf.mario_qua_mario.appearances.toads.toadette.RaccoonToadetteCommonAppearance"
 		],
 
 		"cfa-client-appearances": [
@@ -134,10 +134,10 @@
 			"com.fqf.mario_qua_mario.appearances.luigi.FireLuigiClientAppearance",
 			"com.fqf.mario_qua_mario.appearances.luigi.FoxLuigiClientAppearance",
 
-			"com.fqf.mario_qua_mario.appearances.test.SmallClientAppearance",
-			"com.fqf.mario_qua_mario.appearances.test.TemplateClientAppearance",
-			"com.fqf.mario_qua_mario.appearances.test.AlexClientAppearance",
-			"com.fqf.mario_qua_mario.appearances.test.WonkyClientAppearance"
+			"com.fqf.mario_qua_mario.appearances.toads.toadette.SmallToadetteClientAppearance",
+			"com.fqf.mario_qua_mario.appearances.toads.toadette.SuperToadetteClientAppearance",
+			"com.fqf.mario_qua_mario.appearances.toads.toadette.FireToadetteClientAppearance",
+			"com.fqf.mario_qua_mario.appearances.toads.toadette.RaccoonToadetteClientAppearance"
 		],
 
 		"cfa-voicelines": [

@@ -59,6 +59,7 @@ public abstract class PlayerEntityModelMixin<T extends LivingEntity> extends Bip
 				appearanceData.animate((PlayerEntityModel<?>) (Object) this,
 						MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(true));
 				if(model != null) model.postActionAnimation(player, data);
+				this.hat.copyTransform(this.head);
 			}
 
 

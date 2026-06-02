@@ -23,9 +23,9 @@ import org.joml.Vector3i;
 public class ClientAppearanceCollector extends AbstractAppearanceCollector<ClientAppearanceDefinition, Pair<ParsedClientAppearance, AppearanceRenderer>> {
 	public static ClientAppearanceCollector INSTANCE = new ClientAppearanceCollector();
 
-	private @Nullable AppearanceModel customModelForRenderer;
-	public @Nullable AppearanceModel getCustomModelForRenderer() {
-		return this.customModelForRenderer;
+	private @Nullable ParsedClientAppearance currentlyInitializingAppearance;
+	public @Nullable ParsedClientAppearance getCurrentlyInitializingAppearance() {
+		return this.currentlyInitializingAppearance;
 	}
 
 	@Override protected String getEntrypoint() {
@@ -100,8 +100,8 @@ public class ClientAppearanceCollector extends AbstractAppearanceCollector<Clien
 			this.map.forEach((combo, pair) -> {
 				try {
 					ParsedClientAppearance model = pair.getLeft();
-					this.customModelForRenderer = model.makeAndGetModel(ctx);
-					AppearanceRenderer renderer = new AppearanceRenderer(ctx, model.TEXTURE_LOCATION);
+					this.currentlyInitializingAppearance = model;
+					AppearanceRenderer renderer = new AppearanceRenderer(ctx, model);
 					pair.setRight(renderer);
 				} catch(Exception exception) {
 					throw new IllegalArgumentException("Failed to create player model for " + combo, exception);
@@ -109,7 +109,7 @@ public class ClientAppearanceCollector extends AbstractAppearanceCollector<Clien
 			});
 		}
 		finally {
-			this.customModelForRenderer = null;
+			this.currentlyInitializingAppearance = null;
 		}
 	}
 

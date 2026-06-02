@@ -17,7 +17,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ShieldItem;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -30,7 +30,7 @@ public abstract class HeldItemFeatureRendererMixin<T extends LivingEntity, M ext
 	}
 
 	@Override
-	public @Nullable TransformationContext cfa$getContext() {
+	public @NotNull TransformationContext cfa$getContext() {
 		return TransformationContext.ORIGINAL;
 	}
 

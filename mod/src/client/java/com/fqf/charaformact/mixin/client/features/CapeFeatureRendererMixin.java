@@ -6,14 +6,14 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.feature.CapeFeatureRenderer;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(CapeFeatureRenderer.class)
 public class CapeFeatureRendererMixin implements FeatureRendererWithContext {
 	@Override
-	public @Nullable TransformationContext cfa$getContext() {
+	public @NotNull TransformationContext cfa$getContext() {
 		// Cape should render as back equipment.
 		return TransformationContext.SPECIAL;
 	}

@@ -11,7 +11,7 @@ import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -24,7 +24,7 @@ public abstract class ElytraFeatureRendererMixin<T extends LivingEntity, M exten
 	}
 
 	@Override
-	public @Nullable TransformationContext cfa$getContext() {
+	public @NotNull TransformationContext cfa$getContext() {
 		return TransformationContext.SPECIAL;
 	}
 

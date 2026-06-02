@@ -134,6 +134,23 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 
 	private final Set<String> POWERS = new HashSet<>();
 	private final List<StatAlteringStateDefinition.AttributeModifierInstruction> ATTRIBUTE_MODIFIERS = new ArrayList<>();
+	private float horizontalScale, verticalScale, eyeHeightScale, horizontalAnimationScale, verticalAnimationScale;
+
+	public float getHorizontalScale() {
+		return this.horizontalScale;
+	}
+	public float getVerticalScale() {
+		return this.verticalScale;
+	}
+	public float getEyeHeightScale() {
+		return this.eyeHeightScale;
+	}
+	public float getHorizontalAnimationScale() {
+		return this.horizontalAnimationScale;
+	}
+	public float getVerticalAnimationScale() {
+		return this.verticalAnimationScale;
+	}
 
 	public void updateCharacterFormCombo() {
 		this.updateAppearance();
@@ -188,6 +205,17 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 					));
 				}
 			}
+
+			this.horizontalScale = this.getForm().WIDTH_FACTOR * this.getCharacter().WIDTH_FACTOR;
+			this.verticalScale = this.getForm().HEIGHT_FACTOR * this.getCharacter().HEIGHT_FACTOR;
+			this.eyeHeightScale = this.getForm().HEIGHT_FACTOR * this.getCharacter().EYE_HEIGHT_FACTOR;
+			this.horizontalAnimationScale = this.getForm().ANIMATION_HORIZONTAL_SCALE * this.getCharacter().ANIMATION_HORIZONTAL_SCALE;
+			this.verticalAnimationScale = this.getForm().ANIMATION_VERTICAL_SCALE * this.getCharacter().ANIMATION_VERTICAL_SCALE;
+		}
+		else {
+			this.horizontalScale = 1; this.verticalScale = 1;
+			this.eyeHeightScale = 1;
+			this.horizontalAnimationScale = 1; this.verticalAnimationScale = 1;
 		}
 
 		this.getPlayer().calculateDimensions();
@@ -215,16 +243,6 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 
 	@Override public double getStat(CfaStat stat) {
 		return CfaStatCalculationHelper.calculate(this, stat);
-	}
-
-	@Override public float getHorizontalScale() {
-		return this.isEnabled() ? this.getForm().WIDTH_FACTOR * this.getCharacter().WIDTH_FACTOR : 1;
-	}
-	@Override public float getVerticalScale() {
-		return this.isEnabled() ? this.getForm().HEIGHT_FACTOR * this.getCharacter().HEIGHT_FACTOR : 1;
-	}
-	@Override public float getEyeHeightScale() {
-		return this.isEnabled() ? this.getForm().HEIGHT_FACTOR * this.getCharacter().EYE_HEIGHT_FACTOR : 1;
 	}
 
 	@Override public int getBapStrength(Direction direction) {

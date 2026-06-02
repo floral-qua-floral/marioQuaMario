@@ -2,7 +2,7 @@ package com.fqf.charaformact.appearance;
 
 import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.util.TransformationContext;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -15,9 +15,13 @@ public interface FeatureRendererWithContext {
 	boolean LOG_AUTO_CONTEXT_CHECKS = CharaFormAct.CONFIG.logFeatureContexts();
 	Set<String> FEATURES_PARSED = new HashSet<>();
 
-	@Nullable TransformationContext cfa$getContext();
+	@NotNull TransformationContext cfa$getContext();
 
-	static TransformationContext getAssumedContext(Class<?> clazz) {
+	default void cfa$setContext(@NotNull TransformationContext newContext) {
+		throw new UnsupportedOperationException("Cannot override the Feature Transformation Context of feature {}! Did you do something weird??");
+	}
+
+	static @NotNull TransformationContext getAssumedContext(Class<?> clazz) {
 		String name = clazz.getSimpleName();
 		if(
 				checkContains(name, "back", true, false)

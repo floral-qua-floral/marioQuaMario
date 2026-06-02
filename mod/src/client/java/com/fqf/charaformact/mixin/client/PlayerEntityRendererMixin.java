@@ -3,6 +3,7 @@ package com.fqf.charaformact.mixin.client;
 import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.appearance.AppearanceRenderer;
 import com.fqf.charaformact.appearance.ClientAppearanceCollector;
+import com.fqf.charaformact.appearance.ParsedClientAppearance;
 import com.fqf.charaformact.cfadata.CfaAppearanceData;
 import com.fqf.charaformact_api.appearance.AppearanceModel;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -29,11 +30,11 @@ public abstract class PlayerEntityRendererMixin {
 
 	@WrapOperation(method = "<init>", at = @At(value = "NEW", target = "(Lnet/minecraft/client/model/ModelPart;Z)Lnet/minecraft/client/render/entity/model/PlayerEntityModel;"))
 	private static PlayerEntityModel<AbstractClientPlayerEntity> uwu(ModelPart root, boolean thinArms, Operation<PlayerEntityModel<AbstractClientPlayerEntity>> original, @Local(argsOnly = true) EntityRendererFactory.Context ctx) {
-		AppearanceModel currentCustomModel = ClientAppearanceCollector.INSTANCE.getCustomModelForRenderer();
+		ParsedClientAppearance currentCustomModel = ClientAppearanceCollector.INSTANCE.getCurrentlyInitializingAppearance();
 		if(currentCustomModel != null) {
-			CharaFormAct.LOGGER.info("Instantiating a custom player renderer! HOLY SMOKES!!!!");
+			CharaFormAct.LOGGER.info("Instantiating an Appearance-based player renderer!");
 //			return original.call(root, thinArms);
-			return currentCustomModel;
+			return currentCustomModel.makeAndGetModel(ctx);
 		}
 		else {
 			CharaFormAct.LOGGER.info("Instantiating a vanilla player renderer, with {} arms!", thinArms ? "thin" : "wide");

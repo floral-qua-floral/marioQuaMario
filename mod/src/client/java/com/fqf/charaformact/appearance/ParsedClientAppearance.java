@@ -6,15 +6,22 @@ import com.fqf.charaformact.registries.power_granting.ParsedForm;
 import com.fqf.charaformact.util.TransformationContext;
 import com.fqf.charaformact_api.appearance.*;
 import com.fqf.charaformact.util.VanillaPart;
+import com.google.common.collect.ImmutableList;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.EntityRendererFactory;
+import net.minecraft.client.render.entity.feature.FeatureRenderer;
+import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
+import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 public class ParsedClientAppearance extends ParsedCommonAppearance {
@@ -37,6 +44,8 @@ public class ParsedClientAppearance extends ParsedCommonAppearance {
 	public final float VIEW_BOB_MULTIPLIER;
 
 	public final Map<VanillaPart, Map<TransformationContext, TransformationInstructions>> FEATURE_TRANSFORMATION_INSTRUCTIONS;
+
+	private List<FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>>> customFeatures;
 
 	public ParsedClientAppearance(ClientAppearanceDefinition definition, ParsedCharacter character, ParsedForm form) {
 		super(definition, character, form);
@@ -99,6 +108,23 @@ public class ParsedClientAppearance extends ParsedCommonAppearance {
 
 	public AppearanceModel getModel() {
 		return this.model;
+	}
+
+	// good god i cannot BELIEVE i can just get away with all these stupid horrible casts???
+	@SuppressWarnings("unchecked")
+	public List<FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>>> makeCustomFeatures(
+			AppearanceRenderer renderer, EntityRendererFactory.Context ctx
+	) {
+		if(this.customFeatures == null) {
+			List<FeatureRenderer<AbstractClientPlayerEntity, AppearanceModel>> customFeatures = this.DEFINITION.getFeatureRenderersToAdd((FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel>) (Object) renderer, ctx);
+			ImmutableList.Builder<FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>>> builder = ImmutableList.builderWithExpectedSize(customFeatures.size());
+			for(FeatureRenderer<AbstractClientPlayerEntity, AppearanceModel> customFeature : customFeatures) {
+				((FeatureRendererWithContext) customFeature).cfa$setContext(TransformationContext.ORIGINAL);
+				builder.add((FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>>) (Object) customFeature);
+			}
+			this.customFeatures = builder.build();
+		}
+		return this.customFeatures;
 	}
 
 	private void populateTransformationInstructions(

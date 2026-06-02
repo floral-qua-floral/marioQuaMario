@@ -214,6 +214,10 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 			this.thisFrameModelArrangement.wrappedLerpRadians(tickDelta, this.prevFrameModelArrangement, lerpTo);
 		}
 
+		this.thisFrameModelArrangement.x *= this.DATA.getHorizontalAnimationScale();
+		this.thisFrameModelArrangement.y *= this.DATA.getVerticalAnimationScale();
+		this.thisFrameModelArrangement.z *= this.DATA.getHorizontalAnimationScale();
+
 		this.prevFrameModelArrangement = new AdvancedArrangement();
 		this.prevFrameModelArrangement.setPos(
 				this.thisFrameModelArrangement.x, this.thisFrameModelArrangement.y, this.thisFrameModelArrangement.z);
@@ -289,9 +293,7 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 				thisFramePosture.wrappedLerp(tickDelta, this.prevFramePosture, lerpTo);
 			}
 
-			float horizontalScale = this.DATA.getCharacter().ANIMATION_HORIZONTAL_SCALE * this.DATA.getForm().ANIMATION_HORIZONTAL_SCALE;
-			float verticalScale = this.DATA.getCharacter().ANIMATION_VERTICAL_SCALE * this.DATA.getForm().ANIMATION_VERTICAL_SCALE;
-			thisFramePosture.scaleTranslations(horizontalScale, verticalScale);
+			thisFramePosture.scaleTranslations(this.DATA.getHorizontalAnimationScale(), this.DATA.getVerticalAnimationScale());
 
 			if(rightArmBusy) handleBusyArm(thisFramePosture.RIGHT_ARM, thisFramePosture.TORSO);
 			if(leftArmBusy) handleBusyArm(thisFramePosture.LEFT_ARM, thisFramePosture.TORSO);

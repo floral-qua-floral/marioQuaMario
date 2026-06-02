@@ -30,10 +30,10 @@ public class AppearanceHelperImpl implements AppearanceGeometryHelper, Appearanc
 			Vector2i uv, Vector2i hatUV,
 			boolean isVanillaPart
 	) {
-		ModelPartData mainPart = this.makePart(root, name, isLeft, pivot, offset, mirrorableXOffset, new Vector3f(), size, uv);
+		ModelPartData mainPart = this.makePart(root, name, isLeft, pivot, offset, mirrorableXOffset, rotation, size, uv);
 		if(isVanillaPart) // Attach the hat-like part to the root with the main part's offsets & pivot. Vanilla code will make it mirrorChanges the main part.
 			this.makePart(root, hatName, isLeft, pivot, offset, mirrorableXOffset, rotation, size, hatUV, 0.25F);
-		else // Attach the hat-like layerPostureMutator directly to the main part with no offset or pivot
+		else // Attach the hat-like layerPostureMutator directly to the main part with no pivot or rotation
 			this.makePart(mainPart, hatName, isLeft, new Vector3f(), offset, mirrorableXOffset, new Vector3f(), size, hatUV, 0.25F);
 		return mainPart;
 	}

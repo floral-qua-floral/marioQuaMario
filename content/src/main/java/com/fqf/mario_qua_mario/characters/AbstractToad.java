@@ -1,24 +1,34 @@
 package com.fqf.mario_qua_mario.characters;
 
 import com.fqf.charaformact_api.definitions.states.CharacterDefinition;
-import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.util.MarioSFX;
+import com.fqf.mario_qua_mario.util.Powers;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
 import static com.fqf.charaformact_api.util.StatCategory.*;
 
-public class BlueToad extends AbstractMario implements CharacterDefinition {
-	public static final Identifier ID = MarioQuaMario.makeID("blue_toad");
-	@Override public @NotNull Identifier getID() {
-	    return ID;
-	}
-
+public abstract class AbstractToad extends AbstractMario implements CharacterDefinition {
 	@Override public @NotNull String getVoiceName() {
 		return "toad";
+	}
+
+	@Override
+	public float getHeightFactor() {
+		return 0.97F;
+	}
+
+	@Override
+	public float getEyeHeightFactor() {
+		return 0.765F;
+	}
+
+	@Override
+	public float getAnimationVerticalScale() {
+		return 0.8F;
 	}
 
 	@Override
@@ -37,5 +47,11 @@ public class BlueToad extends AbstractMario implements CharacterDefinition {
 				new StatModifier(Set.of(JUMPING_GRAVITY), 1.1),
 				new StatModifier(Set.of(JUMP_VELOCITY), 0.885)
 		);
+	}
+
+	@Override
+	public Set<String> getPowers() {
+		ImmutableSet.Builder<String> marioPowers = ImmutableSet.builder();
+		return marioPowers.addAll(super.getPowers()).add(Powers.MYCOLOGICAL).build();
 	}
 }

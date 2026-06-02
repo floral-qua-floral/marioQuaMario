@@ -59,7 +59,7 @@ public class LivingEntityRendererMixin<T extends LivingEntity> {
 	) {
 		if(applyRef.get()) {
 			TransformationContext context = ((FeatureRendererWithContext) instance).cfa$getContext();
-			if(context != null) ModelPartMover.instance.setTo(context);
+			ModelPartMover.instance.setTo(context);
 		}
 		original.call(instance, matrices, vertexConsumers, light, entity, limbAngle, limbDistance, tickDelta, animationProgress, headYaw, headPitch);
 	}

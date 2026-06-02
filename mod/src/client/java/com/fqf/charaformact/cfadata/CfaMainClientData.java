@@ -117,10 +117,7 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 			if(appearanceAnimation != null && appearanceAnimation.EXECUTION_FLAGS.contains(AnimationFlag.Execution.MIRROR))
 				cameraArrangement.mirrorChanges(AdvancedArrangement.BEFORE_CFA_ANIMATIONS);
 
-			cameraArrangement.scaleTranslations(
-					this.getCharacter().ANIMATION_HORIZONTAL_SCALE * this.getForm().ANIMATION_HORIZONTAL_SCALE,
-					this.getCharacter().ANIMATION_VERTICAL_SCALE * this.getForm().ANIMATION_VERTICAL_SCALE
-			);
+			cameraArrangement.scaleTranslations(this.getHorizontalAnimationScale(), this.getVerticalAnimationScale());
 		}
 	}
 

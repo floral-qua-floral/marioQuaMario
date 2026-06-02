@@ -16,7 +16,7 @@ import net.minecraft.client.render.entity.model.ParrotEntityModel;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -27,7 +27,7 @@ public abstract class ShoulderParrotFeatureRendererMixin<T extends PlayerEntity>
 	}
 
 	@Override
-	public @Nullable TransformationContext cfa$getContext() {
+	public @NotNull TransformationContext cfa$getContext() {
 		return TransformationContext.ORIGINAL;
 	}
 

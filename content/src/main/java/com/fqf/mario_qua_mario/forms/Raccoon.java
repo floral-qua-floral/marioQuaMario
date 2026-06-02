@@ -85,7 +85,8 @@ public class Raccoon implements FormDefinition {
 				Powers.SMB3_IDLE,
 				Powers.TAIL_ATTACK,
 				Powers.TAIL_STALL,
-				Powers.TAIL_FLY
+				Powers.TAIL_FLY,
+				Powers.TAPETUM_LUCIDUM
 		);
 	}
 	@Override public Set<AttributeModifierInstruction> getAttributeModifiers() {

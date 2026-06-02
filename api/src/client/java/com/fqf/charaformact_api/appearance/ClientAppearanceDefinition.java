@@ -1,13 +1,20 @@
 package com.fqf.charaformact_api.appearance;
 
 import net.minecraft.client.model.*;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.render.entity.EntityRendererFactory;
+import net.minecraft.client.render.entity.feature.FeatureRenderer;
+import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.client.render.entity.model.EntityModelPartNames;
+import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
+
+import java.util.List;
 
 /**
  * An Appearance is essentially a playermodel that is associated with a single Character + Form intersection.
@@ -157,6 +164,18 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 	// If you do, I'd recommend still calling super on any methods you override.
 	default AppearanceModel createModel(ModelPart root) {
 		return new AppearanceModel(root);
+	}
+
+	// Please feel free to override this to add any custom feature renderers you would like. For instance, you could use
+	// this to add a glowing element onto your model. You should not use this for extra body parts such as a tail;
+	// instead, add things like that to getModelData as genuine ModelParts. You can then animate these custom parts
+	// yourself by overriding createModel with a custom model class, then animate the parts in its preActionAnimation or
+	// postActionAnimation methods.
+	default List<FeatureRenderer<AbstractClientPlayerEntity, AppearanceModel>> getFeatureRenderersToAdd(
+			FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel> featureRendererContext,
+			EntityRendererFactory.Context ctx
+	) {
+		return List.of();
 	}
 
 	// Methods for deciding where on the arm held items will render (third person).

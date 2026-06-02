@@ -54,6 +54,10 @@ public class AppearanceModel extends PlayerEntityModel<AbstractClientPlayerEntit
 		}
 	}
 
+	@Override public final void setAngles(AbstractClientPlayerEntity livingEntity, float f, float g, float h, float i, float j) {
+		super.setAngles(livingEntity, f, g, h, i, j);
+	}
+
 	public void preActionAnimation(AbstractClientPlayerEntity player, CfaAnimatingData data) {
 		// This method is called after vanilla has posed the model, but before CFA has applied Action animations.
 	}
