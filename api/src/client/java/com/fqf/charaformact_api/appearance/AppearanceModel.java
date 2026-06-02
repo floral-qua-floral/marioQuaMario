@@ -60,9 +60,11 @@ public class AppearanceModel extends PlayerEntityModel<AbstractClientPlayerEntit
 
 	public void preActionAnimation(AbstractClientPlayerEntity player, CfaAnimatingData data) {
 		// This method is called after vanilla has posed the model, but before CFA has applied Action animations.
+		// Use this to animate body parts that CharaFormAct might also want to animate, such as the arms, legs, or tail.
 	}
 
 	public void postActionAnimation(AbstractClientPlayerEntity player, CfaAnimatingData data) {
-		// This method is called after CFA has applied Action animations. Use this sparingly!
+		// This method is called after CFA has applied Action animations. Use this to animate body parts that
+		// CharaFormAct won't animate via Actions, such as hair.
 	}
 }

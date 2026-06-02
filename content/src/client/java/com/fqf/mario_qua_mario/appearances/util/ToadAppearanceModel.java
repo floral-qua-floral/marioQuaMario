@@ -15,12 +15,11 @@ public class ToadAppearanceModel extends MqmAppearanceModel {
 		ModelPart capBulb = this.head.getChild(AbstractToadClientAppearance.CAP_BULB);
 		this.rightPigtail = capBulb.getChild(AbstractToadClientAppearance.RIGHT_PIGTAIL_TOP);
 		this.leftPigtail = capBulb.getChild(AbstractToadClientAppearance.LEFT_PIGTAIL_TOP);
-		this.rightPigtail.visible = false;
 	}
 
 	@Override
-	public void preActionAnimation(AbstractClientPlayerEntity player, CfaAnimatingData data) {
-		super.preActionAnimation(player, data);
+	public void postActionAnimation(AbstractClientPlayerEntity player, CfaAnimatingData data) {
+		super.postActionAnimation(player, data);
 
 		if(this.rightPigtail.visible || this.leftPigtail.visible) {
 			this.rightPigtail.pitch = -this.head.pitch + this.rightPigtail.getDefaultTransform().pitch;
