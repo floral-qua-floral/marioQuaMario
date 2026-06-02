@@ -7,10 +7,6 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
 import com.fqf.charaformact_api.cfadata.*;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.BodyPartAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.EntireBodyAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
@@ -211,7 +207,6 @@ public class Raccoon implements FormDefinition {
 	}
 
 	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
-		PiecemealPlayermodelAnimation tailWhipAnimation = makeTailWhipAnimation(animationHelper);
 		CameraAnimationSet tailWhipCameraAnimation = makeTailWhipCameraAnimationSet();
 
 		return List.of(
@@ -294,38 +289,4 @@ public class Raccoon implements FormDefinition {
 			}
 	);
 
-	private static PiecemealPlayermodelAnimation makeTailWhipAnimation(AnimationHelper helper) {
-		LimbAnimation armAnimation = new LimbAnimation(false, (data, arrangement, progress) -> {
-			float factor = progress < 0.5 ? progress * 2 : progress * -2 + 2;
-			arrangement.addPos(0, MathHelper.lerp(factor, 2, 4), MathHelper.lerp(factor, 2, 4));
-			arrangement.pitch -= MathHelper.lerp(factor, 16, 90);
-		});
-		LimbAnimation legAnimation = new LimbAnimation(false, (data, arrangement, progress) -> {
-			float factor = progress < 0.5 ? progress * 2 : progress * -2 + 2;
-			arrangement.addPos(0, factor * 2, factor * 6);
-			arrangement.pitch -= factor * 39;
-		});
-		return new PiecemealPlayermodelAnimation(
-				null,
-				new ProgressHandler(TAIL_WHIP_ANIMATION_DURATION, false, Easing.SINE_IN_OUT),
-
-				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) ->
-						arrangement.yaw = progress * 360),
-				new BodyPartAnimation((data, arrangement, progress) -> {
-					float factor = progress < 0.5 ? progress * 2 : progress * -2 + 2;
-					arrangement.addPos(0, factor * 4.3F, factor * -1);
-				}),
-				new BodyPartAnimation((data, arrangement, progress) -> {
-					float factor = progress < 0.5 ? progress * 2 : progress * -2 + 2;
-					arrangement.addPos(0, factor * 4.3F, factor * -1);
-					arrangement.pitch += factor * 42;
-				}),
-				armAnimation, armAnimation,
-				legAnimation, legAnimation,
-				new LimbAnimation(false, (data, arrangement, progress) -> {
-					arrangement.pitch = helper.interpolateKeyframes(progress * 2, 0, MathHelper.clamp(data.getPlayer().getPitch() - 30, -80, 75), 20);
-					arrangement.yaw = helper.interpolateKeyframes(progress * 2, 0, 85, 0);
-				})
-		);
-	}
 }

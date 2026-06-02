@@ -1,5 +1,9 @@
 package com.fqf.mario_qua_mario.actions.form;
 
+import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
+import com.fqf.charaformact_api.cfadata.CfaClientData;
+import com.fqf.charaformact_api.cfadata.CfaData;
+import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
@@ -7,9 +11,6 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.Animat
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
-import com.fqf.charaformact_api.cfadata.*;
-import com.fqf.charaformact_api.cfadata.CfaClientData;
-import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -41,7 +42,7 @@ public class TailSpinGround implements GroundedActionDefinition {
 	public static AnimationDefinition makeAnimation(boolean isGrounded) {
 		return AnimationDefinition.layerModelArranger(
 				AnimationDefinition.layerPostureMutator(
-						DuckWaddle.makeDuckAnimation2(isGrounded, false),
+						DuckWaddle.makeAnimation(isGrounded, false),
 						((posture, data, animationTime, helper) -> {
 							if(posture.TAIL != null)
 								posture.TAIL.pitch = -MathHelper.clamp(data.getPlayer().getPitch() - 10, -60, 10) - posture.TORSO.pitch;

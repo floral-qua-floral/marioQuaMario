@@ -1,14 +1,15 @@
 package com.fqf.mario_qua_mario.actions.grounded;
 
+import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
+import com.fqf.charaformact_api.cfadata.CfaClientData;
+import com.fqf.charaformact_api.cfadata.CfaData;
+import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charaformact_api.cfadata.*;
-import com.fqf.charaformact_api.cfadata.CfaClientData;
-import com.fqf.charaformact_api.cfadata.CfaTravelData;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -46,7 +47,7 @@ public class DuckWaddle implements GroundedActionDefinition {
 			default -> 1;
 		};
 	}
-	public static AnimationDefinition makeDuckAnimation2(boolean isGrounded, boolean isWaddle) {
+	public static AnimationDefinition makeAnimation(boolean isGrounded, boolean isWaddle) {
 		Identifier animationID = isGrounded ? ANIMATION_ID : AIRBORNE_ANIMATION_ID;
 		return AnimationDefinition.of(
 				animationID,
@@ -88,16 +89,8 @@ public class DuckWaddle implements GroundedActionDefinition {
 		);
 	}
 
-	public static PiecemealPlayermodelAnimation makeDuckAnimation(boolean walking, boolean airborne) {
-		return new PiecemealPlayermodelAnimation(
-				null, null,
-				null, null, null,
-				null, null, null, null, null
-		);
-	}
-
 	@Override public @Nullable AnimationDefinition getAnimation() {
-		return makeDuckAnimation2(true, true);
+		return makeAnimation(true, true);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
 		return null;

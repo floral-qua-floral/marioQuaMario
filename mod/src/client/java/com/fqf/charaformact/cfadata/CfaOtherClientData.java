@@ -4,7 +4,6 @@ import com.fqf.charaformact.appearance.ParsedCommonAppearance;
 import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.HandPreference;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.cfadata.util.RecordedCollisionSet;
 import net.minecraft.client.network.OtherClientPlayerEntity;
@@ -35,14 +34,8 @@ public class CfaOtherClientData extends CfaPlayerData implements CfaClientDataIm
 		return super.setForm(newForm, isReversion, seed);
 	}
 
-	private boolean replaceAnimationNextTick;
-	private PiecemealPlayermodelAnimation nextTickAnimation;
-	private boolean replaceAnimationNextNextTick;
-	private PiecemealPlayermodelAnimation nextNextTickAnimation;
 	@Override public void setActionTransitionless(AbstractParsedAction action) {
 		this.handleSlidingSound(action);
-		this.replaceAnimationNextTick = true;
-		this.nextTickAnimation = action.PIECEMEAL_ANIMATION;
 		super.setActionTransitionless(action);
 	}
 
@@ -70,16 +63,6 @@ public class CfaOtherClientData extends CfaPlayerData implements CfaClientDataIm
 		this.prevZ = pos.z;
 
 		this.VELOCITIES.invalidate();
-
-		if(this.replaceAnimationNextTick) {
-			this.replaceAnimationNextTick = false;
-//			this.PLAYER.cfa$getOldAnimationData().replaceAnimation(this, this.nextTickAnimation, -1);
-		}
-		if(this.replaceAnimationNextNextTick) {
-			this.replaceAnimationNextNextTick = false;
-			this.replaceAnimationNextTick = true;
-			this.nextTickAnimation = this.nextNextTickAnimation;
-		}
 
 		this.APPEARANCE_DATA.tick();
 	}

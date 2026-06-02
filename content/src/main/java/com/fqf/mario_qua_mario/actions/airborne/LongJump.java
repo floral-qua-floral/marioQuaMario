@@ -4,9 +4,6 @@ import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.BodyPartAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -69,19 +66,8 @@ public class LongJump extends Jump implements AirborneActionDefinition {
 				}
 		);
 	}
-
-	//	private static LimbAnimation makeArmAnimation(AnimationHelper helper, int factor) {
-//		return new LimbAnimation(false, (data, arrangement, progress) -> {
-//			arrangement.addAngles(
-//					helper.interpolateKeyframes(progress, 0, 0),
-//					helper.interpolateKeyframes(progress, 0, 0),
-//					helper.interpolateKeyframes(progress, 70, 0)
-//			);
-//		});
-//	}
 	private static float interpProgress(AnimationHelper helper, float progress) {
 		return helper.sequencedEase(progress, Easing.QUART_OUT, Easing.QUAD_IN);
-//		return 2;
 	}
 	private static float rotationProgress(float progress) {
 		return (progress - 1) * 2.4F;
@@ -91,94 +77,6 @@ public class LongJump extends Jump implements AirborneActionDefinition {
 		arrangement.y += helper.interpolateKeyframes(progress * BODY_ROTATION_SPEED, 2.24F, 0, 4.4F);
 		arrangement.z += helper.interpolateKeyframes(progress * BODY_ROTATION_SPEED, -1.2F, 0, -2);
 	}
-	private static LimbAnimation makeLegAnimation(AnimationHelper helper, int factor) {
-		return new LimbAnimation(false, (data, arrangement, progress) -> {
-			float interpProgress = interpProgress(helper, progress);
-			float rotationProgress = rotationProgress(progress);
-			arrangement.pitch += helper.interpolateKeyframes(interpProgress, 17, -5 + MathHelper.sin(rotationProgress) * factor * 56.6F, -57);
-			arrangement.y += helper.interpolateKeyframes(interpProgress * BODY_ROTATION_SPEED, -1.92F, -0.8F, 0);
-			arrangement.z += helper.interpolateKeyframes(interpProgress * BODY_ROTATION_SPEED, 2, -4.2F, 5);
-		});
-	}
-	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
-//		PiecemealPlayermodelAnimation old = new PiecemealPlayermodelAnimation(
-//				null,
-//				new ProgressHandler(
-//						(data, ticksPassed) ->
-//								ticksPassed / 100F
-//				),
-//				null,
-//				new BodyPartAnimation((data, arrangement, progress) -> {
-//
-//				}),
-//				new BodyPartAnimation((data, arrangement, progress) -> {
-//					arrangement.pitch -= helper.interpolateKeyframes(progress, 0, 0);
-//				}),
-//
-//				new LimbAnimation(false, (data, arrangement, progress) -> {
-//					arrangement.pitch -= helper.interpolateKeyframes(progress, 0, 170, 30);
-//					arrangement.yaw += helper.interpolateKeyframes(progress, 0, 0, 70);
-//					arrangement.roll += helper.interpolateKeyframes(progress, 70, -17.4F, 88);
-//				}),
-//				new LimbAnimation(false, (data, arrangement, progress) -> {
-//					arrangement.pitch -= helper.interpolateKeyframes(progress, 98, 64);
-//					arrangement.yaw -= helper.interpolateKeyframes(progress, 0, 90);
-//					arrangement.roll += helper.interpolateKeyframes(progress, 0, 0);
-//				}),
-//
-//				new LimbAnimation(false, (data, arrangement, progress) -> {
-//					arrangement.y -= helper.interpolateKeyframes(progress, 2, 0);
-//					arrangement.z -= helper.interpolateKeyframes(progress, 2, 0);
-//				}),
-//				new LimbAnimation(false, (data, arrangement, progress) -> {
-//					arrangement.y -= helper.interpolateKeyframes(progress, 0, 2);
-//					arrangement.z -= helper.interpolateKeyframes(progress, 0, 2);
-//				}),
-//				null
-//		);
-		return new PiecemealPlayermodelAnimation(
-				null,
-				new ProgressHandler(
-						(data, ticksPassed) ->
-								ticksPassed / 8F
-				),
-				null,
-				new BodyPartAnimation((data, arrangement, progress) -> {
-					positionOffset(helper, interpProgress(helper, progress), arrangement);
-				}),
-				new BodyPartAnimation((data, arrangement, progress) -> {
-					float interpProgress = interpProgress(helper, progress);
-					arrangement.pitch += helper.interpolateKeyframes(interpProgress * BODY_ROTATION_SPEED, 33, -26, 36);
-					positionOffset(helper, interpProgress, arrangement);
-				}),
-
-				new LimbAnimation(false, (data, arrangement, progress) -> {
-					float interpProgress = interpProgress(helper, progress);
-					float rotationProgress = rotationProgress(progress);
-					arrangement.addAngles(
-							helper.interpolateKeyframes(interpProgress, 0, -75 + MathHelper.sin(rotationProgress) * 28.5F, 65),
-							helper.interpolateKeyframes(interpProgress, 0, 63 + MathHelper.cos(rotationProgress) * 41, -5),
-							helper.interpolateKeyframes(interpProgress, 70, 0, 30)
-					);
-					positionOffset(helper, interpProgress, arrangement);
-				}),
-				new LimbAnimation(false, (data, arrangement, progress) -> {
-					float interpProgress = interpProgress(helper, progress);
-					float rotationProgress = rotationProgress(progress) + MathHelper.PI * 0.7F;
-					arrangement.addAngles(
-							helper.interpolateKeyframes(interpProgress, -90, -75 + MathHelper.cos(rotationProgress) * 28.5F, 65),
-							helper.interpolateKeyframes(interpProgress, 0, -63 + MathHelper.sin(rotationProgress) * 41, 5),
-							helper.interpolateKeyframes(interpProgress, 0, 0, -30)
-					);
-					positionOffset(helper, interpProgress, arrangement);
-				}),
-
-				makeLegAnimation(helper, 1),
-				makeLegAnimation(helper, -1),
-				null
-		);
-	}
-
 	@Override public @NotNull SneakingRule getSneakingRule() {
 		return SneakingRule.PROHIBIT;
 	}

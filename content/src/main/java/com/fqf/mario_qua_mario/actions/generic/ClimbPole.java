@@ -1,24 +1,26 @@
 package com.fqf.mario_qua_mario.actions.generic;
 
-import com.fqf.charaformact_api.cfadata.*;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
+import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
+import com.fqf.charaformact_api.cfadata.CfaClientData;
+import com.fqf.charaformact_api.cfadata.CfaData;
+import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.fqf.charaformact_api.definitions.states.actions.GenericActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationOption;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
-import com.fqf.charaformact_api.cfadata.CfaTravelData;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.BodyPartAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.EntireBodyAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.LimbAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.StatCategory;
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.charaformact_api.definitions.states.actions.GenericActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.*;
-import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.mario_qua_mario.Voicelines;
-import com.fqf.mario_qua_mario.actions.airborne.*;
+import com.fqf.mario_qua_mario.actions.airborne.Fall;
+import com.fqf.mario_qua_mario.actions.airborne.Jump;
+import com.fqf.mario_qua_mario.actions.airborne.SpecialFall;
+import com.fqf.mario_qua_mario.actions.airborne.WallJump;
 import com.fqf.mario_qua_mario.actions.grounded.SubWalk;
 import com.fqf.mario_qua_mario.util.ClimbTransitions;
 import com.fqf.mario_qua_mario.util.ClimbVars;
@@ -84,48 +86,6 @@ public class ClimbPole implements GenericActionDefinition {
 							posture.TAIL.roll += climbProgress * 30;
 					}
 				}
-		);
-	}
-
-	private static LimbAnimation makeArmAnimation(int factor) {
-	    return new LimbAnimation(false, (data, arrangement, progress) -> {
-			arrangement.pitch -= 140 + progress * -20 * factor;
-			arrangement.yaw -= 20 * factor;
-			arrangement.y += progress * 1.9F * factor;
-	    });
-	}
-	private static LimbAnimation makeLegAnimation(int factor) {
-	    return new LimbAnimation(false, (data, arrangement, progress) -> {
-			arrangement.pitch -= 10 + progress * 20 * factor;
-			arrangement.y -= 3F + progress * 3F * factor;
-			arrangement.z -= 3.7F;
-	    });
-	}
-
-	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
-		return new PiecemealPlayermodelAnimation(
-				null,
-				new ProgressHandler((data, ticksPassed) -> {
-					ClimbVars vars = data.retrieveStateData(ClimbVars.class);
-					double factorForInput = 1 / ClimbPole.CLIMB_SPEED.get(data);
-					vars.progress += (float) (data.getYVel() * factorForInput) / 2;
-					return MathHelper.sin(vars.progress);
-				}),
-				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
-					Vec3d offset = getMaximumOffset(data, 0.1).multiply(16);
-					arrangement.z += (float) offset.horizontalLength();
-				}),
-				null,
-				new BodyPartAnimation((data1, arrangement1, progress1) -> {
-					arrangement1.yaw += progress1 * -15;
-				}),
-				makeArmAnimation(1), makeArmAnimation(-1),
-				makeLegAnimation(1), makeLegAnimation(-1),
-				new LimbAnimation(true, (data, arrangement, progress) -> {
-					arrangement.pitch = 60;
-					if(data.getVelocity().lengthSquared() > 0.1)
-						arrangement.roll += progress * 30;
-				})
 		);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {

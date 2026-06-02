@@ -1,13 +1,13 @@
 package com.fqf.mario_qua_mario.actions.form;
 
+import com.fqf.charaformact_api.cfadata.CfaClientData;
+import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.charaformact_api.definitions.states.actions.util.SneakingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
-import com.fqf.charaformact_api.cfadata.CfaClientData;
-import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.mario_qua_mario.actions.airborne.DuckFall;
 import com.fqf.mario_qua_mario.actions.grounded.DuckWaddle;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
@@ -25,7 +25,7 @@ public class TailStallDucking extends TailStall implements AirborneActionDefinit
 	}
 
 	@Override public @Nullable AnimationDefinition getAnimation() {
-		return AnimationDefinition.layerPostureMutator(DuckWaddle.makeDuckAnimation2(false, false), TailStall.POSTURE_MUTATOR);
+		return AnimationDefinition.layerPostureMutator(DuckWaddle.makeAnimation(false, false), TailStall.POSTURE_MUTATOR);
 	}
 
 	@Override public @NotNull SneakingRule getSneakingRule() {

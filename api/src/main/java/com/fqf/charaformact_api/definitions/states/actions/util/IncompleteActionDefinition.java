@@ -4,7 +4,6 @@ import com.fqf.charaformact_api.definitions.states.AttackInterceptingStateDefini
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.piecemeal.PiecemealPlayermodelAnimation;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,9 +14,7 @@ public interface IncompleteActionDefinition extends AttackInterceptingStateDefin
 	default @Nullable AnimationDefinition getAnimation() {
 		return null;
 	}
-	default @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
-		return null;
-	}
+
 	@Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper);
 	@NotNull SlidingStatus getSlidingStatus();
 

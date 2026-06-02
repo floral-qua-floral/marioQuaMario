@@ -109,6 +109,8 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 		}
 		else {
 			// This could be modernized to use AppearanceData and be a part AnimationDefinition, but tbh i don't wanna
+			// NOTE FOR FUTURE ME: ALSO the existence of minProgressToFinish means it's not as simple as just replacing
+			// progress handlers & mutators with a single mutator!!!!!!!! don't try it thinking it'll be easy!!!!!! >:(
 			cameraArrangement.store(AdvancedArrangement.BEFORE_CFA_ANIMATIONS);
 
 			this.currentCameraAnimation.mutator().mutate(this, cameraArrangement, progress);
