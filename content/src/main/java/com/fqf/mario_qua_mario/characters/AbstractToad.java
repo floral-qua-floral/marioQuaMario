@@ -12,9 +12,9 @@ import java.util.Set;
 import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public abstract class AbstractToad extends AbstractMario implements CharacterDefinition {
-	@Override public @NotNull String getVoiceName() {
-		return "toad";
-	}
+//	@Override public @NotNull String getVoiceName() {
+//		return "toad";
+//	}
 
 	@Override
 	public float getHeightFactor() {

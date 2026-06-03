@@ -1,5 +1,6 @@
 package com.fqf.charaformact.registries;
 
+import com.fqf.charaformact.util.DelayedRemovable;
 import com.fqf.charaformact_api.definitions.CollisionAttackTypeDefinition;
 import com.fqf.charaformact_api.interfaces.CollisionAttackResult;
 import com.fqf.charaformact_api.interfaces.CollisionAttackable;
@@ -93,53 +94,63 @@ public class ParsedCollisionAttack extends ParsedCfaThing {
 
 		EnumMap<CollisionAttackResult.ExecutableResult, Set<Entity>> collidedEntities = new EnumMap<>(CollisionAttackResult.ExecutableResult.class);
 		boolean canMount = this.MOUNTING && !player.isSneaking();
-		for(Entity target : entities) {
-			CollisionAttackResult result = ((CollisionAttackable) target).cfa$processCollisionAttack(data, canMount, collisionDamageAmount, collisionDamageSource);
-			if(result == CollisionAttackResult.PAINFUL) {
-				result = switch(this.PAINFUL_COLLISION_RESPONSE) {
-					case INJURY -> CollisionAttackResult.PAINFUL;
-					case MUTUALLY_HARMLESS -> CollisionAttackResult.GLANCING;
-					case IMMUNE -> {
-						if(target.damage(collisionDamageSource, collisionDamageAmount)) {
-							player.onAttacking(target);
-							yield CollisionAttackResult.NORMAL;
+
+		try {
+			for(Entity target : entities) {
+				((DelayedRemovable) target).cfa$startDelayedRemoval();
+
+				CollisionAttackResult result = ((CollisionAttackable) target).cfa$processCollisionAttack(data, canMount, collisionDamageAmount, collisionDamageSource);
+				if(result == CollisionAttackResult.PAINFUL) {
+					result = switch(this.PAINFUL_COLLISION_RESPONSE) {
+						case INJURY -> CollisionAttackResult.PAINFUL;
+						case MUTUALLY_HARMLESS -> CollisionAttackResult.GLANCING;
+						case IMMUNE -> {
+							if(target.damage(collisionDamageSource, collisionDamageAmount)) {
+								player.onAttacking(target);
+								yield CollisionAttackResult.NORMAL;
+							}
+							else yield CollisionAttackResult.RESISTED;
 						}
-						else yield CollisionAttackResult.RESISTED;
+					};
+				}
+
+				switch(result) {
+					case MOUNT -> {
+						canMount = false;
+						registerCollidedEntity(collidedEntities, target, CollisionAttackResult.ExecutableResult.MOUNT);
 					}
-				};
+					case PAINFUL -> registerCollidedEntity(collidedEntities, target, CollisionAttackResult.ExecutableResult.PAINFUL);
+					case NORMAL -> registerCollidedEntity(collidedEntities, target, CollisionAttackResult.ExecutableResult.NORMAL);
+					case GLANCING -> registerCollidedEntity(collidedEntities, target, CollisionAttackResult.ExecutableResult.GLANCING);
+					case RESISTED -> registerCollidedEntity(collidedEntities, target, CollisionAttackResult.ExecutableResult.RESISTED);
+				}
 			}
 
-			switch(result) {
-				case MOUNT -> {
-					canMount = false;
-					registerCollidedEntity(collidedEntities, target, CollisionAttackResult.ExecutableResult.MOUNT);
+			boolean affectingAttacker = true;
+			boolean canHurtAttacker = true;
+			@Nullable Vec3d targetPos = null;
+			for (Map.Entry<CollisionAttackResult.ExecutableResult, Set<Entity>> executableResultSetEntry : collidedEntities.entrySet()) {
+				CollisionAttackResult.ExecutableResult currentCollisionResult = executableResultSetEntry.getKey();
+				for(Entity affectEntity : executableResultSetEntry.getValue()) {
+					Vec3d providedTargetPos = this.executeServerAndNetwork(data, affectEntity, currentCollisionResult, goingToPos, affectingAttacker);
+					if(affectingAttacker) {
+						affectingAttacker = false;
+						targetPos = providedTargetPos;
+					}
+					if(currentCollisionResult == CollisionAttackResult.ExecutableResult.PAINFUL && canHurtAttacker) {
+						canHurtAttacker = false;
+						player.damage(player.getDamageSources().thorns(affectEntity), 4);
+					}
 				}
-				case PAINFUL -> registerCollidedEntity(collidedEntities, target, CollisionAttackResult.ExecutableResult.PAINFUL);
-				case NORMAL -> registerCollidedEntity(collidedEntities, target, CollisionAttackResult.ExecutableResult.NORMAL);
-				case GLANCING -> registerCollidedEntity(collidedEntities, target, CollisionAttackResult.ExecutableResult.GLANCING);
-				case RESISTED -> registerCollidedEntity(collidedEntities, target, CollisionAttackResult.ExecutableResult.RESISTED);
 			}
+
+			return targetPos;
 		}
-
-		boolean affectingAttacker = true;
-		boolean canHurtAttacker = true;
-		@Nullable Vec3d targetPos = null;
-		for (Map.Entry<CollisionAttackResult.ExecutableResult, Set<Entity>> executableResultSetEntry : collidedEntities.entrySet()) {
-			CollisionAttackResult.ExecutableResult currentCollisionResult = executableResultSetEntry.getKey();
-			for(Entity affectEntity : executableResultSetEntry.getValue()) {
-				Vec3d providedTargetPos = this.executeServerAndNetwork(data, affectEntity, currentCollisionResult, goingToPos, affectingAttacker);
-				if(affectingAttacker) {
-					affectingAttacker = false;
-					targetPos = providedTargetPos;
-				}
-				if(currentCollisionResult == CollisionAttackResult.ExecutableResult.PAINFUL && canHurtAttacker) {
-					canHurtAttacker = false;
-					player.damage(player.getDamageSources().thorns(affectEntity), 4);
-				}
-			}
+		finally {
+			// This has to be in a finally block to make sure that even if there's an exception, we don't leave the
+			// target in a Delayed Removal state!! It'll probably crash anyways but just to be safe!
+			for(Entity target : entities) ((DelayedRemovable) target).cfa$finishDelayedRemoval();
 		}
-
-		return targetPos;
 	}
 
 	public void transitionAction(CfaPlayerData data, CollisionAttackResult.ExecutableResult result) {

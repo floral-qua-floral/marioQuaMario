@@ -16,11 +16,6 @@ public class Toadette extends AbstractToad implements CharacterDefinition {
 	}
 
 	@Override
-	public @NotNull String getVoiceName() {
-		return ID.getPath();
-	}
-
-	@Override
 	public @NotNull SoundEvent getJumpSound() {
 		return MarioSFX.TOADETTE_JUMP;
 	}
