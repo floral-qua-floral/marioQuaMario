@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import static com.fqf.charaformact_api.util.StatCategory.DAMAGE;
 import static com.fqf.charaformact_api.util.StatCategory.COLLISION_ATTACK;
 
-public class AquaticGroundPound extends JumpStomp implements CollisionAttackTypeDefinition {
+public class AquaticGroundPound extends Stomp implements CollisionAttackTypeDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("aquatic_ground_pound");
 	@Override public @NotNull Identifier getID() {
 	    return ID;
@@ -50,7 +50,7 @@ public class AquaticGroundPound extends JumpStomp implements CollisionAttackType
 
 	@Override
 	public float calculateDamage(CfaData data, ItemStack equipment, float equipmentArmor, float equipmentToughness) {
-		int pulverizingLevel = JumpStomp.getPulverizingLevel(equipment, data);
+		int pulverizingLevel = Stomp.getPulverizingLevel(equipment, data);
 		float pulverizingBonus = pulverizingLevel * 0.25F + (pulverizingLevel > 0 ? 0.5F : 0);
 		int depthChargeLevel = getDepthChargeLevel(equipment, data);
 		float depthChargeBonus = depthChargeLevel * 0.5F + (depthChargeLevel > 0 ? 1 : 0);
@@ -58,7 +58,7 @@ public class AquaticGroundPound extends JumpStomp implements CollisionAttackType
 	}
 
 	public static int getDepthChargeLevel(ItemStack item, CfaData data) {
-		return JumpStomp.getEnchantmentLevel(item, data.getPlayer().getWorld(), DEPTH_CHARGE_ID);
+		return Stomp.getEnchantmentLevel(item, data.getPlayer().getWorld(), DEPTH_CHARGE_ID);
 	}
 
 	@Override

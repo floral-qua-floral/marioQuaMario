@@ -13,7 +13,7 @@ import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario.actions.grounded.SubWalk;
 import com.fqf.mario_qua_mario.actions.wallbound.WallSlide;
-import com.fqf.mario_qua_mario.collision_attacks.JumpStomp;
+import com.fqf.mario_qua_mario.collision_attacks.Stomp;
 import com.fqf.mario_qua_mario.util.ClimbTransitions;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -48,7 +48,7 @@ public class Fall implements AirborneActionDefinition {
 		return BappingRule.FALLING;
 	}
 	@Override public @Nullable Identifier getCollisionAttackTypeID() {
-		return JumpStomp.ID;
+		return Stomp.ID;
 	}
 
 	public static final CfaStat FALL_ACCEL = new CfaStat(-0.115, NORMAL_GRAVITY);

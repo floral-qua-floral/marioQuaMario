@@ -3,7 +3,7 @@ package com.fqf.mario_qua_mario.util;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.characters.Mario;
-import com.fqf.mario_qua_mario.collision_attacks.JumpStomp;
+import com.fqf.mario_qua_mario.collision_attacks.Stomp;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.command.EntityDataObject;
@@ -34,7 +34,7 @@ public class MQMEventListeners {
 							marioY = mario.getY();
 
 						//noinspection RedundantIfStatement
-						if(JumpStomp.collidingFromTop(attacker, mario, marioY, new Vec3d(0, -1, 0), false)
+						if(Stomp.collidingFromTop(attacker, mario, marioY, new Vec3d(0, -1, 0), false)
 								|| (attacker instanceof EnderDragonEntity && mario.getY() > attacker.getY() + attacker.getHeight() / 2)) {
 							return false;
 						}

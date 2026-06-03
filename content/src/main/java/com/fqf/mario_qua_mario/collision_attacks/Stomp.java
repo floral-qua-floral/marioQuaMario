@@ -9,6 +9,7 @@ import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.CfaTags;
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.actions.airborne.BonkAir;
 import com.fqf.mario_qua_mario.actions.airborne.StompBounce;
 import com.fqf.mario_qua_mario.util.*;
 import net.minecraft.enchantment.Enchantment;
@@ -35,7 +36,7 @@ import java.util.Optional;
 import static com.fqf.charaformact_api.util.StatCategory.DAMAGE;
 import static com.fqf.charaformact_api.util.StatCategory.COLLISION_ATTACK;
 
-public class JumpStomp implements CollisionAttackTypeDefinition {
+public class Stomp implements CollisionAttackTypeDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("stomp");
 	@Override public @NotNull Identifier getID() {
 	    return ID;
@@ -55,7 +56,7 @@ public class JumpStomp implements CollisionAttackTypeDefinition {
 	}
 	@Override public @Nullable Identifier getPostCollisionActions(CollisionAttackResult.ExecutableResult result) {
 		return switch(result) {
-			case PAINFUL -> null; // Later: Replace this with Bonk
+			case PAINFUL -> BonkAir.ID;
 			case NORMAL, GLANCING, RESISTED -> StompBounce.ID;
 			default -> null;
 		};
@@ -110,7 +111,7 @@ public class JumpStomp implements CollisionAttackTypeDefinition {
 
 	@Override
 	public float calculateDamage(CfaData data, ItemStack equipment, float equipmentArmor, float equipmentToughness) {
-		int pulverizingLevel = JumpStomp.getPulverizingLevel(equipment, data);
+		int pulverizingLevel = Stomp.getPulverizingLevel(equipment, data);
 		return ((float) BASE_DAMAGE.get(data)) + equipmentArmor * 2.25F + pulverizingLevel * 0.5F + (pulverizingLevel > 0 ? 0.5F : 0);
 	}
 

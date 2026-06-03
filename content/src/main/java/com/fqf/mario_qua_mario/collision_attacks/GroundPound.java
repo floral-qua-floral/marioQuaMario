@@ -7,10 +7,10 @@ import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.actions.airborne.BonkAir;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
@@ -52,6 +52,7 @@ public class GroundPound implements CollisionAttackTypeDefinition {
 
 	@Override
 	public @Nullable Identifier getPostCollisionActions(CollisionAttackResult.ExecutableResult result) {
+		if(result == CollisionAttackResult.ExecutableResult.PAINFUL) return BonkAir.ID;
 		return null;
 	}
 
@@ -62,14 +63,14 @@ public class GroundPound implements CollisionAttackTypeDefinition {
 
 	@Override
 	public void filterPotentialTargets(List<Entity> potentialTargets, ServerPlayerEntity attacker, Vec3d motion) {
-		potentialTargets.removeIf(entity -> !(entity.canHit() && entity instanceof LivingEntity));
+		potentialTargets.removeIf(entity -> !entity.canHit());
 	}
 
 	public static final CfaStat BASE_DAMAGE = new CfaStat(7, COLLISION_ATTACK, DAMAGE);
 
 	@Override
 	public float calculateDamage(CfaData data, ItemStack equipment, float equipmentArmor, float equipmentToughness) {
-		int pulverizingLevel = JumpStomp.getPulverizingLevel(equipment, data);
+		int pulverizingLevel = Stomp.getPulverizingLevel(equipment, data);
 		return ((float) BASE_DAMAGE.get(data)) + equipmentArmor * 2.25F + pulverizingLevel * 0.5F + (pulverizingLevel > 0 ? 1 : 0);
 	}
 

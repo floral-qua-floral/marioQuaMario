@@ -17,7 +17,7 @@
 	"environment": "*",
 	"entrypoints": {
 		"cfa-collision-attacks": [
-			"com.fqf.mario_qua_mario.collision_attacks.JumpStomp",
+          "com.fqf.mario_qua_mario.collision_attacks.Stomp",
 			"com.fqf.mario_qua_mario.collision_attacks.GroundPound",
 			"com.fqf.mario_qua_mario.collision_attacks.AquaticGroundPound"
 		],
