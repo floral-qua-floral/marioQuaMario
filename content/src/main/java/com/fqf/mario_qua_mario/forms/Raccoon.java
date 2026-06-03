@@ -58,10 +58,10 @@ public class Raccoon implements FormDefinition {
 	@Override public float getHeightFactor() {
 		return 1;
 	}
-	@Override public float getAnimationWidthFactor() {
+	@Override public float getAnimationHorizontalScale() {
 		return 1;
 	}
-	@Override public float getAnimationHeightFactor() {
+	@Override public float getAnimationVerticalScale() {
 		return 1;
 	}
 
@@ -81,7 +81,8 @@ public class Raccoon implements FormDefinition {
 				Powers.SMB3_IDLE,
 				Powers.TAIL_ATTACK,
 				Powers.TAIL_STALL,
-				Powers.TAIL_FLY
+				Powers.TAIL_FLY,
+				Powers.TAPETUM_LUCIDUM
 		);
 	}
 	@Override public Set<AttributeModifierInstruction> getAttributeModifiers() {
@@ -126,12 +127,10 @@ public class Raccoon implements FormDefinition {
 
 	private abstract static class TailAttack implements AttackInterceptionDefinition {
 		private final Identifier ACTION_TARGET;
-		private final PlayermodelAnimation ANIMATION;
 		private final CameraAnimationSet CAMERA_ANIMATIONS;
 
-		private TailAttack(Identifier actionTarget, PlayermodelAnimation animation, CameraAnimationSet cameraAnimations) {
+		private TailAttack(Identifier actionTarget, CameraAnimationSet cameraAnimations) {
 			this.ACTION_TARGET = actionTarget;
-			this.ANIMATION = animation;
 			this.CAMERA_ANIMATIONS = cameraAnimations;
 		}
 
@@ -174,7 +173,7 @@ public class Raccoon implements FormDefinition {
 //			if(entityTarget != null) data.playSound(MarioSFX.KICK, seed);
 			if(this.ACTION_TARGET == null) {
 				data.voice(Voicelines.TAIL_WHIP, seed);
-				data.playAnimation(this.ANIMATION, TAIL_WHIP_ANIMATION_DURATION);
+				data.playAnimation(TAIL_WHIP_ANIMATION, TAIL_WHIP_ANIMATION_DURATION);
 				data.playCameraAnimation(this.CAMERA_ANIMATIONS);
 			}
 			else data.voice(Voicelines.TAIL_SPIN, seed);
@@ -208,21 +207,20 @@ public class Raccoon implements FormDefinition {
 	}
 
 	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
-		PlayermodelAnimation tailWhipAnimation = makeTailWhipAnimation(animationHelper);
 		CameraAnimationSet tailWhipCameraAnimation = makeTailWhipCameraAnimationSet();
 
 		return List.of(
-				new TailAttack(TailSpinGround.ID, null, null) {
+				new TailAttack(TailSpinGround.ID, null) {
 					@Override protected boolean testSwing(CfaReadableMotionData data) {
 						return data.getPlayer().isOnGround() && data.getPlayer().isInSneakingPose();
 					}
 				},
-				new TailAttack(TailSpinFall.ID, null, null) {
+				new TailAttack(TailSpinFall.ID, null) {
 					@Override protected boolean testSwing(CfaReadableMotionData data) {
 						return !data.getPlayer().isOnGround() && data.getPlayer().isInSneakingPose();
 					}
 				},
-				new TailAttack(null, tailWhipAnimation, tailWhipCameraAnimation) {
+				new TailAttack(null, tailWhipCameraAnimation) {
 					@Override protected boolean testSwing(CfaReadableMotionData data) {
 						return true;
 					}
@@ -255,38 +253,40 @@ public class Raccoon implements FormDefinition {
 	}
 
 	private static final int TAIL_WHIP_ANIMATION_DURATION = 7;
-	private static PlayermodelAnimation makeTailWhipAnimation(AnimationHelper helper) {
-		LimbAnimation armAnimation = new LimbAnimation(false, (data, arrangement, progress) -> {
-			float factor = progress < 0.5 ? progress * 2 : progress * -2 + 2;
-			arrangement.addPos(0, MathHelper.lerp(factor, 2, 4), MathHelper.lerp(factor, 2, 4));
-			arrangement.pitch -= MathHelper.lerp(factor, 16, 90);
-		});
-		LimbAnimation legAnimation = new LimbAnimation(false, (data, arrangement, progress) -> {
-			float factor = progress < 0.5 ? progress * 2 : progress * -2 + 2;
-			arrangement.addPos(0, factor * 2, factor * 6);
-			arrangement.pitch -= factor * 39;
-		});
-		return new PlayermodelAnimation(
-				null,
-				new ProgressHandler(TAIL_WHIP_ANIMATION_DURATION, false, Easing.SINE_IN_OUT),
 
-				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) ->
-						arrangement.yaw = progress * 360),
-				new BodyPartAnimation((data, arrangement, progress) -> {
-					float factor = progress < 0.5 ? progress * 2 : progress * -2 + 2;
-					arrangement.addPos(0, factor * 4.3F, factor * -1);
-				}),
-				new BodyPartAnimation((data, arrangement, progress) -> {
-					float factor = progress < 0.5 ? progress * 2 : progress * -2 + 2;
-					arrangement.addPos(0, factor * 4.3F, factor * -1);
-					arrangement.pitch += factor * 42;
-				}),
-				armAnimation, armAnimation,
-				legAnimation, legAnimation,
-				new LimbAnimation(false, (data, arrangement, progress) -> {
-					arrangement.pitch = helper.interpolateKeyframes(progress * 2, 0, MathHelper.clamp(data.getPlayer().getPitch() - 30, -80, 75), 20);
-					arrangement.yaw = helper.interpolateKeyframes(progress * 2, 0, 85, 0);
-				})
-		);
+	private static float calculateProgress(float animationTime) {
+		return Easing.SINE_IN_OUT.ease(Math.min(animationTime / TAIL_WHIP_ANIMATION_DURATION, 1));
 	}
+	public static final AnimationDefinition TAIL_WHIP_ANIMATION = AnimationDefinition.of(
+			AnimationFlag.NO_SWING_LIMBS,
+			(arrangement, data, animationTime, helper) -> arrangement.yaw = calculateProgress(animationTime) * 360,
+			(posture, data, animationTime, helper) -> {
+				float progress = calculateProgress(animationTime);
+				float factor = progress < 0.5 ? progress * 2 : progress * -2 + 2;
+
+				posture.HEAD.addPos(0, factor * 4.3F, factor * -1);
+
+				posture.TORSO.addPos(0, factor * 4.3F, factor * -1);
+				posture.TORSO.pitch += factor * 42;
+
+				helper.asymmetricallyAnimate(posture.RIGHT_ARM, posture.LEFT_ARM, (arrangement, isLeft, sideFactor) -> {
+					arrangement.addPos(0, MathHelper.lerp(factor, 2, 4), MathHelper.lerp(factor, 2, 4));
+					arrangement.pitch -= MathHelper.lerp(factor, 16, 90);
+				});
+
+				helper.asymmetricallyAnimate(posture.RIGHT_LEG, posture.LEFT_LEG, (arrangement, isLeft, sideFactor) -> {
+					arrangement.addPos(0, factor * 2, factor * 6);
+					arrangement.pitch -= factor * 39;
+				});
+
+				if(posture.TAIL != null) {
+					posture.TAIL.setAngles(
+							-posture.TORSO.pitch - helper.interpolateKeyframes(progress * 2, 0, MathHelper.clamp(data.getPlayer().getPitch() - 30, -80, 75), 20),
+							helper.interpolateKeyframes(progress * 2, 0, 85, 0),
+							0
+					);
+				}
+			}
+	);
+
 }

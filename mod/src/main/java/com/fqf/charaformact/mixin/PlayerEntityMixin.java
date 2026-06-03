@@ -1,6 +1,7 @@
 package com.fqf.charaformact.mixin;
 
 import com.fqf.charaformact.CharaFormAct;
+import com.fqf.charaformact.appearance.ParsedCommonAppearance;
 import com.fqf.charaformact.bapping.BlockBappingUtil;
 import com.fqf.charaformact.bapping.WorldBapsInfo;
 import com.fqf.charaformact.cfadata.CfaMoveableData;
@@ -31,6 +32,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameMode;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -137,14 +139,21 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDa
 
 	@Inject(method = "tickMovement", at = @At("TAIL"))
 	private void preventViewBobbing(CallbackInfo ci) {
-		CfaPlayerData data = cfa$getCfaData();
+		CfaPlayerData data = this.cfa$getCfaData();
 		if(data.isClient() && data.isEnabled() && data.getAction().SLIDING_STATUS != SlidingStatus.NOT_SLIDING)
 			strideDistance = prevStrideDistance * 0.6F;
 	}
 
 	@Override
+	protected float calculateNextStepSoundDistance() {
+		ParsedCommonAppearance appearance = this.cfa$getCfaData().getAppearance();
+		if(appearance == null) return super.calculateNextStepSoundDistance();
+		else return this.distanceTraveled + appearance.STRIDE_LENGTH;
+	}
+
+	@Override
 	public boolean startRiding(Entity entity, boolean force) {
-		CfaPlayerData data = cfa$getCfaData();
+		CfaPlayerData data = this.cfa$getCfaData();
 		if(data.isEnabled()) {
 			AbstractParsedAction mountedAction = data.getCharacter().getMountedAction(entity);
 			boolean mounted = mountedAction != null && super.startRiding(entity, force);

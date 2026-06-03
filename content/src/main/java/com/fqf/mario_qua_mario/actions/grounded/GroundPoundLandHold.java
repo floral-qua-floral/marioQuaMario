@@ -5,8 +5,7 @@ import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionInjectionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -21,9 +20,8 @@ public class GroundPoundLandHold extends GroundPoundLand implements GroundedActi
 	    return ID;
 	}
 
-	@Override
-	public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return BonkGroundBackward.makeBonkStandupAnimation(helper, (data, ticksPassed) -> 0);
+	@Override public @Nullable AnimationDefinition getAnimation() {
+		return BonkGroundBackward.makeAnimation((data, animationTime) -> 0);
 	}
 
 	@Override

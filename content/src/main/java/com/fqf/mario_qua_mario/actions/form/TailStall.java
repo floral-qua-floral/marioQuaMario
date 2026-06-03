@@ -1,17 +1,16 @@
 package com.fqf.mario_qua_mario.actions.form;
 
+import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
+import com.fqf.charaformact_api.cfadata.CfaClientData;
+import com.fqf.charaformact_api.cfadata.CfaData;
+import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionInjectionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.LimbAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.ProgressHandler;
-import com.fqf.charaformact_api.cfadata.*;
-import com.fqf.charaformact_api.cfadata.CfaClientData;
-import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
@@ -38,42 +37,39 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 		return ID;
 	}
 
-	private static LimbAnimation makeArmAnimation(AnimationHelper helper, int factor) {
-		return new LimbAnimation(false, (data, arrangement, progress) -> {
-			arrangement.x -= factor;
-			arrangement.roll += 100 * factor + MathHelper.sin(progress) * 5;
-			arrangement.pitch += factor * MathHelper.cos(progress) * 11;
-		});
-	}
-	private static LimbAnimation makeLegAnimation(AnimationHelper helper, int factor) {
-		return new LimbAnimation(false, (data, arrangement, progress) -> {
-			arrangement.pitch += factor * MathHelper.cos(progress) * 70F;
-		});
-	}
-	public static LimbAnimation makeTailAnimation(boolean useProgress) {
-		return new LimbAnimation(
-				false, (data, arrangement, progress) -> {
-					float value;
-					if(useProgress) value = progress;
-					else value = data.retrieveStateData(ActionTimerVars.class).actionTimer * 1.1F;
-					arrangement.setAngles(
-							MathHelper.sin(value * 1.2F) * 38.3F,
-							MathHelper.sin(value * 0.6F) * 52,
-							0
-					);
+	public static final float TAIL_WAGGLE_FREQUENCY = 1.1F;
+
+	public static final AnimationDefinition.PostureMutator POSTURE_MUTATOR = (posture, data, animationTime, helper) -> {
+		if(posture.TAIL != null) {
+			float progress = animationTime * TAIL_WAGGLE_FREQUENCY;
+			posture.TAIL.setAngles(
+					MathHelper.sin(progress * 1.2F) * 38.3F,
+					MathHelper.sin(progress * 0.6F) * 52,
+					0
+			);
+		}
+	};
+
+	@Override public @Nullable AnimationDefinition getAnimation() {
+		return AnimationDefinition.of(
+				AnimationFlag.NO_SWING_LIMBS,
+				(posture, data, animationTime, helper) -> {
+					float progress = animationTime * TAIL_WAGGLE_FREQUENCY;
+
+					helper.asymmetricallyAnimate(posture.RIGHT_ARM, posture.LEFT_ARM, (arrangement, isLeft, sideFactor) -> {
+						arrangement.x -= sideFactor;
+						arrangement.addAngles(
+								sideFactor * MathHelper.cos(progress) * 11,
+								0,
+								100 * sideFactor + MathHelper.sin(progress) * 5
+						);
+					});
+
+					helper.asymmetricallyAnimate(posture.RIGHT_LEG, posture.LEFT_LEG, (arrangement, isLeft, sideFactor) ->
+							arrangement.pitch += sideFactor * MathHelper.cos(progress) * 70F);
+
+					POSTURE_MUTATOR.mutatePosture(posture, data, animationTime, helper);
 				}
-		);
-	}
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return new PlayermodelAnimation(
-				null,
-				new ProgressHandler((data, ticksPassed) -> ticksPassed * 1.1F),
-				null,
-				null,
-				null,
-				makeArmAnimation(helper, 1), makeArmAnimation(helper, -1),
-				makeLegAnimation(helper, 1), makeLegAnimation(helper, -1),
-				makeTailAnimation(true)
 		);
 	}
 
@@ -82,7 +78,7 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 
 	public static void tailWaggleTick(CfaClientData data) {
 		if(data.retrieveStateData(ActionTimerVars.class).actionTimer++ % 4 == 0)
-			data.playSound(MarioSFX.TAIL_FLY, 1F, 0.2F, data.getPlayer().getRandom().nextLong());
+			data.playSound(MarioSFX.TAIL_FLY, 1F, 0.1F, data.getPlayer().getRandom().nextLong());
 	}
 
 	@Override public @Nullable Object provideStateData(CfaData data) {

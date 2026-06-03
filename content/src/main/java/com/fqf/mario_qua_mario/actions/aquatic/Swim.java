@@ -2,18 +2,12 @@ package com.fqf.mario_qua_mario.actions.aquatic;
 
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.ProgressHandler;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Objects;
 
 import static com.fqf.charaformact_api.util.StatCategory.*;
 
@@ -23,19 +17,8 @@ public class Swim extends Submerged {
 	    return ID;
 	}
 
-	@Override
-	public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return Objects.requireNonNull(Submerged.makeAnimation(helper).variate(
-				null,
-				new ProgressHandler(
-						null,
-						(data, prevAnimationID) -> true, // Always reset animation progress when entering this action
-						(data, ticksPassed) -> Math.min(ticksPassed / 6F, 1)
-				),
-				null, null, null,
-				null, null, null, null,
-				null
-		));
+	@Override protected float getAnimationProgress(float animationTime) {
+		return Math.min(animationTime / 2, 3);
 	}
 
 	public static final CfaStat SWIM_ACCEL = new CfaStat(0.4, SWIMMING, UP, ACCELERATION);

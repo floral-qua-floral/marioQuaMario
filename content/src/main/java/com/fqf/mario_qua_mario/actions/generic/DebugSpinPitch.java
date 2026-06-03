@@ -1,9 +1,8 @@
 package com.fqf.mario_qua_mario.actions.generic;
 
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.EntireBodyAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.ProgressHandler;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -18,17 +17,11 @@ public class DebugSpinPitch extends Debug {
 	    return ID;
 	}
 
-	@Override
-	public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return new PlayermodelAnimation(
-				null, new ProgressHandler((data, ticksPassed) -> ticksPassed / 40F),
-				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) ->
-						arrangement.pitch = MathHelper.sin(progress) * 90),
-
-				null, null,
-				null, null,
-				null, null,
-				null
+	@Override public @Nullable AnimationDefinition getAnimation() {
+		return AnimationDefinition.of(
+				AnimationFlag.NO_SWING_LIMBS,
+				(arrangement, data, animationTime, helper) -> arrangement.pitch = MathHelper.sin(animationTime / 4F) * 35,
+				(posture, data, animationTime, helper) -> Debug.tPose(posture)
 		);
 	}
 

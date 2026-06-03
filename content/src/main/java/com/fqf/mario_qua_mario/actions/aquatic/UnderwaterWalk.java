@@ -1,15 +1,17 @@
 package com.fqf.mario_qua_mario.actions.aquatic;
 
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
+import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
+import com.fqf.charaformact_api.cfadata.CfaClientData;
+import com.fqf.charaformact_api.cfadata.CfaData;
+import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.fqf.charaformact_api.definitions.states.actions.AquaticActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charaformact_api.cfadata.*;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.StatCategory;
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.charaformact_api.definitions.states.actions.AquaticActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.*;
-import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
-import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.airborne.LavaBoost;
 import com.fqf.mario_qua_mario.actions.grounded.DuckWaddle;
@@ -29,44 +31,38 @@ public class UnderwaterWalk implements AquaticActionDefinition {
 	}
 
 	public static final float LEG_HEIGHT_OFFSET = -1.8F;
-	private static LimbAnimation makeArmAnimation(int factor) {
-		return new LimbAnimation(true, (data, arrangement, progress) -> {
-			arrangement.roll *= -1;
-			arrangement.yaw -= arrangement.pitch * factor * 0.5F;
-			arrangement.roll -= arrangement.pitch * factor * 0.5F;
-			arrangement.pitch *= 1;
-			arrangement.addAngles(
-					-50,
-					factor * -10,
-					factor * 60
-			);
-		});
-	}
-	private static LimbAnimation makeLegAnimation(int factor) {
-		return new LimbAnimation(true, (data, arrangement, progress) -> {
-			arrangement.pitch *= 0.5F;
-			arrangement.addPos(
-					factor * -0.4F,
-					LEG_HEIGHT_OFFSET,
-					-0.9F
-			);
-			arrangement.addAngles(
-					17.5F,
-					0,
-					factor * -1.9F
-			);
-		});
-	}
 
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return new PlayermodelAnimation(
-				null, null,
-				new EntireBodyAnimation(0.5F, true,
-						(data, arrangement, progress) -> arrangement.y += LEG_HEIGHT_OFFSET),
-				null, new BodyPartAnimation((data, arrangement, progress) -> arrangement.pitch += 15),
-				makeArmAnimation(1), makeArmAnimation(-1),
-				makeLegAnimation(1), makeLegAnimation(-1),
-				null
+	@Override public @Nullable AnimationDefinition getAnimation() {
+		return AnimationDefinition.of(
+			(arrangement, data, animationTime, helper) -> {
+				arrangement.y += LEG_HEIGHT_OFFSET;
+			},
+			(posture, data, animationTime, helper) -> {
+				posture.TORSO.pitch += 15;
+
+				helper.symmetricallyAnimate(posture, posture.RIGHT_ARM, arrangement -> {
+					arrangement.roll *= -1;
+					arrangement.addAngles(
+							-50,
+							-10 - arrangement.pitch * 0.5F,
+							60 - arrangement.pitch * 0.5F
+					);
+				});
+
+				helper.symmetricallyAnimate(posture, posture.RIGHT_LEG, arrangement -> {
+					arrangement.addPos(
+							-0.4F,
+							LEG_HEIGHT_OFFSET,
+							-0.9F
+					);
+					arrangement.pitch *= 0.5F;
+					arrangement.addAngles(
+							17.5F,
+							0,
+							-1.9F
+					);
+				});
+			}
 		);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {

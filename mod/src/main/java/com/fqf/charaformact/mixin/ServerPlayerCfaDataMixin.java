@@ -2,7 +2,6 @@ package com.fqf.charaformact.mixin;
 
 import com.fqf.charaformact.cfadata.CfaServerPlayerData;
 import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
-import com.fqf.charaformact.cfadata.CfaPlayerData;
 import com.fqf.charaformact.cfadata.injections.AdvCfaServerDataHolder;
 import com.fqf.charaformact_api.cfadata.injections.CfaAuthoritativeDataHolder;
 import com.fqf.charaformact_api.cfadata.injections.CfaTravelDataHolder;
@@ -23,8 +22,4 @@ public class ServerPlayerCfaDataMixin implements AdvCfaServerDataHolder, CfaAuth
 		return this.cfaServerData;
 	}
 
-	@Override public void cfa$setCfaData(CfaPlayerData replacementData) {
-		this.cfaServerData = (CfaServerPlayerData) replacementData;
-		replacementData.initialApply();
-	}
 }

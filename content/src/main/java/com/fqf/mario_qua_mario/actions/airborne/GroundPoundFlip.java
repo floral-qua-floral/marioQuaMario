@@ -1,20 +1,24 @@
 package com.fqf.mario_qua_mario.actions.airborne;
 
+import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
+import com.fqf.charaformact_api.cfadata.CfaClientData;
+import com.fqf.charaformact_api.cfadata.CfaData;
+import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
-import com.fqf.charaformact_api.cfadata.*;
-import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
-import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.aquatic.AquaticPoundFlip;
 import com.fqf.mario_qua_mario.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.MarioSFX;
+import it.unimi.dsi.fastutil.floats.Float2FloatFunction;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -32,46 +36,40 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 	}
 
 	private static final float FLIP_DURATION = 5;
-	private static LimbAnimation makeArmAnimation(AnimationHelper helper, int factor) {
-		return new LimbAnimation(false, (data, arrangement, progress) -> {
-			arrangement.addAngles(
-					progress * -67.75F,
-					0,
-					MathHelper.lerp(progress, factor * 20, factor * -20)
-			);
-			arrangement.addPos(
-					0,
-					progress * 1,
-					progress * 2.5F
-			);
-		});
+
+	public static AnimationDefinition makeAnimation(float flipDuration) {
+		return makeAnimation(animationTime -> Math.min(animationTime / flipDuration, 1));
 	}
-	private static LimbAnimation makeLegAnimation(AnimationHelper helper, int factor) {
-		return new LimbAnimation(false, (data, arrangement, progress) -> {
-			arrangement.addAngles(
-					progress * -90,
-					progress * factor * 16.75F,
-					0
-			);
-		});
-	}
-	public static PlayermodelAnimation makeAnimation(AnimationHelper helper) {
-		return new PlayermodelAnimation(
-				null,
-				new ProgressHandler((data, ticksPassed) -> Math.min(ticksPassed / FLIP_DURATION, 1)),
-				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
-					arrangement.pitch = progress * -360;
+	public static AnimationDefinition makeAnimation(Float2FloatFunction progressCalculator) {
+		return AnimationDefinition.of(
+				AnimationFlag.NO_SWING_LIMBS,
+				(arrangement, data, animationTime, helper) -> {
+					float progress = progressCalculator.get(animationTime);
 					arrangement.y = progress * -8;
-				}),
-				null,
-				null,
-				makeArmAnimation(helper, 1), makeArmAnimation(helper, -1),
-				makeLegAnimation(helper, 1), makeLegAnimation(helper, -1),
-				null
+					arrangement.pitch = progress * -360;
+				},
+				(posture, data, animationTime, helper) -> {
+					float progress = progressCalculator.get(animationTime);
+					helper.symmetricallyAnimate(posture, posture.RIGHT_ARM, arrangement -> {
+						arrangement.addPos(0, progress * 1, progress * 2.5F);
+						arrangement.addAngles(
+								progress * -67.75F,
+								0,
+								MathHelper.lerp(progress, 20, -20)
+						);
+					});
+
+					helper.symmetricallyAnimate(posture, posture.RIGHT_LEG, arrangement -> arrangement.addAngles(
+							progress * -90,
+							progress * 16.75F,
+							0
+					));
+				}
 		);
 	}
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return makeAnimation(helper);
+
+	@Override public @Nullable AnimationDefinition getAnimation() {
+		return makeAnimation(FLIP_DURATION);
 	}
 
 	public static CameraAnimationSet makeCameraAnimations(float flipAnimationDuration) {

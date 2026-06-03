@@ -1,11 +1,12 @@
 package com.fqf.mario_qua_mario.actions.grounded;
 
+import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
 import com.fqf.charaformact_api.cfadata.CfaData;
-import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.*;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -26,23 +27,20 @@ public class WalkRun extends SubWalk implements GroundedActionDefinition {
 	    return ID;
 	}
 
-	@Override
-	public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return new PlayermodelAnimation(
+	private static float getProgress(CfaAnimatingData data) {
+		return Easing.clampedRangeToProgress(data.getForwardVel(), SubWalk.WALK_SPEED.get(data), RUN_SPEED.get(data));
+	}
+
+	@Override public @Nullable AnimationDefinition getAnimation() {
+		return AnimationDefinition.of(
 				null,
-				new ProgressHandler(
-						(data, ticksPassed) ->
-								Easing.clampedRangeToProgress(data.getForwardVel(), SubWalk.WALK_SPEED.get(data), RUN_SPEED.get(data))
-				),
-
-				new EntireBodyAnimation(0.0F, true, (data, arrangement, progress) ->
-						arrangement.roll = MathHelper.clamp((float) data.getDeltaYaw() * progress * -4F, -45F, 45F)),
-				null, null,
-
-				new LimbAnimation(true, (data, arrangement, progress) -> arrangement.roll += progress * 70),
-				new LimbAnimation(true, (data, arrangement, progress) -> arrangement.roll -= progress * 70),
-
-				null, null, null
+				(arrangement, data, animationTime, helper) ->
+						arrangement.roll = MathHelper.clamp((float) data.getDeltaYaw() * getProgress(data) * -4F, -45F, 45F),
+				(posture, data, animationTime, helper) -> {
+					float progress = getProgress(data);
+					helper.symmetricallyAnimate(posture, posture.RIGHT_ARM, arrangement ->
+							arrangement.roll += progress * 70);
+				}
 		);
 	}
 

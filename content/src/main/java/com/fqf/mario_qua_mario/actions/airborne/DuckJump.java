@@ -6,10 +6,7 @@ import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnviron
 import com.fqf.charaformact_api.definitions.states.actions.util.SneakingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.EntireBodyAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
-import com.fqf.charaformact_api.util.Easing;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.actions.grounded.DuckWaddle;
@@ -25,17 +22,10 @@ public class DuckJump extends Jump implements AirborneActionDefinition {
 	    return ID;
 	}
 
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return DuckWaddle.makeDuckAnimation(false, true).variate(
-				null, null,
-				new EntireBodyAnimation(0.0F, true, (data, arrangement, progress) -> {
-					float tilt_progress = Easing.clampedRangeToProgress(data.getYVel(), -0.0, 0.4);
-					arrangement.pitch = (tilt_progress * 2 - 1) * 15F;
-				}),
-				null, null,
-				null, null,
-				null, null, null
-		);
+
+	@Override
+	public @Nullable AnimationDefinition getAnimation() {
+		return DuckWaddle.makeAnimation(false, false);
 	}
 
 	@Override public @NotNull SneakingRule getSneakingRule() {

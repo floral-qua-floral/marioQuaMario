@@ -9,25 +9,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public class Toadette extends AbstractMario implements CharacterDefinition {
+public class Toadette extends AbstractToad implements CharacterDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("toadette");
 	@Override public @NotNull Identifier getID() {
 	    return ID;
 	}
 
 	@Override
-	public float getHeightFactor() {
-		return 0.97F;
-	}
-
-	@Override
-	public float getEyeHeightFactor() {
-		return 0.765F;
-	}
-
-	@Override
-	public float getAnimationHeightFactor() {
-		return 0.8F;
+	public @NotNull String getVoiceName() {
+		return ID.getPath();
 	}
 
 	@Override

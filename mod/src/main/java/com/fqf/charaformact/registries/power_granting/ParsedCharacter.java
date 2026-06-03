@@ -5,7 +5,6 @@ import com.fqf.charaformact_api.definitions.states.CharacterDefinition;
 import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact.registries.RegistryManager;
 import com.fqf.charaformact.registries.actions.AbstractParsedAction;
-import com.tom.cpm.shared.io.ModelFile;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.sound.SoundEvent;
@@ -23,7 +22,7 @@ public class ParsedCharacter extends ParsedPowerGrantingState {
 
 	public final float EYE_HEIGHT_FACTOR;
 
-	public final Map<ParsedForm, ModelFile> MODELS;
+	public final Map<ParsedForm, String> MODELS;
 
 	public ParsedCharacter(CharacterDefinition definition) {
 		super(definition);

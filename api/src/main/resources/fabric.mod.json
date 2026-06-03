@@ -16,12 +16,6 @@
 	"icon": "assets/charaformact_api/icon.png",
 	"environment": "*",
 	"entrypoints": {
-		"main": [
-			"com.fqf.charaformact_api.CharaFormActAPI"
-		],
-		"client": [
-			"com.fqf.charaformact_api.CharaFormActAPIClient"
-		],
 		"fabric-datagen": [
 			"com.fqf.charaformact_api.CharaFormActAPIDataGenerator"
 		]

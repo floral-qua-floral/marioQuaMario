@@ -1,16 +1,20 @@
 package com.fqf.charaformact.registries.actions;
 
+import com.fqf.charaformact.util.CfaClientHelperManager;
 import com.fqf.charaformact_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.Arrangement;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.Posture;
 import com.fqf.charaformact_api.util.Easing;
-import net.minecraft.util.Pair;
+import it.unimi.dsi.fastutil.floats.FloatObjectImmutablePair;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class AnimationHelperImpl implements AnimationHelper {
 	public static final AnimationHelperImpl INSTANCE = new AnimationHelperImpl();
@@ -29,16 +33,16 @@ public class AnimationHelperImpl implements AnimationHelper {
 	}
 
 	@Override
-	public float easeKeyframes(float progress, float start, List<Pair<Float, Easing>> keyframes) {
+	public float easeKeyframes(float progress, float start, List<FloatObjectImmutablePair<Easing>> keyframes) {
 		if(progress < 0) return start;
 
-		List<Pair<Float, Easing>> all_keyframes = new ArrayList<>(keyframes.size() + 1);
-		all_keyframes.add(new Pair<>(start, null));
+		List<FloatObjectImmutablePair<Easing>> all_keyframes = new ArrayList<>(keyframes.size() + 1);
+		all_keyframes.add(new FloatObjectImmutablePair<>(start, null));
 		all_keyframes.addAll(keyframes);
 		int starting_index = MathHelper.floor(progress);
 		int ending_index = starting_index + 1;
-		if(ending_index >= all_keyframes.size()) return all_keyframes.getLast().getLeft();
-		return all_keyframes.get(ending_index).getRight().ease(progress % 1, all_keyframes.get(starting_index).getLeft(), all_keyframes.get(ending_index).getLeft());
+		if(ending_index >= all_keyframes.size()) return all_keyframes.getLast().leftFloat();
+		return all_keyframes.get(ending_index).right().ease(progress % 1, all_keyframes.get(starting_index).leftFloat(), all_keyframes.get(ending_index).leftFloat());
 	}
 
 	@Override
@@ -61,5 +65,30 @@ public class AnimationHelperImpl implements AnimationHelper {
 	public @Nullable WallboundActionDefinition.WallInfo getWallInfo(CfaReadableMotionData data) {
 		if(data.getActionCategory() != ActionCategory.WALLBOUND) return null;
 		return UniversalActionDefinitionHelper.INSTANCE.getWallInfo(data);
+	}
+
+	@Override
+	public void symmetricallyAnimate(Posture posture, Arrangement rightPart, Consumer<Arrangement> animator) {
+		animator.accept(rightPart);
+		CfaClientHelperManager.helper.mirrorAndAnimate(posture, rightPart, animator);
+	}
+
+	@Override
+	public void symmetricallyAnimate(Posture posture, Arrangement rightPart, DualPartAnimator animator) {
+		animator.animate(rightPart, false, 0);
+		CfaClientHelperManager.helper.mirrorAndAnimate(posture, rightPart, animator);
+	}
+
+	@Override
+	public void asymmetricallyAnimate(Arrangement rightPart, Arrangement leftPart, DualPartAnimator animator) {
+		animator.animate(rightPart, false, 1);
+		animator.animate(leftPart, true, -1);
+	}
+
+	@Override
+	public void multiAnimate(Consumer<Arrangement> animator, Arrangement... parts) {
+		for(Arrangement part : parts) {
+			animator.accept(part);
+		}
 	}
 }

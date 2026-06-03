@@ -5,21 +5,19 @@ import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnviron
 import com.fqf.charaformact_api.definitions.states.actions.util.SneakingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.LimbAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.aquatic.Submerged;
-import com.fqf.mario_qua_mario.actions.grounded.PRun;
 import com.fqf.mario_qua_mario.actions.form.TailFly;
 import com.fqf.mario_qua_mario.actions.form.TailStall;
+import com.fqf.mario_qua_mario.actions.grounded.PRun;
 import com.fqf.mario_qua_mario.actions.wallbound.WallSlide;
 import com.fqf.mario_qua_mario.forms.Raccoon;
 import com.fqf.mario_qua_mario.util.ClimbTransitions;
 import com.fqf.mario_qua_mario.util.Powers;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -29,22 +27,16 @@ public class PJump extends Jump implements AirborneActionDefinition {
 		return ID;
 	}
 
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return new PlayermodelAnimation(
-				null, null, null,
-				null, null,
-				new LimbAnimation(false, (data, arrangement, progress) -> {
-					arrangement.roll += 90;
-					arrangement.pitch += 15;
-				}),
-				new LimbAnimation(false, (data, arrangement, progress) -> {
-					arrangement.roll -= 90;
-					arrangement.pitch += 15;
-				}),
+	@Override public @NotNull AnimationDefinition getAnimation() {
+		return AnimationDefinition.of(
+				AnimationFlag.NO_SWING_LIMBS,
+				(posture, data, animationTime, helper) -> {
+					helper.symmetricallyAnimate(posture, posture.RIGHT_ARM, arrangement ->
+							arrangement.addAngles(15, 0, 90));
 
-				new LimbAnimation(false, (data, arrangement, progress) -> arrangement.pitch += 40),
-				new LimbAnimation(false, (data, arrangement, progress) -> arrangement.pitch += 40),
-				null
+					helper.asymmetricallyAnimate(posture.RIGHT_LEG, posture.LEFT_LEG, (arrangement, isLeft, sideFactor) ->
+							arrangement.pitch += 40);
+				}
 		);
 	}
 

@@ -1,8 +1,8 @@
 package com.fqf.charaformact.mixin.client;
 
 import com.fqf.charaformact.cfadata.CfaMainClientData;
+import com.fqf.charaformact.cfadata.CfaAppearanceData;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
-import com.fqf.charaformact.cfadata.CfaPlayerData;
 import com.fqf.charaformact.cfadata.injections.AdvCfaMainClientDataHolder;
 import com.fqf.charaformact_api.cfadata.injections.CfaClientDataHolder;
 import com.fqf.charaformact_api.cfadata.injections.CfaTravelDataHolder;
@@ -21,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPlayerEntity.class)
 public class ClientPlayerEntityCfaDataMixin implements AdvCfaMainClientDataHolder, CfaTravelDataHolder, CfaClientDataHolder {
-	@Unique private CfaMainClientData cfaData = new CfaMainClientData((ClientPlayerEntity) (Object) this);
+	@Unique private final CfaMainClientData CFA_DATA = new CfaMainClientData((ClientPlayerEntity) (Object) this);
 
 	@Override public CfaClientData cfa$getCfaClientData() {
 		return this.cfa$getCfaData();
@@ -29,17 +29,16 @@ public class ClientPlayerEntityCfaDataMixin implements AdvCfaMainClientDataHolde
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void constructorHook(MinecraftClient client, ClientWorld world, ClientPlayNetworkHandler networkHandler, StatHandler stats, ClientRecipeBook recipeBook, boolean lastSneaking, boolean lastSprinting, CallbackInfo ci) {
-		this.cfa$setCfaData(this.cfaData);
+		this.CFA_DATA.initialApply();
 	}
 
 	@Override
 	public @NotNull CfaMainClientData cfa$getCfaData() {
-		return this.cfaData;
+		return this.CFA_DATA;
 	}
 
 	@Override
-	public void cfa$setCfaData(CfaPlayerData replacementData) {
-		this.cfaData = (CfaMainClientData) replacementData;
-		replacementData.initialApply();
+	public @NotNull CfaAppearanceData<CfaMainClientData> cfa$getAppearanceData() {
+		return this.CFA_DATA.APPEARANCE_DATA;
 	}
 }

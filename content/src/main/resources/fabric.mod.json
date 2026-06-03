@@ -30,7 +30,6 @@
 			"com.fqf.mario_qua_mario.actions.generic.DebugSpinPitch",
 			"com.fqf.mario_qua_mario.actions.generic.DebugSpinYaw",
 			"com.fqf.mario_qua_mario.actions.generic.DebugSpinRoll",
-			"com.fqf.mario_qua_mario.actions.generic.DebugSideTurn",
 			"com.fqf.mario_qua_mario.actions.generic.DebugVanillaTravel"
 		],
 		"cfa-grounded-actions": [
@@ -45,7 +44,6 @@
 			"com.fqf.mario_qua_mario.actions.grounded.BonkGroundBackward",
 			"com.fqf.mario_qua_mario.actions.grounded.BonkGroundForward",
 
-			"com.fqf.mario_qua_mario.actions.form.RetroIdle",
 			"com.fqf.mario_qua_mario.actions.form.TailSpinGround"
 		],
 		"cfa-airborne-actions": [
@@ -104,7 +102,42 @@
 
 		"cfa-characters": [
 			"com.fqf.mario_qua_mario.characters.Mario",
+			"com.fqf.mario_qua_mario.characters.Luigi",
 			"com.fqf.mario_qua_mario.characters.Toadette"
+		],
+
+		"cfa-common-appearances": [
+			"com.fqf.mario_qua_mario.appearances.mario.SmallMarioCommonAppearance",
+			"com.fqf.mario_qua_mario.appearances.mario.SuperMarioCommonAppearance",
+			"com.fqf.mario_qua_mario.appearances.mario.FireMarioCommonAppearance",
+			"com.fqf.mario_qua_mario.appearances.mario.RaccoonMarioCommonAppearance",
+
+			"com.fqf.mario_qua_mario.appearances.luigi.SmallLuigiCommonAppearance",
+			"com.fqf.mario_qua_mario.appearances.luigi.SuperLuigiCommonAppearance",
+			"com.fqf.mario_qua_mario.appearances.luigi.FireLuigiCommonAppearance",
+			"com.fqf.mario_qua_mario.appearances.luigi.FoxLuigiCommonAppearance",
+
+			"com.fqf.mario_qua_mario.appearances.toads.toadette.SmallToadetteCommonAppearance",
+			"com.fqf.mario_qua_mario.appearances.toads.toadette.SuperToadetteCommonAppearance",
+			"com.fqf.mario_qua_mario.appearances.toads.toadette.FireToadetteCommonAppearance",
+			"com.fqf.mario_qua_mario.appearances.toads.toadette.RaccoonToadetteCommonAppearance"
+		],
+
+		"cfa-client-appearances": [
+			"com.fqf.mario_qua_mario.appearances.mario.SmallMarioClientAppearance",
+			"com.fqf.mario_qua_mario.appearances.mario.SuperMarioClientAppearance",
+			"com.fqf.mario_qua_mario.appearances.mario.FireMarioClientAppearance",
+			"com.fqf.mario_qua_mario.appearances.mario.RaccoonMarioClientAppearance",
+
+			"com.fqf.mario_qua_mario.appearances.luigi.SmallLuigiClientAppearance",
+			"com.fqf.mario_qua_mario.appearances.luigi.SuperLuigiClientAppearance",
+			"com.fqf.mario_qua_mario.appearances.luigi.FireLuigiClientAppearance",
+			"com.fqf.mario_qua_mario.appearances.luigi.FoxLuigiClientAppearance",
+
+			"com.fqf.mario_qua_mario.appearances.toads.toadette.SmallToadetteClientAppearance",
+			"com.fqf.mario_qua_mario.appearances.toads.toadette.SuperToadetteClientAppearance",
+			"com.fqf.mario_qua_mario.appearances.toads.toadette.FireToadetteClientAppearance",
+			"com.fqf.mario_qua_mario.appearances.toads.toadette.RaccoonToadetteClientAppearance"
 		],
 
 		"cfa-voicelines": [

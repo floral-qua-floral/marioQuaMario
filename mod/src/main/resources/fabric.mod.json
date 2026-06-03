@@ -26,9 +26,6 @@
 			"com.fqf.charaformact.CharaFormActDataGenerator"
 		],
 
-		"cpmapi": [
-			"com.fqf.charaformact.compat.required.CPMCompat"
-		],
 		"modmenu": [
 			"com.fqf.charaformact.util.ModMenuIntegration"
 		]
@@ -46,7 +43,6 @@
 		"java": ">=21",
 		"fabric-api": "*",
 		"cloth-config": "*",
-		"cpm": "*",
 		"charaformact_api": "*"
 	},
 	"suggests": {

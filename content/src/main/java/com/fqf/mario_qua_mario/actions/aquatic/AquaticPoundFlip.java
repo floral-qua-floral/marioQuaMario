@@ -1,15 +1,15 @@
 package com.fqf.mario_qua_mario.actions.aquatic;
 
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.ProgressHandler;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charaformact_api.cfadata.*;
-import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.charaformact_api.definitions.states.actions.AquaticActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.*;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
+import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.fqf.charaformact_api.definitions.states.actions.AquaticActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.GroundPoundFlip;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import net.minecraft.util.Identifier;
@@ -26,15 +26,10 @@ public class AquaticPoundFlip implements AquaticActionDefinition {
 	}
 
 	private static final float AQUATIC_FLIP_DURATION = 7;
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return GroundPoundFlip.makeAnimation(helper).variate(
-				null,
-				new ProgressHandler((data, ticksPassed) -> Math.min(ticksPassed / AQUATIC_FLIP_DURATION, 1)),
-				null, null, null,
-				null, null,
-				null, null, null
-		);
+	@Override public @Nullable AnimationDefinition getAnimation() {
+		return GroundPoundFlip.makeAnimation(AQUATIC_FLIP_DURATION);
 	}
+
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
 		return GroundPoundFlip.makeCameraAnimations(AQUATIC_FLIP_DURATION + 2.5F);
 	}

@@ -6,8 +6,8 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public record ProgressHandler(@Nullable Identifier animationID, @Nullable ProgressResetPredicate resetter, @NotNull ProgressCalculator calculator) {
-	public ProgressHandler(ProgressCalculator calculator) {
+public record ProgressHandler(@Nullable Identifier animationID, @Nullable ProgressResetPredicate resetter, @NotNull ProgressHandler.ProgressCalculatorOld calculator) {
+	public ProgressHandler(ProgressCalculatorOld calculator) {
 		this(null, null, calculator);
 	}
 
@@ -18,7 +18,7 @@ public record ProgressHandler(@Nullable Identifier animationID, @Nullable Progre
 	}
 
 	@FunctionalInterface
-	public interface ProgressCalculator {
+	public interface ProgressCalculatorOld {
 		float calculateProgress(CfaAnimatingData data, int ticksPassed);
 	}
 

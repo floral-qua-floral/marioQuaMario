@@ -1,10 +1,12 @@
 package com.fqf.mario_qua_mario.actions.grounded;
 
+import com.fqf.charaformact_api.cfadata.*;
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charaformact_api.cfadata.*;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -27,20 +29,22 @@ public class PRun implements GroundedActionDefinition {
 	    return ID;
 	}
 
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return new PlayermodelAnimation(
-				null,
-				new ProgressHandler((data, ticksPassed) ->
-						Easing.clampedRangeToProgress(data.getDeltaYaw(), -1, 1) * 2 - 1),
-				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) ->
-						arrangement.roll = progress * -5),
-				null, null,
-				new LimbAnimation(false, (data, arrangement, progress) ->
-						arrangement.roll += 90 - progress * 10),
-				new LimbAnimation(false, (data, arrangement, progress) ->
-						arrangement.roll += -90 - progress * 10),
-				null, null,
-				new LimbAnimation(false, null)
+	private static float getTilt(CfaAnimatingData data) {
+		return Easing.clampedRangeToProgress(data.getDeltaYaw(), -1, 1) * 2 - 1;
+	}
+
+	@Override public @Nullable AnimationDefinition getAnimation() {
+		return AnimationDefinition.of(
+				AnimationFlag.NO_SWING_ARMS,
+				(arrangement, data, animationTime, helper) -> arrangement.roll = getTilt(data) * -5,
+				(posture, data, animationTime, helper) -> {
+					float tilt = getTilt(data);
+					posture.RIGHT_ARM.roll += 90 - tilt * 10;
+					posture.LEFT_ARM.roll -= 90 + tilt * 10;
+
+					if(posture.TAIL != null)
+						posture.TAIL.setAngles(0, 0, 0);
+				}
 		);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {

@@ -1,6 +1,5 @@
 package com.fqf.charaformact.mixin.client;
 
-import com.fqf.charaformact.cfadata.CfaMainClientData;
 import com.fqf.charaformact.cfadata.injections.AdvCfaMainClientDataHolder;
 import com.fqf.charaformact.util.CfaPositionSettable;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -12,7 +11,6 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.math.Vec3d;
-import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -56,11 +54,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 	@WrapOperation(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isUsingItem()Z"))
 	private boolean moveFastWithItem(ClientPlayerEntity instance, Operation<Boolean> original) {
 		return (!this.cfa$getCfaData().doCustomTravel() || instance.isOnGround()) && original.call(instance);
-	}
-
-	@Override
-	public @NotNull CfaMainClientData cfa$getCfaData() {
-		throw new AssertionError("?!");
 	}
 
 	@Inject(method = "shouldSlowDown", at = @At("HEAD"), cancellable = true)

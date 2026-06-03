@@ -1,11 +1,13 @@
 package com.fqf.charaformact.mixin.client;
 
 import com.fqf.charaformact.bapping.BlockBappingClientUtil;
+import com.fqf.charaformact.cfadata.util.AdvancedArrangement;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.Arrangement;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.Camera;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.Items;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.BlockView;
@@ -39,7 +41,7 @@ public abstract class CameraMixin {
 	@Shadow @Final private Vector3f verticalPlane;
 	@Shadow @Final private Vector3f horizontalPlane;
 	@Shadow private Entity focusedEntity;
-	@Unique private final Arrangement CAMERA_ARRANGEMENT = new Arrangement();
+	@Unique private final AdvancedArrangement CAMERA_ARRANGEMENT = new AdvancedArrangement();
 
 	// This is a bit of a weird way to do things, but I dunno, maybe it'll work better with other mods or something ???
 	@Inject(method = "update", at = @At("RETURN"))
@@ -58,10 +60,14 @@ public abstract class CameraMixin {
 				);
 				Vec3d cameraRelativePos = this.getPos().subtract(playerPos);
 				this.CAMERA_ARRANGEMENT.setPos((float) cameraRelativePos.x, (float) cameraRelativePos.y, (float) cameraRelativePos.z);
-				this.CAMERA_ARRANGEMENT.setAngles(this.getPitch() * MathHelper.RADIANS_PER_DEGREE, this.getYaw() * MathHelper.RADIANS_PER_DEGREE, 0);
+				this.CAMERA_ARRANGEMENT.setAngles(this.getPitch(), this.getYaw(), 0);
+
 				player.cfa$getCfaData().mutateCamera(this.CAMERA_ARRANGEMENT, tickDelta);
+
 				this.setPos(playerPos.add(this.CAMERA_ARRANGEMENT.x, this.CAMERA_ARRANGEMENT.y, this.CAMERA_ARRANGEMENT.z));
-				this.setRotationRads(this.CAMERA_ARRANGEMENT.pitch, MathHelper.PI + this.CAMERA_ARRANGEMENT.yaw, this.CAMERA_ARRANGEMENT.roll);
+				this.CAMERA_ARRANGEMENT.multiplyAngles(MathHelper.RADIANS_PER_DEGREE);
+				this.setRotationRads(this.CAMERA_ARRANGEMENT.pitch, this.CAMERA_ARRANGEMENT.yaw, this.CAMERA_ARRANGEMENT.roll);
+
 				MinecraftClient.getInstance().worldRenderer.scheduleTerrainUpdate();
 			}
 
@@ -79,7 +85,7 @@ public abstract class CameraMixin {
 	private void setRotationRads(float pitch, float yaw, float roll) {
 		this.pitch = pitch * MathHelper.DEGREES_PER_RADIAN;
 		this.yaw = yaw * MathHelper.DEGREES_PER_RADIAN;
-		this.rotation.rotationYXZ(-yaw, -pitch, -roll);
+		this.rotation.rotationYXZ(MathHelper.PI - yaw, -pitch, -roll);
 		HORIZONTAL.rotate(this.rotation, this.horizontalPlane);
 		VERTICAL.rotate(this.rotation, this.verticalPlane);
 		DIAGONAL.rotate(this.rotation, this.diagonalPlane);

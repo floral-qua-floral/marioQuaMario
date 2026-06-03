@@ -1,13 +1,18 @@
 package com.fqf.charaformact.cfadata;
 
 import com.fqf.charaformact.CharaFormAct;
+import com.fqf.charaformact.appearance.ParsedCommonAppearance;
 import com.fqf.charaformact.bapping.BlockBappingUtil;
+import com.fqf.charaformact.cfadata.util.ActiveAnimation;
+import com.fqf.charaformact.cfadata.util.AdvancedArrangement;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
 import com.fqf.charaformact.util.BlockCollisionFinder;
 import com.fqf.charaformact.util.DirectionBasedWallInfo;
 import com.fqf.charaformact.util.AdvancedWallInfo;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.Arrangement;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.HandPreference;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimation;
 import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import com.fqf.charaformact.registries.actions.ParsedActionHelper;
@@ -33,9 +38,11 @@ import java.util.*;
 
 public class CfaMainClientData extends CfaMoveableData implements CfaClientDataImpl {
 	private final ClientPlayerEntity PLAYER;
+	public final CfaAppearanceData<CfaMainClientData> APPEARANCE_DATA;
 	public CfaMainClientData(ClientPlayerEntity player) {
 		super();
 		this.PLAYER = player;
+		this.APPEARANCE_DATA = new CfaAppearanceData<>(this);
 	}
 	@Override public ClientPlayerEntity getPlayer() {
 		return PLAYER;
@@ -53,13 +60,14 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 
 	@Override public void setActionTransitionless(AbstractParsedAction action) {
 		this.handleSlidingSound(action);
-		this.PLAYER.cfa$getAnimationData().replaceAnimation(this, action.ANIMATION, -1);
+//		this.PLAYER.cfa$getOldAnimationData().replaceAnimation(this, action.PIECEMEAL_ANIMATION, -1);
 
 		if(action != this.getAction()) {
 			this.playCameraAnimation(action.CAMERA_ANIMATIONS);
 		}
 
 		super.setActionTransitionless(action);
+		this.APPEARANCE_DATA.updateAction();
 	}
 
 	@Override
@@ -88,7 +96,7 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 		return this.isEnabled() && this.currentCameraAnimation != null && !this.getPlayer().isSleeping();
 	}
 
-	public void mutateCamera(Arrangement cameraArrangement, float tickDelta) {
+	public void mutateCamera(AdvancedArrangement cameraArrangement, float tickDelta) {
 		float cameraAnimationTime = (float) (this.getPlayer().getWorld().getTime() - this.cameraAnimationStartTime - 1) + tickDelta;
 
 		float progress = this.currentCameraAnimation.progressHandler().progressCalculator().calculateProgress(this, cameraAnimationTime);
@@ -99,7 +107,27 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 			this.currentCameraAnimation = null;
 			this.attemptFinish = false;
 		}
-		else this.getPlayer().cfa$getAnimationData().mutate(cameraArrangement, this.currentCameraAnimation.mutator(), this, progress);
+		else {
+			// This could be modernized to use AppearanceData and be a part AnimationDefinition, but tbh i don't wanna
+			// NOTE FOR FUTURE ME: ALSO the existence of minProgressToFinish means it's not as simple as just replacing
+			// progress handlers & mutators with a single mutator!!!!!!!! don't try it thinking it'll be easy!!!!!! >:(
+			cameraArrangement.store(AdvancedArrangement.BEFORE_CFA_ANIMATIONS);
+
+			this.currentCameraAnimation.mutator().mutate(this, cameraArrangement, progress);
+
+			ActiveAnimation appearanceAnimation = this.APPEARANCE_DATA.getCurrentAnimation();
+			if(appearanceAnimation != null && appearanceAnimation.EXECUTION_FLAGS.contains(AnimationFlag.Execution.MIRROR))
+				cameraArrangement.mirrorChanges(AdvancedArrangement.BEFORE_CFA_ANIMATIONS);
+
+			cameraArrangement.scaleTranslations(this.getHorizontalAnimationScale(), this.getVerticalAnimationScale());
+		}
+	}
+
+	@Override public void updateAppearance() {
+		this.APPEARANCE_DATA.updateAppearance();
+	}
+	@Override public @Nullable ParsedCommonAppearance getAppearance() {
+		return this.APPEARANCE_DATA.getAppearance();
 	}
 
 	@Override public void tick() {
@@ -107,6 +135,7 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 		this.getAction().clientTick(this, true);
 		this.getForm().clientTick(this, true);
 		this.getCharacter().clientTick(this, true);
+		this.APPEARANCE_DATA.tick();
 	}
 
 	private final WallInfoWithInputs WALL_INFO = new WallInfoWithInputs(this);
@@ -494,5 +523,18 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 		this.RECORDED_COLLISIONS.COLLIDED[direction.getAxis().ordinal()] = true;
 		this.RECORDED_COLLISIONS.add(new RecordedCollision(pos, this.getPlayer().clientWorld.getBlockState(pos), direction, bapResult));
 		return bapResult == BapResult.BUST;
+	}
+
+	private HandPreference handPreference = HandPreference.EITHER;
+	private float relativeHeadYaw;
+	@Override public void setHandPreferenceAndRelativeHeadYaw(HandPreference preference, float relativeHeadYaw) {
+		this.handPreference = preference;
+		this.relativeHeadYaw = relativeHeadYaw;
+	}
+	@Override public HandPreference getCurrentHandPreference() {
+		return this.handPreference;
+	}
+	@Override public float getRelativeHeadYawRadians() {
+		return this.relativeHeadYaw;
 	}
 }

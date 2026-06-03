@@ -1,6 +1,7 @@
 package com.fqf.charaformact.cfadata;
 
 import com.fqf.charaformact.CharaFormAct;
+import com.fqf.charaformact.appearance.ParsedCommonAppearance;
 import com.fqf.charaformact.registries.actions.parsed.ParsedWallboundAction;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
 import com.fqf.charaformact.util.CfaStatCalculationHelper;
@@ -9,7 +10,6 @@ import com.fqf.charaformact.util.AdvancedWallInfo;
 import com.fqf.charaformact_api.definitions.states.StatAlteringStateDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.definitions.states.actions.util.WallBodyAlignment;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
 import com.fqf.charaformact.registries.ParsedCfaState;
 import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import com.fqf.charaformact.registries.actions.ParsedActionHelper;
@@ -49,8 +49,6 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 	}
 
 	private AbstractParsedAction action;
-	public boolean resetAnimation;
-	public PlayermodelAnimation prevAnimation;
 	public boolean tickAnimation = true;
 	public AbstractParsedAction getAction() {
 		return this.action;
@@ -69,8 +67,6 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 		return transitionedNaturally || forced;
 	}
 	public void setActionTransitionless(AbstractParsedAction action) {
-		this.resetAnimation = true;
-		this.prevAnimation = this.action == null ? null : this.action.ANIMATION;
 		this.setupCustomVars(this.action, action);
 		this.action = action;
 		this.getPlayer().calculateDimensions();
@@ -130,9 +126,30 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 		if(oldThingVarsClass != null && !oldThingVarsClass.equals(newThingVarsClass))
 			this.customVars.remove(oldThingVarsClass); // If we didn't already just replace the vars, delete the old ones
 	}
+
 	private final Set<String> POWERS = new HashSet<>();
 	private final List<StatAlteringStateDefinition.AttributeModifierInstruction> ATTRIBUTE_MODIFIERS = new ArrayList<>();
+	private float horizontalScale, verticalScale, eyeHeightScale, horizontalAnimationScale, verticalAnimationScale;
+
+	public float getHorizontalScale() {
+		return this.horizontalScale;
+	}
+	public float getVerticalScale() {
+		return this.verticalScale;
+	}
+	public float getEyeHeightScale() {
+		return this.eyeHeightScale;
+	}
+	public float getHorizontalAnimationScale() {
+		return this.horizontalAnimationScale;
+	}
+	public float getVerticalAnimationScale() {
+		return this.verticalAnimationScale;
+	}
+
 	public void updateCharacterFormCombo() {
+		this.updateAppearance();
+
 		// Clear all power strings
 		this.POWERS.clear();
 
@@ -183,6 +200,17 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 					));
 				}
 			}
+
+			this.horizontalScale = this.getForm().WIDTH_FACTOR * this.getCharacter().WIDTH_FACTOR;
+			this.verticalScale = this.getForm().HEIGHT_FACTOR * this.getCharacter().HEIGHT_FACTOR;
+			this.eyeHeightScale = this.getForm().HEIGHT_FACTOR * this.getCharacter().EYE_HEIGHT_FACTOR;
+			this.horizontalAnimationScale = this.getForm().ANIMATION_HORIZONTAL_SCALE * this.getCharacter().ANIMATION_HORIZONTAL_SCALE;
+			this.verticalAnimationScale = this.getForm().ANIMATION_VERTICAL_SCALE * this.getCharacter().ANIMATION_VERTICAL_SCALE;
+		}
+		else {
+			this.horizontalScale = 1; this.verticalScale = 1;
+			this.eyeHeightScale = 1;
+			this.horizontalAnimationScale = 1; this.verticalAnimationScale = 1;
 		}
 
 		this.getPlayer().calculateDimensions();
@@ -190,6 +218,9 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 	@Override public boolean hasPower(String power) {
 		return this.isEnabled() && this.POWERS.contains(power);
 	}
+
+	public abstract void updateAppearance();
+	public abstract @Nullable ParsedCommonAppearance getAppearance();
 
 	public void setupVariablesBeforeInitialApply(ParsedCharacter character, ParsedForm form) {
 		this.character = character;
@@ -207,16 +238,6 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 
 	@Override public double getStat(CfaStat stat) {
 		return CfaStatCalculationHelper.calculate(this, stat);
-	}
-
-	@Override public float getHorizontalScale() {
-		return this.isEnabled() ? this.getForm().WIDTH_FACTOR * this.getCharacter().WIDTH_FACTOR : 1;
-	}
-	@Override public float getVerticalScale() {
-		return this.isEnabled() ? this.getForm().HEIGHT_FACTOR * this.getCharacter().HEIGHT_FACTOR : 1;
-	}
-	@Override public float getEyeHeightScale() {
-		return this.isEnabled() ? this.getForm().HEIGHT_FACTOR * this.getCharacter().EYE_HEIGHT_FACTOR : 1;
 	}
 
 	@Override public int getBapStrength(Direction direction) {
@@ -240,7 +261,12 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 	}
 
 	public boolean doCustomTravel() {
-		return this.isEnabled() && !this.getPlayer().getAbilities().flying && !this.getPlayer().isFallFlying() && !this.getPlayer().isUsingRiptide();
+		return
+				this.isEnabled()
+				&& !this.getPlayer().getAbilities().flying // this means "currently flying", not "can fly"
+				&& !this.getPlayer().isFallFlying()
+				&& !this.getPlayer().isUsingRiptide() // do i want to keep this here?
+				&& !this.getPlayer().isSleeping();
 	}
 
 	public Vec3d getFluidPushingVel() {

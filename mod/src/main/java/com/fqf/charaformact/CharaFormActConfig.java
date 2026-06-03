@@ -8,14 +8,19 @@ import me.shedaniel.autoconfig.annotation.Config;
 public class CharaFormActConfig implements ConfigData {
 	private int bufferLength = 3;
 	private boolean logAllActionTransitions = false;
+	private boolean logAppearancesUVs = false;
 	private boolean logNBTReadWrite = false;
 	private boolean logActionTransitionInjections = false;
 	private boolean specialHUD = false;
 	private boolean allowIllegalTransitionsInSingleplayer = true;
 	private float inherentBumpedBlockScale = 1.0001F;
+	private boolean logFeatureContexts = true;
 
 	public boolean logAllActionTransitions() {
 		return this.logAllActionTransitions;
+	}
+	public boolean logCharacterFormModelUVs() {
+		return this.logAppearancesUVs;
 	}
 	public boolean logNBTReadWrite() {
 		return this.logNBTReadWrite;
@@ -34,5 +39,8 @@ public class CharaFormActConfig implements ConfigData {
 	}
 	public float getInherentBumpedBlockScale() {
 		return this.inherentBumpedBlockScale;
+	}
+	public boolean logFeatureContexts() {
+		return this.logFeatureContexts;
 	}
 }

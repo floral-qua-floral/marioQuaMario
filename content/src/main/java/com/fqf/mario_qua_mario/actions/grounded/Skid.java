@@ -1,12 +1,15 @@
 package com.fqf.mario_qua_mario.actions.grounded;
 
-import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.*;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charaformact_api.cfadata.*;
+import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
+import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
@@ -16,7 +19,6 @@ import com.fqf.mario_qua_mario.actions.airborne.Jump;
 import com.fqf.mario_qua_mario.actions.airborne.Sideflip;
 import com.fqf.mario_qua_mario.actions.aquatic.UnderwaterWalk;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,66 +34,29 @@ public class Skid implements GroundedActionDefinition {
 		return ID;
 	}
 
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return new PlayermodelAnimation(
-				null,
-				new ProgressHandler((data, ticksPassed) -> 1),
-				new EntireBodyAnimation(0.3F, true, (data, arrangement, progress) -> {
+	@Override public @Nullable AnimationDefinition getAnimation() {
+		return AnimationDefinition.of(
+				AnimationFlag.NO_SWING_LIMBS,
+				(arrangement, data, animationTime, helper) -> {
 					arrangement.y -= 4;
 					arrangement.setAngles(
 							0,
-							progress * 42.5F,
-							progress * 17.5F
+							42.5F,
+							17.5F
 					);
-				}),
-				new BodyPartAnimation((data, arrangement, progress) -> {
-					arrangement.roll -= progress * 15;
-				}),
-				new BodyPartAnimation((data, arrangement, progress) -> {
+				},
+				(posture, data, animationTime, helper) -> {
+					posture.HEAD.roll -= 15;
 
-				}),
-				new LimbAnimation(false, (data, arrangement, progress) -> {
-					arrangement.addAngles(
-							progress * -32,
-							progress * -35,
-							progress * 80
-					);
-				}),
-				new LimbAnimation(false, (data, arrangement, progress) -> {
-					arrangement.addAngles(
-							-45,
-							0,
-							-30
-					);
-				}),
+					posture.RIGHT_ARM.addAngles(-32, -35, 80);
+					posture.LEFT_ARM.addAngles(-45, 0, -30);
+					posture.RIGHT_LEG.addAngles(-57.5F, 45F, -20);
+					posture.LEFT_LEG.addPos(0, -4.1F, -3.9F);
+					posture.LEFT_LEG.addAngles(5, 15, 0);
 
-				new LimbAnimation(false, (data, arrangement, progress) -> {
-					arrangement.addAngles(
-							progress * -57.5F,
-							progress * 45F,
-							progress * -20
-					);
-				}),
-				new LimbAnimation(false, (data, arrangement, progress) -> {
-					arrangement.addPos(
-							progress * 0,
-							progress * -4.1F,
-							progress * -3.9F
-					);
-					arrangement.addAngles(
-							progress * 5,
-							progress * 15,
-							progress * 0
-					);
-				}),
-
-				new LimbAnimation(false, (data, arrangement, progress) -> {
-					arrangement.setAngles(
-							5,
-							42,
-							-17.5F
-					);
-				})
+					if(posture.TAIL != null)
+						posture.TAIL.setAngles(5, 42, -17.5F);
+				}
 		);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
@@ -163,13 +128,10 @@ public class Skid implements GroundedActionDefinition {
 						data -> {
 							helper.performJump(data, Sideflip.SIDEFLIP_VEL, null);
 							data.setForwardStrafeVel(Sideflip.SIDEFLIP_BACKWARDS_SPEED.get(data), 0);
-							PlayerEntity mario = data.getPlayer();
-//							data.forceBodyAlignment(true);
-							mario.setYaw(mario.getYaw() - 178);
+							data.forceBodyAlignment(true);
 						},
 						(data, isSelf, seed) -> {
 							data.forceBodyAlignment(true);
-							data.instantVisualRotate(-178, true);
 							data.playJumpSound(seed);
 							data.voice(Voicelines.SIDEFLIP, seed);
 						}

@@ -17,6 +17,7 @@ public class Arrangement {
 	public void setAngles(float pitch, float yaw, float roll) {
 		this.pitch = pitch; this.yaw = yaw; this.roll = roll;
 	}
+
 	public void addPos(float x, float y, float z) {
 		this.setPos(this.x + x, this.y + y, this.z + z);
 	}

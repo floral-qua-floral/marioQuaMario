@@ -1,10 +1,13 @@
 package com.fqf.mario_qua_mario.actions.generic;
 
+import com.fqf.charaformact_api.cfadata.*;
 import com.fqf.charaformact_api.definitions.states.actions.GenericActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.Posture;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charaformact_api.cfadata.*;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.actions.airborne.LavaBoost;
@@ -32,25 +35,21 @@ public class Debug implements GenericActionDefinition {
 	    return ID;
 	}
 
-	public static final PlayermodelAnimation T_POSE = new PlayermodelAnimation(
-		null,
-		new ProgressHandler(null, (data, prevAnimationID) -> true, (data, ticksPassed) -> ticksPassed / 25F),
-		null,
-
-		null,
-		null,
-
-		new LimbAnimation(false, (data, arrangement, progress) -> arrangement.roll += 90),
-		new LimbAnimation(false, (data, arrangement, progress) -> arrangement.roll -= 90),
-
-		new LimbAnimation(false, null),
-		new LimbAnimation(false, null),
-
-		new LimbAnimation(false, null)
-	);
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return T_POSE;
+	public static void tPose(Posture posture) {
+		posture.RIGHT_ARM.roll = 90;
+		posture.LEFT_ARM.roll = -90;
 	}
+
+	@Override
+	public @Nullable AnimationDefinition getAnimation() {
+		return AnimationDefinition.of(
+				AnimationFlag.NO_SWING_LIMBS,
+				(posture, data, animationTime, helper) -> {
+					tPose(posture);
+				}
+		);
+	}
+
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
 		return null;
 	}
@@ -117,8 +116,7 @@ public class Debug implements GenericActionDefinition {
 						(data, isSelf, seed) -> {
 							data.voice(Voicelines.BURNT, seed);
 						}
-				),
-				DebugSideTurn.SIDE_TURN
+				)
 		);
 	}
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions() {
@@ -164,14 +162,19 @@ public class Debug implements GenericActionDefinition {
 					@Override
 					public void executeTravellers(CfaTravelData data, ItemStack weapon, float attackCooldownProgress, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget) {
 
-						data.getPlayer().setYaw(data.getPlayer().getYaw() + 90);
+
+
+//						data.getPlayer().setYaw(data.getPlayer().getYaw() + 90);
+//						data.getPlayer().bodyYaw = 20;
+//						data.getPlayer().prevHeadYaw = -30;
+//						data.getPlayer().prevBodyYaw = 20;
+//						data.getPlayer().prevYaw = 0;
 					}
 
 					@Override
 					public void executeClients(CfaClientData data, ItemStack weapon, float attackCooldownProgress, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget, long seed) {
-						data.forceBodyAlignment(true);
-						data.instantVisualRotate(90, true);
-						data.playAnimation(DebugSideTurn.ANIMATION, -1);
+//						data.forceBodyAlignment(true);
+//						data.instantVisualRotate(90, true);
 					}
 
 					@Override

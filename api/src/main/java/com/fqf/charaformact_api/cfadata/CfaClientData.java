@@ -1,13 +1,13 @@
 package com.fqf.charaformact_api.cfadata;
 
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import net.minecraft.entity.Entity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 
 public interface CfaClientData extends CfaData {
-	void playAnimation(PlayermodelAnimation animation, int ticks);
+	void playAnimation(AnimationDefinition animation, int duration);
 	void playCameraAnimation(CameraAnimationSet animationSet);
 
 	SoundInstanceWrapper playSound(
@@ -19,6 +19,8 @@ public interface CfaClientData extends CfaData {
 	SoundInstanceWrapper playSound(SoundEvent event, long seed);
 	SoundInstanceWrapper playSound(SoundEvent event, float pitch, float volume, long seed);
 	SoundInstanceWrapper playSound(SoundEvent event, Entity entity, SoundCategory category, long seed);
+
+	void sustainSound(SoundEvent event, Entity entity, SoundCategory category, float pitch, float volume, long seed);
 
 	void playJumpSound(long seed);
 	void fadeJumpSound();

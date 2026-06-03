@@ -129,7 +129,7 @@ public class JumpStomp implements CollisionAttackTypeDefinition {
 
 	public static Vec3d stompETAMTS(CfaTravelData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, Vec3d movingToPos, boolean affectMario) {
 		return switch(result) {
-			case PAINFUL -> null; // Replace once Bonk implemented: Give Mario backwards momentum
+			case PAINFUL -> null; // Replace once Bonk implemented: Give Mario forwards momentum
 			case NORMAL, GLANCING, RESISTED -> {
 				if(affectMario) {
 					data.refreshJumpCapping();

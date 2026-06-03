@@ -1,12 +1,11 @@
 package com.fqf.mario_qua_mario.actions.generic;
 
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.EntireBodyAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.ProgressHandler;
-import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,17 +17,11 @@ public class DebugSpinYaw extends Debug {
 	    return ID;
 	}
 
-	@Override
-	public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return new PlayermodelAnimation(
-				null, new ProgressHandler(80F, true, Easing.LINEAR),
-				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) ->
-						arrangement.yaw = progress * 360),
-
-				null, null,
-				null, null,
-				null, null,
-				null
+	@Override public @Nullable AnimationDefinition getAnimation() {
+		return AnimationDefinition.of(
+				AnimationFlag.NO_SWING_LIMBS,
+				(arrangement, data, animationTime, helper) -> arrangement.yaw = MathHelper.sin(animationTime / 4F) * 35,
+				(posture, data, animationTime, helper) -> Debug.tPose(posture)
 		);
 	}
 

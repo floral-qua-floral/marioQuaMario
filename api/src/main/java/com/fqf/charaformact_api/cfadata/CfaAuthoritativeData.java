@@ -41,12 +41,12 @@ public interface CfaAuthoritativeData extends CfaData {
 	enum FormChangeOperationResult {
 		SUCCESS,
 		NOT_ENABLED,
-		MISSING_PLAYERMODEL
+		NO_VALID_APPEARANCE
 	}
 	enum ReversionResult {
 		SUCCESS,
 		NOT_ENABLED,
-		MISSING_PLAYERMODEL,
+		NO_VALID_APPEARANCE,
 		NO_WEAKER_FORM
 	}
 }

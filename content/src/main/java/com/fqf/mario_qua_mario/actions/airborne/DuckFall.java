@@ -4,8 +4,7 @@ import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinit
 import com.fqf.charaformact_api.definitions.states.actions.util.SneakingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.PlayermodelAnimation;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.grounded.DuckWaddle;
 import net.minecraft.util.Identifier;
@@ -20,8 +19,8 @@ public class DuckFall extends Fall implements AirborneActionDefinition {
 	    return ID;
 	}
 
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return DuckWaddle.makeDuckAnimation(false, true);
+	@Override public @Nullable AnimationDefinition getAnimation() {
+		return DuckWaddle.makeAnimation(false, false);
 	}
 
 	@Override public @NotNull SneakingRule getSneakingRule() {

@@ -1,12 +1,15 @@
 package com.fqf.mario_qua_mario.actions.airborne;
 
-import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.*;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charaformact_api.cfadata.*;
+import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
+import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.aquatic.Submerged;
@@ -31,31 +34,24 @@ public class LavaBoost extends Fall implements AirborneActionDefinition {
 		return ID;
 	}
 
-	private static LimbAnimation makeArmAnimation(int factor) {
-	    return new LimbAnimation(false, (data, arrangement, progress) -> {
-			arrangement.addAngles(120, factor * 88, factor * 90);
-			arrangement.addPos(0, 1.25F, 1);
-	    });
-	}
-	private static LimbAnimation makeLegAnimation(int factor) {
-	    return new LimbAnimation(false, (data, arrangement, progress) -> {
-			arrangement.addAngles(-57.75F + factor * MathHelper.sin(progress) * 40, 0, 0);
-	    });
-	}
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-	    return new PlayermodelAnimation(
-	            null,
-	            new ProgressHandler((data, ticksPassed) -> ticksPassed / 2.2F),
-	            new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
+	@Override public @Nullable AnimationDefinition getAnimation() {
+		return AnimationDefinition.of(
+				AnimationFlag.NO_SWING_LIMBS,
+				(arrangement, data, animationTime, helper) -> {
 					arrangement.pitch += 28.45F;
 					arrangement.y -= 6.75F;
-	            }),
-	            null,
-	            null,
-	            makeArmAnimation(1), makeArmAnimation(-1),
-	            makeLegAnimation(1), makeLegAnimation(-1),
-	            null
-	    );
+				},
+				(posture, data, animationTime, helper) -> {
+					helper.symmetricallyAnimate(posture, posture.RIGHT_ARM, arrangement -> {
+						arrangement.addPos(0, 1.25F, 1);
+						arrangement.addAngles(120, 88, 90);
+					});
+
+					float progress = animationTime / 2.2F;
+					helper.asymmetricallyAnimate(posture.RIGHT_LEG, posture.LEFT_LEG, (arrangement, isLeft, sideFactor) ->
+							arrangement.addAngles(-57.75F + sideFactor * MathHelper.sin(progress) * 40, 0, 0));
+				}
+		);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
 		return null;

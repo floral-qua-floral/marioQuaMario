@@ -1,5 +1,6 @@
 package com.fqf.charaformact;
 
+import com.fqf.charaformact.appearance.CommonAppearanceCollector;
 import com.fqf.charaformact.packets.CfaPackets;
 import com.fqf.charaformact.registries.RegistryManager;
 import com.fqf.charaformact.util.CfaGamerules;
@@ -37,12 +38,10 @@ public class CharaFormAct implements ModInitializer {
 		CfaGamerules.register();
 		CfaEventListeners.register();
 
+		CommonAppearanceCollector.INSTANCE.collect();
 	}
 
 	public static Identifier makeID(String path) {
 		return Identifier.of("charaformact", path);
-	}
-	public static Identifier makeResID(String path) {
-		return Identifier.of(MOD_ID, path);
 	}
 }

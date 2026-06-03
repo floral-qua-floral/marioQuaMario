@@ -1,14 +1,16 @@
 package com.fqf.mario_qua_mario.actions.airborne;
 
+import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
-import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -25,73 +27,80 @@ public class Backflip extends Jump implements AirborneActionDefinition {
 		return ID;
 	}
 
-	private static LimbAnimation makeArmAnimation(AnimationHelper helper, int factor) {
-		return new LimbAnimation(false, (data, arrangement, progress) -> {
-			arrangement.pitch += helper.interpolateKeyframes(progress,
-					-70.5F,
-					-100,
-					-98,
-					-90,
-					0
-			);
-			arrangement.yaw += helper.interpolateKeyframes(progress,
-					factor * 70,
-					factor * 60,
-					factor * 106,
-					factor * 110,
-					factor * (factor == 1 ? -40 : 80)
-			);
-			arrangement.roll += helper.interpolateKeyframes(progress,
-					factor * 90,
-					0,
-					0,
-					0,
-					factor * 110
-			);
-			arrangement.y += helper.interpolateKeyframes(progress, 0, 0, 1, 0);
-			arrangement.z += helper.interpolateKeyframes(progress, 0, 0, -1, 0);
-		});
+	private static float getAnimationProgress(float animationTime, AnimationHelper helper) {
+		return helper.sequencedEase(helper.sequencedEase(animationTime / 4.4F,
+				Easing.LINEAR, Easing.LINEAR, Easing.LINEAR, Easing.LINEAR) / 3, Easing.LINEAR, Easing.LINEAR) * 3;
 	}
-	private static LimbAnimation makeLegAnimation(AnimationHelper helper, int offsetFactor) {
-		return new LimbAnimation(false, (data, arrangement, progress) -> {
-			arrangement.pitch += helper.interpolateKeyframes(progress,
-					0,
-					48,
-					22.5F,
-					19 + offsetFactor * 21,
-					(offsetFactor == 0) ? -12.5F : 9.1F
-			);
-			arrangement.y += helper.interpolateKeyframes(progress,
-					0,
-					0,
-					0,
-					offsetFactor * -1.75F,
-					offsetFactor * -4.5F
-			);
-			arrangement.z += helper.interpolateKeyframes(progress,
-					0,
-					0,
-					0,
-					-2 + offsetFactor * -1.8F,
-					offsetFactor * -4.25F
-			);
-		});
-	}
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return new PlayermodelAnimation(
-				(data, rightArmBusy, leftArmBusy, headRelativeYaw) -> data.getPlayer().getRandom().nextBoolean(),
-				new ProgressHandler(
-						(data, ticksPassed) -> helper.sequencedEase(helper.sequencedEase(ticksPassed / 4.4F,
-								Easing.LINEAR, Easing.LINEAR, Easing.LINEAR, Easing.LINEAR) / 3, Easing.LINEAR, Easing.LINEAR) * 3
-				),
-				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
-					arrangement.pitch += progress * 180;
-				}),
-				null,
-				null,
-				makeArmAnimation(helper, 1), makeArmAnimation(helper, -1),
-				makeLegAnimation(helper, 0), makeLegAnimation(helper, 1),
-				null
+
+	@Override public @Nullable AnimationDefinition getAnimation() {
+		return AnimationDefinition.of(
+				AnimationFlag.NO_SWING_LIMBS,
+				AnimationFlag.Execution.RANDOMLY_MIRROR,
+				(arrangement, data, animationTime, helper) -> {
+					arrangement.pitch += getAnimationProgress(animationTime, helper) * 180;
+				},
+				(posture, data, animationTime, helper) -> {
+					float progress = getAnimationProgress(animationTime, helper);
+
+					helper.symmetricallyAnimate(posture, posture.RIGHT_ARM, (arrangement, isLeft, leftFactor) -> {
+						arrangement.addAngles(
+								helper.interpolateKeyframes(progress,
+										-70.5F,
+										-100,
+										-98,
+										-90,
+										0
+								),
+								helper.interpolateKeyframes(progress,
+										70,
+										60,
+										106,
+										110,
+										isLeft ? -40 : 80
+								),
+								helper.interpolateKeyframes(progress,
+										90,
+										0,
+										0,
+										0,
+										110
+								)
+						);
+						arrangement.addPos(
+								0,
+								helper.interpolateKeyframes(progress, 0, 0, 1, 0),
+								helper.interpolateKeyframes(progress, 0, 0, -1, 0)
+						);
+					});
+
+					helper.symmetricallyAnimate(posture, posture.RIGHT_LEG, (arrangement, isLeft, leftFactor) -> {
+						int offsetFactor = isLeft ? 1 : 0;
+						arrangement.pitch += helper.interpolateKeyframes(progress,
+								0,
+								48,
+								22.5F,
+								19 + offsetFactor * 21,
+								(offsetFactor == 0) ? -12.5F : 9.1F
+						);
+						arrangement.addPos(
+								0,
+								helper.interpolateKeyframes(progress,
+										0,
+										0,
+										0,
+										offsetFactor * -1.75F,
+										offsetFactor * -4.5F
+								),
+								helper.interpolateKeyframes(progress,
+										0,
+										0,
+										0,
+										-2 + offsetFactor * -1.8F,
+										offsetFactor * -4.25F
+								)
+						);
+					});
+				}
 		);
 	}
 	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {

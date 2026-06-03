@@ -1,10 +1,11 @@
 package com.fqf.mario_qua_mario.actions.wallbound;
 
+import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
-import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -22,43 +23,41 @@ public class ClimbWallSideHang extends ClimbWall implements WallboundActionDefin
 	    return ID;
 	}
 
-	private static LimbAnimation makeArmAnimation(int factor) {
-	    return new LimbAnimation(false, (data, arrangement, progress) -> {
-			boolean isWallSide = progress == factor;
-
-			arrangement.roll += factor * (isWallSide ? 140 : 12.5F);
-			arrangement.pitch += isWallSide ? -25 : 0;
-	    });
-	}
-	private static LimbAnimation makeLegAnimation(int factor) {
-	    return new LimbAnimation(false, (data, arrangement, progress) -> {
-			boolean isWallSide = progress == factor;
-			if(isWallSide) {
-				arrangement.addPos(factor * -0.5F, -3.75F, -4);
-				arrangement.addAngles(4, 0, factor * -2);
-			}
-			else {
-				arrangement.pitch += 17.5F;
-				arrangement.roll += factor * -30;
-			}
-	    });
-	}
 	protected float getEntireBodyXOffset(CfaReadableMotionData data) {
 		return -1.25F;
 	}
-	@Override public @Nullable PlayermodelAnimation getAnimation(AnimationHelper helper) {
-		return new PlayermodelAnimation(
-				null,
-				new ProgressHandler((data, ticksPassed) -> Math.signum(Objects.requireNonNull(helper.getWallInfo(data)).getYawDeviation())),
-				new EntireBodyAnimation(0.5F, true, (data, arrangement, progress) -> {
+
+	@Override public @Nullable AnimationDefinition getAnimation() {
+		return AnimationDefinition.of(
+				AnimationFlag.NO_SWING_LIMBS,
+				(arrangement, data, animationTime, helper) -> {
+					float progress = Math.signum(Objects.requireNonNull(helper.getWallInfo(data)).getYawDeviation());
 					arrangement.x += progress * this.getEntireBodyXOffset(data);
 					arrangement.roll = progress * 12.5F;
-				}),
-				null,
-				null,
-				makeArmAnimation(1), makeArmAnimation(-1),
-				makeLegAnimation(1), makeLegAnimation(-1),
-				null
+				},
+				(posture, data, animationTime, helper) -> {
+					float progress = Math.signum(Objects.requireNonNull(helper.getWallInfo(data)).getYawDeviation());
+
+					helper.asymmetricallyAnimate(posture.RIGHT_ARM, posture.LEFT_ARM, (arrangement, isLeft, sideFactor) -> {
+						boolean isWallSide = progress == sideFactor;
+						arrangement.addAngles(isWallSide ? -25 : 0, 0, sideFactor * (isWallSide ? 140 : 12.5F));
+					});
+
+					helper.asymmetricallyAnimate(posture.RIGHT_LEG, posture.LEFT_LEG, (arrangement, isLeft, sideFactor) -> {
+						boolean isWallSide = progress == sideFactor;
+						if(isWallSide) {
+							arrangement.addPos(sideFactor * -0.5F, -3.75F, -4);
+							arrangement.addAngles(4, 0, sideFactor * -2);
+						}
+						else {
+							arrangement.addAngles(
+									17.5F,
+									0,
+									sideFactor * -30
+							);
+						}
+					});
+				}
 		);
 	}
 
@@ -67,8 +66,9 @@ public class ClimbWallSideHang extends ClimbWall implements WallboundActionDefin
 		return WallBodyAlignment.SIDEWAYS;
 	}
 
-	public static void sideHangTravelHook(CfaTravelData data, WallInfo wall, WallboundActionHelper helper, ClimbWall baseAction) {
-		helper.setTowardsWallVel(data, baseAction.TOWARDS_WALL_VEL);
+	@Override
+	public void travelHook(CfaTravelData data, WallInfo wall, WallboundActionHelper helper) {
+		helper.setTowardsWallVel(data, TOWARDS_WALL_VEL);
 		if(data.getYVel() < -0.05) {
 			data.setYVel(data.getYVel() * 0.775);
 		}
@@ -76,11 +76,6 @@ public class ClimbWallSideHang extends ClimbWall implements WallboundActionDefin
 			data.getPlayer().fallDistance = 0;
 			data.setYVel(0);
 		}
-	}
-
-	@Override
-	public void travelHook(CfaTravelData data, WallInfo wall, WallboundActionHelper helper) {
-		sideHangTravelHook(data, wall, helper, this);
 	}
 
 	protected Identifier getClimbingActionID() {

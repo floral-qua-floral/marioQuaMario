@@ -13,16 +13,13 @@ import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import com.fqf.charaformact.registries.actions.ParsedActionHelper;
 import com.fqf.charaformact.registries.power_granting.ParsedCharacter;
 import com.fqf.charaformact.util.CfaSounds;
-import com.fqf.charaformact.util.PlayermodelListener;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
-import net.minecraft.resource.ResourceType;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
@@ -125,18 +122,10 @@ public class RegistryManager {
 	}
 
 	private static void registerCharacters() {
-		Set<String> characterNamespaces = new HashSet<>();
 		for(CharacterDefinition definition : getEntrypoints("cfa-characters", CharacterDefinition.class)) {
-			ParsedCharacter character = new ParsedCharacter(definition);
-			registerThing(CHARACTERS, character);
-			characterNamespaces.add(character.RESOURCE_ID.getNamespace());
+			registerThing(CHARACTERS, new ParsedCharacter(definition));
 		}
 		CHARACTERS.freeze();
-
-		for(String namespace : characterNamespaces) {
-			CharaFormAct.LOGGER.info("Registering a playermodel resource listener for namespace \"{}\"...", namespace);
-			ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new PlayermodelListener(namespace));
-		}
 	}
 
 	private static void registerVoicelines() {
