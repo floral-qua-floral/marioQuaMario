@@ -4,6 +4,7 @@ import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.registries.ParsedAttackInterception;
 import com.fqf.charaformact.registries.RegistryManager;
 import com.fqf.charaformact.registries.actions.AbstractParsedAction;
+import com.fqf.charaformact.registries.actions.ParsedActionHelper;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -39,10 +40,45 @@ public class AttackInterceptionPackets {
 			ServerPlayerEntity player, AttackInterceptionPayload payload,
 			@Nullable Entity targetEntity, @Nullable BlockPos targetBlock, long seed
 	) {
+		// Validate interception source (form or action)!
+		if(payload.isFromAction()) {
+			if(!player.cfa$getCfaData().recentlyInAction(ParsedActionHelper.get(payload.interceptionSource()))) {
+				logIllegalAttackInterception(player, payload, "Not recently in action!! Current action: "
+						+ player.cfa$getCfaData().getAction().ID);
+				return;
+			}
+		}
+		else {
+			if(player.cfa$getCfaData().getForm() != RegistryManager.FORMS.getOrThrow(payload.interceptionSource())) {
+				logIllegalAttackInterception(player, payload, "Not in specified form! Current form: "
+						+ player.cfa$getCfaData().getForm().ID);
+				return;
+			}
+		}
+
+		// Validate targets!
+		if(targetBlock != null && !player.canInteractWithBlockAt(targetBlock, 1.0)) {
+			targetBlock = null;
+			logIllegalAttackInterception(player, payload, "Block is too far away!");
+		}
+		if(targetEntity != null && !player.canInteractWithEntity(targetEntity, 1.0)) {
+			targetEntity = null;
+			logIllegalAttackInterception(player, payload, "Entity is too far away!");
+		}
+
 		ParsedAttackInterception.getInterception(payload)
 				.execute(player.cfa$getCfaData(), targetEntity, targetBlock, seed);
 
 		CfaPackets.sendToTrackers(player, convertPayloadToS2C(player, payload, targetEntity, targetBlock), false);
+	}
+	private static void logIllegalAttackInterception(ServerPlayerEntity player, AttackInterceptionPayload payload, String extraDetails) {
+		CharaFormAct.LOGGER.warn("{} attempted an illegal action transition: {} from {} {}. Details: {}",
+				player.getName().getString(),
+				payload.interceptionSource(),
+				payload.isFromAction() ? "ACTION" : "FORM",
+				ParsedAttackInterception.getStateOrigin(payload),
+				extraDetails
+		);
 	}
 	private static CustomPayload convertPayloadToS2C(
 			ServerPlayerEntity player, AttackInterceptionPayload payload,

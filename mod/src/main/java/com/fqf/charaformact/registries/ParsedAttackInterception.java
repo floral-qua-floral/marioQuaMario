@@ -1,5 +1,6 @@
 package com.fqf.charaformact.registries;
 
+import com.fqf.charaformact.registries.power_granting.ParsedPowerGrantingState;
 import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.definitions.states.AttackInterceptingStateDefinition;
@@ -20,8 +21,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ParsedAttackInterception {
+	public static ParsedCfaState getStateOrigin(AttackInterceptionPackets.AttackInterceptionPayload payload) {
+		return payload.isFromAction()
+				? ParsedActionHelper.get(payload.interceptionSource())
+				: RegistryManager.FORMS.getOrThrow(payload.interceptionSource());
+	}
 	public static ParsedAttackInterception getInterception(AttackInterceptionPackets.AttackInterceptionPayload payload) {
-		return payload.isFromAction() ? ParsedActionHelper.get(payload.interceptionSource()).INTERCEPTIONS.get(payload.interceptionIndex())
+		return payload.isFromAction()
+				? ParsedActionHelper.get(payload.interceptionSource()).INTERCEPTIONS.get(payload.interceptionIndex())
 				: RegistryManager.FORMS.getOrThrow(payload.interceptionSource()).INTERCEPTIONS.get(payload.interceptionIndex());
 	}
 	public static float getAttackCooldownProgress(PlayerEntity player) {

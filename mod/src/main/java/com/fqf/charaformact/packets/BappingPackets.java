@@ -45,10 +45,11 @@ public class BappingPackets {
 			Direction direction = Direction.values()[payload.direction];
 
 			AbstractParsedAction bappingAction = RegistryManager.ACTIONS.getOrThrow(payload.action);
-			if(data.recentlyInAction(bappingAction))
+			ServerPlayerEntity player = context.player();
+			if(data.recentlyInAction(bappingAction) && payload.pos.isWithinDistance(player.getPos(), Math.max(player.getWidth(), player.getHeight()) * 2))
 				BlockBappingUtil.attemptBap(
 						data,
-						context.player().getServerWorld(),
+						player.getServerWorld(),
 						payload.pos,
 						direction,
 						data.getBapStrength(bappingAction, direction),
