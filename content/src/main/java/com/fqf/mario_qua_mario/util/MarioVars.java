@@ -2,8 +2,15 @@ package com.fqf.mario_qua_mario.util;
 
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
+import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.wallbound.WallSlide;
+import net.minecraft.entity.attribute.EntityAttributeInstance;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Direction;
+
+import java.util.Objects;
 
 public class MarioVars {
 	public int canDoubleJumpTicks = 0;
@@ -16,6 +23,8 @@ public class MarioVars {
 	private long lastWallSlideTick = Long.MIN_VALUE;
 	private Direction lastWallSlideDirection;
 	private int wallSlidingTicks;
+
+	public boolean hasUnarmedModifier;
 
 	public static MarioVars get(CfaData data) {
 		return data.retrieveStateData(MarioVars.class);

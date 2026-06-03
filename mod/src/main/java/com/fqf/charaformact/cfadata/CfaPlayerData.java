@@ -68,7 +68,9 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 	}
 	public void setActionTransitionless(AbstractParsedAction action) {
 		this.setupCustomVars(this.action, action);
+		this.action.onExit(this);
 		this.action = action;
+		this.action.onEnter(this);
 		this.getPlayer().calculateDimensions();
 //		if(action.CATEGORY != ActionCategory.MOUNTED) this.getPlayer().dismountVehicle();
 	}
@@ -91,7 +93,9 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 	}
 	public boolean setFormTransitionless(ParsedForm newForm) {
 		this.setupCustomVars(this.form, newForm);
+		this.form.onExit(this);
 		this.form = newForm;
+		this.form.onEnter(this);
 		updateCharacterFormCombo();
 		return true;
 	}
@@ -106,7 +110,9 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 
 	public void setCharacter(ParsedCharacter character) {
 		this.setupCustomVars(this.character, character);
+		if(this.character != null) this.character.onExit(this);
 		this.character = character;
+		this.character.onEnter(this);
 		this.form = character.INITIAL_FORM;
 		this.action = character.getInitialAction(this);
 		this.setActionTransitionless(this.action);

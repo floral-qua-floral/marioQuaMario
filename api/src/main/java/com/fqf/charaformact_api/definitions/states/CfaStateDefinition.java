@@ -13,4 +13,7 @@ public interface CfaStateDefinition {
 	@Nullable Object provideStateData(CfaData data);
 	void clientTick(CfaClientData data, boolean isSelf);
 	void serverTick(CfaAuthoritativeData data);
+
+	default void onEnter(CfaData data) { }
+	default void onExit(CfaData data) { }
 }

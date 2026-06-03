@@ -15,15 +15,18 @@ import com.fqf.mario_qua_mario.util.MQMTags;
 import com.fqf.mario_qua_mario.util.MarioVars;
 import com.fqf.mario_qua_mario.util.Powers;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.Set;
 
 public abstract class AbstractMario implements CharacterDefinition {
@@ -94,6 +97,8 @@ public abstract class AbstractMario implements CharacterDefinition {
 		);
 	}
 
+	private static final EntityAttributeModifier UNARMED_DAMAGE_BONUS =
+			new EntityAttributeModifier(MarioQuaMario.makeID("unarmed_damage_boost"), 1, EntityAttributeModifier.Operation.ADD_VALUE);
 	@Override public @Nullable Object provideStateData(CfaData data) {
 		return new MarioVars();
 	}
@@ -113,6 +118,21 @@ public abstract class AbstractMario implements CharacterDefinition {
 					// Individual actions can change this by assigning a value to P-Speed themselves!
 					vars.pSpeed = 0;
 		}
+
+		// I wanted to handle this somewhere other than in tick (ideally would be wherever attribute modifiers get
+		// applied?) but I could not find that and it seemed not worth the hassle. I'm pretty sure that just happens
+		// somewhere in tick too, since it seems like PlayerEntity.getMainHandItem returns based on the index of the
+		// selected hotbar slot, which can change Literally Whenever. So it's not as though the attribute modifiers are
+		// being applied at the very instant that the player switches slots.
+		PlayerEntity mario = data.getPlayer();
+		boolean mainHandEmpty = mario.getMainHandStack().isEmpty();
+		if(mainHandEmpty == vars.hasUnarmedModifier) return;
+
+		vars.hasUnarmedModifier = mainHandEmpty;
+		EntityAttributeInstance attribute = mario.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE);
+		assert attribute != null; // if it's ever null i'll cry why on EARTH would it be null jesus christ
+		if(mainHandEmpty) attribute.addTemporaryModifier(UNARMED_DAMAGE_BONUS);
+		else attribute.removeModifier(UNARMED_DAMAGE_BONUS);
 	}
 	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 		commonTick(data);
@@ -120,5 +140,9 @@ public abstract class AbstractMario implements CharacterDefinition {
 	@Override public void serverTick(CfaAuthoritativeData data) {
 		commonTick(data);
 		data.retrieveStateData(MarioVars.class).stompGuardRemainingTicks--;
+	}
+
+	@Override public void onExit(CfaData data) {
+		Objects.requireNonNull(data.getPlayer().getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE)).removeModifier(UNARMED_DAMAGE_BONUS);
 	}
 }
