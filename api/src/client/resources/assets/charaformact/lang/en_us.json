@@ -1,0 +1,5 @@
+{
+  "origin.charaformact.character.name": "Character",
+  "origin.charaformact.character.description": "Play as a character using the CharaFormAct API.",
+  "layer.charaformact.character_layer.name": "Character"
+}

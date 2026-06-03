@@ -1,0 +1,17 @@
+{
+  "replace": false,
+  "origins": [
+    {
+      "condition": {
+        "type": "origins:origin",
+        "origin": "charaformact:character",
+        "layer": "origins:origin"
+      },
+      "origins": [
+        "mario_qua_mario:mario",
+        "mario_qua_mario:luigi",
+        "mario_qua_mario:toadette"
+      ]
+    }
+  ]
+}

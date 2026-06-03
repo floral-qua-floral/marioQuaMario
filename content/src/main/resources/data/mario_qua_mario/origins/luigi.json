@@ -1,0 +1,10 @@
+{
+  "powers": [
+    "mario_qua_mario:play_as_luigi"
+  ],
+  "icon": {
+    "id": "minecraft:dark_oak_leaves"
+  },
+  "order": 0,
+  "impact": 3
+}

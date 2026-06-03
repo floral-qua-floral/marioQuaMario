@@ -64,6 +64,17 @@
   "tag.item.mario_qua_mario.edible_power_ups": "Edible power-ups for Mario",
   "tag.item.mario_qua_mario.less_nutritious_power_ups": "Less nutritious power-ups for Mario",
 
+  "origin.mario_qua_mario.mario.name": "Mario",
+  "origin.mario_qua_mario.mario.description": "Fight and explore using a combination of power-ups and acrobatic moves!",
+  "origin.mario_qua_mario.luigi.name": "Luigi",
+  "origin.mario_qua_mario.luigi.description": "Luigi has all the same features as Mario, but different attributes. He runs faster and jumps higher, but has much less traction. Try not to slip!",
+  "origin.mario_qua_mario.toadette.name": "Toadette",
+  "origin.mario_qua_mario.toadette.description": "Toadette has the same features and attributes as Mario, but she's also a mushroom, and a girl.",
+  "origin.mario_qua_mario.wario.name": "Wario",
+  "origin.mario_qua_mario.wario.description": "Wario has the same features as Mario, but different attributes. He runs slower and doesn't jump as high, but he deals more damage and mines faster.",
+  "origin.mario_qua_mario.customizable_toad.name": "Custom Toad",
+  "origin.mario_qua_mario.customizable_toad.description": "Play as a Toad, with a customizable appearance! Toads have the same features as Mario, but different attributes. They run faster but don't jump as high.",
+
   "subtitles.mario_qua_mario.movement.flip": "Aerial flip",
   "subtitles.mario_qua_mario.movement.jump": "Jumping",
   "subtitles.mario_qua_mario.movement.wall_jump": "Wall jumping",

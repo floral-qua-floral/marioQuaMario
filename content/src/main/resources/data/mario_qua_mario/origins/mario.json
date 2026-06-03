@@ -1,0 +1,10 @@
+{
+  "powers": [
+    "mario_qua_mario:play_as_mario"
+  ],
+  "icon": {
+    "id": "minecraft:mace"
+  },
+  "order": 0,
+  "impact": 3
+}
