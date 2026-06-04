@@ -32,8 +32,6 @@ public class ToadAppearanceModel extends MqmAppearanceModel {
 
 			this.leftPigtail.copyTransform(this.rightPigtail);
 			this.leftPigtail.pivotX *= -1;
-			this.leftPigtail.yaw *= -1;
-			this.leftPigtail.roll *= -1;
 		}
 	}
 }

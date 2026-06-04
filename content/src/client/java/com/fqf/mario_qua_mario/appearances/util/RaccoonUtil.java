@@ -50,7 +50,7 @@ public class RaccoonUtil {
 	private static void addEar(
 			ModelPartData head, boolean isLeft,
 			Vector3f pivot,
-			Vector2i innerUV1, Vector2i innerUV2, Vector2i outerUV2,
+			Vector2i innerUV1, Vector2i innerUV2, Vector2i outerUV,
 			AppearanceGeometryHelper helper
 	) {
 		ModelPartData earBase = makeEarHalf(
@@ -58,12 +58,12 @@ public class RaccoonUtil {
 				pivot,
 //				helper.toRadians(0, -10, 0),
 				helper.toRadians(-10, -10, 20),
-				innerUV1, outerUV2, helper
+				innerUV1, outerUV, helper
 		);
 		makeEarHalf(
 				earBase, isLeft ? "left_ear_flap" : "right_ear_flap", isLeft, true,
 				new Vector3f(), helper.toRadians(0, 110, 0),
-				innerUV1, outerUV2, helper
+				innerUV2, outerUV, helper
 		);
 	}
 
