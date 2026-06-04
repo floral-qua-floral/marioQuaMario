@@ -129,15 +129,15 @@ public class AppearanceHelperImpl implements AppearanceGeometryHelper, Appearanc
 	}
 
 	public TransformationInstructions getStretchingTransformation(Vector3i cuboid, Vector3i vanillaCuboid) {
-		var uwu = new TransformationInstructions(
+		return this.getStretchingTransformation(new Vector3f(cuboid), vanillaCuboid);
+	}
+	public TransformationInstructions getStretchingTransformation(Vector3f cuboid, Vector3i vanillaCuboid) {
+		return new TransformationInstructions(
 				0, 0, 0,
 				0, 0, 0,
-				(float) cuboid.x / vanillaCuboid.x,
-				(float) cuboid.y / vanillaCuboid.y,
-				(float) cuboid.z / vanillaCuboid.z
+				cuboid.x / vanillaCuboid.x,
+				cuboid.y / vanillaCuboid.y,
+				cuboid.z / vanillaCuboid.z
 		);
-		CharaFormAct.LOGGER.info("STRETCHING TRANSFORMATION TIME!!!!\n\tVanilla part: {}, {}, {}\n\tCustom: {}, {}, {}\n\tResult: {}",
-				vanillaCuboid.x, vanillaCuboid.y, vanillaCuboid.z, cuboid.x, cuboid.y, cuboid.z, uwu);
-		return uwu;
 	}
 }

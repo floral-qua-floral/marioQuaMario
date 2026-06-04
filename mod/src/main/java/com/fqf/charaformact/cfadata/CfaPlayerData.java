@@ -39,6 +39,9 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 		return this.character != null;
 	}
 	public void disableInternal() {
+		if(this.action != null) this.action.onExit(this);
+		if(this.form != null) this.form.onExit(this);
+		if(this.character != null) this.character.onExit(this);
 		this.character = null;
 		this.form = null;
 		this.action = null;

@@ -1,11 +1,10 @@
 package com.fqf.mario_qua_mario.appearances.toads;
 
-import com.fqf.charaformact_api.appearance.AppearanceGeometryHelper;
-import com.fqf.charaformact_api.appearance.AppearanceModel;
-import com.fqf.charaformact_api.appearance.ClientAppearanceDefinition;
+import com.fqf.charaformact_api.appearance.*;
 import com.fqf.mario_qua_mario.appearances.util.ToadAppearanceModel;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.model.ModelPartData;
+import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
@@ -55,6 +54,15 @@ public abstract class AbstractToadClientAppearance extends AbstractToadCommonApp
 	public Vector3i getPigtailBottomSize() {
 		return new Vector3i(4);
 	}
+
+	public Vector3f getBulbPivot() {
+		return new Vector3f(0, -this.getHeadSize().y + 1.2F, 0.1F);
+	}
+
+	public Vector3f getBulbRotation() {
+		return new Vector3f(6.0213857F, 0, 0);
+	}
+
 	public Vector2i getPigtailTopUV() {
 		return new Vector2i(0, 39);
 	}
@@ -104,10 +112,10 @@ public abstract class AbstractToadClientAppearance extends AbstractToadCommonApp
 
 		ModelPartData bulb = helper.makePart(
 				head, CAP_BULB, false,
-				new Vector3f(0, -this.getHeadSize().y + 1.2F, 0.1F), // pivot
+				this.getBulbPivot(), // pivot
 				new Vector3f(bulbSize.x / -2F, -bulbSize.y, bulbSize.z / -2F), // offset
 				0, // mirrorable offset
-				new Vector3f(6.0213857F, 0, 0), // rotation (radians)
+				this.getBulbRotation(), // rotation (radians)
 				bulbSize, // size
 				bulbUV // uv
 		);
@@ -142,5 +150,37 @@ public abstract class AbstractToadClientAppearance extends AbstractToadCommonApp
 	@Override
 	public AppearanceModel createModel(ModelPart root) {
 		return new ToadAppearanceModel(root);
+	}
+
+	@Override
+	public TransformationInstructions getHelmetTransformation(AppearanceFeatureHelper helper) {
+		Vector3i bulbSize = this.getCapBulbSize();
+		Vector3f bulbPivot = this.getBulbPivot();
+		float gap = 0.98F; // gap between the surface of the mushroom cap & the helmet
+		float scale = ((bulbSize.x + bulbSize.z - 4 + gap * 4) / 2F) / 8F;
+
+		float angle = this.getBulbRotation().x;
+
+		Vector3f vanillaRotatedPivot = new Vector3f(0, 8 * scale, 0).rotateX(angle);
+		float addend = MathHelper.lerp(gap, 0.2F, 0.4F); // why? why? why? why? why? why???
+		Vector3f rotatedPivot = new Vector3f(0, bulbSize.y + addend + gap, 0).rotateX(angle);
+
+		return new TransformationInstructions(
+				-vanillaRotatedPivot.z - bulbPivot.z + rotatedPivot.z,
+				-vanillaRotatedPivot.y - bulbPivot.y + rotatedPivot.y,
+				-vanillaRotatedPivot.x - bulbPivot.x + rotatedPivot.x,
+				angle, 0, 0,
+				scale, scale, scale
+		);
+	}
+
+	@Override
+	public TransformationInstructions getUnknownHeadFeatureTransformation(AppearanceFeatureHelper helper) {
+		Vector3i bulbSize = this.getCapBulbSize();
+
+		return helper.getStretchingTransformation(
+				new Vector3f(bulbSize.x - 0.8F, this.getHeadSize().y + bulbSize.y - 0.5F,  bulbSize.z - 0.5F),
+				new Vector3i(8, 8, 8)
+		).offset(-1, 0, 0);
 	}
 }
