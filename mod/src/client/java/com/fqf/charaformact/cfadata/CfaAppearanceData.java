@@ -83,7 +83,9 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 				// Force the action animation to interpolate from the last frame of the override animation, rather than
 				// from its own last tick posture. We put these in the "to" variable because on the first frame of this
 				// tick it will be shifting these into the "from" variables.
+				interpolatedAnimation.fromPosture = this.prevFramePosture;
 				interpolatedAnimation.toPosture = this.prevFramePosture;
+				interpolatedAnimation.fromModelArrangement = this.prevFrameModelArrangement;
 				interpolatedAnimation.toModelArrangement = this.prevFrameModelArrangement;
 			}
 		}
