@@ -16,6 +16,7 @@ import com.fqf.mario_qua_mario.actions.airborne.GroundPoundDrop;
 import com.fqf.mario_qua_mario.collision_attacks.AquaticGroundPound;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -63,7 +64,7 @@ public class AquaticPoundDrop implements AquaticActionDefinition {
 		return null;
 	}
 	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-
+		data.sustainSound(MarioSFX.AQUATIC_GROUND_POUND_DROP, data.getPlayer(), SoundCategory.PLAYERS);
 	}
 	@Override public void serverTick(CfaAuthoritativeData data) {
 

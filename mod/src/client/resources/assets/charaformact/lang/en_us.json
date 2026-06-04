@@ -12,6 +12,7 @@
   "text.autoconfig.charaformact.option.allowIllegalTransitionsInSingleplayer": "Skip transition verification in Singleplayer",
   "text.autoconfig.charaformact.option.inherentBumpedBlockScale": "Scale of blocks being bumped",
   "text.autoconfig.charaformact.option.logFeatureContexts": "Log feature context categorization",
+  "text.autoconfig.charaformact.option.suppressVoiceUnderwater": "Silence character voices underwater",
 
   "text.autoconfig.charaformact.option.spinputType": "Spin Input Type",
   "fabric.mods.charaformact.spin": "Spin",

@@ -20,12 +20,14 @@ public interface CfaClientData extends CfaData {
 	SoundInstanceWrapper playSound(SoundEvent event, float pitch, float volume, long seed);
 	SoundInstanceWrapper playSound(SoundEvent event, Entity entity, SoundCategory category, long seed);
 
-	void sustainSound(SoundEvent event, Entity entity, SoundCategory category, float pitch, float volume, long seed);
+	void sustainSound(SoundEvent event, Entity entity, SoundCategory category);
+	void sustainSound(SoundEvent event, Entity entity, SoundCategory category, float pitch, float volume);
 
 	void playJumpSound(long seed);
 	void fadeJumpSound();
 
 	SoundInstanceWrapper voice(String voiceline, long seed);
+	SoundInstanceWrapper voice(String voiceline, float volume, long seed);
 	float getVoicePitch();
 
 	void storeSound(SoundInstanceWrapper instance);

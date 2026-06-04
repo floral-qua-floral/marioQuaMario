@@ -19,7 +19,6 @@ import com.fqf.mario_qua_mario.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import it.unimi.dsi.fastutil.floats.Float2FloatFunction;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -141,7 +140,7 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 			(data, isSelf, seed) -> data.playSound(MarioSFX.GROUND_POUND_FLIP, seed)
 	);
 
-	public static TransitionDefinition makeDropTransition(Identifier targetAction, float flipDuration, SoundEvent sfx) {
+	public static TransitionDefinition makeDropTransition(Identifier targetAction, float flipDuration) {
 		return new TransitionDefinition(
 				targetAction,
 				data -> data.retrieveStateData(FlipTimerVars.class).actionTimer >= flipDuration,
@@ -152,7 +151,7 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 					data.getPlayer().fallDistance = data.retrieveStateData(FlipTimerVars.class).STORED_FALL_DISTANCE * 0.6F;
 				},
 				(data, isSelf, seed) -> {
-					data.storeSound(data.playSound(sfx, seed));
+					// Sound is not played here, it's in the tick method of the target action!
 					data.getPlayer().fallDistance = data.retrieveStateData(FlipTimerVars.class).STORED_FALL_DISTANCE * 0.6F;
 				}
 		);
@@ -160,7 +159,7 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(AirborneActionHelper helper) {
 		return List.of(
-				makeDropTransition(GroundPoundDrop.ID, FLIP_DURATION, MarioSFX.GROUND_POUND_DROP)
+				makeDropTransition(GroundPoundDrop.ID, FLIP_DURATION)
 		);
 	}
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {

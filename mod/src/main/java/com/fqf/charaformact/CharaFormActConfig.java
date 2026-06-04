@@ -15,6 +15,7 @@ public class CharaFormActConfig implements ConfigData {
 	private boolean allowIllegalTransitionsInSingleplayer = true;
 	private float inherentBumpedBlockScale = 1.0001F;
 	private boolean logFeatureContexts = true;
+	private boolean suppressVoiceUnderwater = true;
 
 	public boolean logAllActionTransitions() {
 		return this.logAllActionTransitions;
@@ -42,5 +43,8 @@ public class CharaFormActConfig implements ConfigData {
 	}
 	public boolean logFeatureContexts() {
 		return this.logFeatureContexts;
+	}
+	public boolean doSuppressVoiceUnderwater() {
+		return this.suppressVoiceUnderwater;
 	}
 }

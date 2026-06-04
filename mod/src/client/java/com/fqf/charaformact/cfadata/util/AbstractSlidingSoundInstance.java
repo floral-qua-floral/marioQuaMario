@@ -2,20 +2,19 @@ package com.fqf.charaformact.cfadata.util;
 
 import com.fqf.charaformact.cfadata.CfaClientDataImpl;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.sound.MovingSoundInstance;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 
-public abstract class AbstractSlidingSoundInstance extends MovingSoundInstance {
-	protected final CfaClientDataImpl DATA;
+public abstract class AbstractSlidingSoundInstance extends EntityAttachedSoundInstance {
 	protected final AbstractClientPlayerEntity PLAYER;
+	protected final CfaClientDataImpl DATA;
 	private final SoundEvent SOUND_EVENT;
 	protected int ticks;
 
 	public AbstractSlidingSoundInstance(SoundEvent soundEvent, CfaClientDataImpl data) {
-		super(soundEvent, SoundCategory.PLAYERS, data.getPlayer().getRandom());
-		this.DATA = data;
+		super(soundEvent, data.getPlayer(), SoundCategory.PLAYERS, 1, 0);
 		this.PLAYER = data.getPlayer();
+		this.DATA = data;
 		this.SOUND_EVENT = soundEvent;
 		this.repeat = true;
 		this.ticks = 0;
@@ -35,9 +34,7 @@ public abstract class AbstractSlidingSoundInstance extends MovingSoundInstance {
 			}
 			else {
 				this.ticks++;
-				this.x = this.PLAYER.getX();
-				this.y = this.PLAYER.getY();
-				this.z = this.PLAYER.getZ();
+				super.tick();
 				this.updatePitchVolume();
 			}
 		}

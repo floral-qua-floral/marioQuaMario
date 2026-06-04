@@ -9,10 +9,12 @@ import com.fqf.charaformact.cfadata.util.*;
 import com.fqf.charaformact.registries.RegistryManager;
 import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import com.fqf.charaformact.util.CfaSounds;
+import com.fqf.charaformact_api.util.BuiltInPowers;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundInstance;
+import net.minecraft.client.sound.SoundManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
@@ -25,6 +27,8 @@ import net.minecraft.util.math.random.Random;
 import java.util.Map;
 
 public interface CfaClientDataImpl extends CfaAnimatingData {
+	float DEFAULT_VOLUME = 0.4F;
+
 	@Override
 	default boolean isClient() {
 		return true;
@@ -57,7 +61,7 @@ public interface CfaClientDataImpl extends CfaAnimatingData {
 
 	@Override
 	default SoundInstanceWrapperImpl playSound(SoundEvent event, long seed) {
-		return this.playSound(event, 1F, 0.4F, seed);
+		return this.playSound(event, 1F, DEFAULT_VOLUME, seed);
 	}
 
 	@Override
@@ -68,13 +72,27 @@ public interface CfaClientDataImpl extends CfaAnimatingData {
 
 	@Override
 	default SoundInstanceWrapperImpl playSound(SoundEvent event, Entity entity, SoundCategory category, long seed) {
-		return this.playSound(event, category, entity.getX(), entity.getY(), entity.getZ(), 1F, 0.4F, seed);
+		return this.playSound(event, category, entity.getX(), entity.getY(), entity.getZ(), 1F, DEFAULT_VOLUME, seed);
 	}
 
 	@Override
-	default void sustainSound(SoundEvent event, Entity entity, SoundCategory category, float pitch, float volume, long seed) {
-		// TODO: Implement
-		CharaFormAct.LOGGER.error("Unimplemented!");
+	default void sustainSound(SoundEvent event, Entity entity, SoundCategory category) {
+		this.sustainSound(event, entity, category, 1.0F, DEFAULT_VOLUME);
+	}
+
+	@Override
+	default void sustainSound(SoundEvent event, Entity entity, SoundCategory category, float pitch, float volume) {
+		SustainingSoundInstance existingInstance = this.getStoredSounds().get(event.getId()) instanceof SustainingSoundInstance sustaining
+				? sustaining
+				: null;
+
+		SoundManager manager = MinecraftClient.getInstance().getSoundManager();
+		if(existingInstance == null || !manager.isPlaying(existingInstance)) {
+			SustainingSoundInstance newInstance = new SustainingSoundInstance(event, entity, category, pitch, volume);
+			manager.play(newInstance);
+			this.storeSound(new SoundInstanceWrapperImpl(newInstance));
+		}
+		else existingInstance.sustain(pitch, volume);
 	}
 
 	default void handlePowerTransitionSound(boolean isReversion, ParsedForm newPower, long seed) {
@@ -121,20 +139,34 @@ public interface CfaClientDataImpl extends CfaAnimatingData {
 
 	@Override
 	default SoundInstanceWrapperImpl voice(String voiceline, long seed) {
+		return this.voice(voiceline, DEFAULT_VOLUME, seed);
+	}
+
+	@Override
+	default SoundInstanceWrapperImpl voice(String voiceline, float volume, long seed) {
+		AbstractClientPlayerEntity player = this.getPlayer();
+
+		// Checking if air is full instead of checking for fluid immersion to hopefully catch any weird modded fluids,
+		// space dimensions, etc.
+		if(player.getAir() < player.getMaxAir()) {
+			if(CharaFormAct.CONFIG.doSuppressVoiceUnderwater() && !this.hasPower(BuiltInPowers.CAN_USE_VOICE_WITHOUT_BREATH))
+				return new SoundInstanceWrapperImpl(this.getStoredSounds().get(COMMON_VOICE_IDENTIFIER));
+		}
+
 		MinecraftClient.getInstance().getSoundManager().stop(this.getStoredSounds().get(COMMON_VOICE_IDENTIFIER));
-		Vec3d position = this.getPlayer().getPos();
+
 		if(RegistryManager.VOICE_LINES.get(voiceline) == null)
 			throw new IllegalArgumentException("Voiceline " + voiceline + " isn't registered!!!");
-		SoundInstanceWrapperImpl newVoiceSound = this.playSound(
-				RegistryManager.VOICE_LINES.get(voiceline).get(((CfaPlayerData) this).getCharacter()), SoundCategory.VOICE,
-				position.x, position.y, position.z,
-				this.getVoicePitch(), 0.4F,
-				seed
+
+		SoundInstance newVoiceSound = new EntityAttachedSoundInstance(
+				RegistryManager.VOICE_LINES.get(voiceline).get(((CfaPlayerData) this).getCharacter()),
+				player, SoundCategory.VOICE, this.getVoicePitch(), volume
 		);
 
-		this.getStoredSounds().put(COMMON_VOICE_IDENTIFIER, newVoiceSound.SOUND);
+		MinecraftClient.getInstance().getSoundManager().play(newVoiceSound);
+		this.getStoredSounds().put(COMMON_VOICE_IDENTIFIER, newVoiceSound);
 
-		return newVoiceSound;
+		return new SoundInstanceWrapperImpl(newVoiceSound);
 	}
 
 	@Override

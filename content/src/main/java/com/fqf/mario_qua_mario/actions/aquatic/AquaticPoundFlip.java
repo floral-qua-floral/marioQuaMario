@@ -75,7 +75,7 @@ public class AquaticPoundFlip implements AquaticActionDefinition {
 
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(AquaticActionHelper helper) {
 		return List.of(
-				GroundPoundFlip.makeDropTransition(AquaticPoundDrop.ID, AQUATIC_FLIP_DURATION, MarioSFX.AQUATIC_GROUND_POUND_DROP)
+				GroundPoundFlip.makeDropTransition(AquaticPoundDrop.ID, AQUATIC_FLIP_DURATION)
 		);
 	}
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AquaticActionHelper helper) {
