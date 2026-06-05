@@ -14,6 +14,7 @@ public class CharaFormActConfig implements ConfigData {
 	private boolean specialHUD = false;
 	private boolean allowIllegalTransitionsInSingleplayer = true;
 	private float inherentBumpedBlockScale = 1.0001F;
+	private int bumpedBlockLingerFrames = 2;
 	private boolean logFeatureContexts = true;
 	private boolean suppressVoiceUnderwater = true;
 
@@ -46,5 +47,8 @@ public class CharaFormActConfig implements ConfigData {
 	}
 	public boolean doSuppressVoiceUnderwater() {
 		return this.suppressVoiceUnderwater;
+	}
+	public int getBumpedBlockLingerFrames() {
+		return this.bumpedBlockLingerFrames;
 	}
 }

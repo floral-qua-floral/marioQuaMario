@@ -30,15 +30,18 @@ public class CfaClientEventListeners {
 			Vec3d cameraPos = worldRenderContext.camera().getPos();
 
 			for(BlockPos pos : worldBaps.HIDDEN) {
-				BlockBappingClientUtil.renderBumpedBlock(world, worldBaps, matrixStack, cameraPos, pos, true);
+				BlockBappingClientUtil.renderBumpedBlock(world, worldBaps, matrixStack, cameraPos, pos, worldBaps.BRITTLE.contains(pos));
 			}
-			for(BlockPos pos : worldBaps.HIDDEN_LINGERING) {
-				BlockBappingClientUtil.renderBumpedBlock(world, worldBaps, matrixStack, cameraPos, pos, false);
-			}
-			worldBaps.HIDDEN_LINGERING.clear();
+
+			worldBaps.HIDDEN_LINGERING.removeIf(lingerer -> {
+				boolean isFinished = lingerer.framesRemaining-- <= 0;
+				if(!isFinished)
+					BlockBappingClientUtil.renderBumpedBlock(world, worldBaps, matrixStack, cameraPos, lingerer.POS, lingerer.IS_BRITTLE);
+				return isFinished;
+			});
 
 			for(BlockPos pos : worldBaps.BRITTLE) {
-				if(worldBaps.HIDDEN.contains(pos)) {
+				if(worldBaps.HIDDEN.contains(pos) || worldBaps.HIDDEN_LINGERING.stream().anyMatch(lingerer -> lingerer.POS.equals(pos))) {
 					continue;
 				}
 

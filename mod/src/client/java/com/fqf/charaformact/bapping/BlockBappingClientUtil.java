@@ -13,6 +13,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Triple;
@@ -24,7 +25,7 @@ public class BlockBappingClientUtil {
 		BlockBappingUtil.commonWorldTick(world);
 	}
 
-	public static void renderBumpedBlock(ClientWorld world, WorldBapsInfo worldBaps, MatrixStack matrixStack, Vec3d cameraPos, BlockPos pos, boolean checkBrittle) {
+	public static void renderBumpedBlock(ClientWorld world, WorldBapsInfo worldBaps, MatrixStack matrixStack, Vec3d cameraPos, BlockPos pos, boolean isBrittle) {
 		Vec3d bumpOffset = BlockBappingClientUtil.calculateDubiousOffset(worldBaps, pos, BlockBappingClientUtil.getTickDelta());
 
 		Triple<Vec3d, Vector3dc, Quaternionf> bumpedBlockPosAndOrientation = SableCompatSafe.getPosAndOrientation(world, pos);
@@ -50,7 +51,7 @@ public class BlockBappingClientUtil {
 					(float) (inherentScale * bumpedBlockScale.z())
 			);
 
-			if(checkBrittle && worldBaps.BRITTLE.contains(pos)) {
+			if(isBrittle) {
 				MatrixStack.Entry entry3 = matrixStack.peek();
 
 				VertexConsumer vertexConsumer2 = new OverlayVertexConsumer(
@@ -90,8 +91,14 @@ public class BlockBappingClientUtil {
 	}
 
 	public static double calculateOffsetMagnitude(BumpingBlockInfo info, float tickDelta) {
+		// For some reason it seems like the first call to this can have a really high tickDelta...???
+		// It seems like it should always be starting close to 0, right? Since you'd think that we'd start the bap on
+		// an actual tick... But instead it's often closer to 0.8 or 0.6?
+		// So ordinarily this would result in the bap animation starting well into its first tick, resulting in the block
+		// teleporting slightly when it starts. That's why we subtract 1 from ticksAlive, to try and prevent that. Then
+		// we have to clamp it to a minimum of 0, because that means we start off with a ticksAlive of -1... Ugh.
 		int ticksAlive = BumpingBlockInfo.BUMP_DURATION - (int) (info.FINISH_TIME - info.WORLD.getTime()) - 1;
-		float progress = Math.min(1, (tickDelta + ticksAlive) / BumpingBlockInfo.BUMP_DURATION);
+		float progress = MathHelper.clamp((tickDelta + ticksAlive) / BumpingBlockInfo.BUMP_DURATION, 0, 1);
 		return 0.5F * (1 - (2 * ((progress - 1) * (progress - 1)) - 1) * (2 * ((progress - 1) * (progress - 1)) - 1));
 	}
 

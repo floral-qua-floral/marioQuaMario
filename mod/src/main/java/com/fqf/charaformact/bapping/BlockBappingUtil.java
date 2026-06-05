@@ -1,5 +1,6 @@
 package com.fqf.charaformact.bapping;
 
+import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.cfadata.CfaPlayerData;
 import com.fqf.charaformact.packets.BappingPackets;
 import com.fqf.charaformact.util.CfaClientHelperManager;
@@ -20,12 +21,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.PalettedContainer;
 import net.minecraft.world.chunk.WorldChunk;
+import org.apache.commons.lang3.mutable.MutableInt;
+import org.apache.commons.lang3.mutable.MutableShort;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -249,13 +253,23 @@ public class BlockBappingUtil {
 		addOrRemoveFromSets(info, worldBaps, true);
 	}
 
+	// We represent the sets as enums instead of themselves so that we can store them in a list and then check that list
+	// with .contains(). If we just put the sets themselves in a list, then that would give false positives, since they
+	// can be considered equal if their contents are equal! Upsetting!!
+	private enum WorldBapsSet {
+		HIDDEN { @Override public Set<BlockPos> get(WorldBapsInfo world) { return world.HIDDEN; } },
+		BRITTLE { @Override public Set<BlockPos> get(WorldBapsInfo world) { return world.BRITTLE; } },
+		POWERED { @Override public Set<BlockPos> get(WorldBapsInfo world) { return world.POWERED; } };
+		public abstract Set<BlockPos> get(WorldBapsInfo world);
+	}
+
 	public static void addOrRemoveFromSets(AbstractBapInfo info, WorldBapsInfo world, boolean adding) {
-		List<Set<BlockPos>> sets = switch(info.RESULT) {
-			case BUMP, BREAK -> List.of(world.HIDDEN, world.POWERED);
-			case BUMP_WITHOUT_POWERING, BREAK_WITHOUT_POWERING -> List.of(world.HIDDEN);
-			case BUMP_EMBRITTLE -> List.of(world.HIDDEN, world.POWERED, world.BRITTLE);
-			case BUMP_EMBRITTLE_WITHOUT_POWERING -> List.of(world.HIDDEN, world.BRITTLE);
-			case EMBRITTLE -> List.of(world.BRITTLE);
+		List<WorldBapsSet> sets = switch(info.RESULT) {
+			case BUMP, BREAK -> List.of(WorldBapsSet.HIDDEN, WorldBapsSet.POWERED);
+			case BUMP_WITHOUT_POWERING, BREAK_WITHOUT_POWERING -> List.of(WorldBapsSet.HIDDEN);
+			case BUMP_EMBRITTLE -> List.of(WorldBapsSet.HIDDEN, WorldBapsSet.BRITTLE, WorldBapsSet.POWERED);
+			case BUMP_EMBRITTLE_WITHOUT_POWERING -> List.of(WorldBapsSet.HIDDEN, WorldBapsSet.BRITTLE);
+			case EMBRITTLE -> List.of(WorldBapsSet.BRITTLE);
 			case BUST, FAIL -> throw new IllegalStateException("BapInfo with BUST or FAIL result shouldn't be possible!");
 		};
 
@@ -263,23 +277,26 @@ public class BlockBappingUtil {
 			AbstractBapInfo prevInfo = world.ALL_BAPS.put(info.POS, info);
 			if(prevInfo != null) addOrRemoveFromSets(prevInfo, world, false);
 
-			for(Set<BlockPos> set : sets) {
-				set.add(info.POS);
+			for(WorldBapsSet set : sets) {
+				set.get(world).add(info.POS);
 			}
 		}
 		else {
 //			world.ALL_BAPS.remove(info.POS); // DON'T ACTUALLY REMOVE IT!!! By now it's already been replaced or removed!
-			for(Set<BlockPos> set : sets) {
-				set.remove(info.POS);
+			for(WorldBapsSet set : sets) {
+				set.get(world).remove(info.POS);
 			}
 			info.finishAndGetReplacement();
 		}
-		if(sets.contains(world.HIDDEN)) {
+		if(sets.contains(WorldBapsSet.HIDDEN)) {
 			reRenderPos(info);
-			if(!adding && info.WORLD.isClient() && info.RESULT != BapResult.BREAK && info.RESULT != BapResult.BREAK_WITHOUT_POWERING)
-				world.HIDDEN_LINGERING.add(info.POS);
+			if(!adding && info.WORLD.isClient() && info.RESULT != BapResult.BREAK && info.RESULT != BapResult.BREAK_WITHOUT_POWERING) {
+				int lingerFrames = CharaFormAct.CONFIG.getBumpedBlockLingerFrames();
+				if(lingerFrames > 0)
+					world.HIDDEN_LINGERING.add(new WorldBapsInfo.LingeringInfo(info.POS, sets.contains(WorldBapsSet.BRITTLE), lingerFrames));
+			}
 		}
-		if(sets.contains(world.POWERED)) info.WORLD.updateNeighbor(info.POS, info.WORLD.getBlockState(info.POS).getBlock(), info.POS);
+		if(sets.contains(WorldBapsSet.POWERED)) info.WORLD.updateNeighbor(info.POS, info.WORLD.getBlockState(info.POS).getBlock(), info.POS);
 	}
 
 	public static void reRenderPos(AbstractBapInfo info) {
