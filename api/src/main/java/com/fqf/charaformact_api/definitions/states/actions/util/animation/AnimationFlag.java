@@ -25,13 +25,11 @@ public enum AnimationFlag {
 	ALWAYS_WRAP_ANGLES; // mostly relevant for interpolation
 
 	public static final EnumSet<AnimationFlag> NO_SWING_ARMS = EnumSet.of(NO_RIGHT_ARM_SWING, NO_LEFT_ARM_SWING);
-	public static final EnumSet<AnimationFlag> NO_SWING_LEGS = EnumSet.of(NO_RIGHT_LEG_SWING, NO_LEFT_LEG_SWING);
 	public static final EnumSet<AnimationFlag> NO_SWING_LIMBS = EnumSet.of(NO_RIGHT_ARM_SWING, NO_LEFT_ARM_SWING,
 			NO_RIGHT_LEG_SWING, NO_LEFT_LEG_SWING);
 
 	public enum Execution {
 		MIRROR, // Mirrors the animation horizontally
-//		PRESERVE_MIRRORING, // Copies the mirroring status of the previous animation. TODO: Implement???
 		DO_NOT_RESET_PROGRESS; // Applying this while entering an animation prevents it from resetting tick progress!
 
 		public static final EnumSet<Execution> NONE = EnumSet.noneOf(Execution.class);

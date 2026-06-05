@@ -10,6 +10,7 @@ import com.fqf.charaformact.util.BlockCollisionFinder;
 import com.fqf.charaformact.util.DirectionBasedWallInfo;
 import com.fqf.charaformact.util.AdvancedWallInfo;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
+import com.fqf.charaformact_api.definitions.states.actions.util.SlidingStatus;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.Arrangement;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.HandPreference;
@@ -218,9 +219,9 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 		this.applyModifiedVelocity();
 
 		if(this.getActionCategory() == ActionCategory.GROUNDED && this.getPlayer().isOnGround() && this.getYVel() == 0.0)
-			this.getPlayer().setVelocity(this.getPlayer().getVelocity().withAxis(Direction.Axis.Y, -0.1));
+			if(this.getAction().SLIDING_STATUS == SlidingStatus.NOT_SLIDING || this.getAction().SLIDING_STATUS == SlidingStatus.NOT_SLIDING_SMOOTH)
+				this.getPlayer().setVelocity(this.getPlayer().getVelocity().withAxis(Direction.Axis.Y, -0.1));
 		// ^ Needed for Presence Footsteps compatibility
-		// TODO: Prevent Presence Footsteps steps while in a Sliding action.
 
 		this.getPlayer().updateLimbs(false);
 

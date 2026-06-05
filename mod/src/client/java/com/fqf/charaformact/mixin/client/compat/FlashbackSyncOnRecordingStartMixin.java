@@ -12,20 +12,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Pseudo
 @Mixin(value = Recorder.class, remap = false)
 public class FlashbackSyncOnRecordingStartMixin {
-//	@Inject(method = "startRecordingReplay()V", at = @At("RETURN"))
-//	private static void injectSyncCfaDataAtRecordingStart(CallbackInfo ci) {
-//		CharaFormAct.LOGGER.info("Syncing CfaData of tracked players in world to newly started replay...");
-//		CfaClientPacketHelper.syncCfaDatasToReplay();
-//	}
-//
-//	@Inject(method = "pauseRecordingReplay", at = @At("RETURN"))
-//	private static void injectSyncCfaDataAtRecordingUnpause(boolean pause, CallbackInfo ci) {
-//		CharaFormAct.LOGGER.info("Syncing CfaData of tracked players in world to resumed replay...");
-//		if(!pause) CfaClientPacketHelper.syncCfaDatasToReplay();
-//	}
-
-	// TODO: Figure out what to do about the player model :/
-
 	@Inject(method = "writeSnapshot", at = @At("RETURN"))
 	private void syncAfterSnapshot(boolean asActualSnapshot, CallbackInfo ci) {
 		CharaFormAct.LOGGER.info("Syncing CfaData of tracked players after snapshot recorded...");

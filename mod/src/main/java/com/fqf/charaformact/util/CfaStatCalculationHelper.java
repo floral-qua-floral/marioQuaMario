@@ -19,7 +19,10 @@ import static net.minecraft.entity.attribute.EntityAttributes.*;
 
 public class CfaStatCalculationHelper {
 	public static double calculate(CfaPlayerData data, CfaStat stat) {
-		return data.getForm().adjustStat(stat, data.getCharacter().adjustStat(stat, adjustBaseValue(data, stat)));
+		double asCharacter;
+		if(CfaGamerules.useCharacterStats) asCharacter = data.getCharacter().adjustStat(stat, adjustBaseValue(data, stat));
+		else asCharacter = adjustBaseValue(data, stat);
+		return data.getForm().adjustStat(stat, asCharacter);
 	}
 
 //	private static final EnumSet<StatCategory> AFFECTED_BY_MOVEMENT_EFFICIENCY = of(WALKING);

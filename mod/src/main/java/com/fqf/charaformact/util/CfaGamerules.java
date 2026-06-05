@@ -7,16 +7,13 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.GameRules;
 
 public class CfaGamerules {
-	public static boolean useCharacterStats; // FIXME: Doesn't seem to be applying??
+	public static boolean useCharacterStats;
 	public static boolean restrictAdventureBapping;
 	public static boolean adventurePlayersBreakBrittleBlocks;
 
 	public static final GameRules.Key<GameRules.BooleanRule> ALLOW_NULL_APPEARANCE =
 			GameRuleRegistry.register("cfaAllowNullAppearance", GameRules.Category.PLAYER,
-					GameRuleFactory.createBooleanRule(false, (server, booleanRule) -> {
-						useCharacterStats = booleanRule.get();
-						CfaPackets.syncUseCharacterStatsS2C(server, useCharacterStats);
-					})
+					GameRuleFactory.createBooleanRule(false)
 			);
 
 	public static final GameRules.Key<GameRules.BooleanRule> USE_CHARACTER_STATS =
@@ -45,10 +42,7 @@ public class CfaGamerules {
 
 	public static final GameRules.Key<GameRules.BooleanRule> PETS_AND_TEAMMATES_RESIST_COLLISION_ATTACKS =
 			GameRuleRegistry.register("cfaFriendliesResistCollisionAttacks", GameRules.Category.PLAYER,
-					GameRuleFactory.createBooleanRule(true, (server, booleanRule) -> {
-						adventurePlayersBreakBrittleBlocks = booleanRule.get();
-						syncAdventureRules(server);
-					})
+					GameRuleFactory.createBooleanRule(true)
 			);
 
 	public static final GameRules.Key<GameRules.BooleanRule> REJECT_INVALID_ACTION_TRANSITIONS =

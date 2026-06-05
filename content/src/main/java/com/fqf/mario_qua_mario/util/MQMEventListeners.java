@@ -44,37 +44,38 @@ public class MQMEventListeners {
 			return true;
 		});
 
-		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-			int timesDisconnected = handler.player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.LEAVE_GAME));
-			if(timesDisconnected == 0 && MarioQuaMario.CONFIG.isWelcomeMessageEnabled()) {
-				// Player joined for the first time; say hi and tell them how to enable the mod
-				String marioCommand = "/cfa set character " + Mario.ID;
-				Text marioCommandText = Text.literal(marioCommand)
-						.formatted(Formatting.UNDERLINE)
-						.styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, marioCommand)));
-				handler.player.sendMessage(Text.translatable("messages.mario_qua_mario.welcome1").append(marioCommandText).append(Text.translatable("messages.mario_qua_mario.welcome2")));
-			}
-			else if(timesDisconnected >= 3 && handler.player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_TIME)) > 48000 && !handler.player.getCommandTags().contains(NAGGED_TAG) && MarioQuaMario.CONFIG.isNagMessageEnabled() && isPlayerEnabledInNBT(handler.player)) {
-				handler.player.addCommandTag(NAGGED_TAG); // Sorry
-				MutableText nagMessage = Text.translatable("messages.mario_qua_mario.nag1");
-
-				// Ko-fi
-				nagMessage.append(Text.translatable("messages.mario_qua_mario.link1")
-						.formatted(Formatting.UNDERLINE)
-						.styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://ko-fi.com/floralquafloral"))));
-
-				// Commission
-//				nagMessage.append(Text.translatable("messages.mario_qua_mario.link2").append(Text.translatable("messages.mario_qua_mario.link3")
-//						.formatted(Formatting.UNDERLINE) // TODO Insert real commission link
-//						.styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://en.wikipedia.org/wiki/Sans_(Undertale)")))));
-
-				nagMessage.append(Text.translatable("messages.mario_qua_mario.nag2"));
-				nagMessage.append(Text.translatable("text.autoconfig.mario_qua_mario_content.option.nagMessage"));
-				nagMessage.append(Text.translatable("messages.mario_qua_mario.nag3"));
-
-				handler.player.sendMessage(nagMessage);
-			}
-		});
+		// TODO: This should seriously be client-side!
+//		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+//			int timesDisconnected = handler.player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.LEAVE_GAME));
+//			if(timesDisconnected == 0 && MarioQuaMario.CONFIG.isWelcomeMessageEnabled()) {
+//				// Player joined for the first time; say hi and tell them how to enable the mod
+//				String marioCommand = "/cfa set character " + Mario.ID;
+//				Text marioCommandText = Text.literal(marioCommand)
+//						.formatted(Formatting.UNDERLINE)
+//						.styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, marioCommand)));
+//				handler.player.sendMessage(Text.translatable("messages.mario_qua_mario.welcome1").append(marioCommandText).append(Text.translatable("messages.mario_qua_mario.welcome2")));
+//			}
+//			else if(timesDisconnected >= 3 && handler.player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_TIME)) > 48000 && !handler.player.getCommandTags().contains(NAGGED_TAG) && MarioQuaMario.CONFIG.isNagMessageEnabled() && isPlayerEnabledInNBT(handler.player)) {
+//				handler.player.addCommandTag(NAGGED_TAG); // Sorry
+//				MutableText nagMessage = Text.translatable("messages.mario_qua_mario.nag1");
+//
+//				// Ko-fi
+//				nagMessage.append(Text.translatable("messages.mario_qua_mario.link1")
+//						.formatted(Formatting.UNDERLINE)
+//						.styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://ko-fi.com/floralquafloral"))));
+//
+//				// Commission
+////				nagMessage.append(Text.translatable("messages.mario_qua_mario.link2").append(Text.translatable("messages.mario_qua_mario.link3")
+////						.formatted(Formatting.UNDERLINE)
+////						.styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://en.wikipedia.org/wiki/Sans_(Undertale)")))));
+//
+//				nagMessage.append(Text.translatable("messages.mario_qua_mario.nag2"));
+//				nagMessage.append(Text.translatable("text.autoconfig.mario_qua_mario_content.option.nagMessage"));
+//				nagMessage.append(Text.translatable("messages.mario_qua_mario.nag3"));
+//
+//				handler.player.sendMessage(nagMessage);
+//			}
+//		});
 	}
 
 	private static boolean isPlayerEnabledInNBT(ServerPlayerEntity mario) {
