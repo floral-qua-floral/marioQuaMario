@@ -11,7 +11,7 @@ import java.util.Set;
 
 import static com.fqf.charaformact_api.util.StatCategory.*;
 
-public class Luigi extends AbstractMario implements CharacterDefinition {
+public class Luigi extends AbstractMarioSeriesCharacter implements CharacterDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("luigi");
 	@Override public @NotNull Identifier getID() {
 	    return ID;

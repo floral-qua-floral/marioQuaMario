@@ -52,7 +52,7 @@ public class FoxLuigiClientAppearance extends AbstractLuigiClientAppearance {
 	@Override
 	public List<FeatureRenderer<AbstractClientPlayerEntity, AppearanceModel>> getFeatureRenderersToAdd(FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel> featureRendererContext, EntityRendererFactory.Context ctx) {
 		return List.of(
-				new RaccoonUtil.RaccoonModelEyesFeatureRenderer(featureRendererContext, this)
+				new RaccoonUtil.RaccoonFormEyesFeatureRenderer(featureRendererContext, this)
 		);
 	}
 }

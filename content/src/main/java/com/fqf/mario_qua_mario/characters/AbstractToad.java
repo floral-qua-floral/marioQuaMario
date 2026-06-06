@@ -11,11 +11,7 @@ import java.util.Set;
 
 import static com.fqf.charaformact_api.util.StatCategory.*;
 
-public abstract class AbstractToad extends AbstractMario implements CharacterDefinition {
-//	@Override public @NotNull String getVoiceName() {
-//		return "toad";
-//	}
-
+public abstract class AbstractToad extends AbstractMarioSeriesCharacter implements CharacterDefinition {
 	@Override
 	public float getHeightFactor() {
 		return 0.97F;
@@ -34,19 +30,6 @@ public abstract class AbstractToad extends AbstractMario implements CharacterDef
 	@Override
 	public @NotNull SoundEvent getJumpSound() {
 		return MarioSFX.TOAD_JUMP;
-	}
-
-	@Override public Set<StatModifier> getStatModifiers() {
-		return Set.of(
-				// Blue Toad walks and runs EXTRA faster
-				new StatModifier(Set.of(FORWARD, WALKING, SPEED), 1.3),
-				new StatModifier(Set.of(FORWARD, RUNNING, SPEED), 1.34),
-				new StatModifier(Set.of(FORWARD, P_RUNNING, SPEED), 1.34),
-
-				// Blue Toad's jumps are a lot shorter
-				new StatModifier(Set.of(JUMPING_GRAVITY), 1.1),
-				new StatModifier(Set.of(JUMP_VELOCITY), 0.885)
-		);
 	}
 
 	@Override

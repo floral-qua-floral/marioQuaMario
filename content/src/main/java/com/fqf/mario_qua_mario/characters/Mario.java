@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public class Mario extends AbstractMario implements CharacterDefinition {
+public class Mario extends AbstractMarioSeriesCharacter implements CharacterDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("mario");
 	@Override public @NotNull Identifier getID() {
 	    return ID;

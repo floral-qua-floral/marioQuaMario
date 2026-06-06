@@ -91,10 +91,10 @@ public class RaccoonUtil {
 		return outer;
 	}
 
-	public static class RaccoonModelEyesFeatureRenderer extends EyesFeatureRenderer<AbstractClientPlayerEntity, AppearanceModel> {
+	public static class RaccoonFormEyesFeatureRenderer extends EyesFeatureRenderer<AbstractClientPlayerEntity, AppearanceModel> {
 		private final RenderLayer TEXTURE;
 
-		public RaccoonModelEyesFeatureRenderer(FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel> featureRendererContext, ClientAppearanceDefinition definition) {
+		public RaccoonFormEyesFeatureRenderer(FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel> featureRendererContext, ClientAppearanceDefinition definition) {
 			super(featureRendererContext);
 			Identifier textureLocation = definition.getTextureLocation();
 			this.TEXTURE = RenderLayer.getEyes(Identifier.of(textureLocation.getNamespace(), textureLocation.getPath().replace(".png", "_eyes.png")));

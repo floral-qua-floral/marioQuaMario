@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.Set;
 
-public abstract class AbstractMario implements CharacterDefinition {
+public abstract class AbstractMarioSeriesCharacter implements CharacterDefinition {
 	@Override public @NotNull Identifier getInitialAction() {
 		return Fall.ID;
 	}
