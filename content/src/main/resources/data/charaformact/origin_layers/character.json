@@ -10,7 +10,8 @@
       "origins": [
         "mario_qua_mario:mario",
         "mario_qua_mario:luigi",
-        "mario_qua_mario:toadette"
+        "mario_qua_mario:toadette",
+        "mario_qua_mario:customizable_toad"
       ]
     }
   ]

@@ -1,0 +1,10 @@
+{
+  "powers": [
+    "mario_qua_mario:play_as_customizable_toad"
+  ],
+  "icon": {
+    "id": "minecraft:crafter"
+  },
+  "order": 0,
+  "impact": 3
+}
