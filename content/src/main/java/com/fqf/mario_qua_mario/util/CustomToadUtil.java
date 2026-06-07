@@ -44,7 +44,7 @@ public class CustomToadUtil {
 	public static void registerCommand() {
 		MarioQuaMario.LOGGER.info("Registering Custom Toad command! <3");
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-			LiteralCommandNode<ServerCommandSource> literalCommandNode = dispatcher.register(literal("customtoad")
+			dispatcher.register(literal("customtoad")
 					.then(literal("reset")
 							.executes(commandContext -> {
 								ServerPlayerEntity player = commandContext.getSource().getPlayerOrThrow();

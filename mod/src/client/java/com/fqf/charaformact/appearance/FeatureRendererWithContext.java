@@ -25,6 +25,7 @@ public interface FeatureRendererWithContext {
 		String name = clazz.getSimpleName();
 		if(
 				checkContains(name, "back", true, false)
+				|| checkContains(name, "elytra", false, false)
 				|| checkContains(name, "glove", false, false)
 				|| checkContains(name, "hat", true, true)
 		)
