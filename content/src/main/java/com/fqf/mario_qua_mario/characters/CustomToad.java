@@ -1,9 +1,11 @@
 package com.fqf.mario_qua_mario.characters;
 
+import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.definitions.states.CharacterDefinition;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,5 +39,13 @@ public class CustomToad extends AbstractToad implements CharacterDefinition {
 				new StatModifier(Set.of(JUMPING_GRAVITY), 1.1),
 				new StatModifier(Set.of(JUMP_VELOCITY), 0.885)
 		);
+	}
+
+	@Override
+	public void onEnter(CfaData data) {
+		super.onEnter(data);
+		if(data.isClient() && data.getPlayer().isMainPlayer()) {
+			data.getPlayer().sendMessage(Text.translatable("messages.mario_qua_mario.customtoad"));
+		}
 	}
 }

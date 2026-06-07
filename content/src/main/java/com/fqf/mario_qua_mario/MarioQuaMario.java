@@ -2,6 +2,7 @@ package com.fqf.mario_qua_mario;
 
 import com.fqf.mario_qua_mario.entity.ModEntities;
 import com.fqf.mario_qua_mario.item.ModItems;
+import com.fqf.mario_qua_mario.util.CustomToadUtil;
 import com.fqf.mario_qua_mario.util.MQMEventListeners;
 import com.fqf.mario_qua_mario.util.MQMGamerules;
 import com.fqf.mario_qua_mario.util.MarioSFX;
@@ -36,6 +37,8 @@ public class MarioQuaMario implements ModInitializer {
 		MarioSFX.staticInitialize();
 		MQMGamerules.register();
 		MQMEventListeners.register();
+
+		CustomToadUtil.registerCommand();
 	}
 
 	public static Identifier makeID(String path) {

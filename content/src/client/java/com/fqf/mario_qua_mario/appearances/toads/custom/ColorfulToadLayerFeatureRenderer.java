@@ -36,7 +36,7 @@ public abstract class ColorfulToadLayerFeatureRenderer<TrackedType> extends Feat
 	}
 
 	public static List<FeatureRenderer<AbstractClientPlayerEntity, AppearanceModel>> makeFeatureRenderers(FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel> context, String folder, SpotsMode spots) {
-		ImmutableList.Builder<FeatureRenderer<AbstractClientPlayerEntity, AppearanceModel>> builder = ImmutableList.builderWithExpectedSize(spots == SpotsMode.HARDCODED ? 4 : 5);
+		ImmutableList.Builder<FeatureRenderer<AbstractClientPlayerEntity, AppearanceModel>> builder = ImmutableList.builderWithExpectedSize(spots == SpotsMode.HARDCODED ? 3 : 5);
 
 		builder.add(new TracksInteger(context, folder, "skin", SKIN_COLOR));
 
@@ -53,7 +53,9 @@ public abstract class ColorfulToadLayerFeatureRenderer<TrackedType> extends Feat
 				builder.add(new TracksInteger(context, folder, "cap", SPOTS_COLOR));
 		}
 
-		builder.add(new TracksInteger(context, folder, "vest", VEST_COLOR));
+		// If spots are hard-coded, then vest color always is too
+		if(spots != SpotsMode.HARDCODED) builder.add(new TracksInteger(context, folder, "vest", VEST_COLOR));
+
 		builder.add(new TracksOptionalInteger(context, folder, "shirt", SHIRT_COLOR));
 
 		return builder.build();
