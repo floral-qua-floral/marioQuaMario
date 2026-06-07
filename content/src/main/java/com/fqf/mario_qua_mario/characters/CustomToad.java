@@ -4,6 +4,8 @@ import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.definitions.states.CharacterDefinition;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.util.MarioSFX;
+import com.fqf.mario_qua_mario.util.Powers;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -39,6 +41,12 @@ public class CustomToad extends AbstractToad implements CharacterDefinition {
 				new StatModifier(Set.of(JUMPING_GRAVITY), 1.1),
 				new StatModifier(Set.of(JUMP_VELOCITY), 0.885)
 		);
+	}
+
+	@Override
+	public Set<String> getPowers() {
+		ImmutableSet.Builder<String> abstractToadPowers = ImmutableSet.builder();
+		return abstractToadPowers.addAll(super.getPowers()).add(Powers.USES_TOAD_CUSTOMIZATIONS).build();
 	}
 
 	@Override
