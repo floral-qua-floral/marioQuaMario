@@ -135,7 +135,7 @@ public class UnderwaterWalk implements AquaticActionDefinition {
 						UnderwaterDuck.ID,
 						null, null,
 						null,
-						(data, isSelf, seed) -> data.playSound(MarioSFX.DUCK, seed)
+						(data, isSelf, seed) -> data.playSound(MarioSFX.DUCK, 1, 0.25F, seed)
 				)
 		);
 	}

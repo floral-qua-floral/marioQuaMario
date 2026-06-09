@@ -150,7 +150,7 @@ public class DuckWaddle implements GroundedActionDefinition {
 			EvaluatorEnvironment.CLIENT_ONLY,
 			null,
 			(data, isSelf, seed) -> {
-				data.playSound(MarioSFX.DUCK, seed);
+				data.playSound(MarioSFX.DUCK, 1, 0.25F, seed);
 				data.voice(Voicelines.DUCK, seed);
 			}
 	);
@@ -160,7 +160,7 @@ public class DuckWaddle implements GroundedActionDefinition {
 			data -> !data.getInputs().DUCK.isHeld(),
 			EvaluatorEnvironment.CLIENT_ONLY,
 			null,
-			(data, isSelf, seed) -> data.playSound(MarioSFX.UNDUCK, seed)
+			(data, isSelf, seed) -> data.playSound(MarioSFX.UNDUCK, 1, 0.25F, seed)
 	);
 
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(GroundedActionHelper helper) {

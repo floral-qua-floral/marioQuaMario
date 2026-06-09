@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.appearances.toads.custom;
 
 import com.fqf.charaformact_api.appearance.AppearanceModel;
+import com.fqf.mario_qua_mario.appearances.toads.AbstractRaccoonToadClientAppearance;
 import com.fqf.mario_qua_mario.appearances.toads.AbstractToadClientAppearance;
 import com.fqf.mario_qua_mario.appearances.util.CustomizableToadAppearanceModel;
 import com.fqf.mario_qua_mario.characters.CustomToad;
@@ -16,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class RaccoonCustomToadClientAppearance extends AbstractToadClientAppearance {
+public class RaccoonCustomToadClientAppearance extends AbstractRaccoonToadClientAppearance {
 	@Override
 	public @NotNull Identifier getID() {
 		return RaccoonCustomToadCommonAppearance.ID;
@@ -25,11 +26,6 @@ public class RaccoonCustomToadClientAppearance extends AbstractToadClientAppeara
 	@Override
 	public @NotNull Identifier getCharacterID() {
 		return CustomToad.ID;
-	}
-
-	@Override
-	public @NotNull Identifier getFormID() {
-		return Raccoon.ID;
 	}
 
 	@Override

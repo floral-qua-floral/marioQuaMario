@@ -14,7 +14,9 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
+import com.fqf.mario_qua_mario.util.MarioSFX;
 import net.minecraft.entity.EntityPose;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
@@ -96,7 +98,7 @@ public class Paddle implements AquaticActionDefinition {
 		return null;
 	}
 	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-
+		data.sustainSound(MarioSFX.SWIM_PADDLE, data.getPlayer(), SoundCategory.PLAYERS);
 	}
 	@Override public void serverTick(CfaAuthoritativeData data) {
 

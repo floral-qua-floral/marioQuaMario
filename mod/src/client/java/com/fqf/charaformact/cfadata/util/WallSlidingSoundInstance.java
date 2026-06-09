@@ -17,6 +17,6 @@ public class WallSlidingSoundInstance extends AbstractSlidingSoundInstance {
 	@Override
 	protected void updatePitchVolume() {
 		this.pitch = 0.2F;
-		this.volume = MathHelper.clamp((float) Math.abs(this.PLAYER.cfa$getCfaData().getYVel()), 0.4F, 1.0F);
+		this.volume = MathHelper.clamp((float) Math.abs(this.PLAYER.cfa$getCfaData().getYVel()), 0.4F, 1.0F) * 0.4F;
 	}
 }

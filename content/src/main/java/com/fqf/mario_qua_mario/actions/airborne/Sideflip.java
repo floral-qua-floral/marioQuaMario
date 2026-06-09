@@ -36,7 +36,8 @@ public class Sideflip extends Backflip implements AirborneActionDefinition {
 	}
 
 	private static void conditionallyFlip(CfaAnimatingData data, Arrangement arrangement) {
-		if(!data.retrieveStateData(SideflipVars.class).hasRotated) arrangement.yaw += 180;
+		SideflipVars vars = data.retrieveStateData(SideflipVars.class);
+		if(vars != null && !vars.hasRotated) arrangement.yaw += 180;
 	}
 
 	@Override public @Nullable AnimationDefinition getAnimation() {
