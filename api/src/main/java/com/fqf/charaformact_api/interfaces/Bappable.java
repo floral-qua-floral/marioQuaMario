@@ -70,6 +70,15 @@ public interface Bappable {
 				bumpThreshold = 3.5F;
 			}
 
+			case 5 -> {
+				// Elephant Mario major bap?
+				// Big Mario minor bap?????
+				bustThreshold = 0.61F; // busts through grass, dirt to hit the stone layer
+				breakThreshold = 1.6F; // breaks stone
+				embrittleThreshold = 2.1F; // embrittles wood planks, logs
+				bumpThreshold = 5.1F; // bump open iron doors, trapdoors
+			}
+
 			default -> throw new IllegalStateException("Unexpected bap strength value: " + strength);
 		}
 
