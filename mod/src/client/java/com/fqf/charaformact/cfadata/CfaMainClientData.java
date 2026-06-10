@@ -12,7 +12,6 @@ import com.fqf.charaformact.util.AdvancedWallInfo;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.definitions.states.actions.util.SlidingStatus;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.Arrangement;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.HandPreference;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimation;
 import com.fqf.charaformact.registries.actions.AbstractParsedAction;
@@ -209,7 +208,7 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 		this.RECORDED_COLLISIONS.COLLIDED[0] = false; this.RECORDED_COLLISIONS.REFLECTS[0] = false;
 		this.RECORDED_COLLISIONS.COLLIDED[1] = false; this.RECORDED_COLLISIONS.REFLECTS[1] = false;
 		this.RECORDED_COLLISIONS.COLLIDED[2] = false; this.RECORDED_COLLISIONS.REFLECTS[2] = false;
-		Vec3d movement = this.getMovementWithFluidPushing();
+		Vec3d movement = this.getMovementWithFluidPushingAndNudgeVel();
 		this.preemptMovement(movement);
 		this.getPlayer().move(MovementType.SELF, movement);
 

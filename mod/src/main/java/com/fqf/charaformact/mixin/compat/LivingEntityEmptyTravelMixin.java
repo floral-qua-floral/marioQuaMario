@@ -1,5 +1,6 @@
 package com.fqf.charaformact.mixin.compat;
 
+import com.fqf.charaformact.util.TravelSkipper;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -10,7 +11,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(value = LivingEntity.class)
-public class LivingEntityEmptyTravelMixin {
+public class LivingEntityEmptyTravelMixin implements TravelSkipper {
 //	@WrapMethod(method = "travel")
 //	private void skipTravelIfPlayingAsCharacter(Vec3d movementInput, Operation<Void> original) {
 //		Entity thisAsEntity = (Entity) (Object) this;
@@ -31,10 +32,15 @@ public class LivingEntityEmptyTravelMixin {
 	// Nothing worked so instead I'm just doing this silly nonsense to skip straight to the pre-existing return.
 	@WrapOperation(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;isLogicalSideForUpdatingMovement()Z"))
 	private boolean gaslightAboutLogicalSideForSable(LivingEntity instance, Operation<Boolean> original, @Local(argsOnly = true) Vec3d movementInput) {
-		return movementInput != null && original.call(instance);
+		return this.cfa$doLivingEntityTravel() && original.call(instance);
 	}
 	@WrapWithCondition(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;updateLimbs(Z)V"))
 	private boolean preventRedundantUpdateLimbsForSable(LivingEntity instance, boolean flutter, @Local(argsOnly = true) Vec3d movementInput) {
-		return movementInput != null;
+		return this.cfa$doLivingEntityTravel();
+	}
+
+	@Override
+	public boolean cfa$doLivingEntityTravel() {
+		return true;
 	}
 }

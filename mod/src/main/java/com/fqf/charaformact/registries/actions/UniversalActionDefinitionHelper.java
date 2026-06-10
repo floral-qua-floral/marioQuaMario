@@ -85,7 +85,7 @@ public class UniversalActionDefinitionHelper implements
 	public double getSlipFactor(CfaReadableMotionData data) {
 		return Math.pow(0.6 / getFloorSlipperiness(data.getPlayer()), 3);
 	}
-	private static float getFloorSlipperiness(Entity stepper) {
+	public static float getFloorSlipperiness(Entity stepper) {
 		if(stepper.isOnGround()) {
 			BlockPos blockPos = stepper.getVelocityAffectingPos();
 			return stepper.getWorld().getBlockState(blockPos).getBlock().getSlipperiness();

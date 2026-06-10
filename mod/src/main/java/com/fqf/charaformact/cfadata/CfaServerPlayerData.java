@@ -200,7 +200,7 @@ public class CfaServerPlayerData extends CfaMoveableData implements CfaAuthorita
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.INPUT);
 
 		this.applyModifiedVelocity();
-		this.getPlayer().move(MovementType.SELF, this.getMovementWithFluidPushing());
+		this.getPlayer().move(MovementType.SELF, this.getMovementWithFluidPushingAndNudgeVel());
 
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
 

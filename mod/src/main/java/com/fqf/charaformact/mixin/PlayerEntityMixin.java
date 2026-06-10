@@ -10,6 +10,7 @@ import com.fqf.charaformact.cfadata.injections.AdvCfaDataHolder;
 import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import com.fqf.charaformact.registries.actions.parsed.ParsedWallboundAction;
 import com.fqf.charaformact.util.CfaGamerules;
+import com.fqf.charaformact.util.TravelSkipper;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.definitions.states.actions.util.SlidingStatus;
 import com.fqf.charaformact_api.definitions.states.actions.util.SneakingRule;
@@ -42,7 +43,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerEntity.class)
-public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDataHolder {
+public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDataHolder, TravelSkipper {
 	@Shadow public abstract EntityDimensions getBaseDimensions(EntityPose pose);
 
 	@Shadow public float strideDistance;
@@ -58,6 +59,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDa
 		if(data.isEnabled()) data.tick();
 	}
 
+	@Unique private boolean skippingThroughLivingEntityTravel;
+
 	@Inject(method = "travel", at = @At("HEAD"), cancellable = true)
 	private void travelHook(Vec3d movementInput, CallbackInfo ci) {
 		if(this.cfa$getCfaData() instanceof CfaMoveableData moveableData
@@ -65,11 +68,22 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDa
 				&& !this.getWeaponStack().isOf(Items.FIREWORK_STAR)
 				&& moveableData.travelHook(movementInput.z, movementInput.x)) {
 
-			// SABLE HOOK
-			super.travel(null); // WHAT AM I DOING!!!!!!!!!!!
+			// SABLE COMPATIBILITY
+			try {
+				this.skippingThroughLivingEntityTravel = true;
+				super.travel(movementInput);
+			}
+			finally {
+				this.skippingThroughLivingEntityTravel = false;
+			}
 
 			ci.cancel();
 		}
+	}
+
+	@Override
+	public boolean cfa$doLivingEntityTravel() {
+		return !this.skippingThroughLivingEntityTravel;
 	}
 
 	@Override
@@ -290,8 +304,17 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDa
 	}
 
 	@Override
-	public boolean isPushable() {
-		return !this.cfa$getCfaData().isEnabled();
+	public void pushAwayFrom(Entity entity) {
+		if(this.cfa$getCfaData() instanceof CfaMoveableData data && data.isEnabled()) {
+			// Entity pushing affects special nudgeVel, which follows vanilla-like physics
+			Vec3d trueVelocity = this.getVelocity();
+			this.setVelocity(data.nudgeVel);
+			super.pushAwayFrom(entity);
+			data.nudgeVel = this.getVelocity();
+			this.setVelocity(trueVelocity);
+			return;
+		}
+		super.pushAwayFrom(entity);
 	}
 
 	@Override
@@ -299,6 +322,4 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDa
 		super.changeLookDirection(cursorDeltaX, cursorDeltaY);
 		if(this.cfa$getCfaData().isEnabled()) this.cfa$getCfaData().onLookAround();
 	}
-
-	@Unique private static final int SPRINTING_FLAG_INDEX = 3;
 }

@@ -1,5 +1,6 @@
 package com.fqf.charaformact.packets;
 
+import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.bapping.BlockBappingUtil;
 import com.fqf.charaformact.cfadata.CfaServerPlayerData;
 import com.fqf.charaformact.registries.RegistryManager;
@@ -46,7 +47,7 @@ public class BappingPackets {
 
 			AbstractParsedAction bappingAction = RegistryManager.ACTIONS.getOrThrow(payload.action);
 			ServerPlayerEntity player = context.player();
-			if(data.recentlyInAction(bappingAction) && payload.pos.isWithinDistance(player.getPos(), Math.max(player.getWidth(), player.getHeight()) * 2))
+			if(data.recentlyInAction(bappingAction) && payload.pos.isWithinDistance(player.getPos(), Math.max(player.getWidth(), player.getHeight()) + 3))
 				BlockBappingUtil.attemptBap(
 						data,
 						player.getServerWorld(),
@@ -55,6 +56,8 @@ public class BappingPackets {
 						data.getBapStrength(bappingAction, direction),
 						false
 				);
+			else
+				CharaFormAct.LOGGER.warn("Player {} tried to bap a block that's too far away! Player @ {}, block @ {}", player.getName().getString(), player.getPos(), payload.pos);
 		}
 
 		@Override public Id<? extends CustomPayload> getId() {

@@ -1,5 +1,6 @@
 package com.fqf.charaformact.cfadata;
 
+import com.fqf.charaformact.registries.actions.UniversalActionDefinitionHelper;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact.util.CfaPositionSettable;
 import com.fqf.charaformact_api.cfadata.util.CollisionMatcher;
@@ -23,6 +24,8 @@ public abstract class CfaMoveableData extends CfaPlayerData implements CfaTravel
 	public CfaMoveableData() {
 		super();
 	}
+
+	public Vec3d nudgeVel = Vec3d.ZERO;
 
 	private final CfaVelocities VELOCITIES = new CfaVelocities();
 	private class CfaVelocities {
@@ -87,6 +90,14 @@ public abstract class CfaMoveableData extends CfaPlayerData implements CfaTravel
 	private double smoothedDeltaYaw;
 	@Override public void tick() {
 		super.tick();
+
+		if(this.nudgeVel != Vec3d.ZERO) {
+			if(this.nudgeVel.lengthSquared() < 0.00001)
+				this.nudgeVel = Vec3d.ZERO;
+			else {
+				this.nudgeVel = this.nudgeVel.multiply(UniversalActionDefinitionHelper.getFloorSlipperiness(this.getPlayer()));
+			}
+		}
 
 		double deltaYaw = this.getPlayer().getYaw() - this.prevYaw;
 		this.prevYaw = this.getPlayer().getYaw();
@@ -264,8 +275,8 @@ public abstract class CfaMoveableData extends CfaPlayerData implements CfaTravel
 		this.jumpCapped = false;
 	}
 
-	protected Vec3d getMovementWithFluidPushing() {
-		Vec3d motion = this.getPlayer().getVelocity().add(this.getFluidPushingVel());
+	protected Vec3d getMovementWithFluidPushingAndNudgeVel() {
+		Vec3d motion = this.getPlayer().getVelocity().add(this.getFluidPushingVel()).add(this.nudgeVel);
 		// god i hope this fixes it
 		if(this.isInUnloadedChunks()) {
 			motion = motion.withAxis(Direction.Axis.Y, 0);
