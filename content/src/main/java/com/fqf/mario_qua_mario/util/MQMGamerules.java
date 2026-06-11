@@ -14,6 +14,10 @@ public class MQMGamerules {
 			GameRuleRegistry.register("mqmIncomingDamageMultiplier", GameRules.Category.PLAYER,
 					GameRuleFactory.createDoubleRule(2.5));
 
+//	public static final GameRules.Key<DoubleRule> GROUND_POUND_SOLID_MULTIPLIER =
+//			GameRuleRegistry.register("mqmGroundPoundSolidEntityDamageMultiplier", GameRules.Category.PLAYER,
+//					GameRuleFactory.createDoubleRule(3));
+
 //	public static final GameRules.Key<DoubleRule> OUTGOING_DAMAGE_MULTIPLIER =
 //			GameRuleRegistry.register("marioOutgoingDamageMultiplier", GameRules.Category.PLAYER,
 //					GameRuleFactory.createDoubleRule(1.0));

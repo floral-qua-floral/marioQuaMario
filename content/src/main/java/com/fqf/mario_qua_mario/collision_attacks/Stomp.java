@@ -17,6 +17,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.projectile.TridentEntity;
+import net.minecraft.entity.vehicle.VehicleEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -77,20 +78,30 @@ public class Stomp implements CollisionAttackTypeDefinition {
 		);
 	}
 
-	public static void filterStompTargets(List<Entity> potentialTargets, ServerPlayerEntity mario, Vec3d motion) {
-		potentialTargets.removeIf(entity -> entity.collidesWith(mario) || entity.isConnectedThroughVehicle(mario) || !(
-				(entity.canHit() || entity instanceof TridentEntity) // Mario can only stomp on things he can hit w/ crosshair (& Tridents)
-						&& collidingFromTop(entity, mario, mario.getY(), motion,
-						!entity.getType().isIn(CfaTags.HARMS_COLLISION_ATTACKERS) && ( // No rising stomp on pointy things!
-								entity instanceof Monster // Mario can do rising stomps against monsters
-								|| entity.getType().isIn(MQMTags.RISING_STOMPABLE_NONMONSTERS) // And off of armor stands
-						))
-		));
-	}
-
+	@SuppressWarnings("RedundantIfStatement")
 	@Override
 	public void filterPotentialTargets(List<Entity> potentialTargets, ServerPlayerEntity attacker, Vec3d motion) {
-		filterStompTargets(potentialTargets, attacker, motion);
+		potentialTargets.removeIf(entity -> {
+			// Mario cannot stomp on entities that are solid to him, unless they're vehicles (boats).
+			// This should prevent stomps on Shulkers and also modded platform entities.
+			if(attacker.collidesWith(entity) && !(entity instanceof VehicleEntity)) return true;
+
+			// Mario must be able to hit the entity, unless it's a trident.
+			if(!entity.canHit() && !(entity instanceof TridentEntity)) return true;
+
+			boolean canRisingStomp;
+			if(entity.getType().isIn(CfaTags.HARMS_COLLISION_ATTACKERS)) // No rising stomp on pointy things!
+				canRisingStomp = false;
+			else if(entity instanceof Monster) // Mario can do a rising stomp on monsters
+				canRisingStomp = true;
+			else if(entity.getType().isIn(MQMTags.RISING_STOMPABLE_NONMONSTERS)) // Mario can do a rising stomp on entities in the tag
+				canRisingStomp = true;
+			else // Against all other things - animals, vehicles, etc - Mario cannot do a rising stomp, and must be falling.
+				canRisingStomp = false;
+
+			// Mario must be either entering or exiting the top of the entity's hitbox.
+			return !collidingFromTop(entity, attacker, attacker.getY(), motion, canRisingStomp);
+		});
 	}
 
 	public static final CfaStat BASE_DAMAGE = new CfaStat(4.5, COLLISION_ATTACK, DAMAGE);

@@ -30,9 +30,9 @@
   "text.autoconfig.mario_qua_mario.option.welcomeMessage": "Welcome Message",
   "text.autoconfig.mario_qua_mario.option.nagMessage": "One-Time Nag Message",
 
-  "gamerule.marioDoesRisingStomps": "Mario can stomp monsters while ascending",
-  "gamerule.marioIncomingDamageMultiplier": "Mario incoming damage multiplier",
-  "gamerule.marioOutgoingDamageMultiplier": "Mario outgoing damage multiplier",
+  "gamerule.mqmDoRisingStomps": "Basic stomp can hit monsters while ascending",
+  "gamerule.mqmIncomingDamageMultiplier": "Damage taken by Mario series characters",
+  "gamerule.mqmGroundPoundSolidEntityDamageMultiplier": "Damage multiplier for hitting solid entities with Ground Pound",
 
   "item.mario_qua_mario.coin": "Gold Coin",
   "item.mario_qua_mario.coin.lore1": "Use 8 with %s",
