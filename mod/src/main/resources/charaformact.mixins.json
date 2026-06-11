@@ -7,15 +7,17 @@
     "DamageSourceMixin",
     "EntityDelayedRemovalMixin",
     "EntityTrackerEntryMixin",
-    "ItemTakeDurabilityFromBrittleBlocksMixin",
-    "LivingEntityResistFriendlyCollisionAttacksMixin",
-    "PlayerEntityCfaDataMixin",
-    "PlayerEntityMixin",
+    "ItemLoseDurabilityFromBrittleBlocksMixin",
+    "LivingEntityCollisionAttackImmunityMixin",
     "RedstoneViewMixin",
-    "ServerPlayerCfaDataMixin",
-    "ServerPlayerEntityMixin",
     "ServerPlayNetworkHandlerMixin",
-    "compat.LivingEntityEmptyTravelMixin"
+    "compat.LivingEntityEmptyTravelMixin",
+    "player.data.PlayerEntityCfaDataMixin",
+    "player.data.ServerPlayerCfaDataMixin",
+    "player.functionality.EntityMixinForPlayers",
+    "player.functionality.LivingEntityMixinForPlayers",
+    "player.functionality.PlayerEntityMixin",
+    "player.functionality.ServerPlayerEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1

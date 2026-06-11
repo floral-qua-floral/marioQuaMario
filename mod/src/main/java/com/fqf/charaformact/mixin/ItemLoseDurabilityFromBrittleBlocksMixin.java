@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(Item.class)
-public class ItemTakeDurabilityFromBrittleBlocksMixin {
+public class ItemLoseDurabilityFromBrittleBlocksMixin {
 	@WrapOperation(method = "postMine", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;getHardness(Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;)F"))
 	private float alwaysGetVanillaHardness(BlockState instance, BlockView blockView, BlockPos blockPos, Operation<Float> original) {
 		return BlockBappingUtil.getVanillaHardnessForMixin(instance, blockView, blockPos, original);

@@ -1,6 +1,5 @@
-package com.fqf.charaformact.mixin;
+package com.fqf.charaformact.mixin.player.data;
 
-import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact.cfadata.injections.AdvCfaDataHolder;
 import com.fqf.charaformact_api.cfadata.injections.CfaDataHolder;
 import net.minecraft.entity.player.PlayerEntity;

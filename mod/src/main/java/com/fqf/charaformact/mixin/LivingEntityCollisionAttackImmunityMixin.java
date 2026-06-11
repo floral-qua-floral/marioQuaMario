@@ -16,8 +16,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
-public abstract class LivingEntityResistFriendlyCollisionAttacksMixin extends Entity {
-	public LivingEntityResistFriendlyCollisionAttacksMixin(EntityType<?> type, World world) {
+public abstract class LivingEntityCollisionAttackImmunityMixin extends Entity {
+	public LivingEntityCollisionAttackImmunityMixin(EntityType<?> type, World world) {
 		super(type, world);
 		throw new IllegalStateException("Trying to use mixin constructor??");
 	}

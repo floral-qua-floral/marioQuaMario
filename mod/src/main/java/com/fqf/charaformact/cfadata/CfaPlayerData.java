@@ -385,7 +385,7 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 	}
 
 	public void onLookAround() {
-		if(this.getActionCategory() != ActionCategory.WALLBOUND) return;
+		if(!this.isEnabled() || this.getActionCategory() != ActionCategory.WALLBOUND) return;
 
 		PlayerEntity player = this.getPlayer();
 		ParsedWallboundAction wallAction = (ParsedWallboundAction) this.getAction();

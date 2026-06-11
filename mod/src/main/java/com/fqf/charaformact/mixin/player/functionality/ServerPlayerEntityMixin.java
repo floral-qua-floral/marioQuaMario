@@ -1,11 +1,10 @@
-package com.fqf.charaformact.mixin;
+package com.fqf.charaformact.mixin.player.functionality;
 
 import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.cfadata.CfaServerPlayerData;
 import com.fqf.charaformact.cfadata.injections.AdvCfaServerDataHolder;
 import com.fqf.charaformact.packets.CfaDataPackets;
 import com.fqf.charaformact.registries.RegistryManager;
-import com.fqf.charaformact.registries.actions.UniversalActionDefinitionHelper;
 import com.fqf.charaformact.registries.power_granting.ParsedCharacter;
 import com.fqf.charaformact.util.CfaNbtKeys;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;

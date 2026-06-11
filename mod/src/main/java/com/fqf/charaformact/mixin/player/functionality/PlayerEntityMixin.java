@@ -1,4 +1,4 @@
-package com.fqf.charaformact.mixin;
+package com.fqf.charaformact.mixin.player.functionality;
 
 import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.appearance.ParsedCommonAppearance;
@@ -10,7 +10,7 @@ import com.fqf.charaformact.cfadata.injections.AdvCfaDataHolder;
 import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import com.fqf.charaformact.registries.actions.parsed.ParsedWallboundAction;
 import com.fqf.charaformact.util.CfaGamerules;
-import com.fqf.charaformact.util.TravelSkipper;
+import com.fqf.charaformact.util.EntitiesMixinInterface;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.definitions.states.actions.util.SlidingStatus;
 import com.fqf.charaformact_api.definitions.states.actions.util.SneakingRule;
@@ -33,7 +33,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameMode;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -43,7 +42,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerEntity.class)
-public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDataHolder, TravelSkipper {
+public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDataHolder, EntitiesMixinInterface {
 	@Shadow public abstract EntityDimensions getBaseDimensions(EntityPose pose);
 
 	@Shadow public float strideDistance;
@@ -86,19 +85,14 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDa
 		return !this.skippingThroughLivingEntityTravel;
 	}
 
-	@Override
-	protected boolean stepOnBlock(BlockPos pos, BlockState state, boolean playSound, boolean emitEvent, Vec3d movement) {
-		return switch(this.cfa$getCfaData().isEnabled() ? this.cfa$getCfaData().getAction().SLIDING_STATUS : null) {
-			case SLIDING, SLIDING_SILENT, SKIDDING -> false;
-			case null, default -> super.stepOnBlock(pos, state, playSound, emitEvent, movement);
-		};
-	}
 
 	@Override
-	protected void playStepSounds(BlockPos pos, BlockState state) {
-		switch(this.cfa$getCfaData().isEnabled() ? this.cfa$getCfaData().getAction().SLIDING_STATUS : null) {
-			case SLIDING, SLIDING_SILENT, SKIDDING -> {}
-			case null, default -> super.playStepSounds(pos, state);
+	public boolean cfa$shouldStepOnBlock() {
+		CfaPlayerData data = this.cfa$getCfaData();
+		if(!data.isEnabled()) return true;
+		return switch(data.getAction().SLIDING_STATUS) {
+			case SLIDING, SLIDING_SILENT, SKIDDING -> false;
+			default -> true;
 		};
 	}
 
@@ -159,24 +153,16 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDa
 	}
 
 	@Override
-	protected float calculateNextStepSoundDistance() {
+	public float cfa$calculateNextStepSoundDistance(Operation<Float> original) {
 		ParsedCommonAppearance appearance = this.cfa$getCfaData().getAppearance();
-		if(appearance == null) return super.calculateNextStepSoundDistance();
+		if(appearance == null) return EntitiesMixinInterface.super.cfa$calculateNextStepSoundDistance(original);
 		else return this.distanceTraveled + appearance.STRIDE_LENGTH;
 	}
 
 	@Override
-	public boolean startRiding(Entity entity, boolean force) {
+	public void cfa$afterMounting(Entity mount) {
 		CfaPlayerData data = this.cfa$getCfaData();
-		if(data.isEnabled()) {
-			AbstractParsedAction mountedAction = data.getCharacter().getMountedAction(entity);
-			boolean mounted = mountedAction != null && super.startRiding(entity, force);
-			if (mounted) {
-				data.setActionTransitionless(mountedAction);
-			}
-			return mounted;
-		}
-		return super.startRiding(entity, force);
+		data.setActionTransitionless(data.getCharacter().getMountedAction(mount));
 	}
 
 	@Inject(method = "shouldDismount", at = @At("HEAD"), cancellable = true)
@@ -220,17 +206,17 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDa
 	}
 
 	@Override
-	public boolean isInSneakingPose() {
+	public boolean cfa$isInSneakingPose(boolean vanillaResult) {
 		return switch(cfa$getCfaData().isEnabled() ? cfa$getCfaData().getAction().SNEAKING_RULE : SneakingRule.ALLOW) {
-			case ALLOW, SLIP -> super.isInSneakingPose();
+			case ALLOW, SLIP -> vanillaResult;
 			case PROHIBIT -> false;
 			case FORCE -> true;
 		};
 	}
 
 	@Override
-	public void setSwimming(boolean swimming) {
-		super.setSwimming(swimming && !this.cfa$getCfaData().isEnabled());
+	public boolean cfa$canSetSwimming() {
+		return !this.cfa$getCfaData().isEnabled();
 	}
 
 	@Inject(method = "updateSwimming", at = @At("HEAD"), cancellable = true)
@@ -254,23 +240,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDa
 		}
 	}
 
-	@Override
-	public void updateLimbs(boolean flutter) {
-		if(!this.cfa$getCfaData().isEnabled()) {
-			super.updateLimbs(flutter);
-			return;
-		}
-
-		Vec3d fluidMotionVector = this.cfa$getCfaData().getFluidPushingVel();
-		this.prevX -= fluidMotionVector.x;
-		this.prevY -= fluidMotionVector.y;
-		this.prevZ -= fluidMotionVector.z;
-		super.updateLimbs(flutter);
-		this.prevX += fluidMotionVector.x;
-		this.prevY += fluidMotionVector.y;
-		this.prevZ += fluidMotionVector.z;
-	}
-
 	@Inject(method = "getMaxRelativeHeadRotation", at = @At("HEAD"), cancellable = true)
 	private void restrictHeadRotation(CallbackInfoReturnable<Float> cir) {
 		CfaPlayerData data = this.cfa$getCfaData();
@@ -285,8 +254,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDa
 	}
 
 	@Override
-	protected float turnHead(float bodyRotation, float headRotation) {
-		@NotNull CfaPlayerData data = this.cfa$getCfaData();
+	public float cfa$modifyBodyRotationForTurnHead(float bodyRotation) {
+		CfaPlayerData data = this.cfa$getCfaData();
 		boolean rotateBody;
 
 		if(data.isEnabled()) {
@@ -300,26 +269,25 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDa
 		}
 		else rotateBody = true;
 
-		return super.turnHead(rotateBody ? bodyRotation : this.bodyYaw, headRotation);
+		return rotateBody ? bodyRotation : this.bodyYaw;
 	}
 
 	@Override
-	public void pushAwayFrom(Entity entity) {
+	public void cfa$wrapPushAwayFrom(Entity entity, Operation<Void> original) {
 		if(this.cfa$getCfaData() instanceof CfaMoveableData data && data.isEnabled()) {
 			// Entity pushing affects special nudgeVel, which follows vanilla-like physics
 			Vec3d trueVelocity = this.getVelocity();
 			this.setVelocity(data.nudgeVel);
-			super.pushAwayFrom(entity);
+			original.call(entity);
 			data.nudgeVel = this.getVelocity();
 			this.setVelocity(trueVelocity);
 			return;
 		}
-		super.pushAwayFrom(entity);
+		original.call(entity);
 	}
 
 	@Override
-	public void changeLookDirection(double cursorDeltaX, double cursorDeltaY) {
-		super.changeLookDirection(cursorDeltaX, cursorDeltaY);
-		if(this.cfa$getCfaData().isEnabled()) this.cfa$getCfaData().onLookAround();
+	public void cfa$afterChangeLookDirection() {
+		this.cfa$getCfaData().onLookAround();
 	}
 }

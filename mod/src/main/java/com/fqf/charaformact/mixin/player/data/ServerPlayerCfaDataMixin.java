@@ -1,4 +1,4 @@
-package com.fqf.charaformact.mixin;
+package com.fqf.charaformact.mixin.player.data;
 
 import com.fqf.charaformact.cfadata.CfaServerPlayerData;
 import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;

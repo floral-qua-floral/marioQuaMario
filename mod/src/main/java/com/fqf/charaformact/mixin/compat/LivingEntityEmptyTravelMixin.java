@@ -1,6 +1,6 @@
 package com.fqf.charaformact.mixin.compat;
 
-import com.fqf.charaformact.util.TravelSkipper;
+import com.fqf.charaformact.util.EntitiesMixinInterface;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(value = LivingEntity.class)
-public class LivingEntityEmptyTravelMixin implements TravelSkipper {
+public class LivingEntityEmptyTravelMixin implements EntitiesMixinInterface {
 //	@WrapMethod(method = "travel")
 //	private void skipTravelIfPlayingAsCharacter(Vec3d movementInput, Operation<Void> original) {
 //		Entity thisAsEntity = (Entity) (Object) this;
@@ -37,10 +37,5 @@ public class LivingEntityEmptyTravelMixin implements TravelSkipper {
 	@WrapWithCondition(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;updateLimbs(Z)V"))
 	private boolean preventRedundantUpdateLimbsForSable(LivingEntity instance, boolean flutter, @Local(argsOnly = true) Vec3d movementInput) {
 		return this.cfa$doLivingEntityTravel();
-	}
-
-	@Override
-	public boolean cfa$doLivingEntityTravel() {
-		return true;
 	}
 }
