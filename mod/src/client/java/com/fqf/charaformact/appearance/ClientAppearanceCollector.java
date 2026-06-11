@@ -34,8 +34,6 @@ public class ClientAppearanceCollector extends AbstractAppearanceCollector<Clien
 		return this.currentlyInitializingAppearance;
 	}
 
-	private List<FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>>> capturedFeatures;
-
 	@Override protected String getEntrypoint() {
 		return "cfa-client-appearances";
 	}
@@ -133,6 +131,7 @@ public class ClientAppearanceCollector extends AbstractAppearanceCollector<Clien
 //		this.capturedFeatures.add((FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>>) feature);
 		for(Pair<ParsedClientAppearance, AppearanceRenderer> pair : this.map.values()) {
 			CharaFormAct.LOGGER.info("Distributing a feature to Appearance Renderer {}...", pair.getLeft().ID);
+			//noinspection unchecked
 			pair.getRight().addCapturedFeature((FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>>) feature);
 		}
 	}
