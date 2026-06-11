@@ -15,7 +15,8 @@ import java.util.Map;
 
 @Mixin(EntityRenderers.class)
 public class EntityRenderersMixin {
-	@Inject(method = "reloadPlayerRenderers", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableMap$Builder;build()Lcom/google/common/collect/ImmutableMap;"))
+	// Set up all the Appearance Renderers first, so that they'll be ready to receive captured Feature Renderers
+	@Inject(method = "reloadPlayerRenderers", at = @At("HEAD"))
 	private static void addCfaPlayermodels(EntityRendererFactory.Context ctx, CallbackInfoReturnable<Map<SkinTextures.Model, EntityRenderer<? extends PlayerEntity>>> cir) {
 		ClientAppearanceCollector.INSTANCE.reloadAppearanceRenderers(ctx);
 	}

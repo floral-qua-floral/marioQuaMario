@@ -5,7 +5,6 @@ import com.fqf.charaformact.appearance.AppearanceRenderer;
 import com.fqf.charaformact.appearance.ClientAppearanceCollector;
 import com.fqf.charaformact.appearance.ParsedClientAppearance;
 import com.fqf.charaformact.cfadata.CfaAppearanceData;
-import com.fqf.charaformact_api.appearance.AppearanceModel;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -19,26 +18,32 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PlayerEntityRenderer.class)
-public abstract class PlayerEntityRendererMixin {
-	@Shadow public abstract Identifier getTexture(AbstractClientPlayerEntity abstractClientPlayerEntity);
-
+public abstract class PlayerEntityRendererMixin extends LivingEntityRendererMixin<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
 	@WrapOperation(method = "<init>", at = @At(value = "NEW", target = "(Lnet/minecraft/client/model/ModelPart;Z)Lnet/minecraft/client/render/entity/model/PlayerEntityModel;"))
-	private static PlayerEntityModel<AbstractClientPlayerEntity> uwu(ModelPart root, boolean thinArms, Operation<PlayerEntityModel<AbstractClientPlayerEntity>> original, @Local(argsOnly = true) EntityRendererFactory.Context ctx) {
+	private static PlayerEntityModel<AbstractClientPlayerEntity> associatedWithAppearanceModel(ModelPart root, boolean thinArms, Operation<PlayerEntityModel<AbstractClientPlayerEntity>> original, @Local(argsOnly = true) EntityRendererFactory.Context ctx) {
 		ParsedClientAppearance currentCustomModel = ClientAppearanceCollector.INSTANCE.getCurrentlyInitializingAppearance();
-		if(currentCustomModel != null) {
-			CharaFormAct.LOGGER.info("Instantiating an Appearance-based player renderer!");
-//			return original.call(root, thinArms);
-			return currentCustomModel.makeAndGetModel(ctx);
-		}
-		else {
+		if (currentCustomModel == null) {
 			CharaFormAct.LOGGER.info("Instantiating a vanilla player renderer, with {} arms!", thinArms ? "thin" : "wide");
 			return original.call(root, thinArms);
+		} else {
+			CharaFormAct.LOGGER.info("Instantiating an Appearance-based player renderer!");
+			return currentCustomModel.makeAndGetModel(ctx);
+		}
+	}
+
+	@Unique private boolean capturingFeatures;
+
+	@Inject(method = "<init>", at = @At("TAIL"))
+	private void prepareToCatchAddedFeatures(EntityRendererFactory.Context ctx, boolean slim, CallbackInfo ci) {
+		if(ClientAppearanceCollector.INSTANCE.getCurrentlyInitializingAppearance() == null && !slim) {
+			CharaFormAct.LOGGER.info("Vanilla's wide-armed player renderer will now start capturing any additional features...");
+			this.capturingFeatures = true;
 		}
 	}
 
@@ -76,5 +81,10 @@ public abstract class PlayerEntityRendererMixin {
 		if((Object) this instanceof AppearanceRenderer appearanceRenderer)
 			return appearanceRenderer.TEXTURE;
 		return original.call(instance);
+	}
+
+	@Override
+	protected boolean isCapturingFeatures() {
+		return this.capturingFeatures;
 	}
 }

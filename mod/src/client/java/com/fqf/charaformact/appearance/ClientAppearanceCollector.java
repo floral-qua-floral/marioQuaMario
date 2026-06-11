@@ -5,20 +5,26 @@ import com.fqf.charaformact.registries.power_granting.CharacterFormCombo;
 import com.fqf.charaformact.registries.power_granting.ParsedCharacter;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
 import com.fqf.charaformact_api.appearance.AppearanceGeometryHelper;
-import com.fqf.charaformact_api.appearance.AppearanceModel;
 import com.fqf.charaformact_api.appearance.ClientAppearanceDefinition;
 import com.google.common.collect.ImmutableMap;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.minecraft.client.model.ModelData;
 import net.minecraft.client.model.ModelPartData;
 import net.minecraft.client.model.TexturedModelData;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.EntityRendererFactory;
+import net.minecraft.client.render.entity.feature.FeatureRenderer;
+import net.minecraft.client.render.entity.model.EntityModel;
+import net.minecraft.client.render.entity.model.PlayerEntityModel;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
+
+import java.util.List;
 
 public class ClientAppearanceCollector extends AbstractAppearanceCollector<ClientAppearanceDefinition, Pair<ParsedClientAppearance, AppearanceRenderer>> {
 	public static ClientAppearanceCollector INSTANCE = new ClientAppearanceCollector();
@@ -27,6 +33,8 @@ public class ClientAppearanceCollector extends AbstractAppearanceCollector<Clien
 	public @Nullable ParsedClientAppearance getCurrentlyInitializingAppearance() {
 		return this.currentlyInitializingAppearance;
 	}
+
+	private List<FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>>> capturedFeatures;
 
 	@Override protected String getEntrypoint() {
 		return "cfa-client-appearances";
@@ -119,5 +127,13 @@ public class ClientAppearanceCollector extends AbstractAppearanceCollector<Clien
 		ImmutableMap.Builder<CharacterFormCombo, Identifier> collectedIDs = ImmutableMap.builderWithExpectedSize(this.map.size());
 		this.map.forEach((combo, pair) -> collectedIDs.put(combo, pair.getLeft().ID));
 		CommonAppearanceCollector.INSTANCE.validate(collectedIDs.build());
+	}
+
+	public <T extends LivingEntity, M extends EntityModel<T>> void captureFeature(FeatureRenderer<T, M> feature) {
+//		this.capturedFeatures.add((FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>>) feature);
+		for(Pair<ParsedClientAppearance, AppearanceRenderer> pair : this.map.values()) {
+			CharaFormAct.LOGGER.info("Distributing a feature to Appearance Renderer {}...", pair.getLeft().ID);
+			pair.getRight().addCapturedFeature((FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>>) feature);
+		}
 	}
 }

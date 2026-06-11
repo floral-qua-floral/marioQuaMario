@@ -23,7 +23,7 @@ public class AppearanceRenderer extends PlayerEntityRenderer {
 			this.addFeature(customFeature);
 		}
 
-		this.disgustingIllegalAtrociouslyUpsettingHacksToAddCustomFeatureRenderers(ctx);
+//		this.disgustingIllegalAtrociouslyUpsettingHacksToAddCustomFeatureRenderers(ctx);
 	}
 
 	@SuppressWarnings({"UnstableApiUsage", "unchecked", "rawtypes"})
@@ -41,5 +41,9 @@ public class AppearanceRenderer extends PlayerEntityRenderer {
 	@Override
 	public Identifier getTexture(AbstractClientPlayerEntity abstractClientPlayerEntity) {
 		return this.TEXTURE;
+	}
+
+	public void addCapturedFeature(FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> feature) {
+		this.addFeature(feature);
 	}
 }

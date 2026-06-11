@@ -1,10 +1,8 @@
 accessWidener v2 named
 
 accessible class net/minecraft/client/gui/hud/InGameHud$HeartType
-extendable method net/minecraft/entity/Entity stepOnBlock (Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;ZZLnet/minecraft/util/math/Vec3d;)Z
-extendable method net/minecraft/entity/Entity playStepSounds (Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)V
-extendable method net/minecraft/entity/LivingEntity onDismounted (Lnet/minecraft/entity/Entity;)V
 accessible field net/minecraft/client/render/entity/model/PlayerEntityModel cloak Lnet/minecraft/client/model/ModelPart;
 accessible method net/minecraft/client/render/entity/model/BipedEntityModel positionRightArm (Lnet/minecraft/entity/LivingEntity;)V
 accessible method net/minecraft/client/render/entity/model/BipedEntityModel positionLeftArm (Lnet/minecraft/entity/LivingEntity;)V
 accessible field net/minecraft/entity/Entity fluidHeight Lit/unimi/dsi/fastutil/objects/Object2DoubleMap;
+mutable field net/minecraft/client/render/entity/feature/FeatureRenderer context Lnet/minecraft/client/render/entity/feature/FeatureRendererContext;
