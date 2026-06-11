@@ -151,7 +151,7 @@ public class CfaClientPacketHelper implements CfaClientHelperManager.ClientPacke
 					payload.strength(),
 					context.player().clientWorld.getEntityById(payload.bapperID()),
 					BapResult.values()[payload.result()]
-			), "Received payload for a bap that shouldn't trigger bap packet sending??"), 0);
+			), "Received payload for a bap that shouldn't trigger bap packet sending??"), true);
 		});
 	}
 
