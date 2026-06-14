@@ -10,6 +10,7 @@ import me.shedaniel.autoconfig.annotation.ConfigEntry;
 public class MQMConfig implements ConfigData {
 	private boolean backflipFromVehicles = true;
 	private boolean autoLadder = true;
+	private boolean squashDamageAnimation = true;
 
 	@ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
 	private CameraAnimationOption backflipCameraAnim = CameraAnimationOption.GENTLE;
@@ -34,6 +35,9 @@ public class MQMConfig implements ConfigData {
 	}
 	public boolean doAutoLadder() {
 		return this.autoLadder;
+	}
+	public boolean doSquashDamageAnimation() {
+		return this.squashDamageAnimation;
 	}
 
 	public CameraAnimationOption getBackflipCameraAnim() {

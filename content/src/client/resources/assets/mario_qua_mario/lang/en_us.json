@@ -21,6 +21,7 @@
 
   "text.autoconfig.mario_qua_mario.option.backflipFromVehicles": "Dismount Backflips",
   "text.autoconfig.mario_qua_mario.option.autoLadder": "Automatically grab ladders",
+  "text.autoconfig.mario_qua_mario.option.squashDamageAnimation": "Stomps cause squashing",
   "text.autoconfig.mario_qua_mario.option.sideflipCameraAnim": "Sideflip Camera Animation",
   "text.autoconfig.mario_qua_mario.option.backflipCameraAnim": "Backflip Camera Animation",
   "text.autoconfig.mario_qua_mario.option.tripleJumpCameraAnim": "Triple Jump Camera Animation",

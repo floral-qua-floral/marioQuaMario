@@ -9,6 +9,7 @@ import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.BonkAir;
 import com.fqf.mario_qua_mario.util.MarioSFX;
+import com.fqf.mario_qua_mario.util.Squashable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -91,6 +92,7 @@ public class GroundPound implements CollisionAttackTypeDefinition {
 
 	@Override
 	public void executeClients(CfaClientData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, boolean affectAttacker, long seed) {
+		Stomp.visuallySquashOnClient(target, result);
 		if(result == CollisionAttackResult.ExecutableResult.RESISTED || result == CollisionAttackResult.ExecutableResult.PAINFUL) return;
 		MarioQuaMario.LOGGER.info("Result: {}", result);
 		data.playSound(MarioSFX.KICK, seed);

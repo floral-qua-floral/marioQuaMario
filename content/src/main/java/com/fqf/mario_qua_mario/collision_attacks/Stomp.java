@@ -139,9 +139,9 @@ public class Stomp implements CollisionAttackTypeDefinition {
 		}
 	}
 
-	public static Vec3d stompETAMTS(CfaTravelData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, Vec3d movingToPos, boolean affectMario) {
+	public static Vec3d bounceMarioAndGetTargetPos(CfaTravelData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, Vec3d movingToPos, boolean affectMario) {
 		return switch(result) {
-			case PAINFUL -> null; // Replace once Bonk implemented: Give Mario forwards momentum
+			case PAINFUL -> null;
 			case NORMAL, GLANCING, RESISTED -> {
 				if(affectMario) {
 					data.refreshJumpCapping();
@@ -155,11 +155,17 @@ public class Stomp implements CollisionAttackTypeDefinition {
 
 	@Override
 	public @Nullable Vec3d executeTravellersAndModifyTargetPos(CfaTravelData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, Vec3d movingToPos, boolean affectAttacker) {
-		return stompETAMTS(data, equipment, target, result, movingToPos, affectAttacker);
+		return bounceMarioAndGetTargetPos(data, equipment, target, result, movingToPos, affectAttacker);
+	}
+
+	public static void visuallySquashOnClient(Entity target, CollisionAttackResult.ExecutableResult result) {
+		if(result != CollisionAttackResult.ExecutableResult.MOUNT && target instanceof Squashable squashableTarget)
+			squashableTarget.cfa$squash();
 	}
 
 	@Override
 	public void executeClients(CfaClientData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, boolean affectAttacker, long seed) {
+		visuallySquashOnClient(target, result);
 		SoundEvent stompSound = switch(result) {
 			case MOUNT, PAINFUL -> null;
 			case NORMAL, GLANCING -> target.isAlive() ? MarioSFX.STOMP : MarioSFX.LAST;

@@ -21,19 +21,29 @@ public abstract class LivingEntityMixin extends Entity implements Squashable {
 	}
 
 	@Unique private boolean squashed;
+	@Unique private long squashStartTime, squashEndTime;
+	@Unique private static final int SQUASH_DURATION = 15;
 
 	@Inject(method = "tick", at = @At("HEAD"))
 	private void resetSquashed(CallbackInfo ci) {
-		if(!this.isDead()) this.squashed = false;
+		if(!this.isDead() && this.getWorld().getTime() >= squashEndTime) this.squashed = false;
 	}
 
 	@Override
 	public void cfa$squash() {
 		this.squashed = true;
+		this.squashStartTime = this.getWorld().getTime();
+		this.squashEndTime = this.squashStartTime + SQUASH_DURATION;
 	}
 
 	@Override
 	public boolean cfa$isSquashed() {
 		return this.squashed;
+	}
+
+	@Override
+	public float cfa$getSquashProgress(float tickDelta) {
+		if(this.squashed) return (((float) (this.getWorld().getTime() - this.squashStartTime)) + tickDelta) / SQUASH_DURATION;
+		return 0;
 	}
 }
