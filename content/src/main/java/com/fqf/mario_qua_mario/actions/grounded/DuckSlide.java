@@ -108,6 +108,7 @@ public class DuckSlide implements GroundedActionDefinition {
 						data -> {
 							helper.performJump(data, LongJump.LONG_JUMP_VEL, null);
 							data.setForwardVel(data.getForwardVel() * 0.92 + 0.098);
+							data.getInputs().DUCK.isPressed(); // Force unbuffer DUCK
 						},
 						(data, isSelf, seed) -> {
 							data.playJumpSound(seed);

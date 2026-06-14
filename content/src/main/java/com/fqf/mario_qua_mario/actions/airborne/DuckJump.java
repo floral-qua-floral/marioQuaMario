@@ -40,7 +40,10 @@ public class DuckJump extends Jump implements AirborneActionDefinition {
 				DuckJump.ID,
 				data -> data.getInputs().JUMP.isPressed(),
 				EvaluatorEnvironment.CLIENT_ONLY,
-				data -> helper.performJump(data, JUMP_VEL, JUMP_ADDEND),
+				data -> {
+					helper.performJump(data, JUMP_VEL, JUMP_ADDEND);
+					data.getInputs().DUCK.isPressed(); // Unbuffer DUCK
+				},
 				(data, isSelf, seed) -> {
 					data.playJumpSound(seed);
 					data.voice(Voicelines.DUCK_JUMP, seed);

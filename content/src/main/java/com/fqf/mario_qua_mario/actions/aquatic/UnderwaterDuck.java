@@ -72,7 +72,11 @@ public class UnderwaterDuck implements AquaticActionDefinition {
 	}
 	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AquaticActionHelper helper) {
 		return List.of(
-				Swim.SWIM
+				Swim.SWIM.variate(null, null, null, data -> {
+					assert Swim.SWIM.travelExecutor() != null;
+					Swim.SWIM.travelExecutor().execute(data);
+					data.getInputs().DUCK.isPressed(); // Force unbuffer DUCK
+				}, null)
 		);
 	}
 	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AquaticActionHelper helper) {
