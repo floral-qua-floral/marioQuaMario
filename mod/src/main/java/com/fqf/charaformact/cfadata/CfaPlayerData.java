@@ -156,19 +156,14 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 		return this.verticalAnimationScale;
 	}
 
-	public void updateCharacterFormCombo() {
-		this.updateAppearance();
-
-		// Clear all power strings
-		this.POWERS.clear();
-
+	public void removeCharacterFormAttributeModifiers() {
 		// Remove all attribute modifiers
 		int removingIndex = 0;
 		for(StatAlteringStateDefinition.AttributeModifierInstruction removeModifier : this.ATTRIBUTE_MODIFIERS) {
 			EntityAttributeInstance attributeInstance = this.getPlayer().getAttributeInstance(removeModifier.attribute());
 			if(attributeInstance == null) {
 				CharaFormAct.LOGGER.error("Trying to remove a generated attribute modifier from attribute {}, however" +
-						" the player has no instance of this attribute?!\n\tPlayer: {}",
+								" the player has no instance of this attribute?!\n\tPlayer: {}",
 						removeModifier.attribute().getIdAsString(),
 						this.getPlayer());
 				removingIndex++;
@@ -180,6 +175,15 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 
 		// Clear attribute modifier instructions
 		this.ATTRIBUTE_MODIFIERS.clear();
+	}
+
+	public void updateCharacterFormCombo() {
+		this.updateAppearance();
+
+		// Clear all power strings
+		this.POWERS.clear();
+
+		this.removeCharacterFormAttributeModifiers();
 
 		if(this.isEnabled()) {
 			// Store new power strings
@@ -202,7 +206,6 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 					addingIndex++;
 				}
 				else {
-					// FIXME: Error on client when changing world >:(
 					attributeInstance.addTemporaryModifier(new EntityAttributeModifier(
 							CharaFormAct.makeID("generated_modifier_" + addingIndex++),
 							addModifier.d(),

@@ -4,6 +4,7 @@ import com.fqf.charaformact.bapping.BlockBappingClientUtil;
 import com.fqf.charaformact.bapping.BlockBappingUtil;
 import com.fqf.charaformact.bapping.WorldBapsInfo;
 import com.fqf.charaformact.compat.optional.SableCompatSafe;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.MinecraftClient;
@@ -11,6 +12,7 @@ import net.minecraft.client.render.*;
 import net.minecraft.client.render.model.ModelLoader;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import org.apache.commons.lang3.tuple.Triple;
@@ -20,6 +22,10 @@ import org.joml.Vector3dc;
 public class CfaClientEventListeners {
 	public static void register() {
 		ClientTickEvents.START_WORLD_TICK.register(BlockBappingClientUtil::clientWorldTick);
+
+		ClientEntityEvents.ENTITY_UNLOAD.register((entity, world) -> {
+			if(entity instanceof PlayerEntity player) player.cfa$getCfaData().removeCharacterFormAttributeModifiers();
+		});
 
 		WorldRenderEvents.AFTER_ENTITIES.register((worldRenderContext) -> {
 			ClientWorld world = worldRenderContext.world();

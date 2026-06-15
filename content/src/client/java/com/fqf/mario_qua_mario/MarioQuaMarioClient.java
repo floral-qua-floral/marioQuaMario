@@ -32,10 +32,6 @@ public class MarioQuaMarioClient implements ClientModInitializer {
 		ModelLoadingPlugin.register(context -> {
 			context.addModels(COIN_GROUND_ID);
 		});
-
-		ClientEntityEvents.ENTITY_UNLOAD.register((entity, world) -> {
-			if(entity instanceof PlayerEntity player) MarioQuaMario.LOGGER.info("Unloading player: {}", player);
-		});
 	}
 
 	public static class ContentClientHelperImplementation extends MarioQuaMario.ContentClientHelper {
