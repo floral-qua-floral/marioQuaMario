@@ -30,7 +30,6 @@ public class MarioQuaMarioClient implements ClientModInitializer {
 		ModelLoadingPlugin.register(context -> {
 			context.addModels(COIN_GROUND_ID);
 		});
-
 	}
 
 	public static class ContentClientHelperImplementation extends MarioQuaMario.ContentClientHelper {

@@ -20,6 +20,14 @@ public class Powers {
 	public static final String TAIL_STALL = "Tail Stall";
 	public static final String TAIL_FLY = "Tail Fly";
 
-	// Powers associated with Raccoon and Elephant forms. This excludes costume forms such as Tanooki Mario or Cat Mario.
+	// Powers associated with Raccoon, Tanooki, and Cape forms
+	public static final String CAN_HIT_PROJECTILES = "Can Hit Projectiles With Crosshair";
+
+	// Powers associated with Raccoon and Elephant forms. Specific to those which affect Mario's body directly, so
+	// costume-based forms like Tanooki Mario and Penguin Mario would not have this power. Cat Mario is a weird case
+	// because it's a costume, but it also alters Mario's posture in a way that implies physical transformation beneath
+	// the suit?? I think I'd give Cat Mario this power, since Cat Form has never been acquired from a Suit power-up,
+	// and also because of Meowser's design showing that the Super Bell does do bodily transformation at least some of
+	// the time.
 	public static final String TAPETUM_LUCIDUM = "Tapetum Lucidum";
 }

@@ -19,6 +19,7 @@ public interface MQMTags {
 	TagKey<EntityType<?>> RISING_STOMPABLE_NONMONSTERS = getTag(ENTITY_TYPE, "rising_stompable_nonmonsters");
 	TagKey<EntityType<?>> DODGES_MARIO_FIREBALL = getTag(ENTITY_TYPE, "dodges_mario_fireball");
 	TagKey<EntityType<?>> FIRE_MARIO_PUNCH_TARGETS = getTag(ENTITY_TYPE, "fire_mario_punch_targets");
+	TagKey<EntityType<?>> TAIL_ATTACK_REFLECTABLE = getTag(ENTITY_TYPE, "tail_attack_reflectable");
 
 	TagKey<Block> CLIMBABLE = getTag(BLOCK, "mario_climbable");
 	TagKey<Block> SOMETIMES_CLIMBABLE_PANES = getTag(BLOCK, "mario_sometimes_climbable_panes");

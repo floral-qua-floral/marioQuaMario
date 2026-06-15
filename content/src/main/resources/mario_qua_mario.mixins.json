@@ -6,7 +6,13 @@
     "CoinSpinMixin",
     "CustomizableToadDataTrackingMixin",
     "DropCoinWithExperienceMixin",
-    "PlayerStruckByLightningMixin"
+    "PersistentProjectileMixin",
+    "PlayerStruckByLightningMixin",
+    "TridentEntityMixin",
+    "tail_reflecting.EntityReflectabilityMixin",
+    "tail_reflecting.ProjectileReflectabilityMixin",
+    "tail_reflecting.ShulkerBulletReflectabilityMixin",
+    "tail_reflecting.VexReflectabilityMixin"
   ],
   "injectors": {
     "defaultRequire": 1

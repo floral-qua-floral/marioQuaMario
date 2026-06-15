@@ -4,6 +4,7 @@ import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.wallbound.WallSlide;
+import com.fqf.mario_qua_mario.characters.AbstractMarioSeriesCharacter;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -25,6 +26,12 @@ public class MarioVars {
 	private int wallSlidingTicks;
 
 	public boolean hasUnarmedModifier;
+
+	public MarioVars(CfaData data) {
+		// this is annoying. but it's necessary to prevent a crash when changing dimensions, since the attribute
+		// modifiers get copied over, but the CfaData is created fresh.
+		this.hasUnarmedModifier = Objects.requireNonNull(data.getPlayer().getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE)).hasModifier(AbstractMarioSeriesCharacter.UNARMED_DAMAGE_BONUS.id());
+	}
 
 	public static MarioVars get(CfaData data) {
 		return data.retrieveStateData(MarioVars.class);

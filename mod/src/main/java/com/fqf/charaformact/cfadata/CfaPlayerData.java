@@ -202,6 +202,7 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 					addingIndex++;
 				}
 				else {
+					// FIXME: Error on client when changing world >:(
 					attributeInstance.addTemporaryModifier(new EntityAttributeModifier(
 							CharaFormAct.makeID("generated_modifier_" + addingIndex++),
 							addModifier.d(),

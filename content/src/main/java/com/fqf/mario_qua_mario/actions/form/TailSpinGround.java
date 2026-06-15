@@ -21,6 +21,7 @@ import com.fqf.mario_qua_mario.actions.grounded.DuckWaddle;
 import com.fqf.mario_qua_mario.forms.Raccoon;
 import com.fqf.mario_qua_mario.util.Powers;
 import com.fqf.mario_qua_mario.util.TailSpinActionTimerVars;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -98,14 +99,23 @@ public class TailSpinGround implements GroundedActionDefinition {
 	public static void attemptTailStrike(CfaAuthoritativeData data) {
 		if(data.retrieveStateData(TailSpinActionTimerVars.class).actionTimer % 3 == 0) {
 			ServerPlayerEntity mario = data.getPlayer();
-			List<Entity> strikeTargets = mario.getServerWorld().getOtherEntities(
-					mario, mario.getBoundingBox().expand(1, 0.5, 1));
+			ImmutableList.Builder<Entity> strikeTargets = ImmutableList.builder();
 
-			strikeTargets.removeIf(entity -> !entity.canHit());
+			strikeTargets.addAll(mario.getServerWorld().getOtherEntities(
+					mario,
+					mario.getBoundingBox().expand(1, 0.5, 1),
+					Entity::canHit
+			));
+			strikeTargets.addAll(mario.getServerWorld().getOtherEntities(
+					mario,
+					mario.getBoundingBox().expand(3, 1, 3),
+					Raccoon::canBeReflected
+			));
 
 			DamageSource source = mario.getDamageSources().playerAttack(mario);
-			for(Entity strikeTarget : strikeTargets) {
-				strikeTarget.damage(source, Raccoon.TAIL_STRIKE_DAMAGE);
+			for(Entity strikeTarget : strikeTargets.build()) {
+				if(!Raccoon.tryReflect(strikeTarget, mario, false))
+					strikeTarget.damage(source, Raccoon.TAIL_STRIKE_DAMAGE);
 			}
 		}
 	}

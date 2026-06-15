@@ -1,4 +1,5 @@
 {
+    "replace": false,
     "values": [
         "minecraft:armor_stand",
         "#mario_qua_mario:dodges_mario_fireball"

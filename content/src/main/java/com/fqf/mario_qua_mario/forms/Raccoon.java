@@ -13,12 +13,15 @@ import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.actions.form.TailSpinFall;
 import com.fqf.mario_qua_mario.actions.form.TailSpinGround;
 import com.fqf.mario_qua_mario.actions.form.TailStall;
-import com.fqf.mario_qua_mario.util.MarioSFX;
-import com.fqf.mario_qua_mario.util.Powers;
+import com.fqf.mario_qua_mario.util.*;
+import net.minecraft.command.argument.EntityAnchorArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.Tameable;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.PersistentProjectileEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -27,8 +30,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -82,6 +84,7 @@ public class Raccoon implements FormDefinition {
 				Powers.TAIL_ATTACK,
 				Powers.TAIL_STALL,
 				Powers.TAIL_FLY,
+				Powers.CAN_HIT_PROJECTILES,
 				Powers.TAPETUM_LUCIDUM
 		);
 	}
@@ -121,6 +124,72 @@ public class Raccoon implements FormDefinition {
 	}
 	@Override public void serverTick(CfaAuthoritativeData data) {
 		tick(data);
+	}
+
+	public static boolean canBeReflected(Entity reflectTarget) {
+		return ((ReflectableEntity) reflectTarget).cfa$canReflect();
+	}
+
+	private static final double REFLECTION_SPEED_FACTOR = 1.5;
+	private static final double MINIMUM_POST_REFLECTION_SPEED = 2.2;
+	public static boolean tryReflect(Entity reflectTarget, PlayerEntity mario, boolean isForward) {
+		if(canBeReflected(reflectTarget)) {
+			Vec3d originalVelocity = reflectTarget.getVelocity();
+			double newSpeed = Math.max(originalVelocity.length() * REFLECTION_SPEED_FACTOR, MINIMUM_POST_REFLECTION_SPEED);
+			Vec3d aimVector;
+			if(isForward) aimVector = // Aim in Mario's look direction
+					Vec3d.fromPolar(mario.getPitch(), mario.getYaw());
+			else aimVector = // Aim in
+					mario.getPos().add(0, mario.getHeight() * 0.25, 0)
+							.subtract(reflectTarget.getPos().add(0, reflectTarget.getHeight(), 0));
+			Vec3d newVelocity;
+			if(reflectTarget instanceof PersistentProjectileEntity persistentProjectileTarget && ((PersistentReflectable) persistentProjectileTarget).mqm$isInGround()) {
+				// Reflect a trident, arrow, etc that's lodged in a block
+				PersistentReflectable reflectable = ((PersistentReflectable) persistentProjectileTarget);
+
+				Vec3d inversionFactor;
+				Direction direction = reflectable.mqm$getGroundStickFace();
+				Vec3d identity = new Vec3d(1, 1, 1);
+				if(MathHelper.sign(aimVector.getComponentAlongAxis(direction.getAxis())) != direction.getDirection().offset())
+					inversionFactor = identity.withAxis(direction.getAxis(), -0.4);
+				else
+					inversionFactor = identity;
+
+				newVelocity = aimVector.multiply(inversionFactor).multiply(newSpeed);
+				reflectable.mqm$dislodge();
+				persistentProjectileTarget.setCritical(true);
+				PersistentProjectileEntity.PickupPermission pickup = persistentProjectileTarget.pickupType;
+				persistentProjectileTarget.setOwner(mario);
+				persistentProjectileTarget.pickupType = pickup;
+			}
+			else if(reflectTarget instanceof ProjectileEntity projectileTarget) {
+				// Reflect a projectile mid-flight
+//				newVelocity = aimVector.add(originalVelocity.negate().normalize()).normalize().multiply(newSpeed);
+				newVelocity = aimVector.multiply(newSpeed);
+				if(reflectTarget instanceof PersistentProjectileEntity persistentProjectileTarget) {
+					persistentProjectileTarget.setCritical(true);
+					PersistentProjectileEntity.PickupPermission pickup = persistentProjectileTarget.pickupType;
+					projectileTarget.setOwner(mario);
+					persistentProjectileTarget.pickupType = pickup;
+				}
+				else {
+					projectileTarget.setOwner(mario);
+				}
+			}
+			else {
+				// Reflect a non-projectile entity
+				newVelocity = aimVector.multiply(newSpeed);
+				// this is wonky but i really don't wanna do the math god almighty
+				reflectTarget.lookAt(EntityAnchorArgumentType.EntityAnchor.FEET, reflectTarget.getPos().add(aimVector));
+
+				// Is there any other logic I'd want to do here...?? I could check Ownable to transfer ownership of things
+				// like Vexes on reflect, which is a hilarious idea, but it doesn't make enough sense for me.
+			}
+			reflectTarget.playSound(MarioSFX.KICK, 0.4F, 1);
+			reflectTarget.setVelocity(newVelocity);
+			reflectTarget.velocityModified = true;
+		}
+		return false;
 	}
 
 	public static final float TAIL_STRIKE_DAMAGE = 5.75F;
@@ -181,26 +250,59 @@ public class Raccoon implements FormDefinition {
 
 		@Override
 		public void executeServer(CfaAuthoritativeData data, ItemStack weapon, float attackCooldownProgress, ServerWorld world, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget) {
-			data.getPlayer().spawnSweepAttackParticles();
+			ServerPlayerEntity mario = data.getPlayer();
+			mario.spawnSweepAttackParticles();
 			if(entityTarget != null) {
-				ServerPlayerEntity mario = data.getPlayer();
 				DamageSource damageSource = mario.getDamageSources().playerAttack(mario);
-				entityTarget.damage(damageSource, TAIL_STRIKE_DAMAGE);
-				List<LivingEntity> sweepTargets = mario.getWorld().getNonSpectatingEntities(LivingEntity.class, entityTarget.getBoundingBox().expand(1.0, 0.25, 1.0));
-				for(LivingEntity sweepTarget : sweepTargets) {
+				if(!tryReflect(entityTarget, mario, true)) {
+					// Only damage entities that aren't reflected!
+					entityTarget.damage(damageSource, TAIL_STRIKE_DAMAGE);
+					mario.onAttacking(entityTarget);
+				}
+				Box targetBoundingBox = entityTarget.getBoundingBox();
+				List<Entity> sweepTargets = mario.getWorld().getNonSpectatingEntities(Entity.class, targetBoundingBox.expand(1.0, 0.25, 1.0));
+				double additionalRange = 3 + targetBoundingBox.getLengthX();
+				for(Entity sweepTarget : sweepTargets) {
 					if(
 							sweepTarget != mario
 							&& sweepTarget != entityTarget
 							&& !mario.isTeammate(sweepTarget)
-							&& !(sweepTarget instanceof ArmorStandEntity stand && stand.isMarker())
-							&& mario.squaredDistanceTo(sweepTarget) < 9.0
-							&& sweepTarget.damage(damageSource, TAIL_STRIKE_DAMAGE)) {
+							&& !(sweepTarget instanceof Tameable tameable && mario.equals(tameable.getOwner()))
+							&& (sweepTarget.canHit() || canBeReflected(sweepTarget))
+							&& mario.canInteractWithEntity(sweepTarget, additionalRange)) {
 
-						sweepTarget.takeKnockback(
-								0.4F, MathHelper.sin(mario.getYaw() * (float) (Math.PI / 180.0)), -MathHelper.cos(mario.getYaw() * (float) (Math.PI / 180.0))
-						);
-						mario.onAttacking(sweepTarget);
+						if(
+								!tryReflect(sweepTarget, mario, true)
+								&& sweepTarget instanceof LivingEntity livingTarget
+								&& sweepTarget.damage(damageSource, TAIL_STRIKE_DAMAGE)
+						) {
+							livingTarget.takeKnockback(
+									0.4F, MathHelper.sin(mario.getYaw() * (float) (Math.PI / 180.0)), -MathHelper.cos(mario.getYaw() * (float) (Math.PI / 180.0))
+							);
+							mario.onAttacking(sweepTarget);
+						}
 					}
+				}
+			}
+			else if(this.ACTION_TARGET == null) {
+				// Didn't hit an entity and didn't hit a block, so do an airblast-style hitbox reflect
+				double radius = mario.getEntityInteractionRange() * 0.5;
+				Vec3d center = mario.getEyePos().add(Vec3d.fromPolar(mario.getPitch(), mario.getYaw()).multiply(radius));
+				Box airblastHitbox =  Box.of(center, radius, radius, radius);
+
+				// If Mario's on the ground, ensure that the reflection hitbox down extends to the floor. This way Mario
+				// can easily scoop up a whole bunch of arrows and stuff off the floor & fling 'em forward, which seems
+				// like it'd be fun
+				if(mario.isOnGround())
+					airblastHitbox = airblastHitbox.withMinY(Math.min(airblastHitbox.minY, mario.getY()));
+
+				MarioQuaMario.LOGGER.info("Airblast!\n\tCenter: {}\n\tWidth: {}\n\tmin Y: {}", center, airblastHitbox.getLengthX(), airblastHitbox.minY);
+
+				List<Entity> reflectTargets = mario.getWorld().getEntitiesByClass(Entity.class, airblastHitbox,
+						entity -> !entity.isSpectator() && !entity.equals(mario));
+				for(Entity reflectTarget : reflectTargets) {
+					MarioQuaMario.LOGGER.info("Trying to reflect {}", reflectTarget);
+					tryReflect(reflectTarget, mario, true);
 				}
 			}
 		}

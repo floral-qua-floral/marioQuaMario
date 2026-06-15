@@ -30,8 +30,17 @@ public class CfaEventListeners {
 			if(oldData.isEnabled()) data.assignCharacter(oldData.getCharacterID());
 		});
 
-		ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register(((player, origin, destination) ->
-				player.cfa$getCfaData().initialApply()));
+
+
+		ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register(((player, origin, destination) -> {
+			CfaServerPlayerData data = player.cfa$getCfaData();
+//			if(data.isEnabled()) {
+//				data.getCharacter().onExit(data);
+//				data.getForm().onExit(data);
+//				data.getAction().onExit(data);
+//			}
+			data.initialApply();
+		}));
 
 		ServerLivingEntityEvents.ALLOW_DEATH.register((livingEntity, damageSource, amount) -> {
 			if(!(livingEntity instanceof ServerPlayerEntity player)) return true;

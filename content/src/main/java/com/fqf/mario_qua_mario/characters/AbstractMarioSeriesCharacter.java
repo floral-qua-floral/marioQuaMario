@@ -97,10 +97,10 @@ public abstract class AbstractMarioSeriesCharacter implements CharacterDefinitio
 		);
 	}
 
-	private static final EntityAttributeModifier UNARMED_DAMAGE_BONUS =
+	public static final EntityAttributeModifier UNARMED_DAMAGE_BONUS =
 			new EntityAttributeModifier(MarioQuaMario.makeID("unarmed_damage_boost"), 1, EntityAttributeModifier.Operation.ADD_VALUE);
 	@Override public @Nullable Object provideStateData(CfaData data) {
-		return new MarioVars();
+		return new MarioVars(data);
 	}
 	private static void commonTick(CfaData data) {
 		MarioVars vars = data.retrieveStateData(MarioVars.class);
