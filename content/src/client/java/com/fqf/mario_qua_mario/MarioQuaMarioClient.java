@@ -4,12 +4,14 @@ import com.fqf.mario_qua_mario.entity.ModEntities;
 import com.fqf.mario_qua_mario.entity.MarioFireballModel;
 import com.fqf.mario_qua_mario.entity.MarioFireballRenderer;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.util.ModelIdentifier;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -29,6 +31,10 @@ public class MarioQuaMarioClient implements ClientModInitializer {
 
 		ModelLoadingPlugin.register(context -> {
 			context.addModels(COIN_GROUND_ID);
+		});
+
+		ClientEntityEvents.ENTITY_UNLOAD.register((entity, world) -> {
+			if(entity instanceof PlayerEntity player) MarioQuaMario.LOGGER.info("Unloading player: {}", player);
 		});
 	}
 

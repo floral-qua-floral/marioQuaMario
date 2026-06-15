@@ -315,7 +315,7 @@ public class BlockBappingUtil {
 			for(WorldBapsSet set : sets) {
 				set.get(world).remove(info.POS);
 			}
-			info.finishAndGetReplacement();
+//			info.finishAndGetReplacement();
 		}
 		if(sets.contains(WorldBapsSet.HIDDEN)) {
 			reRenderPos(info);

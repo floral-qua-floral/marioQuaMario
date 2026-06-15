@@ -196,7 +196,7 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 				EntityAttributeInstance attributeInstance = this.getPlayer().getAttributeInstance(addModifier.attribute());
 				if(attributeInstance == null) {
 					CharaFormAct.LOGGER.error("Trying to add a generated attribute modifier to attribute {}, however" +
-									" the player has no instance of this attribute?!\n\tPlayer: {}",
+									" player {} has no instance of this attribute?!",
 							addModifier.attribute().getIdAsString(),
 							this.getPlayer());
 					addingIndex++;

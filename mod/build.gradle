@@ -92,10 +92,8 @@ dependencies {
 	modCompileOnly "maven.modrinth:replaymod:${replaymod_version}"
 	modCompileOnly "maven.modrinth:flashback:${flashback_version}"
 
-	// TODO: Prevent footsteps while sliding? Do I actually use this??
 	modCompileOnly "maven.modrinth:presence-footsteps:${presence_footsteps_version}"
 
-	// TODO: Enable bapping blocks in sublevels?
 //	modCompileOnly("dev.ryanhcode.sable:sable-fabric-${project.minecraft_version}:${project.sable_version}")
 //	include(modApi("dev.ryanhcode.sable-companion:sable-companion-fabric-${project.minecraft_version}:${project.sable_companion_version}"))
 }
