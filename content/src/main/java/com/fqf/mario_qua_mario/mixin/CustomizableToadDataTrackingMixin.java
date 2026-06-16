@@ -21,10 +21,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.OptionalInt;
 import java.util.UUID;
 
-import static com.fqf.mario_qua_mario.util.CustomToadUtil.*;
+import static com.fqf.mario_qua_mario.util.CharacterCustomizationUtil.*;
 
 @Mixin(PlayerEntity.class)
-public abstract class CustomizableToadDataTrackingMixin extends LivingEntity implements CustomToadEntity {
+public abstract class CustomizableToadDataTrackingMixin extends LivingEntity implements CustomizablePlayerEntity {
 	protected CustomizableToadDataTrackingMixin(EntityType<? extends LivingEntity> entityType, World world) {
 		super(entityType, world);
 	}
@@ -33,6 +33,7 @@ public abstract class CustomizableToadDataTrackingMixin extends LivingEntity imp
 
 	@Inject(method = "initDataTracker", at = @At("TAIL"))
 	private void addCustomToadDataTracking(DataTracker.Builder builder, CallbackInfo ci) {
+		builder.add(ALWAYS_USE_SKIN_COLOR, false);
 		builder.add(SKIN_COLOR, 0xFF000000);
 		builder.add(CAP_COLOR, 0xFF000000);
 		builder.add(SPOTS_COLOR, 0xFF000000);
@@ -46,32 +47,34 @@ public abstract class CustomizableToadDataTrackingMixin extends LivingEntity imp
 		if(nbt.contains(PERSISTENT_DATA_KEY, NbtElement.COMPOUND_TYPE)) {
 			NbtCompound persistentData = nbt.getCompound(PERSISTENT_DATA_KEY);
 
-			this.mqm$updateToadData(SKIN_COLOR, persistentData.getInt(SKIN_COLOR_KEY));
-			this.mqm$updateToadData(CAP_COLOR, persistentData.getInt(CAP_COLOR_KEY));
-			this.mqm$updateToadData(SPOTS_COLOR, persistentData.getInt(SPOTS_COLOR_KEY));
-			this.mqm$updateToadData(VEST_COLOR, persistentData.getInt(VEST_COLOR_KEY));
-			this.mqm$updateToadData(SHIRT_COLOR, persistentData.getBoolean(HAS_SHIRT_KEY)
+			this.mqm$updateCustomizationData(ALWAYS_USE_SKIN_COLOR, persistentData.getBoolean(ALWAYS_USE_SKIN_COLOR_KEY));
+			this.mqm$updateCustomizationData(SKIN_COLOR, persistentData.getInt(SKIN_COLOR_KEY));
+			this.mqm$updateCustomizationData(CAP_COLOR, persistentData.getInt(CAP_COLOR_KEY));
+			this.mqm$updateCustomizationData(SPOTS_COLOR, persistentData.getInt(SPOTS_COLOR_KEY));
+			this.mqm$updateCustomizationData(VEST_COLOR, persistentData.getInt(VEST_COLOR_KEY));
+			this.mqm$updateCustomizationData(SHIRT_COLOR, persistentData.getBoolean(HAS_SHIRT_KEY)
 					? OptionalInt.of(persistentData.getInt(SHIRT_COLOR_KEY))
 					: OptionalInt.empty());
-			this.mqm$updateToadData(HAS_PIGTAILS, persistentData.getBoolean(HAS_PIGTAILS_KEY));
+			this.mqm$updateCustomizationData(HAS_PIGTAILS, persistentData.getBoolean(HAS_PIGTAILS_KEY));
 		}
 		else {
 			// Decide defaults based on the player's UUID! Like how Minecraft assigns a default skin based on UUID too.
-			this.mqm$resetToadData(this.getGameProfile().getId());
+			this.mqm$resetCustomizationData(this.getGameProfile().getId());
 		}
 	}
 
 	@Inject(method = "writeCustomDataToNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;writeCustomDataToNbt(Lnet/minecraft/nbt/NbtCompound;)V", shift = At.Shift.AFTER))
 	private void writeCustomToadData(NbtCompound nbt, CallbackInfo ci) {
 		NbtCompound persistentData = new NbtCompound();
-		persistentData.putInt(SKIN_COLOR_KEY, this.mqm$getToadData(SKIN_COLOR));
-		persistentData.putInt(CAP_COLOR_KEY, this.mqm$getToadData(CAP_COLOR));
-		persistentData.putInt(SPOTS_COLOR_KEY, this.mqm$getToadData(SPOTS_COLOR));
-		persistentData.putInt(VEST_COLOR_KEY, this.mqm$getToadData(VEST_COLOR));
-		OptionalInt shirtColor = this.mqm$getToadData(SHIRT_COLOR);
+		persistentData.putBoolean(ALWAYS_USE_SKIN_COLOR_KEY, this.mqm$getCustomizationData(ALWAYS_USE_SKIN_COLOR));
+		persistentData.putInt(SKIN_COLOR_KEY, this.mqm$getCustomizationData(SKIN_COLOR));
+		persistentData.putInt(CAP_COLOR_KEY, this.mqm$getCustomizationData(CAP_COLOR));
+		persistentData.putInt(SPOTS_COLOR_KEY, this.mqm$getCustomizationData(SPOTS_COLOR));
+		persistentData.putInt(VEST_COLOR_KEY, this.mqm$getCustomizationData(VEST_COLOR));
+		OptionalInt shirtColor = this.mqm$getCustomizationData(SHIRT_COLOR);
 		persistentData.putBoolean(HAS_SHIRT_KEY, shirtColor.isPresent());
 		if(shirtColor.isPresent()) persistentData.putInt(SHIRT_COLOR_KEY, shirtColor.orElseThrow());
-		persistentData.putBoolean(HAS_PIGTAILS_KEY, this.mqm$getToadData(HAS_PIGTAILS));
+		persistentData.putBoolean(HAS_PIGTAILS_KEY, this.mqm$getCustomizationData(HAS_PIGTAILS));
 
 		nbt.put(PERSISTENT_DATA_KEY, persistentData);
 	}
@@ -82,19 +85,17 @@ public abstract class CustomizableToadDataTrackingMixin extends LivingEntity imp
 	}
 
 	@Override
-	public <T> void mqm$updateToadData(TrackedData<T> trackedData, T newValue) {
+	public <T> void mqm$updateCustomizationData(TrackedData<T> trackedData, T newValue) {
 		this.dataTracker.set(trackedData, newValue);
 	}
 
 	@Override
-	public <T> T mqm$getToadData(TrackedData<T> trackedData) {
+	public <T> T mqm$getCustomizationData(TrackedData<T> trackedData) {
 		return this.dataTracker.get(trackedData);
 	}
 
 	@Override
-	public void mqm$resetToadData(UUID uuid) {
-		int uuidHash = uuid.hashCode();
-
+	public void mqm$resetSkinToneOnly(UUID uuid) {
 		// I would ideally want to programmatically create a randomized skin tone, but that seems really hard. Instead,
 		// I'm selecting randomly from a hardcoded list of pre-selected individual tones. This is less fun because it
 		// means there aren't a trajillion different possible randomly assigned skin tones, but it's what's within my
@@ -102,7 +103,7 @@ public abstract class CustomizableToadDataTrackingMixin extends LivingEntity imp
 		// These skin tones are sourced from Minecraft's default skins, since they seem to have a pretty solid racial
 		// diversity. I was considering including Toadette and Mario's skin tones in there too, but I don't want to make
 		// lighter skin too common relative to darker skin, which 2 extra light tones might with a pool this small. :(
-		this.mqm$updateToadData(SKIN_COLOR, getArrayElement(new Integer[]{
+		this.mqm$updateCustomizationData(SKIN_COLOR, getArrayElement(new Integer[]{
 //				0xFFEDC19F, // Toadette
 //				0xFFFFDB99, // Mario
 				0xFFEFDABF, // Alex
@@ -114,11 +115,19 @@ public abstract class CustomizableToadDataTrackingMixin extends LivingEntity imp
 				0xFFB3795E, // Steve
 				0xFFF29F5F, // Sunny
 				0xFF7E5337, // Zuri
-		}, uuidHash));
-		this.mqm$updateToadData(CAP_COLOR, Colors.WHITE);
+		}, uuid.hashCode()));
+	}
 
-		int spotsColor = getArrayElement(DyeColor.values(), uuidHash).getEntityColor();
-		this.mqm$updateToadData(SPOTS_COLOR, spotsColor);
+	@Override
+	public void mqm$resetCustomizationData(UUID uuid) {
+		this.mqm$updateCustomizationData(ALWAYS_USE_SKIN_COLOR, false);
+
+		this.mqm$resetSkinToneOnly(uuid);
+
+		this.mqm$updateCustomizationData(CAP_COLOR, Colors.WHITE);
+
+		int spotsColor = getArrayElement(DyeColor.values(), uuid.hashCode()).getEntityColor();
+		this.mqm$updateCustomizationData(SPOTS_COLOR, spotsColor);
 
 		int vestColor;
 		OptionalInt shirtColor;
@@ -134,9 +143,9 @@ public abstract class CustomizableToadDataTrackingMixin extends LivingEntity imp
 			shirtColor = OptionalInt.empty();
 		}
 
-		this.mqm$updateToadData(VEST_COLOR, vestColor);
-		this.mqm$updateToadData(SHIRT_COLOR, shirtColor);
+		this.mqm$updateCustomizationData(VEST_COLOR, vestColor);
+		this.mqm$updateCustomizationData(SHIRT_COLOR, shirtColor);
 
-		this.mqm$updateToadData(HAS_PIGTAILS, uuid.getLeastSignificantBits() % 3 == 0);
+		this.mqm$updateCustomizationData(HAS_PIGTAILS, uuid.getLeastSignificantBits() % 3 == 0);
 	}
 }

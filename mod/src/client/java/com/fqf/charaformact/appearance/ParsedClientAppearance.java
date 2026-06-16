@@ -110,20 +110,21 @@ public class ParsedClientAppearance extends ParsedCommonAppearance {
 		return this.model;
 	}
 
-	// good god i cannot BELIEVE i can just get away with all these stupid horrible casts???
+	// good god i cannot BELIEVE i can just get away with all these ugly nasty casts??? the IDE hates it so much :(
 	@SuppressWarnings("unchecked")
 	public List<FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>>> makeCustomFeatures(
 			AppearanceRenderer renderer, EntityRendererFactory.Context ctx
 	) {
 		if(this.customFeatures == null) {
-			List<FeatureRenderer<AbstractClientPlayerEntity, AppearanceModel>> customFeatures = this.DEFINITION.getFeatureRenderersToAdd((FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel>) (Object) renderer, ctx);
-			ImmutableList.Builder<FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>>> builder = ImmutableList.builderWithExpectedSize(customFeatures.size());
-			for(FeatureRenderer<AbstractClientPlayerEntity, AppearanceModel> customFeature : customFeatures) {
+			ImmutableList.Builder<FeatureRenderer<AbstractClientPlayerEntity, AppearanceModel>> builder = ImmutableList.builder();
+			this.DEFINITION.accumulateCustomFeatureRenderers(builder, (FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel>) (Object) renderer, ctx);
+			this.customFeatures = (List<FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>>>) (Object) builder.build();
+			for(FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> customFeature : this.customFeatures) {
+				// oh my god we do NOT WANT TO TRANSFORM THESE!
 				((FeatureRendererWithContext) customFeature).cfa$setContext(TransformationContext.ORIGINAL);
-				builder.add((FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>>) (Object) customFeature);
 			}
-			this.customFeatures = builder.build();
 		}
+		CharaFormAct.LOGGER.info("Got custom features for {}!\n\t{}", this.ID, this.customFeatures);
 		return this.customFeatures;
 	}
 

@@ -1,5 +1,6 @@
 package com.fqf.charaformact_api.appearance;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraft.client.model.*;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.EntityRendererFactory;
@@ -7,14 +8,11 @@ import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.client.render.entity.model.EntityModelPartNames;
-import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
-
-import java.util.List;
 
 /**
  * An Appearance is essentially a playermodel that is associated with a single Character + Form intersection.
@@ -171,11 +169,12 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 	// instead, add things like that to getModelData as genuine ModelParts. You can then animate these custom parts
 	// yourself by overriding createModel with a custom model class, then animate the parts in its preActionAnimation or
 	// postActionAnimation methods.
-	default List<FeatureRenderer<AbstractClientPlayerEntity, AppearanceModel>> getFeatureRenderersToAdd(
+	default void accumulateCustomFeatureRenderers(
+			ImmutableList.Builder<FeatureRenderer<AbstractClientPlayerEntity, AppearanceModel>> builder,
 			FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel> featureRendererContext,
 			EntityRendererFactory.Context ctx
 	) {
-		return List.of();
+
 	}
 
 	// Methods for deciding where on the arm held items will render (third person).

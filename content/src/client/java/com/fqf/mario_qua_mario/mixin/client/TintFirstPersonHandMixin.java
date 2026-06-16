@@ -1,6 +1,6 @@
 package com.fqf.mario_qua_mario.mixin.client;
 
-import com.fqf.mario_qua_mario.util.CustomToadUtil;
+import com.fqf.mario_qua_mario.util.CharacterCustomizationUtil;
 import com.fqf.mario_qua_mario.util.Powers;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -18,7 +18,7 @@ public class TintFirstPersonHandMixin {
 	@WrapOperation(method = "renderArm", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/ModelPart;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;II)V"))
 	private void renderTintedArmForCustomToad(ModelPart instance, MatrixStack matrices, VertexConsumer vertices, int light, int overlay, Operation<Void> original, @Local(argsOnly = true) AbstractClientPlayerEntity player) {
 		if(player.cfa$getCfaData().hasPower(Powers.USES_TOAD_CUSTOMIZATIONS))
-			instance.render(matrices, vertices, light, overlay, ((CustomToadUtil.CustomToadEntity) player).mqm$getToadData(CustomToadUtil.SKIN_COLOR));
+			instance.render(matrices, vertices, light, overlay, ((CharacterCustomizationUtil.CustomizablePlayerEntity) player).mqm$getCustomizationData(CharacterCustomizationUtil.SKIN_COLOR));
 		else
 			original.call(instance, matrices, vertices, light, overlay);
 	}

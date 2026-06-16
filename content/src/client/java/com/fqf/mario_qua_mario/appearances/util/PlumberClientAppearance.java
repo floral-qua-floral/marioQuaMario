@@ -3,8 +3,13 @@ package com.fqf.mario_qua_mario.appearances.util;
 import com.fqf.charaformact_api.appearance.AppearanceGeometryHelper;
 import com.fqf.charaformact_api.appearance.AppearanceModel;
 import com.fqf.charaformact_api.appearance.ClientAppearanceDefinition;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.model.ModelPartData;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.render.entity.EntityRendererFactory;
+import net.minecraft.client.render.entity.feature.FeatureRenderer;
+import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.EntityModelPartNames;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
@@ -64,6 +69,15 @@ public abstract class PlumberClientAppearance implements ClientAppearanceDefinit
 	protected Vector2i getCapTopUV(AppearanceGeometryHelper helper) {
 		Vector2i brimUV = this.getCapBrimUV(helper);
 		return new Vector2i(helper.getBottomRightCorner(brimUV, this.getCapBrimSize()).x, brimUV.y);
+	}
+
+	protected String getSkinForm() {
+		return "super";
+	}
+
+	@Override
+	public void accumulateCustomFeatureRenderers(ImmutableList.Builder<FeatureRenderer<AbstractClientPlayerEntity, AppearanceModel>> builder, FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel> featureRendererContext, EntityRendererFactory.Context ctx) {
+		builder.add(CustomizableTextureLayerFeature.makeOptionalSkinFeature(featureRendererContext, this.getSkinForm(), this));
 	}
 
 	protected void makeCapStates(ModelPartData head, AppearanceGeometryHelper helper) {
