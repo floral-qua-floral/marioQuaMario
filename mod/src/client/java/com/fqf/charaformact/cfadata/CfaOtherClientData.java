@@ -30,8 +30,12 @@ public class CfaOtherClientData extends CfaPlayerData implements CfaClientDataIm
 
 	@Override
 	public boolean setForm(ParsedForm newForm, boolean isReversion, long seed) {
-		this.handlePowerTransitionSound(isReversion, newForm, seed);
-		return super.setForm(newForm, isReversion, seed);
+		boolean formChanged = super.setForm(newForm, isReversion, seed);
+		if(formChanged) {
+			this.handlePowerTransitionSound(isReversion, newForm, seed);
+			this.APPEARANCE_DATA.conditionallyFlicker();
+		}
+		return formChanged;
 	}
 
 	@Override public void setActionTransitionless(AbstractParsedAction action) {

@@ -270,7 +270,6 @@ public class CfaClientPacketHelper implements CfaClientHelperManager.ClientPacke
 		// Known issue - might not include players in other dimensions being tracked through Immersive Portals?
 		// WHO CARES!!!!!!!
 
-		// Known issue that actually matters - doesn't save playermodel? :(
 		for(PlayerEntity player : Objects.requireNonNull(MinecraftClient.getInstance().player).getWorld().getPlayers()) {
 			CfaPlayerData data = player.cfa$getCfaData();
 			if(data.isEnabled()) {

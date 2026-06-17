@@ -142,8 +142,6 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 		if(newModelAndRenderer == null) newModelAndRenderer = new Pair<>(null, null);
 		this.appearance = newModelAndRenderer.getLeft();
 		this.renderer = newModelAndRenderer.getRight();
-
-		this.conditionallyFlicker();
 	}
 
 	public void updateAction() {

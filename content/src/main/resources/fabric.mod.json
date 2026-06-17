@@ -97,7 +97,8 @@
 			"com.fqf.mario_qua_mario.forms.Small",
 			"com.fqf.mario_qua_mario.forms.Super",
 			"com.fqf.mario_qua_mario.forms.Fire",
-			"com.fqf.mario_qua_mario.forms.Raccoon"
+			"com.fqf.mario_qua_mario.forms.Raccoon",
+			"com.fqf.mario_qua_mario.forms.Mini"
 		],
 
 		"cfa-characters": [
@@ -112,11 +113,13 @@
 			"com.fqf.mario_qua_mario.appearances.mario.SuperMarioCommonAppearance",
 			"com.fqf.mario_qua_mario.appearances.mario.FireMarioCommonAppearance",
 			"com.fqf.mario_qua_mario.appearances.mario.RaccoonMarioCommonAppearance",
+			"com.fqf.mario_qua_mario.appearances.mario.MiniMarioCommonAppearance",
 
 			"com.fqf.mario_qua_mario.appearances.luigi.SmallLuigiCommonAppearance",
 			"com.fqf.mario_qua_mario.appearances.luigi.SuperLuigiCommonAppearance",
 			"com.fqf.mario_qua_mario.appearances.luigi.FireLuigiCommonAppearance",
 			"com.fqf.mario_qua_mario.appearances.luigi.FoxLuigiCommonAppearance",
+			"com.fqf.mario_qua_mario.appearances.luigi.MiniLuigiCommonAppearance",
 
 			"com.fqf.mario_qua_mario.appearances.toads.toadette.SmallToadetteCommonAppearance",
 			"com.fqf.mario_qua_mario.appearances.toads.toadette.SuperToadetteCommonAppearance",
@@ -134,11 +137,13 @@
 			"com.fqf.mario_qua_mario.appearances.mario.SuperMarioClientAppearance",
 			"com.fqf.mario_qua_mario.appearances.mario.FireMarioClientAppearance",
 			"com.fqf.mario_qua_mario.appearances.mario.RaccoonMarioClientAppearance",
+			"com.fqf.mario_qua_mario.appearances.mario.MiniMarioClientAppearance",
 
 			"com.fqf.mario_qua_mario.appearances.luigi.SmallLuigiClientAppearance",
 			"com.fqf.mario_qua_mario.appearances.luigi.SuperLuigiClientAppearance",
 			"com.fqf.mario_qua_mario.appearances.luigi.FireLuigiClientAppearance",
 			"com.fqf.mario_qua_mario.appearances.luigi.FoxLuigiClientAppearance",
+			"com.fqf.mario_qua_mario.appearances.luigi.MiniLuigiClientAppearance",
 
 			"com.fqf.mario_qua_mario.appearances.toads.toadette.SmallToadetteClientAppearance",
 			"com.fqf.mario_qua_mario.appearances.toads.toadette.SuperToadetteClientAppearance",

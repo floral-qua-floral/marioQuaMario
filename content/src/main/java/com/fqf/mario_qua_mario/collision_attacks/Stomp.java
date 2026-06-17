@@ -8,6 +8,7 @@ import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.CfaTags;
+import com.fqf.charaformact_api.util.StatCategory;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.BonkAir;
 import com.fqf.mario_qua_mario.actions.airborne.StompBounce;
@@ -123,7 +124,8 @@ public class Stomp implements CollisionAttackTypeDefinition {
 	@Override
 	public float calculateDamage(CfaData data, ItemStack equipment, float equipmentArmor, float equipmentToughness) {
 		int pulverizingLevel = Stomp.getPulverizingLevel(equipment, data);
-		return ((float) BASE_DAMAGE.get(data)) + equipmentArmor * 2.25F + pulverizingLevel * 0.5F + (pulverizingLevel > 0 ? 0.5F : 0);
+		float pulverizingDamage = pulverizingLevel * 0.5F + (pulverizingLevel > 0 ? 0.5F : 0);
+		return (float) (new CfaStat(4.5F + equipmentArmor * 2.25F, DAMAGE, COLLISION_ATTACK).get(data)) + pulverizingDamage;
 	}
 
 	@Override

@@ -6,6 +6,7 @@
     "CoinSpinMixin",
     "CustomizableToadDataTrackingMixin",
     "DropCoinWithExperienceMixin",
+    "EntityStruckByLightningMixin",
     "PersistentProjectileMixin",
     "PlayerStruckByLightningMixin",
     "TridentEntityMixin",

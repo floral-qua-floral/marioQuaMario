@@ -46,4 +46,9 @@ public class AppearanceRenderer extends PlayerEntityRenderer {
 	public void addCapturedFeature(FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> feature) {
 		this.addFeature(feature);
 	}
+
+	@Override
+	protected float getShadowRadius(AbstractClientPlayerEntity livingEntity) {
+		return super.getShadowRadius(livingEntity) * livingEntity.cfa$getCfaData().getHorizontalScale();
+	}
 }

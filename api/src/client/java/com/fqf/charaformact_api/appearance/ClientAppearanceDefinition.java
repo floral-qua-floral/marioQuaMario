@@ -310,7 +310,7 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 		// Applies to the shoulder piece of a chestplate.
 		Vector3i armSize = this.getArmSize();
 		TransformationInstructions base = helper.getArmorTransformation(
-				armSize, new Vector3i(4, 12, 4), 2, 0.25F);
+				armSize, new Vector3i(4, 12, 4), 1, 0.25F);
 
 		return base.offset(0, Math.max(0, armSize.y / 6F - 2), 0);
 	}
@@ -323,12 +323,12 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 	}
 	default TransformationInstructions getBootsTransformation(AppearanceFeatureHelper helper) {
 		return helper.getArmorTransformation(
-				this.getLegSize(), new Vector3i(4, 12, 4), 2, 0.3F)
+				this.getLegSize(), new Vector3i(4, 12, 4), 1, 0.3F)
 				.flip(this.getLegSize(), 12);
 	}
 	default TransformationInstructions getChaussesTransformation(AppearanceFeatureHelper helper) {
 		// Chausses are the part of the leggings that guards the legs.
-		return helper.getArmorTransformation(this.getLegSize(), new Vector3i(4, 12, 4), 2, 0.25F);
+		return helper.getArmorTransformation(this.getLegSize(), new Vector3i(4, 12, 4), 1, 0.25F);
 	}
 	default TransformationInstructions getUnknownLegsFeatureTransformation(AppearanceFeatureHelper helper) {
 		return helper.getStretchingTransformation(this.getLegSize(), new Vector3i(4, 12, 4));

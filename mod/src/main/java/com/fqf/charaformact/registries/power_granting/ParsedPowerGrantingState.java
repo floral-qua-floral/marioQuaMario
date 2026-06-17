@@ -13,6 +13,7 @@ import java.util.Set;
 public class ParsedPowerGrantingState extends ParsedCfaState {
 	public final float WIDTH_FACTOR;
 	public final float HEIGHT_FACTOR;
+	public final float EYE_HEIGHT_FACTOR;
 	public final float ANIMATION_HORIZONTAL_SCALE;
 	public final float ANIMATION_VERTICAL_SCALE;
 
@@ -31,6 +32,7 @@ public class ParsedPowerGrantingState extends ParsedCfaState {
 
 		this.WIDTH_FACTOR = definition.getWidthFactor();
 		this.HEIGHT_FACTOR = definition.getHeightFactor();
+		this.EYE_HEIGHT_FACTOR = definition.getEyeHeightFactor();
 		this.ANIMATION_HORIZONTAL_SCALE = definition.getAnimationHorizontalScale();
 		this.ANIMATION_VERTICAL_SCALE = definition.getAnimationVerticalScale();
 

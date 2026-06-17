@@ -143,6 +143,12 @@
 			"mario_qua_mario:sfx/form/fireball_wall"
 		]
 	},
+	"sfx.form.mini_empower": {
+		"subtitle": "subtitles.mario_qua_mario.form.mini_empower",
+		"sounds": [
+			"mario_qua_mario:sfx/form/mini_empower"
+		]
+	},
 	"sfx.form.tail_empower": {
 		"subtitle": "subtitles.mario_qua_mario.form.tail_empower",
 		"sounds": [

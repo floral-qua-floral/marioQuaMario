@@ -216,7 +216,7 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 
 			this.horizontalScale = this.getForm().WIDTH_FACTOR * this.getCharacter().WIDTH_FACTOR;
 			this.verticalScale = this.getForm().HEIGHT_FACTOR * this.getCharacter().HEIGHT_FACTOR;
-			this.eyeHeightScale = this.getForm().HEIGHT_FACTOR * this.getCharacter().EYE_HEIGHT_FACTOR;
+			this.eyeHeightScale = this.getForm().EYE_HEIGHT_FACTOR * this.getCharacter().EYE_HEIGHT_FACTOR;
 			this.horizontalAnimationScale = this.getForm().ANIMATION_HORIZONTAL_SCALE * this.getCharacter().ANIMATION_HORIZONTAL_SCALE;
 			this.verticalAnimationScale = this.getForm().ANIMATION_VERTICAL_SCALE * this.getCharacter().ANIMATION_VERTICAL_SCALE;
 		}

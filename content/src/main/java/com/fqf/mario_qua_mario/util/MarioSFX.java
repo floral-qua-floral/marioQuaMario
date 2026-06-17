@@ -33,6 +33,7 @@ public class MarioSFX {
 	public static final SoundEvent FIREBALL = makeFormSound("fireball");
 	public static final SoundEvent FIREBALL_ENEMY = makeFormSound("fireball_enemy");
 	public static final SoundEvent FIREBALL_WALL = makeFormSound("fireball_wall");
+	public static final SoundEvent MINI_EMPOWER = makeFormSound("mini_empower");
 	public static final SoundEvent TAIL_EMPOWER = makeFormSound("tail_empower");
 	public static final SoundEvent TAIL_FLY = makeFormSound("tail_fly");
 	public static final SoundEvent TAIL_WHIP = makeFormSound("tail_whip");

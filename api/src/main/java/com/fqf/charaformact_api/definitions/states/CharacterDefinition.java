@@ -18,8 +18,6 @@ public interface CharacterDefinition extends StatAlteringStateDefinition {
 	@NotNull SoundEvent getJumpSound();
 	@NotNull Identifier getMountedAction(Entity vehicle);
 
-	float getEyeHeightFactor();
-
 	default float modifyIncomingDamage(CfaAuthoritativeData data, DamageSource source, float amount) {
 		return amount;
 	}

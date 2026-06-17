@@ -10,6 +10,9 @@ import java.util.Set;
 public interface StatAlteringStateDefinition extends CfaStateDefinition {
 	float getWidthFactor();
 	float getHeightFactor();
+	default float getEyeHeightFactor() {
+		return 1;
+	}
 	float getAnimationHorizontalScale();
 	float getAnimationVerticalScale();
 
