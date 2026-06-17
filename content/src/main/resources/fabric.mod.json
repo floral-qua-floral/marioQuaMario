@@ -125,11 +125,13 @@
 			"com.fqf.mario_qua_mario.appearances.toads.toadette.SuperToadetteCommonAppearance",
 			"com.fqf.mario_qua_mario.appearances.toads.toadette.FireToadetteCommonAppearance",
 			"com.fqf.mario_qua_mario.appearances.toads.toadette.RaccoonToadetteCommonAppearance",
+			"com.fqf.mario_qua_mario.appearances.toads.toadette.MiniToadetteCommonAppearance",
 
 			"com.fqf.mario_qua_mario.appearances.toads.custom.SmallCustomToadCommonAppearance",
 			"com.fqf.mario_qua_mario.appearances.toads.custom.SuperCustomToadCommonAppearance",
 			"com.fqf.mario_qua_mario.appearances.toads.custom.FireCustomToadCommonAppearance",
-			"com.fqf.mario_qua_mario.appearances.toads.custom.RaccoonCustomToadCommonAppearance"
+			"com.fqf.mario_qua_mario.appearances.toads.custom.RaccoonCustomToadCommonAppearance",
+			"com.fqf.mario_qua_mario.appearances.toads.custom.MiniCustomToadCommonAppearance"
 		],
 
 		"cfa-client-appearances": [
@@ -149,11 +151,13 @@
 			"com.fqf.mario_qua_mario.appearances.toads.toadette.SuperToadetteClientAppearance",
 			"com.fqf.mario_qua_mario.appearances.toads.toadette.FireToadetteClientAppearance",
 			"com.fqf.mario_qua_mario.appearances.toads.toadette.RaccoonToadetteClientAppearance",
+			"com.fqf.mario_qua_mario.appearances.toads.toadette.MiniToadetteClientAppearance",
 
 			"com.fqf.mario_qua_mario.appearances.toads.custom.SmallCustomToadClientAppearance",
 			"com.fqf.mario_qua_mario.appearances.toads.custom.SuperCustomToadClientAppearance",
 			"com.fqf.mario_qua_mario.appearances.toads.custom.FireCustomToadClientAppearance",
-			"com.fqf.mario_qua_mario.appearances.toads.custom.RaccoonCustomToadClientAppearance"
+			"com.fqf.mario_qua_mario.appearances.toads.custom.RaccoonCustomToadClientAppearance",
+			"com.fqf.mario_qua_mario.appearances.toads.custom.MiniCustomToadClientAppearance"
 		],
 
 		"cfa-voicelines": [

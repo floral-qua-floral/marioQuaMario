@@ -11,7 +11,7 @@ public interface StatAlteringStateDefinition extends CfaStateDefinition {
 	float getWidthFactor();
 	float getHeightFactor();
 	default float getEyeHeightFactor() {
-		return 1;
+		return this.getHeightFactor();
 	}
 	float getAnimationHorizontalScale();
 	float getAnimationVerticalScale();

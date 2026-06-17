@@ -59,6 +59,11 @@ public abstract class AbstractToadClientAppearance extends AbstractToadCommonApp
 		return new Vector3f(0, -this.getHeadSize().y + 1.2F, 0.1F);
 	}
 
+	public Vector3f getPigtailTopPivot() {
+		Vector3i bulbSize = this.getCapBulbSize();
+		return new Vector3f(bulbSize.x / 2F - 1, -1, bulbSize.z / 2F - 1);
+	}
+
 	public Vector3f getBulbRotation() {
 		return new Vector3f(6.0213857F, 0, 0);
 	}
@@ -81,7 +86,7 @@ public abstract class AbstractToadClientAppearance extends AbstractToadCommonApp
 				bulb, isLeft,
 				isLeft ? LEFT_PIGTAIL_TOP : RIGHT_PIGTAIL_TOP,
 				isLeft ? LEFT_PIGTAIL_TOP_SPOTS : RIGHT_PIGTAIL_TOP_SPOTS,
-				new Vector3f(bulbSize.x / 2F - 1, -1, bulbSize.z / 2F - 1), // pivot
+				this.getPigtailTopPivot(), // pivot
 				new Vector3f(topSize.x / -2F, 0, topSize.z / -2F + 0.5F), // offset
 				0.5F, // mirrorable offset
 				new Vector3f(0.2617994F, 0, 0), // rotation
