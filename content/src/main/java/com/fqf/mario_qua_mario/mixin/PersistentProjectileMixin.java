@@ -27,7 +27,8 @@ public abstract class PersistentProjectileMixin extends ProjectileEntity impleme
 
 	@Shadow public abstract void setVelocity(double x, double y, double z, float power, float uncertainty);
 
-	@Unique private @Nullable Direction stickDirection;
+	@Shadow protected int inGroundTime;
+	@Unique private @Nullable Direction stickDirection = Direction.UP;
 	@Unique private @NotNull Vec3d groundNormal = Vec3d.ZERO;
 
 	public PersistentProjectileMixin(EntityType<? extends ProjectileEntity> entityType, World world) {
@@ -67,7 +68,7 @@ public abstract class PersistentProjectileMixin extends ProjectileEntity impleme
 
 	@Inject(method = "fall", at = @At("HEAD"))
 	private void clearGroundInformationOnDislodge(CallbackInfo ci) {
-		this.stickDirection = null;
+		this.stickDirection = Direction.UP;
 		this.groundNormal = Vec3d.ZERO;
 	}
 }

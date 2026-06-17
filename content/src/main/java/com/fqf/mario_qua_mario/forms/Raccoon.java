@@ -139,9 +139,11 @@ public class Raccoon implements FormDefinition {
 			Vec3d aimVector;
 			if(isForward) aimVector = // Aim in Mario's look direction
 					Vec3d.fromPolar(mario.getPitch(), mario.getYaw());
-			else aimVector = // Aim in
-					mario.getPos().add(0, mario.getHeight() * 0.25, 0)
-							.subtract(reflectTarget.getPos().add(0, reflectTarget.getHeight(), 0));
+			else { // Aim outwards from Mario's center
+				Vec3d marioPos = mario.getPos().add(0, mario.getHeight() * 0.25, 0);
+				Vec3d targetPos = reflectTarget.getPos().add(0, reflectTarget.getHeight(), 0);
+				aimVector = targetPos.subtract(marioPos).normalize();
+			}
 			Vec3d newVelocity;
 			if(reflectTarget instanceof PersistentProjectileEntity persistentProjectileTarget && ((PersistentReflectable) persistentProjectileTarget).mqm$isInGround()) {
 				// Reflect a trident, arrow, etc that's lodged in a block

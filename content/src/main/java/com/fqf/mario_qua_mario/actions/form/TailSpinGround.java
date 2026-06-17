@@ -114,8 +114,10 @@ public class TailSpinGround implements GroundedActionDefinition {
 
 			DamageSource source = mario.getDamageSources().playerAttack(mario);
 			for(Entity strikeTarget : strikeTargets.build()) {
-				if(!Raccoon.tryReflect(strikeTarget, mario, false))
+				if(!Raccoon.tryReflect(strikeTarget, mario, false)) {
 					strikeTarget.damage(source, Raccoon.TAIL_STRIKE_DAMAGE);
+					mario.onAttacking(strikeTarget);
+				}
 			}
 		}
 	}
