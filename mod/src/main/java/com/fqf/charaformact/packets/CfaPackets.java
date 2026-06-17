@@ -2,6 +2,7 @@ package com.fqf.charaformact.packets;
 
 import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.registries.ParsedCollisionAttack;
+import com.fqf.charaformact.util.CfaGamerules;
 import com.fqf.charaformact_api.interfaces.CollisionAttackResult;
 import com.fqf.charaformact.registries.RegistryManager;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -38,7 +39,7 @@ public class CfaPackets {
 		CfaDataPackets.TransmitWallYawS2CPayload.register();
 
 		SyncUseCharacterStatsS2CPayload.register();
-		SyncAdventureGamerulesS2C.register();
+		SyncCfaGamerulesS2C.register();
 
 		CollisionAttackS2CPayload.register();
 		CollisionAttackDragonPartAffectAttackerS2CPayload.register();
@@ -56,26 +57,23 @@ public class CfaPackets {
 		BappingPackets.BapBlockS2CPayload.register();
 	}
 
-	public static void syncUseCharacterStatsS2C(MinecraftServer server, boolean shouldUse) {
-		CustomPayload packet = new SyncUseCharacterStatsS2CPayload(shouldUse);
+	private static CustomPayload makeSyncGamerulesPacket() {
+		return new SyncCfaGamerulesS2C(
+				CfaGamerules.useCharacterStats,
+				CfaGamerules.restrictAdventureBapping,
+				CfaGamerules.adventurePlayersBreakBrittleBlocks
+		);
+	}
+
+	public static void syncGamerulesS2C(MinecraftServer server) {
+		CustomPayload packet = makeSyncGamerulesPacket();
 		for(ServerPlayerEntity player : PlayerLookup.all(server)) {
 			ServerPlayNetworking.send(player, packet);
 		}
 	}
 
-	public static void syncUseCharacterStatsS2C(ServerPlayerEntity player, boolean shouldUse) {
-		ServerPlayNetworking.send(player, new SyncUseCharacterStatsS2CPayload(shouldUse));
-	}
-
-	public static void syncRestrictAdventureBapsS2C(MinecraftServer server, boolean isRestricted, boolean canBreakBrittle) {
-		CustomPayload packet = new SyncAdventureGamerulesS2C(isRestricted, canBreakBrittle);
-		for(ServerPlayerEntity player : PlayerLookup.all(server)) {
-			ServerPlayNetworking.send(player, packet);
-		}
-	}
-
-	public static void syncRestrictAdventureBapsS2C(ServerPlayerEntity player, boolean isRestricted, boolean canBreakBrittle) {
-		ServerPlayNetworking.send(player, new SyncAdventureGamerulesS2C(isRestricted, canBreakBrittle));
+	public static void syncGamerulesS2C(ServerPlayerEntity player) {
+		ServerPlayNetworking.send(player, makeSyncGamerulesPacket());
 	}
 
 	public static void collisionAttackS2C(ServerPlayerEntity attacker, ParsedCollisionAttack collisionAttack, Entity target, CollisionAttackResult.ExecutableResult result, boolean affectAttacker) {
@@ -146,12 +144,13 @@ public class CfaPackets {
 		}
 	}
 
-	protected record SyncAdventureGamerulesS2C(boolean isRestricted, boolean canBreakBrittle) implements CustomPayload {
-		public static final Id<SyncAdventureGamerulesS2C> ID = CfaPackets.makeID("sync_restrict_adventure_bapping_s2c");
-		public static final PacketCodec<RegistryByteBuf, SyncAdventureGamerulesS2C> CODEC = PacketCodec.tuple(
-				PacketCodecs.BOOL, SyncAdventureGamerulesS2C::isRestricted,
-				PacketCodecs.BOOL, SyncAdventureGamerulesS2C::canBreakBrittle,
-				SyncAdventureGamerulesS2C::new
+	protected record SyncCfaGamerulesS2C(boolean useCharacterStats, boolean isRestricted, boolean canBreakBrittle) implements CustomPayload {
+		public static final Id<SyncCfaGamerulesS2C> ID = CfaPackets.makeID("sync_restrict_adventure_bapping_s2c");
+		public static final PacketCodec<RegistryByteBuf, SyncCfaGamerulesS2C> CODEC = PacketCodec.tuple(
+				PacketCodecs.BOOL, SyncCfaGamerulesS2C::isRestricted,
+				PacketCodecs.BOOL, SyncCfaGamerulesS2C::isRestricted,
+				PacketCodecs.BOOL, SyncCfaGamerulesS2C::canBreakBrittle,
+				SyncCfaGamerulesS2C::new
 		);
 
 		@Override public Id<? extends CustomPayload> getId() {

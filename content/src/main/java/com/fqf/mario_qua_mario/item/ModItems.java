@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.item;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.forms.Mini;
 import com.fqf.mario_qua_mario.item.custom.CoinItem;
 import com.fqf.mario_qua_mario.item.custom.PowerUpItem;
 import com.fqf.mario_qua_mario.forms.Fire;
@@ -29,10 +30,13 @@ public class ModItems {
 	public static final Item SUPER_MUSHROOM = registerItem("super_mushroom", new PowerUpItem(new Item.Settings().maxCount(4).food(
 			new FoodComponent.Builder().nutrition(6).saturationModifier(0.7F).alwaysEdible().snack().build()
 	), Super.ID, 1));
+	public static final Item MINI_MUSHROOM = registerItem("mini_mushroom", new PowerUpItem(new Item.Settings().maxCount(16).food(
+			new FoodComponent.Builder().nutrition(3).saturationModifier(0.7F).alwaysEdible().snack().build()
+	), Mini.ID, 3000));
 
 	public static final Item COIN = registerItem("coin", new CoinItem((new Item.Settings()).rarity(Rarity.UNCOMMON)
 			.component(DataComponentTypes.LORE, new LoreComponent(List.of(
-					styled(Text.translatable("item.mario_qua_mario.coin.lore1", Text.keybind("key.use").formatted(Formatting.BOLD))),
+					styled(Text.translatable("item.mario_qua_mario.coin.lore1", 8, Text.keybind("key.use").formatted(Formatting.BOLD))),
 					styled(Text.translatable("item.mario_qua_mario.coin.lore2"))
 			)))
 	));
@@ -55,6 +59,7 @@ public class ModItems {
 			fabricItemGroupEntries.add(SUPER_MUSHROOM);
 			fabricItemGroupEntries.add(FIRE_FLOWER);
 			fabricItemGroupEntries.add(SUPER_LEAF);
+			fabricItemGroupEntries.add(MINI_MUSHROOM);
 		});
 	}
 }

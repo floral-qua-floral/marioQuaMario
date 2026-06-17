@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "CoinSpinMixin",
+    "PlayerInventoryStruckByLightningMixin",
     "CustomizableToadDataTrackingMixin",
     "DropCoinWithExperienceMixin",
     "EntityStruckByLightningMixin",

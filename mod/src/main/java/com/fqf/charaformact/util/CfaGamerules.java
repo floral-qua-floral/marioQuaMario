@@ -3,11 +3,11 @@ package com.fqf.charaformact.util;
 import com.fqf.charaformact.packets.CfaPackets;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.GameRules;
 
 public class CfaGamerules {
 	public static boolean useCharacterStats;
+	public static int coinsForPowerUp;
 	public static boolean restrictAdventureBapping;
 	public static boolean adventurePlayersBreakBrittleBlocks;
 
@@ -20,7 +20,7 @@ public class CfaGamerules {
 			GameRuleRegistry.register("cfaUseCharacterStatModifiers", GameRules.Category.PLAYER,
 					GameRuleFactory.createBooleanRule(true, (server, booleanRule) -> {
 						useCharacterStats = booleanRule.get();
-						CfaPackets.syncUseCharacterStatsS2C(server, useCharacterStats);
+						CfaPackets.syncGamerulesS2C(server);
 					})
 			);
 
@@ -28,7 +28,7 @@ public class CfaGamerules {
 			GameRuleRegistry.register("cfaRestrictBapsInAdventureMode", GameRules.Category.PLAYER,
 					GameRuleFactory.createBooleanRule(true, (server, booleanRule) -> {
 						restrictAdventureBapping = booleanRule.get();
-						syncAdventureRules(server);
+						CfaPackets.syncGamerulesS2C(server);
 					})
 			);
 
@@ -36,7 +36,7 @@ public class CfaGamerules {
 			GameRuleRegistry.register("cfaBreakBrittleBlocksInAdventureMode", GameRules.Category.PLAYER,
 					GameRuleFactory.createBooleanRule(false, (server, booleanRule) -> {
 						adventurePlayersBreakBrittleBlocks = booleanRule.get();
-						syncAdventureRules(server);
+						CfaPackets.syncGamerulesS2C(server);
 					})
 			);
 
@@ -60,10 +60,6 @@ public class CfaGamerules {
 	public static final GameRules.Key<GameRules.BooleanRule> REVERT_TO_SMALL =
 			GameRuleRegistry.register("cfaAlwaysRevertToWeakestForm", GameRules.Category.PLAYER,
 					GameRuleFactory.createBooleanRule(false));
-
-	private static void syncAdventureRules(MinecraftServer server) {
-		CfaPackets.syncRestrictAdventureBapsS2C(server, restrictAdventureBapping, adventurePlayersBreakBrittleBlocks);
-	}
 
 	public static void register() {
 

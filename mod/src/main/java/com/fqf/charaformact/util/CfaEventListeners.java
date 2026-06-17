@@ -59,8 +59,7 @@ public class CfaEventListeners {
 		});
 
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-			CfaPackets.syncUseCharacterStatsS2C(handler.player, CfaGamerules.useCharacterStats);
-			CfaPackets.syncRestrictAdventureBapsS2C(handler.player, CfaGamerules.restrictAdventureBapping, CfaGamerules.adventurePlayersBreakBrittleBlocks);
+			CfaPackets.syncGamerulesS2C(handler.player);
 			handler.player.cfa$getCfaData().initialApply();
 		});
 

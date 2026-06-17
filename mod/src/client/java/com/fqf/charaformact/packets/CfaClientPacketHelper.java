@@ -36,8 +36,9 @@ public class CfaClientPacketHelper implements CfaClientHelperManager.ClientPacke
 				CfaGamerules.useCharacterStats = payload.shouldUse()
 		);
 
-		// SyncAdventureGamerulesS2C Receiver
-		ClientPlayNetworking.registerGlobalReceiver(CfaPackets.SyncAdventureGamerulesS2C.ID, (payload, context) -> {
+		// SyncCfaGamerulesS2C Receiver
+		ClientPlayNetworking.registerGlobalReceiver(CfaPackets.SyncCfaGamerulesS2C.ID, (payload, context) -> {
+			CfaGamerules.useCharacterStats = payload.useCharacterStats();
 			CfaGamerules.restrictAdventureBapping = payload.isRestricted();
 			CfaGamerules.adventurePlayersBreakBrittleBlocks = payload.canBreakBrittle();
 		});

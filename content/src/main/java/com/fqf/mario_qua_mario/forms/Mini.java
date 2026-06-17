@@ -77,7 +77,7 @@ public class Mini implements FormDefinition {
 				new StatModifier(Set.of(StatCategory.JUMPING_GRAVITY), 0.375),
 				new StatModifier(Set.of(StatCategory.JUMP_VELOCITY), 0.7),
 
-				new StatModifier(Set.of(StatCategory.COLLISION_ATTACK, StatCategory.DAMAGE), (base, categories) -> Math.max(0, base * 0.5 - 3))
+				new StatModifier(Set.of(StatCategory.COLLISION_ATTACK, StatCategory.DAMAGE), (base, categories) -> base * 0.5 - 3)
 		);
 	}
 

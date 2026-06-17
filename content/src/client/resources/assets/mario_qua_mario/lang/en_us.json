@@ -36,11 +36,12 @@
   "gamerule.mqmGroundPoundSolidEntityDamageMultiplier": "Damage multiplier for hitting solid entities with Ground Pound",
 
   "item.mario_qua_mario.coin": "Gold Coin",
-  "item.mario_qua_mario.coin.lore1": "Use 8 with %s",
+  "item.mario_qua_mario.coin.lore1": "Use %d with %s",
   "item.mario_qua_mario.coin.lore2": "for a random power-up",
   "item.mario_qua_mario.super_mushroom": "Super Mushroom",
   "item.mario_qua_mario.fire_flower": "Fire Flower",
   "item.mario_qua_mario.super_leaf": "Super Leaf",
+  "item.mario_qua_mario.mini_mushroom": "Mini Mushroom",
 
   "death.attack.marioStomp": "%s was stomped by %s",
   "death.attack.marioStomp.item": "%s was stomped by %s using %s",
