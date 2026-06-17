@@ -47,7 +47,7 @@ public class CharacterCustomizationCommand {
 					.then(literal("set")
 							.then(makeAdvancedColorAssignmentBranch(
 									"skin",
-									DefaultSkinTone.values(), DefaultSkinTone::toString, DefaultSkinTone::getARBG,
+									DefaultSkinTone.values(), DefaultSkinTone::getName, DefaultSkinTone::getARBG,
 									SKIN_COLOR
 							))
 							.then(makeAdvancedColorAssignmentBranch("cap", CAP_COLOR))

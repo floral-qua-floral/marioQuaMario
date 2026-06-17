@@ -5,6 +5,7 @@ import java.util.Locale;
 public enum DefaultSkinTone {
 	MARIO(0xFFFFDB99),
 	TOADETTE(0xFFEDC19F),
+
 	ALEX(0xFFEFDABF),
 	ARI(0xFFF9A786),
 	EFE(0xFFAB724C),
@@ -13,7 +14,11 @@ public enum DefaultSkinTone {
 	NOOR(0xFFB9674A),
 	STEVE(0xFFB3795E),
 	SUNNY(0xFFF29F5F),
-	ZURI(0xFF7E5337);
+	ZURI(0xFF7E5337),
+
+	VILLAGER(0xFFBE886C),
+	ILLAGER(0xFF959B9B),
+	ZOMBIE(0xFF6D955B);
 
 	public static final DefaultSkinTone[] AVAILABLE_RANDOMLY = new DefaultSkinTone[]{
 			ALEX, ARI, EFE, KAI, MAKENA,
