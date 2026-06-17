@@ -372,8 +372,8 @@ public class Raccoon implements FormDefinition {
 				posture.TORSO.pitch += factor * 42;
 
 				helper.asymmetricallyAnimate(posture.RIGHT_ARM, posture.LEFT_ARM, (arrangement, isLeft, sideFactor) -> {
-					arrangement.addPos(0, MathHelper.lerp(factor, 2, 4), MathHelper.lerp(factor, 2, 4));
-					arrangement.pitch -= MathHelper.lerp(factor, 16, 90);
+					arrangement.addPos(0, factor * 4, factor * 4);
+					arrangement.pitch -= MathHelper.lerp(factor, 8, 90);
 				});
 
 				helper.asymmetricallyAnimate(posture.RIGHT_LEG, posture.LEFT_LEG, (arrangement, isLeft, sideFactor) -> {
@@ -383,7 +383,7 @@ public class Raccoon implements FormDefinition {
 
 				if(posture.TAIL != null) {
 					posture.TAIL.setAngles(
-							-posture.TORSO.pitch - helper.interpolateKeyframes(progress * 2, 0, MathHelper.clamp(data.getPlayer().getPitch() - 30, -80, 75), 20),
+							helper.interpolateKeyframes(progress * 2, posture.TAIL.pitch, -posture.TORSO.pitch - MathHelper.clamp(data.getPlayer().getPitch() - 30, -80, 75), posture.TAIL.pitch),
 							helper.interpolateKeyframes(progress * 2, 0, 85, 0),
 							0
 					);

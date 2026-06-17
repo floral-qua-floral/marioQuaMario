@@ -20,7 +20,7 @@ public class DebugSpinYaw extends Debug {
 	@Override public @Nullable AnimationDefinition getAnimation() {
 		return AnimationDefinition.of(
 				AnimationFlag.NO_SWING_LIMBS,
-				(arrangement, data, animationTime, helper) -> arrangement.yaw = MathHelper.sin(animationTime / 4F) * 35,
+				(arrangement, data, animationTime, helper) -> arrangement.yaw = MathHelper.sin(animationTime / 2F) * 45,
 				(posture, data, animationTime, helper) -> Debug.tPose(posture)
 		);
 	}

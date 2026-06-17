@@ -35,6 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
+import static net.minecraft.util.math.MathHelper.DEGREES_PER_RADIAN;
 import static net.minecraft.util.math.MathHelper.HALF_PI;
 
 public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingData & CfaClientDataImpl> {
@@ -236,17 +237,29 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 	}
 
 	private static final float ALMOST_HALF_PI = 0.99F * HALF_PI;
-	private static final float MAX_HEAD_YAW = HALF_PI * 0.66F;
+	private static final float MAX_HEAD_YAW_RADIANS = HALF_PI * 0.66F;
+
+	public static float counterRotateYaw(float headYaw, Arrangement againstArrangement) {
+		return MathHelper.clamp(AdvancedArrangement.wrapRadians(headYaw + againstArrangement.yaw), -MAX_HEAD_YAW_RADIANS, MAX_HEAD_YAW_RADIANS);
+	}
+	public static float counterRotatePitch(float headPitch, Arrangement againstArrangement) {
+		return MathHelper.clamp(AdvancedArrangement.wrapRadians(headPitch + againstArrangement.pitch), -ALMOST_HALF_PI, ALMOST_HALF_PI);
+	}
+
 	public float counterRotateHead(ModelPart head, float assigningPitch) {
-		this.originalHeadPitch = head.pitch;
+		// Note: The counter-rotation applied here gets undone before rendering IF we're in an Interpolated action.
+		// However, it's still necessary to do it here, because the rotation applied here does still affect some
+		// vanilla animations! Particularly aiming animations - bow, crossbow, spyglass. So we need to do this logic
+		// always!
+		this.originalHeadPitch = assigningPitch;
 		this.originalHeadYaw = head.yaw;
 
 		ActiveAnimation currentAnimation = this.getCurrentAnimation();
 		if(currentAnimation != null && currentAnimation.ANIMATION.FLAGS.contains(AnimationFlag.NO_HEAD_COUNTERROTATION))
 			return assigningPitch;
 
-		head.yaw = MathHelper.clamp(AdvancedArrangement.wrapRadians(head.yaw + this.thisFrameModelArrangement.yaw), -MAX_HEAD_YAW, MAX_HEAD_YAW);
-		return MathHelper.clamp(AdvancedArrangement.wrapRadians(assigningPitch + this.thisFrameModelArrangement.pitch), -ALMOST_HALF_PI, ALMOST_HALF_PI);
+		head.yaw = counterRotateYaw(head.yaw, this.thisFrameModelArrangement);
+		return counterRotatePitch(assigningPitch, this.thisFrameModelArrangement);
 	}
 
 	public void animate(PlayerEntityModel<?> model, float tickDelta) {
@@ -256,12 +269,9 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 				return;
 			}
 
-			// We have to undo head counter-rotation then redo it later, otherwise the counter-rotation will be
-			// mucked around with a little by Posture lerping, which will desynchronize it from playermodel arrangement.
-			float headPitchAdjustment = model.head.pitch - this.originalHeadPitch;
-			float headYawAdjustment = model.head.yaw - this.originalHeadYaw;
-			model.head.pitch = this.originalHeadPitch;
-			model.head.yaw = this.originalHeadYaw;
+
+//			model.head.pitch = this.counterRotatePitch(model.head.pitch);
+//			model.head.yaw = this.counterRotateYaw(model.head.yaw);
 
 			boolean rightArmBusy = isArmBusy(model.rightArmPose, model.leftArmPose);
 			boolean leftArmBusy = isArmBusy(model.leftArmPose, model.rightArmPose);
@@ -284,6 +294,12 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 			boolean hasInterpolated;
 			ActiveAnimation currentAnimation = this.getCurrentAnimation();
 			if(currentAnimation != null) {
+				if(currentAnimation instanceof ActiveAnimation.Interpolated) {
+					// If the current animation is interpolating, then it'll also re-process visual counter-rotation as
+					// a part of its interpolation logic.
+					thisFramePosture.HEAD.pitch = this.originalHeadPitch;
+					thisFramePosture.HEAD.yaw = this.originalHeadYaw;
+				}
 				hasInterpolated = !currentAnimation.ANIMATION.FLAGS.contains(AnimationFlag.NOT_INTERPOLATED);
 				currentAnimation.mutatePosture(thisFramePosture, worldTime, tickDelta, isFirstOfTick, forceWrappedInterpolation);
 			}
@@ -303,9 +319,6 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 			thisFramePosture.apply(model);
 
 //			model.body.zScale = 3;
-
-			model.head.pitch += headPitchAdjustment;
-			model.head.yaw += headYawAdjustment;
 
 			this.prevFramePosture = thisFramePosture;
 		}

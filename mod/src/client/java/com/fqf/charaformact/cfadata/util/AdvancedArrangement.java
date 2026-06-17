@@ -124,8 +124,8 @@ public class AdvancedArrangement extends Arrangement {
 		return wrapped;
 	}
 
-	private static float wrapDegrees(float radians) {
-		float wrapped = radians % 360;
+	public static float wrapDegrees(float degrees) {
+		float wrapped = degrees % 360;
 		if(wrapped >= 180) wrapped -= 360;
 		if(wrapped < -180) wrapped += 360;
 		return wrapped;
