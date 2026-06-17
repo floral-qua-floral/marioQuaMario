@@ -3,6 +3,7 @@ package com.fqf.mario_qua_mario.appearances.util;
 import com.fqf.charaformact_api.appearance.AppearanceModel;
 import com.fqf.charaformact_api.appearance.ClientAppearanceDefinition;
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.customization.CustomizablePlayerEntity;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.OverlayTexture;
@@ -18,7 +19,7 @@ import net.minecraft.util.Identifier;
 import java.util.List;
 import java.util.OptionalInt;
 
-import static com.fqf.mario_qua_mario.util.CharacterCustomizationUtil.*;
+import static com.fqf.mario_qua_mario.customization.CharacterCustomizationUtil.*;
 
 public abstract class CustomizableTextureLayerFeature<TrackedType> extends FeatureRenderer<AbstractClientPlayerEntity, AppearanceModel> {
 	private final Identifier TEXTURE;

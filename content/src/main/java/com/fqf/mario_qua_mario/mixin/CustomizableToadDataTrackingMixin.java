@@ -1,5 +1,7 @@
 package com.fqf.mario_qua_mario.mixin;
 
+import com.fqf.mario_qua_mario.customization.CustomizablePlayerEntity;
+import com.fqf.mario_qua_mario.customization.DefaultSkinTone;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -21,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.OptionalInt;
 import java.util.UUID;
 
-import static com.fqf.mario_qua_mario.util.CharacterCustomizationUtil.*;
+import static com.fqf.mario_qua_mario.customization.CharacterCustomizationUtil.*;
 
 @Mixin(PlayerEntity.class)
 public abstract class CustomizableToadDataTrackingMixin extends LivingEntity implements CustomizablePlayerEntity {
@@ -96,26 +98,7 @@ public abstract class CustomizableToadDataTrackingMixin extends LivingEntity imp
 
 	@Override
 	public void mqm$resetSkinToneOnly(UUID uuid) {
-		// I would ideally want to programmatically create a randomized skin tone, but that seems really hard. Instead,
-		// I'm selecting randomly from a hardcoded list of pre-selected individual tones. This is less fun because it
-		// means there aren't a trajillion different possible randomly assigned skin tones, but it's what's within my
-		// abilities.
-		// These skin tones are sourced from Minecraft's default skins, since they seem to have a pretty solid racial
-		// diversity. I was considering including Toadette and Mario's skin tones in there too, but I don't want to make
-		// lighter skin too common relative to darker skin, which 2 extra light tones might with a pool this small. :(
-		this.mqm$updateCustomizationData(SKIN_COLOR, getArrayElement(new Integer[]{
-//				0xFFEDC19F, // Toadette
-//				0xFFFFDB99, // Mario
-				0xFFEFDABF, // Alex
-				0xFFF9A786, // Ari
-				0xFFAB724C, // Efe
-				0xFFDF9658, // Kai
-				0xFF443528, // Makena
-				0xFFB9674A, // Noor
-				0xFFB3795E, // Steve
-				0xFFF29F5F, // Sunny
-				0xFF7E5337, // Zuri
-		}, uuid.hashCode()));
+		this.mqm$updateCustomizationData(SKIN_COLOR, getArrayElement(DefaultSkinTone.AVAILABLE_RANDOMLY, uuid.hashCode()).ARGB);
 	}
 
 	@Override
