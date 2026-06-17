@@ -37,6 +37,7 @@ public class CfaOtherClientData extends CfaPlayerData implements CfaClientDataIm
 	@Override public void setActionTransitionless(AbstractParsedAction action) {
 		this.handleSlidingSound(action);
 		super.setActionTransitionless(action);
+		this.APPEARANCE_DATA.updateAction();
 	}
 
 	@Override public void updateAppearance() {

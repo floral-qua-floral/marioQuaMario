@@ -64,9 +64,9 @@ public class LivingEntityRendererMixin<T extends LivingEntity, M extends EntityM
 			float headYaw, float headPitch,
 			Operation<Void> original, @Share("mutatePosture") LocalBooleanRef applyRef, @Share(namespace = "cfa", value = "mover") LocalRef<ModelPartMover> moverRef
 	) {
-		if(entity instanceof AbstractClientPlayerEntity player) {
+		if(entity instanceof AbstractClientPlayerEntity) {
 			//noinspection unchecked
-			((FeatureRendererWithMutableRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>>) instance).cfa$replaceMutableContext(player.cfa$getAppearanceData().getRenderer());
+			((FeatureRendererWithMutableRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>>) instance).cfa$replaceMutableContext((LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>>) (Object) this);
 		}
 		if(applyRef.get()) {
 			TransformationContext context = ((FeatureRendererWithContext) instance).cfa$getContext();
