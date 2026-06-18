@@ -1,4 +1,4 @@
-package com.fqf.mario_qua_mario.mixin;
+package com.fqf.mario_qua_mario.mixin.tail_reflecting;
 
 import com.fqf.mario_qua_mario.util.PersistentReflectable;
 import net.minecraft.entity.EntityType;
@@ -7,7 +7,6 @@ import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

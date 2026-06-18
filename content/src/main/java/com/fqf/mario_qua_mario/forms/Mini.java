@@ -8,6 +8,7 @@ import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.util.StatCategory;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.util.MarioSFX;
+import com.fqf.mario_qua_mario.util.Powers;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.sound.SoundEvent;
@@ -64,11 +65,15 @@ public class Mini implements FormDefinition {
 	}
 
 	@Override public Set<String> getPowers() {
-		return Set.of();
+		return Set.of(
+				Powers.SPRINT_ON_WATER,
+				Powers.TALLER_SOLID_WATER_HITBOX
+		);
 	}
 	@Override public Set<AttributeModifierInstruction> getAttributeModifiers() {
 		return Set.of(
-				new AttributeModifierInstruction(EntityAttributes.GENERIC_SAFE_FALL_DISTANCE, 0.5, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
+				new AttributeModifierInstruction(EntityAttributes.GENERIC_SAFE_FALL_DISTANCE, 0.5, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
+				new AttributeModifierInstruction(EntityAttributes.GENERIC_STEP_HEIGHT, -0.5, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
 		);
 	}
 	@Override public Set<StatModifier> getStatModifiers() {

@@ -1,4 +1,4 @@
-package com.fqf.mario_qua_mario.mixin;
+package com.fqf.mario_qua_mario.mixin.lightning;
 
 import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact_api.cfadata.injections.CfaAuthoritativeDataHolder;

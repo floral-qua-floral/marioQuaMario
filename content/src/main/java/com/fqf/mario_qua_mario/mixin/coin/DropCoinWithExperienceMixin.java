@@ -1,4 +1,4 @@
-package com.fqf.mario_qua_mario.mixin;
+package com.fqf.mario_qua_mario.mixin.coin;
 
 import com.fqf.mario_qua_mario.item.ModItems;
 import com.fqf.mario_qua_mario.util.Powers;

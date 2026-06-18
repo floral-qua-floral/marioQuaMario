@@ -3,18 +3,22 @@
   "package": "com.fqf.mario_qua_mario.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "CoinSpinMixin",
-    "PlayerInventoryStruckByLightningMixin",
     "CustomizableToadDataTrackingMixin",
-    "DropCoinWithExperienceMixin",
-    "EntityStruckByLightningMixin",
-    "PersistentProjectileMixin",
-    "PlayerStruckByLightningMixin",
-    "TridentEntityMixin",
+    "coin.CoinSpinMixin",
+    "coin.DropCoinWithExperienceMixin",
+    "lightning.EntityStruckByLightningMixin",
+    "lightning.PlayerInventoryStruckByLightningMixin",
+    "lightning.PlayerStruckByLightningMixin",
     "tail_reflecting.EntityReflectabilityMixin",
+    "tail_reflecting.PersistentProjectileMixin",
     "tail_reflecting.ProjectileReflectabilityMixin",
     "tail_reflecting.ShulkerBulletReflectabilityMixin",
-    "tail_reflecting.VexReflectabilityMixin"
+    "tail_reflecting.TridentEntityMixin",
+    "tail_reflecting.VexReflectabilityMixin",
+    "water_walking.EntityShapeContextAccessor",
+    "water_walking.FluidBlockDynamicCollisionHeightMixin",
+    "water_walking.LivingEntityWaterWalkMixin",
+    "water_walking.MiniWaterWalkingMixin"
   ],
   "injectors": {
     "defaultRequire": 1

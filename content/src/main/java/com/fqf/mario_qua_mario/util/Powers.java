@@ -30,4 +30,9 @@ public class Powers {
 	// and also because of Meowser's design showing that the Super Bell does do bodily transformation at least some of
 	// the time.
 	public static final String TAPETUM_LUCIDUM = "Tapetum Lucidum";
+
+	// Powers associated with Mini form
+	public static final String SPRINT_ON_WATER = "Can sprint on water";
+	public static final double SPRINT_ON_WATER_THRESHOLD = 0.14;
+	public static final String TALLER_SOLID_WATER_HITBOX = "Use taller hitbox for solid fluids";
 }

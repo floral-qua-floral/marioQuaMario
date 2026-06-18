@@ -1,4 +1,4 @@
-package com.fqf.mario_qua_mario.mixin;
+package com.fqf.mario_qua_mario.mixin.coin;
 
 import com.fqf.mario_qua_mario.item.ModItems;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;

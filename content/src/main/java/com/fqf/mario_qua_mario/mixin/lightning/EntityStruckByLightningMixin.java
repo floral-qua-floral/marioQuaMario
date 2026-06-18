@@ -1,4 +1,4 @@
-package com.fqf.mario_qua_mario.mixin;
+package com.fqf.mario_qua_mario.mixin.lightning;
 
 import com.fqf.mario_qua_mario.util.LightningStrikableEntity;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
