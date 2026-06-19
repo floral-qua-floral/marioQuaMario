@@ -53,6 +53,7 @@ public abstract class AbstractMarioSeriesCharacter implements CharacterDefinitio
 				ServerPlayerEntity player = data.getPlayer();
 				player.requestTeleport(player.getX(), player.getY(), player.getZ());
 				data.forceActionTransition(Debug.ID, LavaBoost.ID);
+				MarioQuaMario.LOGGER.info("Lava boost ejection to {}", ejectionLocation.y);
 				return 4 * multiplier;
 			}
 		}

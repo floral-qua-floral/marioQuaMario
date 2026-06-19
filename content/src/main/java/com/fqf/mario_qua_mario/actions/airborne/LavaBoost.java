@@ -164,13 +164,22 @@ public class LavaBoost extends Fall implements AirborneActionDefinition {
 								return player.getPos().withAxis(Direction.Axis.Y, fluidSurface);
 						}
 
+						// We found lava, but we didn't find the surface of it. Since we start from the top and search
+						// downwards, if we haven't found the surface yet, we're for sure not gonna find it even lower.
 						return null;
 					}
 				}
 			}
 		}
 
-		return player.getPos();
+		// Doesn't seem like we're in lava to begin with???? This can be caused by a Lava Cauldron.
+		// Trying to lava boost in place is TOO RISKY. If Mario's in a position that causes lava damage every tick and
+		// never finds actual lava (such as in a lava cauldron), then lava boosting in place would lock him in that
+		// position while he gets cooked to death. Awful...! We could try moving him up an arbitrary amount and then
+		// lava boost in place, which would work great for Lava Cauldrons, but bad if you imagine something like a
+		// Tinker's Construct smeltery. Mario would get forced up to its ceiling, and every time he sinks he'd trigger
+		// a Lava Boost and get forced back up.
+		return null;
 	}
 
 	public static final TransitionDefinition LAVA_BOOST = new TransitionDefinition(
