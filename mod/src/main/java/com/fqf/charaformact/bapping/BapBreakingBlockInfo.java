@@ -13,19 +13,19 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
 public class BapBreakingBlockInfo extends BumpingBlockInfo {
+	private final long BREAK_TIME;
 	public BapBreakingBlockInfo(World world, BlockPos pos, BapResult result, Direction direction, Entity bapper) {
 		super(world, pos, result, direction, bapper);
+		this.BREAK_TIME = this.FINISH_TIME - BumpingBlockInfo.BUMP_DURATION + 1;
 	}
 
-//	@Override
-//	protected long getFinishTime(World world) {
-//		return world.getTime() + (BumpingBlockInfo.BUMP_DURATION / 2) + (world.isClient() ? 0 : -1);
-//	}
-
+	public boolean isAlmostDone() {
+		return this.WORLD.getTime() + 1 > this.BREAK_TIME;
+	}
 
 	@Override
 	public boolean isDone() {
-		return this.WORLD.getTime() > this.FINISH_TIME - BumpingBlockInfo.BUMP_DURATION + 1;
+		return this.WORLD.getTime() > this.BREAK_TIME;
 	}
 
 	@Override

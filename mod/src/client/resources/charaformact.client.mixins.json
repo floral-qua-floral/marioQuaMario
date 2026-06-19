@@ -12,6 +12,7 @@
     "ClientPlayerEntityCfaDataMixin",
     "ClientPlayerEntityMixin",
     "ClientPlayNetworkHandlerMixin",
+    "ClientWorldMixin",
     "EntityRenderDispatcherMixin",
     "EntityRenderersMixin",
     "FeatureRendererMixin",
