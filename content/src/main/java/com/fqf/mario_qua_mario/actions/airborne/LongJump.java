@@ -26,7 +26,7 @@ import static com.fqf.charaformact_api.util.StatCategory.THRESHOLD;
 
 public class LongJump extends Jump implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("long_jump");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 	    return ID;
 	}
 

@@ -11,18 +11,12 @@ import java.util.Set;
 
 public class Toadette extends AbstractToad implements CharacterDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("toadette");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 	    return ID;
 	}
 
 	@Override
-	public @NotNull SoundEvent getJumpSound() {
+	public @NotNull SoundEvent defineJumpSound() {
 		return MarioSFX.TOADETTE_JUMP;
-	}
-
-	@Override
-	public Set<StatModifier> getStatModifiers() {
-		// Toadette has unmodified stats like Mario
-		return Set.of();
 	}
 }

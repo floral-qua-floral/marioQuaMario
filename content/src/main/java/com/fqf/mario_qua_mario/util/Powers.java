@@ -7,7 +7,7 @@ public class Powers {
 	public static final String CEILING_CLIPPING = "Clips past ceiling edges on ascent";
 	public static final String STOMP_GUARD = "Protected from underfoot melee attacks";
 
-	// Power for Mario Mario himself
+	// Power for Mr. Mario Mario himself
 	public static final String SLEEPY = "Falls asleep while idle";
 
 	// Power for Toads

@@ -14,6 +14,7 @@ import com.fqf.mario_qua_mario.actions.airborne.Backflip;
 import com.fqf.mario_qua_mario.actions.grounded.SubWalk;
 import net.minecraft.entity.Entity;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,7 +25,7 @@ import java.util.Set;
 
 public class Mounted implements MountedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("mounted");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 	    return ID;
 	}
 
@@ -49,21 +50,11 @@ public class Mounted implements MountedActionDefinition {
 		return null;
 	}
 
-	@Override public @Nullable MutableText dismountingHint() {
-		return MarioQuaMario.getClientHelper().getBackflipDismountText();
-	}
-
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return null;
-	}
-	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-
-	}
-	@Override public void serverTick(CfaAuthoritativeData data) {
-
-	}
-	@Override public boolean travelHook(CfaTravelData data, Entity mount, MountedActionHelper helper) {
-		return false;
+	@Override public @NotNull MutableText defineDismountHint(
+			MutableText vanillaHint, Text sneakKeybind, Text jumpKeybind,
+			Text attackKeybind, Text forwardKeybind, Text backwardKeybind
+	) {
+		return Text.translatable("mount.onboard.mario", sneakKeybind, jumpKeybind);
 	}
 
 	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(MountedActionHelper helper) {
@@ -102,7 +93,4 @@ public class Mounted implements MountedActionDefinition {
 		return Set.of();
 	}
 
-	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
-		return List.of();
-	}
 }

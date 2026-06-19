@@ -2,22 +2,19 @@ package com.fqf.charaformact.registries.actions;
 
 import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.cfadata.CfaMoveableData;
-import com.fqf.charaformact.registries.ParsedCfaState;
-import com.fqf.charaformact.registries.ParsedCollisionAttack;
+import com.fqf.charaformact.registries.*;
 import com.fqf.charaformact_api.definitions.states.AttackInterceptingStateDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.GenericActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charaformact.registries.ParsedAttackInterception;
-import com.fqf.charaformact.registries.RegistryManager;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public abstract class AbstractParsedAction extends ParsedCfaState {
+public abstract class AbstractParsedAction extends ParsedCfaState implements ParsedAttackInterceptingState {
 	protected final IncompleteActionDefinition ACTION_DEFINITION;
 	public final ActionCategory CATEGORY;
 
@@ -36,7 +33,7 @@ public abstract class AbstractParsedAction extends ParsedCfaState {
 	public final EnumMap<TransitionPhase, List<ParsedTransition>> CLIENT_TRANSITIONS;
 	public final EnumMap<TransitionPhase, List<ParsedTransition>> SERVER_TRANSITIONS;
 
-	public final List<ParsedAttackInterception> INTERCEPTIONS;
+	private final List<ParsedAttackInterception> INTERCEPTIONS_INTERNAL, INTERCEPTIONS_VIEW;
 
 	private static final boolean LOG_TRANSITION_INJECTIONS = CharaFormAct.CONFIG.logActionTransitionInjections();
 
@@ -79,7 +76,8 @@ public abstract class AbstractParsedAction extends ParsedCfaState {
 			allInjections.get(injection.injectNearTransitionsTo()).add(injection);
 		}
 
-		this.INTERCEPTIONS = new ArrayList<>();
+		this.INTERCEPTIONS_INTERNAL = new ArrayList<>();
+		this.INTERCEPTIONS_VIEW = Collections.unmodifiableList(this.INTERCEPTIONS_INTERNAL);
 	}
 
 	protected abstract List<TransitionDefinition> getBasicTransitions();
@@ -91,9 +89,9 @@ public abstract class AbstractParsedAction extends ParsedCfaState {
 		this.parseTransitions(TransitionPhase.INPUT, this.getInputTransitions(), allInjections);
 		this.parseTransitions(TransitionPhase.WORLD_COLLISION, this.getWorldCollisionTransitions(), allInjections);
 
-		for (AttackInterceptingStateDefinition.AttackInterceptionDefinition interception : this.ACTION_DEFINITION.getAttackInterceptions(AnimationHelperImpl.INSTANCE)) {
-			this.INTERCEPTIONS.add(new ParsedAttackInterception(interception, true));
-		}
+		List<AttackInterceptingStateDefinition.AttackInterceptionDefinition> interceptionDefinitions;
+		interceptionDefinitions = accumulateList(builder -> this.ACTION_DEFINITION.accumulateAttackInterceptions(builder, AnimationHelperImpl.INSTANCE));
+		this.INTERCEPTIONS_INTERNAL.addAll(interceptionDefinitions.stream().map(definition -> new ParsedAttackInterception(definition, true)).toList());
 	}
 	private void parseTransitions(
 			TransitionPhase phase, List<TransitionDefinition> transitions,
@@ -156,4 +154,9 @@ public abstract class AbstractParsedAction extends ParsedCfaState {
 	abstract public boolean travelHook(CfaMoveableData data);
 
 	abstract protected ActionCategory getCategory();
+
+	@Override
+	public List<ParsedAttackInterception> getInterceptions() {
+		return INTERCEPTIONS_VIEW;
+	}
 }

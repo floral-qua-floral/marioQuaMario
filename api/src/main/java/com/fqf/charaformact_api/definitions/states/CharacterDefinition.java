@@ -1,6 +1,7 @@
 package com.fqf.charaformact_api.definitions.states;
 
 import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
+import com.fqf.charaformact_api.cfadata.CfaData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.sound.SoundEvent;
@@ -8,15 +9,15 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 public interface CharacterDefinition extends StatAlteringStateDefinition {
-	default @NotNull String getVoiceName() {
-		return this.getID().getPath();
+	default @NotNull String defineVoiceName() {
+		return this.defineID().getPath();
 	}
 
-	@NotNull Identifier getInitialAction();
-	@NotNull Identifier getInitialForm();
+	@NotNull Identifier defineInitialAction();
+	@NotNull Identifier defineInitialForm();
 
-	@NotNull SoundEvent getJumpSound();
-	@NotNull Identifier getMountedAction(Entity vehicle);
+	@NotNull SoundEvent defineJumpSound();
+	@NotNull Identifier chooseMountedAction(CfaData data, Entity vehicle);
 
 	default float modifyIncomingDamage(CfaAuthoritativeData data, DamageSource source, float amount) {
 		return amount;

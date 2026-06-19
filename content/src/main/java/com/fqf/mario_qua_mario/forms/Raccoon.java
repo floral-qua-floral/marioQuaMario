@@ -14,6 +14,8 @@ import com.fqf.mario_qua_mario.actions.form.TailSpinFall;
 import com.fqf.mario_qua_mario.actions.form.TailSpinGround;
 import com.fqf.mario_qua_mario.actions.form.TailStall;
 import com.fqf.mario_qua_mario.util.*;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.command.argument.EntityAnchorArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -35,51 +37,53 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Set;
 
 public class Raccoon implements FormDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("raccoon");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 	    return ID;
 	}
 
-	@Override public @Nullable Identifier getReversionTarget() {
+	@Override public @Nullable Identifier defineReversionTarget() {
 		return Super.ID;
 	}
-	@Override public int getValue() {
+	@Override public int defineValue() {
 		return 2;
 	}
 
-	@Override public @Nullable SoundEvent getAcquisitionSound() {
+	@Override public @Nullable SoundEvent defineReversionSound() {
+		return MarioSFX.REVERT;
+	}
+	@Override public @Nullable SoundEvent defineAcquisitionSound() {
 		return MarioSFX.TAIL_EMPOWER;
 	}
 
-	@Override public float getWidthFactor() {
+	@Override public float defineWidthFactor() {
 		return 1;
 	}
-	@Override public float getHeightFactor() {
+	@Override public float defineHeightFactor() {
 		return 1;
 	}
-	@Override public float getAnimationHorizontalScale() {
+	@Override public float defineAnimationHorizontalScale() {
 		return 1;
 	}
-	@Override public float getAnimationVerticalScale() {
+	@Override public float defineAnimationVerticalScale() {
 		return 1;
 	}
 
-	@Override public int getBapStrengthModifier() {
+	@Override public int defineBapStrengthModifier() {
 		return 0;
 	}
 
-	@Override public float getVoicePitch() {
+	@Override public float defineVoicePitch() {
 		return 1;
 	}
-	@Override public float getJumpPitch() {
+	@Override public float defineJumpPitch() {
 		return 1F;
 	}
 
-	@Override public Set<String> getPowers() {
-		return Set.of(
+	@Override public void accumulatePowers(ImmutableSet.Builder<String> builder) {
+		builder.add(
 				Powers.SMB3_IDLE,
 				Powers.TAIL_ATTACK,
 				Powers.TAIL_STALL,
@@ -88,14 +92,8 @@ public class Raccoon implements FormDefinition {
 				Powers.TAPETUM_LUCIDUM
 		);
 	}
-	@Override public Set<AttributeModifierInstruction> getAttributeModifiers() {
-		return Set.of();
-	}
-	@Override public Set<StatModifier> getStatModifiers() {
-		return Set.of();
-	}
 
-	@Override public @NotNull FormDefinition.FormHeart getFormHeart(FormHeartHelper helper) {
+	@Override public @NotNull FormDefinition.FormHeart defineFormHeart(FormHeartHelper helper) {
 		return helper.auto();
 	}
 
@@ -206,17 +204,17 @@ public class Raccoon implements FormDefinition {
 		}
 
 		@Override
-		public @Nullable Identifier getActionTarget() {
+		public @Nullable Identifier defineActionTarget() {
 			return this.ACTION_TARGET;
 		}
 
 		@Override
-		public @Nullable Hand getHandToSwing() {
+		public @Nullable Hand defineHandToSwing() {
 			return null;
 		}
 
 		@Override
-		public boolean shouldTriggerAttackCooldown() {
+		public boolean triggersAttackCooldown() {
 			return true;
 		}
 
@@ -310,10 +308,10 @@ public class Raccoon implements FormDefinition {
 		}
 	}
 
-	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
+	@Override
+	public void accumulateAttackInterceptions(ImmutableList.Builder<AttackInterceptionDefinition> builder, AnimationHelper helper) {
 		CameraAnimationSet tailWhipCameraAnimation = makeTailWhipCameraAnimationSet();
-
-		return List.of(
+		builder.add(
 				new TailAttack(TailSpinGround.ID, null) {
 					@Override protected boolean testSwing(CfaReadableMotionData data) {
 						return data.getPlayer().isOnGround() && data.getPlayer().isInSneakingPose();

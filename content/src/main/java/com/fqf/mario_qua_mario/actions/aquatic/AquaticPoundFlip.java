@@ -21,7 +21,7 @@ import java.util.Set;
 
 public class AquaticPoundFlip implements AquaticActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("aquatic_ground_pound_flip");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 		return ID;
 	}
 
@@ -91,7 +91,4 @@ public class AquaticPoundFlip implements AquaticActionDefinition {
 		return Set.of();
 	}
 
-	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
-		return List.of();
-	}
 }

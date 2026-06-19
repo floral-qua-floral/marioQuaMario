@@ -33,7 +33,7 @@ import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class TailStall extends Fall implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("tail_stall");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 		return ID;
 	}
 

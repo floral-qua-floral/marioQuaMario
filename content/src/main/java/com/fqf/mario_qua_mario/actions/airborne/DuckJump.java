@@ -18,7 +18,7 @@ import java.util.List;
 
 public class DuckJump extends Jump implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("duck_jump");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 	    return ID;
 	}
 

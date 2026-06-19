@@ -26,7 +26,7 @@ import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class TripleJump extends Jump implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("triple_jump");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 	    return ID;
 	}
 
@@ -133,7 +133,7 @@ public class TripleJump extends Jump implements AirborneActionDefinition {
 				injectNearTransitionsTo,
 				ActionCategory.GROUNDED,
 				(nearbyTransition, castableHelper) -> nearbyTransition.variate(
-						this.getID(),
+						this.defineID(),
 						data ->
 								MarioVars.get(data).canTripleJumpTicks > 0
 								&& data.getForwardVel() >= TRIPLE_JUMP_SPEED_THRESHOLD.get(data)

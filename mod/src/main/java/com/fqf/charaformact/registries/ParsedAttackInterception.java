@@ -1,6 +1,5 @@
 package com.fqf.charaformact.registries;
 
-import com.fqf.charaformact.registries.power_granting.ParsedPowerGrantingState;
 import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.definitions.states.AttackInterceptingStateDefinition;
@@ -28,8 +27,8 @@ public class ParsedAttackInterception {
 	}
 	public static ParsedAttackInterception getInterception(AttackInterceptionPackets.AttackInterceptionPayload payload) {
 		return payload.isFromAction()
-				? ParsedActionHelper.get(payload.interceptionSource()).INTERCEPTIONS.get(payload.interceptionIndex())
-				: RegistryManager.FORMS.getOrThrow(payload.interceptionSource()).INTERCEPTIONS.get(payload.interceptionIndex());
+				? ParsedActionHelper.get(payload.interceptionSource()).getInterceptions().get(payload.interceptionIndex())
+				: RegistryManager.FORMS.getOrThrow(payload.interceptionSource()).getInterceptions().get(payload.interceptionIndex());
 	}
 	public static float getAttackCooldownProgress(PlayerEntity player) {
 		return player.getAttackCooldownProgress(0.5F);
@@ -46,10 +45,10 @@ public class ParsedAttackInterception {
 		this.DEFINITION = definition;
 		this.IS_FROM_ACTION = isFromAction;
 
-		Identifier actionTargetID = definition.getActionTarget();
+		Identifier actionTargetID = definition.defineActionTarget();
 		this.ACTION_TARGET = actionTargetID == null ? null : RegistryManager.ACTIONS.get(actionTargetID);
-		this.HAND_TO_SWING = definition.getHandToSwing();
-		this.TRIGGERS_ATTACK_COOLDOWN = definition.shouldTriggerAttackCooldown();
+		this.HAND_TO_SWING = definition.defineHandToSwing();
+		this.TRIGGERS_ATTACK_COOLDOWN = definition.triggersAttackCooldown();
 	}
 
 	public boolean shouldInterceptAttack(
@@ -58,7 +57,7 @@ public class ParsedAttackInterception {
 	) {
 		return this.DEFINITION.shouldInterceptAttack(data, weapon, attackCooldownProgress, entityHitResult, blockHitResult);
 	}
-	public @NotNull AttackInterceptingStateDefinition.MiningHandling shouldSuppressMining(
+	public @NotNull AttackInterceptingStateDefinition.AttackInterceptionDefinition.MiningHandling shouldSuppressMining(
 			CfaReadableMotionData data, ItemStack weapon, BlockHitResult blockHitResult, int miningTicks
 	) {
 		return this.DEFINITION.shouldSuppressMining(data, weapon, blockHitResult, miningTicks);

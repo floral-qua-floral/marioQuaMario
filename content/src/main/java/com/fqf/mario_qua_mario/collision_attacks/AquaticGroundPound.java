@@ -25,22 +25,22 @@ public class AquaticGroundPound extends Stomp implements CollisionAttackTypeDefi
 	}
 
 	@Override
-	public boolean shouldAttemptMounting() {
+	public boolean attemptsMounting() {
 		return false;
 	}
 
 	@Override
-	public @Nullable EquipmentSlot getEquipmentSlot() {
+	public @Nullable EquipmentSlot defineEquipmentSlot() {
 		return EquipmentSlot.LEGS;
 	}
 
 	@Override
-	public @NotNull Identifier getDamageType() {
+	public @NotNull Identifier defineDamageType() {
 		return MarioQuaMario.makeResID("ground_pound");
 	}
 
 	@Override
-	public @Nullable Identifier getPostCollisionActions(CollisionAttackResult.ExecutableResult result) {
+	public @Nullable Identifier definePostCollisionActions(CollisionAttackResult.ExecutableResult result) {
 		return Submerged.ID;
 	}
 

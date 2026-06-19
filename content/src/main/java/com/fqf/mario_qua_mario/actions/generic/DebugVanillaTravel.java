@@ -12,7 +12,7 @@ import java.util.List;
 
 public class DebugVanillaTravel extends Debug implements GenericActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("debug_vanilla_travel");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 	    return ID;
 	}
 

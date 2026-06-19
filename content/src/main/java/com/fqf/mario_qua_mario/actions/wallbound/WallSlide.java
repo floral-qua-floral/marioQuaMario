@@ -29,7 +29,7 @@ import java.util.Set;
 
 public class WallSlide implements WallboundActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("wall_slide");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 		return ID;
 	}
 
@@ -330,8 +330,4 @@ public class WallSlide implements WallboundActionDefinition {
 		return Set.of();
 	}
 
-	@Override
-	public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
-		return List.of();
-	}
 }

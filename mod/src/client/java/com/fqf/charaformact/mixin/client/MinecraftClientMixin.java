@@ -2,7 +2,8 @@ package com.fqf.charaformact.mixin.client;
 
 import com.fqf.charaformact.cfadata.CfaMainClientData;
 import com.fqf.charaformact.packets.CfaClientPacketHelper;
-import com.fqf.charaformact_api.definitions.states.AttackInterceptingStateDefinition.MiningHandling;
+import com.fqf.charaformact_api.definitions.states.AttackInterceptingStateDefinition;
+import com.fqf.charaformact_api.definitions.states.AttackInterceptingStateDefinition.AttackInterceptionDefinition.MiningHandling;
 import com.fqf.charaformact.registries.ParsedAttackInterception;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -56,11 +57,11 @@ public abstract class MinecraftClientMixin {
 		ItemStack weapon = this.player.getWeaponStack();
 		EntityHitResult entityTarget = this.crosshairTarget.getType() == HitResult.Type.ENTITY ? (EntityHitResult) this.crosshairTarget : null;
 
-		for (ParsedAttackInterception interception : data.getAction().INTERCEPTIONS)
+		for (ParsedAttackInterception interception : data.getAction().getInterceptions())
 			if(this.shouldInterceptAttack(data, attackCooldownProgress, weapon, entityTarget, interception))
 				return true;
 
-		for (ParsedAttackInterception interception : data.getForm().INTERCEPTIONS)
+		for (ParsedAttackInterception interception : data.getForm().getInterceptions())
 			if(this.shouldInterceptAttack(data, attackCooldownProgress, weapon, entityTarget, interception))
 				return true;
 
@@ -88,18 +89,18 @@ public abstract class MinecraftClientMixin {
 		float attackCooldownProgress = ParsedAttackInterception.getAttackCooldownProgress(this.player);
 		ItemStack weapon = this.player.getMainHandStack();
 
-		for (ParsedAttackInterception interception : data.getAction().INTERCEPTIONS) {
+		for (ParsedAttackInterception interception : data.getAction().getInterceptions()) {
 			MiningHandling handling = this.shouldInterceptMiningAttack(
 					data, attackCooldownProgress, weapon, (BlockHitResult) this.crosshairTarget, interception);
 			if(handling != null)
-				return handling != MiningHandling.MINE;
+				return handling != AttackInterceptingStateDefinition.AttackInterceptionDefinition.MiningHandling.MINE;
 		}
 
-		for (ParsedAttackInterception interception : data.getForm().INTERCEPTIONS) {
+		for (ParsedAttackInterception interception : data.getForm().getInterceptions()) {
 			MiningHandling handling = this.shouldInterceptMiningAttack(
 					data, attackCooldownProgress, weapon, (BlockHitResult) this.crosshairTarget, interception);
 			if(handling != null)
-				return handling != MiningHandling.MINE;
+				return handling != AttackInterceptingStateDefinition.AttackInterceptionDefinition.MiningHandling.MINE;
 		}
 
 		return false;

@@ -4,6 +4,7 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.Animat
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +14,7 @@ import java.util.List;
 
 public class DebugSpinPitch extends Debug {
 	public static final Identifier ID = MarioQuaMario.makeID("debug_spin_pitch");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 	    return ID;
 	}
 
@@ -25,7 +26,7 @@ public class DebugSpinPitch extends Debug {
 		);
 	}
 
-	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
-		return List.of();
+	@Override public void accumulateAttackInterceptions(ImmutableList.Builder<AttackInterceptionDefinition> builder, AnimationHelper helper) {
+
 	}
 }

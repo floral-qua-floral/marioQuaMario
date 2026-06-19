@@ -4,6 +4,7 @@ import com.fqf.charaformact_api.definitions.states.StatAlteringStateDefinition;
 import com.fqf.charaformact.registries.ParsedCfaState;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.StatCategory;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
@@ -30,17 +31,17 @@ public class ParsedPowerGrantingState extends ParsedCfaState {
 		super(definition);
 		this.RESOURCE_ID = this.ID;
 
-		this.WIDTH_FACTOR = definition.getWidthFactor();
-		this.HEIGHT_FACTOR = definition.getHeightFactor();
-		this.EYE_HEIGHT_FACTOR = definition.getEyeHeightFactor();
-		this.ANIMATION_HORIZONTAL_SCALE = definition.getAnimationHorizontalScale();
-		this.ANIMATION_VERTICAL_SCALE = definition.getAnimationVerticalScale();
+		this.WIDTH_FACTOR = definition.defineWidthFactor();
+		this.HEIGHT_FACTOR = definition.defineHeightFactor();
+		this.EYE_HEIGHT_FACTOR = definition.defineEyeHeightFactor();
+		this.ANIMATION_HORIZONTAL_SCALE = definition.defineAnimationHorizontalScale();
+		this.ANIMATION_VERTICAL_SCALE = definition.defineAnimationVerticalScale();
 
-		this.BUMP_STRENGTH_MODIFIER = definition.getBapStrengthModifier();
+		this.BUMP_STRENGTH_MODIFIER = definition.defineBapStrengthModifier();
 
-		this.POWERS = definition.getPowers();
-		this.ATTRIBUTE_MODIFIERS = definition.getAttributeModifiers();
-		this.STAT_MODIFIERS = definition.getStatModifiers();
+		this.POWERS = accumulateSet(definition::accumulatePowers);
+		this.ATTRIBUTE_MODIFIERS = accumulateSet(definition::accumulateAttributeModifiers);
+		this.STAT_MODIFIERS = accumulateSet(definition::accumulateStatModifiers);
 	}
 
 	public double adjustStat(CfaStat stat, double startingValue) {

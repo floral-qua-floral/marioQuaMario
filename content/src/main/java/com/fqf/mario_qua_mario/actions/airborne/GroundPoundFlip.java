@@ -30,7 +30,7 @@ import java.util.Set;
 
 public class GroundPoundFlip implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("ground_pound_flip");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 		return ID;
 	}
 
@@ -175,7 +175,4 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 		return Set.of();
 	}
 
-	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
-		return List.of();
-	}
 }

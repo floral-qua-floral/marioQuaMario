@@ -95,9 +95,9 @@ public interface CfaClientDataImpl extends CfaAnimatingData {
 		else existingInstance.sustain(pitch, volume);
 	}
 
-	default void handlePowerTransitionSound(boolean isReversion, ParsedForm newPower, long seed) {
-		if(isReversion) this.playSound(CfaSounds.REVERT, seed);
-		else this.playSound(newPower.ACQUISITION_SOUND, seed);
+	default void handlePowerTransitionSound(boolean isReversion, ParsedForm from, ParsedForm to, long seed) {
+		SoundEvent transitionSound = isReversion ? from.REVERSION_SOUND : to.ACQUISITION_SOUND;
+		if(transitionSound != null) this.playSound(transitionSound, seed);
 	}
 
 	// The stored sounds feature necessitates a tiny bit of duplicated code which is ANNOYING

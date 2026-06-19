@@ -35,8 +35,7 @@ public abstract class ClientPlayNetworkHandlerMixin {
 		if(mainPlayer != null) {
 			CfaMainClientData data = mainPlayer.cfa$getCfaData();
 			if(data.isEnabled() && data.getActionCategory() == ActionCategory.MOUNTED) {
-				MutableText actionDismountHint = ((ParsedMountedAction) data.getAction()).getDismountHint();
-				if(actionDismountHint != null) return actionDismountHint;
+				return ((ParsedMountedAction) data.getAction()).DISMOUNT_HINT;
 			}
 		}
 		return original.call(key, args);

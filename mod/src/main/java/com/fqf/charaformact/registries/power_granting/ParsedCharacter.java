@@ -1,6 +1,7 @@
 package com.fqf.charaformact.registries.power_granting;
 
 import com.fqf.charaformact.cfadata.CfaPlayerData;
+import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.definitions.states.CharacterDefinition;
 import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact.registries.RegistryManager;
@@ -26,19 +27,19 @@ public class ParsedCharacter extends ParsedPowerGrantingState {
 		super(definition);
 		this.CHARACTER_DEFINITION = definition;
 
-		this.INITIAL_ACTION = Objects.requireNonNull(RegistryManager.ACTIONS.get(definition.getInitialAction()),
-				definition.getID() + "'s initial action (" + definition.getInitialAction() + ") doesn't exist!");
-		this.INITIAL_FORM = Objects.requireNonNull(RegistryManager.FORMS.get(definition.getInitialForm()),
-				definition.getID() + "'s initial form (" + definition.getInitialForm() + ") doesn't exist!");
+		this.INITIAL_ACTION = Objects.requireNonNull(RegistryManager.ACTIONS.get(definition.defineInitialAction()),
+				definition.defineID() + "'s initial action (" + definition.defineInitialAction() + ") doesn't exist!");
+		this.INITIAL_FORM = Objects.requireNonNull(RegistryManager.FORMS.get(definition.defineInitialForm()),
+				definition.defineID() + "'s initial form (" + definition.defineInitialForm() + ") doesn't exist!");
 
-		this.JUMP_SOUND = definition.getJumpSound();
-		this.VOICE_NAME = definition.getVoiceName();
+		this.JUMP_SOUND = definition.defineJumpSound();
+		this.VOICE_NAME = definition.defineVoiceName();
 
 		this.MODELS = new HashMap<>();
 	}
 
-	public AbstractParsedAction getMountedAction(Entity mount) {
-		return RegistryManager.ACTIONS.get(this.CHARACTER_DEFINITION.getMountedAction(mount));
+	public AbstractParsedAction getMountedAction(CfaData data, Entity mount) {
+		return RegistryManager.ACTIONS.get(this.CHARACTER_DEFINITION.chooseMountedAction(data, mount));
 	}
 
 	public float modifyIncomingDamage(CfaAuthoritativeData data, DamageSource source, float amount) {
@@ -47,7 +48,7 @@ public class ParsedCharacter extends ParsedPowerGrantingState {
 
 	public AbstractParsedAction getInitialAction(CfaPlayerData data) {
 		if(data.getPlayer().getVehicle() != null)
-			return this.getMountedAction(data.getPlayer().getVehicle());
+			return this.getMountedAction(data, data.getPlayer().getVehicle());
 		return this.INITIAL_ACTION;
 	}
 }

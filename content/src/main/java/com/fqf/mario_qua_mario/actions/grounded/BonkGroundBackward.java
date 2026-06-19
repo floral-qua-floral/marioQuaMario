@@ -29,7 +29,7 @@ import static com.fqf.charaformact_api.util.StatCategory.RUNNING;
 
 public class BonkGroundBackward implements GroundedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("bonk_ground_backward");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 		return ID;
 	}
 
@@ -124,8 +124,4 @@ public class BonkGroundBackward implements GroundedActionDefinition {
 		return Set.of();
 	}
 
-	@Override
-	public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
-		return List.of();
-	}
 }

@@ -13,28 +13,28 @@ import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public abstract class AbstractToad extends AbstractMarioSeriesCharacter implements CharacterDefinition {
 	@Override
-	public float getHeightFactor() {
+	public float defineHeightFactor() {
 		return 0.97F;
 	}
 
 	@Override
-	public float getEyeHeightFactor() {
+	public float defineEyeHeightFactor() {
 		return 0.765F;
 	}
 
 	@Override
-	public float getAnimationVerticalScale() {
+	public float defineAnimationVerticalScale() {
 		return 0.8F;
 	}
 
 	@Override
-	public @NotNull SoundEvent getJumpSound() {
+	public @NotNull SoundEvent defineJumpSound() {
 		return MarioSFX.TOAD_JUMP;
 	}
 
 	@Override
-	public Set<String> getPowers() {
-		ImmutableSet.Builder<String> marioPowers = ImmutableSet.builder();
-		return marioPowers.addAll(super.getPowers()).add(Powers.MYCOLOGICAL).build();
+	public void accumulatePowers(ImmutableSet.Builder<String> builder) {
+		super.accumulatePowers(builder);
+		builder.add(Powers.MYCOLOGICAL);
 	}
 }

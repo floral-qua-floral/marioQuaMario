@@ -13,7 +13,7 @@ import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class Swim extends Submerged {
 	public static final Identifier ID = MarioQuaMario.makeID("swim");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 	    return ID;
 	}
 

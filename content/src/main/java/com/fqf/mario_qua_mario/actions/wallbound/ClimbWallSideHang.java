@@ -19,7 +19,7 @@ import java.util.Set;
 
 public class ClimbWallSideHang extends ClimbWall implements WallboundActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("climb_wall_side_hang");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 	    return ID;
 	}
 
@@ -103,7 +103,7 @@ public class ClimbWallSideHang extends ClimbWall implements WallboundActionDefin
 						this.getClimbingActionID(),
 						(fromAction, fromCategory, existingTransitions) -> fromCategory != ActionCategory.WALLBOUND,
 						(nearbyTransition, castableHelper) -> nearbyTransition.variate(
-								this.getID(),
+								this.defineID(),
 								data -> (data.isServer() || MathHelper.angleBetween(data.getPlayer().getYaw(), this.getWallYaw(data)) > ClimbWall.MIN_DEVIATION_TO_SIDE_HANG)
 										&& nearbyTransition.evaluator().shouldTransition(data)
 						)

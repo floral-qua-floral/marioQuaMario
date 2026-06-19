@@ -23,7 +23,7 @@ import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class WalkRun extends SubWalk implements GroundedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("walk_run");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 	    return ID;
 	}
 
@@ -117,7 +117,7 @@ public class WalkRun extends SubWalk implements GroundedActionDefinition {
 						SubWalk.ID,
 						ActionCategory.AIRBORNE,
 						(nearbyTransition, castableHelper) -> nearbyTransition.variate(
-								this.getID(),
+								this.defineID(),
 								data -> (data.isServer() || meetsWalkRunRequirement(data)) && nearbyTransition.evaluator().shouldTransition(data),
 								EvaluatorEnvironment.CLIENT_CHECKED, null, null
 						)
@@ -127,7 +127,7 @@ public class WalkRun extends SubWalk implements GroundedActionDefinition {
 						SubWalk.ID,
 						ActionCategory.GROUNDED,
 						(nearbyTransition, castableHelper) -> nearbyTransition.variate(
-								this.getID(),
+								this.defineID(),
 								data -> meetsWalkRunRequirement(data) && nearbyTransition.evaluator().shouldTransition(data),
 								EvaluatorEnvironment.CLIENT_ONLY, null, null
 						)

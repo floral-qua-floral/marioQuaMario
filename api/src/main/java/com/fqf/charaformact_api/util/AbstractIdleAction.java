@@ -64,7 +64,7 @@ public abstract class AbstractIdleAction implements GroundedActionDefinition {
 			EvaluatorEnvironment.CLIENT_ONLY
 	);
 	public final TransitionDefinition IDLE_TRANSITION = new TransitionDefinition(
-			this.getID(),
+			this.defineID(),
 			AbstractIdleAction::isIdle,
 			EvaluatorEnvironment.CLIENT_ONLY
 	);
@@ -82,7 +82,4 @@ public abstract class AbstractIdleAction implements GroundedActionDefinition {
 		return Set.of();
 	}
 
-	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
-		return List.of();
-	}
 }

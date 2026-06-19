@@ -12,7 +12,7 @@ import static com.fqf.charaformact_api.util.StatCategory.*;
 public class TailSpinJump extends TailSpinFall implements AirborneActionDefinition {
 	// This only exists to get around the limitations of the action transition system
 	public static final Identifier ID = MarioQuaMario.makeID("tail_spin_jump");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 	    return ID;
 	}
 

@@ -34,8 +34,5 @@
   "subtitles.charaformact.movement.skid_ice": "Slipping",
   "subtitles.charaformact.movement.skid_sand": "Skidding",
   "subtitles.charaformact.movement.skid_snow": "Skidding",
-  "subtitles.charaformact.movement.skid_wall": "Sliding",
-
-  "subtitles.charaformact.form.empower": "Powering up",
-  "subtitles.charaformact.form.revert": "Powering down"
+  "subtitles.charaformact.movement.skid_wall": "Sliding"
 }

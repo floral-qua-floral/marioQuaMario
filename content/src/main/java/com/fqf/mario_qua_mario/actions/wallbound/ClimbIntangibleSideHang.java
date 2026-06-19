@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ClimbIntangibleSideHang extends ClimbWallSideHang implements WallboundActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("climb_intangible_side_hang");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 	    return ID;
 	}
 

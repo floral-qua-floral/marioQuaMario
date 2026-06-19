@@ -162,7 +162,7 @@ public class UniversalActionDefinitionHelper implements
 	public TransitionDefinition makeJumpCapTransition(IncompleteActionDefinition forAction, double capThreshold) {
 		CfaStat cap = new CfaStat(capThreshold, StatCategory.JUMP_CAP);
 		return new TransitionDefinition(
-				forAction.getID(),
+				forAction.defineID(),
 				data -> !((CfaMoveableData) data).jumpCapped && (!data.getInputs().JUMP.isHeld()  || data.getYVel() < cap.get(data)),
 				EvaluatorEnvironment.CLIENT_ONLY,
 				data -> {

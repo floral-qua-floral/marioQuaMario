@@ -14,6 +14,7 @@ import com.fqf.mario_qua_mario.util.MQMGamerules;
 import com.fqf.mario_qua_mario.util.MQMTags;
 import com.fqf.mario_qua_mario.util.MarioVars;
 import com.fqf.mario_qua_mario.util.Powers;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
@@ -30,14 +31,14 @@ import java.util.Objects;
 import java.util.Set;
 
 public abstract class AbstractMarioSeriesCharacter implements CharacterDefinition {
-	@Override public @NotNull Identifier getInitialAction() {
+	@Override public @NotNull Identifier defineInitialAction() {
 		return Fall.ID;
 	}
-	@Override public @NotNull Identifier getInitialForm() {
+	@Override public @NotNull Identifier defineInitialForm() {
 		return Super.ID;
 	}
 
-	@Override public @NotNull Identifier getMountedAction(Entity vehicle) {
+	@Override public @NotNull Identifier chooseMountedAction(CfaData data, Entity vehicle) {
 		return Mounted.ID;
 	}
 
@@ -61,37 +62,16 @@ public abstract class AbstractMarioSeriesCharacter implements CharacterDefinitio
 		return amount * multiplier;
 	}
 
-	@Override public float getWidthFactor() {
-		return 1;
-	}
-	@Override public float getHeightFactor() {
-		return 1;
-	}
-	@Override public float getEyeHeightFactor() {
-		return 1;
-	}
-	@Override public float getAnimationHorizontalScale() {
-		return 1;
-	}
-	@Override public float getAnimationVerticalScale() {
-		return 1;
-	}
-
-	@Override public int getBapStrengthModifier() {
-		return 0;
-	}
-
-	@Override public Set<String> getPowers() {
-		return Set.of(
+	@Override public void accumulatePowers(ImmutableSet.Builder<String> builder) {
+		builder.add(
 				Powers.DROP_COINS,
 				Powers.LIGHTNING_SHRINKS,
 				Powers.CEILING_CLIPPING,
 				Powers.STOMP_GUARD
 		);
 	}
-
-	@Override public Set<AttributeModifierInstruction> getAttributeModifiers() {
-		return Set.of(
+	@Override public void accumulateAttributeModifiers(ImmutableSet.Builder<AttributeModifierInstruction> builder) {
+		builder.add(
 				new AttributeModifierInstruction(EntityAttributes.GENERIC_SAFE_FALL_DISTANCE, 8, EntityAttributeModifier.Operation.ADD_VALUE),
 				new AttributeModifierInstruction(EntityAttributes.GENERIC_ATTACK_SPEED, 1.7, EntityAttributeModifier.Operation.ADD_VALUE),
 				new AttributeModifierInstruction(EntityAttributes.GENERIC_ATTACK_SPEED, -0.7, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)

@@ -20,7 +20,7 @@ import java.util.List;
 
 public class TailStallDucking extends TailStall implements AirborneActionDefinition {
 	public static final Identifier ID = DUCK_STALL_ID; // prevents warnings from trying to access subclass field in TailStall transitions
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 	    return ID;
 	}
 

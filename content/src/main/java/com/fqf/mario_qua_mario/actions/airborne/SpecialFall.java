@@ -14,7 +14,7 @@ import java.util.Set;
 
 public class SpecialFall extends Fall implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("special_fall");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 	    return ID;
 	}
 
@@ -42,7 +42,7 @@ public class SpecialFall extends Fall implements AirborneActionDefinition {
 						TransitionInjectionDefinition.InjectionPlacement.BEFORE,
 						Fall.ID,
 						ActionCategory.GROUNDED,
-						(nearbyTransition, castableHelper) -> nearbyTransition.variate(this.getID(), data ->
+						(nearbyTransition, castableHelper) -> nearbyTransition.variate(this.defineID(), data ->
 								data.getYVel() > 0 && nearbyTransition.evaluator().shouldTransition(data))
 				)
 		);

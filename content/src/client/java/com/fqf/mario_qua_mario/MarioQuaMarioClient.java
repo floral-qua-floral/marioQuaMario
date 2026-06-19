@@ -7,11 +7,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.util.ModelIdentifier;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public class MarioQuaMarioClient implements ClientModInitializer {
@@ -22,21 +18,11 @@ public class MarioQuaMarioClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		MarioQuaMario.LOGGER.info("Mario qua Mario initializing on the client...");
 
-		MarioQuaMario.clientHelper = new ContentClientHelperImplementation();
-
 		EntityModelLayerRegistry.registerModelLayer(MarioFireballModel.FIREBALL, MarioFireballModel::getTexturedModelData);
 		EntityRendererRegistry.register(MQMEntities.MARIO_FIREBALL, MarioFireballRenderer::new);
 
 		ModelLoadingPlugin.register(context -> {
 			context.addModels(COIN_GROUND_ID);
 		});
-	}
-
-	public static class ContentClientHelperImplementation extends MarioQuaMario.ContentClientHelper {
-		@Override
-		public MutableText getBackflipDismountText() {
-			GameOptions options = MinecraftClient.getInstance().options;
-			return Text.translatable("mount.onboard.mario", options.sneakKey.getBoundKeyLocalizedText(), options.jumpKey.getBoundKeyLocalizedText());
-		}
 	}
 }

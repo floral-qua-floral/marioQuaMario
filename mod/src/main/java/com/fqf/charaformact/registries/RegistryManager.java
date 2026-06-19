@@ -94,6 +94,7 @@ public class RegistryManager {
 		actionDefinitions.addAll(getEntrypoints("cfa-wallbound-actions", WallboundActionDefinition.class));
 		actionDefinitions.addAll(getEntrypoints("cfa-mounted-actions", MountedActionDefinition.class));
 
+		if(CharaFormAct.getClientHelper() != null) CharaFormAct.getClientHelper().prepareKeybindTexts();
 		HashMap<Identifier, Set<TransitionInjectionDefinition>> allInjections = new HashMap<>();
 		for(IncompleteActionDefinition definition : actionDefinitions) {
 			registerThing(ACTIONS, ParsedActionHelper.parseAction(definition, allInjections));

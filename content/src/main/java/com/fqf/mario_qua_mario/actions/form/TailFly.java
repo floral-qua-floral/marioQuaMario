@@ -8,7 +8,6 @@ import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnviron
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
@@ -31,7 +30,7 @@ import static com.fqf.charaformact_api.util.StatCategory.JUMP_VELOCITY;
 
 public class TailFly extends PJump implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("tail_fly");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 	    return ID;
 	}
 
@@ -82,8 +81,4 @@ public class TailFly extends PJump implements AirborneActionDefinition {
 		return Set.of();
 	}
 
-	@Override
-	public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
-		return List.of();
-	}
 }

@@ -32,7 +32,7 @@ import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class DuckWaddle implements GroundedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("duck_waddle");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 	    return ID;
 	}
 
@@ -185,8 +185,4 @@ public class DuckWaddle implements GroundedActionDefinition {
 		return Set.of();
 	}
 
-	@Override
-	public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
-		return List.of();
-	}
 }

@@ -40,10 +40,10 @@ public class ParsedCollisionAttack extends ParsedCfaThing {
 
 		this.DEFINITION = definition;
 
-		this.MOUNTING = definition.shouldAttemptMounting();
-		this.PAINFUL_COLLISION_RESPONSE = definition.painfulCollisionResponse();
-		this.USE_EQUIPMENT_SLOT = definition.getEquipmentSlot();
-		this.DAMAGE_TYPE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, definition.getDamageType());
+		this.MOUNTING = definition.attemptsMounting();
+		this.PAINFUL_COLLISION_RESPONSE = definition.definePainfulCollisionResponse();
+		this.USE_EQUIPMENT_SLOT = definition.defineEquipmentSlot();
+		this.DAMAGE_TYPE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, definition.defineDamageType());
 		this.POST_COLLISION_ACTIONS = new EnumMap<>(CollisionAttackResult.ExecutableResult.class);
 	}
 
@@ -56,7 +56,7 @@ public class ParsedCollisionAttack extends ParsedCfaThing {
 	}
 	private void populatePostCollisionActions(CollisionAttackResult.ExecutableResult result) {
 		AbstractParsedAction targetAction;
-		Identifier targetActionID = this.DEFINITION.getPostCollisionActions(result);
+		Identifier targetActionID = this.DEFINITION.definePostCollisionActions(result);
 		if(targetActionID == null) targetAction = null;
 		else targetAction = Objects.requireNonNull(RegistryManager.ACTIONS.get(targetActionID),
 				"Collision attack type " + this.ID + " transitions into action " + targetActionID
@@ -67,7 +67,7 @@ public class ParsedCollisionAttack extends ParsedCfaThing {
 	public Vec3d moveHook(CfaServerPlayerData data, Vec3d movement) {
 		ServerPlayerEntity player = data.getPlayer();
 
-		List<Entity> possibleTargets = player.getWorld().getOtherEntities(player, this.DEFINITION.tweakPlayerBoundingBox(data, player.getBoundingBox()).stretch(movement));
+		List<Entity> possibleTargets = player.getWorld().getOtherEntities(player, this.DEFINITION.mutatePlayerBoundingBox(data, player.getBoundingBox()).stretch(movement));
 		possibleTargets.removeIf(entity -> !entity.isAlive());
 		this.DEFINITION.filterPotentialTargets(possibleTargets, player, movement);
 

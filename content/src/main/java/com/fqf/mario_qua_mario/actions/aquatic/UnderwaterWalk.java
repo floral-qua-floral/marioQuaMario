@@ -26,7 +26,7 @@ import java.util.Set;
 
 public class UnderwaterWalk implements AquaticActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("underwater_walk");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 		return ID;
 	}
 
@@ -156,7 +156,4 @@ public class UnderwaterWalk implements AquaticActionDefinition {
 		return Set.of();
 	}
 
-	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
-		return List.of();
-	}
 }

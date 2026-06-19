@@ -24,7 +24,7 @@ import static com.fqf.charaformact_api.util.StatCategory.JUMP_VELOCITY;
 
 public class Jump extends Fall implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("jump");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 	    return ID;
 	}
 

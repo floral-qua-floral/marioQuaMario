@@ -19,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Set;
 
 import static com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag.*;
@@ -27,7 +26,7 @@ import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class Sideflip extends Backflip implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("sideflip");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 		return ID;
 	}
 
@@ -164,7 +163,4 @@ public class Sideflip extends Backflip implements AirborneActionDefinition {
 		return Set.of();
 	}
 
-	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
-		return List.of();
-	}
 }

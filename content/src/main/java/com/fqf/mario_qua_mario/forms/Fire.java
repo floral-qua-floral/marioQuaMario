@@ -8,6 +8,7 @@ import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.entity.custom.MarioFireballProjectileEntity;
 import com.fqf.mario_qua_mario.util.MQMTags;
 import com.fqf.mario_qua_mario.util.MarioSFX;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -22,61 +23,51 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Set;
-
 public class Fire implements FormDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("fire");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 	    return ID;
 	}
 
-	@Override public @Nullable Identifier getReversionTarget() {
+	@Override public @Nullable Identifier defineReversionTarget() {
 		return Super.ID;
 	}
-	@Override public int getValue() {
+	@Override public int defineValue() {
 		return 2;
 	}
 
-	@Override public @Nullable SoundEvent getAcquisitionSound() {
-		return null;
+	@Override public @Nullable SoundEvent defineReversionSound() {
+		return MarioSFX.REVERT;
+	}
+	@Override public @Nullable SoundEvent defineAcquisitionSound() {
+		return MarioSFX.EMPOWER;
 	}
 
-	@Override public float getWidthFactor() {
+	@Override public float defineWidthFactor() {
 		return 1;
 	}
-	@Override public float getHeightFactor() {
+	@Override public float defineHeightFactor() {
 		return 1;
 	}
-	@Override public float getAnimationHorizontalScale() {
+	@Override public float defineAnimationHorizontalScale() {
 		return 1;
 	}
-	@Override public float getAnimationVerticalScale() {
+	@Override public float defineAnimationVerticalScale() {
 		return 1;
 	}
 
-	@Override public int getBapStrengthModifier() {
+	@Override public int defineBapStrengthModifier() {
 		return 0;
 	}
 
-	@Override public float getVoicePitch() {
+	@Override public float defineVoicePitch() {
 		return 1;
 	}
-	@Override public float getJumpPitch() {
+	@Override public float defineJumpPitch() {
 		return 1F;
 	}
 
-	@Override public Set<String> getPowers() {
-		return Set.of();
-	}
-	@Override public Set<AttributeModifierInstruction> getAttributeModifiers() {
-		return Set.of();
-	}
-	@Override public Set<StatModifier> getStatModifiers() {
-		return Set.of();
-	}
-
-	@Override public @NotNull FormDefinition.FormHeart getFormHeart(FormHeartHelper helper) {
+	@Override public @NotNull FormDefinition.FormHeart defineFormHeart(FormHeartHelper helper) {
 		return helper.auto();
 	}
 
@@ -103,13 +94,13 @@ public class Fire implements FormDefinition {
 			this.HAND = hand;
 		}
 
-		@Override public @Nullable Identifier getActionTarget() {
+		@Override public @Nullable Identifier defineActionTarget() {
 			return null;
 		}
-		@Override public Hand getHandToSwing() {
+		@Override public Hand defineHandToSwing() {
 			return this.HAND;
 		}
-		@Override public boolean shouldTriggerAttackCooldown() {
+		@Override public boolean triggersAttackCooldown() {
 			return this.HAND == Hand.MAIN_HAND;
 		}
 
@@ -173,8 +164,9 @@ public class Fire implements FormDefinition {
 		}
 	}
 
-	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
-		return List.of(
+	@Override
+	public void accumulateAttackInterceptions(ImmutableList.Builder<AttackInterceptionDefinition> builder, AnimationHelper helper) {
+		builder.add(
 				new FireballDefinition(Hand.MAIN_HAND) {
 					@Override
 					public boolean canThrowFireball(CfaReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {

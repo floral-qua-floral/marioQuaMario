@@ -37,7 +37,7 @@ import java.util.Set;
 
 public class ClimbPole implements GenericActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("climb_pole");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 		return ID;
 	}
 
@@ -213,7 +213,4 @@ public class ClimbPole implements GenericActionDefinition {
 		return Set.of();
 	}
 
-	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
-		return List.of();
-	}
 }

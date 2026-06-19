@@ -3,6 +3,7 @@ package com.fqf.mario_qua_mario.characters;
 import com.fqf.charaformact_api.definitions.states.CharacterDefinition;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.util.MarioSFX;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -13,17 +14,18 @@ import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class Luigi extends AbstractMarioSeriesCharacter implements CharacterDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("luigi");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 	    return ID;
 	}
 
 	@Override
-	public @NotNull SoundEvent getJumpSound() {
+	public @NotNull SoundEvent defineJumpSound() {
 		return MarioSFX.LUIGI_JUMP;
 	}
 
-	@Override public Set<StatModifier> getStatModifiers() {
-		return Set.of(
+	@Override
+	public void accumulateStatModifiers(ImmutableSet.Builder<StatModifier> builder) {
+		builder.add(
 				// Luigi walks and runs faster
 				new StatModifier(Set.of(FORWARD, WALKING, SPEED), 1.45),
 				new StatModifier(Set.of(FORWARD, RUNNING, SPEED), 1.2),

@@ -16,7 +16,7 @@ import java.util.Set;
 
 public class GroundPoundLandHold extends GroundPoundLand implements GroundedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("ground_pound_land_hold");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 	    return ID;
 	}
 

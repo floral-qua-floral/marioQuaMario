@@ -8,8 +8,6 @@ sfx_movement = {
 }
 
 sfx_form = {
-  "empower": "Powering up",
-  "revert": "Powering down",
 }
 
 sfx_collision_attack = {

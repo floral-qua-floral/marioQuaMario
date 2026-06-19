@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class BonkGroundForward extends BonkGroundBackward implements GroundedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("bonk_ground_forward");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 		return ID;
 	}
 

@@ -35,7 +35,7 @@ import java.util.Set;
 
 public class TailSpinGround implements GroundedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("tail_spin_grounded");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 	    return ID;
 	}
 
@@ -179,7 +179,4 @@ public class TailSpinGround implements GroundedActionDefinition {
 		return Set.of();
 	}
 
-	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
-		return List.of();
-	}
 }

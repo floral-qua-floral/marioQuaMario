@@ -2,95 +2,29 @@ package com.fqf.mario_qua_mario.forms;
 
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.definitions.states.FormDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.util.MarioSFX;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Set;
-
 public class Super implements FormDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("super");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 	    return ID;
 	}
 
-	@Override public @Nullable Identifier getReversionTarget() {
+	@Override public @Nullable Identifier defineReversionTarget() {
 		return Small.ID;
 	}
-	@Override public int getValue() {
-		return 1;
-	}
 
-	@Override public @Nullable SoundEvent getAcquisitionSound() {
-		return null;
+	@Override public @Nullable SoundEvent defineReversionSound() {
+		return MarioSFX.REVERT;
 	}
-
-	@Override public float getWidthFactor() {
-		return 1;
-	}
-	@Override public float getHeightFactor() {
-		return 1;
-	}
-	@Override public float getAnimationHorizontalScale() {
-		return 1;
-	}
-	@Override public float getAnimationVerticalScale() {
-		return 1;
-	}
-
-	@Override public int getBapStrengthModifier() {
-		return 0;
-	}
-
-	@Override public float getVoicePitch() {
-		return 1;
-	}
-	@Override public float getJumpPitch() {
-		return 1F;
-	}
-
-	@Override public Set<String> getPowers() {
-		return Set.of();
-	}
-	@Override public Set<AttributeModifierInstruction> getAttributeModifiers() {
-		return Set.of();
-	}
-	@Override public Set<StatModifier> getStatModifiers() {
-		return Set.of();
-	}
-
-	@Override public @NotNull FormDefinition.FormHeart getFormHeart(FormHeartHelper helper) {
-		return new FormHeart(
-				Identifier.ofVanilla("hud/heart/full"),
-				Identifier.ofVanilla("hud/heart/full_blinking"),
-				Identifier.ofVanilla("hud/heart/half"),
-				Identifier.ofVanilla("hud/heart/half_blinking"),
-				Identifier.ofVanilla("hud/heart/hardcore_full"),
-				Identifier.ofVanilla("hud/heart/hardcore_full_blinking"),
-				Identifier.ofVanilla("hud/heart/hardcore_half"),
-				Identifier.ofVanilla("hud/heart/hardcore_half_blinking"),
-				Identifier.ofVanilla("hud/heart/container"),
-				Identifier.ofVanilla("hud/heart/container_blinking")
-		);
-	}
-
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return null;
-	}
-	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-
-	}
-	@Override public void serverTick(CfaAuthoritativeData data) {
-
-	}
-
-	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
-		return List.of();
+	@Override public @Nullable SoundEvent defineAcquisitionSound() {
+		return MarioSFX.EMPOWER;
 	}
 }

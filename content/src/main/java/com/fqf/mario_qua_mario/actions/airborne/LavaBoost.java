@@ -30,7 +30,7 @@ import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class LavaBoost extends Fall implements AirborneActionDefinition {
     public static final Identifier ID = MarioQuaMario.makeID("lava_boost");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 		return ID;
 	}
 
@@ -238,7 +238,4 @@ public class LavaBoost extends Fall implements AirborneActionDefinition {
 		);
 	}
 
-	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
-		return List.of();
-	}
 }

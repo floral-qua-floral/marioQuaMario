@@ -10,7 +10,9 @@ import com.fqf.charaformact_api.definitions.states.actions.util.TransitionInject
 import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import com.fqf.charaformact.registries.actions.UniversalActionDefinitionHelper;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,22 +20,27 @@ import java.util.Set;
 
 public class ParsedMountedAction extends AbstractParsedAction {
 	private final MountedActionDefinition MOUNTED_DEFINITION;
+	public final @NotNull MutableText DISMOUNT_HINT;
+
+	public static Text sneakKeybind = Text.empty();
+	public static Text jumpKeybind = Text.empty();
+	public static Text attackKeybind = Text.empty();
+	public static Text forwardKeybind = Text.empty();
+	public static Text backwardKeybind = Text.empty();
+	public static MutableText vanillaHint = Text.empty();
 
 	public ParsedMountedAction(MountedActionDefinition definition, HashMap<Identifier, Set<TransitionInjectionDefinition>> allInjections) {
 		super(definition, allInjections);
 		this.MOUNTED_DEFINITION = definition;
+		this.DISMOUNT_HINT = definition.defineDismountHint(vanillaHint, sneakKeybind, jumpKeybind, attackKeybind, forwardKeybind, backwardKeybind);
 		CharaFormAct.LOGGER.info("\nClient Helper Manager: {}\nClient Packet Sender: {}", CfaClientHelperManager.helper, CfaClientHelperManager.packetSender);
-	}
-
-	public MutableText getDismountHint() {
-		return this.MOUNTED_DEFINITION.dismountingHint();
 	}
 
 	@Override
 	public boolean travelHook(CfaMoveableData data) {
 		data.jumpCapped = false;
 		UniversalActionDefinitionHelper helper = UniversalActionDefinitionHelper.INSTANCE;
-		return this.MOUNTED_DEFINITION.travelHook(data, helper.getMount(data), helper);
+		return this.MOUNTED_DEFINITION.travel(data, helper.getMount(data), helper);
 	}
 
 	@Override

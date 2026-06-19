@@ -28,7 +28,7 @@ import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class TailSpinFall implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("tail_spin_fall");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 	    return ID;
 	}
 
@@ -113,7 +113,4 @@ public class TailSpinFall implements AirborneActionDefinition {
 		return Set.of();
 	}
 
-	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
-		return List.of();
-	}
 }

@@ -13,33 +13,28 @@ import java.util.Set;
 
 public class Mario extends AbstractMarioSeriesCharacter implements CharacterDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("mario");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 	    return ID;
 	}
 
 	@Override
-	public float getHeightFactor() {
+	public float defineHeightFactor() {
 		return 0.97F;
 	}
 
 	@Override
-	public float getEyeHeightFactor() {
+	public float defineEyeHeightFactor() {
 		return 0.96F;
 	}
 
 	@Override
-	public @NotNull SoundEvent getJumpSound() {
+	public @NotNull SoundEvent defineJumpSound() {
 		return MarioSFX.MARIO_JUMP;
 	}
 
 	@Override
-	public Set<StatModifier> getStatModifiers() {
-		return Set.of();
-	}
-
-	@Override
-	public Set<String> getPowers() {
-		ImmutableSet.Builder<String> marioPowers = ImmutableSet.builder();
-		return marioPowers.addAll(super.getPowers()).add(Powers.SLEEPY).build();
+	public void accumulatePowers(ImmutableSet.Builder<String> builder) {
+		super.accumulatePowers(builder);
+		builder.add(Powers.SLEEPY);
 	}
 }

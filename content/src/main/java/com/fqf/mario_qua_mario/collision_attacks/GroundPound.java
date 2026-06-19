@@ -32,33 +32,33 @@ public class GroundPound implements CollisionAttackTypeDefinition {
 	}
 
 	@Override
-	public boolean shouldAttemptMounting() {
+	public boolean attemptsMounting() {
 		return true;
 	}
 
 	@Override
-	public @NotNull CollisionAttackTypeDefinition.PainfulCollisionResponse painfulCollisionResponse() {
+	public @NotNull CollisionAttackTypeDefinition.PainfulCollisionResponse definePainfulCollisionResponse() {
 		return PainfulCollisionResponse.INJURY;
 	}
 
 	@Override
-	public @Nullable EquipmentSlot getEquipmentSlot() {
+	public @Nullable EquipmentSlot defineEquipmentSlot() {
 		return EquipmentSlot.LEGS;
 	}
 
 	@Override
-	public @NotNull Identifier getDamageType() {
+	public @NotNull Identifier defineDamageType() {
 		return MarioQuaMario.makeResID("ground_pound");
 	}
 
 	@Override
-	public @Nullable Identifier getPostCollisionActions(CollisionAttackResult.ExecutableResult result) {
+	public @Nullable Identifier definePostCollisionActions(CollisionAttackResult.ExecutableResult result) {
 		if(result == CollisionAttackResult.ExecutableResult.PAINFUL) return BonkAir.ID;
 		return null;
 	}
 
 	@Override
-	public Box tweakPlayerBoundingBox(CfaData data, Box box) {
+	public Box mutatePlayerBoundingBox(CfaData data, Box box) {
 		return box.stretch(0, -0.05, 0);
 	}
 

@@ -1,44 +1,49 @@
 package com.fqf.charaformact.registries.power_granting;
 
+import com.fqf.charaformact.registries.ParsedAttackInterceptingState;
 import com.fqf.charaformact_api.definitions.states.AttackInterceptingStateDefinition;
 import com.fqf.charaformact_api.definitions.states.FormDefinition;
 import com.fqf.charaformact.registries.ParsedAttackInterception;
 import com.fqf.charaformact.registries.actions.AnimationHelperImpl;
-import com.fqf.charaformact.util.CfaSounds;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class ParsedForm extends ParsedPowerGrantingState {
+public class ParsedForm extends ParsedPowerGrantingState implements ParsedAttackInterceptingState {
 	public final Identifier REVERSION_TARGET_ID;
 	public final int VALUE;
 
-	public final SoundEvent ACQUISITION_SOUND;
+	public final @Nullable SoundEvent REVERSION_SOUND;
+	public final @Nullable SoundEvent ACQUISITION_SOUND;
 	public final float VOICE_PITCH;
 	public final float JUMP_PITCH;
 
 	public final FormDefinition.FormHeart HEART;
 
-	public final List<ParsedAttackInterception> INTERCEPTIONS;
+	private final List<ParsedAttackInterception> INTERCEPTIONS;
 
 	public ParsedForm(FormDefinition definition) {
 		super(definition);
 
-		this.REVERSION_TARGET_ID = definition.getReversionTarget();
-		this.VALUE = definition.getValue();
+		this.REVERSION_TARGET_ID = definition.defineReversionTarget();
+		this.VALUE = definition.defineValue();
 
-		SoundEvent definedAcquisitionSound = definition.getAcquisitionSound();
-		this.ACQUISITION_SOUND = definedAcquisitionSound == null ? CfaSounds.EMPOWER : definedAcquisitionSound;
-		this.VOICE_PITCH = definition.getVoicePitch();
-		this.JUMP_PITCH = definition.getJumpPitch();
+		this.REVERSION_SOUND = definition.defineReversionSound();
+		this.ACQUISITION_SOUND = definition.defineAcquisitionSound();
+		this.VOICE_PITCH = definition.defineVoicePitch();
+		this.JUMP_PITCH = definition.defineJumpPitch();
 
-		this.HEART = definition.getFormHeart(new FormHeartHelperImpl(this.RESOURCE_ID));
+		this.HEART = definition.defineFormHeart(new FormHeartHelperImpl(this.RESOURCE_ID));
 
-		this.INTERCEPTIONS = new ArrayList<>();
-		for (AttackInterceptingStateDefinition.AttackInterceptionDefinition interception : definition.getAttackInterceptions(AnimationHelperImpl.INSTANCE)) {
-			this.INTERCEPTIONS.add(new ParsedAttackInterception(interception, false));
-		}
+		List<AttackInterceptingStateDefinition.AttackInterceptionDefinition> interceptionDefinitions;
+		interceptionDefinitions = accumulateList(builder -> definition.accumulateAttackInterceptions(builder, AnimationHelperImpl.INSTANCE));
+		this.INTERCEPTIONS = interceptionDefinitions.stream().map(interceptionDefinition ->
+				new ParsedAttackInterception(interceptionDefinition, false)).toList();
+	}
+
+	@Override public List<ParsedAttackInterception> getInterceptions() {
+		return INTERCEPTIONS;
 	}
 }

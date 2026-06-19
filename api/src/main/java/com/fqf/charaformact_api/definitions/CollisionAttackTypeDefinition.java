@@ -19,13 +19,15 @@ import java.util.List;
 public interface CollisionAttackTypeDefinition {
 	@NotNull Identifier getID();
 
-	boolean shouldAttemptMounting();
-	@NotNull CollisionAttackTypeDefinition.PainfulCollisionResponse painfulCollisionResponse();
-	@Nullable EquipmentSlot getEquipmentSlot();
-	@NotNull Identifier getDamageType();
-	@Nullable Identifier getPostCollisionActions(CollisionAttackResult.ExecutableResult result);
+	boolean attemptsMounting();
+	default @NotNull PainfulCollisionResponse definePainfulCollisionResponse() {
+		return PainfulCollisionResponse.INJURY;
+	}
+	@Nullable EquipmentSlot defineEquipmentSlot();
+	@NotNull Identifier defineDamageType();
+	@Nullable Identifier definePostCollisionActions(CollisionAttackResult.ExecutableResult result);
 
-	Box tweakPlayerBoundingBox(CfaData data, Box box);
+	Box mutatePlayerBoundingBox(CfaData data, Box box);
 	void filterPotentialTargets(List<Entity> potentialTargets, ServerPlayerEntity attacker, Vec3d motion);
 
 	float calculateDamage(CfaData data, ItemStack equipment, float equipmentArmor, float equipmentToughness);

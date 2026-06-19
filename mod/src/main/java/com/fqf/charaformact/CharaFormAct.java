@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 public class CharaFormAct implements ModInitializer {
 	public static final String MOD_ID = "charaformact";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+	static ClientHelper clientHelper;
 
 	public static final CharaFormActConfig CONFIG;
 	static {
@@ -43,5 +44,13 @@ public class CharaFormAct implements ModInitializer {
 
 	public static Identifier makeID(String path) {
 		return Identifier.of("charaformact", path);
+	}
+
+	public static ClientHelper getClientHelper() {
+		return clientHelper;
+	}
+
+	public static abstract class ClientHelper {
+		public abstract void prepareKeybindTexts();
 	}
 }

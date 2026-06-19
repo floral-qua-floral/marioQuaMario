@@ -16,7 +16,6 @@ import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import net.minecraft.entity.EntityPose;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +26,7 @@ import java.util.Set;
 
 public class Paddle implements AquaticActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("paddle");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 		return ID;
 	}
 
@@ -98,7 +97,7 @@ public class Paddle implements AquaticActionDefinition {
 		return null;
 	}
 	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-		data.sustainSound(MarioSFX.SWIM_PADDLE, data.getPlayer(), SoundCategory.PLAYERS);
+		data.playSound(MarioSFX.SWIM_PADDLE, data.getPlayer().getRandom().nextLong());
 	}
 	@Override public void serverTick(CfaAuthoritativeData data) {
 
@@ -140,7 +139,4 @@ public class Paddle implements AquaticActionDefinition {
 		return Set.of();
 	}
 
-	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
-		return List.of();
-	}
 }

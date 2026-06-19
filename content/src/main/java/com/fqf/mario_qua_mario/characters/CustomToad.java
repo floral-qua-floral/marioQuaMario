@@ -17,21 +17,26 @@ import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class CustomToad extends AbstractToad implements CharacterDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("customizable_toad");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 	    return ID;
 	}
 
-	@Override public @NotNull String getVoiceName() {
+	@Override public @NotNull String defineVoiceName() {
 		return "toad";
 	}
 
 	@Override
-	public @NotNull SoundEvent getJumpSound() {
+	public @NotNull SoundEvent defineJumpSound() {
 		return MarioSFX.TOAD_JUMP;
 	}
 
-	@Override public Set<StatModifier> getStatModifiers() {
-		return Set.of(
+	@Override public void accumulatePowers(ImmutableSet.Builder<String> builder) {
+		super.accumulatePowers(builder);
+		builder.add(Powers.USES_TOAD_CUSTOMIZATIONS);
+	}
+
+	@Override public void accumulateStatModifiers(ImmutableSet.Builder<StatModifier> builder) {
+		builder.add(
 				// Toads walk and run EXTRA faster
 				new StatModifier(Set.of(FORWARD, WALKING, SPEED), 1.3),
 				new StatModifier(Set.of(FORWARD, RUNNING, SPEED), 1.34),
@@ -41,12 +46,6 @@ public class CustomToad extends AbstractToad implements CharacterDefinition {
 				new StatModifier(Set.of(JUMPING_GRAVITY), 1.1),
 				new StatModifier(Set.of(JUMP_VELOCITY), 0.885)
 		);
-	}
-
-	@Override
-	public Set<String> getPowers() {
-		ImmutableSet.Builder<String> abstractToadPowers = ImmutableSet.builder();
-		return abstractToadPowers.addAll(super.getPowers()).add(Powers.USES_TOAD_CUSTOMIZATIONS).build();
 	}
 
 	@Override

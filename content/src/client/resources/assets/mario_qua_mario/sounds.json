@@ -125,6 +125,12 @@
 			"mario_qua_mario:sfx/form/coin_use"
 		]
 	},
+	"sfx.form.empower": {
+		"subtitle": "subtitles.mario_qua_mario.form.empower",
+		"sounds": [
+			"mario_qua_mario:sfx/form/empower"
+		]
+	},
 	"sfx.form.fireball": {
 		"subtitle": "subtitles.mario_qua_mario.form.fireball",
 		"sounds": [
@@ -147,6 +153,12 @@
 		"subtitle": "subtitles.mario_qua_mario.form.mini_empower",
 		"sounds": [
 			"mario_qua_mario:sfx/form/mini_empower"
+		]
+	},
+	"sfx.form.revert": {
+		"subtitle": "subtitles.mario_qua_mario.form.revert",
+		"sounds": [
+			"mario_qua_mario:sfx/form/revert"
 		]
 	},
 	"sfx.form.tail_empower": {

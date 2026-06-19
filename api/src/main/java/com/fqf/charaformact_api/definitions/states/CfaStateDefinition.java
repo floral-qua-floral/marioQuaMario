@@ -8,12 +8,22 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface CfaStateDefinition {
-	@NotNull Identifier getID();
+	@NotNull Identifier defineID();
 
-	@Nullable Object provideStateData(CfaData data);
-	void clientTick(CfaClientData data, boolean isSelf);
-	void serverTick(CfaAuthoritativeData data);
+	default @Nullable Object provideStateData(CfaData data) {
+		return null;
+	}
+	default void clientTick(CfaClientData data, boolean isSelf) {
 
-	default void onEnter(CfaData data) { }
-	default void onExit(CfaData data) { }
+	}
+	default void serverTick(CfaAuthoritativeData data) {
+
+	}
+
+	default void onEnter(CfaData data) {
+
+	}
+	default void onExit(CfaData data) {
+
+	}
 }

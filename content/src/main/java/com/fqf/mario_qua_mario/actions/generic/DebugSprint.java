@@ -9,6 +9,7 @@ import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefini
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.util.MarioSFX;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
@@ -24,7 +25,7 @@ import java.util.List;
 
 public class DebugSprint extends Debug {
 	public static final Identifier ID = MarioQuaMario.makeID("debug_test");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 	    return ID;
 	}
 
@@ -48,16 +49,17 @@ public class DebugSprint extends Debug {
 		);
 	}
 
-	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
-		return List.of(
+	@Override
+	public void accumulateAttackInterceptions(ImmutableList.Builder<AttackInterceptionDefinition> builder, AnimationHelper helper) {
+		builder.add(
 				new AttackInterceptionDefinition() {
-					@Override public @Nullable Identifier getActionTarget() {
+					@Override public @Nullable Identifier defineActionTarget() {
 						return null;
 					}
-					@Override public Hand getHandToSwing() {
+					@Override public Hand defineHandToSwing() {
 						return Hand.MAIN_HAND;
 					}
-					@Override public boolean shouldTriggerAttackCooldown() {
+					@Override public boolean triggersAttackCooldown() {
 						return true;
 					}
 

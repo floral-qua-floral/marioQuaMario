@@ -49,9 +49,10 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 	}
 
 	@Override public boolean setForm(ParsedForm newForm, boolean isReversion, long seed) {
+		ParsedForm oldForm = this.getForm();
 		boolean formChanged = super.setForm(newForm, isReversion, seed);
 		if(formChanged) {
-			this.handlePowerTransitionSound(isReversion, newForm, seed);
+			this.handlePowerTransitionSound(isReversion, oldForm, newForm, seed);
 			this.APPEARANCE_DATA.conditionallyFlicker();
 		}
 		return formChanged;
@@ -214,7 +215,7 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 		this.RECORDED_COLLISIONS.COLLIDED[2] = false; this.RECORDED_COLLISIONS.REFLECTS[2] = false;
 		Vec3d movement = this.getMovementWithFluidPushingAndNudgeVel();
 		this.preemptMovement(movement);
-		this.getPlayer().move(MovementType.SELF, movement);
+		if(cancelVanillaTravel) this.getPlayer().move(MovementType.SELF, movement);
 
 		this.WALL_INFO.calculatedInputs = false;
 

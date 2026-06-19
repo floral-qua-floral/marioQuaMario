@@ -24,7 +24,7 @@ import java.util.Set;
 
 public class BonkAir extends Fall implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("bonk_air");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 		return ID;
 	}
 
@@ -247,7 +247,4 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 		return Set.of();
 	}
 
-	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
-		return List.of();
-	}
 }

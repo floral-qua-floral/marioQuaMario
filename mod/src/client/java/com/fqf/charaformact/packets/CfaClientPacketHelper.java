@@ -195,11 +195,11 @@ public class CfaClientPacketHelper implements CfaClientHelperManager.ClientPacke
 
 		if(interception.IS_FROM_ACTION) {
 			interceptionSource = RegistryManager.ACTIONS.getRawIdOrThrow(data.getAction());
-			interceptionIndex = data.getAction().INTERCEPTIONS.indexOf(interception);
+			interceptionIndex = data.getAction().getInterceptions().indexOf(interception);
 		}
 		else {
 			interceptionSource = RegistryManager.FORMS.getRawIdOrThrow(data.getForm());
-			interceptionIndex = data.getForm().INTERCEPTIONS.indexOf(interception);
+			interceptionIndex = data.getForm().getInterceptions().indexOf(interception);
 		}
 
 		int playerID = data.getPlayer().getId();

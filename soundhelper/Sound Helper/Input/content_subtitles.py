@@ -45,8 +45,10 @@ sfx_form = {
   "burn_object": "Fireball incinerates",
   "tail_fly": "Tail waggles",
   "tail_whip": "Tail whips",
+  "empower": "Powering up",
   "tail_empower": "Powering up",
-  "mini_empower": "Powering up...?"
+  "mini_empower": "Powering up...?",
+  "revert": "Powering down"
 }
 
 sfx_collision_attack = {

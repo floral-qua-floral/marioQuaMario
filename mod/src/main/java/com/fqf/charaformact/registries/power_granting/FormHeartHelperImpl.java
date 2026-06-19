@@ -9,6 +9,24 @@ public class FormHeartHelperImpl implements FormDefinition.FormHeartHelper {
 		this.ID = powerUpID;
 	}
 
+	private static final FormDefinition.FormHeart VANILLA = new FormDefinition.FormHeart(
+			Identifier.ofVanilla("hud/heart/full"),
+			Identifier.ofVanilla("hud/heart/full_blinking"),
+			Identifier.ofVanilla("hud/heart/half"),
+			Identifier.ofVanilla("hud/heart/half_blinking"),
+			Identifier.ofVanilla("hud/heart/hardcore_full"),
+			Identifier.ofVanilla("hud/heart/hardcore_full_blinking"),
+			Identifier.ofVanilla("hud/heart/hardcore_half"),
+			Identifier.ofVanilla("hud/heart/hardcore_half_blinking"),
+			Identifier.ofVanilla("hud/heart/container"),
+			Identifier.ofVanilla("hud/heart/container_blinking")
+	);
+
+	@Override
+	public FormDefinition.FormHeart vanilla() {
+		return VANILLA;
+	}
+
 	@Override
 	public FormDefinition.FormHeart auto() {
 		return this.standard(this.ID.getNamespace(), this.ID.getPath());

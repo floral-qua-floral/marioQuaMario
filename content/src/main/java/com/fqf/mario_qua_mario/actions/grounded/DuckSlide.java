@@ -29,7 +29,7 @@ import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class DuckSlide implements GroundedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("duck_slide");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 	    return ID;
 	}
 
@@ -161,8 +161,4 @@ public class DuckSlide implements GroundedActionDefinition {
 		);
 	}
 
-	@Override
-	public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
-		return List.of();
-	}
 }

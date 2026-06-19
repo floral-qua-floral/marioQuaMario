@@ -7,9 +7,6 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
 public class CfaSounds {
-	public static final SoundEvent EMPOWER = makeFormSound("empower");
-	public static final SoundEvent REVERT = makeFormSound("revert");
-
 	public static final SoundEvent BUMP = makeMovementSound("bump");
 	public static final SoundEvent SKID = makeMovementSound("skid");
 	public static final SoundEvent SKID_ICE = makeMovementSound("skid_ice");

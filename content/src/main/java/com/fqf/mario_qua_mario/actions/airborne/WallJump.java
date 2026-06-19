@@ -16,7 +16,7 @@ import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class WallJump extends Jump implements AirborneActionDefinition {
     public static final Identifier ID = MarioQuaMario.makeID("wall_jump");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 		return ID;
 	}
 

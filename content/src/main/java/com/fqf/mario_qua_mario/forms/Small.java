@@ -2,70 +2,42 @@ package com.fqf.mario_qua_mario.forms;
 
 import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact_api.definitions.states.FormDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Set;
-
 public class Small implements FormDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("small");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 	    return ID;
 	}
 
-	@Override public @Nullable Identifier getReversionTarget() {
-		return null;
-	}
-	@Override public int getValue() {
+	@Override public int defineValue() {
 		return 0;
 	}
 
-	@Override public @Nullable SoundEvent getAcquisitionSound() {
-		return null;
-	}
-
-	@Override public float getWidthFactor() {
-		return 1;
-	}
-	@Override public float getHeightFactor() {
+	@Override public float defineHeightFactor() {
 		return 0.5F;
 	}
-	@Override public float getAnimationHorizontalScale() {
-		return 1;
-	}
-	@Override public float getAnimationVerticalScale() {
+	@Override public float defineAnimationVerticalScale() {
 		return 0.45F;
 	}
 
-	@Override public int getBapStrengthModifier() {
+	@Override public int defineBapStrengthModifier() {
 		return -1;
 	}
 
-	@Override public float getVoicePitch() {
+	@Override public float defineVoicePitch() {
 		return 1.075F;
 	}
-	@Override public float getJumpPitch() {
+	@Override public float defineJumpPitch() {
 		return 1.075F;
 	}
 
-	@Override public Set<String> getPowers() {
-		return Set.of();
-	}
-	@Override public Set<AttributeModifierInstruction> getAttributeModifiers() {
-		return Set.of();
-	}
-	@Override public Set<StatModifier> getStatModifiers() {
-		return Set.of();
-	}
-
-	@Override public @NotNull FormDefinition.FormHeart getFormHeart(FormHeartHelper helper) {
+	@Override public @NotNull FormDefinition.FormHeart defineFormHeart(FormHeartHelper helper) {
 		return new FormHeart(
 				MarioQuaMario.makeResID("hud/form_hearts/small/full"),
 				MarioQuaMario.makeResID("hud/form_hearts/small/full_blinking"),
@@ -94,7 +66,4 @@ public class Small implements FormDefinition {
 
 	}
 
-	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
-		return List.of();
-	}
 }

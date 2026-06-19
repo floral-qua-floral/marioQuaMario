@@ -13,6 +13,7 @@ import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.actions.airborne.LavaBoost;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.MarioSFX;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -31,7 +32,7 @@ import java.util.Set;
 
 public class Debug implements GenericActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("debug");
-	@Override public @NotNull Identifier getID() {
+	@Override public @NotNull Identifier defineID() {
 	    return ID;
 	}
 
@@ -130,22 +131,22 @@ public class Debug implements GenericActionDefinition {
 		return Set.of();
 	}
 
-	@Override public @NotNull List<AttackInterceptionDefinition> getAttackInterceptions(AnimationHelper animationHelper) {
-
-		return List.of(
+	@Override
+	public void accumulateAttackInterceptions(ImmutableList.Builder<AttackInterceptionDefinition> builder, AnimationHelper helper) {
+		builder.add(
 				new AttackInterceptionDefinition() {
 					@Override
-					public @Nullable Identifier getActionTarget() {
+					public @Nullable Identifier defineActionTarget() {
 						return null;
 					}
 
 					@Override
-					public @Nullable Hand getHandToSwing() {
+					public @Nullable Hand defineHandToSwing() {
 						return null;
 					}
 
 					@Override
-					public boolean shouldTriggerAttackCooldown() {
+					public boolean triggersAttackCooldown() {
 						return false;
 					}
 
@@ -183,13 +184,13 @@ public class Debug implements GenericActionDefinition {
 					}
 				},
 				new AttackInterceptionDefinition() {
-					@Override public @Nullable Identifier getActionTarget() {
+					@Override public @Nullable Identifier defineActionTarget() {
 						return null;
 					}
-					@Override public Hand getHandToSwing() {
+					@Override public Hand defineHandToSwing() {
 						return Hand.OFF_HAND;
 					}
-					@Override public boolean shouldTriggerAttackCooldown() {
+					@Override public boolean triggersAttackCooldown() {
 						return true;
 					}
 

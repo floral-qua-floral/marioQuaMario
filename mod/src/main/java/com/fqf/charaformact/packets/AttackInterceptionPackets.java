@@ -23,7 +23,7 @@ public class AttackInterceptionPackets {
 			@Nullable Entity targetEntity, @Nullable BlockPos targetBlock
 	) {
 		long seed = player.getRandom().nextLong();
-		fromAction.INTERCEPTIONS.get(index).execute(player.cfa$getCfaData(), targetEntity, targetBlock, seed);
+		fromAction.getInterceptions().get(index).execute(player.cfa$getCfaData(), targetEntity, targetBlock, seed);
 		AttackInterceptionPayload dummyPayload = new MissedAttackInterceptedC2SPayload(true, RegistryManager.ACTIONS.getRawIdOrThrow(fromAction), index, seed);
 		CfaPackets.sendToTrackers(player, convertPayloadToS2C(player, dummyPayload, targetEntity, targetBlock), true);
 	}
@@ -32,7 +32,7 @@ public class AttackInterceptionPackets {
 			@Nullable Entity targetEntity, @Nullable BlockPos targetBlock
 	) {
 		long seed = player.getRandom().nextLong();
-		fromForm.INTERCEPTIONS.get(index).execute(player.cfa$getCfaData(), targetEntity, targetBlock, seed);
+		fromForm.getInterceptions().get(index).execute(player.cfa$getCfaData(), targetEntity, targetBlock, seed);
 		AttackInterceptionPayload dummyPayload = new MissedAttackInterceptedC2SPayload(false, RegistryManager.FORMS.getRawIdOrThrow(fromForm), index, seed);
 		CfaPackets.sendToTrackers(player, convertPayloadToS2C(player, dummyPayload, targetEntity, targetBlock), true);
 	}

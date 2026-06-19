@@ -44,19 +44,19 @@ public class Stomp implements CollisionAttackTypeDefinition {
 	    return ID;
 	}
 
-	@Override public boolean shouldAttemptMounting() {
+	@Override public boolean attemptsMounting() {
 		return true;
 	}
-	@Override public @NotNull CollisionAttackTypeDefinition.PainfulCollisionResponse painfulCollisionResponse() {
+	@Override public @NotNull CollisionAttackTypeDefinition.PainfulCollisionResponse definePainfulCollisionResponse() {
 		return PainfulCollisionResponse.INJURY;
 	}
-	@Override public @Nullable EquipmentSlot getEquipmentSlot() {
+	@Override public @Nullable EquipmentSlot defineEquipmentSlot() {
 		return EquipmentSlot.FEET;
 	}
-	@Override public @NotNull Identifier getDamageType() {
+	@Override public @NotNull Identifier defineDamageType() {
 		return MarioQuaMario.makeResID("stomp");
 	}
-	@Override public @Nullable Identifier getPostCollisionActions(CollisionAttackResult.ExecutableResult result) {
+	@Override public @Nullable Identifier definePostCollisionActions(CollisionAttackResult.ExecutableResult result) {
 		return switch(result) {
 			case PAINFUL -> BonkAir.ID;
 			case NORMAL, GLANCING, RESISTED -> StompBounce.ID;
@@ -64,7 +64,7 @@ public class Stomp implements CollisionAttackTypeDefinition {
 		};
 	}
 
-	@Override public Box tweakPlayerBoundingBox(CfaData data, Box box) {
+	@Override public Box mutatePlayerBoundingBox(CfaData data, Box box) {
 		return box.stretch(0, -0.05, 0);
 	}
 
