@@ -1,7 +1,7 @@
 package com.fqf.mario_qua_mario.mixin.lightning;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario.item.ModItems;
+import com.fqf.mario_qua_mario.item.MQMItems;
 import com.fqf.mario_qua_mario.util.LightningStrikableInventory;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -26,7 +26,7 @@ public class PlayerInventoryStruckByLightningMixin implements LightningStrikable
 			totalConverted += convert(serverPlayer.playerScreenHandler.getCraftingInput());
 
 			ItemStack oldCursorStack = serverPlayer.currentScreenHandler.getCursorStack();
-			if(oldCursorStack.isOf(ModItems.SUPER_MUSHROOM)) {
+			if(oldCursorStack.isOf(MQMItems.SUPER_MUSHROOM)) {
 				totalConverted += oldCursorStack.getCount();
 				serverPlayer.currentScreenHandler.setCursorStack(equivalentNumberOfMiniMushrooms(oldCursorStack));
 			}
@@ -46,7 +46,7 @@ public class PlayerInventoryStruckByLightningMixin implements LightningStrikable
 
 		for (int slotIndex = 0; slotIndex < inventory.size(); slotIndex++) {
 			ItemStack oldStack = inventory.getStack(slotIndex);
-			if(oldStack.isOf(ModItems.SUPER_MUSHROOM)) {
+			if(oldStack.isOf(MQMItems.SUPER_MUSHROOM)) {
 				inventory.setStack(slotIndex, equivalentNumberOfMiniMushrooms(oldStack));
 				totalConverted += oldStack.getCount();
 			}
@@ -57,6 +57,6 @@ public class PlayerInventoryStruckByLightningMixin implements LightningStrikable
 
 	@Unique
 	private static ItemStack equivalentNumberOfMiniMushrooms(ItemStack old) {
-		return new ItemStack(ModItems.MINI_MUSHROOM, old.getCount());
+		return new ItemStack(MQMItems.MINI_MUSHROOM, old.getCount());
 	}
 }

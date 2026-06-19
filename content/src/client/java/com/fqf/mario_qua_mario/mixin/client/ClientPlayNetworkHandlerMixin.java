@@ -1,6 +1,6 @@
 package com.fqf.mario_qua_mario.mixin.client;
 
-import com.fqf.mario_qua_mario.item.ModItems;
+import com.fqf.mario_qua_mario.item.MQMItems;
 import com.fqf.mario_qua_mario.util.MQMTags;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import com.fqf.mario_qua_mario.util.Squashable;
@@ -34,7 +34,7 @@ public class ClientPlayNetworkHandlerMixin {
 	@Inject(method = "onItemPickupAnimation", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/world/ClientWorld;playSound(DDDLnet/minecraft/sound/SoundEvent;Lnet/minecraft/sound/SoundCategory;FFZ)V"))
 	private void alternatePickupSoundForCoin(ItemPickupAnimationS2CPacket packet, CallbackInfo ci) {
 		Entity pickedUp = this.world.getEntityById(packet.getEntityId());
-		if(pickedUp instanceof ItemEntity pickedUpItem && pickedUpItem.getStack().isOf(ModItems.COIN)) {
+		if(pickedUp instanceof ItemEntity pickedUpItem && pickedUpItem.getStack().isOf(MQMItems.COIN)) {
 			this.world
 					.playSound(
 							pickedUp.getX(),

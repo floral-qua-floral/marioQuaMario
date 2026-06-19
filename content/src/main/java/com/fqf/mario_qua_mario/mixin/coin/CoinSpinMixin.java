@@ -1,6 +1,6 @@
 package com.fqf.mario_qua_mario.mixin.coin;
 
-import com.fqf.mario_qua_mario.item.ModItems;
+import com.fqf.mario_qua_mario.item.MQMItems;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.ItemStack;
@@ -17,7 +17,7 @@ public abstract class CoinSpinMixin {
 
 	@ModifyReturnValue(method = "getRotation", at = @At("RETURN"))
 	private float multiplyRotation(float original) {
-		if(this.getStack().isOf(ModItems.COIN)) original *= COIN_ROTATION_FACTOR;
+		if(this.getStack().isOf(MQMItems.COIN)) original *= COIN_ROTATION_FACTOR;
 		return original;
 	}
 }

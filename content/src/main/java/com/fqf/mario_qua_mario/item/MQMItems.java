@@ -24,7 +24,7 @@ import net.minecraft.util.Rarity;
 
 import java.util.List;
 
-public class ModItems {
+public class MQMItems {
 	public static final Item FIRE_FLOWER = registerPowerItem("fire_flower", Fire.ID, 5, 0.3F);
 	public static final Item SUPER_LEAF = registerPowerItem("super_leaf", Raccoon.ID, 4, 0.4F);
 	public static final Item SUPER_MUSHROOM = registerItem("super_mushroom", new PowerUpItem(new Item.Settings().maxCount(4).food(

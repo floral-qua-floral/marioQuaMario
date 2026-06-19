@@ -1,7 +1,7 @@
 package com.fqf.mario_qua_mario.entity.custom;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario.entity.ModEntities;
+import com.fqf.mario_qua_mario.entity.MQMEntities;
 import com.fqf.mario_qua_mario.util.MQMTags;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import net.minecraft.entity.Entity;
@@ -40,7 +40,7 @@ public class MarioFireballProjectileEntity extends ProjectileEntity {
 	}
 
 	public MarioFireballProjectileEntity(World world, ServerPlayerEntity mario) {
-		this(ModEntities.MARIO_FIREBALL, world);
+		this(MQMEntities.MARIO_FIREBALL, world);
 		this.setOwner(mario);
 		this.setPosition(
 				mario.getX() - (mario.getWidth() + 1) * 0.5 * Math.sin(mario.getYaw() * (Math.PI / 180.0)),

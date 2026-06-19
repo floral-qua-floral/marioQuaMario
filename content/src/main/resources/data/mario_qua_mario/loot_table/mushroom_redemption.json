@@ -1,0 +1,81 @@
+{
+  "type": "minecraft:advancement_reward",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "mario_qua_mario:super_mushroom",
+          "functions": [
+            {
+              "add": false,
+              "count": 3.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:honey_bottle",
+          "conditions": [
+            {
+              "condition": "minecraft:all_of",
+              "terms": [
+                { "condition": "minecraft:weather_check", "raining": false },
+                {
+                  "condition": "minecraft:location_check",
+                  "predicate": {
+                    "biomes": "#c:is_forest"
+                  }
+                }
+              ]
+            }
+          ],
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:honey_bottle",
+          "conditions": [
+            {
+              "condition": "minecraft:all_of",
+              "terms": [
+                { "condition": "minecraft:weather_check", "raining": false },
+                {
+                  "condition": "minecraft:location_check",
+                  "predicate": {
+                    "biomes": "#c:is_floral"
+                  }
+                }
+              ]
+            }
+          ],
+          "weight": 20
+        },
+        {
+          "type": "minecraft:item",
+          "name": "mario_qua_mario:mini_mushroom",
+          "conditions": [
+            {
+              "condition": "minecraft:all_of",
+              "terms": [
+                { "condition": "minecraft:weather_check", "thundering": true },
+                {
+                  "condition": "minecraft:location_check",
+                  "predicate": {
+                    "can_see_sky": true
+                  }
+                }
+              ]
+            }
+          ],
+          "weight": 10
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "mario_qua_mario:power_up_redemption"
+}

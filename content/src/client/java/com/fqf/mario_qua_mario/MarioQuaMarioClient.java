@@ -1,17 +1,15 @@
 package com.fqf.mario_qua_mario;
 
-import com.fqf.mario_qua_mario.entity.ModEntities;
+import com.fqf.mario_qua_mario.entity.MQMEntities;
 import com.fqf.mario_qua_mario.entity.MarioFireballModel;
 import com.fqf.mario_qua_mario.entity.MarioFireballRenderer;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.util.ModelIdentifier;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -27,7 +25,7 @@ public class MarioQuaMarioClient implements ClientModInitializer {
 		MarioQuaMario.clientHelper = new ContentClientHelperImplementation();
 
 		EntityModelLayerRegistry.registerModelLayer(MarioFireballModel.FIREBALL, MarioFireballModel::getTexturedModelData);
-		EntityRendererRegistry.register(ModEntities.MARIO_FIREBALL, MarioFireballRenderer::new);
+		EntityRendererRegistry.register(MQMEntities.MARIO_FIREBALL, MarioFireballRenderer::new);
 
 		ModelLoadingPlugin.register(context -> {
 			context.addModels(COIN_GROUND_ID);

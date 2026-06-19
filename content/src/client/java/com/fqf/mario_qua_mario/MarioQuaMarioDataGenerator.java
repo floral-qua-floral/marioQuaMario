@@ -1,6 +1,6 @@
 package com.fqf.mario_qua_mario;
 
-import com.fqf.mario_qua_mario.item.ModItems;
+import com.fqf.mario_qua_mario.item.MQMItems;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -27,7 +27,7 @@ public class MarioQuaMarioDataGenerator implements DataGeneratorEntrypoint {
 
 		@Override
 		public void generateItemModels(ItemModelGenerator itemModelGenerator) {
-			itemModelGenerator.register(ModItems.COIN, Models.GENERATED);
+			itemModelGenerator.register(MQMItems.COIN, Models.GENERATED);
 		}
 	}
 }

@@ -1,8 +1,9 @@
 package com.fqf.mario_qua_mario;
 
 import com.fqf.mario_qua_mario.customization.CharacterCustomizationCommand;
-import com.fqf.mario_qua_mario.entity.ModEntities;
-import com.fqf.mario_qua_mario.item.ModItems;
+import com.fqf.mario_qua_mario.entity.MQMEntities;
+import com.fqf.mario_qua_mario.item.MQMItems;
+import com.fqf.mario_qua_mario.item.MQMLootTables;
 import com.fqf.mario_qua_mario.util.MQMEventListeners;
 import com.fqf.mario_qua_mario.util.MQMGamerules;
 import com.fqf.mario_qua_mario.util.MarioSFX;
@@ -32,11 +33,12 @@ public class MarioQuaMario implements ModInitializer {
 	public void onInitialize() {
 		LOGGER.info("It's-a me!");
 
-		ModEntities.registerModEntities();
-		ModItems.registerModItems();
+		MQMEntities.registerModEntities();
+		MQMItems.registerModItems();
 		MarioSFX.staticInitialize();
 		MQMGamerules.register();
 		MQMEventListeners.register();
+		MQMLootTables.staticInitialize();
 
 		CharacterCustomizationCommand.registerCommand();
 	}

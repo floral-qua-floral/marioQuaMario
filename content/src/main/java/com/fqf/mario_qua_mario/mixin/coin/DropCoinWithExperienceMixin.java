@@ -1,6 +1,6 @@
 package com.fqf.mario_qua_mario.mixin.coin;
 
-import com.fqf.mario_qua_mario.item.ModItems;
+import com.fqf.mario_qua_mario.item.MQMItems;
 import com.fqf.mario_qua_mario.util.Powers;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -25,6 +25,6 @@ public abstract class DropCoinWithExperienceMixin extends Entity {
 	@Inject(method = "dropXp", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ExperienceOrbEntity;spawn(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/Vec3d;I)V"))
 	private void dropCoin(Entity attacker, CallbackInfo ci) {
 		if(this.attackingPlayer != null && this.attackingPlayer.cfa$getCfaData().hasPower(Powers.DROP_COINS))
-			this.dropItem(ModItems.COIN);
+			this.dropItem(MQMItems.COIN);
 	}
 }

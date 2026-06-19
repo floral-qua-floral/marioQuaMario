@@ -1,6 +1,6 @@
 package com.fqf.mario_qua_mario.item.custom;
 
-import com.fqf.mario_qua_mario.item.ModItems;
+import com.fqf.mario_qua_mario.item.MQMItems;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -19,9 +19,9 @@ public class CoinItem extends Item {
 	}
 
 	public static final List<Pair<Item, Integer>> COIN_REWARDS = List.of(
-			new Pair<>(ModItems.SUPER_MUSHROOM, 3),
-			new Pair<>(ModItems.FIRE_FLOWER, 1),
-			new Pair<>(ModItems.SUPER_LEAF, 1)
+			new Pair<>(MQMItems.SUPER_MUSHROOM, 3),
+			new Pair<>(MQMItems.FIRE_FLOWER, 1),
+			new Pair<>(MQMItems.SUPER_LEAF, 1)
 	);
 
 	@Override
@@ -32,6 +32,7 @@ public class CoinItem extends Item {
 		user.playSound(MarioSFX.COIN_USE, 1.0F, 1.0F);
 
 		if(!world.isClient()) {
+			// TODO: Make data-driven using loot table!
 			Pair<Item, Integer> reward = COIN_REWARDS.get(user.getRandom().nextInt(COIN_REWARDS.size()));
 			if(user.giveItemStack(new ItemStack(reward.getLeft(), reward.getRight()))) {
 				user.incrementStat(Stats.USED.getOrCreateStat(this));

@@ -7,7 +7,7 @@ import net.minecraft.entity.SpawnGroup;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 
-public class ModEntities {
+public class MQMEntities {
 	public static final EntityType<MarioFireballProjectileEntity> MARIO_FIREBALL = Registry.register(
 			Registries.ENTITY_TYPE,
 			MarioQuaMario.makeID("mario_fireball"),
