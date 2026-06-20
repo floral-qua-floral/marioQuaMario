@@ -12,6 +12,7 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.grounded.DuckWaddle;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,53 +26,28 @@ public class UnderwaterDuck implements AquaticActionDefinition {
 		return ID;
 	}
 
-	@Override public @Nullable AnimationDefinition getAnimation() {
+	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return DuckWaddle.makeAnimation(true, false);
 	}
-	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
-		return null;
-	}
 
-	@Override public @NotNull SlidingStatus getSlidingStatus() {
-		return SlidingStatus.NOT_SLIDING;
-	}
-
-	@Override public @NotNull SneakingRule getSneakingRule() {
-		return SneakingRule.ALLOW;
-	}
-	@Override public @NotNull SprintingRule getSprintingRule() {
+	@Override public @NotNull SprintingRule defineSprintingRule() {
 		return SprintingRule.PROHIBIT;
 	}
 
-	@Override public @Nullable BappingRule getBappingRule() {
-		return null;
-	}
-	@Override public @Nullable Identifier getCollisionAttackTypeID() {
-		return null;
-	}
-
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return null;
-	}
-	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-
-	}
-	@Override public void serverTick(CfaAuthoritativeData data) {
-
-	}
 	@Override public void travelHook(CfaTravelData data, AquaticActionHelper helper) {
 		Submerged.waterMove(data, helper);
 	}
 
 	public static final TransitionDefinition DUCK_SUBMERGE = UnderwaterWalk.SUBMERGE.variate(UnderwaterDuck.ID, null);
 
-	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(AquaticActionHelper helper) {
-		return List.of(
-				DuckWaddle.UNDUCK.variate(UnderwaterWalk.ID, null)
-		);
+	@Override
+	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, AquaticActionHelper helper) {
+		builder.add(DuckWaddle.UNDUCK.variate(UnderwaterWalk.ID, null));
 	}
-	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AquaticActionHelper helper) {
-		return List.of(
+
+	@Override
+	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, AquaticActionHelper helper) {
+		builder.add(
 				Swim.SWIM.variate(null, null, null, data -> {
 					assert Swim.SWIM.travelExecutor() != null;
 					Swim.SWIM.travelExecutor().execute(data);
@@ -79,15 +55,12 @@ public class UnderwaterDuck implements AquaticActionDefinition {
 				}, null)
 		);
 	}
-	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AquaticActionHelper helper) {
-		return List.of(
+
+	@Override
+	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, AquaticActionHelper helper) {
+		builder.add(
 				UnderwaterWalk.EXIT_WATER.variate(DuckWaddle.ID, null),
 				Fall.FALL.variate(Submerged.ID, null)
 		);
 	}
-
-	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
-		return Set.of();
-	}
-
 }

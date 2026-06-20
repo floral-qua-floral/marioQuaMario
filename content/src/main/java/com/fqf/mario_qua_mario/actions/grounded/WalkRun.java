@@ -11,6 +11,7 @@ import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +32,7 @@ public class WalkRun extends SubWalk implements GroundedActionDefinition {
 		return Easing.clampedRangeToProgress(data.getForwardVel(), SubWalk.WALK_SPEED.get(data), RUN_SPEED.get(data));
 	}
 
-	@Override public @Nullable AnimationDefinition getAnimation() {
+	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return AnimationDefinition.of(
 				null,
 				(arrangement, data, animationTime, helper) ->
@@ -44,7 +45,7 @@ public class WalkRun extends SubWalk implements GroundedActionDefinition {
 		);
 	}
 
-	@Override public @NotNull SprintingRule getSprintingRule() {
+	@Override public @NotNull SprintingRule defineSprintingRule() {
 		return SprintingRule.ALLOW;
 	}
 
@@ -93,8 +94,9 @@ public class WalkRun extends SubWalk implements GroundedActionDefinition {
 		else super.travelHook(data, helper);
 	}
 
-	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(GroundedActionHelper helper) {
-		return List.of(
+	@Override
+	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+		builder.add(
 				DuckWaddle.DUCK,
 				Skid.SKID,
 				new TransitionDefinition(

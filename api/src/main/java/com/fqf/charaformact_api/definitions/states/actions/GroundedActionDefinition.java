@@ -5,17 +5,21 @@ import com.fqf.charaformact_api.definitions.states.actions.util.IncompleteAction
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.charaformact_api.util.CfaStat;
-import org.jetbrains.annotations.NotNull;
+import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public interface GroundedActionDefinition extends IncompleteActionDefinition {
 	void travelHook(CfaTravelData data, GroundedActionHelper helper);
 
-	@NotNull List<TransitionDefinition> getBasicTransitions(GroundedActionHelper helper);
-	@NotNull List<TransitionDefinition> getInputTransitions(GroundedActionHelper helper);
-	@NotNull List<TransitionDefinition> getWorldCollisionTransitions(GroundedActionHelper helper);
+	default void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+
+	}
+	default void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+
+	}
+	default void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+
+	}
 
 	/**
 	 * Contains a number of methods intended to help with the creation of Grounded Actions. Can be cast to any of the

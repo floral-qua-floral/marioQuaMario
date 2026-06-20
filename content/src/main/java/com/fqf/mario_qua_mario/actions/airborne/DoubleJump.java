@@ -50,10 +50,10 @@ public class DoubleJump extends Jump implements AirborneActionDefinition {
 				posture.LEFT_LEG.pitch += MathHelper.lerp(progress, 20, -9.5F);
 			}
 	);
-	@Override public @Nullable AnimationDefinition getAnimation() {
+	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return ANIMATION;
 	}
-	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
+	@Override public @Nullable CameraAnimationSet defineCameraAnimations(AnimationHelper helper) {
 		return null;
 	}
 

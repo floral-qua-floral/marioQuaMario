@@ -55,7 +55,7 @@ public class TailSpinGround implements GroundedActionDefinition {
 		);
 	}
 
-	@Override public @Nullable AnimationDefinition getAnimation() {
+	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return makeAnimation(true);
 	}
 
@@ -75,24 +75,24 @@ public class TailSpinGround implements GroundedActionDefinition {
 		null
 	);
 
-	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
+	@Override public @Nullable CameraAnimationSet defineCameraAnimations(AnimationHelper helper) {
 		return CAMERA_ANIMATIONS;
 	}
-	@Override public @NotNull SlidingStatus getSlidingStatus() {
+	@Override public @NotNull SlidingStatus defineSlidingStatus() {
 		return SlidingStatus.NOT_SLIDING;
 	}
 
-	@Override public @NotNull SneakingRule getSneakingRule() {
+	@Override public @NotNull SneakingRule defineSneakingRule() {
 		return SneakingRule.SLIP;
 	}
-	@Override public @NotNull SprintingRule getSprintingRule() {
+	@Override public @NotNull SprintingRule defineSprintingRule() {
 		return SprintingRule.PROHIBIT;
 	}
 
-	@Override public @Nullable BappingRule getBappingRule() {
+	@Override public @Nullable BappingRule defineBappingRule() {
 		return null;
 	}
-	@Override public @Nullable Identifier getCollisionAttackTypeID() {
+	@Override public @Nullable Identifier defineActiveCollisionAttack() {
 		return null;
 	}
 
@@ -144,8 +144,9 @@ public class TailSpinGround implements GroundedActionDefinition {
 		return data.retrieveStateData(TailSpinActionTimerVars.class).actionTimer >= 2 * TICKS_PER_REVOLUTION;
 	}
 
-	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(GroundedActionHelper helper) {
-		return List.of(
+	@Override
+	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+		builder.add(
 				DuckWaddle.UNDUCK,
 				new TransitionDefinition(
 						DuckWaddle.ID,
@@ -155,8 +156,10 @@ public class TailSpinGround implements GroundedActionDefinition {
 				)
 		);
 	}
-	@Override public @NotNull List<TransitionDefinition> getInputTransitions(GroundedActionHelper helper) {
-		return List.of(
+
+	@Override
+	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+		builder.add(
 				DuckJump.makeDuckJumpTransition(helper).variate(
 						TailSpinJump.ID,
 						null, null,
@@ -169,14 +172,4 @@ public class TailSpinGround implements GroundedActionDefinition {
 				)
 		);
 	}
-	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(GroundedActionHelper helper) {
-		return List.of(
-				DuckFall.DUCK_FALL.variate(TailSpinFall.ID, null)
-		);
-	}
-
-	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
-		return Set.of();
-	}
-
 }

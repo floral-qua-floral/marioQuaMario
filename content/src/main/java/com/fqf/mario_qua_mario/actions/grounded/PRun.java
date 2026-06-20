@@ -14,6 +14,7 @@ import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.airborne.Jump;
 import com.fqf.mario_qua_mario.actions.airborne.PJump;
 import com.fqf.mario_qua_mario.actions.aquatic.UnderwaterWalk;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,7 +34,7 @@ public class PRun implements GroundedActionDefinition {
 		return Easing.clampedRangeToProgress(data.getDeltaYaw(), -1, 1) * 2 - 1;
 	}
 
-	@Override public @Nullable AnimationDefinition getAnimation() {
+	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return AnimationDefinition.of(
 				AnimationFlag.NO_SWING_ARMS,
 				(arrangement, data, animationTime, helper) -> arrangement.roll = getTilt(data) * -5,
@@ -47,40 +48,14 @@ public class PRun implements GroundedActionDefinition {
 				}
 		);
 	}
-	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
-		return null;
-	}
-	@Override public @NotNull SlidingStatus getSlidingStatus() {
+	@Override public @NotNull SlidingStatus defineSlidingStatus() {
 		return SlidingStatus.NOT_SLIDING_SMOOTH;
-	}
-
-	@Override public @NotNull SneakingRule getSneakingRule() {
-		return SneakingRule.ALLOW;
-	}
-	@Override public @NotNull SprintingRule getSprintingRule() {
-		return SprintingRule.ALLOW;
 	}
 
 	public static final CfaStat P_SPEED = new CfaStat(0.5875, P_RUNNING, FORWARD, SPEED);
 	public static final CfaStat P_ACCEL = new CfaStat(0.13, P_RUNNING, FORWARD, ACCELERATION);
 	public static final CfaStat P_REDIRECTION = new CfaStat(6.0, P_RUNNING, FORWARD, REDIRECTION);
 
-	@Override public @Nullable BappingRule getBappingRule() {
-		return null;
-	}
-	@Override public @Nullable Identifier getCollisionAttackTypeID() {
-		return null;
-	}
-
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return null;
-	}
-	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-
-	}
-	@Override public void serverTick(CfaAuthoritativeData data) {
-
-	}
 	@Override public void travelHook(CfaTravelData data, GroundedActionHelper helper) {
 		boolean sprinting = data.getPlayer().isSprinting();
 		helper.groundAccel(data,
@@ -98,8 +73,9 @@ public class PRun implements GroundedActionDefinition {
 				data.getHorizVelSquared() > WalkRun.RUN_SPEED.getAsSquaredThreshold(data);
 	}
 
-	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(GroundedActionHelper helper) {
-		return List.of(
+	@Override
+	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+		builder.add(
 				DuckWaddle.DUCK,
 				Skid.SKID,
 				new TransitionDefinition(
@@ -108,27 +84,24 @@ public class PRun implements GroundedActionDefinition {
 							double threshold = WalkRun.RUN_SPEED.getAsThreshold(data);
 							return
 									data.getForwardVel() <= 0
-									|| data.getHorizVelSquared() < threshold * threshold
-									|| Math.abs(data.getStrafeVel()) > 0.175;
+											|| data.getHorizVelSquared() < threshold * threshold
+											|| Math.abs(data.getStrafeVel()) > 0.175;
 						},
 						EvaluatorEnvironment.CLIENT_ONLY
 				)
 		);
 	}
-	@Override public @NotNull List<TransitionDefinition> getInputTransitions(GroundedActionHelper helper) {
-		return List.of(
-				Jump.makeJumpTransition(helper).variate(PJump.ID, null)
-		);
+
+	@Override
+	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+		builder.add(Jump.makeJumpTransition(helper).variate(PJump.ID, null));
 	}
-	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(GroundedActionHelper helper) {
-		return List.of(
+
+	@Override
+	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+		builder.add(
 				Fall.FALL,
 				UnderwaterWalk.SUBMERGE
 		);
 	}
-
-	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
-		return Set.of();
-	}
-
 }

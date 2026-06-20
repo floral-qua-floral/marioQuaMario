@@ -7,7 +7,6 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.Animat
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.Posture;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.actions.airborne.LavaBoost;
@@ -27,9 +26,6 @@ import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Set;
-
 public class Debug implements GenericActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("debug");
 	@Override public @NotNull Identifier defineID() {
@@ -42,7 +38,7 @@ public class Debug implements GenericActionDefinition {
 	}
 
 	@Override
-	public @Nullable AnimationDefinition getAnimation() {
+	public @Nullable AnimationDefinition defineAnimation() {
 		return AnimationDefinition.of(
 				AnimationFlag.NO_SWING_LIMBS,
 				(posture, data, animationTime, helper) -> {
@@ -51,35 +47,16 @@ public class Debug implements GenericActionDefinition {
 		);
 	}
 
-	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
-		return null;
-	}
-	@Override public @NotNull SlidingStatus getSlidingStatus() {
+	@Override public @NotNull SlidingStatus defineSlidingStatus() {
 		return SlidingStatus.SLIDING_SILENT;
 	}
 
-	@Override public @NotNull SneakingRule getSneakingRule() {
-		return SneakingRule.ALLOW;
-	}
-	@Override public @NotNull SprintingRule getSprintingRule() {
-		return SprintingRule.ALLOW;
-	}
 	@Override public @NotNull GenericActionType getGenericActionType() {
 		return GenericActionType.UNSPECIFIED;
 	}
 
-	@Override public @Nullable BappingRule getBappingRule() {
-		return null;
-	}
-	@Override public @Nullable Identifier getCollisionAttackTypeID() {
-		return null;
-	}
-
 	@Override public @Nullable Object provideStateData(CfaData data) {
 		return new ActionTimerVars();
-	}
-	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-
 	}
 	@Override public void serverTick(CfaAuthoritativeData data) {
 		data.getPlayer().setHealth(20);
@@ -91,8 +68,9 @@ public class Debug implements GenericActionDefinition {
 		return true;
 	}
 
-	@Override public @NotNull List<TransitionDefinition> getBasicTransitions() {
-		return List.of(
+	@Override
+	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, CastableHelper helper) {
+		builder.add(
 				new TransitionDefinition(
 						DebugSprint.ID,
 						data -> data.getPlayer().isSprinting(), EvaluatorEnvironment.COMMON,
@@ -119,16 +97,6 @@ public class Debug implements GenericActionDefinition {
 						}
 				)
 		);
-	}
-	@Override public @NotNull List<TransitionDefinition> getInputTransitions() {
-		return List.of();
-	}
-	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions() {
-		return List.of();
-	}
-
-	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
-		return Set.of();
 	}
 
 	@Override

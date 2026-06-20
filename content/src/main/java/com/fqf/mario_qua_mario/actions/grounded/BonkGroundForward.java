@@ -14,7 +14,7 @@ public class BonkGroundForward extends BonkGroundBackward implements GroundedAct
 		return ID;
 	}
 
-	@Override public @Nullable AnimationDefinition getAnimation() {
+	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return StandUpWithKneeAnimation.makeAnimation(
 				PROGRESS_CALCULATOR,
 				-3.25F, 40,

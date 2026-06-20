@@ -1,11 +1,10 @@
 package com.fqf.charaformact_api;
 
 import com.fqf.charaformact_api.definitions.states.actions.*;
-import com.fqf.charaformact_api.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 
 public abstract class HelperGetter {
-	public static TransitionInjectionDefinition.TransitionCreator.CastableHelper getCastableActionHelper() {
+	public static GenericActionDefinition.CastableHelper getCastableActionHelper() {
 		return instance.getInstanceCastableActionHelper();
 	}
 
@@ -30,6 +29,6 @@ public abstract class HelperGetter {
 	}
 
 	protected static HelperGetter instance;
-	protected abstract TransitionInjectionDefinition.TransitionCreator.CastableHelper getInstanceCastableActionHelper();
+	protected abstract GenericActionDefinition.CastableHelper getInstanceCastableActionHelper();
 	protected abstract AnimationHelper getInstanceAnimationHelper();
 }

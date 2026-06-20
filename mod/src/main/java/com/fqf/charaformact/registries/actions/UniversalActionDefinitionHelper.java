@@ -10,7 +10,6 @@ import com.fqf.charaformact_api.definitions.states.actions.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.charaformact_api.definitions.states.actions.util.IncompleteActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.StatCategory;
 import net.minecraft.entity.Entity;
@@ -26,7 +25,7 @@ public class UniversalActionDefinitionHelper implements
 		AquaticActionDefinition.AquaticActionHelper,
 		WallboundActionDefinition.WallboundActionHelper,
 		MountedActionDefinition.MountedActionHelper,
-		TransitionInjectionDefinition.TransitionCreator.CastableHelper {
+		GenericActionDefinition.CastableHelper {
 	public static final UniversalActionDefinitionHelper INSTANCE = new UniversalActionDefinitionHelper();
 	private UniversalActionDefinitionHelper() {}
 

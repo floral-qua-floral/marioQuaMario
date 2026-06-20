@@ -24,6 +24,7 @@ import com.fqf.mario_qua_mario.actions.airborne.WallJump;
 import com.fqf.mario_qua_mario.actions.grounded.SubWalk;
 import com.fqf.mario_qua_mario.util.ClimbTransitions;
 import com.fqf.mario_qua_mario.util.ClimbVars;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
@@ -33,7 +34,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Set;
 
 public class ClimbPole implements GenericActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("climb_pole");
@@ -47,7 +47,7 @@ public class ClimbPole implements GenericActionDefinition {
 		return Entity.adjustMovementForCollisions(data.getPlayer(), offset, cameraBox, data.getPlayer().getWorld(), List.of());
 	}
 
-	@Override public @Nullable AnimationDefinition getAnimation() {
+	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return AnimationDefinition.of(
 				AnimationFlag.NO_SWING_LIMBS,
 				(arrangement, data, animationTime, helper) -> {
@@ -88,7 +88,7 @@ public class ClimbPole implements GenericActionDefinition {
 				}
 		);
 	}
-	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
+	@Override public @Nullable CameraAnimationSet defineCameraAnimations(AnimationHelper helper) {
 		return new CameraAnimationSet(
 				() -> CameraAnimationOption.AUTHENTIC,
 				new CameraAnimation(new CameraProgressHandler((data, ticksPassed) -> ticksPassed), (data, arrangement, progress) -> {
@@ -99,24 +99,24 @@ public class ClimbPole implements GenericActionDefinition {
 				null
 		);
 	}
-	@Override public @NotNull SlidingStatus getSlidingStatus() {
+	@Override public @NotNull SlidingStatus defineSlidingStatus() {
 		return SlidingStatus.NOT_SLIDING;
 	}
 
-	@Override public @NotNull SneakingRule getSneakingRule() {
+	@Override public @NotNull SneakingRule defineSneakingRule() {
 		return SneakingRule.PROHIBIT;
 	}
-	@Override public @NotNull SprintingRule getSprintingRule() {
+	@Override public @NotNull SprintingRule defineSprintingRule() {
 		return SprintingRule.PROHIBIT;
 	}
 	@Override public @NotNull GenericActionType getGenericActionType() {
 		return GenericActionType.UNSPECIFIED;
 	}
 
-	@Override public @Nullable BappingRule getBappingRule() {
+	@Override public @Nullable BappingRule defineBappingRule() {
 		return null;
 	}
-	@Override public @Nullable Identifier getCollisionAttackTypeID() {
+	@Override public @Nullable Identifier defineActiveCollisionAttack() {
 		return null;
 	}
 
@@ -144,11 +144,9 @@ public class ClimbPole implements GenericActionDefinition {
 		data.goTo(data.getPlayer().getPos().add(getMaximumOffset(data, 0)));
 	}
 
-	@Override public @NotNull List<TransitionDefinition> getBasicTransitions() {
-		return List.of();
-	}
-	@Override public @NotNull List<TransitionDefinition> getInputTransitions() {
-		return List.of(
+	@Override
+	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, CastableHelper helper) {
+		builder.add(
 				new TransitionDefinition(
 						WallJump.ID,
 						data -> (data.getInputs().getForwardInput() < -0.25 || Math.abs(data.getInputs().getStrafeInput()) > 0.25)
@@ -190,8 +188,10 @@ public class ClimbPole implements GenericActionDefinition {
 				)
 		);
 	}
-	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions() {
-		return List.of(
+
+	@Override
+	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, CastableHelper helper) {
+		builder.add(
 				new TransitionDefinition(
 						SpecialFall.ID,
 						data -> !ClimbTransitions.inNonSolidClimbable(data, false),
@@ -208,9 +208,4 @@ public class ClimbPole implements GenericActionDefinition {
 				)
 		);
 	}
-
-	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
-		return Set.of();
-	}
-
 }

@@ -18,7 +18,7 @@ public class SpecialFall extends Fall implements AirborneActionDefinition {
 	    return ID;
 	}
 
-	@Override public @Nullable AnimationDefinition getAnimation() {
+	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return AnimationDefinition.of(
 				AnimationFlag.NO_SWING_LIMBS,
 				AnimationFlag.Execution.RANDOMLY_MIRROR,

@@ -12,6 +12,7 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.GroundPoundFlip;
 import com.fqf.mario_qua_mario.util.MarioSFX;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,39 +27,23 @@ public class AquaticPoundFlip implements AquaticActionDefinition {
 	}
 
 	private static final float AQUATIC_FLIP_DURATION = 7;
-	@Override public @Nullable AnimationDefinition getAnimation() {
+	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return GroundPoundFlip.makeAnimation(AQUATIC_FLIP_DURATION);
 	}
 
-	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
+	@Override public @Nullable CameraAnimationSet defineCameraAnimations(AnimationHelper helper) {
 		return GroundPoundFlip.makeCameraAnimations(AQUATIC_FLIP_DURATION + 2.5F);
 	}
-	@Override public @NotNull SlidingStatus getSlidingStatus() {
-		return SlidingStatus.NOT_SLIDING;
-	}
 
-	@Override public @NotNull SneakingRule getSneakingRule() {
+	@Override public @NotNull SneakingRule defineSneakingRule() {
 		return SneakingRule.PROHIBIT;
 	}
-	@Override public @NotNull SprintingRule getSprintingRule() {
+	@Override public @NotNull SprintingRule defineSprintingRule() {
 		return SprintingRule.PROHIBIT;
-	}
-
-	@Override public @Nullable BappingRule getBappingRule() {
-		return null;
-	}
-	@Override public @Nullable Identifier getCollisionAttackTypeID() {
-		return null;
 	}
 
 	@Override public @Nullable Object provideStateData(CfaData data) {
 		return new GroundPoundFlip.FlipTimerVars(data);
-	}
-	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-
-	}
-	@Override public void serverTick(CfaAuthoritativeData data) {
-
 	}
 	@Override public void travelHook(CfaTravelData data, AquaticActionHelper helper) {
 		data.retrieveStateData(GroundPoundFlip.FlipTimerVars.class).actionTimer++;
@@ -73,22 +58,13 @@ public class AquaticPoundFlip implements AquaticActionDefinition {
 			(data, isSelf, seed) -> data.playSound(MarioSFX.AQUATIC_GROUND_POUND_FLIP, seed)
 	);
 
-	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(AquaticActionHelper helper) {
-		return List.of(
-				GroundPoundFlip.makeDropTransition(AquaticPoundDrop.ID, AQUATIC_FLIP_DURATION)
-		);
-	}
-	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AquaticActionHelper helper) {
-		return List.of();
-	}
-	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AquaticActionHelper helper) {
-		return List.of(
-				Submerged.EXIT_WATER.variate(GroundPoundFlip.ID, null)
-		);
+	@Override
+	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, AquaticActionHelper helper) {
+		builder.add(GroundPoundFlip.makeDropTransition(AquaticPoundDrop.ID, AQUATIC_FLIP_DURATION));
 	}
 
-	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
-		return Set.of();
+	@Override
+	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, AquaticActionHelper helper) {
+		builder.add(Submerged.EXIT_WATER.variate(GroundPoundFlip.ID, null));
 	}
-
 }

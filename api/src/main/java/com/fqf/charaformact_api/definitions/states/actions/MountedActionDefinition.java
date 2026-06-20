@@ -4,6 +4,7 @@ import com.fqf.charaformact_api.definitions.states.actions.util.IncompleteAction
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.Entity;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -47,9 +48,15 @@ public interface MountedActionDefinition extends IncompleteActionDefinition {
 		return false;
 	}
 
-	@NotNull List<TransitionDefinition> getBasicTransitions(MountedActionHelper helper);
-	@NotNull List<TransitionDefinition> getInputTransitions(MountedActionHelper helper);
-	@NotNull List<TransitionDefinition> getWorldCollisionTransitions(MountedActionHelper helper);
+	default void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, MountedActionHelper helper) {
+
+	}
+	default void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, MountedActionHelper helper) {
+
+	}
+	default void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, MountedActionHelper helper) {
+
+	}
 
 	/**
 	 * Contains a number of methods intended to help with the creation of Mounted Actions. Can be cast to any of the

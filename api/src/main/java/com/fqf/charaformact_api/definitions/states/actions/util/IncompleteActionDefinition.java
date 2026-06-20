@@ -4,6 +4,7 @@ import com.fqf.charaformact_api.definitions.states.AttackInterceptingStateDefini
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,18 +12,33 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Set;
 
 public interface IncompleteActionDefinition extends AttackInterceptingStateDefinition {
-	default @Nullable AnimationDefinition getAnimation() {
+	default @Nullable AnimationDefinition defineAnimation() {
+		return null;
+	}
+	default @Nullable CameraAnimationSet defineCameraAnimations(AnimationHelper helper) {
 		return null;
 	}
 
-	@Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper);
-	@NotNull SlidingStatus getSlidingStatus();
-
-	@NotNull SneakingRule getSneakingRule();
-	@NotNull SprintingRule getSprintingRule();
+	default @NotNull SlidingStatus defineSlidingStatus() {
+		return SlidingStatus.NOT_SLIDING;
+	}
+	default @NotNull SneakingRule defineSneakingRule() {
+		return SneakingRule.ALLOW;
+	}
+	default @NotNull SprintingRule defineSprintingRule() {
+		return SprintingRule.ALLOW;
+	}
 	
-	@Nullable BappingRule getBappingRule();
-	@Nullable Identifier getCollisionAttackTypeID();
+	default @Nullable BappingRule defineBappingRule() {
+		return null;
+	}
+	default @Nullable Identifier defineActiveCollisionAttack() {
+		return null;
+	}
 
-	@NotNull Set<TransitionInjectionDefinition> getTransitionInjections();
+	// TODO: Move Transition Injection definitions OUT of action definitions to avoid inheritance causing duplication!
+	// This should probably be a part of switching from a BILLION ENTRYPOINTS to a system of plugins & registration.
+	@Deprecated default @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
+		return Set.of();
+	}
 }

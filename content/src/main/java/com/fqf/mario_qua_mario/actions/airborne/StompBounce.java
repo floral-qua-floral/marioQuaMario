@@ -17,7 +17,7 @@ public class StompBounce extends Jump implements AirborneActionDefinition {
 	    return ID;
 	}
 
-	@Override public @Nullable AnimationDefinition getAnimation() {
+	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return DoubleJump.ANIMATION;
 	}
 

@@ -39,7 +39,7 @@ public class Sideflip extends Backflip implements AirborneActionDefinition {
 		if(vars != null && !vars.hasRotated) arrangement.yaw += 180;
 	}
 
-	@Override public @Nullable AnimationDefinition getAnimation() {
+	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return AnimationDefinition.of(
 				EnumSet.of(NO_RIGHT_ARM_SWING, NO_LEFT_ARM_SWING, NO_RIGHT_LEG_SWING, NO_LEFT_LEG_SWING, NOT_INTERPOLATED, NO_HEAD_COUNTERROTATION),
 				(arrangement, data, animationTime, helper) -> {
@@ -98,7 +98,7 @@ public class Sideflip extends Backflip implements AirborneActionDefinition {
 		);
 	}
 
-	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
+	@Override public @Nullable CameraAnimationSet defineCameraAnimations(AnimationHelper helper) {
 		return new CameraAnimationSet(
 				MarioQuaMario.CONFIG::getSideflipCameraAnim,
 				new CameraAnimation(

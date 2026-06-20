@@ -19,6 +19,7 @@ import com.fqf.mario_qua_mario.actions.airborne.Jump;
 import com.fqf.mario_qua_mario.actions.airborne.Sideflip;
 import com.fqf.mario_qua_mario.actions.aquatic.UnderwaterWalk;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +35,7 @@ public class Skid implements GroundedActionDefinition {
 		return ID;
 	}
 
-	@Override public @Nullable AnimationDefinition getAnimation() {
+	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return AnimationDefinition.of(
 				AnimationFlag.NO_SWING_LIMBS,
 				(arrangement, data, animationTime, helper) -> {
@@ -59,24 +60,24 @@ public class Skid implements GroundedActionDefinition {
 				}
 		);
 	}
-	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
+	@Override public @Nullable CameraAnimationSet defineCameraAnimations(AnimationHelper helper) {
 		return null;
 	}
-	@Override public @NotNull SlidingStatus getSlidingStatus() {
+	@Override public @NotNull SlidingStatus defineSlidingStatus() {
 		return SlidingStatus.SKIDDING;
 	}
 
-	@Override public @NotNull SneakingRule getSneakingRule() {
+	@Override public @NotNull SneakingRule defineSneakingRule() {
 		return SneakingRule.ALLOW;
 	}
-	@Override public @NotNull SprintingRule getSprintingRule() {
+	@Override public @NotNull SprintingRule defineSprintingRule() {
 		return SprintingRule.PROHIBIT;
 	}
 
-	@Override public @Nullable BappingRule getBappingRule() {
+	@Override public @Nullable BappingRule defineBappingRule() {
 		return new BappingRule(0, 0, 3, new CfaStat(0, THRESHOLD));
 	}
-	@Override public @Nullable Identifier getCollisionAttackTypeID() {
+	@Override public @Nullable Identifier defineActiveCollisionAttack() {
 		return null;
 	}
 
@@ -110,17 +111,18 @@ public class Skid implements GroundedActionDefinition {
 			EvaluatorEnvironment.CLIENT_ONLY
 	);
 
-	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(GroundedActionHelper helper) {
-		return List.of(
-				new TransitionDefinition(
-						SubWalk.ID,
-						data -> data.getHorizVelSquared() == 0 || data.getInputs().getForwardInput() >= 0,
-						EvaluatorEnvironment.CLIENT_ONLY
-				)
-		);
+	@Override
+	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+		builder.add(new TransitionDefinition(
+				SubWalk.ID,
+				data -> data.getHorizVelSquared() == 0 || data.getInputs().getForwardInput() >= 0,
+				EvaluatorEnvironment.CLIENT_ONLY
+		));
 	}
-	@Override public @NotNull List<TransitionDefinition> getInputTransitions(GroundedActionHelper helper) {
-		return List.of(
+
+	@Override
+	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+		builder.add(
 				new TransitionDefinition(
 						Sideflip.ID,
 						data -> data.getForwardVel() < Sideflip.SIDEFLIP_THRESHOLD.get(data) && data.getInputs().JUMP.isPressed(),
@@ -139,8 +141,10 @@ public class Skid implements GroundedActionDefinition {
 				Jump.makeJumpTransition(helper)
 		);
 	}
-	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(GroundedActionHelper helper) {
-		return List.of(
+
+	@Override
+	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+		builder.add(
 				Fall.FALL,
 				UnderwaterWalk.SUBMERGE,
 				BonkAir.BONK.variate(
@@ -154,9 +158,4 @@ public class Skid implements GroundedActionDefinition {
 				)
 		);
 	}
-
-	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
-		return Set.of();
-	}
-
 }

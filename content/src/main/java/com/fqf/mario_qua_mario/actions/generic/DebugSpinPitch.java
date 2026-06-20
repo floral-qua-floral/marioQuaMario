@@ -18,7 +18,7 @@ public class DebugSpinPitch extends Debug {
 	    return ID;
 	}
 
-	@Override public @Nullable AnimationDefinition getAnimation() {
+	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return AnimationDefinition.of(
 				AnimationFlag.NO_SWING_LIMBS,
 				(arrangement, data, animationTime, helper) -> arrangement.pitch = MathHelper.sin(animationTime / 4F) * 35,

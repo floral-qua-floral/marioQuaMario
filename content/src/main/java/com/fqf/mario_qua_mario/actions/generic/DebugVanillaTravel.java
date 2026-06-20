@@ -17,17 +17,12 @@ public class DebugVanillaTravel extends Debug implements GenericActionDefinition
 	}
 
 	@Override
-	public @NotNull SlidingStatus getSlidingStatus() {
+	public @NotNull SlidingStatus defineSlidingStatus() {
 		return SlidingStatus.NOT_SLIDING;
 	}
 
 	@Override
 	public boolean travelHook(CfaTravelData data) {
 		return false;
-	}
-
-	@Override
-	public @NotNull List<TransitionDefinition> getBasicTransitions() {
-		return List.of();
 	}
 }

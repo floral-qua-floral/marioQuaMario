@@ -22,12 +22,12 @@ public class ClimbIntangibleSideHang extends ClimbWallSideHang implements Wallbo
 	}
 
 	@Override
-	public float getWallYaw(CfaReadableMotionData data) {
+	public float calculateWallYaw(CfaReadableMotionData data) {
 		return ClimbIntangibleDirectional.currentBlockYaw(data);
 	}
 
 	@Override
-	public boolean checkLegality(CfaReadableMotionData data, WallInfo wall, Vec3d checkOffset) {
+	public boolean verifyLegality(CfaReadableMotionData data, WallInfo wall, Vec3d checkOffset) {
 		return ClimbIntangibleDirectional.checkLegalityStatic(data, wall, checkOffset);
 	}
 

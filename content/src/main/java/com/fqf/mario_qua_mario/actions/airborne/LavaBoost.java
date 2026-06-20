@@ -15,6 +15,7 @@ import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario.util.ClimbTransitions;
 import com.fqf.mario_qua_mario.util.MQMTags;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.util.Identifier;
@@ -34,7 +35,7 @@ public class LavaBoost extends Fall implements AirborneActionDefinition {
 		return ID;
 	}
 
-	@Override public @Nullable AnimationDefinition getAnimation() {
+	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return AnimationDefinition.of(
 				AnimationFlag.NO_SWING_LIMBS,
 				(arrangement, data, animationTime, helper) -> {
@@ -53,24 +54,24 @@ public class LavaBoost extends Fall implements AirborneActionDefinition {
 				}
 		);
 	}
-	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
+	@Override public @Nullable CameraAnimationSet defineCameraAnimations(AnimationHelper helper) {
 		return null;
 	}
-	@Override public @NotNull SlidingStatus getSlidingStatus() {
+	@Override public @NotNull SlidingStatus defineSlidingStatus() {
 		return SlidingStatus.NOT_SLIDING;
 	}
 
-	@Override public @NotNull SneakingRule getSneakingRule() {
+	@Override public @NotNull SneakingRule defineSneakingRule() {
 		return SneakingRule.PROHIBIT;
 	}
-	@Override public @NotNull SprintingRule getSprintingRule() {
+	@Override public @NotNull SprintingRule defineSprintingRule() {
 		return SprintingRule.PROHIBIT;
 	}
 
-	@Override public @Nullable BappingRule getBappingRule() {
+	@Override public @Nullable BappingRule defineBappingRule() {
 		return null;
 	}
-	@Override public @Nullable Identifier getCollisionAttackTypeID() {
+	@Override public @Nullable Identifier defineActiveCollisionAttack() {
 		return null;
 	}
 
@@ -197,21 +198,16 @@ public class LavaBoost extends Fall implements AirborneActionDefinition {
 			}
 	);
 
-	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(AirborneActionHelper helper) {
-		return List.of();
-	}
-	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {
-		return List.of();
-	}
-	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {
-		return List.of(
+	@Override
+	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+		builder.add(
 				Submerged.SUBMERGE,
 				Fall.LANDING.variate(
 						LavaBoost.ID,
 						data ->
 								data.getYVel() <= 0
-								&& data.retrieveStateData(LavaBoostVars.class).bounceVel > 0.06
-								&& Fall.LANDING.evaluator().shouldTransition(data),
+										&& data.retrieveStateData(LavaBoostVars.class).bounceVel > 0.06
+										&& Fall.LANDING.evaluator().shouldTransition(data),
 						null,
 						data -> {
 							data.setYVel(data.retrieveStateData(LavaBoostVars.class).bounceVel);

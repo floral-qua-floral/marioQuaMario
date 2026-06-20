@@ -28,15 +28,7 @@ public record TransitionInjectionDefinition(
 
 	@FunctionalInterface
 	public interface TransitionCreator {
-		TransitionDefinition makeTransition(TransitionDefinition nearbyTransition, CastableHelper castableHelper);
-
-		interface CastableHelper {
-			GroundedActionDefinition.GroundedActionHelper asGrounded();
-			AirborneActionDefinition.AirborneActionHelper asAirborne();
-			AquaticActionDefinition.AquaticActionHelper asAquatic();
-			WallboundActionDefinition.WallboundActionHelper asWallbound();
-			MountedActionDefinition.MountedActionHelper asMounted();
-		}
+		TransitionDefinition makeTransition(TransitionDefinition nearbyTransition, GenericActionDefinition.CastableHelper castableHelper);
 	}
 
 	public enum InjectionPlacement {

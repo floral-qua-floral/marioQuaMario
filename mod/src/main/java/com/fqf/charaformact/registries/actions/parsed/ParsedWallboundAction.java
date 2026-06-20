@@ -9,11 +9,11 @@ import com.fqf.charaformact_api.definitions.states.actions.util.TransitionInject
 import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import com.fqf.charaformact.registries.actions.UniversalActionDefinitionHelper;
 import com.fqf.charaformact_api.definitions.states.actions.util.WallBodyAlignment;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
 public class ParsedWallboundAction extends AbstractParsedAction {
@@ -26,23 +26,23 @@ public class ParsedWallboundAction extends AbstractParsedAction {
 		super(definition, allInjections);
 		this.WALLBOUND_DEFINITION = definition;
 
-		this.ALIGNMENT = definition.getBodyAlignment();
-		this.HEAD_RANGE = definition.getHeadYawRange();
+		this.ALIGNMENT = definition.defineBodyAlignment();
+		this.HEAD_RANGE = definition.defineHeadYawRange();
 	}
 
 	public float getWallYaw(CfaMoveableData data) {
-		return this.WALLBOUND_DEFINITION.getWallYaw(data);
+		return this.WALLBOUND_DEFINITION.calculateWallYaw(data);
 	}
 
 	public boolean verifyWallLegality(CfaPlayerData data, Vec3d offset) {
-		return this.WALLBOUND_DEFINITION.checkLegality(data, data.getWallInfo(), offset);
+		return this.WALLBOUND_DEFINITION.verifyLegality(data, data.getWallInfo(), offset);
 	}
 
 	@Override
 	public boolean travelHook(CfaMoveableData data) {
 		data.jumpCapped = false;
 		UniversalActionDefinitionHelper helper = UniversalActionDefinitionHelper.INSTANCE;
-		this.WALLBOUND_DEFINITION.travelHook(data, helper.getWallInfo(data), helper);
+		this.WALLBOUND_DEFINITION.travel(data, helper.getWallInfo(data), helper);
 		data.applyLevitation();
 		return true;
 	}
@@ -53,17 +53,17 @@ public class ParsedWallboundAction extends AbstractParsedAction {
 	}
 
 	@Override
-	protected List<TransitionDefinition> getBasicTransitions() {
-		return this.WALLBOUND_DEFINITION.getBasicTransitions(UniversalActionDefinitionHelper.INSTANCE);
+	protected void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder) {
+		this.WALLBOUND_DEFINITION.accumulateBasicTransitions(builder, UniversalActionDefinitionHelper.INSTANCE);
 	}
 
 	@Override
-	protected List<TransitionDefinition> getInputTransitions() {
-		return this.WALLBOUND_DEFINITION.getInputTransitions(UniversalActionDefinitionHelper.INSTANCE);
+	protected void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder) {
+		this.WALLBOUND_DEFINITION.accumulateInputTransitions(builder, UniversalActionDefinitionHelper.INSTANCE);
 	}
 
 	@Override
-	protected List<TransitionDefinition> getWorldCollisionTransitions() {
-		return this.WALLBOUND_DEFINITION.getWorldCollisionTransitions(UniversalActionDefinitionHelper.INSTANCE);
+	protected void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder) {
+		this.WALLBOUND_DEFINITION.accumulateCollisionTransitions(builder, UniversalActionDefinitionHelper.INSTANCE);
 	}
 }

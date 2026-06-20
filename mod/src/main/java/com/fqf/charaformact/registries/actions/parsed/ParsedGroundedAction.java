@@ -9,6 +9,7 @@ import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import com.fqf.charaformact.registries.actions.UniversalActionDefinitionHelper;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.StatCategory;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
@@ -44,17 +45,17 @@ public class ParsedGroundedAction extends AbstractParsedAction {
 	}
 
 	@Override
-	protected List<TransitionDefinition> getBasicTransitions() {
-		return this.GROUNDED_DEFINITION.getBasicTransitions(UniversalActionDefinitionHelper.INSTANCE);
+	protected void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder) {
+		this.GROUNDED_DEFINITION.accumulateBasicTransitions(builder, UniversalActionDefinitionHelper.INSTANCE);
 	}
 
 	@Override
-	protected List<TransitionDefinition> getInputTransitions() {
-		return this.GROUNDED_DEFINITION.getInputTransitions(UniversalActionDefinitionHelper.INSTANCE);
+	protected void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder) {
+		this.GROUNDED_DEFINITION.accumulateInputTransitions(builder, UniversalActionDefinitionHelper.INSTANCE);
 	}
 
 	@Override
-	protected List<TransitionDefinition> getWorldCollisionTransitions() {
-		return this.GROUNDED_DEFINITION.getWorldCollisionTransitions(UniversalActionDefinitionHelper.INSTANCE);
+	protected void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder) {
+		this.GROUNDED_DEFINITION.accumulateCollisionTransitions(builder, UniversalActionDefinitionHelper.INSTANCE);
 	}
 }

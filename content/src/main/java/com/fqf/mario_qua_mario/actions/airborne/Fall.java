@@ -15,6 +15,7 @@ import com.fqf.mario_qua_mario.actions.grounded.SubWalk;
 import com.fqf.mario_qua_mario.actions.wallbound.WallSlide;
 import com.fqf.mario_qua_mario.collision_attacks.Stomp;
 import com.fqf.mario_qua_mario.util.ClimbTransitions;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,24 +31,24 @@ public class Fall implements AirborneActionDefinition {
 	    return ID;
 	}
 
-	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
+	@Override public @Nullable CameraAnimationSet defineCameraAnimations(AnimationHelper helper) {
 		return null;
 	}
-	@Override public @NotNull SlidingStatus getSlidingStatus() {
+	@Override public @NotNull SlidingStatus defineSlidingStatus() {
 		return SlidingStatus.NOT_SLIDING;
 	}
 
-	@Override public @NotNull SneakingRule getSneakingRule() {
+	@Override public @NotNull SneakingRule defineSneakingRule() {
 		return SneakingRule.PROHIBIT;
 	}
-	@Override public @NotNull SprintingRule getSprintingRule() {
+	@Override public @NotNull SprintingRule defineSprintingRule() {
 		return SprintingRule.IF_ALREADY_SPRINTING;
 	}
 
-	@Override public @Nullable BappingRule getBappingRule() {
+	@Override public @Nullable BappingRule defineBappingRule() {
 		return BappingRule.FALLING;
 	}
-	@Override public @Nullable Identifier getCollisionAttackTypeID() {
+	@Override public @Nullable Identifier defineActiveCollisionAttack() {
 		return Stomp.ID;
 	}
 
@@ -81,39 +82,28 @@ public class Fall implements AirborneActionDefinition {
 			EvaluatorEnvironment.CLIENT_ONLY
 	);
 
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return null;
-	}
-	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-
-	}
-	@Override public void serverTick(CfaAuthoritativeData data) {
-		
-	}
 	@Override public void travelHook(CfaTravelData data, AirborneActionHelper helper) {
 		helper.applyComplexGravity(data, FALL_ACCEL, null, FALL_SPEED);
 		drift(data, helper);
 	}
 
+	protected TransitionDefinition getLandingTransition() {
+		return LANDING;
+	}
 	public static final TransitionDefinition LANDING = new TransitionDefinition(
 			SubWalk.ID,
 			data -> data.getPlayer().isOnGround(),
 			EvaluatorEnvironment.COMMON
 	);
 
-	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(AirborneActionHelper helper) {
-		return List.of();
+	@Override
+	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+		builder.add(GroundPoundFlip.GROUND_POUND);
 	}
-	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {
-		return List.of(
-				GroundPoundFlip.GROUND_POUND
-		);
-	}
-	protected TransitionDefinition getLandingTransition() {
-		return LANDING;
-	}
-	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {
-		return List.of(
+
+	@Override
+	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+		builder.add(
 				Submerged.SUBMERGE,
 				this.getLandingTransition(),
 				ClimbTransitions.CLIMB_NON_SOLID_DIRECTIONAL,

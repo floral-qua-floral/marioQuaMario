@@ -12,6 +12,7 @@ import com.fqf.mario_qua_mario.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario.actions.grounded.PRun;
 import com.fqf.mario_qua_mario.util.ClimbTransitions;
 import com.fqf.mario_qua_mario.util.MarioSFX;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -30,7 +31,7 @@ public class LongJump extends Jump implements AirborneActionDefinition {
 	    return ID;
 	}
 
-	@Override public @Nullable AnimationDefinition getAnimation() {
+	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return AnimationDefinition.of(
 				AnimationFlag.NO_SWING_LIMBS,
 				(posture, data, animationTime, helper) -> {
@@ -77,15 +78,15 @@ public class LongJump extends Jump implements AirborneActionDefinition {
 		arrangement.y += helper.interpolateKeyframes(progress * BODY_ROTATION_SPEED, 2.24F, 0, 4.4F);
 		arrangement.z += helper.interpolateKeyframes(progress * BODY_ROTATION_SPEED, -1.2F, 0, -2);
 	}
-	@Override public @NotNull SneakingRule getSneakingRule() {
+	@Override public @NotNull SneakingRule defineSneakingRule() {
 		return SneakingRule.PROHIBIT;
 	}
-	@Override public @NotNull SprintingRule getSprintingRule() {
+	@Override public @NotNull SprintingRule defineSprintingRule() {
 		return SprintingRule.ALLOW;
 	}
 
 	@Override
-	public @Nullable BappingRule getBappingRule() {
+	public @Nullable BappingRule defineBappingRule() {
 		return BappingRule.ROLLING.variate(4, 1, null, null);
 	}
 
@@ -115,14 +116,14 @@ public class LongJump extends Jump implements AirborneActionDefinition {
 		return 0.4;
 	}
 
-	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {
-		return List.of();
+	@Override
+	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+
 	}
 
-	public static final double WALL_JUMP_SPEED_MULTIPLIER = 1.2;
-
-	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {
-		return List.of(
+	@Override
+	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+		builder.add(
 				Submerged.SUBMERGE,
 				BonkAir.BONK.variate(
 						WallJump.ID,
@@ -151,7 +152,7 @@ public class LongJump extends Jump implements AirborneActionDefinition {
 				),
 				BonkAir.BONK,
 				Jump.DOUBLE_JUMPABLE_LANDING.variate(PRun.ID, data ->
-						Fall.LANDING.evaluator().shouldTransition(data) && (data.isServer() || PRun.meetsPRunRequirements(data)),
+								Fall.LANDING.evaluator().shouldTransition(data) && (data.isServer() || PRun.meetsPRunRequirements(data)),
 						EvaluatorEnvironment.CLIENT_CHECKED, null, null),
 				Jump.DOUBLE_JUMPABLE_LANDING,
 				// Mario can start climbing non-solids (vines), but can't climb solids or start wall-sliding (because he'd bonk)
@@ -159,4 +160,6 @@ public class LongJump extends Jump implements AirborneActionDefinition {
 				ClimbTransitions.CLIMB_NON_SOLID_NON_DIRECTIONAL
 		);
 	}
+
+	public static final double WALL_JUMP_SPEED_MULTIPLIER = 1.2;
 }

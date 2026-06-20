@@ -16,6 +16,7 @@ import com.fqf.mario_qua_mario.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario.actions.grounded.GroundPoundLand;
 import com.fqf.mario_qua_mario.collision_attacks.GroundPound;
 import com.fqf.mario_qua_mario.util.MarioSFX;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -34,27 +35,27 @@ public class GroundPoundDrop implements AirborneActionDefinition {
 
 	public static final AnimationDefinition ANIMATION = GroundPoundFlip.makeAnimation(key -> 1);
 
-	@Override public @Nullable AnimationDefinition getAnimation() {
+	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return ANIMATION;
 	}
-	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
+	@Override public @Nullable CameraAnimationSet defineCameraAnimations(AnimationHelper helper) {
 		return null;
 	}
-	@Override public @NotNull SlidingStatus getSlidingStatus() {
+	@Override public @NotNull SlidingStatus defineSlidingStatus() {
 		return SlidingStatus.NOT_SLIDING;
 	}
 
-	@Override public @NotNull SneakingRule getSneakingRule() {
+	@Override public @NotNull SneakingRule defineSneakingRule() {
 		return SneakingRule.PROHIBIT;
 	}
-	@Override public @NotNull SprintingRule getSprintingRule() {
+	@Override public @NotNull SprintingRule defineSprintingRule() {
 		return SprintingRule.PROHIBIT;
 	}
 
-	@Override public @Nullable BappingRule getBappingRule() {
+	@Override public @Nullable BappingRule defineBappingRule() {
 		return BappingRule.GROUND_POUND;
 	}
-	@Override public @Nullable Identifier getCollisionAttackTypeID() {
+	@Override public @Nullable Identifier defineActiveCollisionAttack() {
 		return GroundPound.ID;
 	}
 
@@ -76,25 +77,23 @@ public class GroundPoundDrop implements AirborneActionDefinition {
 		data.setForwardStrafeVel(strainVel * data.getInputs().getForwardInput(), strainVel * data.getInputs().getStrafeInput());
 	}
 
-	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(AirborneActionHelper helper) {
-		return List.of(
-				new TransitionDefinition(
-						SpecialFall.ID,
-						data -> data.getYVel() > 0 || data.getInputs().JUMP.isPressed(),
-						EvaluatorEnvironment.CLIENT_ONLY,
-						data -> data.getInputs().DUCK.isPressed(), // Unbuffer duck to make Ground Pound stalling less trivial
-						(data, isSelf, seed) -> data.stopStoredSound(MarioSFX.GROUND_POUND_DROP)
-				)
-		);
+	@Override
+	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+		builder.add(new TransitionDefinition(
+				SpecialFall.ID,
+				data -> data.getYVel() > 0 || data.getInputs().JUMP.isPressed(),
+				EvaluatorEnvironment.CLIENT_ONLY,
+				data -> data.getInputs().DUCK.isPressed(), // Unbuffer duck to make Ground Pound stalling less trivial
+				(data, isSelf, seed) -> data.stopStoredSound(MarioSFX.GROUND_POUND_DROP)
+		));
 	}
-	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {
-		return List.of();
-	}
-	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {
-		return List.of(
+
+	@Override
+	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+		builder.add(
 				Fall.LANDING.variate(
 						GroundPoundLand.ID,
-						null, EvaluatorEnvironment.CLIENT_ONLY,
+						null, EvaluatorEnvironment.COMMON,
 						data -> data.setForwardStrafeVel(0, 0),
 						(data, isSelf, seed) -> {
 							data.stopStoredSound(MarioSFX.GROUND_POUND_DROP);
@@ -113,10 +112,6 @@ public class GroundPoundDrop implements AirborneActionDefinition {
 						}
 				)
 		);
-	}
-
-	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
-		return Set.of();
 	}
 
 }

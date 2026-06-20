@@ -7,6 +7,7 @@ import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefini
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,24 +21,22 @@ public class GroundPoundLandHold extends GroundPoundLand implements GroundedActi
 	    return ID;
 	}
 
-	@Override public @Nullable AnimationDefinition getAnimation() {
+	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return BonkGroundBackward.makeAnimation((data, animationTime) -> 0);
 	}
 
 	@Override
-	public @NotNull List<TransitionDefinition> getBasicTransitions(GroundedActionHelper helper) {
-		return List.of();
+	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+
 	}
 
 	@Override
-	public @NotNull List<TransitionDefinition> getInputTransitions(GroundedActionHelper helper) {
-		return List.of(
-				new TransitionDefinition(
-						GroundPoundLand.ID,
-						data -> !data.getInputs().DUCK.isHeld(),
-						EvaluatorEnvironment.CLIENT_ONLY
-				)
-		);
+	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+		builder.add(new TransitionDefinition(
+				GroundPoundLand.ID,
+				data -> !data.getInputs().DUCK.isHeld(),
+				EvaluatorEnvironment.CLIENT_ONLY
+		));
 	}
 
 	@Override

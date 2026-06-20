@@ -32,7 +32,7 @@ public class Backflip extends Jump implements AirborneActionDefinition {
 				Easing.LINEAR, Easing.LINEAR, Easing.LINEAR, Easing.LINEAR) / 3, Easing.LINEAR, Easing.LINEAR) * 3;
 	}
 
-	@Override public @Nullable AnimationDefinition getAnimation() {
+	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return AnimationDefinition.of(
 				AnimationFlag.NO_SWING_LIMBS,
 				AnimationFlag.Execution.RANDOMLY_MIRROR,
@@ -103,7 +103,7 @@ public class Backflip extends Jump implements AirborneActionDefinition {
 				}
 		);
 	}
-	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
+	@Override public @Nullable CameraAnimationSet defineCameraAnimations(AnimationHelper helper) {
 		return new CameraAnimationSet(
 				MarioQuaMario.CONFIG::getBackflipCameraAnim,
 				new CameraAnimation(

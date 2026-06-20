@@ -15,6 +15,7 @@ import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.airborne.GroundPoundDrop;
 import com.fqf.mario_qua_mario.collision_attacks.AquaticGroundPound;
 import com.fqf.mario_qua_mario.util.MarioSFX;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Identifier;
@@ -32,28 +33,28 @@ public class AquaticPoundDrop implements AquaticActionDefinition {
 		return ID;
 	}
 
-	@Override public @Nullable AnimationDefinition getAnimation() {
+	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return GroundPoundDrop.ANIMATION;
 	}
 
-	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
+	@Override public @Nullable CameraAnimationSet defineCameraAnimations(AnimationHelper helper) {
 		return null;
 	}
-	@Override public @NotNull SlidingStatus getSlidingStatus() {
+	@Override public @NotNull SlidingStatus defineSlidingStatus() {
 		return SlidingStatus.NOT_SLIDING;
 	}
 
-	@Override public @NotNull SneakingRule getSneakingRule() {
+	@Override public @NotNull SneakingRule defineSneakingRule() {
 		return SneakingRule.PROHIBIT;
 	}
-	@Override public @NotNull SprintingRule getSprintingRule() {
+	@Override public @NotNull SprintingRule defineSprintingRule() {
 		return SprintingRule.PROHIBIT;
 	}
 
-	@Override public @Nullable BappingRule getBappingRule() {
+	@Override public @Nullable BappingRule defineBappingRule() {
 		return new BappingRule(0, 3);
 	}
-	@Override public @Nullable Identifier getCollisionAttackTypeID() {
+	@Override public @Nullable Identifier defineActiveCollisionAttack() {
 		return AquaticGroundPound.ID;
 	}
 
@@ -78,22 +79,23 @@ public class AquaticPoundDrop implements AquaticActionDefinition {
 		helper.applyWaterDrag(data, drag, AQUATIC_GROUND_POUND_DRAG_MIN);
 	}
 
-	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(AquaticActionHelper helper) {
-		return List.of(
-				new TransitionDefinition(
-						Submerged.ID,
-						data -> data.getYVel() >= -0.01,
-						EvaluatorEnvironment.CLIENT_ONLY
-				)
-		);
+	@Override
+	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, AquaticActionHelper helper) {
+		builder.add(new TransitionDefinition(
+				Submerged.ID,
+				data -> data.getYVel() >= -0.01,
+				EvaluatorEnvironment.CLIENT_ONLY
+		));
 	}
-	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AquaticActionHelper helper) {
-		return List.of(
-				Swim.SWIM
-		);
+
+	@Override
+	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, AquaticActionHelper helper) {
+		builder.add(Swim.SWIM);
 	}
-	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AquaticActionHelper helper) {
-		return List.of(
+
+	@Override
+	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, AquaticActionHelper helper) {
+		builder.add(
 				Fall.LANDING.variate(
 						AquaticPoundLand.ID,
 						null, null,
@@ -114,9 +116,4 @@ public class AquaticPoundDrop implements AquaticActionDefinition {
 				)
 		);
 	}
-
-	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
-		return Set.of();
-	}
-
 }

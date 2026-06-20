@@ -21,6 +21,7 @@ import com.fqf.mario_qua_mario.forms.Raccoon;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import com.fqf.mario_qua_mario.util.Powers;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +51,7 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 		}
 	};
 
-	@Override public @Nullable AnimationDefinition getAnimation() {
+	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return AnimationDefinition.of(
 				AnimationFlag.NO_SWING_LIMBS,
 				(posture, data, animationTime, helper) -> {
@@ -100,17 +101,18 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 			EvaluatorEnvironment.CLIENT_ONLY
 	);
 
-	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(AirborneActionHelper helper) {
-		return List.of(
-				new TransitionDefinition(
-						SpecialFall.ID, // special fall coming in CLUTCH!
-						data -> !data.hasPower(Powers.TAIL_STALL),
-						EvaluatorEnvironment.COMMON
-				)
-		);
+	@Override
+	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+		builder.add(new TransitionDefinition(
+				SpecialFall.ID, // special fall coming in CLUTCH!
+				data -> !data.hasPower(Powers.TAIL_STALL),
+				EvaluatorEnvironment.COMMON
+		));
 	}
-	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {
-		return List.of(
+
+	@Override
+	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+		builder.add(
 				GroundPoundFlip.GROUND_POUND,
 				END_STALLING
 		);

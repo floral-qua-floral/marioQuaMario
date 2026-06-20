@@ -10,6 +10,7 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.Animat
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.actions.grounded.DuckWaddle;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,14 +25,14 @@ public class DuckJump extends Jump implements AirborneActionDefinition {
 
 
 	@Override
-	public @Nullable AnimationDefinition getAnimation() {
+	public @Nullable AnimationDefinition defineAnimation() {
 		return DuckWaddle.makeAnimation(false, false);
 	}
 
-	@Override public @NotNull SneakingRule getSneakingRule() {
+	@Override public @NotNull SneakingRule defineSneakingRule() {
 		return SneakingRule.ALLOW;
 	}
-	@Override public @NotNull SprintingRule getSprintingRule() {
+	@Override public @NotNull SprintingRule defineSprintingRule() {
 		return SprintingRule.PROHIBIT;
 	}
 
@@ -54,15 +55,15 @@ public class DuckJump extends Jump implements AirborneActionDefinition {
 	@Override protected double getJumpCapThreshold() {
 		return 0.14;
 	}
-	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(AirborneActionHelper helper) {
-		return List.of(
-				DuckWaddle.UNDUCK.variate(Jump.ID, null)
-		);
+
+	@Override
+	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+		builder.add(DuckWaddle.UNDUCK.variate(Jump.ID, null));
 	}
-	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {
-		return List.of(
-				helper.makeJumpCapTransition(this, this.getJumpCapThreshold())
-		);
+
+	@Override
+	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+		builder.add(helper.makeJumpCapTransition(this, this.getJumpCapThreshold()));
 	}
 
 	@Override protected TransitionDefinition getLandingTransition() {

@@ -16,6 +16,7 @@ import com.fqf.mario_qua_mario.actions.wallbound.WallSlide;
 import com.fqf.mario_qua_mario.forms.Raccoon;
 import com.fqf.mario_qua_mario.util.ClimbTransitions;
 import com.fqf.mario_qua_mario.util.Powers;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +28,7 @@ public class PJump extends Jump implements AirborneActionDefinition {
 		return ID;
 	}
 
-	@Override public @NotNull AnimationDefinition getAnimation() {
+	@Override public @NotNull AnimationDefinition defineAnimation() {
 		return AnimationDefinition.of(
 				AnimationFlag.NO_SWING_LIMBS,
 				(posture, data, animationTime, helper) -> {
@@ -40,10 +41,10 @@ public class PJump extends Jump implements AirborneActionDefinition {
 		);
 	}
 
-	@Override public @NotNull SneakingRule getSneakingRule() {
+	@Override public @NotNull SneakingRule defineSneakingRule() {
 		return SneakingRule.PROHIBIT;
 	}
-	@Override public @NotNull SprintingRule getSprintingRule() {
+	@Override public @NotNull SprintingRule defineSprintingRule() {
 		return SprintingRule.ALLOW;
 	}
 
@@ -53,30 +54,27 @@ public class PJump extends Jump implements AirborneActionDefinition {
 	}
 
 	@Override
-	public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {
-		return List.of(
-				new TransitionDefinition(
-						TailFly.ID,
-						data ->
-								data.hasPower(Powers.TAIL_FLY)
+	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+		builder.add(new TransitionDefinition(
+				TailFly.ID,
+				data ->
+						data.hasPower(Powers.TAIL_FLY)
 								&& data.retrieveStateData(Raccoon.RaccoonVars.class).flightTicks > 0
 								&& (data.isServer() || (
-										data.getYVel() < TailStall.STALL_THRESHOLD.get(data)
+								data.getYVel() < TailStall.STALL_THRESHOLD.get(data)
 										&& data.getInputs().JUMP.isHeld()
-								)),
-						EvaluatorEnvironment.CLIENT_CHECKED
-				),
-				GroundPoundFlip.GROUND_POUND,
-				helper.makeJumpCapTransition(this, this.getJumpCapThreshold())
-		);
+						)),
+				EvaluatorEnvironment.CLIENT_CHECKED
+		));
+		super.accumulateInputTransitions(builder, helper);
 	}
 
 	@Override
-	public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper) {
-		return List.of(
+	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+		builder.add(
 				Submerged.SUBMERGE,
 				Jump.DOUBLE_JUMPABLE_LANDING.variate(PRun.ID, data ->
-						Fall.LANDING.evaluator().shouldTransition(data) && (data.isServer() || PRun.meetsPRunRequirements(data)),
+								Fall.LANDING.evaluator().shouldTransition(data) && (data.isServer() || PRun.meetsPRunRequirements(data)),
 						EvaluatorEnvironment.CLIENT_CHECKED,
 						null,
 						null),

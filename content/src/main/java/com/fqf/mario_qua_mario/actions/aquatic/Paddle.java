@@ -15,6 +15,7 @@ import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.util.MarioSFX;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -30,7 +31,7 @@ public class Paddle implements AquaticActionDefinition {
 		return ID;
 	}
 
-	@Override public @Nullable AnimationDefinition getAnimation() {
+	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return AnimationDefinition.of(
 				AnimationFlag.NO_SWING_LIMBS,
 				(arrangement, data, animationTime, helper) -> arrangement.addPos(0, -2, -4),
@@ -68,39 +69,20 @@ public class Paddle implements AquaticActionDefinition {
 				}
 		);
 	}
-	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
-		return null;
-	}
-	@Override public @NotNull SlidingStatus getSlidingStatus() {
-		return SlidingStatus.NOT_SLIDING;
-	}
-
-	@Override public @NotNull SneakingRule getSneakingRule() {
+	@Override public @NotNull SneakingRule defineSneakingRule() {
 		return SneakingRule.PROHIBIT;
 	}
-	@Override public @NotNull SprintingRule getSprintingRule() {
+	@Override public @NotNull SprintingRule defineSprintingRule() {
 		return SprintingRule.PROHIBIT;
-	}
-
-	@Override public @Nullable BappingRule getBappingRule() {
-		return null;
-	}
-	@Override public @Nullable Identifier getCollisionAttackTypeID() {
-		return null;
 	}
 
 	public static final CfaStat PADDLE_FALL_SPEED = Submerged.FALL_SPEED.variate(0.5);
 
 	private static final double INTENDED_IMMERSION_LEVEL = 0.75;
 
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return null;
-	}
 	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-		data.playSound(MarioSFX.SWIM_PADDLE, data.getPlayer().getRandom().nextLong());
-	}
-	@Override public void serverTick(CfaAuthoritativeData data) {
-
+		if(data.getPlayer().getWorld().getTime() % 2 == 0)
+			data.playSound(MarioSFX.SWIM_PADDLE, data.getPlayer().getRandom().nextLong());
 	}
 	@Override public void travelHook(CfaTravelData data, AquaticActionHelper helper) {
 		if(data.getImmersionPercent() >= 0.95) helper.applyGravity(data, Submerged.FALL_ACCEL, Submerged.FALL_SPEED.variate(0.1));
@@ -115,11 +97,9 @@ public class Paddle implements AquaticActionDefinition {
 		Submerged.drift(data, helper);
 	}
 
-	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(AquaticActionHelper helper) {
-		return List.of();
-	}
-	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AquaticActionHelper helper) {
-		return List.of(
+	@Override
+	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, AquaticActionHelper helper) {
+		builder.add(
 				AquaticPoundFlip.AQUATIC_GROUND_POUND,
 				new TransitionDefinition(
 						Submerged.ID,
@@ -128,15 +108,12 @@ public class Paddle implements AquaticActionDefinition {
 				)
 		);
 	}
-	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(AquaticActionHelper helper) {
-		return List.of(
+
+	@Override
+	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, AquaticActionHelper helper) {
+		builder.add(
 				Submerged.EXIT_WATER,
 				Fall.LANDING.variate(UnderwaterWalk.ID, null)
 		);
 	}
-
-	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
-		return Set.of();
-	}
-
 }

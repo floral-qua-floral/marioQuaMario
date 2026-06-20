@@ -31,7 +31,7 @@ public class TripleJump extends Jump implements AirborneActionDefinition {
 	}
 
 	@Override
-	public @Nullable AnimationDefinition getAnimation() {
+	public @Nullable AnimationDefinition defineAnimation() {
 		return AnimationDefinition.of(
 				null,
 				AnimationFlag.NO_SWING_LIMBS, AnimationFlag.Execution.RANDOMLY_MIRROR,
@@ -100,7 +100,7 @@ public class TripleJump extends Jump implements AirborneActionDefinition {
 				}
 		);
 	}
-	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
+	@Override public @Nullable CameraAnimationSet defineCameraAnimations(AnimationHelper helper) {
 		return new CameraAnimationSet(
 				MarioQuaMario.CONFIG::getTripleJumpCameraAnim,
 				new CameraAnimation(

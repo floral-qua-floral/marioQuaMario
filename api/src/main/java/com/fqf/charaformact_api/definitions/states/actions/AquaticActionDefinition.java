@@ -4,16 +4,20 @@ import com.fqf.charaformact_api.definitions.states.actions.util.IncompleteAction
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.util.CfaStat;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
+import com.google.common.collect.ImmutableList;
 
 public interface AquaticActionDefinition extends IncompleteActionDefinition {
 	void travelHook(CfaTravelData data, AquaticActionHelper helper);
 
-	@NotNull List<TransitionDefinition> getBasicTransitions(AquaticActionHelper helper);
-	@NotNull List<TransitionDefinition> getInputTransitions(AquaticActionHelper helper);
-	@NotNull List<TransitionDefinition> getWorldCollisionTransitions(AquaticActionHelper helper);
+	default void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, AquaticActionHelper helper) {
+
+	}
+	default void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, AquaticActionHelper helper) {
+
+	}
+	default void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, AquaticActionHelper helper) {
+
+	}
 
 	/**
 	 * Contains a number of methods intended to help with the creation of Aquatic Actions.

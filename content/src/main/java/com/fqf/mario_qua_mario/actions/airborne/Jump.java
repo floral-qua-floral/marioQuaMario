@@ -13,6 +13,7 @@ import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.util.MarioVars;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +33,7 @@ public class Jump extends Fall implements AirborneActionDefinition {
 		return Easing.EXPO_IN_OUT.ease(Easing.clampedRangeToProgress(data.getYVel(), 0.87, -0.85));
 	}
 
-	@Override public @Nullable AnimationDefinition getAnimation() {
+	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return AnimationDefinition.of(
 				AnimationFlag.NO_SWING_LIMBS,
 				(data, prevAnimationID) -> { // Tries to raise a non-busy hand that won't block player's face.
@@ -76,7 +77,7 @@ public class Jump extends Fall implements AirborneActionDefinition {
 				}
 		);
 	}
-	@Override public @Nullable BappingRule getBappingRule() {
+	@Override public @Nullable BappingRule defineBappingRule() {
 		return BappingRule.JUMPING;
 	}
 
@@ -109,12 +110,13 @@ public class Jump extends Fall implements AirborneActionDefinition {
 	protected double getJumpCapThreshold() {
 		return 0.39;
 	}
-	@Override public @NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper) {
-		return List.of(
-				GroundPoundFlip.GROUND_POUND,
-				helper.makeJumpCapTransition(this, this.getJumpCapThreshold())
-		);
+
+	@Override
+	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+		super.accumulateInputTransitions(builder, helper);
+		builder.add(helper.makeJumpCapTransition(this, this.getJumpCapThreshold()));
 	}
+
 	@Override protected TransitionDefinition getLandingTransition() {
 		return DOUBLE_JUMPABLE_LANDING;
 	}

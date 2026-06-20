@@ -6,17 +6,17 @@ import com.fqf.charaformact_api.definitions.states.actions.util.IncompleteAction
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.WallBodyAlignment;
 import com.fqf.charaformact_api.util.CfaStat;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Set;
 
 public interface WallboundActionDefinition extends IncompleteActionDefinition {
-	@NotNull WallBodyAlignment getBodyAlignment();
+	@NotNull WallBodyAlignment defineBodyAlignment();
 
-	float getHeadYawRange();
+	float defineHeadYawRange();
 
 	/**
 	 * Called on the client the instant the player transitions into this action. The result is networked to the server
@@ -24,25 +24,32 @@ public interface WallboundActionDefinition extends IncompleteActionDefinition {
 	 * @param data
 	 * @return
 	 */
-	float getWallYaw(CfaReadableMotionData data);
+	float calculateWallYaw(CfaReadableMotionData data);
 
 	/**
-	 * Called on the server to validate whether transitioning into this action is allowed. This is never called if
-	 * the gamerule cfaRejectIllegalActionTransitions is set to false!
+	 * Called on the server to validate whether transitioning into this action is allowed. This is also called by
+	 * WallInfo.isLegal and WallInfo.wouldBeLegalWithOffset.
 	 *
-	 * @param data        Player's data (server-sided)
+	 * @param data        Player's data
 	 * @param wall        Information about the wall, as claimed by the client.
-	 * @param checkOffset
-	 * @return Whether the transition is allowed. If false, it is rejected and the player is forced back into her previous
-	 * action.
+	 * @param checkOffset If you need to use the player's position directly, please offset it by checkOffset to ensure
+	 *                    that all WallInfo methods will work as intended.
+	 * @return Whether the transition is allowed. If false, it is rejected and the player is forced back into her
+	 * previous action.
 	 */
-	boolean checkLegality(CfaReadableMotionData data, WallInfo wall, Vec3d checkOffset);
+	boolean verifyLegality(CfaReadableMotionData data, WallInfo wall, Vec3d checkOffset);
 
-	void travelHook(CfaTravelData data, WallInfo wall, WallboundActionHelper helper);
+	void travel(CfaTravelData data, WallInfo wall, WallboundActionHelper helper);
 
-	@NotNull List<TransitionDefinition> getBasicTransitions(WallboundActionHelper helper);
-	@NotNull List<TransitionDefinition> getInputTransitions(WallboundActionHelper helper);
-	@NotNull List<TransitionDefinition> getWorldCollisionTransitions(WallboundActionHelper helper);
+	default void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, WallboundActionHelper helper) {
+
+	}
+	default void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, WallboundActionHelper helper) {
+
+	}
+	default void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, WallboundActionHelper helper) {
+
+	}
 
 	/**
 	 * Provides some information about the wall the player is interacting with and her relationship to it.

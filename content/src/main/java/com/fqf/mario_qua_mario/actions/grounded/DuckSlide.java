@@ -18,6 +18,7 @@ import com.fqf.mario_qua_mario.actions.airborne.DuckJump;
 import com.fqf.mario_qua_mario.actions.airborne.LongJump;
 import com.fqf.mario_qua_mario.actions.aquatic.UnderwaterDuck;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,29 +35,19 @@ public class DuckSlide implements GroundedActionDefinition {
 	}
 
 	@Override
-	public @Nullable AnimationDefinition getAnimation() {
+	public @Nullable AnimationDefinition defineAnimation() {
 		return DuckWaddle.makeAnimation(true, false);
 	}
 
-	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
-		return null;
-	}
-	@Override public @NotNull SlidingStatus getSlidingStatus() {
+	@Override public @NotNull SlidingStatus defineSlidingStatus() {
 		return SlidingStatus.SLIDING;
 	}
 
-	@Override public @NotNull SneakingRule getSneakingRule() {
+	@Override public @NotNull SneakingRule defineSneakingRule() {
 		return SneakingRule.SLIP;
 	}
-	@Override public @NotNull SprintingRule getSprintingRule() {
+	@Override public @NotNull SprintingRule defineSprintingRule() {
 		return SprintingRule.PROHIBIT;
-	}
-
-	@Override public @Nullable BappingRule getBappingRule() {
-		return null;
-	}
-	@Override public @Nullable Identifier getCollisionAttackTypeID() {
-		return null;
 	}
 
 	public static final CfaStat SLIDE_THRESHOLD = new CfaStat(0.25, DUCKING, THRESHOLD);
@@ -69,12 +60,6 @@ public class DuckSlide implements GroundedActionDefinition {
 	@Override public @Nullable Object provideStateData(CfaData data) {
 		return new ActionTimerVars();
 	}
-	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-
-	}
-	@Override public void serverTick(CfaAuthoritativeData data) {
-
-	}
 	@Override public void travelHook(CfaTravelData data, GroundedActionHelper helper) {
 		data.retrieveStateData(ActionTimerVars.class).actionTimer++;
 		helper.applyDrag(
@@ -84,8 +69,9 @@ public class DuckSlide implements GroundedActionDefinition {
 		);
 	}
 
-	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(GroundedActionHelper helper) {
-		return List.of(
+	@Override
+	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+		builder.add(
 				DuckWaddle.UNDUCK,
 				new TransitionDefinition(
 						DuckWaddle.ID,
@@ -94,16 +80,18 @@ public class DuckSlide implements GroundedActionDefinition {
 				)
 		);
 	}
-	@Override public @NotNull List<TransitionDefinition> getInputTransitions(GroundedActionHelper helper) {
-		return List.of(
+
+	@Override
+	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+		builder.add(
 				Backflip.makeBackflipTransition(helper),
 				new TransitionDefinition(
 						LongJump.ID,
 						data ->
 								data.getInputs().getForwardInput() > 0.4
-								&& data.retrieveStateData(ActionTimerVars.class).actionTimer < 5
-								&& data.getForwardVel() > LongJump.LONG_JUMP_THRESHOLD.get(data)
-								&& data.getInputs().JUMP.isPressed(),
+										&& data.retrieveStateData(ActionTimerVars.class).actionTimer < 5
+										&& data.getForwardVel() > LongJump.LONG_JUMP_THRESHOLD.get(data)
+										&& data.getInputs().JUMP.isPressed(),
 						EvaluatorEnvironment.CLIENT_ONLY,
 						data -> {
 							helper.performJump(data, LongJump.LONG_JUMP_VEL, null);
@@ -118,8 +106,10 @@ public class DuckSlide implements GroundedActionDefinition {
 				DuckJump.makeDuckJumpTransition(helper)
 		);
 	}
-	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(GroundedActionHelper helper) {
-		return List.of(
+
+	@Override
+	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+		builder.add(
 				DuckFall.DUCK_FALL,
 				UnderwaterDuck.DUCK_SUBMERGE
 		);

@@ -8,6 +8,7 @@ import com.fqf.charaformact_api.definitions.states.actions.GenericActionDefiniti
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,20 +48,20 @@ public abstract class AbstractParsedAction extends ParsedCfaState implements Par
 		this.ACTION_DEFINITION = definition;
 		this.CATEGORY = this.getCategory();
 
-		AnimationDefinition animation = definition.getAnimation();
+		AnimationDefinition animation = definition.defineAnimation();
 		if(animation == null) this.ANIMATION = null;
 		else this.ANIMATION = new ParsedAnimation(animation);
-		this.CAMERA_ANIMATIONS = definition.getCameraAnimations(AnimationHelperImpl.INSTANCE);
-		this.SLIDING_STATUS = definition.getSlidingStatus();
+		this.CAMERA_ANIMATIONS = definition.defineCameraAnimations(AnimationHelperImpl.INSTANCE);
+		this.SLIDING_STATUS = definition.defineSlidingStatus();
 
-		this.SNEAKING_RULE = definition.getSneakingRule();
-		this.SPRINTING_RULE = definition.getSprintingRule();
+		this.SNEAKING_RULE = definition.defineSneakingRule();
+		this.SPRINTING_RULE = definition.defineSprintingRule();
 		this.GENERIC_ACTION_TYPE = (definition instanceof GenericActionDefinition genericDefinition ? genericDefinition.getGenericActionType() : null);
 
-		BappingRule bappingRule = definition.getBappingRule();
+		BappingRule bappingRule = definition.defineBappingRule();
 		this.BAPPING_RULE = bappingRule == null ? NULL_EQUIVALENT : bappingRule;
 
-		Identifier collisionAttackID = definition.getCollisionAttackTypeID();
+		Identifier collisionAttackID = definition.defineActiveCollisionAttack();
 		if(collisionAttackID == null)
 			this.COLLISION_ATTACK_TYPE = null;
 		else
@@ -71,6 +72,7 @@ public abstract class AbstractParsedAction extends ParsedCfaState implements Par
 		this.CLIENT_TRANSITIONS = new EnumMap<>(TransitionPhase.class);
 		this.SERVER_TRANSITIONS = new EnumMap<>(TransitionPhase.class);
 
+		// TODO: Separate out of Action Definitions.
 		for(TransitionInjectionDefinition injection : definition.getTransitionInjections()) {
 			allInjections.putIfAbsent(injection.injectNearTransitionsTo(), new HashSet<>());
 			allInjections.get(injection.injectNearTransitionsTo()).add(injection);
@@ -80,14 +82,14 @@ public abstract class AbstractParsedAction extends ParsedCfaState implements Par
 		this.INTERCEPTIONS_VIEW = Collections.unmodifiableList(this.INTERCEPTIONS_INTERNAL);
 	}
 
-	protected abstract List<TransitionDefinition> getBasicTransitions();
-	protected abstract List<TransitionDefinition> getInputTransitions();
-	protected abstract List<TransitionDefinition> getWorldCollisionTransitions();
+	protected abstract void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder);
+	protected abstract void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder);
+	protected abstract void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder);
 
 	public void parseTransitions(HashMap<Identifier, Set<TransitionInjectionDefinition>> allInjections) {
-		this.parseTransitions(TransitionPhase.BASIC, this.getBasicTransitions(), allInjections);
-		this.parseTransitions(TransitionPhase.INPUT, this.getInputTransitions(), allInjections);
-		this.parseTransitions(TransitionPhase.WORLD_COLLISION, this.getWorldCollisionTransitions(), allInjections);
+		this.parseTransitions(TransitionPhase.BASIC, accumulateList(this::accumulateBasicTransitions), allInjections);
+		this.parseTransitions(TransitionPhase.INPUT, accumulateList(this::accumulateInputTransitions), allInjections);
+		this.parseTransitions(TransitionPhase.WORLD_COLLISION, accumulateList(this::accumulateCollisionTransitions), allInjections);
 
 		List<AttackInterceptingStateDefinition.AttackInterceptionDefinition> interceptionDefinitions;
 		interceptionDefinitions = accumulateList(builder -> this.ACTION_DEFINITION.accumulateAttackInterceptions(builder, AnimationHelperImpl.INSTANCE));

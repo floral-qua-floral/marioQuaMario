@@ -18,6 +18,7 @@ import com.fqf.mario_qua_mario.actions.generic.ClimbPole;
 import com.fqf.mario_qua_mario.actions.grounded.SubWalk;
 import com.fqf.mario_qua_mario.util.ClimbTransitions;
 import com.fqf.mario_qua_mario.util.ClimbVars;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -41,7 +42,7 @@ public class ClimbWall implements WallboundActionDefinition {
 	protected float getEntireBodyZOffset(CfaReadableMotionData data) {
 		return 2.25F;
 	}
-	@Override public @Nullable AnimationDefinition getAnimation() {
+	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return AnimationDefinition.of(
 				AnimationFlag.NO_SWING_LIMBS,
 				(arrangement, data, animationTime, helper) -> arrangement.z += this.getEntireBodyZOffset(data),
@@ -96,32 +97,18 @@ public class ClimbWall implements WallboundActionDefinition {
 				}
 		);
 	}
-	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
-		return null;
-	}
-	@Override public @NotNull SlidingStatus getSlidingStatus() {
-		return SlidingStatus.NOT_SLIDING;
-	}
-
-	@Override public @NotNull SneakingRule getSneakingRule() {
+	@Override public @NotNull SneakingRule defineSneakingRule() {
 		return SneakingRule.PROHIBIT;
 	}
-	@Override public @NotNull SprintingRule getSprintingRule() {
+	@Override public @NotNull SprintingRule defineSprintingRule() {
 		return SprintingRule.PROHIBIT;
 	}
 
-	@Override public @Nullable BappingRule getBappingRule() {
-		return null;
-	}
-	@Override public @Nullable Identifier getCollisionAttackTypeID() {
-		return null;
-	}
-
-	@Override public @NotNull WallBodyAlignment getBodyAlignment() {
+	@Override public @NotNull WallBodyAlignment defineBodyAlignment() {
 		return WallBodyAlignment.TOWARDS;
 	}
 
-	@Override public float getHeadYawRange() {
+	@Override public float defineHeadYawRange() {
 		return 360;
 	}
 
@@ -130,12 +117,12 @@ public class ClimbWall implements WallboundActionDefinition {
 	}
 
 	@Override
-	public float getWallYaw(CfaReadableMotionData data) {
+	public float calculateWallYaw(CfaReadableMotionData data) {
 		return ClimbTransitions.yawOf(getWallDirection(data));
 	}
 
 	@Override
-	public boolean checkLegality(CfaReadableMotionData data, WallInfo wall, Vec3d checkOffset) {
+	public boolean verifyLegality(CfaReadableMotionData data, WallInfo wall, Vec3d checkOffset) {
 		World world = data.getPlayer().getWorld();
 		for(BlockPos wallBlock : wall.getWallBlocks(0.4)) {
 			if(ClimbTransitions.canClimbBlock(world.getBlockState(wallBlock), Direction.fromRotation(wall.getWallYaw())))
@@ -169,10 +156,8 @@ public class ClimbWall implements WallboundActionDefinition {
 	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 		data.retrieveStateData(ClimbOmniDirectionalVars.class).clientTick(data);
 	}
-	@Override public void serverTick(CfaAuthoritativeData data) {
 
-	}
-	@Override public void travelHook(CfaTravelData data, WallInfo wall, WallboundActionHelper helper) {
+	@Override public void travel(CfaTravelData data, WallInfo wall, WallboundActionHelper helper) {
 		helper.setTowardsWallVel(data, TOWARDS_WALL_VEL);
 		data.getPlayer().fallDistance = 0;
 		double climbInput = wall.getTowardsWallInput() * (data.getInputs().DUCK.isHeld() ? 0.3 : 1);
@@ -203,22 +188,23 @@ public class ClimbWall implements WallboundActionDefinition {
 		return null;
 	}
 
-	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(WallboundActionHelper helper) {
-		return List.of(
-				new TransitionDefinition(
-						this.getSideHangActionID(),
-						data -> Math.abs(helper.getWallInfo(data).getYawDeviation()) > MIN_DEVIATION_TO_SIDE_HANG,
-						EvaluatorEnvironment.CLIENT_ONLY,
-						data -> {
-							data.setForwardStrafeVel(0, 0);
-							data.setYVel(Math.min(0, data.getYVel()));
-						},
-						this.getSideHangTransitionClientsExecutor()
-				)
-		);
+	@Override
+	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, WallboundActionHelper helper) {
+		builder.add(new TransitionDefinition(
+				this.getSideHangActionID(),
+				data -> Math.abs(helper.getWallInfo(data).getYawDeviation()) > MIN_DEVIATION_TO_SIDE_HANG,
+				EvaluatorEnvironment.CLIENT_ONLY,
+				data -> {
+					data.setForwardStrafeVel(0, 0);
+					data.setYVel(Math.min(0, data.getYVel()));
+				},
+				this.getSideHangTransitionClientsExecutor()
+		));
 	}
-	@Override public @NotNull List<TransitionDefinition> getInputTransitions(WallboundActionHelper helper) {
-		return List.of(
+
+	@Override
+	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, WallboundActionHelper helper) {
+		builder.add(
 				new TransitionDefinition(
 						WallJump.ID,
 						data -> helper.getWallInfo(data) != null
@@ -258,8 +244,10 @@ public class ClimbWall implements WallboundActionDefinition {
 				)
 		);
 	}
-	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(WallboundActionHelper helper) {
-		return List.of(
+
+	@Override
+	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, WallboundActionHelper helper) {
+		builder.add(
 				new TransitionDefinition(
 						SpecialFall.ID,
 						data -> !helper.getWallInfo(data).isLegal(),
@@ -274,9 +262,4 @@ public class ClimbWall implements WallboundActionDefinition {
 				)
 		);
 	}
-
-	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
-		return Set.of();
-	}
-
 }

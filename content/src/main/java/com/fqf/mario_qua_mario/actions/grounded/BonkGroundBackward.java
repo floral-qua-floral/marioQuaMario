@@ -17,6 +17,7 @@ import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.aquatic.UnderwaterWalk;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.StandUpWithKneeAnimation;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,29 +48,19 @@ public class BonkGroundBackward implements GroundedActionDefinition {
 		);
 	}
 
-	@Override public @Nullable AnimationDefinition getAnimation() {
+	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return makeAnimation(PROGRESS_CALCULATOR);
 	}
 
-	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
-		return null;
-	}
-	@Override public @NotNull SlidingStatus getSlidingStatus() {
+	@Override public @NotNull SlidingStatus defineSlidingStatus() {
 		return SlidingStatus.SLIDING;
 	}
 
-	@Override public @NotNull SneakingRule getSneakingRule() {
+	@Override public @NotNull SneakingRule defineSneakingRule() {
 		return SneakingRule.PROHIBIT;
 	}
-	@Override public @NotNull SprintingRule getSprintingRule() {
+	@Override public @NotNull SprintingRule defineSprintingRule() {
 		return SprintingRule.PROHIBIT;
-	}
-
-	@Override public @Nullable BappingRule getBappingRule() {
-		return null;
-	}
-	@Override public @Nullable Identifier getCollisionAttackTypeID() {
-		return null;
 	}
 
 	public static final CfaStat BONK_DRAG = new CfaStat(0.185, RUNNING, DRAG);
@@ -77,12 +68,6 @@ public class BonkGroundBackward implements GroundedActionDefinition {
 
 	@Override public @Nullable Object provideStateData(CfaData data) {
 		return new ActionTimerVars();
-	}
-	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-
-	}
-	@Override public void serverTick(CfaAuthoritativeData data) {
-
 	}
 	@Override public void travelHook(CfaTravelData data, GroundedActionHelper helper) {
 		if(data.getHorizVelSquared() == 0) data.retrieveStateData(ActionTimerVars.class).actionTimer++;
@@ -94,20 +79,18 @@ public class BonkGroundBackward implements GroundedActionDefinition {
 		);
 	}
 
-	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(GroundedActionHelper helper) {
-		return List.of(
-				new TransitionDefinition(
-						SubWalk.ID,
-						data -> data.retrieveStateData(ActionTimerVars.class).actionTimer > STANDUP_TICKS,
-						EvaluatorEnvironment.CLIENT_ONLY
-				)
-		);
+	@Override
+	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+		builder.add(new TransitionDefinition(
+				SubWalk.ID,
+				data -> data.retrieveStateData(ActionTimerVars.class).actionTimer > STANDUP_TICKS,
+				EvaluatorEnvironment.CLIENT_ONLY
+		));
 	}
-	@Override public @NotNull List<TransitionDefinition> getInputTransitions(GroundedActionHelper helper) {
-		return List.of();
-	}
-	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(GroundedActionHelper helper) {
-		return List.of(
+
+	@Override
+	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+		builder.add(
 				Fall.FALL.variate(
 						BonkAir.ID,
 						data -> Fall.FALL.evaluator().shouldTransition(data) && data.retrieveStateData(ActionTimerVars.class).actionTimer == 0,
@@ -119,9 +102,4 @@ public class BonkGroundBackward implements GroundedActionDefinition {
 				UnderwaterWalk.SUBMERGE
 		);
 	}
-
-	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
-		return Set.of();
-	}
-
 }

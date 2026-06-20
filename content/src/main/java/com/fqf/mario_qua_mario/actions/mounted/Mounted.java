@@ -12,6 +12,7 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Backflip;
 import com.fqf.mario_qua_mario.actions.grounded.SubWalk;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.Entity;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -29,24 +30,24 @@ public class Mounted implements MountedActionDefinition {
 	    return ID;
 	}
 
-	@Override public @Nullable CameraAnimationSet getCameraAnimations(AnimationHelper helper) {
+	@Override public @Nullable CameraAnimationSet defineCameraAnimations(AnimationHelper helper) {
 		return null;
 	}
-	@Override public @NotNull SlidingStatus getSlidingStatus() {
+	@Override public @NotNull SlidingStatus defineSlidingStatus() {
 		return SlidingStatus.NOT_SLIDING;
 	}
 
-	@Override public @NotNull SneakingRule getSneakingRule() {
+	@Override public @NotNull SneakingRule defineSneakingRule() {
 		return SneakingRule.PROHIBIT;
 	}
-	@Override public @NotNull SprintingRule getSprintingRule() {
+	@Override public @NotNull SprintingRule defineSprintingRule() {
 		return SprintingRule.ALLOW;
 	}
 
-	@Override public @Nullable BappingRule getBappingRule() {
+	@Override public @Nullable BappingRule defineBappingRule() {
 		return null;
 	}
-	@Override public @Nullable Identifier getCollisionAttackTypeID() {
+	@Override public @Nullable Identifier defineActiveCollisionAttack() {
 		return null;
 	}
 
@@ -57,22 +58,23 @@ public class Mounted implements MountedActionDefinition {
 		return Text.translatable("mount.onboard.mario", sneakKeybind, jumpKeybind);
 	}
 
-	@Override public @NotNull List<TransitionDefinition> getBasicTransitions(MountedActionHelper helper) {
-		return List.of(
-				new TransitionDefinition(
-						SubWalk.ID,
-						data -> helper.getMount(data) == null,
-						EvaluatorEnvironment.COMMON,
-						data -> {
-							MarioQuaMario.LOGGER.warn("Transitioned to SubWalk because mount was null?");
-						},
-						(data, isSelf, seed) -> {}
-				)
-		);
+	@Override
+	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, MountedActionHelper helper) {
+		builder.add(new TransitionDefinition(
+				SubWalk.ID,
+				data -> helper.getMount(data) == null || helper.getMount(data).isRemoved(),
+				EvaluatorEnvironment.COMMON,
+				data -> {
+					MarioQuaMario.LOGGER.warn("Transitioned to SubWalk because mount was missing?!");
+				},
+				(data, isSelf, seed) -> {}
+		));
 	}
-	@Override public @NotNull List<TransitionDefinition> getInputTransitions(MountedActionHelper helper) {
+
+	@Override
+	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, MountedActionHelper helper) {
 		TransitionDefinition backflip = Backflip.makeBackflipTransition((GroundedActionDefinition.GroundedActionHelper) helper);
-		return List.of(
+		builder.add(
 				backflip.variate(
 						null,
 						data -> data.getInputs().DUCK.isHeld() && data.getInputs().JUMP.isPressed(),
@@ -85,12 +87,4 @@ public class Mounted implements MountedActionDefinition {
 				)
 		);
 	}
-	@Override public @NotNull List<TransitionDefinition> getWorldCollisionTransitions(MountedActionHelper helper) {
-		return List.of();
-	}
-
-	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
-		return Set.of();
-	}
-
 }

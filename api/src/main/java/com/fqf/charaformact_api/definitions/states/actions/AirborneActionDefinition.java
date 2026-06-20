@@ -4,17 +4,21 @@ import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.util.IncompleteActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charaformact_api.util.CfaStat;
-import org.jetbrains.annotations.NotNull;
+import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public interface AirborneActionDefinition extends IncompleteActionDefinition {
 	void travelHook(CfaTravelData data, AirborneActionHelper helper);
 
-	@NotNull List<TransitionDefinition> getBasicTransitions(AirborneActionHelper helper);
-	@NotNull List<TransitionDefinition> getInputTransitions(AirborneActionHelper helper);
-	@NotNull List<TransitionDefinition> getWorldCollisionTransitions(AirborneActionHelper helper);
+	default void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+
+	}
+	default void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+
+	}
+	default void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+
+	}
 
 	/**
 	 * Contains a number of methods intended to help with the creation of Airborne Actions.

@@ -7,13 +7,13 @@ import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -27,7 +27,7 @@ public class ClimbWallSideHang extends ClimbWall implements WallboundActionDefin
 		return -1.25F;
 	}
 
-	@Override public @Nullable AnimationDefinition getAnimation() {
+	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return AnimationDefinition.of(
 				AnimationFlag.NO_SWING_LIMBS,
 				(arrangement, data, animationTime, helper) -> {
@@ -62,12 +62,12 @@ public class ClimbWallSideHang extends ClimbWall implements WallboundActionDefin
 	}
 
 	@Override
-	public @NotNull WallBodyAlignment getBodyAlignment() {
+	public @NotNull WallBodyAlignment defineBodyAlignment() {
 		return WallBodyAlignment.SIDEWAYS;
 	}
 
 	@Override
-	public void travelHook(CfaTravelData data, WallInfo wall, WallboundActionHelper helper) {
+	public void travel(CfaTravelData data, WallInfo wall, WallboundActionHelper helper) {
 		helper.setTowardsWallVel(data, TOWARDS_WALL_VEL);
 		if(data.getYVel() < -0.05) {
 			data.setYVel(data.getYVel() * 0.775);
@@ -83,8 +83,8 @@ public class ClimbWallSideHang extends ClimbWall implements WallboundActionDefin
 	}
 
 	@Override
-	public @NotNull List<TransitionDefinition> getBasicTransitions(WallboundActionHelper helper) {
-		return List.of(
+	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, WallboundActionHelper helper) {
+		builder.add(
 				new TransitionDefinition(
 						this.getClimbingActionID(),
 						data -> Math.abs(helper.getWallInfo(data).getYawDeviation()) < 80,
@@ -104,7 +104,7 @@ public class ClimbWallSideHang extends ClimbWall implements WallboundActionDefin
 						(fromAction, fromCategory, existingTransitions) -> fromCategory != ActionCategory.WALLBOUND,
 						(nearbyTransition, castableHelper) -> nearbyTransition.variate(
 								this.defineID(),
-								data -> (data.isServer() || MathHelper.angleBetween(data.getPlayer().getYaw(), this.getWallYaw(data)) > ClimbWall.MIN_DEVIATION_TO_SIDE_HANG)
+								data -> (data.isServer() || MathHelper.angleBetween(data.getPlayer().getYaw(), this.calculateWallYaw(data)) > ClimbWall.MIN_DEVIATION_TO_SIDE_HANG)
 										&& nearbyTransition.evaluator().shouldTransition(data)
 						)
 				)

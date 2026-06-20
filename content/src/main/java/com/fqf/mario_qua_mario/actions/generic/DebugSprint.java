@@ -21,8 +21,6 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
 public class DebugSprint extends Debug {
 	public static final Identifier ID = MarioQuaMario.makeID("debug_test");
 	@Override public @NotNull Identifier defineID() {
@@ -38,8 +36,9 @@ public class DebugSprint extends Debug {
 		return true;
 	}
 
-	@Override public @NotNull List<TransitionDefinition> getBasicTransitions() {
-		return List.of(
+	@Override
+	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, CastableHelper helper) {
+		builder.add(
 				new TransitionDefinition(
 						Debug.ID,
 						data -> !data.getPlayer().isSprinting(), EvaluatorEnvironment.SERVER_ONLY,

@@ -36,7 +36,7 @@ public class ClimbIntangibleDirectional extends ClimbWall implements WallboundAc
 	}
 
 	@Override
-	public float getWallYaw(CfaReadableMotionData data) {
+	public float calculateWallYaw(CfaReadableMotionData data) {
 		return currentBlockYaw(data);
 	}
 
@@ -49,7 +49,7 @@ public class ClimbIntangibleDirectional extends ClimbWall implements WallboundAc
 		);
 		return ClimbTransitions.verifyIntangibleDirectionalClimbingLegality(data.getPlayer(), blockPos, Direction.fromRotation(wall.getWallYaw()), true);
 //		BlockState state = data.getPlayer().getWorld().getBlockState(blockPos);
-//		return wall.getWallYaw() == getYawOf(data.getPlayer(), blockPos, state);
+//		return wall.calculateWallYaw() == getYawOf(data.getPlayer(), blockPos, state);
 	}
 
 	public static boolean useAlternateOffset(CfaReadableMotionData data) {
@@ -63,7 +63,7 @@ public class ClimbIntangibleDirectional extends ClimbWall implements WallboundAc
 		return useAlternateOffset((CfaReadableMotionData) data);
 	}
 
-	@Override public boolean checkLegality(CfaReadableMotionData data, WallInfo wall, Vec3d checkOffset) {
+	@Override public boolean verifyLegality(CfaReadableMotionData data, WallInfo wall, Vec3d checkOffset) {
 		return checkLegalityStatic(data, wall, checkOffset);
 	}
 

@@ -7,6 +7,7 @@ import com.fqf.charaformact_api.definitions.states.actions.util.TransitionInject
 import com.fqf.charaformact.cfadata.CfaMoveableData;
 import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import com.fqf.charaformact.registries.actions.UniversalActionDefinitionHelper;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
@@ -34,17 +35,17 @@ public class ParsedAquaticAction extends AbstractParsedAction {
 	}
 
 	@Override
-	protected List<TransitionDefinition> getBasicTransitions() {
-		return this.AQUATIC_DEFINITION.getBasicTransitions(UniversalActionDefinitionHelper.INSTANCE);
+	protected void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder) {
+		this.AQUATIC_DEFINITION.accumulateBasicTransitions(builder, UniversalActionDefinitionHelper.INSTANCE);
 	}
 
 	@Override
-	protected List<TransitionDefinition> getInputTransitions() {
-		return this.AQUATIC_DEFINITION.getInputTransitions(UniversalActionDefinitionHelper.INSTANCE);
+	protected void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder) {
+		this.AQUATIC_DEFINITION.accumulateInputTransitions(builder, UniversalActionDefinitionHelper.INSTANCE);
 	}
 
 	@Override
-	protected List<TransitionDefinition> getWorldCollisionTransitions() {
-		return this.AQUATIC_DEFINITION.getWorldCollisionTransitions(UniversalActionDefinitionHelper.INSTANCE);
+	protected void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder) {
+		this.AQUATIC_DEFINITION.accumulateCollisionTransitions(builder, UniversalActionDefinitionHelper.INSTANCE);
 	}
 }
