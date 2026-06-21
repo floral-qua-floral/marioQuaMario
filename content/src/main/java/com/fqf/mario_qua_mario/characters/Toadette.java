@@ -7,12 +7,11 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Set;
-
 public class Toadette extends AbstractToad implements CharacterDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("toadette");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
+
+	@Override public @NotNull String defineVoiceName() {
+		return "toadette";
 	}
 
 	@Override

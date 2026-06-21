@@ -8,7 +8,6 @@ import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.CfaTags;
-import com.fqf.charaformact_api.util.StatCategory;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.BonkAir;
 import com.fqf.mario_qua_mario.actions.airborne.StompBounce;
@@ -40,9 +39,6 @@ import static com.fqf.charaformact_api.util.StatCategory.COLLISION_ATTACK;
 
 public class Stomp implements CollisionAttackTypeDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("stomp");
-	@Override public @NotNull Identifier getID() {
-	    return ID;
-	}
 
 	@Override public boolean attemptsMounting() {
 		return true;

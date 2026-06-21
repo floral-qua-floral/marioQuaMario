@@ -12,19 +12,18 @@ import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact.registries.RegistryManager;
 import com.fqf.charaformact.registries.actions.parsed.*;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 
 public class ParsedActionHelper {
-	public static AbstractParsedAction parseAction(
-			IncompleteActionDefinition definition
-	) {
+	public static AbstractParsedAction parseAction(Identifier id, IncompleteActionDefinition definition) {
 		return switch (definition) {
-			case GenericActionDefinition def -> new ParsedGenericAction(def);
-			case GroundedActionDefinition def -> new ParsedGroundedAction(def);
-			case AirborneActionDefinition def -> new ParsedAirborneAction(def);
-			case AquaticActionDefinition def -> new ParsedAquaticAction(def);
-			case WallboundActionDefinition def -> new ParsedWallboundAction(def);
-			case MountedActionDefinition def -> new ParsedMountedAction(def);
+			case GenericActionDefinition def -> new ParsedGenericAction(id, def);
+			case GroundedActionDefinition def -> new ParsedGroundedAction(id, def);
+			case AirborneActionDefinition def -> new ParsedAirborneAction(id, def);
+			case AquaticActionDefinition def -> new ParsedAquaticAction(id, def);
+			case WallboundActionDefinition def -> new ParsedWallboundAction(id, def);
+			case MountedActionDefinition def -> new ParsedMountedAction(id, def);
 			default -> throw new AssertionError("Action Definition wasn't one of the known types?!?!");
 		};
 	}

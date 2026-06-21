@@ -17,9 +17,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class AquaticPoundLand implements AquaticActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("aquatic_ground_pound_land");
-	@Override public @NotNull Identifier defineID() {
-		return ID;
-	}
 
 	private static final float AQUATIC_STANDUP_TICKS = 15;
 

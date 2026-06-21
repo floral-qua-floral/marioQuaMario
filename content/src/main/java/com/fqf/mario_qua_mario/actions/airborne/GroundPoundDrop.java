@@ -26,9 +26,6 @@ import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class GroundPoundDrop implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("ground_pound_drop");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
-	}
 
 	public static final AnimationDefinition ANIMATION = GroundPoundFlip.makeAnimation(key -> 1);
 

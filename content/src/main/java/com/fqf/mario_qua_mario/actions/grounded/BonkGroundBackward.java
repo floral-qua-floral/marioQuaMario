@@ -23,9 +23,6 @@ import static com.fqf.charaformact_api.util.StatCategory.RUNNING;
 
 public class BonkGroundBackward implements GroundedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("bonk_ground_backward");
-	@Override public @NotNull Identifier defineID() {
-		return ID;
-	}
 
 	public static final float STANDUP_TICKS = 8;
 	protected static final StandUpWithKneeAnimation.ProgressCalculator PROGRESS_CALCULATOR = (data, animationTime) ->

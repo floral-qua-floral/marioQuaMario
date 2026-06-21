@@ -17,9 +17,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class AquaticPoundFlip implements AquaticActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("aquatic_ground_pound_flip");
-	@Override public @NotNull Identifier defineID() {
-		return ID;
-	}
 
 	private static final float AQUATIC_FLIP_DURATION = 7;
 	@Override public @Nullable AnimationDefinition defineAnimation() {

@@ -31,9 +31,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class TailSpinGround implements GroundedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("tail_spin_grounded");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
-	}
 
 	private static final float TICKS_PER_REVOLUTION = 6;
 	public static AnimationDefinition makeAnimation(boolean isGrounded) {

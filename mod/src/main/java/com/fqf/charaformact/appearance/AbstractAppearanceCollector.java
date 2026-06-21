@@ -20,6 +20,9 @@ public abstract class AbstractAppearanceCollector<DefinitionType extends CommonA
 
 	}
 
+	// TODO: Move this system away from Entrypoints too
+//	protected abstract Map<CharacterFormCombo, DefinitionType> getDefinitions();
+
 	protected abstract String getEntrypoint();
 	protected abstract Class<DefinitionType> getEntrypointClass();
 

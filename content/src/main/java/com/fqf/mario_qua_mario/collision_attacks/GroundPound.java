@@ -9,7 +9,6 @@ import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.BonkAir;
 import com.fqf.mario_qua_mario.util.MarioSFX;
-import com.fqf.mario_qua_mario.util.Squashable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -27,9 +26,6 @@ import static com.fqf.charaformact_api.util.StatCategory.COLLISION_ATTACK;
 
 public class GroundPound implements CollisionAttackTypeDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("ground_pound");
-	@Override public @NotNull Identifier getID() {
-	    return ID;
-	}
 
 	@Override
 	public boolean attemptsMounting() {

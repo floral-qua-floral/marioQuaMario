@@ -20,9 +20,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class BonkAir extends Fall implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("bonk_air");
-	@Override public @NotNull Identifier defineID() {
-		return ID;
-	}
 
 	public static float getDeviation(CfaAnimatingData data) {
 		return MathHelper.subtractAngles(data.getPlayer().bodyYaw, data.retrieveStateData(BonkAir.BonkVars.class).recalculateBonkYaw(data)) / 180 * 2;

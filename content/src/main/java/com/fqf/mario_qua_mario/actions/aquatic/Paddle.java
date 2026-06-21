@@ -20,9 +20,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class Paddle implements AquaticActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("paddle");
-	@Override public @NotNull Identifier defineID() {
-		return ID;
-	}
 
 	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return AnimationDefinition.of(
@@ -74,7 +71,7 @@ public class Paddle implements AquaticActionDefinition {
 	private static final double INTENDED_IMMERSION_LEVEL = 0.75;
 
 	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-		if(data.getPlayer().getWorld().getTime() % 2 == 0)
+		if(data.getPlayer().getWorld().getTime() % 3 == 0)
 			data.playSound(MarioSFX.SWIM_PADDLE, data.getPlayer().getRandom().nextLong());
 	}
 	@Override public void travelHook(CfaTravelData data, AquaticActionHelper helper) {

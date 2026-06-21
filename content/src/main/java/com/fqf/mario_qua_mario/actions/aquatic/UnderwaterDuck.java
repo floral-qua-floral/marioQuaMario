@@ -14,9 +14,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class UnderwaterDuck implements AquaticActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("underwater_duck");
-	@Override public @NotNull Identifier defineID() {
-		return ID;
-	}
 
 	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return DuckWaddle.makeAnimation(true, false);

@@ -26,9 +26,6 @@ import static com.fqf.charaformact_api.util.StatCategory.WATER_DRAG;
 
 public class AquaticPoundDrop implements AquaticActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("aquatic_ground_pound_drop");
-	@Override public @NotNull Identifier defineID() {
-		return ID;
-	}
 
 	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return GroundPoundDrop.ANIMATION;

@@ -21,9 +21,6 @@ import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class PRun implements GroundedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("p_run");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
-	}
 
 	private static float getTilt(CfaAnimatingData data) {
 		return Easing.clampedRangeToProgress(data.getDeltaYaw(), -1, 1) * 2 - 1;

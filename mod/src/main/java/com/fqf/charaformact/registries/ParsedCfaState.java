@@ -4,6 +4,7 @@ import com.fqf.charaformact.cfadata.CfaPlayerData;
 import com.fqf.charaformact.cfadata.CfaServerPlayerData;
 import com.fqf.charaformact_api.definitions.states.CfaStateDefinition;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,8 +13,8 @@ public class ParsedCfaState extends ParsedCfaThing {
 
 	private @Nullable Class<?> lastCustomVarsClass;
 
-	public ParsedCfaState(CfaStateDefinition definition) {
-		super(definition.defineID());
+	public ParsedCfaState(Identifier id, @NotNull CfaStateDefinition definition) {
+		super(id);
 		this.STATE_DEFINITION = definition;
 	}
 

@@ -19,17 +19,13 @@ public class ParsedPowerGrantingState extends ParsedCfaState {
 	public final float ANIMATION_VERTICAL_SCALE;
 
 	public final int BUMP_STRENGTH_MODIFIER;
-	public final Identifier RESOURCE_ID;
-
 
 	public final Set<String> POWERS;
 	public final Set<StatAlteringStateDefinition.AttributeModifierInstruction> ATTRIBUTE_MODIFIERS;
 	private final Set<StatAlteringStateDefinition.StatModifier> STAT_MODIFIERS;
-	private final Map<Set<StatCategory>, Double> STAT_MULTIPLIERS_CACHE = new HashMap<>();
 
-	public ParsedPowerGrantingState(StatAlteringStateDefinition definition) {
-		super(definition);
-		this.RESOURCE_ID = this.ID;
+	public ParsedPowerGrantingState(Identifier id, StatAlteringStateDefinition definition) {
+		super(id, definition);
 
 		this.WIDTH_FACTOR = definition.defineWidthFactor();
 		this.HEIGHT_FACTOR = definition.defineHeightFactor();

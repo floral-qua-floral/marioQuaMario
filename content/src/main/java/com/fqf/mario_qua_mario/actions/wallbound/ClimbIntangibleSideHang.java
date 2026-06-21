@@ -9,13 +9,9 @@ import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransition
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
-import org.jetbrains.annotations.NotNull;
 
 public class ClimbIntangibleSideHang extends ClimbWallSideHang implements WallboundActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("climb_intangible_side_hang");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
-	}
 
 	@Override
 	protected float getEntireBodyXOffset(CfaReadableMotionData data) {

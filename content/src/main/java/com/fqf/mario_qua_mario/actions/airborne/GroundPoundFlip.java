@@ -28,9 +28,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class GroundPoundFlip implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("ground_pound_flip");
-	@Override public @NotNull Identifier defineID() {
-		return ID;
-	}
 
 	private static final float FLIP_DURATION = 5;
 

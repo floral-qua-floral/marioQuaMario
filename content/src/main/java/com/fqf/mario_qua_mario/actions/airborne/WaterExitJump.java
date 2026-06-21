@@ -9,13 +9,9 @@ import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.StatCategory;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
 
 public class WaterExitJump extends Jump implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("water_exit_jump");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
-	}
 
 	public static final CfaStat WATER_EXIT_JUMP_VEL = new CfaStat(0.939, StatCategory.JUMP_VELOCITY);
 

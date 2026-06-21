@@ -28,9 +28,6 @@ import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class LavaBoost extends Fall implements AirborneActionDefinition {
     public static final Identifier ID = MarioQuaMario.makeID("lava_boost");
-	@Override public @NotNull Identifier defineID() {
-		return ID;
-	}
 
 	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return AnimationDefinition.of(

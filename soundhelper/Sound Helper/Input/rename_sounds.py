@@ -30,5 +30,6 @@ sfx = {
   "dive": "aquatic_ground_pound_drop",
 
   "nsmbwiiCoinAppear2": "coin_use",
-  "nsmbwiiFenceHit": "climbable_hit"
+  "nsmbwiiFenceHit": "climbable_hit",
+  "mkwii_lightning_shrink": "mini_revert"
 }

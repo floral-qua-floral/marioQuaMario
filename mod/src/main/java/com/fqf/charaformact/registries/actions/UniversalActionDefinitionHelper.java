@@ -9,10 +9,10 @@ import com.fqf.charaformact.util.AdvancedWallInfo;
 import com.fqf.charaformact_api.definitions.states.actions.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.charaformact_api.definitions.states.actions.util.IncompleteActionDefinition;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.StatCategory;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -27,7 +27,7 @@ public class UniversalActionDefinitionHelper implements
 		MountedActionDefinition.MountedActionHelper,
 		GenericActionDefinition.CastableHelper {
 	public static final UniversalActionDefinitionHelper INSTANCE = new UniversalActionDefinitionHelper();
-	private UniversalActionDefinitionHelper() {}
+	protected UniversalActionDefinitionHelper() {}
 
 	@Override
 	public void groundAccel(
@@ -158,10 +158,15 @@ public class UniversalActionDefinitionHelper implements
 	}
 
 	@Override
-	public ActionTransitionDetails makeJumpCapTransition(IncompleteActionDefinition forAction, double capThreshold) {
+	public ActionTransitionDetails makeJumpCapTransition(double capThreshold) {
+		throw new UnsupportedOperationException("You shouldn't be creating Action Transitions right now!! >:(");
+	}
+
+	@Override
+	public ActionTransitionDetails makeJumpCapTransition(Identifier postCapAction, double capThreshold) {
 		CfaStat cap = new CfaStat(capThreshold, StatCategory.JUMP_CAP);
 		return new ActionTransitionDetails(
-				forAction.defineID(),
+				postCapAction,
 				data -> !((CfaMoveableData) data).jumpCapped && (!data.getInputs().JUMP.isHeld()  || data.getYVel() < cap.get(data)),
 				EvaluatorEnvironment.CLIENT_ONLY,
 				data -> {

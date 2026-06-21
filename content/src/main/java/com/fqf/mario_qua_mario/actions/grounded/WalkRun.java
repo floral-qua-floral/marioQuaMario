@@ -18,15 +18,10 @@ import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Set;
-
 import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class WalkRun extends SubWalk implements GroundedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("walk_run");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
-	}
 
 	private static float getProgress(CfaAnimatingData data) {
 		return Easing.clampedRangeToProgress(data.getForwardVel(), SubWalk.WALK_SPEED.get(data), RUN_SPEED.get(data));

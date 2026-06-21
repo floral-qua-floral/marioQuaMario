@@ -9,14 +9,10 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.Animat
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class GroundPoundLandHold extends GroundPoundLand implements GroundedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("ground_pound_land_hold");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
-	}
 
 	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return BonkGroundBackward.makeAnimation((data, animationTime) -> 0);

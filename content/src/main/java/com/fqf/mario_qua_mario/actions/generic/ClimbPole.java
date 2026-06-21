@@ -37,9 +37,6 @@ import java.util.List;
 
 public class ClimbPole implements GenericActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("climb_pole");
-	@Override public @NotNull Identifier defineID() {
-		return ID;
-	}
 
 	private static Vec3d getMaximumOffset(CfaData data, double contraction) {
 		Box cameraBox = data.getPlayer().getBoundingBox().contract(contraction, 0, contraction);

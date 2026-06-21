@@ -2,6 +2,7 @@ package com.fqf.charaformact.registries.actions.parsed;
 
 import com.fqf.charaformact.cfadata.CfaMoveableData;
 import com.fqf.charaformact.cfadata.CfaPlayerData;
+import com.fqf.charaformact.registries.actions.UniversalActionTransitionHelper;
 import com.fqf.charaformact_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
@@ -9,6 +10,7 @@ import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import com.fqf.charaformact.registries.actions.UniversalActionDefinitionHelper;
 import com.fqf.charaformact_api.definitions.states.actions.util.WallBodyAlignment;
 import com.google.common.collect.ImmutableList;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 
 public class ParsedWallboundAction extends AbstractParsedAction {
@@ -17,8 +19,8 @@ public class ParsedWallboundAction extends AbstractParsedAction {
 	public final WallBodyAlignment ALIGNMENT;
 	public final float HEAD_RANGE;
 
-	public ParsedWallboundAction(WallboundActionDefinition definition) {
-		super(definition);
+	public ParsedWallboundAction(Identifier id, WallboundActionDefinition definition) {
+		super(id, definition);
 		this.WALLBOUND_DEFINITION = definition;
 
 		this.ALIGNMENT = definition.defineBodyAlignment();
@@ -48,17 +50,17 @@ public class ParsedWallboundAction extends AbstractParsedAction {
 	}
 
 	@Override
-	protected void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder) {
-		this.WALLBOUND_DEFINITION.accumulateBasicTransitions(builder, UniversalActionDefinitionHelper.INSTANCE);
+	protected void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, UniversalActionTransitionHelper helper) {
+		this.WALLBOUND_DEFINITION.accumulateBasicTransitions(builder, helper);
 	}
 
 	@Override
-	protected void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder) {
-		this.WALLBOUND_DEFINITION.accumulateInputTransitions(builder, UniversalActionDefinitionHelper.INSTANCE);
+	protected void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, UniversalActionTransitionHelper helper) {
+		this.WALLBOUND_DEFINITION.accumulateInputTransitions(builder, helper);
 	}
 
 	@Override
-	protected void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder) {
-		this.WALLBOUND_DEFINITION.accumulateCollisionTransitions(builder, UniversalActionDefinitionHelper.INSTANCE);
+	protected void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, UniversalActionTransitionHelper helper) {
+		this.WALLBOUND_DEFINITION.accumulateCollisionTransitions(builder, helper);
 	}
 }

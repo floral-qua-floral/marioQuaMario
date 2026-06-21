@@ -28,9 +28,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class Debug implements GenericActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("debug");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
-	}
 
 	public static void tPose(Posture posture) {
 		posture.RIGHT_ARM.roll = 90;

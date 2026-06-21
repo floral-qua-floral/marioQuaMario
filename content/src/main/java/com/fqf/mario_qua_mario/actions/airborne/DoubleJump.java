@@ -25,9 +25,6 @@ import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class DoubleJump extends Jump implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("double_jump");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
-	}
 
 	public static final AnimationDefinition ANIMATION = AnimationDefinition.of(
 			AnimationFlag.NO_SWING_LIMBS,

@@ -4,8 +4,6 @@ import com.fqf.charaformact_api.util.StatCategory;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import com.google.common.collect.ImmutableSet;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -18,8 +16,9 @@ import static net.minecraft.entity.attribute.EntityAttributes.*;
 
 public class Wario extends AbstractMarioSeriesCharacter {
 	public static final Identifier ID = MarioQuaMario.makeID("wario");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
+
+	@Override public @NotNull String defineVoiceName() {
+		return "wario";
 	}
 
 	@Override

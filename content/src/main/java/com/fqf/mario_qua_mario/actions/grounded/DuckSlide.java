@@ -20,15 +20,10 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Set;
-
 import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class DuckSlide implements GroundedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("duck_slide");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
-	}
 
 	@Override
 	public @Nullable AnimationDefinition defineAnimation() {

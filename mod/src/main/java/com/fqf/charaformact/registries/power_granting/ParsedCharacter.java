@@ -9,6 +9,7 @@ import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,14 +24,14 @@ public class ParsedCharacter extends ParsedPowerGrantingState {
 
 	public final Map<ParsedForm, String> MODELS;
 
-	public ParsedCharacter(CharacterDefinition definition) {
-		super(definition);
+	public ParsedCharacter(Identifier id, CharacterDefinition definition) {
+		super(id, definition);
 		this.CHARACTER_DEFINITION = definition;
 
 		this.INITIAL_ACTION = Objects.requireNonNull(RegistryManager.ACTIONS.get(definition.defineInitialAction()),
-				definition.defineID() + "'s initial action (" + definition.defineInitialAction() + ") doesn't exist!");
+				id + "'s initial action (" + definition.defineInitialAction() + ") doesn't exist!");
 		this.INITIAL_FORM = Objects.requireNonNull(RegistryManager.FORMS.get(definition.defineInitialForm()),
-				definition.defineID() + "'s initial form (" + definition.defineInitialForm() + ") doesn't exist!");
+				id + "'s initial form (" + definition.defineInitialForm() + ") doesn't exist!");
 
 		this.JUMP_SOUND = definition.defineJumpSound();
 		this.VOICE_NAME = definition.defineVoiceName();

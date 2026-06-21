@@ -40,9 +40,6 @@ import java.util.List;
 
 public class Raccoon implements FormDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("raccoon");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
-	}
 
 	@Override public @Nullable Identifier defineReversionTarget() {
 		return Super.ID;

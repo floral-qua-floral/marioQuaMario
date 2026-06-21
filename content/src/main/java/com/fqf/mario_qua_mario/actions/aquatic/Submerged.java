@@ -27,9 +27,6 @@ import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class Submerged implements AquaticActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("submerged");
-	@Override public @NotNull Identifier defineID() {
-		return ID;
-	}
 
 	protected float getAnimationProgress(float animationTime) {
 		return 3;

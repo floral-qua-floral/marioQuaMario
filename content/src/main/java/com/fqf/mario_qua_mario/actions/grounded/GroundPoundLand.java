@@ -19,9 +19,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class GroundPoundLand implements GroundedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("ground_pound_land");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
-	}
 
 	private static final float STANDUP_TICKS = 10;
 

@@ -7,15 +7,11 @@ import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
 
 import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class Swim extends Submerged {
 	public static final Identifier ID = MarioQuaMario.makeID("swim");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
-	}
 
 	@Override protected float getAnimationProgress(float animationTime) {
 		return Math.min(animationTime / 2, 3);

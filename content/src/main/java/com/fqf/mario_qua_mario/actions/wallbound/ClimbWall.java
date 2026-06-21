@@ -31,9 +31,6 @@ import java.util.Objects;
 
 public class ClimbWall implements WallboundActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("climb_wall");
-	@Override public @NotNull Identifier defineID() {
-		return ID;
-	}
 
 	protected float getEntireBodyZOffset(CfaReadableMotionData data) {
 		return 2.25F;

@@ -14,7 +14,6 @@ import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
@@ -24,9 +23,6 @@ import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class Sideflip extends Backflip implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("sideflip");
-	@Override public @NotNull Identifier defineID() {
-		return ID;
-	}
 
 	private static float calculateProgress(float animationTime) {
 		return Easing.LINEAR.ease(Math.min(animationTime / 20F, 1));

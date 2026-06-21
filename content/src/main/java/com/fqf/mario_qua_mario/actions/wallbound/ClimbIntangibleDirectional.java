@@ -15,13 +15,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import org.jetbrains.annotations.NotNull;
 
 public class ClimbIntangibleDirectional extends ClimbWall implements WallboundActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("climb_intangible_directional");
-	@Override public @NotNull Identifier defineID() {
-		return ID;
-	}
 
 	@Override
 	protected float getEntireBodyZOffset(CfaReadableMotionData data) {

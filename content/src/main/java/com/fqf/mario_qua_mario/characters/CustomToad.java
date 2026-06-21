@@ -17,9 +17,6 @@ import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class CustomToad extends AbstractToad implements CharacterDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("customizable_toad");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
-	}
 
 	@Override public @NotNull String defineVoiceName() {
 		return "toad";

@@ -20,9 +20,6 @@ import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class SubWalk implements GroundedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("sub_walk");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
-	}
 
 	@Override public @Nullable CameraAnimationSet defineCameraAnimations(AnimationHelper helper) {
 		return null;

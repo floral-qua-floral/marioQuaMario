@@ -21,6 +21,7 @@ import net.minecraft.util.Identifier;
 
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class RegistryManager {
@@ -75,10 +76,10 @@ public class RegistryManager {
 	private static <ThingDefinition, ParsedThing> void parseAndRegisterThings(
 			Registry<ParsedThing> registry, List<CharaFormActAddon> addons,
 			BiConsumer<CharaFormActAddon, ImmutableMap.Builder<Identifier, ThingDefinition>> accumulator,
-			Function<ThingDefinition, ParsedThing> parser
+			BiFunction<Identifier, ThingDefinition, ParsedThing> parser
 	) {
 		Map<Identifier, ThingDefinition> map = ImmutableCollectionHelper.accumulateMap(addons, accumulator);
-		map.forEach((id, thingDefinition) -> Registry.register(registry, id, parser.apply(thingDefinition)));
+		map.forEach((id, thingDefinition) -> Registry.register(registry, id, parser.apply(id, thingDefinition)));
 		registry.freeze();
 	}
 
@@ -131,7 +132,7 @@ public class RegistryManager {
 		for(Identifier voiceLine : ImmutableCollectionHelper.accumulateSet(addons, CharaFormActAddon::accumulateVoicelines)) {
 			ImmutableMap.Builder<ParsedCharacter, SoundEvent> builder = ImmutableMap.builder();
 			for(ParsedCharacter character : CHARACTERS) {
-				Identifier eventID = Identifier.of(character.RESOURCE_ID.getNamespace(),
+				Identifier eventID = Identifier.of(character.ID.getNamespace(),
 						"voice." + character.VOICE_NAME + "." + voiceLine.getPath());
 				SoundEvent event = SoundEvent.of(eventID);
 				Registry.register(Registries.SOUND_EVENT, eventID, event);

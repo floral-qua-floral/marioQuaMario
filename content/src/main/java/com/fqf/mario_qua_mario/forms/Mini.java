@@ -21,13 +21,7 @@ import static net.minecraft.entity.attribute.EntityAttributes.*;
 
 public class Mini implements FormDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("mini");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
-	}
 
-	@Override public @Nullable Identifier defineReversionTarget() {
-		return null;
-	}
 	@Override public int defineValue() {
 		return 0;
 	}

@@ -2,6 +2,7 @@ package com.fqf.charaformact.registries.actions.parsed;
 
 import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.cfadata.CfaMoveableData;
+import com.fqf.charaformact.registries.actions.UniversalActionTransitionHelper;
 import com.fqf.charaformact.util.CfaClientHelperManager;
 import com.fqf.charaformact_api.definitions.states.actions.MountedActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
@@ -11,6 +12,7 @@ import com.fqf.charaformact.registries.actions.UniversalActionDefinitionHelper;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 public class ParsedMountedAction extends AbstractParsedAction {
@@ -24,8 +26,8 @@ public class ParsedMountedAction extends AbstractParsedAction {
 	public static Text backwardKeybind = Text.empty();
 	public static MutableText vanillaHint = Text.empty();
 
-	public ParsedMountedAction(MountedActionDefinition definition) {
-		super(definition);
+	public ParsedMountedAction(Identifier id, MountedActionDefinition definition) {
+		super(id, definition);
 		this.MOUNTED_DEFINITION = definition;
 		this.DISMOUNT_HINT = definition.defineDismountHint(vanillaHint, sneakKeybind, jumpKeybind, attackKeybind, forwardKeybind, backwardKeybind);
 		CharaFormAct.LOGGER.info("\nClient Helper Manager: {}\nClient Packet Sender: {}", CfaClientHelperManager.helper, CfaClientHelperManager.packetSender);
@@ -44,17 +46,17 @@ public class ParsedMountedAction extends AbstractParsedAction {
 	}
 
 	@Override
-	protected void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder) {
-		this.MOUNTED_DEFINITION.accumulateBasicTransitions(builder, UniversalActionDefinitionHelper.INSTANCE);
+	protected void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, UniversalActionTransitionHelper helper) {
+		this.MOUNTED_DEFINITION.accumulateBasicTransitions(builder, helper);
 	}
 
 	@Override
-	protected void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder) {
-		this.MOUNTED_DEFINITION.accumulateInputTransitions(builder, UniversalActionDefinitionHelper.INSTANCE);
+	protected void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, UniversalActionTransitionHelper helper) {
+		this.MOUNTED_DEFINITION.accumulateInputTransitions(builder, helper);
 	}
 
 	@Override
-	protected void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder) {
-		this.MOUNTED_DEFINITION.accumulateCollisionTransitions(builder, UniversalActionDefinitionHelper.INSTANCE);
+	protected void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, UniversalActionTransitionHelper helper) {
+		this.MOUNTED_DEFINITION.accumulateCollisionTransitions(builder, helper);
 	}
 }

@@ -15,7 +15,6 @@ import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.util.MarioVars;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.fqf.charaformact_api.util.StatCategory.JUMPING_GRAVITY;
@@ -23,9 +22,6 @@ import static com.fqf.charaformact_api.util.StatCategory.JUMP_VELOCITY;
 
 public class Jump extends Fall implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("jump");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
-	}
 
 	public static float getAnimationProgress(CfaAnimatingData data) {
 		return Easing.EXPO_IN_OUT.ease(Easing.clampedRangeToProgress(data.getYVel(), 0.87, -0.85));
@@ -112,7 +108,7 @@ public class Jump extends Fall implements AirborneActionDefinition {
 	@Override
 	public void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AirborneActionHelper helper) {
 		super.accumulateInputTransitions(builder, helper);
-		builder.add(helper.makeJumpCapTransition(this, this.getJumpCapThreshold()));
+		builder.add(helper.makeJumpCapTransition(this.getJumpCapThreshold()));
 	}
 
 	@Override protected ActionTransitionDetails getLandingTransition() {

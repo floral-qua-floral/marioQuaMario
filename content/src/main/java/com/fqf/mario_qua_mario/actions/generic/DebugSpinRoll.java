@@ -7,16 +7,10 @@ import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public class DebugSpinRoll extends Debug {
 	public static final Identifier ID = MarioQuaMario.makeID("debug_spin_roll");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
-	}
 
 	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return AnimationDefinition.of(

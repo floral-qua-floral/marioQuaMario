@@ -22,9 +22,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class PJump extends Jump implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("p_jump");
-	@Override public @NotNull Identifier defineID() {
-		return ID;
-	}
 
 	@Override public @NotNull AnimationDefinition defineAnimation() {
 		return AnimationDefinition.of(

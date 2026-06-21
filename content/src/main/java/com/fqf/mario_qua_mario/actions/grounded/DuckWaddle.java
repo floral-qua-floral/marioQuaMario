@@ -31,9 +31,6 @@ import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class DuckWaddle implements GroundedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("duck_waddle");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
-	}
 
 	public static final Identifier ANIMATION_ID = MarioQuaMario.makeID("grounded_ducking");
 	public static final Identifier AIRBORNE_ANIMATION_ID = MarioQuaMario.makeID("airborne_ducking");

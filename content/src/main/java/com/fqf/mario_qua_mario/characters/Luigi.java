@@ -14,8 +14,9 @@ import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class Luigi extends AbstractMarioSeriesCharacter implements CharacterDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("luigi");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
+
+	@Override public @NotNull String defineVoiceName() {
+		return "luigi";
 	}
 
 	@Override

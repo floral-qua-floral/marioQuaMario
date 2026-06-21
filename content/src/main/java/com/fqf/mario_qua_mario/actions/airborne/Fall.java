@@ -21,9 +21,6 @@ import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class Fall implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("fall");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
-	}
 
 	@Override public @Nullable CameraAnimationSet defineCameraAnimations(AnimationHelper helper) {
 		return null;

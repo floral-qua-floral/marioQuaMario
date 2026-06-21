@@ -7,14 +7,10 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.Animat
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class SpecialFall extends Fall implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("special_fall");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
-	}
 
 	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return AnimationDefinition.of(

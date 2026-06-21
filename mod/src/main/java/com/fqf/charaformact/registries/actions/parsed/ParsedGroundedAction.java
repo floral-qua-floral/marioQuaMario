@@ -1,6 +1,7 @@
 package com.fqf.charaformact.registries.actions.parsed;
 
 import com.fqf.charaformact.cfadata.CfaMoveableData;
+import com.fqf.charaformact.registries.actions.UniversalActionTransitionHelper;
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
@@ -9,12 +10,13 @@ import com.fqf.charaformact.registries.actions.UniversalActionDefinitionHelper;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.StatCategory;
 import com.google.common.collect.ImmutableList;
+import net.minecraft.util.Identifier;
 
 public class ParsedGroundedAction extends AbstractParsedAction {
 	private final GroundedActionDefinition GROUNDED_DEFINITION;
 
-	public ParsedGroundedAction(GroundedActionDefinition definition) {
-		super(definition);
+	public ParsedGroundedAction(Identifier id, GroundedActionDefinition definition) {
+		super(id, definition);
 		this.GROUNDED_DEFINITION = definition;
 	}
 
@@ -39,17 +41,17 @@ public class ParsedGroundedAction extends AbstractParsedAction {
 	}
 
 	@Override
-	protected void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder) {
-		this.GROUNDED_DEFINITION.accumulateBasicTransitions(builder, UniversalActionDefinitionHelper.INSTANCE);
+	protected void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, UniversalActionTransitionHelper helper) {
+		this.GROUNDED_DEFINITION.accumulateBasicTransitions(builder, helper);
 	}
 
 	@Override
-	protected void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder) {
-		this.GROUNDED_DEFINITION.accumulateInputTransitions(builder, UniversalActionDefinitionHelper.INSTANCE);
+	protected void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, UniversalActionTransitionHelper helper) {
+		this.GROUNDED_DEFINITION.accumulateInputTransitions(builder, helper);
 	}
 
 	@Override
-	protected void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder) {
-		this.GROUNDED_DEFINITION.accumulateCollisionTransitions(builder, UniversalActionDefinitionHelper.INSTANCE);
+	protected void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, UniversalActionTransitionHelper helper) {
+		this.GROUNDED_DEFINITION.accumulateCollisionTransitions(builder, helper);
 	}
 }

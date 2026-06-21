@@ -14,16 +14,12 @@ import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class TripleJump extends Jump implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("triple_jump");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
-	}
 
 	@Override
 	public @Nullable AnimationDefinition defineAnimation() {

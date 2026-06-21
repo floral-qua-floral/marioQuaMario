@@ -27,9 +27,6 @@ import static com.fqf.charaformact_api.util.StatCategory.JUMP_VELOCITY;
 
 public class TailFly extends PJump implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("tail_fly");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
-	}
 
 	@Override public @NotNull AnimationDefinition defineAnimation() {
 		return AnimationDefinition.layerPostureMutator(super.defineAnimation(), TailStall.POSTURE_MUTATOR);

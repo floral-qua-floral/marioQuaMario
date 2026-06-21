@@ -21,9 +21,6 @@ import java.util.Objects;
 
 public class ClimbWallSideHang extends ClimbWall implements WallboundActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("climb_wall_side_hang");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
-	}
 
 	protected float getEntireBodyXOffset(CfaReadableMotionData data) {
 		return -1.25F;

@@ -28,9 +28,6 @@ import java.util.Objects;
 
 public class WallSlide implements WallboundActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("wall_slide");
-	@Override public @NotNull Identifier defineID() {
-		return ID;
-	}
 
 	private static float calculateDeviation(CfaAnimatingData data, AnimationHelper helper) {
 		return MathHelper.subtractAngles(data.getPlayer().bodyYaw,

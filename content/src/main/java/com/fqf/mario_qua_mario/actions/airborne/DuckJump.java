@@ -17,9 +17,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class DuckJump extends Jump implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("duck_jump");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
-	}
 
 
 	@Override
@@ -61,7 +58,7 @@ public class DuckJump extends Jump implements AirborneActionDefinition {
 
 	@Override
 	public void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AirborneActionHelper helper) {
-		builder.add(helper.makeJumpCapTransition(this, this.getJumpCapThreshold()));
+		builder.add(helper.makeJumpCapTransition(this.getJumpCapThreshold()));
 	}
 
 	@Override protected ActionTransitionDetails getLandingTransition() {

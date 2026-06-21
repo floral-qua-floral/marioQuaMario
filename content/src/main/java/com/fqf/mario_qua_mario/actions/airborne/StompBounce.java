@@ -5,7 +5,6 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.Animat
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.fqf.charaformact_api.util.StatCategory.COLLISION_ATTACK;
@@ -13,9 +12,6 @@ import static com.fqf.charaformact_api.util.StatCategory.JUMP_VELOCITY;
 
 public class StompBounce extends Jump implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("stomp");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
-	}
 
 	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return DoubleJump.ANIMATION;

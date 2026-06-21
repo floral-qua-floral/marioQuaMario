@@ -9,9 +9,7 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 public interface CharacterDefinition extends StatAlteringStateDefinition {
-	default @NotNull String defineVoiceName() {
-		return this.defineID().getPath();
-	}
+	@NotNull String defineVoiceName();
 
 	@NotNull Identifier defineInitialAction();
 	@NotNull Identifier defineInitialForm();

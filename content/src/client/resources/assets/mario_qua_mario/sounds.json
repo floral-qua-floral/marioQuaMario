@@ -155,6 +155,12 @@
 			"mario_qua_mario:sfx/form/mini_empower"
 		]
 	},
+	"sfx.form.mini_revert": {
+		"subtitle": "subtitles.mario_qua_mario.form.mini_revert",
+		"sounds": [
+			"mario_qua_mario:sfx/form/mini_revert"
+		]
+	},
 	"sfx.form.revert": {
 		"subtitle": "subtitles.mario_qua_mario.form.revert",
 		"sounds": [

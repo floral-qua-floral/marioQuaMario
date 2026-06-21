@@ -1,32 +1,22 @@
 package com.fqf.mario_qua_mario.actions.aquatic;
 
-import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
-import com.fqf.charaformact_api.cfadata.CfaClientData;
-import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AquaticActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.StatCategory;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
-import com.fqf.mario_qua_mario.actions.airborne.LavaBoost;
 import com.fqf.mario_qua_mario.actions.grounded.DuckWaddle;
 import com.fqf.mario_qua_mario.actions.grounded.SubWalk;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class UnderwaterWalk implements AquaticActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("underwater_walk");
-	@Override public @NotNull Identifier defineID() {
-		return ID;
-	}
 
 	public static final float LEG_HEIGHT_OFFSET = -1.8F;
 

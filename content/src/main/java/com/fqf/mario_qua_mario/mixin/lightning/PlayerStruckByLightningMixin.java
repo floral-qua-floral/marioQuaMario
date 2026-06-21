@@ -5,6 +5,7 @@ import com.fqf.charaformact_api.cfadata.injections.CfaAuthoritativeDataHolder;
 import com.fqf.mario_qua_mario.forms.Mini;
 import com.fqf.mario_qua_mario.util.LightningStrikableEntity;
 import com.fqf.mario_qua_mario.util.LightningStrikableInventory;
+import com.fqf.mario_qua_mario.util.MarioSFX;
 import com.fqf.mario_qua_mario.util.Powers;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -31,6 +32,7 @@ public abstract class PlayerStruckByLightningMixin extends PlayerEntity implemen
 		if(data.hasPower(Powers.LIGHTNING_SHRINKS)) {
 			if(!data.getFormID().equals(Mini.ID)) {
 				data.empowerTo(Mini.ID);
+				this.playSound(MarioSFX.MINI_REVERT);
 				// 6 seconds of Fire Resistance in addition to no damage from the lightning bolt because Mini Mario is
 				// RIDICULOUSLY fragile ^^;
 				this.immuneToLightningUntil = this.getWorld().getTime() + 50L;

@@ -11,9 +11,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class Small implements FormDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("small");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
-	}
 
 	@Override public int defineValue() {
 		return 0;

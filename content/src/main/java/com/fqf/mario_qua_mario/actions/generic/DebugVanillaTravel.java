@@ -9,9 +9,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class DebugVanillaTravel extends Debug implements GenericActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("debug_vanilla_travel");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
-	}
 
 	@Override
 	public @NotNull SlidingStatus defineSlidingStatus() {

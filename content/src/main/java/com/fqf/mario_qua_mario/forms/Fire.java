@@ -25,9 +25,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class Fire implements FormDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("fire");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
-	}
 
 	@Override public @Nullable Identifier defineReversionTarget() {
 		return Super.ID;

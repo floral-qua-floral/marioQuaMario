@@ -35,8 +35,8 @@ public class ParsedCollisionAttack extends ParsedCfaThing {
 	private final @NotNull RegistryKey<DamageType> DAMAGE_TYPE;
 	private final EnumMap<CollisionAttackResult.ExecutableResult, @Nullable AbstractParsedAction> POST_COLLISION_ACTIONS;
 
-	public ParsedCollisionAttack(@NotNull CollisionAttackTypeDefinition definition) {
-		super(definition.getID());
+	public ParsedCollisionAttack(Identifier id, @NotNull CollisionAttackTypeDefinition definition) {
+		super(id);
 
 		this.DEFINITION = definition;
 

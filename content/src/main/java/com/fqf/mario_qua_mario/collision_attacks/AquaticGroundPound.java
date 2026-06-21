@@ -20,9 +20,6 @@ import static com.fqf.charaformact_api.util.StatCategory.COLLISION_ATTACK;
 
 public class AquaticGroundPound extends Stomp implements CollisionAttackTypeDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("aquatic_ground_pound");
-	@Override public @NotNull Identifier getID() {
-	    return ID;
-	}
 
 	@Override
 	public boolean attemptsMounting() {

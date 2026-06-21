@@ -25,8 +25,8 @@ public class ParsedForm extends ParsedPowerGrantingState implements ParsedAttack
 
 	private final List<ParsedAttackInterception> INTERCEPTIONS;
 
-	public ParsedForm(FormDefinition definition) {
-		super(definition);
+	public ParsedForm(Identifier id, FormDefinition definition) {
+		super(id, definition);
 
 		this.REVERSION_TARGET_ID = definition.defineReversionTarget();
 		this.VALUE = definition.defineValue();
@@ -36,7 +36,7 @@ public class ParsedForm extends ParsedPowerGrantingState implements ParsedAttack
 		this.VOICE_PITCH = definition.defineVoicePitch();
 		this.JUMP_PITCH = definition.defineJumpPitch();
 
-		this.HEART = definition.defineFormHeart(new FormHeartHelperImpl(this.RESOURCE_ID));
+		this.HEART = definition.defineFormHeart(new FormHeartHelperImpl(this.ID));
 
 		List<AttackInterceptingStateDefinition.AttackInterceptionDefinition> interceptionDefinitions;
 		interceptionDefinitions = ImmutableCollectionHelper.accumulateList(builder -> definition.accumulateAttackInterceptions(builder, AnimationHelperImpl.INSTANCE));

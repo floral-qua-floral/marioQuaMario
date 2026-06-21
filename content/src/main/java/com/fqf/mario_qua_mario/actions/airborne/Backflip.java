@@ -16,16 +16,12 @@ import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class Backflip extends Jump implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("backflip");
-	@Override public @NotNull Identifier defineID() {
-		return ID;
-	}
 
 	private static float getAnimationProgress(float animationTime, AnimationHelper helper) {
 		return helper.sequencedEase(helper.sequencedEase(animationTime / 4.4F,

@@ -41,8 +41,8 @@ public abstract class AbstractParsedAction extends ParsedCfaState implements Par
 
 	private static final BappingRule NULL_EQUIVALENT = new BappingRule(0, 0);
 
-	public AbstractParsedAction(IncompleteActionDefinition definition) {
-		super(definition);
+	public AbstractParsedAction(Identifier id, IncompleteActionDefinition definition) {
+		super(id, definition);
 
 		CharaFormAct.LOGGER.info("Parsing action {}...", this.ID);
 
@@ -77,14 +77,27 @@ public abstract class AbstractParsedAction extends ParsedCfaState implements Par
 		this.INTERCEPTIONS_VIEW = Collections.unmodifiableList(this.INTERCEPTIONS_INTERNAL);
 	}
 
-	protected abstract void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder);
-	protected abstract void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder);
-	protected abstract void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder);
+	protected abstract void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, UniversalActionTransitionHelper helper);
+	protected abstract void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, UniversalActionTransitionHelper helper);
+	protected abstract void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, UniversalActionTransitionHelper helper);
 
 	public void parseTransitions(List<TransitionInjectionDefinition> injections) {
-		this.parseTransitions(TransitionPhase.BASIC, ImmutableCollectionHelper.accumulateList(this::accumulateBasicTransitions), injections);
-		this.parseTransitions(TransitionPhase.INPUT, ImmutableCollectionHelper.accumulateList(this::accumulateInputTransitions), injections);
-		this.parseTransitions(TransitionPhase.WORLD_COLLISION, ImmutableCollectionHelper.accumulateList(this::accumulateCollisionTransitions), injections);
+		UniversalActionTransitionHelper helper = new UniversalActionTransitionHelper(this);
+		this.parseTransitions(
+				TransitionPhase.BASIC,
+				ImmutableCollectionHelper.accumulateList(builder -> accumulateBasicTransitions(builder, helper)),
+				injections
+		);
+		this.parseTransitions(
+				TransitionPhase.INPUT,
+				ImmutableCollectionHelper.accumulateList(builder -> accumulateInputTransitions(builder, helper)),
+				injections
+		);
+		this.parseTransitions(
+				TransitionPhase.WORLD_COLLISION,
+				ImmutableCollectionHelper.accumulateList(builder -> accumulateCollisionTransitions(builder, helper)),
+				injections
+		);
 
 		List<AttackInterceptingStateDefinition.AttackInterceptionDefinition> interceptionDefinitions;
 		interceptionDefinitions = ImmutableCollectionHelper.accumulateList(builder -> this.ACTION_DEFINITION.accumulateAttackInterceptions(builder, AnimationHelperImpl.INSTANCE));
@@ -114,7 +127,7 @@ public abstract class AbstractParsedAction extends ParsedCfaState implements Par
 				TransitionInjectionDefinition.InjectionPlacement placement = injection.getPlacementRelativeTo(this.getCategory(), this.ID, transitioningTo.CATEGORY, transitioningTo.ID);
 				if(placement == null) continue;
 
-				ActionTransitionDetails injectionDetails = injection.makeTransition(details, UniversalActionDefinitionHelper.INSTANCE);
+				ActionTransitionDetails injectionDetails = injection.makeTransition(details, new UniversalActionTransitionHelper(this));
 				if(placement == TransitionInjectionDefinition.InjectionPlacement.BEFORE)
 					this.injectTransitionToBuilders(clientBuilder, serverBuilder, injectionDetails,
 							TransitionInjectionDefinition.InjectionPlacement.BEFORE, transitioningTo.ID);

@@ -5,14 +5,10 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.Animat
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.util.StandUpWithKneeAnimation;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class BonkGroundForward extends BonkGroundBackward implements GroundedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("bonk_ground_forward");
-	@Override public @NotNull Identifier defineID() {
-		return ID;
-	}
 
 	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return StandUpWithKneeAnimation.makeAnimation(

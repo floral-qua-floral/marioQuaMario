@@ -1,5 +1,6 @@
 package com.fqf.charaformact.registries.actions.parsed;
 
+import com.fqf.charaformact.registries.actions.UniversalActionTransitionHelper;
 import com.fqf.charaformact_api.definitions.states.actions.AquaticActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
@@ -7,12 +8,13 @@ import com.fqf.charaformact.cfadata.CfaMoveableData;
 import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import com.fqf.charaformact.registries.actions.UniversalActionDefinitionHelper;
 import com.google.common.collect.ImmutableList;
+import net.minecraft.util.Identifier;
 
 public class ParsedAquaticAction extends AbstractParsedAction {
 	private final AquaticActionDefinition AQUATIC_DEFINITION;
 
-	public ParsedAquaticAction(AquaticActionDefinition definition) {
-		super(definition);
+	public ParsedAquaticAction(Identifier id, AquaticActionDefinition definition) {
+		super(id, definition);
 		this.AQUATIC_DEFINITION = definition;
 	}
 
@@ -29,17 +31,17 @@ public class ParsedAquaticAction extends AbstractParsedAction {
 	}
 
 	@Override
-	protected void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder) {
-		this.AQUATIC_DEFINITION.accumulateBasicTransitions(builder, UniversalActionDefinitionHelper.INSTANCE);
+	protected void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, UniversalActionTransitionHelper helper) {
+		this.AQUATIC_DEFINITION.accumulateBasicTransitions(builder, helper);
 	}
 
 	@Override
-	protected void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder) {
-		this.AQUATIC_DEFINITION.accumulateInputTransitions(builder, UniversalActionDefinitionHelper.INSTANCE);
+	protected void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, UniversalActionTransitionHelper helper) {
+		this.AQUATIC_DEFINITION.accumulateInputTransitions(builder, helper);
 	}
 
 	@Override
-	protected void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder) {
-		this.AQUATIC_DEFINITION.accumulateCollisionTransitions(builder, UniversalActionDefinitionHelper.INSTANCE);
+	protected void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, UniversalActionTransitionHelper helper) {
+		this.AQUATIC_DEFINITION.accumulateCollisionTransitions(builder, helper);
 	}
 }

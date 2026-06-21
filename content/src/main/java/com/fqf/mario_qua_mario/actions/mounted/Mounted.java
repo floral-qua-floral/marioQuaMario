@@ -19,9 +19,6 @@ import java.util.Objects;
 
 public class Mounted implements MountedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("mounted");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
-	}
 
 	@Override public @Nullable CameraAnimationSet defineCameraAnimations(AnimationHelper helper) {
 		return null;

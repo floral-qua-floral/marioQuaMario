@@ -16,9 +16,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class TailStallDucking extends TailStall implements AirborneActionDefinition {
 	public static final Identifier ID = DUCK_STALL_ID; // prevents warnings from trying to access subclass field in TailStall transitions
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
-	}
 
 	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return AnimationDefinition.layerPostureMutator(DuckWaddle.makeAnimation(false, false), TailStall.POSTURE_MUTATOR);

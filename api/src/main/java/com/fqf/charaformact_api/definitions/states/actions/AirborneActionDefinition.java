@@ -5,6 +5,7 @@ import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransition
 import com.fqf.charaformact_api.definitions.states.actions.util.IncompleteActionDefinition;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.google.common.collect.ImmutableList;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 public interface AirborneActionDefinition extends IncompleteActionDefinition {
@@ -38,6 +39,7 @@ public interface AirborneActionDefinition extends IncompleteActionDefinition {
 				double forwardAngleContribution, double strafeAngleContribution, CfaStat redirectStat
 		);
 
-		ActionTransitionDetails makeJumpCapTransition(IncompleteActionDefinition forAction, double capThreshold);
+		ActionTransitionDetails makeJumpCapTransition(double capThreshold);
+		ActionTransitionDetails makeJumpCapTransition(Identifier postCapAction, double capThreshold);
 	}
 }

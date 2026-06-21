@@ -48,7 +48,8 @@ sfx_form = {
   "empower": "Powering up",
   "tail_empower": "Powering up",
   "mini_empower": "Powering up...?",
-  "revert": "Powering down"
+  "revert": "Powering down",
+  "mini_revert": "Shrinking"
 }
 
 sfx_collision_attack = {

@@ -23,9 +23,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class DebugSprint extends Debug {
 	public static final Identifier ID = MarioQuaMario.makeID("debug_test");
-	@Override public @NotNull Identifier defineID() {
-	    return ID;
-	}
 
 	@Override public boolean travelHook(CfaTravelData data) {
 		data.setStrafeVel(data.getInputs().getStrafeInput() * 0.5);

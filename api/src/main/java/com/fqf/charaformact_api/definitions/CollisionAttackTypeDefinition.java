@@ -17,8 +17,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public interface CollisionAttackTypeDefinition {
-	@NotNull Identifier getID();
-
 	boolean attemptsMounting();
 	default @NotNull PainfulCollisionResponse definePainfulCollisionResponse() {
 		return PainfulCollisionResponse.INJURY;
