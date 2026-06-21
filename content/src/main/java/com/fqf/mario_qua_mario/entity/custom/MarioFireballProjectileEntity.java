@@ -66,8 +66,6 @@ public class MarioFireballProjectileEntity extends ProjectileEntity {
 		this.prevAngle = this.angle;
 		this.angle += 28F;
 
-		// TODO: Fix Enderman dodging
-
 		if(!this.getWorld().isClient() && ProjectileUtil.getCollision(this, this::canHit, RaycastContext.ShapeType.OUTLINE) instanceof BlockHitResult blockHitResult) {
 			if(this.getWorld().getBlockState(blockHitResult.getBlockPos()).isIn(MQMTags.DESTROYED_BY_FIREBALL)) {
 				this.getWorld().removeBlock(blockHitResult.getBlockPos(), false);

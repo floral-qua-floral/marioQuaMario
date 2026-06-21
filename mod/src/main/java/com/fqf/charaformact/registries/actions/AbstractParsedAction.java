@@ -73,9 +73,6 @@ public abstract class AbstractParsedAction extends ParsedCfaState implements Par
 		this.CLIENT_TRANSITIONS = new EnumMap<>(TransitionPhase.class);
 		this.SERVER_TRANSITIONS = new EnumMap<>(TransitionPhase.class);
 
-		// TODO: Separate out of Action Definitions.
-
-
 		this.INTERCEPTIONS_INTERNAL = new ArrayList<>();
 		this.INTERCEPTIONS_VIEW = Collections.unmodifiableList(this.INTERCEPTIONS_INTERNAL);
 	}
