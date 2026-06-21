@@ -3,8 +3,9 @@ package com.fqf.mario_qua_mario.actions.wallbound;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
+import com.fqf.charaformact_api.definitions.TransitionInjectionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.WallboundActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
@@ -52,7 +53,13 @@ public class ClimbIntangibleSideHang extends ClimbWallSideHang implements Wallbo
 	}
 
 	@Override
-	protected TransitionDefinition.ClientsExecutor getSideHangTransitionClientsExecutor() {
+	protected ActionTransitionDetails.ClientsExecutor getSideHangTransitionClientsExecutor() {
 		return ClimbIntangibleDirectional.SIDE_HANG_CLIENTS_EXECUTOR;
 	}
+
+	public static final TransitionInjectionDefinition INJECTION = new ClimbSideHangInjection(ClimbIntangibleDirectional.ID, ClimbIntangibleSideHang.ID) {
+		@Override protected float calculateWallYaw(CfaReadableMotionData data) {
+			return ClimbIntangibleDirectional.currentBlockYaw(data);
+		}
+	};
 }

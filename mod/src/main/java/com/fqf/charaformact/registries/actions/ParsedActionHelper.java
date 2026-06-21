@@ -8,29 +8,23 @@ import com.fqf.charaformact.util.CfaClientHelperManager;
 import com.fqf.charaformact_api.definitions.states.actions.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.definitions.states.actions.util.IncompleteActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact.registries.RegistryManager;
 import com.fqf.charaformact.registries.actions.parsed.*;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
-
-import java.util.HashMap;
-import java.util.Set;
 
 public class ParsedActionHelper {
 	public static AbstractParsedAction parseAction(
-			IncompleteActionDefinition definition,
-			HashMap<Identifier, Set<TransitionInjectionDefinition>> allInjections
+			IncompleteActionDefinition definition
 	) {
 		return switch (definition) {
-			case GenericActionDefinition def -> new ParsedGenericAction(def, allInjections);
-			case GroundedActionDefinition def -> new ParsedGroundedAction(def, allInjections);
-			case AirborneActionDefinition def -> new ParsedAirborneAction(def, allInjections);
-			case AquaticActionDefinition def -> new ParsedAquaticAction(def, allInjections);
-			case WallboundActionDefinition def -> new ParsedWallboundAction(def, allInjections);
-			case MountedActionDefinition def -> new ParsedMountedAction(def, allInjections);
+			case GenericActionDefinition def -> new ParsedGenericAction(def);
+			case GroundedActionDefinition def -> new ParsedGroundedAction(def);
+			case AirborneActionDefinition def -> new ParsedAirborneAction(def);
+			case AquaticActionDefinition def -> new ParsedAquaticAction(def);
+			case WallboundActionDefinition def -> new ParsedWallboundAction(def);
+			case MountedActionDefinition def -> new ParsedMountedAction(def);
 			default -> throw new AssertionError("Action Definition wasn't one of the known types?!?!");
 		};
 	}

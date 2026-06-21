@@ -3,8 +3,8 @@ package com.fqf.mario_qua_mario.actions.airborne;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
@@ -145,8 +145,8 @@ public class Backflip extends Jump implements AirborneActionDefinition {
 		);
 	}
 
-	public static TransitionDefinition makeBackflipTransition(GroundedActionDefinition.GroundedActionHelper helper) {
-		return new TransitionDefinition(
+	public static ActionTransitionDetails makeBackflipTransition(GroundedActionDefinition.GroundedActionHelper helper) {
+		return new ActionTransitionDetails(
 				ID,
 				data ->
 						data.getForwardVel() < 0.0 && data.getInputs().getForwardInput() < -0.65 && data.getInputs().JUMP.isPressed(),

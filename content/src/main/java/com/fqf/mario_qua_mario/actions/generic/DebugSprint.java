@@ -4,8 +4,8 @@ import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.util.MarioSFX;
@@ -37,9 +37,9 @@ public class DebugSprint extends Debug {
 	}
 
 	@Override
-	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, CastableHelper helper) {
+	public void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, CastableHelper helper) {
 		builder.add(
-				new TransitionDefinition(
+				new ActionTransitionDetails(
 						Debug.ID,
 						data -> !data.getPlayer().isSprinting(), EvaluatorEnvironment.SERVER_ONLY,
 						null,

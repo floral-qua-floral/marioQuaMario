@@ -1,16 +1,14 @@
 package com.fqf.mario_qua_mario.actions.airborne;
 
+import com.fqf.charaformact_api.definitions.TransitionInjectionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
-import com.fqf.charaformact_api.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Set;
 
 public class SpecialFall extends Fall implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("special_fall");
@@ -36,15 +34,11 @@ public class SpecialFall extends Fall implements AirborneActionDefinition {
 		);
 	}
 
-	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
-		return Set.of(
-				new TransitionInjectionDefinition(
-						TransitionInjectionDefinition.InjectionPlacement.BEFORE,
-						Fall.ID,
-						ActionCategory.GROUNDED,
-						(nearbyTransition, castableHelper) -> nearbyTransition.variate(this.defineID(), data ->
-								data.getYVel() > 0 && nearbyTransition.evaluator().shouldTransition(data))
-				)
-		);
-	}
+	public static final TransitionInjectionDefinition INJECTION = new TransitionInjectionDefinition.Simple(
+			TransitionInjectionDefinition.InjectionPlacement.BEFORE,
+			Fall.ID,
+			ActionCategory.GROUNDED,
+			(nearbyTransition, castableHelper) -> nearbyTransition.variate(SpecialFall.ID, data ->
+					data.getYVel() > 0 && nearbyTransition.evaluator().shouldTransition(data))
+	);
 }

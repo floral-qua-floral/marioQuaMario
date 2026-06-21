@@ -11,9 +11,6 @@ import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Set;
-
 public abstract class AbstractIdleAction implements GroundedActionDefinition {
 	@Override public @Nullable CameraAnimationSet defineCameraAnimations(AnimationHelper helper) {
 		return null;
@@ -59,19 +56,19 @@ public abstract class AbstractIdleAction implements GroundedActionDefinition {
 				&& MathHelper.approximatelyEquals(data.getInputs().getStrafeInput(), 0)
 				&& !data.getInputs().DUCK.isHeld();
 	}
-	public final TransitionDefinition WAKEUP_TRANSITION = new TransitionDefinition(
+	public final ActionTransitionDetails WAKEUP_TRANSITION = new ActionTransitionDetails(
 			this.WAKEUP_ID,
 			data -> !isIdle(data),
 			EvaluatorEnvironment.CLIENT_ONLY
 	);
-	public final TransitionDefinition IDLE_TRANSITION = new TransitionDefinition(
-			this.defineID(),
-			AbstractIdleAction::isIdle,
-			EvaluatorEnvironment.CLIENT_ONLY
-	);
+//	public final ActionTransitionDetails IDLE_TRANSITION = new ActionTransitionDetails(
+//			this.defineID(),
+//			AbstractIdleAction::isIdle,
+//			EvaluatorEnvironment.CLIENT_ONLY
+//	);
 
 	@Override
-	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+	public void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, GroundedActionHelper helper) {
 		builder.add(WAKEUP_TRANSITION);
 	}
 }

@@ -5,8 +5,6 @@ import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinit
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.actions.aquatic.Submerged;
@@ -19,9 +17,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.Set;
 
 public class BonkAir extends Fall implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("bonk_air");
@@ -159,7 +154,7 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 		return null;
 	}
 
-	public static final TransitionDefinition BONK = new TransitionDefinition(
+	public static final ActionTransitionDetails BONK = new ActionTransitionDetails(
 			BonkAir.ID,
 			data -> data.getRecordedCollisions().collidedHorizontally(),
 			EvaluatorEnvironment.CLIENT_ONLY,
@@ -211,7 +206,7 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 	}
 
 	@Override
-	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+	public void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AirborneActionHelper helper) {
 		builder.add(
 				Submerged.SUBMERGE,
 				Fall.LANDING.variate(

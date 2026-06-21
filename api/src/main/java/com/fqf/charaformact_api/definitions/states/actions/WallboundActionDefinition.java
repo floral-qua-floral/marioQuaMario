@@ -2,8 +2,8 @@ package com.fqf.charaformact_api.definitions.states.actions;
 
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.IncompleteActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.WallBodyAlignment;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.google.common.collect.ImmutableList;
@@ -20,9 +20,7 @@ public interface WallboundActionDefinition extends IncompleteActionDefinition {
 
 	/**
 	 * Called on the client the instant the player transitions into this action. The result is networked to the server
-	 * and then to other clients without being verified.
-	 * @param data
-	 * @return
+	 * and then to other clients without being verified. The transition itself is then verified by verifyLegality.
 	 */
 	float calculateWallYaw(CfaReadableMotionData data);
 
@@ -41,13 +39,13 @@ public interface WallboundActionDefinition extends IncompleteActionDefinition {
 
 	void travel(CfaTravelData data, WallInfo wall, WallboundActionHelper helper);
 
-	default void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, WallboundActionHelper helper) {
+	default void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, WallboundActionHelper helper) {
 
 	}
-	default void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, WallboundActionHelper helper) {
+	default void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, WallboundActionHelper helper) {
 
 	}
-	default void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, WallboundActionHelper helper) {
+	default void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, WallboundActionHelper helper) {
 
 	}
 

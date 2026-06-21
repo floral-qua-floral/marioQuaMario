@@ -4,18 +4,18 @@ import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.fqf.charaformact_api.definitions.TransitionInjectionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.GenericActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.airborne.GroundPoundFlip;
-import com.fqf.mario_qua_mario.actions.airborne.Jump;
 import com.fqf.mario_qua_mario.actions.airborne.SpecialFall;
 import com.fqf.mario_qua_mario.forms.Raccoon;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
@@ -27,8 +27,8 @@ import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import static com.fqf.charaformact_api.util.StatCategory.*;
 
@@ -95,15 +95,15 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 		if(data.getYVel() > FALL_SPEED.get(data)) data.getPlayer().fallDistance = 0;
 	}
 
-	protected static final TransitionDefinition END_STALLING = new TransitionDefinition(
+	protected static final ActionTransitionDetails END_STALLING = new ActionTransitionDetails(
 			Fall.ID,
 			data -> !data.getInputs().JUMP.isHeld() || data.getYVel() > 0,
 			EvaluatorEnvironment.CLIENT_ONLY
 	);
 
 	@Override
-	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
-		builder.add(new TransitionDefinition(
+	public void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AirborneActionHelper helper) {
+		builder.add(new ActionTransitionDetails(
 				SpecialFall.ID, // special fall coming in CLUTCH!
 				data -> !data.hasPower(Powers.TAIL_STALL),
 				EvaluatorEnvironment.COMMON
@@ -111,7 +111,7 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 	}
 
 	@Override
-	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+	public void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AirborneActionHelper helper) {
 		builder.add(
 				GroundPoundFlip.GROUND_POUND,
 				END_STALLING
@@ -119,7 +119,7 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 	}
 
 	public static final CfaStat STALL_THRESHOLD = new CfaStat(-0.31, THRESHOLD, FORM);
-	private static final TransitionDefinition STALL_TRANSITION = new TransitionDefinition(
+	protected static final ActionTransitionDetails STALL_TRANSITION = new ActionTransitionDetails(
 			TailStall.ID,
 			data ->
 					data.hasPower(Powers.TAIL_STALL)
@@ -144,42 +144,34 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 			},
 			null
 	);
+
 	protected static final Identifier DUCK_STALL_ID = MarioQuaMario.makeID("tail_stall_duck");
-	private static final TransitionDefinition DUCK_STALL_TRANSITION = STALL_TRANSITION.variate(
-			DUCK_STALL_ID,
-			data ->
-					data.hasPower(Powers.TAIL_STALL)
-					&& data.getPlayer().isInSneakingPose()
-					&& (data.isServer() || (
-							data.getYVel() < STALL_THRESHOLD.get(data)
-							&& data.getInputs().JUMP.isHeld()
-					))
-	);
 	private static final Set<Identifier> NO_STALL_FROM = Set.of(ID, DUCK_STALL_ID);
-	private static final TransitionInjectionDefinition.InjectionPredicate STALL_INJECTION_PREDICATE =
-			(fromAction, fromCategory, existingTransitions) ->
-					!NO_STALL_FROM.contains(fromAction)
-					&& fromCategory == ActionCategory.AIRBORNE;
-	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
-		return Set.of(
-				new TransitionInjectionDefinition(
-						TransitionInjectionDefinition.InjectionPlacement.AFTER,
-						GroundPoundFlip.ID,
-						STALL_INJECTION_PREDICATE,
-						(nearbyTransition, castableHelper) -> STALL_TRANSITION
-				),
-				new TransitionInjectionDefinition(
-						TransitionInjectionDefinition.InjectionPlacement.AFTER,
-						Fall.ID,
-						STALL_INJECTION_PREDICATE,
-						(nearbyTransition, castableHelper) -> DUCK_STALL_TRANSITION
-				),
-				new TransitionInjectionDefinition(
-						TransitionInjectionDefinition.InjectionPlacement.AFTER,
-						Jump.ID,
-						STALL_INJECTION_PREDICATE,
-						(nearbyTransition, castableHelper) -> DUCK_STALL_TRANSITION
-				)
-		);
+
+	protected static class StallInjection implements TransitionInjectionDefinition {
+		private final Predicate<Identifier> TARGET_ACTION_PREDICATE;
+		private final ActionTransitionDetails INJECT_TRANSITION;
+
+		protected StallInjection(Predicate<Identifier> targetActionPredicate, ActionTransitionDetails injectTransition) {
+			TARGET_ACTION_PREDICATE = targetActionPredicate;
+			INJECT_TRANSITION = injectTransition;
+		}
+
+		@Override
+		public @Nullable InjectionPlacement getPlacementRelativeTo(ActionCategory fromCategory, Identifier fromID, ActionCategory toCategory, Identifier toID) {
+			return (
+					this.TARGET_ACTION_PREDICATE.test(toID)
+					&& fromCategory == ActionCategory.AIRBORNE
+					&& !NO_STALL_FROM.contains(fromID)
+			) ? InjectionPlacement.AFTER : null;
+		}
+
+		@Override
+		public @NotNull ActionTransitionDetails makeTransition(ActionTransitionDetails nearbyTransition, GenericActionDefinition.CastableHelper helper) {
+			return this.INJECT_TRANSITION;
+		}
 	}
+
+	public static final TransitionInjectionDefinition INJECTION = new StallInjection(id -> id.equals(GroundPoundFlip.ID), STALL_TRANSITION);
+
 }

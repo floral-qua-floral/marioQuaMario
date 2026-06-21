@@ -1,8 +1,8 @@
 package com.fqf.charaformact_api.definitions.states.actions;
 
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.IncompleteActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.Nullable;
@@ -10,13 +10,13 @@ import org.jetbrains.annotations.Nullable;
 public interface AirborneActionDefinition extends IncompleteActionDefinition {
 	void travelHook(CfaTravelData data, AirborneActionHelper helper);
 
-	default void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+	default void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AirborneActionHelper helper) {
 
 	}
-	default void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+	default void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AirborneActionHelper helper) {
 
 	}
-	default void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+	default void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AirborneActionHelper helper) {
 
 	}
 
@@ -38,6 +38,6 @@ public interface AirborneActionDefinition extends IncompleteActionDefinition {
 				double forwardAngleContribution, double strafeAngleContribution, CfaStat redirectStat
 		);
 
-		TransitionDefinition makeJumpCapTransition(IncompleteActionDefinition forAction, double capThreshold);
+		ActionTransitionDetails makeJumpCapTransition(IncompleteActionDefinition forAction, double capThreshold);
 	}
 }

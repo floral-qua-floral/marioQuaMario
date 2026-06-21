@@ -24,9 +24,6 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Set;
-
 import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class LavaBoost extends Fall implements AirborneActionDefinition {
@@ -183,7 +180,7 @@ public class LavaBoost extends Fall implements AirborneActionDefinition {
 		return null;
 	}
 
-	public static final TransitionDefinition LAVA_BOOST = new TransitionDefinition(
+	public static final ActionTransitionDetails LAVA_BOOST = new ActionTransitionDetails(
 			LavaBoost.ID,
 			data -> {
 //				data.getPlayer().isInLava()
@@ -199,7 +196,7 @@ public class LavaBoost extends Fall implements AirborneActionDefinition {
 	);
 
 	@Override
-	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+	public void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AirborneActionHelper helper) {
 		builder.add(
 				Submerged.SUBMERGE,
 				Fall.LANDING.variate(
@@ -223,15 +220,16 @@ public class LavaBoost extends Fall implements AirborneActionDefinition {
 		);
 	}
 
-	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
-		return Set.of(
-				new TransitionInjectionDefinition(
-						TransitionInjectionDefinition.InjectionPlacement.BEFORE,
-						Submerged.ID,
-						(fromAction, fromCategory, existingTransitions) -> true,
-						(nearbyTransition, castableHelper) -> LAVA_BOOST
-				)
-		);
-	}
+	// What is this???????????
+//	@Override public @NotNull Set<DeprecatedTransitionInjectionDefinition> getTransitionInjections() {
+//		return Set.of(
+//				new DeprecatedTransitionInjectionDefinition(
+//						TransitionInjectionDefinition.InjectionPlacement.BEFORE,
+//						Submerged.ID,
+//						(fromAction, fromCategory, existingTransitions) -> true,
+//						(nearbyTransition, castableHelper) -> LAVA_BOOST
+//				)
+//		);
+//	}
 
 }

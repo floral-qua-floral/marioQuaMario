@@ -3,6 +3,7 @@ package com.fqf.charaformact.registries.actions;
 import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.cfadata.CfaMoveableData;
 import com.fqf.charaformact.registries.*;
+import com.fqf.charaformact_api.definitions.TransitionInjectionDefinition;
 import com.fqf.charaformact_api.definitions.states.AttackInterceptingStateDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.GenericActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
@@ -40,7 +41,7 @@ public abstract class AbstractParsedAction extends ParsedCfaState implements Par
 
 	private static final BappingRule NULL_EQUIVALENT = new BappingRule(0, 0);
 
-	public AbstractParsedAction(IncompleteActionDefinition definition, HashMap<Identifier, Set<TransitionInjectionDefinition>> allInjections) {
+	public AbstractParsedAction(IncompleteActionDefinition definition) {
 		super(definition);
 
 		CharaFormAct.LOGGER.info("Parsing action {}...", this.ID);
@@ -73,80 +74,90 @@ public abstract class AbstractParsedAction extends ParsedCfaState implements Par
 		this.SERVER_TRANSITIONS = new EnumMap<>(TransitionPhase.class);
 
 		// TODO: Separate out of Action Definitions.
-		for(TransitionInjectionDefinition injection : definition.getTransitionInjections()) {
-			allInjections.putIfAbsent(injection.injectNearTransitionsTo(), new HashSet<>());
-			allInjections.get(injection.injectNearTransitionsTo()).add(injection);
-		}
+
 
 		this.INTERCEPTIONS_INTERNAL = new ArrayList<>();
 		this.INTERCEPTIONS_VIEW = Collections.unmodifiableList(this.INTERCEPTIONS_INTERNAL);
 	}
 
-	protected abstract void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder);
-	protected abstract void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder);
-	protected abstract void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder);
+	protected abstract void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder);
+	protected abstract void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder);
+	protected abstract void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder);
 
-	public void parseTransitions(HashMap<Identifier, Set<TransitionInjectionDefinition>> allInjections) {
-		this.parseTransitions(TransitionPhase.BASIC, accumulateList(this::accumulateBasicTransitions), allInjections);
-		this.parseTransitions(TransitionPhase.INPUT, accumulateList(this::accumulateInputTransitions), allInjections);
-		this.parseTransitions(TransitionPhase.WORLD_COLLISION, accumulateList(this::accumulateCollisionTransitions), allInjections);
+	public void parseTransitions(List<TransitionInjectionDefinition> injections) {
+		this.parseTransitions(TransitionPhase.BASIC, ImmutableCollectionHelper.accumulateList(this::accumulateBasicTransitions), injections);
+		this.parseTransitions(TransitionPhase.INPUT, ImmutableCollectionHelper.accumulateList(this::accumulateInputTransitions), injections);
+		this.parseTransitions(TransitionPhase.WORLD_COLLISION, ImmutableCollectionHelper.accumulateList(this::accumulateCollisionTransitions), injections);
 
 		List<AttackInterceptingStateDefinition.AttackInterceptionDefinition> interceptionDefinitions;
-		interceptionDefinitions = accumulateList(builder -> this.ACTION_DEFINITION.accumulateAttackInterceptions(builder, AnimationHelperImpl.INSTANCE));
+		interceptionDefinitions = ImmutableCollectionHelper.accumulateList(builder -> this.ACTION_DEFINITION.accumulateAttackInterceptions(builder, AnimationHelperImpl.INSTANCE));
 		this.INTERCEPTIONS_INTERNAL.addAll(interceptionDefinitions.stream().map(definition -> new ParsedAttackInterception(definition, true)).toList());
 	}
 	private void parseTransitions(
-			TransitionPhase phase, List<TransitionDefinition> transitions,
-			HashMap<Identifier, Set<TransitionInjectionDefinition>> allInjections
+			TransitionPhase phase, List<ActionTransitionDetails> transitionDefinitions,
+			List<TransitionInjectionDefinition> injections
 	) {
-		this.CLIENT_TRANSITIONS.putIfAbsent(phase, new ArrayList<>());
-		this.SERVER_TRANSITIONS.putIfAbsent(phase, new ArrayList<>());
-		List<ParsedTransition> buildingClientList = this.CLIENT_TRANSITIONS.get(phase);
-		List<ParsedTransition> buildingServerList = this.SERVER_TRANSITIONS.get(phase);
+		ImmutableList.Builder<ParsedTransition> clientBuilder = new ImmutableList.Builder<>();
+		ImmutableList.Builder<ParsedTransition> serverBuilder = new ImmutableList.Builder<>();
 
-		for(TransitionDefinition definition : transitions) {
-			Set<TransitionInjectionDefinition> relevantInjections = new HashSet<>(allInjections.getOrDefault(definition.targetID(), Set.of()));
+//		this.CLIENT_TRANSITIONS.putIfAbsent(phase, new ArrayList<>());
+//		this.SERVER_TRANSITIONS.putIfAbsent(phase, new ArrayList<>());
+//		List<ParsedTransition> buildingClientList = this.CLIENT_TRANSITIONS.get(phase);
+//		List<ParsedTransition> buildingServerList = this.SERVER_TRANSITIONS.get(phase);
 
-			relevantInjections.removeIf(injection -> injection.predicate() != null && !injection.predicate().shouldInject(this.ID, this.CATEGORY, null));
+		for(ActionTransitionDetails details : transitionDefinitions) {
+			ImmutableList.Builder<ActionTransitionDetails> afterInjections = ImmutableList.builder();
 
-			this.conditionallyInjectTransitions(buildingClientList, buildingServerList, relevantInjections,
-					TransitionInjectionDefinition.InjectionPlacement.BEFORE, definition);
-			CharaFormAct.LOGGER.debug("Parsing transition into {}", definition.targetID());
-			addTransitionToLists(buildingClientList, buildingServerList, definition);
-			this.conditionallyInjectTransitions(buildingClientList, buildingServerList, relevantInjections,
-					TransitionInjectionDefinition.InjectionPlacement.AFTER, definition);
-		}
-	}
-	private void conditionallyInjectTransitions(
-			List<ParsedTransition> buildingClientList,
-			List<ParsedTransition> buildingServerList,
-			Set<TransitionInjectionDefinition> relevantInjections,
-			TransitionInjectionDefinition.InjectionPlacement placement,
-			TransitionDefinition originalTransition
-	) {
-		for(TransitionInjectionDefinition injection : relevantInjections) {
-			if(injection.placement() == placement) {
-				TransitionDefinition injectTransition = injection.injectedTransitionCreator().makeTransition(originalTransition, UniversalActionDefinitionHelper.INSTANCE);
-				if(LOG_TRANSITION_INJECTIONS) CharaFormAct.LOGGER.info("Injecting transition: {}->{}",
-						this.ID, injectTransition.targetID());
-				addTransitionToLists(buildingClientList, buildingServerList, injectTransition);
+			@Nullable AbstractParsedAction transitioningTo = RegistryManager.ACTIONS.get(details.targetID());
+
+			if(transitioningTo == null) throw new IllegalArgumentException("Action " + this.ID + " contains a transition to "
+					+ details.targetID() + ", which is not registered!!");
+
+			for (TransitionInjectionDefinition injection : injections) {
+				TransitionInjectionDefinition.InjectionPlacement placement = injection.getPlacementRelativeTo(this.getCategory(), this.ID, transitioningTo.CATEGORY, transitioningTo.ID);
+				if(placement == null) continue;
+
+				ActionTransitionDetails injectionDetails = injection.makeTransition(details, UniversalActionDefinitionHelper.INSTANCE);
+				if(placement == TransitionInjectionDefinition.InjectionPlacement.BEFORE)
+					this.injectTransitionToBuilders(clientBuilder, serverBuilder, injectionDetails,
+							TransitionInjectionDefinition.InjectionPlacement.BEFORE, transitioningTo.ID);
+				else afterInjections.add(injectionDetails);
+			}
+
+			this.addTransitionToBuilders(clientBuilder, serverBuilder, details);
+
+			for(ActionTransitionDetails injectionDetails : afterInjections.build()) {
+				this.injectTransitionToBuilders(clientBuilder, serverBuilder, injectionDetails,
+						TransitionInjectionDefinition.InjectionPlacement.AFTER, transitioningTo.ID);
 			}
 		}
+
+		this.CLIENT_TRANSITIONS.put(phase, clientBuilder.build());
+		this.SERVER_TRANSITIONS.put(phase, serverBuilder.build());
 	}
 
-	private void addTransitionToLists(
-			List<ParsedTransition> client, List<ParsedTransition> server,
-			TransitionDefinition definition
+	private void injectTransitionToBuilders(
+			ImmutableList.Builder<ParsedTransition> client, ImmutableList.Builder<ParsedTransition> server,
+			ActionTransitionDetails injectionDetails, TransitionInjectionDefinition.InjectionPlacement placement,
+			Identifier naturalTarget
+	) {
+		if(LOG_TRANSITION_INJECTIONS)
+			CharaFormAct.LOGGER.info("Injecting transition *->{} {} natural transition {}->{}",
+					injectionDetails.targetID(), placement, this.ID, naturalTarget);
+		this.addTransitionToBuilders(client, server, injectionDetails);
+	}
+	private void addTransitionToBuilders(
+			ImmutableList.Builder<ParsedTransition> client, ImmutableList.Builder<ParsedTransition> server,
+			ActionTransitionDetails definition
 	) {
 		RegistryManager.incrementTransitionCount();
 		ParsedTransition transition = new ParsedTransition(definition);
 		if(this.TRANSITIONS_FROM_TARGETS.containsKey(transition.targetAction()))
-			CharaFormAct.LOGGER.warn("Action {} has multiple transitions into {}! This is likely to cause issues!",
+			CharaFormAct.LOGGER.warn("Action {} has multiple transitionDefinitions into {}! This is likely to cause issues!",
 					this.ID, transition.targetAction().ID);
 		else this.TRANSITIONS_FROM_TARGETS.put(transition.targetAction(), transition);
-		if(definition.environment() != EvaluatorEnvironment.SERVER_ONLY) client.add(transition);
-		if(definition.environment() != EvaluatorEnvironment.CLIENT_ONLY && definition.environment() != EvaluatorEnvironment.CLIENT_CHECKED)
-			server.add(transition);
+		if(definition.environment().CHECK_ON_CLIENT) client.add(transition);
+		if(definition.environment().CHECK_ON_SERVER) server.add(transition);
 	}
 
 	public int getIntID() {

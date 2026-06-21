@@ -7,9 +7,9 @@ import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact.cfadata.CfaPlayerData;
 import com.fqf.charaformact.util.AdvancedWallInfo;
 import com.fqf.charaformact_api.definitions.states.actions.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.charaformact_api.definitions.states.actions.util.IncompleteActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.StatCategory;
 import net.minecraft.entity.Entity;
@@ -158,9 +158,9 @@ public class UniversalActionDefinitionHelper implements
 	}
 
 	@Override
-	public TransitionDefinition makeJumpCapTransition(IncompleteActionDefinition forAction, double capThreshold) {
+	public ActionTransitionDetails makeJumpCapTransition(IncompleteActionDefinition forAction, double capThreshold) {
 		CfaStat cap = new CfaStat(capThreshold, StatCategory.JUMP_CAP);
-		return new TransitionDefinition(
+		return new ActionTransitionDetails(
 				forAction.defineID(),
 				data -> !((CfaMoveableData) data).jumpCapped && (!data.getInputs().JUMP.isHeld()  || data.getYVel() < cap.get(data)),
 				EvaluatorEnvironment.CLIENT_ONLY,

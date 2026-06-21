@@ -2,11 +2,14 @@ package com.fqf.mario_qua_mario.actions.wallbound;
 
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.fqf.charaformact_api.definitions.TransitionInjectionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.GenericActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.util.ClimbTransitions;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -15,7 +18,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
-import java.util.Set;
 
 public class ClimbWallSideHang extends ClimbWall implements WallboundActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("climb_wall_side_hang");
@@ -83,9 +85,9 @@ public class ClimbWallSideHang extends ClimbWall implements WallboundActionDefin
 	}
 
 	@Override
-	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, WallboundActionHelper helper) {
+	public void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, WallboundActionHelper helper) {
 		builder.add(
-				new TransitionDefinition(
+				new ActionTransitionDetails(
 						this.getClimbingActionID(),
 						data -> Math.abs(helper.getWallInfo(data).getYawDeviation()) < 80,
 						EvaluatorEnvironment.CLIENT_ONLY,
@@ -95,19 +97,35 @@ public class ClimbWallSideHang extends ClimbWall implements WallboundActionDefin
 		);
 	}
 
-	@Override
-	public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
-		return Set.of(
-				new TransitionInjectionDefinition(
-						TransitionInjectionDefinition.InjectionPlacement.BEFORE,
-						this.getClimbingActionID(),
-						(fromAction, fromCategory, existingTransitions) -> fromCategory != ActionCategory.WALLBOUND,
-						(nearbyTransition, castableHelper) -> nearbyTransition.variate(
-								this.defineID(),
-								data -> (data.isServer() || MathHelper.angleBetween(data.getPlayer().getYaw(), this.calculateWallYaw(data)) > ClimbWall.MIN_DEVIATION_TO_SIDE_HANG)
-										&& nearbyTransition.evaluator().shouldTransition(data)
-						)
-				)
-		);
+	protected abstract static class ClimbSideHangInjection implements TransitionInjectionDefinition {
+		private final Identifier CLIMB_ID;
+		private final Identifier SIDE_HANG_ID;
+
+		public ClimbSideHangInjection(Identifier climbID, Identifier sideHangID) {
+			this.CLIMB_ID = climbID;
+			this.SIDE_HANG_ID = sideHangID;
+		}
+
+		@Override
+		public @Nullable InjectionPlacement getPlacementRelativeTo(ActionCategory fromCategory, Identifier fromID, ActionCategory toCategory, Identifier toID) {
+			return (toID.equals(this.CLIMB_ID) && fromCategory != ActionCategory.WALLBOUND) ? InjectionPlacement.BEFORE : null;
+		}
+
+		@Override
+		public @NotNull ActionTransitionDetails makeTransition(ActionTransitionDetails nearbyTransition, GenericActionDefinition.CastableHelper helper) {
+			return nearbyTransition.variate(
+					this.SIDE_HANG_ID,
+					data -> (data.isServer() || MathHelper.angleBetween(data.getPlayer().getYaw(), this.calculateWallYaw(data)) > MIN_DEVIATION_TO_SIDE_HANG)
+							&& nearbyTransition.evaluator().shouldTransition(data)
+			);
+		}
+
+		protected abstract float calculateWallYaw(CfaReadableMotionData data);
 	}
+
+	public static final TransitionInjectionDefinition INJECTION = new ClimbSideHangInjection(ClimbWall.ID, ClimbWallSideHang.ID) {
+		@Override protected float calculateWallYaw(CfaReadableMotionData data) {
+			return ClimbTransitions.yawOf(ClimbWall.getWallDirection(data));
+		}
+	};
 }

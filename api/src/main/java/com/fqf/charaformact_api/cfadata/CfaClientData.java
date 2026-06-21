@@ -5,6 +5,7 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera
 import net.minecraft.entity.Entity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.Identifier;
 
 public interface CfaClientData extends CfaData {
 	void playAnimation(AnimationDefinition animation, int duration);
@@ -26,8 +27,8 @@ public interface CfaClientData extends CfaData {
 	void playJumpSound(long seed);
 	void fadeJumpSound();
 
-	SoundInstanceWrapper voice(String voiceline, long seed);
-	SoundInstanceWrapper voice(String voiceline, float volume, long seed);
+	SoundInstanceWrapper voice(Identifier voiceline, long seed);
+	SoundInstanceWrapper voice(Identifier voiceline, float volume, long seed);
 	float getVoicePitch();
 
 	void storeSound(SoundInstanceWrapper instance);

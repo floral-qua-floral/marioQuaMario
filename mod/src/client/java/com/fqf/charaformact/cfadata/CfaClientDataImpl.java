@@ -1,6 +1,7 @@
 package com.fqf.charaformact.cfadata;
 
 import com.fqf.charaformact.CharaFormAct;
+import com.fqf.charaformact.registries.power_granting.ParsedCharacter;
 import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
@@ -23,6 +24,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -138,12 +140,12 @@ public interface CfaClientDataImpl extends CfaAnimatingData {
 	}
 
 	@Override
-	default SoundInstanceWrapperImpl voice(String voiceline, long seed) {
+	default SoundInstanceWrapperImpl voice(Identifier voiceline, long seed) {
 		return this.voice(voiceline, DEFAULT_VOLUME, seed);
 	}
 
 	@Override
-	default SoundInstanceWrapperImpl voice(String voiceline, float volume, long seed) {
+	default SoundInstanceWrapperImpl voice(Identifier voiceline, float volume, long seed) {
 		AbstractClientPlayerEntity player = this.getPlayer();
 
 		// Checking if air is full instead of checking for fluid immersion to hopefully catch any weird modded fluids,
@@ -155,11 +157,11 @@ public interface CfaClientDataImpl extends CfaAnimatingData {
 
 		MinecraftClient.getInstance().getSoundManager().stop(this.getStoredSounds().get(COMMON_VOICE_IDENTIFIER));
 
-		if(RegistryManager.VOICE_LINES.get(voiceline) == null)
-			throw new IllegalArgumentException("Voiceline " + voiceline + " isn't registered!!!");
+		@Nullable Map<ParsedCharacter, SoundEvent> map = RegistryManager.VOICE_LINES.get(voiceline);
+		if(map == null) throw new IllegalArgumentException("Voiceline " + voiceline + " was never registered!");
 
 		SoundInstance newVoiceSound = new EntityAttachedSoundInstance(
-				RegistryManager.VOICE_LINES.get(voiceline).get(((CfaPlayerData) this).getCharacter()),
+				map.get(((CfaPlayerData) this).getCharacter()),
 				player, SoundCategory.VOICE, this.getVoicePitch(), volume
 		);
 

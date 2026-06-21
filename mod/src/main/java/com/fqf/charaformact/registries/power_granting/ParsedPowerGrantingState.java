@@ -1,10 +1,10 @@
 package com.fqf.charaformact.registries.power_granting;
 
+import com.fqf.charaformact.registries.ImmutableCollectionHelper;
 import com.fqf.charaformact_api.definitions.states.StatAlteringStateDefinition;
 import com.fqf.charaformact.registries.ParsedCfaState;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.StatCategory;
-import com.google.common.collect.ImmutableSet;
 import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
@@ -39,9 +39,9 @@ public class ParsedPowerGrantingState extends ParsedCfaState {
 
 		this.BUMP_STRENGTH_MODIFIER = definition.defineBapStrengthModifier();
 
-		this.POWERS = accumulateSet(definition::accumulatePowers);
-		this.ATTRIBUTE_MODIFIERS = accumulateSet(definition::accumulateAttributeModifiers);
-		this.STAT_MODIFIERS = accumulateSet(definition::accumulateStatModifiers);
+		this.POWERS = ImmutableCollectionHelper.accumulateSet(definition::accumulatePowers);
+		this.ATTRIBUTE_MODIFIERS = ImmutableCollectionHelper.accumulateSet(definition::accumulateAttributeModifiers);
+		this.STAT_MODIFIERS = ImmutableCollectionHelper.accumulateSet(definition::accumulateStatModifiers);
 	}
 
 	public double adjustStat(CfaStat stat, double startingValue) {

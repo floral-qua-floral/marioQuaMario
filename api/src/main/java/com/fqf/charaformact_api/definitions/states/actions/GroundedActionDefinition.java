@@ -1,8 +1,8 @@
 package com.fqf.charaformact_api.definitions.states.actions;
 
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.IncompleteActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.google.common.collect.ImmutableList;
@@ -11,13 +11,13 @@ import org.jetbrains.annotations.Nullable;
 public interface GroundedActionDefinition extends IncompleteActionDefinition {
 	void travelHook(CfaTravelData data, GroundedActionHelper helper);
 
-	default void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+	default void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, GroundedActionHelper helper) {
 
 	}
-	default void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+	default void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, GroundedActionHelper helper) {
 
 	}
-	default void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+	default void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, GroundedActionHelper helper) {
 
 	}
 
@@ -61,8 +61,8 @@ public interface GroundedActionDefinition extends IncompleteActionDefinition {
 		 *
 		 * @param drag The fractional portion of the player's speed that should be lost each tick. For example, a drag
 		 *             of 0.1 will result in 10% of the player's current speed being lost per tick.
-		 * @param dragMin The minimum amount of speed lost per tick. Used to ensure the player comes to a prompt stop
-		 *                instead of lingering on very low speed values.
+		 * @param dragMin The minimum amount of speed lost per tick. Used to ensure the player comes to a complete stop
+		 *                promptly, instead of lingering on very low speed values.
 		 * @param forwardAngleContribution The forward component of the player's intended angle of motion.
 		 * @param strafeAngleContribution The rightward component of the player's intended angle of motion.
 		 * @param redirection How far, in degrees, the player's current motion vector will rotate towards the intended

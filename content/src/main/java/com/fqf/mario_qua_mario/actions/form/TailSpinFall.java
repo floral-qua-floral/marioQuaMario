@@ -22,9 +22,6 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Set;
-
 import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class TailSpinFall implements AirborneActionDefinition {
@@ -41,22 +38,9 @@ public class TailSpinFall implements AirborneActionDefinition {
 	@Override public @Nullable CameraAnimationSet defineCameraAnimations(AnimationHelper helper) {
 		return TailSpinGround.CAMERA_ANIMATIONS;
 	}
-	@Override public @NotNull SlidingStatus defineSlidingStatus() {
-		return SlidingStatus.NOT_SLIDING;
-	}
 
-	@Override public @NotNull SneakingRule defineSneakingRule() {
-		return SneakingRule.ALLOW;
-	}
 	@Override public @NotNull SprintingRule defineSprintingRule() {
 	return SprintingRule.PROHIBIT;
-	}
-
-	@Override public @Nullable BappingRule defineBappingRule() {
-		return null;
-	}
-	@Override public @Nullable Identifier defineActiveCollisionAttack() {
-		return null;
 	}
 
 	public static final CfaStat FALL_ACCEL = Fall.FALL_ACCEL.variateAndReplaceCategories(0.575, DUCKING, NORMAL_GRAVITY, FORM);
@@ -89,10 +73,10 @@ public class TailSpinFall implements AirborneActionDefinition {
 	}
 
 	@Override
-	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+	public void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AirborneActionHelper helper) {
 		builder.add(
 				DuckWaddle.UNDUCK.variate(Fall.ID, null),
-				new TransitionDefinition(
+				new ActionTransitionDetails(
 						DuckFall.ID,
 						data -> !data.hasPower(Powers.TAIL_ATTACK),
 						EvaluatorEnvironment.COMMON
@@ -101,7 +85,7 @@ public class TailSpinFall implements AirborneActionDefinition {
 	}
 
 	@Override
-	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+	public void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AirborneActionHelper helper) {
 		builder.add(
 				Submerged.SUBMERGE,
 				Fall.LANDING.variate(TailSpinGround.ID,
@@ -109,9 +93,4 @@ public class TailSpinFall implements AirborneActionDefinition {
 				Fall.LANDING.variate(DuckWaddle.ID, null)
 		);
 	}
-
-	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
-		return Set.of();
-	}
-
 }

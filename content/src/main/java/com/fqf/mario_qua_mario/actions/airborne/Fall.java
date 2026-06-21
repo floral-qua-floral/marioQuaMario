@@ -1,8 +1,5 @@
 package com.fqf.mario_qua_mario.actions.airborne;
 
-import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
-import com.fqf.charaformact_api.cfadata.CfaClientData;
-import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
@@ -19,9 +16,6 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.Set;
 
 import static com.fqf.charaformact_api.util.StatCategory.*;
 
@@ -76,7 +70,7 @@ public class Fall implements AirborneActionDefinition {
 		);
 	}
 
-	public static final TransitionDefinition FALL = new TransitionDefinition(
+	public static final ActionTransitionDetails FALL = new ActionTransitionDetails(
 			Fall.ID,
 			data -> !data.getPlayer().isOnGround(),
 			EvaluatorEnvironment.CLIENT_ONLY
@@ -87,22 +81,22 @@ public class Fall implements AirborneActionDefinition {
 		drift(data, helper);
 	}
 
-	protected TransitionDefinition getLandingTransition() {
+	protected ActionTransitionDetails getLandingTransition() {
 		return LANDING;
 	}
-	public static final TransitionDefinition LANDING = new TransitionDefinition(
+	public static final ActionTransitionDetails LANDING = new ActionTransitionDetails(
 			SubWalk.ID,
 			data -> data.getPlayer().isOnGround(),
 			EvaluatorEnvironment.COMMON
 	);
 
 	@Override
-	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+	public void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AirborneActionHelper helper) {
 		builder.add(GroundPoundFlip.GROUND_POUND);
 	}
 
 	@Override
-	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+	public void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AirborneActionHelper helper) {
 		builder.add(
 				Submerged.SUBMERGE,
 				this.getLandingTransition(),
@@ -112,9 +106,4 @@ public class Fall implements AirborneActionDefinition {
 				WallSlide.WALL_SLIDE
 		);
 	}
-
-	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
-		return Set.of();
-	}
-
 }

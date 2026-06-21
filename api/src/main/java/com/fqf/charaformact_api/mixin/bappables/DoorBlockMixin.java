@@ -58,7 +58,7 @@ public abstract class DoorBlockMixin implements Bappable {
 					world.emitGameEvent(data == null ? null : data.getPlayer(), this.isOpen(blockState) ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, pos);
 				}
 
-//				CharaFormActAPI.LOGGER.info("Door bap test:\n\t- Open: {}\n\t- Facing: {}\n\t- Hinge: {}\n\t- Bapdir: {}\n\t- Flipdir: {}",
+//				CfaCommonAPI.LOGGER.info("Door bap test:\n\t- Open: {}\n\t- Facing: {}\n\t- Hinge: {}\n\t- Bapdir: {}\n\t- Flipdir: {}",
 //						blockState.get(OPEN), blockState.get(FACING), blockState.get(HINGE), direction, flipDir);
 			}
 		}

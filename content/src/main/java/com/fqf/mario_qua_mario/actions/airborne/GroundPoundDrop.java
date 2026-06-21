@@ -22,9 +22,6 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Set;
-
 import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class GroundPoundDrop implements AirborneActionDefinition {
@@ -78,8 +75,8 @@ public class GroundPoundDrop implements AirborneActionDefinition {
 	}
 
 	@Override
-	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
-		builder.add(new TransitionDefinition(
+	public void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AirborneActionHelper helper) {
+		builder.add(new ActionTransitionDetails(
 				SpecialFall.ID,
 				data -> data.getYVel() > 0 || data.getInputs().JUMP.isPressed(),
 				EvaluatorEnvironment.CLIENT_ONLY,
@@ -89,7 +86,7 @@ public class GroundPoundDrop implements AirborneActionDefinition {
 	}
 
 	@Override
-	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+	public void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AirborneActionHelper helper) {
 		builder.add(
 				Fall.LANDING.variate(
 						GroundPoundLand.ID,

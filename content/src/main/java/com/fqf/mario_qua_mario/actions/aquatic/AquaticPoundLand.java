@@ -1,14 +1,10 @@
 package com.fqf.mario_qua_mario.actions.aquatic;
 
-import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
-import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AquaticActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
@@ -18,9 +14,6 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.Set;
 
 public class AquaticPoundLand implements AquaticActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("aquatic_ground_pound_land");
@@ -61,8 +54,8 @@ public class AquaticPoundLand implements AquaticActionDefinition {
 	}
 
 	@Override
-	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, AquaticActionHelper helper) {
-		builder.add(new TransitionDefinition(
+	public void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AquaticActionHelper helper) {
+		builder.add(new ActionTransitionDetails(
 				UnderwaterWalk.ID,
 				data -> data.retrieveStateData(ActionTimerVars.class).actionTimer > AQUATIC_STANDUP_TICKS,
 				EvaluatorEnvironment.COMMON
@@ -70,7 +63,7 @@ public class AquaticPoundLand implements AquaticActionDefinition {
 	}
 
 	@Override
-	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, AquaticActionHelper helper) {
+	public void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AquaticActionHelper helper) {
 		builder.add(
 				Fall.FALL.variate(
 						AquaticPoundDrop.ID,

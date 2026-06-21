@@ -1,7 +1,5 @@
 package com.fqf.mario_qua_mario.actions.aquatic;
 
-import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
-import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AquaticActionDefinition;
@@ -16,9 +14,6 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.Set;
 
 public class AquaticPoundFlip implements AquaticActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("aquatic_ground_pound_flip");
@@ -50,7 +45,7 @@ public class AquaticPoundFlip implements AquaticActionDefinition {
 		data.setYVel(0.075);
 	}
 
-	public static final TransitionDefinition AQUATIC_GROUND_POUND = GroundPoundFlip.GROUND_POUND.variate(
+	public static final ActionTransitionDetails AQUATIC_GROUND_POUND = GroundPoundFlip.GROUND_POUND.variate(
 			AquaticPoundFlip.ID,
 			null,
 			null,
@@ -59,12 +54,12 @@ public class AquaticPoundFlip implements AquaticActionDefinition {
 	);
 
 	@Override
-	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, AquaticActionHelper helper) {
+	public void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AquaticActionHelper helper) {
 		builder.add(GroundPoundFlip.makeDropTransition(AquaticPoundDrop.ID, AQUATIC_FLIP_DURATION));
 	}
 
 	@Override
-	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, AquaticActionHelper helper) {
+	public void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AquaticActionHelper helper) {
 		builder.add(Submerged.EXIT_WATER.variate(GroundPoundFlip.ID, null));
 	}
 }

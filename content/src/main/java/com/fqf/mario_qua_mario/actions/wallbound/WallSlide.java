@@ -24,9 +24,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 public class WallSlide implements WallboundActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("wall_slide");
@@ -261,7 +259,7 @@ public class WallSlide implements WallboundActionDefinition {
 		helper.setTowardsWallVel(data, 0.2);
 	}
 
-	public static final TransitionDefinition WALL_SLIDE = new TransitionDefinition(
+	public static final ActionTransitionDetails WALL_SLIDE = new ActionTransitionDetails(
 			WallSlide.ID,
 			MarioVars::checkWallSlide,
 			EvaluatorEnvironment.CLIENT_ONLY,
@@ -279,9 +277,9 @@ public class WallSlide implements WallboundActionDefinition {
 	);
 
 	@Override
-	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, WallboundActionHelper helper) {
+	public void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, WallboundActionHelper helper) {
 		builder.add(
-				new TransitionDefinition(
+				new ActionTransitionDetails(
 						WallJump.ID,
 						data -> data.getInputs().JUMP.isPressed(),
 						EvaluatorEnvironment.CLIENT_ONLY,
@@ -295,7 +293,7 @@ public class WallSlide implements WallboundActionDefinition {
 							data.voice(Voicelines.WALL_JUMP, seed);
 						}
 				),
-				new TransitionDefinition(
+				new ActionTransitionDetails(
 						Fall.ID,
 						data -> data.getInputs().DUCK.isPressed() || data.retrieveStateData(WallSlideVars.class).holdAwayFromWallTicks > 6,
 						EvaluatorEnvironment.CLIENT_ONLY,
@@ -306,18 +304,18 @@ public class WallSlide implements WallboundActionDefinition {
 	}
 
 	@Override
-	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, WallboundActionHelper helper) {
+	public void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, WallboundActionHelper helper) {
 		builder.add(
 				ClimbTransitions.CLIMB_SOLID.variate(
 						null,
 						data -> helper.getWallInfo(data).getTowardsWallInput() > 0.3 && ClimbTransitions.CLIMB_SOLID.evaluator().shouldTransition(data)
 				),
-				new TransitionDefinition(
+				new ActionTransitionDetails(
 						SpecialFall.ID,
 						data -> !helper.getWallInfo(data).isLegal(),
 						EvaluatorEnvironment.COMMON
 				),
-				new TransitionDefinition(
+				new ActionTransitionDetails(
 						SubWalk.ID,
 						data -> data.getPlayer().isOnGround(),
 						EvaluatorEnvironment.COMMON

@@ -145,9 +145,9 @@ public class ClimbPole implements GenericActionDefinition {
 	}
 
 	@Override
-	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, CastableHelper helper) {
+	public void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, CastableHelper helper) {
 		builder.add(
-				new TransitionDefinition(
+				new ActionTransitionDetails(
 						WallJump.ID,
 						data -> (data.getInputs().getForwardInput() < -0.25 || Math.abs(data.getInputs().getStrafeInput()) > 0.25)
 								&& data.getInputs().JUMP.isPressed(),
@@ -164,7 +164,7 @@ public class ClimbPole implements GenericActionDefinition {
 							data.playJumpSound(seed);
 						}
 				),
-				new TransitionDefinition(
+				new ActionTransitionDetails(
 						Fall.ID,
 						data -> data.getInputs().DUCK.isHeld() && data.getInputs().JUMP.isPressed(),
 						EvaluatorEnvironment.CLIENT_ONLY,
@@ -174,7 +174,7 @@ public class ClimbPole implements GenericActionDefinition {
 						},
 						null
 				),
-				new TransitionDefinition(
+				new ActionTransitionDetails(
 						Jump.ID,
 						data -> data.getInputs().JUMP.isPressed(),
 						EvaluatorEnvironment.CLIENT_ONLY,
@@ -190,16 +190,16 @@ public class ClimbPole implements GenericActionDefinition {
 	}
 
 	@Override
-	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, CastableHelper helper) {
+	public void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, CastableHelper helper) {
 		builder.add(
-				new TransitionDefinition(
+				new ActionTransitionDetails(
 						SpecialFall.ID,
 						data -> !ClimbTransitions.inNonSolidClimbable(data, false),
 						EvaluatorEnvironment.COMMON,
 						ClimbPole::releasePole,
 						null
 				),
-				new TransitionDefinition(
+				new ActionTransitionDetails(
 						SubWalk.ID,
 						data -> data.getPlayer().isOnGround(),
 						EvaluatorEnvironment.CLIENT_ONLY,

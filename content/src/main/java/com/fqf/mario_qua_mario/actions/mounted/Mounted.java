@@ -1,9 +1,5 @@
 package com.fqf.mario_qua_mario.actions.mounted;
 
-import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
-import com.fqf.charaformact_api.cfadata.CfaClientData;
-import com.fqf.charaformact_api.cfadata.CfaData;
-import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.MountedActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
@@ -13,16 +9,13 @@ import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Backflip;
 import com.fqf.mario_qua_mario.actions.grounded.SubWalk;
 import com.google.common.collect.ImmutableList;
-import net.minecraft.entity.Entity;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 public class Mounted implements MountedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("mounted");
@@ -59,8 +52,8 @@ public class Mounted implements MountedActionDefinition {
 	}
 
 	@Override
-	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, MountedActionHelper helper) {
-		builder.add(new TransitionDefinition(
+	public void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, MountedActionHelper helper) {
+		builder.add(new ActionTransitionDetails(
 				SubWalk.ID,
 				data -> helper.getMount(data) == null || helper.getMount(data).isRemoved(),
 				EvaluatorEnvironment.COMMON,
@@ -72,8 +65,8 @@ public class Mounted implements MountedActionDefinition {
 	}
 
 	@Override
-	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, MountedActionHelper helper) {
-		TransitionDefinition backflip = Backflip.makeBackflipTransition((GroundedActionDefinition.GroundedActionHelper) helper);
+	public void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, MountedActionHelper helper) {
+		ActionTransitionDetails backflip = Backflip.makeBackflipTransition((GroundedActionDefinition.GroundedActionHelper) helper);
 		builder.add(
 				backflip.variate(
 						null,

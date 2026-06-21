@@ -1,7 +1,7 @@
 package com.fqf.mario_qua_mario.actions.aquatic;
 
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
@@ -24,7 +24,7 @@ public class Swim extends Submerged {
 	public static final CfaStat SWIM_ACCEL = new CfaStat(0.4, SWIMMING, UP, ACCELERATION);
 	public static final CfaStat SWIM_MAX_ASCENSION_SPEED = new CfaStat(0.45, SWIMMING, UP, SPEED);
 
-	public static final TransitionDefinition SWIM = new TransitionDefinition(
+	public static final ActionTransitionDetails SWIM = new ActionTransitionDetails(
 			ID,
 			data -> {
 				ActionTimerVars vars = data.retrieveStateData(ActionTimerVars.class);

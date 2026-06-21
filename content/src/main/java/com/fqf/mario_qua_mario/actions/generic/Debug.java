@@ -69,15 +69,15 @@ public class Debug implements GenericActionDefinition {
 	}
 
 	@Override
-	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, CastableHelper helper) {
+	public void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, CastableHelper helper) {
 		builder.add(
-				new TransitionDefinition(
+				new ActionTransitionDetails(
 						DebugSprint.ID,
 						data -> data.getPlayer().isSprinting(), EvaluatorEnvironment.COMMON,
 						null,
 						(data, isSelf, seed) -> data.playSound(MarioSFX.FIREBALL, seed)
 				),
-				new TransitionDefinition(
+				new ActionTransitionDetails(
 						LavaBoost.ID,
 						data -> false,
 						EvaluatorEnvironment.SERVER_ONLY,

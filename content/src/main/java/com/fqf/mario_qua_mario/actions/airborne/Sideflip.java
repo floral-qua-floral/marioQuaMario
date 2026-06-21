@@ -2,7 +2,6 @@ package com.fqf.mario_qua_mario.actions.airborne;
 
 import com.fqf.charaformact_api.cfadata.*;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.Arrangement;
@@ -19,7 +18,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
-import java.util.Set;
 
 import static com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag.*;
 import static com.fqf.charaformact_api.util.StatCategory.*;
@@ -147,9 +145,6 @@ public class Sideflip extends Backflip implements AirborneActionDefinition {
 			data.instantVisualRotate(180, false);
 		}
 	}
-	@Override public void serverTick(CfaAuthoritativeData data) {
-
-	}
 	@Override public void travelHook(CfaTravelData data, AirborneActionHelper helper) {
 		helper.applyComplexGravity(data, Fall.FALL_ACCEL, JUMP_GRAVITY, Fall.FALL_SPEED);
 		if(data.getYVel() < 0.1) Fall.drift(data, helper);
@@ -158,9 +153,4 @@ public class Sideflip extends Backflip implements AirborneActionDefinition {
 	@Override protected double getJumpCapThreshold() {
 		return 0.65;
 	}
-
-	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
-		return Set.of();
-	}
-
 }

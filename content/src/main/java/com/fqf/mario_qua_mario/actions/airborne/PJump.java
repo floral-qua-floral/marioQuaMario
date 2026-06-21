@@ -1,10 +1,10 @@
 package com.fqf.mario_qua_mario.actions.airborne;
 
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.charaformact_api.definitions.states.actions.util.SneakingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
-import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -19,8 +19,6 @@ import com.fqf.mario_qua_mario.util.Powers;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public class PJump extends Jump implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("p_jump");
@@ -54,8 +52,8 @@ public class PJump extends Jump implements AirborneActionDefinition {
 	}
 
 	@Override
-	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
-		builder.add(new TransitionDefinition(
+	public void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AirborneActionHelper helper) {
+		builder.add(new ActionTransitionDetails(
 				TailFly.ID,
 				data ->
 						data.hasPower(Powers.TAIL_FLY)
@@ -70,7 +68,7 @@ public class PJump extends Jump implements AirborneActionDefinition {
 	}
 
 	@Override
-	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+	public void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AirborneActionHelper helper) {
 		builder.add(
 				Submerged.SUBMERGE,
 				Jump.DOUBLE_JUMPABLE_LANDING.variate(PRun.ID, data ->

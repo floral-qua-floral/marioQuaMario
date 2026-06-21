@@ -1,14 +1,11 @@
 package com.fqf.mario_qua_mario.actions.grounded;
 
-import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
-import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.fqf.charaformact_api.definitions.TransitionInjectionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
@@ -23,7 +20,6 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Set;
 
 import static com.fqf.charaformact_api.util.StatCategory.*;
@@ -70,10 +66,10 @@ public class DuckSlide implements GroundedActionDefinition {
 	}
 
 	@Override
-	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+	public void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, GroundedActionHelper helper) {
 		builder.add(
 				DuckWaddle.UNDUCK,
-				new TransitionDefinition(
+				new ActionTransitionDetails(
 						DuckWaddle.ID,
 						data -> data.getHorizVelSquared() == 0,
 						EvaluatorEnvironment.CLIENT_ONLY
@@ -82,10 +78,10 @@ public class DuckSlide implements GroundedActionDefinition {
 	}
 
 	@Override
-	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+	public void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, GroundedActionHelper helper) {
 		builder.add(
 				Backflip.makeBackflipTransition(helper),
-				new TransitionDefinition(
+				new ActionTransitionDetails(
 						LongJump.ID,
 						data ->
 								data.getInputs().getForwardInput() > 0.4
@@ -108,47 +104,40 @@ public class DuckSlide implements GroundedActionDefinition {
 	}
 
 	@Override
-	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+	public void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, GroundedActionHelper helper) {
 		builder.add(
 				DuckFall.DUCK_FALL,
 				UnderwaterDuck.DUCK_SUBMERGE
 		);
 	}
 
-	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
-		return Set.of(
-				new TransitionInjectionDefinition(
-						TransitionInjectionDefinition.InjectionPlacement.BEFORE,
-						DuckWaddle.ID,
-						ActionCategory.GROUNDED,
-						(nearbyTransition, castableHelper) -> nearbyTransition.variate(
-								DuckSlide.ID,
-								data -> {
-									double threshold = SLIDE_THRESHOLD.get(data);
-									return data.getHorizVelSquared() > threshold * threshold
-											&& nearbyTransition.evaluator().shouldTransition(data);
-								},
-								EvaluatorEnvironment.CLIENT_ONLY,
-								null, null
-						)
-				),
-
-				new TransitionInjectionDefinition(
-						TransitionInjectionDefinition.InjectionPlacement.BEFORE,
-						DuckWaddle.ID,
-						ActionCategory.AIRBORNE,
-						(nearbyTransition, castableHelper) -> nearbyTransition.variate(
-								DuckSlide.ID,
-								data -> {
-									double threshold = SLIDE_THRESHOLD.get(data);
-									return (data.isServer() || (data.getHorizVelSquared() > threshold * threshold))
-											&& nearbyTransition.evaluator().shouldTransition(data);
-								},
-								EvaluatorEnvironment.CLIENT_CHECKED,
-								null, null
-						)
-				)
-		);
-	}
+	public static final TransitionInjectionDefinition GROUNDED_INJECTION = new TransitionInjectionDefinition.Simple(
+			TransitionInjectionDefinition.InjectionPlacement.BEFORE, DuckWaddle.ID,
+			ActionCategory.GROUNDED,
+			(nearbyTransition, helper) -> nearbyTransition.variate(
+					DuckSlide.ID,
+					data -> {
+						double threshold = SLIDE_THRESHOLD.get(data);
+						return data.getHorizVelSquared() > threshold * threshold
+								&& nearbyTransition.evaluator().shouldTransition(data);
+					},
+					EvaluatorEnvironment.CLIENT_ONLY,
+					null, null
+			)
+	);
+	public static final TransitionInjectionDefinition AIRBORNE_INJECTION = new TransitionInjectionDefinition.Simple(
+			TransitionInjectionDefinition.InjectionPlacement.BEFORE, DuckWaddle.ID,
+			ActionCategory.AIRBORNE,
+			(nearbyTransition, helper) -> nearbyTransition.variate(
+					DuckSlide.ID,
+					data -> {
+						double threshold = SLIDE_THRESHOLD.get(data);
+						return (data.isServer() || (data.getHorizVelSquared() > threshold * threshold))
+								&& nearbyTransition.evaluator().shouldTransition(data);
+					},
+					EvaluatorEnvironment.CLIENT_CHECKED,
+					null, null
+			)
+	);
 
 }

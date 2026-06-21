@@ -26,9 +26,6 @@ import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Set;
-
 public class GroundPoundFlip implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("ground_pound_flip");
 	@Override public @NotNull Identifier defineID() {
@@ -131,7 +128,7 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 		data.setYVel(0.15);
 	}
 
-	public static final TransitionDefinition GROUND_POUND = new TransitionDefinition(
+	public static final ActionTransitionDetails GROUND_POUND = new ActionTransitionDetails(
 			ID,
 			data -> data.getInputs().DUCK.isPressed(),
 			EvaluatorEnvironment.CLIENT_ONLY,
@@ -141,8 +138,8 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 			(data, isSelf, seed) -> data.playSound(MarioSFX.GROUND_POUND_FLIP, seed)
 	);
 
-	public static TransitionDefinition makeDropTransition(Identifier targetAction, float flipDuration) {
-		return new TransitionDefinition(
+	public static ActionTransitionDetails makeDropTransition(Identifier targetAction, float flipDuration) {
+		return new ActionTransitionDetails(
 				targetAction,
 				data -> data.retrieveStateData(FlipTimerVars.class).actionTimer >= flipDuration,
 				EvaluatorEnvironment.COMMON,
@@ -159,17 +156,12 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 	}
 
 	@Override
-	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+	public void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AirborneActionHelper helper) {
 		builder.add(makeDropTransition(GroundPoundDrop.ID, FLIP_DURATION));
 	}
 
 	@Override
-	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+	public void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AirborneActionHelper helper) {
 		builder.add(Submerged.SUBMERGE.variate(AquaticPoundFlip.ID, null));
 	}
-
-	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
-		return Set.of();
-	}
-
 }

@@ -4,9 +4,9 @@ import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.BappingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.util.CfaStat;
@@ -17,8 +17,6 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 import static com.fqf.charaformact_api.util.StatCategory.JUMPING_GRAVITY;
 import static com.fqf.charaformact_api.util.StatCategory.JUMP_VELOCITY;
@@ -91,8 +89,8 @@ public class Jump extends Fall implements AirborneActionDefinition {
 		Fall.drift(data, helper);
 	}
 
-	public static TransitionDefinition makeJumpTransition(GroundedActionDefinition.GroundedActionHelper helper) {
-		return new TransitionDefinition(
+	public static ActionTransitionDetails makeJumpTransition(GroundedActionDefinition.GroundedActionHelper helper) {
+		return new ActionTransitionDetails(
 				Jump.ID,
 				data -> data.getInputs().JUMP.isPressed(),
 				EvaluatorEnvironment.CLIENT_ONLY,
@@ -101,7 +99,7 @@ public class Jump extends Fall implements AirborneActionDefinition {
 		);
 	}
 
-	public static final TransitionDefinition DOUBLE_JUMPABLE_LANDING = Fall.LANDING.variate(
+	public static final ActionTransitionDetails DOUBLE_JUMPABLE_LANDING = Fall.LANDING.variate(
 			null, null, null,
 			data -> MarioVars.get(data).canDoubleJumpTicks = 3,
 			null
@@ -112,12 +110,12 @@ public class Jump extends Fall implements AirborneActionDefinition {
 	}
 
 	@Override
-	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+	public void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AirborneActionHelper helper) {
 		super.accumulateInputTransitions(builder, helper);
 		builder.add(helper.makeJumpCapTransition(this, this.getJumpCapThreshold()));
 	}
 
-	@Override protected TransitionDefinition getLandingTransition() {
+	@Override protected ActionTransitionDetails getLandingTransition() {
 		return DOUBLE_JUMPABLE_LANDING;
 	}
 }

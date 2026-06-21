@@ -1,8 +1,8 @@
 package com.fqf.charaformact.registries.actions;
 
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charaformact.registries.RegistryManager;
 import net.minecraft.util.crash.CrashException;
 import net.minecraft.util.crash.CrashReport;
@@ -11,13 +11,13 @@ import org.jetbrains.annotations.Nullable;
 
 public record ParsedTransition(
 		@NotNull AbstractParsedAction targetAction,
-		@NotNull TransitionDefinition.Evaluator evaluator,
+		@NotNull ActionTransitionDetails.Evaluator evaluator,
 		boolean fullyNetworked,
 		boolean serverChecked,
-		@Nullable TransitionDefinition.TravelExecutor travelExecutor,
-		@Nullable TransitionDefinition.ClientsExecutor clientsExecutor
+		@Nullable ActionTransitionDetails.TravelExecutor travelExecutor,
+		@Nullable ActionTransitionDetails.ClientsExecutor clientsExecutor
 ) {
-	public ParsedTransition(TransitionDefinition definition) {
+	public ParsedTransition(ActionTransitionDetails definition) {
 		this(
 				getTargetAction(definition),
 				definition.evaluator(),
@@ -28,7 +28,7 @@ public record ParsedTransition(
 		);
 	}
 
-	public static @NotNull AbstractParsedAction getTargetAction(TransitionDefinition definition) {
+	public static @NotNull AbstractParsedAction getTargetAction(ActionTransitionDetails definition) {
 		AbstractParsedAction targetAction = RegistryManager.ACTIONS.get(definition.targetID());
 		if(targetAction == null) throw new CrashException(new CrashReport(
 				"Attempting to register a transition into action \"" + definition.targetID()

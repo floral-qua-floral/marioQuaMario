@@ -4,9 +4,8 @@ import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.TransitionInjectionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -22,8 +21,6 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Set;
 
 import static com.fqf.charaformact_api.util.StatCategory.FORM;
 import static com.fqf.charaformact_api.util.StatCategory.JUMP_VELOCITY;
@@ -53,8 +50,8 @@ public class TailFly extends PJump implements AirborneActionDefinition {
 	}
 
 	@Override
-	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
-		builder.add(new TransitionDefinition(
+	public void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AirborneActionHelper helper) {
+		builder.add(new ActionTransitionDetails(
 				SpecialFall.ID,
 				data -> !data.hasPower(Powers.TAIL_STALL) || data.retrieveStateData(Raccoon.RaccoonVars.class).flightTicks <= 0,
 				EvaluatorEnvironment.COMMON
@@ -62,10 +59,10 @@ public class TailFly extends PJump implements AirborneActionDefinition {
 	}
 
 	@Override
-	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+	public void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AirborneActionHelper helper) {
 		builder.add(
 				GroundPoundFlip.GROUND_POUND,
-				new TransitionDefinition(
+				new ActionTransitionDetails(
 						PJump.ID,
 						data -> !data.getInputs().JUMP.isHeld(),
 						EvaluatorEnvironment.CLIENT_ONLY
@@ -74,12 +71,7 @@ public class TailFly extends PJump implements AirborneActionDefinition {
 	}
 
 	@Override
-	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, AirborneActionHelper helper) {
+	public void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AirborneActionHelper helper) {
 		builder.add(Submerged.SUBMERGE);
 	}
-
-	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
-		return Set.of();
-	}
-
 }

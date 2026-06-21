@@ -5,7 +5,7 @@ import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.charaformact_api.definitions.states.actions.WallboundActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.util.ClimbTransitions;
 import net.minecraft.block.BlockState;
@@ -77,12 +77,12 @@ public class ClimbIntangibleDirectional extends ClimbWall implements WallboundAc
 		return ClimbIntangibleSideHang.ID;
 	}
 
-	public static final TransitionDefinition.ClientsExecutor SIDE_HANG_CLIENTS_EXECUTOR = (data, isSelf, seed) -> {
+	public static final ActionTransitionDetails.ClientsExecutor SIDE_HANG_CLIENTS_EXECUTOR = (data, isSelf, seed) -> {
 		ClimbTransitions.playGrabIntangibleSound(data, seed);
 	};
 
 	@Override
-	protected TransitionDefinition.ClientsExecutor getSideHangTransitionClientsExecutor() {
+	protected ActionTransitionDetails.ClientsExecutor getSideHangTransitionClientsExecutor() {
 		return SIDE_HANG_CLIENTS_EXECUTOR;
 	}
 
@@ -90,6 +90,4 @@ public class ClimbIntangibleDirectional extends ClimbWall implements WallboundAc
 	protected double getConstantTowardsWallVel() {
 		return 0;
 	}
-
-
 }

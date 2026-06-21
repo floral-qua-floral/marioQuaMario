@@ -16,9 +16,6 @@ import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Set;
-
 import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class SubWalk implements GroundedActionDefinition {
@@ -154,15 +151,15 @@ public class SubWalk implements GroundedActionDefinition {
 	}
 
 	@Override
-	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+	public void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, GroundedActionHelper helper) {
 		builder.add(
 				DuckWaddle.DUCK,
-				new TransitionDefinition(
+				new ActionTransitionDetails(
 						WalkRun.ID,
 						WalkRun::meetsWalkRunRequirement,
 						EvaluatorEnvironment.CLIENT_ONLY
 				)//,
-//				new TransitionDefinition(
+//				new ActionTransitionDetails(
 //						RetroIdle.ID,
 //						data -> data.hasPower(Powers.SMB3_IDLE) && isIdle(data),
 //						EvaluatorEnvironment.CLIENT_ONLY
@@ -171,7 +168,7 @@ public class SubWalk implements GroundedActionDefinition {
 	}
 
 	@Override
-	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+	public void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, GroundedActionHelper helper) {
 		builder.add(
 				Skid.SKID,
 				Jump.makeJumpTransition(helper)
@@ -179,7 +176,7 @@ public class SubWalk implements GroundedActionDefinition {
 	}
 
 	@Override
-	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+	public void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, GroundedActionHelper helper) {
 		builder.add(
 				Fall.FALL,
 				UnderwaterWalk.SUBMERGE

@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
  * @param travelExecutor The effect the transition has on the character's motion.
  * @param clientsExecutor Client-side effects of this transition firing.
  */
-public record TransitionDefinition(
+public record ActionTransitionDetails(
 		@NotNull Identifier targetID,
 		@NotNull Evaluator evaluator, @NotNull EvaluatorEnvironment environment,
 		@Nullable TravelExecutor travelExecutor,
@@ -22,18 +22,18 @@ public record TransitionDefinition(
 	/**
 	 * Alternate constructor provided for convenience
 	 */
-	public TransitionDefinition(@NotNull Identifier targetID, @NotNull Evaluator evaluator, @NotNull EvaluatorEnvironment environment) {
+	public ActionTransitionDetails(@NotNull Identifier targetID, @NotNull Evaluator evaluator, @NotNull EvaluatorEnvironment environment) {
 		this(targetID, evaluator, environment, null, null);
 	}
 
-	public TransitionDefinition variate(
+	public ActionTransitionDetails variate(
 			@Nullable Identifier targetID,
 			@Nullable Evaluator evaluator,
 			@Nullable EvaluatorEnvironment environment,
 			@Nullable TravelExecutor travelExecutor,
 			@Nullable ClientsExecutor clientsExecutor
 	) {
-		return new TransitionDefinition(
+		return new ActionTransitionDetails(
 				targetID == null ? this.targetID : targetID,
 				evaluator == null ? this.evaluator : evaluator,
 				environment == null ? this.environment : environment,
@@ -41,7 +41,7 @@ public record TransitionDefinition(
 				clientsExecutor == null ? this.clientsExecutor : clientsExecutor
 		);
 	}
-	public TransitionDefinition variate(@Nullable Identifier targetID, @Nullable Evaluator evaluator) {
+	public ActionTransitionDetails variate(@Nullable Identifier targetID, @Nullable Evaluator evaluator) {
 		return this.variate(targetID, evaluator, null, null, null);
 	}
 

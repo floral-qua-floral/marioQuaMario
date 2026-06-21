@@ -1,16 +1,12 @@
 package com.fqf.mario_qua_mario.actions.aquatic;
 
 
-import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
-import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AquaticActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
@@ -21,9 +17,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.Set;
 
 public class Paddle implements AquaticActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("paddle");
@@ -98,10 +91,10 @@ public class Paddle implements AquaticActionDefinition {
 	}
 
 	@Override
-	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, AquaticActionHelper helper) {
+	public void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AquaticActionHelper helper) {
 		builder.add(
 				AquaticPoundFlip.AQUATIC_GROUND_POUND,
-				new TransitionDefinition(
+				new ActionTransitionDetails(
 						Submerged.ID,
 						data -> !data.getInputs().JUMP.isHeld() || data.getForwardVel() < -0.1,
 						EvaluatorEnvironment.CLIENT_ONLY
@@ -110,7 +103,7 @@ public class Paddle implements AquaticActionDefinition {
 	}
 
 	@Override
-	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, AquaticActionHelper helper) {
+	public void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AquaticActionHelper helper) {
 		builder.add(
 				Submerged.EXIT_WATER,
 				Fall.LANDING.variate(UnderwaterWalk.ID, null)

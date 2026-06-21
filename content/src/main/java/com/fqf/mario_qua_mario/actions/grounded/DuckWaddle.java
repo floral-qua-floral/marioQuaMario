@@ -26,8 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
 
 import static com.fqf.charaformact_api.util.StatCategory.*;
 
@@ -145,7 +143,7 @@ public class DuckWaddle implements GroundedActionDefinition {
 		);
 	}
 
-	public static final TransitionDefinition DUCK = new TransitionDefinition(
+	public static final ActionTransitionDetails DUCK = new ActionTransitionDetails(
 			DuckWaddle.ID,
 			data -> data.getInputs().DUCK.isHeld(),
 			EvaluatorEnvironment.CLIENT_ONLY,
@@ -156,7 +154,7 @@ public class DuckWaddle implements GroundedActionDefinition {
 			}
 	);
 
-	public static final TransitionDefinition UNDUCK = new TransitionDefinition(
+	public static final ActionTransitionDetails UNDUCK = new ActionTransitionDetails(
 			SubWalk.ID,
 			data -> !data.getInputs().DUCK.isHeld(),
 			EvaluatorEnvironment.CLIENT_ONLY,
@@ -165,12 +163,12 @@ public class DuckWaddle implements GroundedActionDefinition {
 	);
 
 	@Override
-	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+	public void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, GroundedActionHelper helper) {
 		builder.add(UNDUCK);
 	}
 
 	@Override
-	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+	public void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, GroundedActionHelper helper) {
 		builder.add(
 				Backflip.makeBackflipTransition(helper),
 				DuckJump.makeDuckJumpTransition(helper)
@@ -178,7 +176,7 @@ public class DuckWaddle implements GroundedActionDefinition {
 	}
 
 	@Override
-	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+	public void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, GroundedActionHelper helper) {
 		builder.add(
 				DuckFall.DUCK_FALL,
 				UnderwaterDuck.DUCK_SUBMERGE

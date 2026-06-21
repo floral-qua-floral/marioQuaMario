@@ -24,9 +24,6 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Set;
-
 import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class Skid implements GroundedActionDefinition {
@@ -105,15 +102,15 @@ public class Skid implements GroundedActionDefinition {
 		);
 	}
 
-	public static final TransitionDefinition SKID = new TransitionDefinition(
+	public static final ActionTransitionDetails SKID = new ActionTransitionDetails(
 			ID,
 			data -> data.getInputs().getForwardInput() < -0.675 && data.getForwardVel() > SKID_THRESHOLD.get(data),
 			EvaluatorEnvironment.CLIENT_ONLY
 	);
 
 	@Override
-	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
-		builder.add(new TransitionDefinition(
+	public void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, GroundedActionHelper helper) {
+		builder.add(new ActionTransitionDetails(
 				SubWalk.ID,
 				data -> data.getHorizVelSquared() == 0 || data.getInputs().getForwardInput() >= 0,
 				EvaluatorEnvironment.CLIENT_ONLY
@@ -121,9 +118,9 @@ public class Skid implements GroundedActionDefinition {
 	}
 
 	@Override
-	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+	public void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, GroundedActionHelper helper) {
 		builder.add(
-				new TransitionDefinition(
+				new ActionTransitionDetails(
 						Sideflip.ID,
 						data -> data.getForwardVel() < Sideflip.SIDEFLIP_THRESHOLD.get(data) && data.getInputs().JUMP.isPressed(),
 						EvaluatorEnvironment.CLIENT_ONLY,
@@ -143,7 +140,7 @@ public class Skid implements GroundedActionDefinition {
 	}
 
 	@Override
-	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+	public void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, GroundedActionHelper helper) {
 		builder.add(
 				Fall.FALL,
 				UnderwaterWalk.SUBMERGE,

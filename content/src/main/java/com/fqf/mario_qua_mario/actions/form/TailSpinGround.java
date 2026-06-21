@@ -14,7 +14,6 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario.actions.airborne.DuckFall;
 import com.fqf.mario_qua_mario.actions.airborne.DuckJump;
 import com.fqf.mario_qua_mario.actions.grounded.DuckSlide;
 import com.fqf.mario_qua_mario.actions.grounded.DuckWaddle;
@@ -29,9 +28,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.Set;
 
 public class TailSpinGround implements GroundedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("tail_spin_grounded");
@@ -145,10 +141,10 @@ public class TailSpinGround implements GroundedActionDefinition {
 	}
 
 	@Override
-	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+	public void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, GroundedActionHelper helper) {
 		builder.add(
 				DuckWaddle.UNDUCK,
-				new TransitionDefinition(
+				new ActionTransitionDetails(
 						DuckWaddle.ID,
 						data -> !data.hasPower(Powers.TAIL_ATTACK)
 								|| doneSpinning(data),
@@ -158,7 +154,7 @@ public class TailSpinGround implements GroundedActionDefinition {
 	}
 
 	@Override
-	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+	public void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, GroundedActionHelper helper) {
 		builder.add(
 				DuckJump.makeDuckJumpTransition(helper).variate(
 						TailSpinJump.ID,

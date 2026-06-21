@@ -4,6 +4,7 @@ import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.fqf.charaformact_api.definitions.TransitionInjectionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
@@ -17,7 +18,6 @@ import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Set;
 
 import static com.fqf.charaformact_api.util.StatCategory.*;
@@ -95,16 +95,16 @@ public class WalkRun extends SubWalk implements GroundedActionDefinition {
 	}
 
 	@Override
-	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, GroundedActionHelper helper) {
+	public void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, GroundedActionHelper helper) {
 		builder.add(
 				DuckWaddle.DUCK,
 				Skid.SKID,
-				new TransitionDefinition(
+				new ActionTransitionDetails(
 						SubWalk.ID,
 						data -> !meetsWalkRunRequirement(data),
 						EvaluatorEnvironment.CLIENT_ONLY
 				),
-				new TransitionDefinition(
+				new ActionTransitionDetails(
 						PRun.ID,
 						data -> PRun.meetsPRunRequirements(data) && ActionTimerVars.get(data).actionTimer > 20,
 						EvaluatorEnvironment.CLIENT_ONLY
@@ -112,28 +112,22 @@ public class WalkRun extends SubWalk implements GroundedActionDefinition {
 		);
 	}
 
-	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
-		return Set.of(
-				new TransitionInjectionDefinition(
-						TransitionInjectionDefinition.InjectionPlacement.BEFORE,
-						SubWalk.ID,
-						ActionCategory.AIRBORNE,
-						(nearbyTransition, castableHelper) -> nearbyTransition.variate(
-								this.defineID(),
-								data -> (data.isServer() || meetsWalkRunRequirement(data)) && nearbyTransition.evaluator().shouldTransition(data),
-								EvaluatorEnvironment.CLIENT_CHECKED, null, null
-						)
-				),
-				new TransitionInjectionDefinition(
-						TransitionInjectionDefinition.InjectionPlacement.BEFORE,
-						SubWalk.ID,
-						ActionCategory.GROUNDED,
-						(nearbyTransition, castableHelper) -> nearbyTransition.variate(
-								this.defineID(),
-								data -> meetsWalkRunRequirement(data) && nearbyTransition.evaluator().shouldTransition(data),
-								EvaluatorEnvironment.CLIENT_ONLY, null, null
-						)
-				)
-		);
-	}
+	public static final TransitionInjectionDefinition GROUNDED_INJECTION = new TransitionInjectionDefinition.Simple(
+			TransitionInjectionDefinition.InjectionPlacement.BEFORE, SubWalk.ID,
+			ActionCategory.GROUNDED,
+			(nearbyTransition, castableHelper) -> nearbyTransition.variate(
+					WalkRun.ID,
+					data -> meetsWalkRunRequirement(data) && nearbyTransition.evaluator().shouldTransition(data),
+					EvaluatorEnvironment.CLIENT_ONLY, null, null
+			)
+	);
+	public static final TransitionInjectionDefinition AIRBORNE_INJECTION = new TransitionInjectionDefinition.Simple(
+			TransitionInjectionDefinition.InjectionPlacement.BEFORE, SubWalk.ID,
+			ActionCategory.AIRBORNE,
+			(nearbyTransition, castableHelper) -> nearbyTransition.variate(
+					WalkRun.ID,
+					data -> (data.isServer() || meetsWalkRunRequirement(data)) && nearbyTransition.evaluator().shouldTransition(data),
+					EvaluatorEnvironment.CLIENT_CHECKED, null, null
+			)
+	);
 }

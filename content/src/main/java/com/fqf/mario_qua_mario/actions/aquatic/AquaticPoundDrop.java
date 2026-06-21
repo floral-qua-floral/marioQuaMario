@@ -22,9 +22,6 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Set;
-
 import static com.fqf.charaformact_api.util.StatCategory.WATER_DRAG;
 
 public class AquaticPoundDrop implements AquaticActionDefinition {
@@ -80,8 +77,8 @@ public class AquaticPoundDrop implements AquaticActionDefinition {
 	}
 
 	@Override
-	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, AquaticActionHelper helper) {
-		builder.add(new TransitionDefinition(
+	public void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AquaticActionHelper helper) {
+		builder.add(new ActionTransitionDetails(
 				Submerged.ID,
 				data -> data.getYVel() >= -0.01,
 				EvaluatorEnvironment.CLIENT_ONLY
@@ -89,12 +86,12 @@ public class AquaticPoundDrop implements AquaticActionDefinition {
 	}
 
 	@Override
-	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, AquaticActionHelper helper) {
+	public void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AquaticActionHelper helper) {
 		builder.add(Swim.SWIM);
 	}
 
 	@Override
-	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, AquaticActionHelper helper) {
+	public void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AquaticActionHelper helper) {
 		builder.add(
 				Fall.LANDING.variate(
 						AquaticPoundLand.ID,

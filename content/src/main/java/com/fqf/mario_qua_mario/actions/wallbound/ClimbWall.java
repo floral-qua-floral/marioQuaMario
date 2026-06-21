@@ -6,8 +6,6 @@ import com.fqf.charaformact_api.definitions.states.actions.WallboundActionDefini
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
@@ -29,9 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2d;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 public class ClimbWall implements WallboundActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("climb_wall");
@@ -184,13 +180,13 @@ public class ClimbWall implements WallboundActionDefinition {
 
 	public static final float MIN_DEVIATION_TO_SIDE_HANG = 99;
 
-	protected TransitionDefinition.ClientsExecutor getSideHangTransitionClientsExecutor() {
+	protected ActionTransitionDetails.ClientsExecutor getSideHangTransitionClientsExecutor() {
 		return null;
 	}
 
 	@Override
-	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, WallboundActionHelper helper) {
-		builder.add(new TransitionDefinition(
+	public void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, WallboundActionHelper helper) {
+		builder.add(new ActionTransitionDetails(
 				this.getSideHangActionID(),
 				data -> Math.abs(helper.getWallInfo(data).getYawDeviation()) > MIN_DEVIATION_TO_SIDE_HANG,
 				EvaluatorEnvironment.CLIENT_ONLY,
@@ -203,9 +199,9 @@ public class ClimbWall implements WallboundActionDefinition {
 	}
 
 	@Override
-	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, WallboundActionHelper helper) {
+	public void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, WallboundActionHelper helper) {
 		builder.add(
-				new TransitionDefinition(
+				new ActionTransitionDetails(
 						WallJump.ID,
 						data -> helper.getWallInfo(data) != null
 								&& Objects.requireNonNull(helper.getWallInfo(data)).getTowardsWallInput() < -0.45
@@ -222,7 +218,7 @@ public class ClimbWall implements WallboundActionDefinition {
 							data.playJumpSound(seed);
 						}
 				),
-				new TransitionDefinition(
+				new ActionTransitionDetails(
 						Fall.ID,
 						data -> data.getInputs().DUCK.isHeld() && data.getInputs().JUMP.isPressed(),
 						EvaluatorEnvironment.CLIENT_ONLY,
@@ -232,7 +228,7 @@ public class ClimbWall implements WallboundActionDefinition {
 						},
 						null
 				),
-				new TransitionDefinition(
+				new ActionTransitionDetails(
 						Jump.ID,
 						data -> data.getInputs().JUMP.isPressed(),
 						EvaluatorEnvironment.CLIENT_ONLY,
@@ -246,16 +242,16 @@ public class ClimbWall implements WallboundActionDefinition {
 	}
 
 	@Override
-	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, WallboundActionHelper helper) {
+	public void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, WallboundActionHelper helper) {
 		builder.add(
-				new TransitionDefinition(
+				new ActionTransitionDetails(
 						SpecialFall.ID,
 						data -> !helper.getWallInfo(data).isLegal(),
 						EvaluatorEnvironment.COMMON,
 						data -> helper.setTowardsWallVel(data, 0),
 						null
 				),
-				new TransitionDefinition(
+				new ActionTransitionDetails(
 						SubWalk.ID,
 						data -> data.getPlayer().isOnGround(),
 						EvaluatorEnvironment.CLIENT_ONLY

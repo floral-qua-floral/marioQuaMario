@@ -1,42 +1,34 @@
 package com.fqf.mario_qua_mario;
 
-import com.fqf.charaformact_api.definitions.VoicelineSetDefinition;
+import com.google.common.collect.ImmutableSet;
+import net.minecraft.util.Identifier;
 
 import java.util.Set;
 
-public class Voicelines implements VoicelineSetDefinition {
-	public static final String SELECT = "select";
+import static com.fqf.mario_qua_mario.MarioQuaMario.makeID;
 
-	public static final String BONK = "bonk";
-	public static final String BURNT = "burnt";
-	public static final String SHOCK = "shock";
-	public static final String DEATH = "death";
+public interface Voicelines {
+	Identifier BONK = makeID("bonk");
+	Identifier BURNT = makeID("burnt");
 
-	public static final String DUCK = "duck";
-	public static final String DUCK_JUMP = "duck_jump";
-	public static final String LONG_JUMP = "long_jump";
-	public static final String BACKFLIP = "backflip";
-	public static final String SIDEFLIP = "sideflip";
-	public static final String WALL_JUMP = "wall_jump";
-	public static final String DOUBLE_JUMP = "double_jump";
-	public static final String TRIPLE_JUMP = "triple_jump";
-	public static final String GYMNAST_SALUTE = "gymnast_salute";
+	Identifier DUCK = makeID("duck");
+	Identifier DUCK_JUMP = makeID("duck_jump");
+	Identifier LONG_JUMP = makeID("long_jump");
+	Identifier BACKFLIP = makeID("backflip");
+	Identifier SIDEFLIP = makeID("sideflip");
+	Identifier WALL_JUMP = makeID("wall_jump");
+	Identifier DOUBLE_JUMP = makeID("double_jump");
+	Identifier TRIPLE_JUMP = makeID("triple_jump");
+	Identifier GYMNAST_SALUTE = makeID("gymnast_salute");
 
-	public static final String REVERT = "revert";
-	public static final String FIREBALL = "fireball";
-	public static final String TAIL_WHIP = "tail_whip";
-	public static final String TAIL_SPIN = "tail_spin";
-	public static final String GET_STAR = "get_star";
+	Identifier FIREBALL = makeID("fireball");
+	Identifier TAIL_WHIP = makeID("tail_whip");
+	Identifier TAIL_SPIN = makeID("tail_spin");
 
-	@Override
-	public Set<String> getVoiceLines() {
-		return Set.of(
-				SELECT,
-
+	static void addAll(ImmutableSet.Builder<Identifier> builder) {
+		builder.add(
 				BONK,
 				BURNT,
-				SHOCK,
-				DEATH,
 
 				DUCK,
 				DUCK_JUMP,
@@ -48,11 +40,9 @@ public class Voicelines implements VoicelineSetDefinition {
 				TRIPLE_JUMP,
 				GYMNAST_SALUTE,
 
-				REVERT,
 				FIREBALL,
 				TAIL_WHIP,
-				TAIL_SPIN,
-				GET_STAR
+				TAIL_SPIN
 		);
 	}
 }

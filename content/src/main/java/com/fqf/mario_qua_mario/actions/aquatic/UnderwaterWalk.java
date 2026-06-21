@@ -22,9 +22,6 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Set;
-
 public class UnderwaterWalk implements AquaticActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("underwater_walk");
 	@Override public @NotNull Identifier defineID() {
@@ -66,28 +63,6 @@ public class UnderwaterWalk implements AquaticActionDefinition {
 			}
 		);
 	}
-	@Override public @Nullable CameraAnimationSet defineCameraAnimations(AnimationHelper helper) {
-		return null;
-	}
-
-	@Override public @NotNull SlidingStatus defineSlidingStatus() {
-		return SlidingStatus.NOT_SLIDING;
-	}
-
-	@Override public @NotNull SneakingRule defineSneakingRule() {
-		return SneakingRule.ALLOW;
-	}
-	@Override public @NotNull SprintingRule defineSprintingRule() {
-		return SprintingRule.PROHIBIT;
-	}
-
-	@Override public @Nullable BappingRule defineBappingRule() {
-		return null;
-	}
-	@Override public @Nullable Identifier defineActiveCollisionAttack() {
-		return null;
-	}
-
 	public static CfaStat REDUCED_FORWARD_ACCEL = Submerged.FORWARD_SWIM_ACCEL.variateAndAddCategories(0.475, StatCategory.WALKING);
 	public static CfaStat REDUCED_FORWARD_SPEED = Submerged.FORWARD_SWIM_SPEED.variateAndAddCategories(0.475, StatCategory.WALKING);
 	public static CfaStat REDUCED_BACKWARD_ACCEL = Submerged.BACKWARD_SWIM_ACCEL.variateAndAddCategories(0.475, StatCategory.WALKING);
@@ -97,15 +72,6 @@ public class UnderwaterWalk implements AquaticActionDefinition {
 
 	public static CfaStat REDUCED_REDIRECTION = Submerged.SWIM_REDIRECTION.variateAndAddCategories(0.7, StatCategory.WALKING);
 
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return null;
-	}
-	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-
-	}
-	@Override public void serverTick(CfaAuthoritativeData data) {
-
-	}
 	@Override public void travelHook(CfaTravelData data, AquaticActionHelper helper) {
 		Submerged.waterMove(data, helper);
 		helper.aquaticAccel(
@@ -118,20 +84,19 @@ public class UnderwaterWalk implements AquaticActionDefinition {
 		);
 	}
 
-	public static final TransitionDefinition SUBMERGE = new TransitionDefinition(
-			ID,
-			data -> data.getImmersionPercent() > 0.5 && (data.getActionID() != LavaBoost.ID || data.getYVel() < 0),
-			EvaluatorEnvironment.COMMON
+	public static final ActionTransitionDetails SUBMERGE = Submerged.SUBMERGE.variate(
+			UnderwaterWalk.ID,
+			null
 	);
 
-	public static final TransitionDefinition EXIT_WATER = new TransitionDefinition(
+	public static final ActionTransitionDetails EXIT_WATER = new ActionTransitionDetails(
 			SubWalk.ID,
 			data -> data.getImmersionPercent() < 0.5,
 			EvaluatorEnvironment.COMMON
 	);
 
 	@Override
-	public void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, AquaticActionHelper helper) {
+	public void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AquaticActionHelper helper) {
 		builder.add(DuckWaddle.DUCK.variate(
 				UnderwaterDuck.ID,
 				null, null,
@@ -141,12 +106,12 @@ public class UnderwaterWalk implements AquaticActionDefinition {
 	}
 
 	@Override
-	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, AquaticActionHelper helper) {
+	public void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AquaticActionHelper helper) {
 		builder.add(Swim.SWIM);
 	}
 
 	@Override
-	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, AquaticActionHelper helper) {
+	public void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AquaticActionHelper helper) {
 		builder.add(
 				EXIT_WATER,
 				Fall.FALL.variate(Submerged.ID,

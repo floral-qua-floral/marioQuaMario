@@ -1,7 +1,7 @@
 package com.fqf.charaformact_api.definitions.states.actions;
 
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.IncompleteActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.google.common.collect.ImmutableList;
@@ -9,9 +9,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 /**
  * IMPORTANT: Vanilla dismounting logic is entirely disabled for anyone playing as a Character! You'll need to handle
@@ -48,13 +45,13 @@ public interface MountedActionDefinition extends IncompleteActionDefinition {
 		return false;
 	}
 
-	default void accumulateBasicTransitions(ImmutableList.Builder<TransitionDefinition> builder, MountedActionHelper helper) {
+	default void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, MountedActionHelper helper) {
 
 	}
-	default void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, MountedActionHelper helper) {
+	default void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, MountedActionHelper helper) {
 
 	}
-	default void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, MountedActionHelper helper) {
+	default void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, MountedActionHelper helper) {
 
 	}
 

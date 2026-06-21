@@ -13,6 +13,7 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
+import com.fqf.mario_qua_mario.actions.airborne.LavaBoost;
 import com.fqf.mario_qua_mario.actions.airborne.SpecialFall;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.google.common.collect.ImmutableList;
@@ -21,8 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
 
 import static com.fqf.charaformact_api.util.StatCategory.*;
 
@@ -150,26 +149,26 @@ public class Submerged implements AquaticActionDefinition {
 		drift(data, helper);
 	}
 
-	public static final TransitionDefinition SUBMERGE = UnderwaterWalk.SUBMERGE.variate(
+	public static final ActionTransitionDetails SUBMERGE = new ActionTransitionDetails(
 			ID,
-			null,
-			null,
+			data -> data.getImmersionPercent() > 0.5 && (data.getActionID() != LavaBoost.ID || data.getYVel() < 0),
+			EvaluatorEnvironment.COMMON,
 			data -> data.setYVel(data.getYVel() * 0.225),
 			null
 	);
 
-	public static final TransitionDefinition EXIT_WATER = new TransitionDefinition(
+	public static final ActionTransitionDetails EXIT_WATER = new ActionTransitionDetails(
 			SpecialFall.ID,
 			data -> data.getImmersionPercent() <= 0.3,
 			EvaluatorEnvironment.COMMON
 	);
 
 	@Override
-	public void accumulateInputTransitions(ImmutableList.Builder<TransitionDefinition> builder, AquaticActionHelper helper) {
+	public void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AquaticActionHelper helper) {
 		builder.add(
 				Swim.SWIM,
 				AquaticPoundFlip.AQUATIC_GROUND_POUND,
-				new TransitionDefinition(
+				new ActionTransitionDetails(
 						Paddle.ID,
 						data -> {
 							ActionTimerVars vars = data.retrieveStateData(ActionTimerVars.class);
@@ -185,7 +184,7 @@ public class Submerged implements AquaticActionDefinition {
 	}
 
 	@Override
-	public void accumulateCollisionTransitions(ImmutableList.Builder<TransitionDefinition> builder, AquaticActionHelper helper) {
+	public void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AquaticActionHelper helper) {
 		builder.add(
 				EXIT_WATER,
 				Fall.LANDING.variate(UnderwaterWalk.ID, null)

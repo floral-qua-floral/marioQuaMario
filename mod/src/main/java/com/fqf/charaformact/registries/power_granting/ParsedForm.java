@@ -1,5 +1,6 @@
 package com.fqf.charaformact.registries.power_granting;
 
+import com.fqf.charaformact.registries.ImmutableCollectionHelper;
 import com.fqf.charaformact.registries.ParsedAttackInterceptingState;
 import com.fqf.charaformact_api.definitions.states.AttackInterceptingStateDefinition;
 import com.fqf.charaformact_api.definitions.states.FormDefinition;
@@ -38,7 +39,7 @@ public class ParsedForm extends ParsedPowerGrantingState implements ParsedAttack
 		this.HEART = definition.defineFormHeart(new FormHeartHelperImpl(this.RESOURCE_ID));
 
 		List<AttackInterceptingStateDefinition.AttackInterceptionDefinition> interceptionDefinitions;
-		interceptionDefinitions = accumulateList(builder -> definition.accumulateAttackInterceptions(builder, AnimationHelperImpl.INSTANCE));
+		interceptionDefinitions = ImmutableCollectionHelper.accumulateList(builder -> definition.accumulateAttackInterceptions(builder, AnimationHelperImpl.INSTANCE));
 		this.INTERCEPTIONS = interceptionDefinitions.stream().map(interceptionDefinition ->
 				new ParsedAttackInterception(interceptionDefinition, false)).toList();
 	}

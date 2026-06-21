@@ -2,8 +2,8 @@ package com.fqf.mario_qua_mario.util;
 
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.StatCategory;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -141,8 +141,8 @@ public class ClimbTransitions {
 		data.playSound(group.getStepSound(), group.getPitch(), 1, seed);
 	}
 
-	private static TransitionDefinition makeNonSolidClimbingTransition(Identifier targetActionID, boolean directionality) {
-		return new TransitionDefinition(
+	private static ActionTransitionDetails makeNonSolidClimbingTransition(Identifier targetActionID, boolean directionality) {
+		return new ActionTransitionDetails(
 				targetActionID,
 				data -> inNonSolidClimbable(data, directionality) && (data.isServer() || tryingToStartClimbingIntangible(data)),
 				EvaluatorEnvironment.CLIENT_CHECKED,
@@ -162,9 +162,9 @@ public class ClimbTransitions {
 	public static final CfaStat CLIMB_JUMP_OFF_VEL = new CfaStat(0.8, StatCategory.JUMP_VELOCITY);
 	public static final CfaStat CLIMB_JUMP_OFF_HORIZ_VEL = new CfaStat(0.8, StatCategory.BACKWARD);
 
-	public static final TransitionDefinition CLIMB_NON_SOLID_DIRECTIONAL = makeNonSolidClimbingTransition(ClimbIntangibleDirectional.ID, true);
-	public static final TransitionDefinition CLIMB_NON_SOLID_NON_DIRECTIONAL = makeNonSolidClimbingTransition(ClimbPole.ID, false);
-	public static final TransitionDefinition CLIMB_SOLID = new TransitionDefinition(
+	public static final ActionTransitionDetails CLIMB_NON_SOLID_DIRECTIONAL = makeNonSolidClimbingTransition(ClimbIntangibleDirectional.ID, true);
+	public static final ActionTransitionDetails CLIMB_NON_SOLID_NON_DIRECTIONAL = makeNonSolidClimbingTransition(ClimbPole.ID, false);
+	public static final ActionTransitionDetails CLIMB_SOLID = new ActionTransitionDetails(
 			ClimbWall.ID,
 			data -> (MarioQuaMario.CONFIG.doAutoLadder() || data.getInputs().JUMP.isPressed()) &&
 					data.getRecordedCollisions().getAnyMatch((collision, block) ->

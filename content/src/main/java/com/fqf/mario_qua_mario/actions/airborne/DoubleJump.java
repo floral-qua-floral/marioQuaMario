@@ -1,10 +1,10 @@
 package com.fqf.mario_qua_mario.actions.airborne;
 
+import com.fqf.charaformact_api.definitions.TransitionInjectionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.GenericActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
-import com.fqf.charaformact_api.definitions.states.actions.util.TransitionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.TransitionInjectionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
@@ -19,7 +19,7 @@ import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Set;
+import java.util.function.ToIntFunction;
 
 import static com.fqf.charaformact_api.util.StatCategory.*;
 
@@ -61,7 +61,7 @@ public class DoubleJump extends Jump implements AirborneActionDefinition {
 	public static final CfaStat DOUBLE_JUMP_ADDEND = new CfaStat(0.3, JUMP_VELOCITY);
 	public static CfaStat DOUBLE_JUMP_SPEED_THRESHOLD = new CfaStat(0, WALKING, FORWARD, THRESHOLD);
 
-	public static final TransitionDefinition TRIPLE_JUMPABLE_LANDING = Fall.LANDING.variate(
+	public static final ActionTransitionDetails TRIPLE_JUMPABLE_LANDING = Fall.LANDING.variate(
 			null, null, null,
 			data -> MarioVars.get(data).canTripleJumpTicks = 3,
 			null
@@ -70,35 +70,44 @@ public class DoubleJump extends Jump implements AirborneActionDefinition {
 	@Override protected double getJumpCapThreshold() {
 		return 0.285;
 	}
-	@Override protected TransitionDefinition getLandingTransition() {
+	@Override protected ActionTransitionDetails getLandingTransition() {
 		return TRIPLE_JUMPABLE_LANDING;
 	}
 
-	private TransitionInjectionDefinition makeInjection(Identifier injectNearTransitionsTo) {
-		return new TransitionInjectionDefinition(
-				TransitionInjectionDefinition.InjectionPlacement.BEFORE,
-				injectNearTransitionsTo,
-				ActionCategory.GROUNDED,
-				(nearbyTransition, castableHelper) -> nearbyTransition.variate(
-						this.defineID(),
+	public static TransitionInjectionDefinition makeTransitionInjection(
+			Identifier transitionTo,
+			ToIntFunction<MarioVars> tickChecker, CfaStat requiredForwardSpeed,
+			CfaStat jumpVel, CfaStat addend, Identifier voiceline
+	) {
+		return new TransitionInjectionDefinition() {
+			@Override
+			public @Nullable InjectionPlacement getPlacementRelativeTo(ActionCategory fromCategory, Identifier fromID, ActionCategory toCategory, Identifier toID) {
+				return (fromCategory == ActionCategory.GROUNDED && (toID == Jump.ID || toID == PJump.ID)) ? InjectionPlacement.BEFORE : null;
+			}
+
+			@Override
+			public @NotNull ActionTransitionDetails makeTransition(ActionTransitionDetails nearbyTransition, GenericActionDefinition.CastableHelper helper) {
+				return nearbyTransition.variate(
+						transitionTo,
 						data ->
-								MarioVars.get(data).canDoubleJumpTicks > 0
-								&& data.getForwardVel() >= DOUBLE_JUMP_SPEED_THRESHOLD.get(data)
+								tickChecker.applyAsInt(MarioVars.get(data)) > 0
+								&& data.getForwardVel() >= requiredForwardSpeed.getAsLimit(data)
 								&& nearbyTransition.evaluator().shouldTransition(data),
 						null,
-						data -> ((GroundedActionDefinition.GroundedActionHelper) castableHelper)
-									.performJump(data, DOUBLE_JUMP_VEL, DOUBLE_JUMP_ADDEND),
+						data -> helper.asGrounded().performJump(data, jumpVel, addend),
 						(data, isSelf, seed) -> {
 							data.playJumpSound(seed);
-							data.voice(Voicelines.DOUBLE_JUMP, seed);
+							data.voice(voiceline, seed);
 						}
-				)
-		);
+				);
+			}
+		};
 	}
-	@Override public @NotNull Set<TransitionInjectionDefinition> getTransitionInjections() {
-		return Set.of(
-			this.makeInjection(Jump.ID),
-			this.makeInjection(PJump.ID)
-		);
-	}
+
+	public static final TransitionInjectionDefinition INJECTION = makeTransitionInjection(
+			DoubleJump.ID,
+			vars -> vars.canDoubleJumpTicks,
+			DOUBLE_JUMP_SPEED_THRESHOLD,
+			DOUBLE_JUMP_VEL, DOUBLE_JUMP_ADDEND, Voicelines.DOUBLE_JUMP
+	);
 }
