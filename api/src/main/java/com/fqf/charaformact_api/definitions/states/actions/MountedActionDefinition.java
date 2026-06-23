@@ -36,13 +36,8 @@ public interface MountedActionDefinition extends IncompleteActionDefinition {
 		return Text.empty();
 	}
 
-	/**
-	 * @return Return true to cancel the vanilla player physics. Return false to allow vanilla player physics to apply.
-	 * This only affects the player, not the mount. It probably doesn't matter what you return here, since vanilla
-	 * physics do almost nothing to the player while mounted.
-	 */
-	default boolean travel(CfaTravelData data, Entity mount, MountedActionHelper helper) {
-		return false;
+	default void travel(CfaTravelData data, Entity mount, MountedActionHelper helper) {
+
 	}
 
 	default void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, MountedActionHelper helper) {

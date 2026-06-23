@@ -47,7 +47,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 		// Only perform collision attack checks on movement that comes from a player packet (as opposed to server-side travel).
 		// Should this change??
 		long time = this.getWorld().getTime();
-		if(data.isEnabled() && data.doCustomTravel() && data.getAction().COLLISION_ATTACK_TYPE != null
+		if(data.isEnabled() && data.doCustomTravel(false) && data.getAction().COLLISION_ATTACK_TYPE != null
 				&& (movementType == MovementType.PLAYER || movementType == MovementType.SELF)
 				&& time != this.ticksAfterCollisionAttack && time != this.ticksAfterCollisionAttack - 1)
 			movement = data.getAction().COLLISION_ATTACK_TYPE.moveHook(data, movement);

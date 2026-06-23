@@ -22,13 +22,12 @@ import org.jetbrains.annotations.Nullable;
 public class DebugSprint extends Debug {
 	public static final Identifier ID = MarioQuaMario.makeID("debug_test");
 
-	@Override public boolean travelHook(CfaTravelData data) {
+	@Override public void travelHook(CfaTravelData data) {
 		data.setStrafeVel(data.getInputs().getStrafeInput() * 0.5);
 
 		double pitchRadians = Math.toRadians(data.getPlayer().getPitch());
 		data.setForwardVel(data.getInputs().getForwardInput() * Math.cos(pitchRadians));
 		data.setYVel(data.getInputs().getForwardInput() * -Math.sin(pitchRadians));
-		return true;
 	}
 
 	@Override

@@ -31,7 +31,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
 	@Inject(method = "canSprint", at = @At("HEAD"), cancellable = true)
 	private void preventSprinting(CallbackInfoReturnable<Boolean> cir) {
-		if(this.cfa$getCfaData().doCustomTravel()) switch( this.cfa$getCfaData().getAction().SPRINTING_RULE) {
+		if(this.cfa$getCfaData().doCustomTravel(false)) switch( this.cfa$getCfaData().getAction().SPRINTING_RULE) {
 			case ALLOW:
 				break;
 			case IF_ALREADY_SPRINTING:
@@ -53,12 +53,12 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
 	@WrapOperation(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isUsingItem()Z"))
 	private boolean moveFastWithItem(ClientPlayerEntity instance, Operation<Boolean> original) {
-		return (!this.cfa$getCfaData().doCustomTravel() || instance.isOnGround()) && original.call(instance);
+		return (!this.cfa$getCfaData().doCustomTravel(false) || instance.isOnGround()) && original.call(instance);
 	}
 
 	@Inject(method = "shouldSlowDown", at = @At("HEAD"), cancellable = true)
 	private void preventSlowDown(CallbackInfoReturnable<Boolean> cir) {
-		if(this.cfa$getCfaData().doCustomTravel()) cir.setReturnValue(false);
+		if(this.cfa$getCfaData().doCustomTravel(false)) cir.setReturnValue(false);
 	}
 
 	@Inject(method = "isInSneakingPose", at = @At("HEAD"), cancellable = true)

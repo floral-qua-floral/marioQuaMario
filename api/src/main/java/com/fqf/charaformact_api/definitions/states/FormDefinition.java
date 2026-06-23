@@ -13,6 +13,9 @@ public interface FormDefinition extends StatAlteringStateDefinition, AttackInter
 		return 1;
 	}
 
+	default boolean doFlickerAnimation() {
+		return true;
+	}
 	default @Nullable SoundEvent defineReversionSound() {
 		return null;
 	}

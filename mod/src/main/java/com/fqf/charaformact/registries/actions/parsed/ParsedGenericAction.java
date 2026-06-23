@@ -21,7 +21,8 @@ public class ParsedGenericAction extends AbstractParsedAction {
 	@Override
 	public boolean travelHook(CfaMoveableData data) {
 		data.jumpCapped = false;
-		return this.GENERIC_DEFINITION.travelHook(data);
+		this.GENERIC_DEFINITION.travelHook(data);
+		return true;
 	}
 
 	@Override

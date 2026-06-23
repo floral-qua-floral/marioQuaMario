@@ -150,9 +150,9 @@ public class CfaServerPlayerData extends CfaMoveableData implements CfaAuthorita
 
 	private ParsedCommonAppearance appearance;
 	@Override public void updateAppearance() {
-		this.appearance = CommonAppearanceCollector.INSTANCE.get(new AppearanceKey(
+		this.appearance = this.isEnabled() ? CommonAppearanceCollector.INSTANCE.get(new AppearanceKey(
 				this.getCharacter(), this.getForm()
-		));
+		)) : null;
 	}
 	@Override public @Nullable ParsedCommonAppearance getAppearance() {
 		return this.appearance;
@@ -190,22 +190,21 @@ public class CfaServerPlayerData extends CfaMoveableData implements CfaAuthorita
 	}
 
 	@Override
-	public boolean travelHook(double forwardInput, double strafeInput) {
+	public void customTravel(boolean cancelVanillaTravel, double forwardInput, double strafeInput) {
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.BASIC);
 		// Check for Elytra and Creative Flight
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION_EARLY);
 
-		boolean cancelVanillaTravel = this.getAction().travelHook(this);
+		this.getAction().travelHook(this);
 
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.INPUT);
 
 		this.applyModifiedVelocity();
-		this.getPlayer().move(MovementType.SELF, this.getMovementWithFluidPushingAndNudgeVel());
+		if(cancelVanillaTravel) this.getPlayer().move(MovementType.SELF, this.getMovementWithFluidPushingAndNudgeVel());
 
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION);
 
 		this.getPlayer().updateLimbs(false);
-		return cancelVanillaTravel;
 	}
 
 	@Override

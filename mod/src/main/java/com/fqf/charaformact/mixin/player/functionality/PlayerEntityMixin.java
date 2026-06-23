@@ -7,7 +7,6 @@ import com.fqf.charaformact.bapping.WorldBapsInfo;
 import com.fqf.charaformact.cfadata.CfaMoveableData;
 import com.fqf.charaformact.cfadata.CfaPlayerData;
 import com.fqf.charaformact.cfadata.injections.AdvCfaDataHolder;
-import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import com.fqf.charaformact.registries.actions.parsed.ParsedWallboundAction;
 import com.fqf.charaformact.util.CfaGamerules;
 import com.fqf.charaformact.util.EntitiesMixinInterface;
@@ -19,12 +18,10 @@ import com.fqf.charaformact_api.definitions.states.actions.util.WallBodyAlignmen
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerModelPart;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
@@ -32,7 +29,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameMode;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -63,20 +59,22 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDa
 	@Inject(method = "travel", at = @At("HEAD"), cancellable = true)
 	private void travelHook(Vec3d movementInput, CallbackInfo ci) {
 		if(this.cfa$getCfaData() instanceof CfaMoveableData moveableData
-				&& moveableData.doCustomTravel()
-				&& !this.getWeaponStack().isOf(Items.FIREWORK_STAR)
-				&& moveableData.travelHook(movementInput.z, movementInput.x)) {
+				&& moveableData.doCustomTravel(true)) {
 
-			// SABLE COMPATIBILITY
-			try {
-				this.skippingThroughLivingEntityTravel = true;
-				super.travel(movementInput);
-			}
-			finally {
-				this.skippingThroughLivingEntityTravel = false;
-			}
+			boolean cancelVanillaTravel = moveableData.actionPreventsVanillaTravel();
+			moveableData.customTravel(cancelVanillaTravel, movementInput.z, movementInput.x);
+			if(cancelVanillaTravel) {
+				// SABLE COMPATIBILITY
+				try {
+					this.skippingThroughLivingEntityTravel = true;
+					super.travel(movementInput);
+				}
+				finally {
+					this.skippingThroughLivingEntityTravel = false;
+				}
 
-			ci.cancel();
+				ci.cancel();
+			}
 		}
 	}
 
@@ -98,13 +96,13 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDa
 
 	@Inject(method = "shouldSwimInFluids", at = @At("HEAD"), cancellable = true)
 	private void preventVanillaSwimming(CallbackInfoReturnable<Boolean> cir) {
-		if(cfa$getCfaData().doCustomTravel())
+		if(cfa$getCfaData().doCustomTravel(false))
 			cir.setReturnValue(false);
 	}
 
 	@Inject(method = "isPushedByFluids", at = @At("HEAD"), cancellable = true)
 	private void preventVanillaFluidPushing(CallbackInfoReturnable<Boolean> cir) {
-		if(cfa$getCfaData().doCustomTravel())
+		if(cfa$getCfaData().doCustomTravel(false))
 			cir.setReturnValue(false);
 	}
 
@@ -141,7 +139,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDa
 	@Inject(method = "clipAtLedge", at = @At("HEAD"), cancellable = true)
 	private void slideOffLedges(CallbackInfoReturnable<Boolean> cir) {
 		CfaPlayerData data = cfa$getCfaData();
-		if(data.doCustomTravel() && data.getAction().SNEAKING_RULE == SneakingRule.SLIP)
+		if(data.doCustomTravel(false) && data.getAction().SNEAKING_RULE == SneakingRule.SLIP)
 			cir.setReturnValue(false);
 	}
 
@@ -182,7 +180,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDa
 
 	@WrapWithCondition(method = "jump", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;jump()V"))
 	private boolean preventLivingEntityJump(LivingEntity instance) {
-		return !cfa$getCfaData().doCustomTravel();
+		return !cfa$getCfaData().doCustomTravel(false);
 	}
 
 	@Inject(method = "writeCustomDataToNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;writeCustomDataToNbt(Lnet/minecraft/nbt/NbtCompound;)V", shift = At.Shift.AFTER))

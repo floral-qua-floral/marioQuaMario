@@ -195,7 +195,7 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 		this.INPUTS.updateButtons();
 	}
 
-	@Override public boolean travelHook(double forwardInput, double strafeInput) {
+	@Override public void customTravel(boolean cancelVanillaTravel, double forwardInput, double strafeInput) {
 		this.HELD_TRANSITION_PACKETS.clear();
 		this.INPUTS.updateAnalog(forwardInput, strafeInput);
 
@@ -203,7 +203,7 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 		// Check for Elytra and Creative Flight
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION_EARLY);
 
-		boolean cancelVanillaTravel = this.getAction().travelHook(this);
+		this.getAction().travelHook(this);
 
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.INPUT);
 
@@ -229,8 +229,6 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 		// ^ Needed for Presence Footsteps compatibility
 
 		this.getPlayer().updateLimbs(false);
-
-		return cancelVanillaTravel;
 	}
 
 	public final List<CustomPayload> HELD_TRANSITION_PACKETS = new ArrayList<>();

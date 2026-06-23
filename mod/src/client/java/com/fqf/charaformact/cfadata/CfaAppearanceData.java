@@ -116,7 +116,7 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 	}
 
 	public void conditionallyFlicker() {
-		this.flickerUntil = this.PLAYER.getWorld().getTime() + 9L;
+		if(this.DATA.getForm().DO_FLICKER_ANIMATION) this.flickerUntil = this.PLAYER.getWorld().getTime() + 9L;
 	}
 
 	public void updateAppearance() {
@@ -124,6 +124,8 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 		this.flickerRenderer = this.renderer;
 
 		@Nullable Pair<ParsedClientAppearance, AppearanceRenderer> newModelAndRenderer = null;
+
+		// FIXME: Head lerping causes head to turn left & right when strafing during an animation :(
 
 		if(this.DATA.isEnabled()) {
 			ParsedCharacter character = this.DATA.getCharacter();

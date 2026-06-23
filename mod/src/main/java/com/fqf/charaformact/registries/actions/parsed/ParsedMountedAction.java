@@ -37,7 +37,8 @@ public class ParsedMountedAction extends AbstractParsedAction {
 	public boolean travelHook(CfaMoveableData data) {
 		data.jumpCapped = false;
 		UniversalActionDefinitionHelper helper = UniversalActionDefinitionHelper.INSTANCE;
-		return this.MOUNTED_DEFINITION.travel(data, helper.getMount(data), helper);
+		this.MOUNTED_DEFINITION.travel(data, helper.getMount(data), helper);
+		return true;
 	}
 
 	@Override

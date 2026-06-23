@@ -8,9 +8,11 @@ import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.NotNull;
 
 public interface GenericActionDefinition extends IncompleteActionDefinition {
-	@NotNull GenericActionType getGenericActionType();
+	default @NotNull GenericActionType getGenericActionType() {
+		return GenericActionType.UNSPECIFIED;
+	}
 
-	boolean travelHook(CfaTravelData data);
+	void travelHook(CfaTravelData data);
 
 	default void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, CastableHelper helper) {
 

@@ -9,6 +9,7 @@ import com.fqf.charaformact.util.DirectionBasedWallInfo;
 import com.fqf.charaformact.util.AdvancedWallInfo;
 import com.fqf.charaformact_api.definitions.states.StatAlteringStateDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
+import com.fqf.charaformact_api.definitions.states.actions.util.GenericActionType;
 import com.fqf.charaformact_api.definitions.states.actions.util.WallBodyAlignment;
 import com.fqf.charaformact.registries.ParsedCfaState;
 import com.fqf.charaformact.registries.actions.AbstractParsedAction;
@@ -46,9 +47,6 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 		this.form = null;
 		this.action = null;
 		this.updateCharacterFormCombo();
-		this.updatePassiveUniversalTraits(false);
-	}
-	public void updatePassiveUniversalTraits(boolean enabled) {
 	}
 
 	private AbstractParsedAction action;
@@ -119,9 +117,7 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 		this.form = character.INITIAL_FORM;
 		this.action = character.getInitialAction(this);
 		this.setActionTransitionless(this.action);
-		this.setFormTransitionless(character.INITIAL_FORM);
-		updateCharacterFormCombo();
-		this.updatePassiveUniversalTraits(true);
+		this.setFormTransitionless(character.INITIAL_FORM); // <- This updates CharaForm combo already!
 	}
 
 	public void setupCustomVars(ParsedCfaState oldThing, ParsedCfaState newThing) {
@@ -273,10 +269,14 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 		return clazz.cast(customData);
 	}
 
-	public boolean doCustomTravel() {
+	public boolean actionPreventsVanillaTravel() {
+		return this.getAction().GENERIC_ACTION_TYPE == GenericActionType.UNSPECIFIED;
+	}
+
+	public boolean doCustomTravel(boolean ignoreAction) {
 		return
 				this.isEnabled()
-						// TODO: Add "ultralight" characters that use vanilla travel always
+				&& (ignoreAction || this.actionPreventsVanillaTravel())
 				&& !this.getPlayer().getAbilities().flying // this means "currently flying", not "can fly"
 				&& !this.getPlayer().isFallFlying()
 				&& !this.getPlayer().isUsingRiptide() // do i want to keep this here?

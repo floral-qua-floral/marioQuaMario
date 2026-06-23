@@ -16,6 +16,7 @@ public class ParsedForm extends ParsedPowerGrantingState implements ParsedAttack
 	public final Identifier REVERSION_TARGET_ID;
 	public final int VALUE;
 
+	public final boolean DO_FLICKER_ANIMATION;
 	public final @Nullable SoundEvent REVERSION_SOUND;
 	public final @Nullable SoundEvent ACQUISITION_SOUND;
 	public final float VOICE_PITCH;
@@ -28,6 +29,7 @@ public class ParsedForm extends ParsedPowerGrantingState implements ParsedAttack
 	public ParsedForm(Identifier id, FormDefinition definition) {
 		super(id, definition);
 
+		this.DO_FLICKER_ANIMATION = definition.doFlickerAnimation();
 		this.REVERSION_TARGET_ID = definition.defineReversionTarget();
 		this.VALUE = definition.defineValue();
 

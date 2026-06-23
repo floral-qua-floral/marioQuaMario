@@ -45,21 +45,16 @@ public class Debug implements GenericActionDefinition {
 		return SlidingStatus.SLIDING_SILENT;
 	}
 
-	@Override public @NotNull GenericActionType getGenericActionType() {
-		return GenericActionType.UNSPECIFIED;
-	}
-
 	@Override public @Nullable Object provideStateData(CfaData data) {
 		return new ActionTimerVars();
 	}
 	@Override public void serverTick(CfaAuthoritativeData data) {
 		data.getPlayer().setHealth(20);
 	}
-	@Override public boolean travelHook(CfaTravelData data) {
+	@Override public void travelHook(CfaTravelData data) {
 		ActionTimerVars.get(data).actionTimer++;
 		data.setForwardStrafeVel(data.getInputs().getForwardInput() * 0.5, data.getInputs().getStrafeInput() * 0.5);
 		data.setYVel(data.getInputs().JUMP.isHeld() ? 0.4 : (data.getInputs().DUCK.isHeld() ? -0.4 : (0.03 * Math.sin(ActionTimerVars.get(data).actionTimer++ / 16.0))));
-		return true;
 	}
 
 	@Override

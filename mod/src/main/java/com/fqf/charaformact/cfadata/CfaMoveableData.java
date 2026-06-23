@@ -102,9 +102,6 @@ public abstract class CfaMoveableData extends CfaPlayerData implements CfaTravel
 		double deltaYaw = this.getPlayer().getYaw() - this.prevYaw;
 		this.prevYaw = this.getPlayer().getYaw();
 		this.smoothedDeltaYaw = MathHelper.lerp(0.2, this.smoothedDeltaYaw, deltaYaw);
-//		double deltaYawDiff = deltaYaw - smoothedDeltaYaw;
-//		if(Math.abs(deltaYawDiff) > 0.1) this.smoothedDeltaYaw += 0.1 * Math.signum(deltaYawDiff);
-//		else this.smoothedDeltaYaw = deltaYaw;
 	}
 
 	@Override public void setForwardVel(double forward) {
@@ -292,7 +289,12 @@ public abstract class CfaMoveableData extends CfaPlayerData implements CfaTravel
 				ChunkSectionPos.getSectionCoord(this.getPlayer().getBlockPos().getZ())).isEmpty();
 	}
 
-	public abstract boolean travelHook(double forwardInput, double strafeInput);
+//	@Override
+//	public boolean didCustomTravel() {
+//		return super.didCustomTravel() && ;
+//	}
+
+	public abstract void customTravel(boolean cancelVanillaTravel, double forwardInput, double strafeInput);
 
 	public boolean applyLevitation() {
 		StatusEffectInstance levitationEffect = this.getPlayer().getStatusEffect(StatusEffects.LEVITATION);

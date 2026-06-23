@@ -2,6 +2,7 @@ package com.fqf.mario_qua_mario.actions.generic;
 
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.GenericActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.GenericActionType;
 import com.fqf.charaformact_api.definitions.states.actions.util.SlidingStatus;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import net.minecraft.util.Identifier;
@@ -16,7 +17,12 @@ public class DebugVanillaTravel extends Debug implements GenericActionDefinition
 	}
 
 	@Override
-	public boolean travelHook(CfaTravelData data) {
-		return false;
+	public @NotNull GenericActionType getGenericActionType() {
+		return GenericActionType.VANILLA_TRAVEL;
+	}
+
+	@Override
+	public void travelHook(CfaTravelData data) {
+
 	}
 }

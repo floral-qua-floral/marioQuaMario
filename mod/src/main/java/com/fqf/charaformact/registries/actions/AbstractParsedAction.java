@@ -6,6 +6,7 @@ import com.fqf.charaformact.registries.*;
 import com.fqf.charaformact_api.definitions.TransitionInjectionDefinition;
 import com.fqf.charaformact_api.definitions.states.AttackInterceptingStateDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.GenericActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.MountedActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
@@ -26,7 +27,7 @@ public abstract class AbstractParsedAction extends ParsedCfaState implements Par
 
 	public final SneakingRule SNEAKING_RULE;
 	public final SprintingRule SPRINTING_RULE;
-	public final @Nullable GenericActionType GENERIC_ACTION_TYPE;
+	public final @NotNull GenericActionType GENERIC_ACTION_TYPE;
 
 	public final @NotNull BappingRule BAPPING_RULE;
 	public final @Nullable ParsedCollisionAttack COLLISION_ATTACK_TYPE;
@@ -57,7 +58,11 @@ public abstract class AbstractParsedAction extends ParsedCfaState implements Par
 
 		this.SNEAKING_RULE = definition.defineSneakingRule();
 		this.SPRINTING_RULE = definition.defineSprintingRule();
-		this.GENERIC_ACTION_TYPE = (definition instanceof GenericActionDefinition genericDefinition ? genericDefinition.getGenericActionType() : null);
+		this.GENERIC_ACTION_TYPE = switch (definition) {
+			case GenericActionDefinition genericDefinition -> genericDefinition.getGenericActionType();
+			case MountedActionDefinition ignored -> GenericActionType.VANILLA_TRAVEL;
+			default -> GenericActionType.UNSPECIFIED;
+		};
 
 		BappingRule bappingRule = definition.defineBappingRule();
 		this.BAPPING_RULE = bappingRule == null ? NULL_EQUIVALENT : bappingRule;

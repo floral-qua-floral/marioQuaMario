@@ -102,9 +102,6 @@ public class ClimbPole implements GenericActionDefinition {
 	@Override public @NotNull SprintingRule defineSprintingRule() {
 		return SprintingRule.PROHIBIT;
 	}
-	@Override public @NotNull GenericActionType getGenericActionType() {
-		return GenericActionType.UNSPECIFIED;
-	}
 
 	public static final CfaStat CLIMB_SPEED = new CfaStat(0.2, StatCategory.UP, StatCategory.SPEED, StatCategory.CLIMBING);
 
@@ -114,13 +111,12 @@ public class ClimbPole implements GenericActionDefinition {
 	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 		data.forceBodyAlignment(true);
 	}
-	@Override public boolean travelHook(CfaTravelData data) {
+	@Override public void travelHook(CfaTravelData data) {
 		double forwardInput = data.getInputs().getForwardInput() * (data.getInputs().DUCK.isHeld() ? 0.3 : 1);
 		data.setYVel(forwardInput * CLIMB_SPEED.get(data));
 		data.centerLaterally();
 		data.setForwardStrafeVel(0, 0);
 		data.getPlayer().fallDistance = 0;
-		return true;
 	}
 
 	private static void releasePole(CfaTravelData data) {
