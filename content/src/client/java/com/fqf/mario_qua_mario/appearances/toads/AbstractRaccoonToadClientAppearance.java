@@ -2,18 +2,12 @@ package com.fqf.mario_qua_mario.appearances.toads;
 
 import com.fqf.charaformact_api.appearance.AppearanceGeometryHelper;
 import com.fqf.mario_qua_mario.appearances.util.RaccoonUtil;
-import com.fqf.mario_qua_mario.forms.Raccoon;
 import net.minecraft.client.model.ModelPartData;
-import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
 public abstract class AbstractRaccoonToadClientAppearance extends AbstractToadClientAppearance {
-	@Override public @NotNull Identifier getFormID() {
-		return Raccoon.ID;
-	}
 
 	@Override
 	public ModelPartData makeHead(ModelPartData root, AppearanceGeometryHelper helper) {

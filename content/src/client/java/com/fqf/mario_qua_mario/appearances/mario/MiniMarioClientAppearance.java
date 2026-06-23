@@ -10,6 +10,7 @@ import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.EntityModelPartNames;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
@@ -17,7 +18,7 @@ import org.joml.Vector3i;
 
 public class MiniMarioClientAppearance extends MiniMarioCommonAppearance implements ClientAppearanceDefinition {
 	@Override
-	public @NotNull Vector2i getTextureSize() {
+	public @NotNull Vector2i defineTextureSize() {
 		return new Vector2i(32, 32);
 	}
 
@@ -65,8 +66,8 @@ public class MiniMarioClientAppearance extends MiniMarioCommonAppearance impleme
 	}
 
 	@Override
-	public void accumulateCustomFeatureRenderers(ImmutableList.Builder<FeatureRenderer<AbstractClientPlayerEntity, AppearanceModel>> builder, FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel> featureRendererContext, EntityRendererFactory.Context ctx) {
-		builder.add(CustomizableTextureLayerFeature.makeOptionalSkinFeature(featureRendererContext, "mini", this));
+	public void accumulateCustomFeatureRenderers(Identifier texture, ImmutableList.Builder<FeatureRenderer<AbstractClientPlayerEntity, AppearanceModel>> builder, FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel> featureRendererContext, EntityRendererFactory.Context ctx) {
+		builder.add(CustomizableTextureLayerFeature.makeOptionalSkinFeature(featureRendererContext, texture, "mini"));
 	}
 
 	@Override

@@ -1,7 +1,6 @@
 package com.fqf.mario_qua_mario.appearances.util;
 
 import com.fqf.charaformact_api.appearance.AppearanceModel;
-import com.fqf.charaformact_api.appearance.ClientAppearanceDefinition;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.customization.CustomizablePlayerEntity;
 import com.google.common.collect.ImmutableList;
@@ -25,48 +24,12 @@ public abstract class CustomizableTextureLayerFeature<TrackedType> extends Featu
 	private final Identifier TEXTURE;
 	protected final TrackedData<TrackedType> TRACKED_DATA;
 
-	public CustomizableTextureLayerFeature(FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel> context, String character, String folder, String layer, TrackedData<TrackedType> trackedData) {
+	public CustomizableTextureLayerFeature(FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel> context, Identifier texture, String folder, String layer, TrackedData<TrackedType> trackedData) {
 		super(context);
 
-		this.TEXTURE = Identifier.of("mario_qua_mario", "textures/entity/player/appearance/" + character + "/features/" + folder + "/" + layer + ".png");
+		this.TEXTURE = Identifier.of(texture.getNamespace(), texture.getPath().substring(0, texture.getPath().lastIndexOf('/')) + "/features/" + folder + "/" + layer + ".png");
 		MarioQuaMario.LOGGER.info("Made a customizable texture feature with path {}", this.TEXTURE);
 		this.TRACKED_DATA = trackedData;
-	}
-
-	public enum SpotsMode {
-		DEFAULT,
-		INVERTED,
-		HARDCODED
-	}
-
-	public static FeatureRenderer<AbstractClientPlayerEntity, AppearanceModel> makeOptionalSkinFeature(FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel> context, String folder, ClientAppearanceDefinition definition) {
-		return new TracksIntegerAndBoolean(context, definition.getCharacterID().getPath(), folder, "skin", SKIN_COLOR, ALWAYS_USE_SKIN_COLOR);
-	}
-
-	public static List<FeatureRenderer<AbstractClientPlayerEntity, AppearanceModel>> makeCustomToadFeatures(FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel> context, String folder, SpotsMode spots) {
-		ImmutableList.Builder<FeatureRenderer<AbstractClientPlayerEntity, AppearanceModel>> builder = ImmutableList.builderWithExpectedSize(spots == SpotsMode.HARDCODED ? 3 : 5);
-
-		builder.add(new TracksInteger(context, folder, "skin", SKIN_COLOR));
-
-		switch(spots) {
-			case DEFAULT:
-				builder.add(
-						new TracksInteger(context, folder, "cap", CAP_COLOR),
-						new TracksInteger(context, folder, "spots", SPOTS_COLOR)
-				);
-				break;
-			case INVERTED:
-				builder.add(new TracksInteger(context, folder, "spots", CAP_COLOR));
-			case HARDCODED: // Switch-case fallthrough my beloved!!!!!!!!!!!
-				builder.add(new TracksInteger(context, folder, "cap", SPOTS_COLOR));
-		}
-
-		// If spots are hard-coded, then vest color always is too
-		if(spots != SpotsMode.HARDCODED) builder.add(new TracksInteger(context, folder, "vest", VEST_COLOR));
-
-		builder.add(new TracksOptionalInteger(context, folder, "shirt", SHIRT_COLOR));
-
-		return builder.build();
 	}
 
 	@Override
@@ -83,9 +46,45 @@ public abstract class CustomizableTextureLayerFeature<TrackedType> extends Featu
 
 	protected abstract int getColor(TrackedType trackedValue);
 
+	public enum SpotsMode {
+		DEFAULT,
+		INVERTED,
+		HARDCODED
+	}
+
+	public static FeatureRenderer<AbstractClientPlayerEntity, AppearanceModel> makeOptionalSkinFeature(FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel> context, Identifier texture, String folder) {
+		return new TracksIntegerAndBoolean(context, texture, folder, "skin", SKIN_COLOR, ALWAYS_USE_SKIN_COLOR);
+	}
+
+	public static List<FeatureRenderer<AbstractClientPlayerEntity, AppearanceModel>> makeCustomToadFeatures(FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel> context, Identifier texture, String folder, SpotsMode spots) {
+		ImmutableList.Builder<FeatureRenderer<AbstractClientPlayerEntity, AppearanceModel>> builder = ImmutableList.builderWithExpectedSize(spots == SpotsMode.HARDCODED ? 3 : 5);
+
+		builder.add(new TracksInteger(context, texture, folder, "skin", SKIN_COLOR));
+
+		switch(spots) {
+			case DEFAULT:
+				builder.add(
+						new TracksInteger(context, texture, folder, "cap", CAP_COLOR),
+						new TracksInteger(context, texture, folder, "spots", SPOTS_COLOR)
+				);
+				break;
+			case INVERTED:
+				builder.add(new TracksInteger(context, texture, folder, "spots", CAP_COLOR));
+			case HARDCODED: // Switch-case fallthrough my beloved!!!!!!!!!!!
+				builder.add(new TracksInteger(context, texture, folder, "cap", SPOTS_COLOR));
+		}
+
+		// If spots are hard-coded, then vest color always is too
+		if(spots != SpotsMode.HARDCODED) builder.add(new TracksInteger(context, texture, folder, "vest", VEST_COLOR));
+
+		builder.add(new TracksOptionalInteger(context, texture, folder, "shirt", SHIRT_COLOR));
+
+		return builder.build();
+	}
+
 	private static class TracksInteger extends CustomizableTextureLayerFeature<Integer> {
-		public TracksInteger(FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel> context, String folder, String layer, TrackedData<Integer> trackedData) {
-			super(context, "customizable_toad", folder, layer, trackedData);
+		public TracksInteger(FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel> context, Identifier texture, String folder, String layer, TrackedData<Integer> trackedData) {
+			super(context, texture, folder, layer, trackedData);
 		}
 
 		@Override
@@ -95,8 +94,8 @@ public abstract class CustomizableTextureLayerFeature<TrackedType> extends Featu
 	}
 
 	private static class TracksOptionalInteger extends CustomizableTextureLayerFeature<OptionalInt> {
-		public TracksOptionalInteger(FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel> context, String folder, String layer, TrackedData<OptionalInt> trackedData) {
-			super(context, "customizable_toad", folder, layer, trackedData);
+		public TracksOptionalInteger(FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel> context, Identifier texture, String folder, String layer, TrackedData<OptionalInt> trackedData) {
+			super(context, texture, folder, layer, trackedData);
 		}
 
 		@Override
@@ -113,8 +112,8 @@ public abstract class CustomizableTextureLayerFeature<TrackedType> extends Featu
 	private static class TracksIntegerAndBoolean extends CustomizableTextureLayerFeature<Integer> {
 		private final TrackedData<Boolean> TRACKED_BOOLEAN;
 
-		public TracksIntegerAndBoolean(FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel> context, String character, String folder, String layer, TrackedData<Integer> trackedInteger, TrackedData<Boolean> trackedBoolean) {
-			super(context, character, folder, layer, trackedInteger);
+		public TracksIntegerAndBoolean(FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel> context, Identifier texture, String folder, String layer, TrackedData<Integer> trackedInteger, TrackedData<Boolean> trackedBoolean) {
+			super(context, texture, folder, layer, trackedInteger);
 			this.TRACKED_BOOLEAN = trackedBoolean;
 		}
 

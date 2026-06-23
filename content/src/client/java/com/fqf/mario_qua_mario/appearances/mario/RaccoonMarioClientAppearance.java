@@ -4,7 +4,6 @@ import com.fqf.charaformact_api.appearance.AppearanceGeometryHelper;
 import com.fqf.charaformact_api.appearance.AppearanceModel;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.appearances.util.RaccoonUtil;
-import com.fqf.mario_qua_mario.forms.Raccoon;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.model.ModelPartData;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -12,22 +11,11 @@ import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
-import java.util.List;
-
-public class RaccoonMarioClientAppearance extends AbstractMarioClientAppearance {
+public class RaccoonMarioClientAppearance extends SuperMarioClientAppearance {
 	public static final Identifier ID = MarioQuaMario.makeID("raccoon_mario");
-	@Override public @NotNull Identifier getID() {
-	    return ID;
-	}
-
-	@Override
-	public @NotNull Identifier getFormID() {
-		return Raccoon.ID;
-	}
 
 	@Override
 	public ModelPartData makeTorso(ModelPartData root, AppearanceGeometryHelper helper) {
@@ -52,8 +40,8 @@ public class RaccoonMarioClientAppearance extends AbstractMarioClientAppearance 
 	}
 
 	@Override
-	public void accumulateCustomFeatureRenderers(ImmutableList.Builder<FeatureRenderer<AbstractClientPlayerEntity, AppearanceModel>> builder, FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel> featureRendererContext, EntityRendererFactory.Context ctx) {
-		super.accumulateCustomFeatureRenderers(builder, featureRendererContext, ctx);
-		builder.add(new RaccoonUtil.RaccoonFormEyesFeatureRenderer(featureRendererContext, this));
+	public void accumulateCustomFeatureRenderers(Identifier texture, ImmutableList.Builder<FeatureRenderer<AbstractClientPlayerEntity, AppearanceModel>> builder, FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel> featureRendererContext, EntityRendererFactory.Context ctx) {
+		super.accumulateCustomFeatureRenderers(texture, builder, featureRendererContext, ctx);
+		builder.add(new RaccoonUtil.RaccoonFormEyesFeatureRenderer(featureRendererContext, texture));
 	}
 }

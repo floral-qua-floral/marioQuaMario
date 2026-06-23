@@ -1,6 +1,5 @@
 package com.fqf.charaformact.appearance;
 
-import com.fqf.charaformact_api.appearance.AppearanceModel;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
 import net.fabricmc.fabric.impl.client.rendering.RegistrationHelperImpl;
 import net.fabricmc.fabric.mixin.client.rendering.LivingEntityRendererAccessor;
@@ -8,17 +7,18 @@ import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
-import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.Identifier;
 
+import java.util.function.Function;
+
 public class AppearanceRenderer extends PlayerEntityRenderer {
-	public final Identifier TEXTURE;
+	public final Function<AbstractClientPlayerEntity, Identifier> TEXTURE_FUNCTION;
 
 	public AppearanceRenderer(EntityRendererFactory.Context ctx, ParsedClientAppearance appearance) {
 		super(ctx, false);
-		this.TEXTURE = appearance.TEXTURE_LOCATION;
+		this.TEXTURE_FUNCTION = appearance.TEXTURE_FUNCTION;
 		for(var customFeature : appearance.makeCustomFeatures(this, ctx)) {
 			this.addFeature(customFeature);
 		}
@@ -40,7 +40,7 @@ public class AppearanceRenderer extends PlayerEntityRenderer {
 
 	@Override
 	public Identifier getTexture(AbstractClientPlayerEntity abstractClientPlayerEntity) {
-		return this.TEXTURE;
+		return this.TEXTURE_FUNCTION.apply(abstractClientPlayerEntity);
 	}
 
 	public void addCapturedFeature(FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> feature) {

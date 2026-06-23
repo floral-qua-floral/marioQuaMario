@@ -16,60 +16,11 @@
 	"icon": "assets/mario_qua_mario/icon.png",
 	"environment": "*",
 	"entrypoints": {
-		"charaformact-addon": [
+		"charaformact-common": [
 			"com.fqf.mario_qua_mario.CfaMarioAddon"
 		],
-
-		"cfa-common-appearances": [
-			"com.fqf.mario_qua_mario.appearances.mario.SmallMarioCommonAppearance",
-			"com.fqf.mario_qua_mario.appearances.mario.SuperMarioCommonAppearance",
-			"com.fqf.mario_qua_mario.appearances.mario.FireMarioCommonAppearance",
-			"com.fqf.mario_qua_mario.appearances.mario.RaccoonMarioCommonAppearance",
-			"com.fqf.mario_qua_mario.appearances.mario.MiniMarioCommonAppearance",
-
-			"com.fqf.mario_qua_mario.appearances.luigi.SmallLuigiCommonAppearance",
-			"com.fqf.mario_qua_mario.appearances.luigi.SuperLuigiCommonAppearance",
-			"com.fqf.mario_qua_mario.appearances.luigi.FireLuigiCommonAppearance",
-			"com.fqf.mario_qua_mario.appearances.luigi.FoxLuigiCommonAppearance",
-			"com.fqf.mario_qua_mario.appearances.luigi.MiniLuigiCommonAppearance",
-
-			"com.fqf.mario_qua_mario.appearances.toads.toadette.SmallToadetteCommonAppearance",
-			"com.fqf.mario_qua_mario.appearances.toads.toadette.SuperToadetteCommonAppearance",
-			"com.fqf.mario_qua_mario.appearances.toads.toadette.FireToadetteCommonAppearance",
-			"com.fqf.mario_qua_mario.appearances.toads.toadette.RaccoonToadetteCommonAppearance",
-			"com.fqf.mario_qua_mario.appearances.toads.toadette.MiniToadetteCommonAppearance",
-
-			"com.fqf.mario_qua_mario.appearances.toads.custom.SmallCustomToadCommonAppearance",
-			"com.fqf.mario_qua_mario.appearances.toads.custom.SuperCustomToadCommonAppearance",
-			"com.fqf.mario_qua_mario.appearances.toads.custom.FireCustomToadCommonAppearance",
-			"com.fqf.mario_qua_mario.appearances.toads.custom.RaccoonCustomToadCommonAppearance",
-			"com.fqf.mario_qua_mario.appearances.toads.custom.MiniCustomToadCommonAppearance"
-		],
-
-		"cfa-client-appearances": [
-			"com.fqf.mario_qua_mario.appearances.mario.SmallMarioClientAppearance",
-			"com.fqf.mario_qua_mario.appearances.mario.SuperMarioClientAppearance",
-			"com.fqf.mario_qua_mario.appearances.mario.FireMarioClientAppearance",
-			"com.fqf.mario_qua_mario.appearances.mario.RaccoonMarioClientAppearance",
-			"com.fqf.mario_qua_mario.appearances.mario.MiniMarioClientAppearance",
-
-			"com.fqf.mario_qua_mario.appearances.luigi.SmallLuigiClientAppearance",
-			"com.fqf.mario_qua_mario.appearances.luigi.SuperLuigiClientAppearance",
-			"com.fqf.mario_qua_mario.appearances.luigi.FireLuigiClientAppearance",
-			"com.fqf.mario_qua_mario.appearances.luigi.FoxLuigiClientAppearance",
-			"com.fqf.mario_qua_mario.appearances.luigi.MiniLuigiClientAppearance",
-
-			"com.fqf.mario_qua_mario.appearances.toads.toadette.SmallToadetteClientAppearance",
-			"com.fqf.mario_qua_mario.appearances.toads.toadette.SuperToadetteClientAppearance",
-			"com.fqf.mario_qua_mario.appearances.toads.toadette.FireToadetteClientAppearance",
-			"com.fqf.mario_qua_mario.appearances.toads.toadette.RaccoonToadetteClientAppearance",
-			"com.fqf.mario_qua_mario.appearances.toads.toadette.MiniToadetteClientAppearance",
-
-			"com.fqf.mario_qua_mario.appearances.toads.custom.SmallCustomToadClientAppearance",
-			"com.fqf.mario_qua_mario.appearances.toads.custom.SuperCustomToadClientAppearance",
-			"com.fqf.mario_qua_mario.appearances.toads.custom.FireCustomToadClientAppearance",
-			"com.fqf.mario_qua_mario.appearances.toads.custom.RaccoonCustomToadClientAppearance",
-			"com.fqf.mario_qua_mario.appearances.toads.custom.MiniCustomToadClientAppearance"
+		"charaformact-client": [
+			"com.fqf.mario_qua_mario.CfaMarioClientAddon"
 		],
 
 		"main": [

@@ -1,7 +1,5 @@
 package com.fqf.charaformact.appearance;
 
-import com.fqf.charaformact.registries.power_granting.ParsedCharacter;
-import com.fqf.charaformact.registries.power_granting.ParsedForm;
 import com.fqf.charaformact_api.appearance.CommonAppearanceDefinition;
 import net.minecraft.util.Identifier;
 
@@ -13,16 +11,14 @@ import java.util.Objects;
  */
 public class ParsedCommonAppearance {
 	public final Identifier ID;
-	public final ParsedCharacter CHARACTER;
-	public final ParsedForm FORM;
 
 	public final float STRIDE_LENGTH;
+	public final float ARM_LENGTH;
 
-	public ParsedCommonAppearance(CommonAppearanceDefinition definition, ParsedCharacter character, ParsedForm form) {
-		this.ID = Objects.requireNonNull(definition.getID());
-		this.CHARACTER = character;
-		this.FORM = form;
+	public ParsedCommonAppearance(Identifier id, CommonAppearanceDefinition definition) {
+		this.ID = id;
 
 		this.STRIDE_LENGTH = definition.getStrideLength();
+		this.ARM_LENGTH = definition.getArmLength();
 	}
 }

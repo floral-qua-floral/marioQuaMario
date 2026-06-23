@@ -1,55 +1,95 @@
 package com.fqf.charaformact.appearance;
 
 import com.fqf.charaformact.CharaFormAct;
-import com.fqf.charaformact.registries.power_granting.CharacterFormCombo;
-import com.fqf.charaformact.registries.power_granting.ParsedCharacter;
-import com.fqf.charaformact.registries.power_granting.ParsedForm;
+import com.fqf.charaformact.registries.RegistryManager;
+import com.fqf.charaformact.registries.power_granting.AppearanceKey;
+import com.fqf.charaformact_api.CharaFormActAddon;
 import com.fqf.charaformact_api.appearance.CommonAppearanceDefinition;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Pair;
 
 import java.util.*;
 
 public class CommonAppearanceCollector extends AbstractAppearanceCollector<CommonAppearanceDefinition, ParsedCommonAppearance> {
 	public static final CommonAppearanceCollector INSTANCE = new CommonAppearanceCollector();
 
-	@Override protected String getEntrypoint() {
-		return "cfa-common-appearances";
-	}
-	@Override protected Class<CommonAppearanceDefinition> getEntrypointClass() {
-		return CommonAppearanceDefinition.class;
+	@Override
+	protected Map<AppearanceKey.Registerable, CommonAppearanceDefinition> getDefinitions() {
+		AppearanceMapBuilderImpl<CommonAppearanceDefinition> builder = new AppearanceMapBuilderImpl<>();
+		for(CharaFormActAddon addon : RegistryManager.getAndClearAddons()) {
+			addon.accumulateCommonAppearances(builder);
+		}
+		return builder.build();
 	}
 
 	@Override
-	protected ParsedCommonAppearance parse(CommonAppearanceDefinition definition, ParsedCharacter character, ParsedForm form) {
-		return new ParsedCommonAppearance(definition, character, form);
+	protected ParsedCommonAppearance parse(AppearanceKey.Registerable key, CommonAppearanceDefinition definition) {
+		return new ParsedCommonAppearance(key.ID, definition);
 	}
 
-	public void validate(Map<CharacterFormCombo, Identifier> clientMap) {
+	@Override
+	protected ParsedCommonAppearance refine(ParsedCommonAppearance from) {
+		return from;
+	}
+
+	public void validate(Map<Identifier, Pair<AppearanceKey, ParsedCommonAppearance>> clientValidationMap) {
 		StringBuilder discrepancies = new StringBuilder();
-		Set<CharacterFormCombo> allKeys = new HashSet<>(clientMap.keySet());
-		allKeys.addAll(this.map.keySet());
-		for(CharacterFormCombo key : allKeys) {
-			Identifier clientID = clientMap.get(key);
-			Identifier commonID = this.map.containsKey(key) ? this.map.get(key).ID : null;
-			if(!Objects.equals(commonID, clientID)) {
-				if(clientID == null) discrepancies.append(commonID).append(" was never registered on the client!\n\t");
-				else if(commonID == null) discrepancies.append(clientID).append(" was never registered common-side!\n\t");
-				else discrepancies.append("Two different IDs (").append(clientID).append(" and ").append(commonID)
-							.append(") were both registered to the same Character + Form intersection (").append(key)
-							.append(")!\n\t");
+		Set<Identifier> allKeys = new ImmutableSet.Builder<Identifier>()
+				.addAll(clientValidationMap.keySet())
+				.addAll(this.validationMap.keySet()).build();
+
+		for(Identifier id : allKeys) {
+			Pair<AppearanceKey, ParsedCommonAppearance> commonPair = this.validationMap.get(id);
+			Pair<AppearanceKey, ParsedCommonAppearance> clientPair = clientValidationMap.get(id);
+
+			if(commonPair == null && clientPair == null) {
+				throw new IllegalStateException("Something has gone terribly wrong during CharaFormAct's Appearance validation!");
+			}
+			else if(commonPair == null)
+				discrepancies.append(id).append(" is registered client-side at the intersection of ")
+						.append(clientPair.getLeft()).append(", but is missing common-side!\n");
+			else if(clientPair == null)
+				discrepancies.append(id).append(" is registered common-side at the intersection of ")
+						.append(commonPair.getLeft()).append(", but is missing client-side!\n");
+			else {
+				ParsedCommonAppearance commonAppearance = commonPair.getRight();
+				ParsedCommonAppearance clientAppearance = clientPair.getRight();
+
+				float commonStrideLength = commonAppearance.STRIDE_LENGTH;
+				float clientStrideLength = clientAppearance.STRIDE_LENGTH;
+				if(commonStrideLength != clientStrideLength)
+					discrepancies.append(id).append("'s Stride Length is not equal between client & server: ")
+							.append(clientStrideLength).append(" on client, but ")
+							.append(commonStrideLength).append(" on server!\n");
+
+				float commonArmLength = commonAppearance.ARM_LENGTH;
+				float clientArmLength = clientAppearance.ARM_LENGTH;
+				if(commonArmLength != clientArmLength)
+					discrepancies.append(id).append("'s Arm Length is not equal between client & server: ")
+							.append(clientArmLength).append(" on client, but ")
+							.append(commonArmLength).append(" on server!\n");
 			}
 		}
 
-		String discrepanciesString = discrepancies.toString();
 		if(!discrepancies.isEmpty()) {
-			CharaFormAct.LOGGER.info("Yikes! The same appearances were not registered between the two entrypoints!");
-			throw new IllegalStateException("""
-				This crash was triggered deliberately by CharaFormAct, because another mod which uses it has failed to \
-				 properly register its Appearances (player models). Try looking at the namespaced IDs at the start of\
-				 the following lines to figure out which mod bungled it. If this is your own mod, you probably forgot to\
-				 add an Appearance Definition to one of the entrypoints in fabric.mod.json. If you're a player, please\
-				 report this crash to the creator of the mod responsible.
-				\t""" + discrepanciesString);
+			if(CharaFormAct.CONFIG.doValidateAppearances()) {
+				throw new IllegalStateException("""
+					This crash was triggered deliberately by CharaFormAct, because another mod which uses it has failed\
+					 to properly register its Appearances (player models). Try looking at the namespaced IDs at the\
+					 start of the following lines to figure out which mod bungled it. If this is your own mod, you may\
+					 have forgotten to register an Appearance on one side, or you may have failed to make the Client\
+					 and Common definitions match up where necessary. If you're a player, please report this crash to\
+					 the creator of the mod responsible. You can bypass this validation by disabling Appearance \
+					 Validation in CharaFormAct's config.
+					\t""" + discrepancies);
+			}
+			else {
+				CharaFormAct.LOGGER.error("Appearance validation failed, but was suppressed!");
+			}
 		}
+
+		// Clear Common validation map, we don't need it anymore!
+		this.validationMap = null;
 	}
 }

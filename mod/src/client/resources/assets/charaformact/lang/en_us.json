@@ -14,6 +14,7 @@
   "text.autoconfig.charaformact.option.bumpedBlockLingerFrames": "Extra frames for bumped block rendering",
   "text.autoconfig.charaformact.option.logFeatureContexts": "Log feature context categorization",
   "text.autoconfig.charaformact.option.suppressVoiceUnderwater": "Silence character voices underwater",
+  "text.autoconfig.charaformact.option.validateAppearances": "Appearance validation",
 
   "text.autoconfig.charaformact.option.spinputType": "Spin Input Type",
   "fabric.mods.charaformact.spin": "Spin",
@@ -26,8 +27,6 @@
   "gamerule.cfaRejectInvalidActionTransitions": "Only allow legal action transitions",
   "gamerule.cfaDisableCharacterMovementCheck": "Disable movement checks when playing as any character",
   "gamerule.cfaAlwaysRevertToWeakestForm": "Characters revert to weakest possible form at 0 health",
-
-  "tag.item.charaformact.enchantable.pulverizing": "Enchantable with Pulverizing",
 
   "subtitles.charaformact.movement.bump": "Block bumped",
   "subtitles.charaformact.movement.skid": "Skidding",

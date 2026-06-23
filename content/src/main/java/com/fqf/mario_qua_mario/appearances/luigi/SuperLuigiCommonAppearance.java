@@ -1,17 +1,12 @@
 package com.fqf.mario_qua_mario.appearances.luigi;
 
-import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario.forms.Super;
-import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
+import com.fqf.charaformact_api.appearance.CommonAppearanceDefinition;
+import org.joml.Vector3i;
 
-public class SuperLuigiCommonAppearance extends AbstractLuigiCommonAppearance {
-	public static final Identifier ID = MarioQuaMario.makeID("super_luigi");
-	@Override public @NotNull Identifier getID() {
-		return ID;
-	}
+public class SuperLuigiCommonAppearance implements CommonAppearanceDefinition {
+	public static final Vector3i ARM_SIZE = new Vector3i(3, 12, 4);
 
-	@Override public @NotNull Identifier getFormID() {
-		return Super.ID;
+	@Override public Vector3i getArmSize() {
+		return ARM_SIZE;
 	}
 }

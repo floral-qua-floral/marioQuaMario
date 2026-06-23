@@ -13,10 +13,6 @@ public interface AppearanceGeometryHelper {
 	String LEFT_SLEEVE = "left_sleeve";
 	String CAPE = "cloak";
 
-	String TAIL = EntityModelPartNames.TAIL;
-	String RIGHT_WING = EntityModelPartNames.RIGHT_WING;
-	String LEFT_WING = EntityModelPartNames.LEFT_WING;
-
 	ModelPartData makePartAndHat(
 			ModelPartData root, boolean isLeft,
 			String name, String hatName,

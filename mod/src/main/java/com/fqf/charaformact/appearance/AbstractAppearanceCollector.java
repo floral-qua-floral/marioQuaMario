@@ -2,39 +2,42 @@ package com.fqf.charaformact.appearance;
 
 import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.registries.RegistryManager;
-import com.fqf.charaformact.registries.power_granting.CharacterFormCombo;
+import com.fqf.charaformact.registries.power_granting.AppearanceKey;
 import com.fqf.charaformact.registries.power_granting.ParsedCharacter;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
 import com.fqf.charaformact_api.appearance.CommonAppearanceDefinition;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.util.Pair;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
 public abstract class AbstractAppearanceCollector<DefinitionType extends CommonAppearanceDefinition, ParsedType> {
-	protected Map<CharacterFormCombo, ParsedType> map;
+	protected Map<AppearanceKey, ParsedType> map;
+	protected Map<Identifier, Pair<AppearanceKey, ParsedCommonAppearance>> validationMap;
 
 	protected AbstractAppearanceCollector() {
 
 	}
 
-	// TODO: Move this system away from Entrypoints too
-//	protected abstract Map<CharacterFormCombo, DefinitionType> getDefinitions();
+	protected abstract Map<AppearanceKey.Registerable, DefinitionType> getDefinitions();
 
-	protected abstract String getEntrypoint();
-	protected abstract Class<DefinitionType> getEntrypointClass();
+	protected abstract ParsedType parse(AppearanceKey.Registerable key, DefinitionType definition);
 
-	protected abstract ParsedType parse(DefinitionType definition, ParsedCharacter character, ParsedForm form);
+	protected abstract ParsedCommonAppearance refine(ParsedType from);
 
 	public void collect() {
-		ImmutableMap.Builder<CharacterFormCombo, ParsedType> builder = ImmutableMap.builder();
+		Map<AppearanceKey.Registerable, DefinitionType> definitions = this.getDefinitions();
 
-		for(DefinitionType definition : RegistryManager.getEntrypoints(this.getEntrypoint(), this.getEntrypointClass())) {
-			Identifier modelID = definition.getID();
-			Identifier characterID = definition.getCharacterID();
-			Identifier formID = definition.getFormID();
+		ImmutableMap.Builder<AppearanceKey, ParsedType> builder = ImmutableMap.builderWithExpectedSize(definitions.size());
+		ImmutableMap.Builder<Identifier, Pair<AppearanceKey, ParsedCommonAppearance>> validationBuilder = ImmutableMap.builderWithExpectedSize(definitions.size());
+
+		definitions.forEach((key, definition) -> {
+			Identifier modelID = key.ID;
+			Identifier characterID = key.CHARACTER;
+			Identifier formID = key.FORM;
+
 			ParsedCharacter character = RegistryManager.CHARACTERS.get(characterID);
 			ParsedForm form = RegistryManager.FORMS.get(formID);
 
@@ -45,14 +48,18 @@ public abstract class AbstractAppearanceCollector<DefinitionType extends CommonA
 				CharaFormAct.LOGGER.warn("Model {}'s character ({}) is unregistered, ignoring...", modelID, characterID);
 			else if(form == null)
 				CharaFormAct.LOGGER.warn("Model {}'s form ({}) is unregistered, ignoring...", modelID, formID);
-			else
-				builder.put(new CharacterFormCombo(character, form), this.parse(definition, character, form));
-		}
+			else {
+				ParsedType parsed = this.parse(key, definition);
+				builder.put(key, parsed);
+				validationBuilder.put(key.ID, new Pair<>(key, this.refine(parsed)));
+			}
+		});
 
 		this.map = builder.build();
+		this.validationMap = validationBuilder.build();
 	}
 
-	public @Nullable ParsedType get(CharacterFormCombo combo) {
+	public @Nullable ParsedType get(AppearanceKey combo) {
 		return this.map.get(combo);
 	}
 }

@@ -25,10 +25,13 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class RegistryManager {
+	private static List<CharaFormActAddon> addons;
+
 	public static void registerAll() {
 		CfaSounds.staticInitialize();
 
-		List<CharaFormActAddon> addons = getEntrypoints("charaformact-addon", CharaFormActAddon.class);
+		addons = getEntrypoints("charaformact-common", CharaFormActAddon.class);
+		CharaFormAct.LOGGER.info("Common addons: {}", addons);
 
 		registerCollisionAttackTypes(addons);
 		registerActions(addons);
@@ -36,6 +39,12 @@ public class RegistryManager {
 		registerCharacters(addons);
 
 		registerVoicelines(addons);
+	}
+
+	public static List<CharaFormActAddon> getAndClearAddons() {
+		List<CharaFormActAddon> list = addons;
+		addons = null;
+		return list;
 	}
 
 	public static final RegistryKey<Registry<ParsedCollisionAttack>> COLLISION_ATTACKS_KEY =

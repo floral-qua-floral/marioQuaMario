@@ -11,6 +11,7 @@ import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.EntityModelPartNames;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
@@ -77,10 +78,10 @@ public abstract class PlumberClientAppearance implements ClientAppearanceDefinit
 	}
 
 	@Override
-	public void accumulateCustomFeatureRenderers(ImmutableList.Builder<FeatureRenderer<AbstractClientPlayerEntity, AppearanceModel>> builder, FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel> featureRendererContext, EntityRendererFactory.Context ctx) {
+	public void accumulateCustomFeatureRenderers(Identifier texture, ImmutableList.Builder<FeatureRenderer<AbstractClientPlayerEntity, AppearanceModel>> builder, FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel> featureRendererContext, EntityRendererFactory.Context ctx) {
 		String skinForm = this.getSkinForm();
 		if(skinForm != null)
-			builder.add(CustomizableTextureLayerFeature.makeOptionalSkinFeature(featureRendererContext, skinForm, this));
+			builder.add(CustomizableTextureLayerFeature.makeOptionalSkinFeature(featureRendererContext, texture, skinForm));
 	}
 
 	protected void makeCapStates(ModelPartData head, AppearanceGeometryHelper helper) {

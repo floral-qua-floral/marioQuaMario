@@ -1,12 +1,15 @@
 package com.fqf.mario_qua_mario;
 
 import com.fqf.charaformact_api.CharaFormActAddon;
+import com.fqf.charaformact_api.appearance.CommonAppearanceDefinition;
 import com.fqf.charaformact_api.definitions.CollisionAttackTypeDefinition;
 import com.fqf.charaformact_api.definitions.TransitionInjectionDefinition;
 import com.fqf.charaformact_api.definitions.states.CharacterDefinition;
 import com.fqf.charaformact_api.definitions.states.FormDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.IncompleteActionDefinition;
-import com.fqf.charaformact_api.util.CfaStat;
+import com.fqf.charaformact_api.util.AppearanceMapBuilder;
+import com.fqf.mario_qua_mario.appearances.mario.*;
+import com.fqf.mario_qua_mario.appearances.luigi.*;
 import com.fqf.mario_qua_mario.characters.*;
 import com.fqf.mario_qua_mario.forms.*;
 import com.fqf.mario_qua_mario.actions.generic.*;
@@ -161,5 +164,20 @@ public class CfaMarioAddon implements CharaFormActAddon {
 		builder.put(Stomp.ID, new Stomp());
 		builder.put(GroundPound.ID, new GroundPound());
 		builder.put(AquaticGroundPound.ID, new AquaticGroundPound());
+	}
+
+	@Override
+	public void accumulateCommonAppearances(AppearanceMapBuilder<CommonAppearanceDefinition> builder) {
+		builder.putMatching(Mario.ID, Small.ID, new SmallMarioCommonAppearance());
+		builder.putMatching(Mario.ID, Super.ID, new SuperMarioCommonAppearance());
+		builder.putMatching(Mario.ID, Fire.ID, new SuperMarioCommonAppearance());
+		builder.putMatching(Mario.ID, Raccoon.ID, new SuperMarioCommonAppearance());
+		builder.putMatching(Mario.ID, Mini.ID, new MiniMarioCommonAppearance());
+
+		builder.putMatching(Luigi.ID, Small.ID, new SmallLuigiCommonAppearance());
+		builder.putMatching(Luigi.ID, Super.ID, new SuperLuigiCommonAppearance());
+		builder.putMatching(Luigi.ID, Fire.ID, new SuperLuigiCommonAppearance());
+		builder.putMatching(Luigi.ID, Raccoon.ID, new FoxLuigiCommonAppearance());
+		builder.putMatching(Luigi.ID, Mini.ID, new MiniMarioCommonAppearance());
 	}
 }

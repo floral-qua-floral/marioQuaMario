@@ -77,9 +77,9 @@ public abstract class PlayerEntityRendererMixin extends LivingEntityRendererMixi
 	}
 
 	@WrapOperation(method = "renderArm", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/SkinTextures;texture()Lnet/minecraft/util/Identifier;"))
-	private Identifier getActualTexturePls(SkinTextures instance, Operation<Identifier> original) {
+	private Identifier getActualTexturePls(SkinTextures instance, Operation<Identifier> original, @Local(argsOnly = true) AbstractClientPlayerEntity player) {
 		if((Object) this instanceof AppearanceRenderer appearanceRenderer)
-			return appearanceRenderer.TEXTURE;
+			return appearanceRenderer.TEXTURE_FUNCTION.apply(player);
 		return original.call(instance);
 	}
 

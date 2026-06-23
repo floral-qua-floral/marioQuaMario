@@ -17,6 +17,7 @@ public class CharaFormActConfig implements ConfigData {
 	private int bumpedBlockLingerFrames = 2;
 	private boolean logFeatureContexts = true;
 	private boolean suppressVoiceUnderwater = true;
+	private boolean validateAppearances = true;
 
 	public boolean logAllActionTransitions() {
 		return this.logAllActionTransitions;
@@ -42,13 +43,16 @@ public class CharaFormActConfig implements ConfigData {
 	public float getInherentBumpedBlockScale() {
 		return this.inherentBumpedBlockScale;
 	}
+	public int getBumpedBlockLingerFrames() {
+		return this.bumpedBlockLingerFrames;
+	}
 	public boolean logFeatureContexts() {
 		return this.logFeatureContexts;
 	}
 	public boolean doSuppressVoiceUnderwater() {
 		return this.suppressVoiceUnderwater;
 	}
-	public int getBumpedBlockLingerFrames() {
-		return this.bumpedBlockLingerFrames;
+	public boolean doValidateAppearances() {
+		return this.validateAppearances;
 	}
 }

@@ -8,7 +8,7 @@ import com.fqf.charaformact.cfadata.util.ActiveAnimation;
 import com.fqf.charaformact.cfadata.util.AdvancedArrangement;
 import com.fqf.charaformact.cfadata.util.AdvancedPosture;
 import com.fqf.charaformact.registries.actions.ParsedAnimation;
-import com.fqf.charaformact.registries.power_granting.CharacterFormCombo;
+import com.fqf.charaformact.registries.power_granting.AppearanceKey;
 import com.fqf.charaformact.registries.power_granting.ParsedCharacter;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
 import com.fqf.charaformact_api.appearance.TransformationInstructions;
@@ -35,7 +35,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
-import static net.minecraft.util.math.MathHelper.DEGREES_PER_RADIAN;
 import static net.minecraft.util.math.MathHelper.HALF_PI;
 
 public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingData & CfaClientDataImpl> {
@@ -130,12 +129,12 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 			ParsedCharacter character = this.DATA.getCharacter();
 			ParsedForm form = this.DATA.getForm();
 			newModelAndRenderer = ClientAppearanceCollector.INSTANCE.get(
-					new CharacterFormCombo(character, form));
+					new AppearanceKey(character, form));
 			if(newModelAndRenderer == null) {
 				CharaFormAct.LOGGER.warn("Player {} could not find a playermodel for {} in form {}!",
 						this.PLAYER, character, form);
 				newModelAndRenderer = ClientAppearanceCollector.INSTANCE.get(
-						new CharacterFormCombo(character, character.INITIAL_FORM));
+						new AppearanceKey(character, character.INITIAL_FORM));
 			}
 		}
 

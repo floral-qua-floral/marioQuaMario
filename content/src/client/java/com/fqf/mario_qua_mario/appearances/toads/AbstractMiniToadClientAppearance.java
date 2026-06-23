@@ -2,24 +2,16 @@ package com.fqf.mario_qua_mario.appearances.toads;
 
 import com.fqf.charaformact_api.appearance.AppearanceFeatureHelper;
 import com.fqf.charaformact_api.appearance.AppearanceGeometryHelper;
-import com.fqf.charaformact_api.appearance.ClientAppearanceDefinition;
 import com.fqf.charaformact_api.appearance.TransformationInstructions;
-import com.fqf.mario_qua_mario.forms.Mini;
-import com.fqf.mario_qua_mario.forms.Small;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
 public abstract class AbstractMiniToadClientAppearance extends AbstractToadClientAppearance {
-	@Override
-	public @NotNull Identifier getFormID() {
-		return Mini.ID;
-	}
 
 	@Override
-	public @NotNull Vector2i getTextureSize() {
+	public @NotNull Vector2i defineTextureSize() {
 		return new Vector2i(32, 48);
 	}
 

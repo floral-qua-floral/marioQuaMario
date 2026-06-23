@@ -3,11 +3,8 @@ package com.fqf.mario_qua_mario.appearances.mario;
 import com.fqf.charaformact_api.appearance.AppearanceGeometryHelper;
 import com.fqf.charaformact_api.appearance.AppearanceModel;
 import com.fqf.charaformact_api.appearance.ClientAppearanceDefinition;
-import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.appearances.util.CustomizableTextureLayerFeature;
 import com.fqf.mario_qua_mario.appearances.util.PlumberClientAppearance;
-import com.fqf.mario_qua_mario.characters.Mario;
-import com.fqf.mario_qua_mario.forms.Small;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.model.ModelPartData;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -20,12 +17,7 @@ import org.joml.Vector2i;
 import org.joml.Vector3i;
 
 public class SmallMarioClientAppearance extends SmallMarioCommonAppearance implements ClientAppearanceDefinition {
-	public static final Identifier ID = MarioQuaMario.makeID("small_mario");
-	@Override public @NotNull Identifier getID() {
-	    return ID;
-	}
-
-	@Override public @NotNull Vector2i getTextureSize() {
+	@Override public @NotNull Vector2i defineTextureSize() {
 		return new Vector2i(64, 64);
 	}
 
@@ -41,7 +33,7 @@ public class SmallMarioClientAppearance extends SmallMarioCommonAppearance imple
 	}
 
 	@Override
-	public void accumulateCustomFeatureRenderers(ImmutableList.Builder<FeatureRenderer<AbstractClientPlayerEntity, AppearanceModel>> builder, FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel> featureRendererContext, EntityRendererFactory.Context ctx) {
-		builder.add(CustomizableTextureLayerFeature.makeOptionalSkinFeature(featureRendererContext, "small", this));
+	public void accumulateCustomFeatureRenderers(Identifier texture, ImmutableList.Builder<FeatureRenderer<AbstractClientPlayerEntity, AppearanceModel>> builder, FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel> featureRendererContext, EntityRendererFactory.Context ctx) {
+		builder.add(CustomizableTextureLayerFeature.makeOptionalSkinFeature(featureRendererContext, texture, "small"));
 	}
 }

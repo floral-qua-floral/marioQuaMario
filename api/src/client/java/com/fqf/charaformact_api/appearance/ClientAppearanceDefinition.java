@@ -6,26 +6,35 @@ import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
-import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.client.render.entity.model.EntityModelPartNames;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
+
+import java.util.function.Function;
 
 /**
  * An Appearance is essentially a playermodel that is associated with a single Character + Form intersection.
  */
 public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
-	default @NotNull EntityModelLayer getModelLayer() {
-		return new EntityModelLayer(this.getID(), "main");
+	@NotNull Vector2i defineTextureSize();
+	default @NotNull Identifier defineDefaultTextureLocation(Identifier appearanceID, Identifier characterID, Identifier formID) {
+		return Identifier.of(appearanceID.getNamespace(), "textures/entity/player/appearance/"
+				+ characterID.getPath() + "/" + formID.getPath() + ".png");
 	}
 
-	@NotNull Vector2i getTextureSize();
-	default @NotNull Identifier getTextureLocation() {
-		return Identifier.of(this.getID().getNamespace(), "textures/entity/player/appearance/"
-				+ this.getCharacterID().getPath() + "/" + this.getFormID().getPath() + ".png");
+	/**
+	 * You can override this to provide a function which will be used to get the texture of the Appearance every frame,
+	 * so that you may swap out or animate the Appearance's texture depending on circumstances. For instance, Vexes
+	 * choose between one of two textures depending on whether they're currently Charging.
+	 * Please keep in mind that, because your function is running every frame, you should cache any Identifiers it will
+	 * return instead of constructing new ones on each call.
+	 */
+	default @Nullable Function<AbstractClientPlayerEntity, Identifier> defineDynamicTextureFunction() {
+		return null;
 	}
 
 	// Methods for getting the size of vanilla parts.
@@ -109,9 +118,9 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 	}
 
 	// Methods for creating the vanilla parts.
-	// The default implementation creates two cuboids per part: One for the actual part, and another for its 3D layerPostureMutator
-	// (hat, jacket, sleeve, or pants). You only need to override any of these if you want to replace the geometry
-	// of a part entirely in some way, such as by splitting the torso into multiple cuboids.
+	// The default implementation creates two cuboids per part: One for the actual part, and another for its 3D layer
+	// (hat, jacket, sleeve, or pants). You only need to override any of these if you want to replace the geometry of a
+	// part entirely in some way, such as by splitting the torso into multiple cuboids.
 	default ModelPartData makeHead(ModelPartData root, AppearanceGeometryHelper helper) {
 		Vector3i headSize = this.getHeadSize();
 		return helper.makePartAndHat(
@@ -157,9 +166,9 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 		);
 	}
 
-	// Please feel free to override this to return a custom class extending CharaFormEntityModel, if you like.
+	// Please feel free to override this to return a custom class extending AppearanceModel, if you would like.
 	// This will give you lots of control over the player's rendering logic.
-	// If you do, I'd recommend still calling super on any methods you override.
+	// If you do, I'd recommend still calling super on any methods you override, even when it seems unnecessary.
 	default AppearanceModel createModel(ModelPart root) {
 		return new AppearanceModel(root);
 	}
@@ -169,7 +178,11 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 	// instead, add things like that to getModelData as genuine ModelParts. You can then animate these custom parts
 	// yourself by overriding createModel with a custom model class, then animate the parts in its preActionAnimation or
 	// postActionAnimation methods.
+	// Please keep in mind that the texture parameter will simply be the default texture as defined by the
+	// defineDefaultTexture method, regardless of whether this Appearance uses a Dynamic Texture Function, since this
+	// method is only called once at model construction, when no player exists yet.
 	default void accumulateCustomFeatureRenderers(
+			Identifier texture,
 			ImmutableList.Builder<FeatureRenderer<AbstractClientPlayerEntity, AppearanceModel>> builder,
 			FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel> featureRendererContext,
 			EntityRendererFactory.Context ctx

@@ -3,7 +3,7 @@ package com.fqf.charaformact.cfadata;
 import com.fqf.charaformact.appearance.CommonAppearanceCollector;
 import com.fqf.charaformact.appearance.ParsedCommonAppearance;
 import com.fqf.charaformact.packets.CfaDataPackets;
-import com.fqf.charaformact.registries.power_granting.CharacterFormCombo;
+import com.fqf.charaformact.registries.power_granting.AppearanceKey;
 import com.fqf.charaformact.util.CfaGamerules;
 import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact.CharaFormAct;
@@ -150,7 +150,7 @@ public class CfaServerPlayerData extends CfaMoveableData implements CfaAuthorita
 
 	private ParsedCommonAppearance appearance;
 	@Override public void updateAppearance() {
-		this.appearance = CommonAppearanceCollector.INSTANCE.get(new CharacterFormCombo(
+		this.appearance = CommonAppearanceCollector.INSTANCE.get(new AppearanceKey(
 				this.getCharacter(), this.getForm()
 		));
 	}
@@ -160,7 +160,7 @@ public class CfaServerPlayerData extends CfaMoveableData implements CfaAuthorita
 
 	private boolean canEnterForm(ParsedForm form) {
 		return this.getPlayer().getWorld().getGameRules().getBoolean(CfaGamerules.ALLOW_NULL_APPEARANCE)
-				|| CommonAppearanceCollector.INSTANCE.get(new CharacterFormCombo(this.getCharacter(), form)) != null;
+				|| CommonAppearanceCollector.INSTANCE.get(new AppearanceKey(this.getCharacter(), form)) != null;
 	}
 
 	@Override

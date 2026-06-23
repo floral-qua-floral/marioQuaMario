@@ -1,8 +1,7 @@
 package com.fqf.charaformact.appearance;
 
 import com.fqf.charaformact.CharaFormAct;
-import com.fqf.charaformact.registries.power_granting.ParsedCharacter;
-import com.fqf.charaformact.registries.power_granting.ParsedForm;
+import com.fqf.charaformact.registries.power_granting.AppearanceKey;
 import com.fqf.charaformact.util.TransformationContext;
 import com.fqf.charaformact_api.appearance.*;
 import com.fqf.charaformact.util.VanillaPart;
@@ -19,16 +18,18 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
 
 public class ParsedClientAppearance extends ParsedCommonAppearance {
 	private final ClientAppearanceDefinition DEFINITION;
 
 	public final EntityModelLayer LAYER;
-	public final Identifier TEXTURE_LOCATION;
+	private final Identifier DEFAULT_TEXTURE_LOCATION;
+	public final @NotNull Function<AbstractClientPlayerEntity, Identifier> TEXTURE_FUNCTION;
 	public final int TEXTURE_WIDTH, TEXTURE_HEIGHT;
 
 	private AppearanceModel model;
@@ -47,13 +48,15 @@ public class ParsedClientAppearance extends ParsedCommonAppearance {
 
 	private List<FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>>> customFeatures;
 
-	public ParsedClientAppearance(ClientAppearanceDefinition definition, ParsedCharacter character, ParsedForm form) {
-		super(definition, character, form);
+	public ParsedClientAppearance(AppearanceKey.Registerable key, EntityModelLayer layer, ClientAppearanceDefinition definition) {
+		super(key.ID, definition);
 		DEFINITION = definition;
 
-		this.LAYER = definition.getModelLayer();
-		this.TEXTURE_LOCATION = definition.getTextureLocation();
-		Vector2i textureSize = definition.getTextureSize();
+		this.LAYER = layer;
+		this.DEFAULT_TEXTURE_LOCATION = definition.defineDefaultTextureLocation(key.ID, key.CHARACTER, key.FORM);
+		this.TEXTURE_FUNCTION = Objects.requireNonNullElseGet(definition.defineDynamicTextureFunction(), () ->
+				player -> this.DEFAULT_TEXTURE_LOCATION);
+		Vector2i textureSize = definition.defineTextureSize();
 		this.TEXTURE_WIDTH = textureSize.x;
 		this.TEXTURE_HEIGHT = textureSize.y;
 
@@ -117,7 +120,7 @@ public class ParsedClientAppearance extends ParsedCommonAppearance {
 	) {
 		if(this.customFeatures == null) {
 			ImmutableList.Builder<FeatureRenderer<AbstractClientPlayerEntity, AppearanceModel>> builder = ImmutableList.builder();
-			this.DEFINITION.accumulateCustomFeatureRenderers(builder, (FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel>) (Object) renderer, ctx);
+			this.DEFINITION.accumulateCustomFeatureRenderers(this.DEFAULT_TEXTURE_LOCATION, builder, (FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel>) (Object) renderer, ctx);
 			this.customFeatures = (List<FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>>>) (Object) builder.build();
 			for(FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> customFeature : this.customFeatures) {
 				// oh my god we do NOT WANT TO TRANSFORM THESE!
@@ -175,7 +178,6 @@ public class ParsedClientAppearance extends ParsedCommonAppearance {
 		EnumMap<TransformationContext, TransformationInstructions> leftInstructions = new EnumMap<>(TransformationContext.class);
 		this.FEATURE_TRANSFORMATION_INSTRUCTIONS.put(left, leftInstructions);
 		this.FEATURE_TRANSFORMATION_INSTRUCTIONS.get(right).forEach((context, instructions) -> {
-			CharaFormAct.LOGGER.info("Mirroring transformation instructions for {}'s {}...", right, context);
 			if(instructions != null) leftInstructions.put(context, instructions
 					.withPos(instructions.forwards(), instructions.upwards(), -instructions.rightwards())
 					.withAngles(instructions.pitch(), -instructions.yaw(), -instructions.roll()));

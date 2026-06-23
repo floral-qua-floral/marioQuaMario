@@ -24,7 +24,7 @@ public abstract class AbstractToadClientAppearance extends AbstractToadCommonApp
 	public static final String RIGHT_PIGTAIL_BOTTOM_SPOTS = "right_pigtail_bottom_spots";
 	public static final String LEFT_PIGTAIL_BOTTOM_SPOTS = "left_pigtail_bottom_spots";
 
-	@Override public @NotNull Vector2i getTextureSize() {
+	@Override public @NotNull Vector2i defineTextureSize() {
 		return new Vector2i(64, 96);
 	}
 

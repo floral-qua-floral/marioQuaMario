@@ -1,9 +1,5 @@
 package com.fqf.mario_qua_mario.appearances.toads;
 
-import com.fqf.mario_qua_mario.forms.Mini;
-import com.fqf.mario_qua_mario.forms.Small;
-import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3i;
 
 public abstract class AbstractMiniToadCommonAppearance extends AbstractToadCommonAppearance {
@@ -17,7 +13,4 @@ public abstract class AbstractMiniToadCommonAppearance extends AbstractToadCommo
 		return LEG_SIZE;
 	}
 
-	@Override public @NotNull Identifier getFormID() {
-		return Mini.ID;
-	}
 }
