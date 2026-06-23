@@ -234,6 +234,12 @@ public class CfaServerPlayerData extends CfaMoveableData implements CfaAuthorita
 			@Override public double getStrafeInput() {
 				return 0;
 			}
+			@Override public double getNormalizedForwardInput() {
+				return 0;
+			}
+			@Override public double getNormalizedStrafeInput() {
+				return 0;
+			}
 			@Override public boolean isReal() {
 				return false;
 			}

@@ -25,6 +25,8 @@ public interface CfaReadableMotionData extends CfaData {
 
 		public abstract double getForwardInput();
 		public abstract double getStrafeInput();
+		public abstract double getNormalizedForwardInput();
+		public abstract double getNormalizedStrafeInput();
 
 		public abstract boolean isReal();
 

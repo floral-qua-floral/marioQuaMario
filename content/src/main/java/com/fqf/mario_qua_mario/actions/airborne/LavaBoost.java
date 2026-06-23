@@ -1,17 +1,14 @@
 package com.fqf.mario_qua_mario.actions.airborne;
 
-import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
-import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario.util.ClimbTransitions;
 import com.fqf.mario_qua_mario.util.MQMTags;
@@ -48,16 +45,7 @@ public class LavaBoost extends Fall implements AirborneActionDefinition {
 				}
 		);
 	}
-	@Override public @Nullable CameraAnimationSet defineCameraAnimations(AnimationHelper helper) {
-		return null;
-	}
-	@Override public @NotNull SlidingStatus defineSlidingStatus() {
-		return SlidingStatus.NOT_SLIDING;
-	}
 
-	@Override public @NotNull SneakingRule defineSneakingRule() {
-		return SneakingRule.PROHIBIT;
-	}
 	@Override public @NotNull SprintingRule defineSprintingRule() {
 		return SprintingRule.PROHIBIT;
 	}
@@ -86,12 +74,6 @@ public class LavaBoost extends Fall implements AirborneActionDefinition {
 	@Override public @Nullable Object provideStateData(CfaData data) {
 		return new LavaBoostVars();
 	}
-	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-
-	}
-	@Override public void serverTick(CfaAuthoritativeData data) {
-
-	}
 	@Override public void travelHook(CfaTravelData data, AirborneActionHelper helper) {
 		helper.applyComplexGravity(data, FALL_ACCEL, null, FALL_SPEED);
 		data.retrieveStateData(LavaBoostVars.class).bounceVel = data.getYVel() * -0.6;
@@ -107,31 +89,6 @@ public class LavaBoost extends Fall implements AirborneActionDefinition {
 	}
 
 	private static final double MAX_EJECTION_DISTANCE = 5;
-	private static final double EJECTION_STEP_DISTANCE = 0.5;
-
-	private static boolean positionHasProhibitiveFluid(CfaData data, Box box) {
-		int minX = MathHelper.floor(box.minX); int maxX = MathHelper.ceil(box.maxX);
-		int minY = MathHelper.floor(box.minY); int maxY = MathHelper.ceil(box.maxY);
-		int minZ = MathHelper.floor(box.minZ); int maxZ = MathHelper.ceil(box.maxZ);
-		World world = data.getPlayer().getWorld();
-		BlockPos.Mutable mutable = new BlockPos.Mutable();
-
-		for(int checkX = minX; checkX < maxX; checkX++) {
-			for(int checkY = minY; checkY < maxY; checkY++) {
-				for(int checkZ = minZ; checkZ < maxZ; checkZ++) {
-					mutable.set(checkX, checkY, checkZ);
-					FluidState fluidState = world.getFluidState(mutable);
-					if(fluidState.isIn(MQMTags.PROHIBITS_LAVA_BOOST_EJECTION)) {
-						if(checkY + fluidState.getHeight(world, mutable) >= box.minY) {
-							return true;
-						}
-					}
-				}
-			}
-		}
-
-		return false;
-	}
 
 	public static @Nullable Vec3d findLavaBoostEjectionSpot(CfaData data) {
 		PlayerEntity player = data.getPlayer();
@@ -177,18 +134,23 @@ public class LavaBoost extends Fall implements AirborneActionDefinition {
 		return null;
 	}
 
-	public static final ActionTransitionDetails LAVA_BOOST = new ActionTransitionDetails(
+	public static final ActionTransitionDetails MANUALLY_TRIGGERABLE_LAVA_BOOST = new ActionTransitionDetails(
 			LavaBoost.ID,
+			data -> false,
+			EvaluatorEnvironment.SERVER_ONLY,
 			data -> {
-//				data.getPlayer().isInLava()
-				return false;
-			},
-			EvaluatorEnvironment.COMMON,
-			data -> {
+				Vec3d lavaBoostEjectionPos = LavaBoost.findLavaBoostEjectionSpot(data);
+				if(lavaBoostEjectionPos == null)
+					MarioQuaMario.LOGGER.error("Triggered Lava Boost transition, but then couldn't find" +
+							" the ejection pos?! Player is at {}", data.getPlayer().getPos());
+				else
+					data.goTo(lavaBoostEjectionPos);
 
+				data.setYVel(LavaBoost.BOOST_VEL.get(data));
+				data.setForwardStrafeVel(0, 0);
 			},
 			(data, isSelf, seed) -> {
-
+				data.voice(Voicelines.BURNT, seed);
 			}
 	);
 

@@ -73,25 +73,6 @@ public class Debug implements GenericActionDefinition {
 						data -> data.getPlayer().isSprinting(), EvaluatorEnvironment.COMMON,
 						null,
 						(data, isSelf, seed) -> data.playSound(MarioSFX.FIREBALL, seed)
-				),
-				new ActionTransitionDetails(
-						LavaBoost.ID,
-						data -> false,
-						EvaluatorEnvironment.SERVER_ONLY,
-						data -> {
-							Vec3d lavaBoostEjectionPos = LavaBoost.findLavaBoostEjectionSpot(data);
-							if(lavaBoostEjectionPos == null)
-								MarioQuaMario.LOGGER.error("Triggered Lava Boost transition, but then couldn't find" +
-										" the ejection pos?! Player is at {}", data.getPlayer().getPos());
-							else
-								data.goTo(lavaBoostEjectionPos);
-
-							data.setYVel(LavaBoost.BOOST_VEL.get(data));
-							data.setForwardStrafeVel(0, 0);
-						},
-						(data, isSelf, seed) -> {
-							data.voice(Voicelines.BURNT, seed);
-						}
 				)
 		);
 	}

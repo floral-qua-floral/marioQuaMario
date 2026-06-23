@@ -104,8 +104,8 @@ public class CfaMarioAddon implements CharaFormActAddon {
 
 		// Bonking
 		builder.put(BonkAir.ID, new BonkAir());
-		builder.put(BonkGroundBackward.ID, new BonkGroundBackward());
-		builder.put(BonkGroundForward.ID, new BonkGroundForward()); // TODO: Unite with BonkGroundBackward
+		builder.put(BonkGround.BACKWARD_ID, new BonkGround(true));
+		builder.put(BonkGround.FORWARD_ID, new BonkGround(false));
 
 		// Swimming
 		builder.put(Submerged.ID, new Submerged());
@@ -124,8 +124,8 @@ public class CfaMarioAddon implements CharaFormActAddon {
 		builder.put(TailStall.ID, new TailStall());
 		builder.put(TailStallDucking.ID, new TailStallDucking());
 		builder.put(TailFly.ID, new TailFly());
-		builder.put(TailSpinFall.ID, new TailSpinFall());
-		builder.put(TailSpinJump.ID, new TailSpinJump());
+		builder.put(TailSpinAerial.FALL_ID, new TailSpinAerial());
+		builder.put(TailSpinAerial.JUMP_ID, new TailSpinAerial());
 
 		// Miscellaneous
 		builder.put(WallSlide.ID, new WallSlide());

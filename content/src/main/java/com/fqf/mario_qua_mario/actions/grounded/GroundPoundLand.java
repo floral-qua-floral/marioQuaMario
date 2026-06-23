@@ -23,7 +23,7 @@ public class GroundPoundLand implements GroundedActionDefinition {
 	private static final float STANDUP_TICKS = 10;
 
 	@Override public @Nullable AnimationDefinition defineAnimation() {
-		return BonkGroundBackward.makeAnimation(StandUpWithKneeAnimation.makeProgressCalculator(STANDUP_TICKS));
+		return BonkGround.makeAnimation(StandUpWithKneeAnimation.makeProgressCalculator(STANDUP_TICKS));
 	}
 
 	@Override public @NotNull SlidingStatus defineSlidingStatus() {

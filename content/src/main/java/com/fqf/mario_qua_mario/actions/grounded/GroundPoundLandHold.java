@@ -15,7 +15,7 @@ public class GroundPoundLandHold extends GroundPoundLand implements GroundedActi
 	public static final Identifier ID = MarioQuaMario.makeID("ground_pound_land_hold");
 
 	@Override public @Nullable AnimationDefinition defineAnimation() {
-		return BonkGroundBackward.makeAnimation((data, animationTime) -> 0);
+		return BonkGround.makeAnimation((data, animationTime) -> 0);
 	}
 
 	@Override

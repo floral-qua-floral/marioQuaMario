@@ -10,7 +10,7 @@ import com.fqf.charaformact_api.cfadata.*;
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
-import com.fqf.mario_qua_mario.actions.form.TailSpinFall;
+import com.fqf.mario_qua_mario.actions.form.TailSpinAerial;
 import com.fqf.mario_qua_mario.actions.form.TailSpinGround;
 import com.fqf.mario_qua_mario.actions.form.TailStall;
 import com.fqf.mario_qua_mario.util.*;
@@ -314,7 +314,7 @@ public class Raccoon implements FormDefinition {
 						return data.getPlayer().isOnGround() && data.getPlayer().isInSneakingPose();
 					}
 				},
-				new TailAttack(TailSpinFall.ID, null) {
+				new TailAttack(TailSpinAerial.FALL_ID, null) {
 					@Override protected boolean testSwing(CfaReadableMotionData data) {
 						return !data.getPlayer().isOnGround() && data.getPlayer().isInSneakingPose();
 					}

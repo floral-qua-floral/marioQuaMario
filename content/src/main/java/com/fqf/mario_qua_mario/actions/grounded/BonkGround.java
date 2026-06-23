@@ -21,12 +21,19 @@ import org.jetbrains.annotations.Nullable;
 import static com.fqf.charaformact_api.util.StatCategory.DRAG;
 import static com.fqf.charaformact_api.util.StatCategory.RUNNING;
 
-public class BonkGroundBackward implements GroundedActionDefinition {
-	public static final Identifier ID = MarioQuaMario.makeID("bonk_ground_backward");
+public class BonkGround implements GroundedActionDefinition {
+	public static final Identifier BACKWARD_ID = MarioQuaMario.makeID("bonk_ground_backward");
+	public static final Identifier FORWARD_ID = MarioQuaMario.makeID("bonk_ground_forward");
+
+	private final boolean IS_BACKWARD;
 
 	public static final float STANDUP_TICKS = 8;
 	protected static final StandUpWithKneeAnimation.ProgressCalculator PROGRESS_CALCULATOR = (data, animationTime) ->
 			2 * Easing.SINE_IN_OUT.ease(Math.min(1, data.retrieveStateData(ActionTimerVars.class).actionTimer / STANDUP_TICKS));
+
+	public BonkGround(boolean isBackward) {
+		this.IS_BACKWARD = isBackward;
+	}
 
 	public static AnimationDefinition makeAnimation(StandUpWithKneeAnimation.ProgressCalculator progressCalculator) {
 		return StandUpWithKneeAnimation.makeAnimation(
@@ -39,7 +46,13 @@ public class BonkGroundBackward implements GroundedActionDefinition {
 	}
 
 	@Override public @Nullable AnimationDefinition defineAnimation() {
-		return makeAnimation(PROGRESS_CALCULATOR);
+		return this.IS_BACKWARD ? makeAnimation(PROGRESS_CALCULATOR) : StandUpWithKneeAnimation.makeAnimation(
+				PROGRESS_CALCULATOR,
+				-3.25F, 40,
+				-80, -80, 90, 1.25F,
+				87.5F, 0, 1.5F,
+				90, 0, 0, -2
+		);
 	}
 
 	@Override public @NotNull SlidingStatus defineSlidingStatus() {

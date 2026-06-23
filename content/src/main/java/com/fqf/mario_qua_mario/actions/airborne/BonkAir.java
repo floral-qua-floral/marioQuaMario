@@ -8,8 +8,7 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.Animat
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.actions.aquatic.Submerged;
-import com.fqf.mario_qua_mario.actions.grounded.BonkGroundBackward;
-import com.fqf.mario_qua_mario.actions.grounded.BonkGroundForward;
+import com.fqf.mario_qua_mario.actions.grounded.BonkGround;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
@@ -207,14 +206,14 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 		builder.add(
 				Submerged.SUBMERGE,
 				Fall.LANDING.variate(
-						BonkGroundBackward.ID,
+						BonkGround.BACKWARD_ID,
 						data -> Fall.LANDING.evaluator().shouldTransition(data)
 								&& Math.abs(MathHelper.subtractAngles(data.getPlayer().bodyYaw, data.retrieveStateData(BonkVars.class).bonkYaw)) < 90,
 						EvaluatorEnvironment.CLIENT_ONLY,
 						null,
 						null
 				),
-				Fall.LANDING.variate(BonkGroundForward.ID, null)
+				Fall.LANDING.variate(BonkGround.FORWARD_ID, null)
 		);
 	}
 }

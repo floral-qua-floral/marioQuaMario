@@ -13,6 +13,7 @@ import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.DuckFall;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
+import com.fqf.mario_qua_mario.actions.airborne.Jump;
 import com.fqf.mario_qua_mario.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario.actions.grounded.DuckWaddle;
 import com.fqf.mario_qua_mario.util.Powers;
@@ -24,8 +25,9 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.fqf.charaformact_api.util.StatCategory.*;
 
-public class TailSpinFall implements AirborneActionDefinition {
-	public static final Identifier ID = MarioQuaMario.makeID("tail_spin_fall");
+public class TailSpinAerial implements AirborneActionDefinition {
+	public static final Identifier FALL_ID = MarioQuaMario.makeID("tail_spin_fall");
+	public static final Identifier JUMP_ID = MarioQuaMario.makeID("tail_spin_jump");
 
 	@Override
 	public @Nullable AnimationDefinition defineAnimation() {
@@ -40,6 +42,7 @@ public class TailSpinFall implements AirborneActionDefinition {
 	return SprintingRule.PROHIBIT;
 	}
 
+	public static final CfaStat JUMP_VEL = Jump.JUMP_VEL.variateAndReplaceCategories(0.7, DUCKING, JUMP_VELOCITY, FORM);
 	public static final CfaStat FALL_ACCEL = Fall.FALL_ACCEL.variateAndReplaceCategories(0.575, DUCKING, NORMAL_GRAVITY, FORM);
 	public static final CfaStat FALL_SPEED = Fall.FALL_SPEED.variateAndReplaceCategories(0.6, DUCKING, TERMINAL_VELOCITY, FORM);
 

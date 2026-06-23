@@ -22,13 +22,6 @@ import static com.fqf.charaformact_api.util.StatCategory.*;
 public class Fall implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("fall");
 
-	@Override public @Nullable CameraAnimationSet defineCameraAnimations(AnimationHelper helper) {
-		return null;
-	}
-	@Override public @NotNull SlidingStatus defineSlidingStatus() {
-		return SlidingStatus.NOT_SLIDING;
-	}
-
 	@Override public @NotNull SneakingRule defineSneakingRule() {
 		return SneakingRule.PROHIBIT;
 	}
@@ -100,7 +93,8 @@ public class Fall implements AirborneActionDefinition {
 				ClimbTransitions.CLIMB_NON_SOLID_DIRECTIONAL,
 				ClimbTransitions.CLIMB_NON_SOLID_NON_DIRECTIONAL,
 				ClimbTransitions.CLIMB_SOLID,
-				WallSlide.WALL_SLIDE
+				WallSlide.WALL_SLIDE,
+				LavaBoost.MANUALLY_TRIGGERABLE_LAVA_BOOST
 		);
 	}
 }

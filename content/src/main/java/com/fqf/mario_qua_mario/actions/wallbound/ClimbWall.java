@@ -207,8 +207,8 @@ public class ClimbWall implements WallboundActionDefinition {
 						data -> {
 							data.setYVel(WallJump.WALL_JUMP_VEL.get(data));
 							double speed = WallJump.WALL_JUMP_SPEED.get(data);
-							data.setForwardStrafeVel(data.getInputs().getForwardInput() * speed,
-									data.getInputs().getStrafeInput() * speed);
+							data.setForwardStrafeVel(data.getInputs().getNormalizedForwardInput() * speed,
+									data.getInputs().getNormalizedStrafeInput() * speed);
 						},
 						(data, isSelf, seed) -> {
 							data.voice(Voicelines.WALL_JUMP, seed);

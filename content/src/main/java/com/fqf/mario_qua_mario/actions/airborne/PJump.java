@@ -36,9 +36,6 @@ public class PJump extends Jump implements AirborneActionDefinition {
 		);
 	}
 
-	@Override public @NotNull SneakingRule defineSneakingRule() {
-		return SneakingRule.PROHIBIT;
-	}
 	@Override public @NotNull SprintingRule defineSprintingRule() {
 		return SprintingRule.ALLOW;
 	}

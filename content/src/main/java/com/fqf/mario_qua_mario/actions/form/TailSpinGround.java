@@ -154,10 +154,10 @@ public class TailSpinGround implements GroundedActionDefinition {
 	public void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, GroundedActionHelper helper) {
 		builder.add(
 				DuckJump.makeDuckJumpTransition(helper).variate(
-						TailSpinJump.ID,
+						TailSpinAerial.JUMP_ID,
 						null, null,
 						data -> {
-							helper.performJump(data, TailSpinJump.JUMP_VEL, null);
+							helper.performJump(data, TailSpinAerial.JUMP_VEL, null);
 						},
 						(data, isSelf, seed) -> {
 							data.playJumpSound(seed);

@@ -32,6 +32,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector2d;
 import org.joml.Vector3f;
 
 import java.util.*;
@@ -321,6 +322,38 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 			return this.strafeInput;
 		}
 
+		boolean hasNormalizedInputs;
+		double normalizedForwardInput;
+		double normalizedStrafeInput;
+
+		@Override
+		public double getNormalizedForwardInput() {
+			this.calculateNormalized();
+			return this.normalizedForwardInput;
+		}
+
+		@Override
+		public double getNormalizedStrafeInput() {
+			this.calculateNormalized();
+			return this.normalizedStrafeInput;
+		}
+
+		private void calculateNormalized() {
+			if(!this.hasNormalizedInputs) {
+				this.hasNormalizedInputs = true;
+				if(this.forwardInput == 0 && this.strafeInput == 0) {
+					this.normalizedForwardInput = 0;
+					this.normalizedStrafeInput = 0;
+				}
+				else {
+					double magnitude = Math.max(Math.abs(this.forwardInput), Math.abs(this.strafeInput));
+					Vector2d vector = new Vector2d(this.forwardInput, this.strafeInput).normalize(magnitude);
+					this.normalizedForwardInput = vector.x;
+					this.normalizedStrafeInput = vector.y;
+				}
+			}
+		}
+
 		private void updateButtons() {
 			ClientPlayerEntity player = getPlayer();
 			Input inputs = player.input;
@@ -336,6 +369,7 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 		private void updateAnalog(double forwardInput, double strafeInput) {
 			this.forwardInput = forwardInput;
 			this.strafeInput = strafeInput;
+			this.hasNormalizedInputs = false;
 		}
 
 		private void cancelUnbuffers() {

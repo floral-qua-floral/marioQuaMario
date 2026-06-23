@@ -142,7 +142,7 @@ public class Skid implements GroundedActionDefinition {
 				Fall.FALL,
 				UnderwaterWalk.SUBMERGE,
 				BonkAir.BONK.variate(
-						BonkGroundBackward.ID,
+						BonkGround.BACKWARD_ID,
 						null,
 						null,
 						data -> {
