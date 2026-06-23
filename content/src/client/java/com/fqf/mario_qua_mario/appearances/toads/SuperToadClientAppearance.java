@@ -10,7 +10,7 @@ import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
-public abstract class AbstractToadClientAppearance extends AbstractToadCommonAppearance implements ClientAppearanceDefinition {
+public class SuperToadClientAppearance extends SuperToadCommonAppearance implements ClientAppearanceDefinition {
 	public static final String CAP_BULB = "cap_bulb";
 	public static final String CAP_TIP = "cap_tip";
 	public static final String CAP_HAT = "cap_hat";

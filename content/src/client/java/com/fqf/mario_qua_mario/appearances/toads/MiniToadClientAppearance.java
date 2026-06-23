@@ -8,8 +8,7 @@ import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
-public abstract class AbstractMiniToadClientAppearance extends AbstractToadClientAppearance {
-
+public class MiniToadClientAppearance extends SuperToadClientAppearance {
 	@Override
 	public @NotNull Vector2i defineTextureSize() {
 		return new Vector2i(32, 48);
@@ -27,12 +26,12 @@ public abstract class AbstractMiniToadClientAppearance extends AbstractToadClien
 
 	@Override
 	public Vector3i getLegSize() {
-		return AbstractMiniToadCommonAppearance.LEG_SIZE;
+		return MiniToadCommonAppearance.LEG_SIZE;
 	}
 
 	@Override
 	public Vector3i getArmSize() {
-		return AbstractMiniToadCommonAppearance.ARM_SIZE;
+		return MiniToadCommonAppearance.ARM_SIZE;
 	}
 
 	@Override

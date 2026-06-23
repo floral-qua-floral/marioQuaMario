@@ -10,6 +10,9 @@ import com.fqf.charaformact_api.definitions.states.actions.util.IncompleteAction
 import com.fqf.charaformact_api.util.AppearanceMapBuilder;
 import com.fqf.mario_qua_mario.appearances.mario.*;
 import com.fqf.mario_qua_mario.appearances.luigi.*;
+import com.fqf.mario_qua_mario.appearances.toads.MiniToadCommonAppearance;
+import com.fqf.mario_qua_mario.appearances.toads.SmallToadCommonAppearance;
+import com.fqf.mario_qua_mario.appearances.toads.SuperToadCommonAppearance;
 import com.fqf.mario_qua_mario.characters.*;
 import com.fqf.mario_qua_mario.forms.*;
 import com.fqf.mario_qua_mario.actions.generic.*;
@@ -177,7 +180,19 @@ public class CfaMarioAddon implements CharaFormActAddon {
 		builder.putMatching(Luigi.ID, Small.ID, new SmallLuigiCommonAppearance());
 		builder.putMatching(Luigi.ID, Super.ID, new SuperLuigiCommonAppearance());
 		builder.putMatching(Luigi.ID, Fire.ID, new SuperLuigiCommonAppearance());
-		builder.putMatching(Luigi.ID, Raccoon.ID, new FoxLuigiCommonAppearance());
+		builder.putMatching(Luigi.ID, Raccoon.ID, new SuperLuigiCommonAppearance());
 		builder.putMatching(Luigi.ID, Mini.ID, new MiniMarioCommonAppearance());
+
+		builder.putMatching(Toadette.ID, Small.ID, new SmallToadCommonAppearance());
+		builder.putMatching(Toadette.ID, Super.ID, new SuperToadCommonAppearance());
+		builder.putMatching(Toadette.ID, Fire.ID, new SuperToadCommonAppearance());
+		builder.putMatching(Toadette.ID, Raccoon.ID, new SuperToadCommonAppearance());
+		builder.putMatching(Toadette.ID, Mini.ID, new MiniToadCommonAppearance());
+
+		builder.putMatching(CustomToad.ID, Small.ID, new SmallToadCommonAppearance());
+		builder.putMatching(CustomToad.ID, Super.ID, new SuperToadCommonAppearance());
+		builder.putMatching(CustomToad.ID, Fire.ID, new SuperToadCommonAppearance());
+		builder.putMatching(CustomToad.ID, Raccoon.ID, new SuperToadCommonAppearance());
+		builder.putMatching(CustomToad.ID, Mini.ID, new MiniToadCommonAppearance());
 	}
 }

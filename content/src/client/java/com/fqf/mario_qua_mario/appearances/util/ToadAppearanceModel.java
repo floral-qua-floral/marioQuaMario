@@ -1,7 +1,7 @@
 package com.fqf.mario_qua_mario.appearances.util;
 
 import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
-import com.fqf.mario_qua_mario.appearances.toads.AbstractToadClientAppearance;
+import com.fqf.mario_qua_mario.appearances.toads.SuperToadClientAppearance;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 
@@ -13,10 +13,10 @@ public class ToadAppearanceModel extends MqmAppearanceModel {
 	public ToadAppearanceModel(ModelPart root) {
 		super(root);
 
-		ModelPart capBulb = this.head.getChild(AbstractToadClientAppearance.CAP_BULB);
-		this.capSpots = capBulb.getChild(AbstractToadClientAppearance.CAP_HAT);
-		this.rightPigtail = capBulb.getChild(AbstractToadClientAppearance.RIGHT_PIGTAIL_TOP);
-		this.leftPigtail = capBulb.getChild(AbstractToadClientAppearance.LEFT_PIGTAIL_TOP);
+		ModelPart capBulb = this.head.getChild(SuperToadClientAppearance.CAP_BULB);
+		this.capSpots = capBulb.getChild(SuperToadClientAppearance.CAP_HAT);
+		this.rightPigtail = capBulb.getChild(SuperToadClientAppearance.RIGHT_PIGTAIL_TOP);
+		this.leftPigtail = capBulb.getChild(SuperToadClientAppearance.LEFT_PIGTAIL_TOP);
 	}
 
 	@Override

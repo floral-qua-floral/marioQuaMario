@@ -7,7 +7,7 @@ import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
-public abstract class AbstractRaccoonToadClientAppearance extends AbstractToadClientAppearance {
+public class RaccoonToadClientAppearance extends SuperToadClientAppearance {
 
 	@Override
 	public ModelPartData makeHead(ModelPartData root, AppearanceGeometryHelper helper) {

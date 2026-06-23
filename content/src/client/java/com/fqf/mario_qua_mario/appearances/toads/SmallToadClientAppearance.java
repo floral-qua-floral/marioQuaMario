@@ -4,7 +4,7 @@ import com.fqf.charaformact_api.appearance.AppearanceGeometryHelper;
 import org.joml.Vector2i;
 import org.joml.Vector3i;
 
-public abstract class AbstractSmallToadClientAppearance extends AbstractToadClientAppearance {
+public class SmallToadClientAppearance extends SuperToadClientAppearance {
 	@Override
 	public Vector3i getHeadSize() {
 		return new Vector3i(8, 3, 8);
@@ -37,12 +37,12 @@ public abstract class AbstractSmallToadClientAppearance extends AbstractToadClie
 
 	@Override
 	public Vector3i getLegSize() {
-		return AbstractSmallToadCommonAppearance.LEG_SIZE;
+		return SmallToadCommonAppearance.LEG_SIZE;
 	}
 
 	@Override
 	public Vector3i getArmSize() {
-		return AbstractSmallToadCommonAppearance.ARM_SIZE;
+		return SmallToadCommonAppearance.ARM_SIZE;
 	}
 
 }

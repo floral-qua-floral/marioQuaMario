@@ -1,7 +1,7 @@
 package com.fqf.mario_qua_mario.appearances.toads.custom;
 
 import com.fqf.charaformact_api.appearance.AppearanceModel;
-import com.fqf.mario_qua_mario.appearances.toads.AbstractMiniToadClientAppearance;
+import com.fqf.mario_qua_mario.appearances.toads.MiniToadClientAppearance;
 import com.fqf.mario_qua_mario.appearances.util.CustomizableTextureLayerFeature;
 import com.fqf.mario_qua_mario.appearances.util.CustomizableToadAppearanceModel;
 import com.google.common.collect.ImmutableList;
@@ -12,8 +12,7 @@ import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.util.Identifier;
 
-public class MiniCustomToadClientAppearance extends AbstractMiniToadClientAppearance {
-
+public class MiniCustomToadClientAppearance extends MiniToadClientAppearance {
 	@Override
 	public void accumulateCustomFeatureRenderers(Identifier texture, ImmutableList.Builder<FeatureRenderer<AbstractClientPlayerEntity, AppearanceModel>> builder, FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel> featureRendererContext, EntityRendererFactory.Context ctx) {
 		builder.addAll(CustomizableTextureLayerFeature.makeCustomToadFeatures(featureRendererContext, texture, "mini", CustomizableTextureLayerFeature.SpotsMode.DEFAULT));

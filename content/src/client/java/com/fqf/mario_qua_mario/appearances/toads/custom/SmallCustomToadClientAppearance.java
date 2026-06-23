@@ -1,7 +1,7 @@
 package com.fqf.mario_qua_mario.appearances.toads.custom;
 
 import com.fqf.charaformact_api.appearance.AppearanceModel;
-import com.fqf.mario_qua_mario.appearances.toads.AbstractSmallToadClientAppearance;
+import com.fqf.mario_qua_mario.appearances.toads.SmallToadClientAppearance;
 import com.fqf.mario_qua_mario.appearances.util.CustomizableTextureLayerFeature;
 import com.fqf.mario_qua_mario.appearances.util.CustomizableToadAppearanceModel;
 import com.google.common.collect.ImmutableList;
@@ -12,7 +12,7 @@ import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.util.Identifier;
 
-public class SmallCustomToadClientAppearance extends AbstractSmallToadClientAppearance {
+public class SmallCustomToadClientAppearance extends SmallToadClientAppearance {
 
 	@Override
 	public AppearanceModel createModel(ModelPart root) {
