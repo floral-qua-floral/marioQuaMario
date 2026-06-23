@@ -1,15 +1,11 @@
 package com.fqf.mario_qua_mario.actions.grounded;
 
-import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
-import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
@@ -54,25 +50,17 @@ public class Skid implements GroundedActionDefinition {
 				}
 		);
 	}
-	@Override public @Nullable CameraAnimationSet defineCameraAnimations(AnimationHelper helper) {
-		return null;
-	}
+
 	@Override public @NotNull SlidingStatus defineSlidingStatus() {
 		return SlidingStatus.SKIDDING;
 	}
 
-	@Override public @NotNull SneakingRule defineSneakingRule() {
-		return SneakingRule.ALLOW;
-	}
 	@Override public @NotNull SprintingRule defineSprintingRule() {
 		return SprintingRule.PROHIBIT;
 	}
 
 	@Override public @Nullable BappingRule defineBappingRule() {
 		return new BappingRule(0, 0, 3, new CfaStat(0, THRESHOLD));
-	}
-	@Override public @Nullable Identifier defineActiveCollisionAttack() {
-		return null;
 	}
 
 	public static final CfaStat SKID_THRESHOLD = new CfaStat(0.285, RUNNING, THRESHOLD);
@@ -83,12 +71,6 @@ public class Skid implements GroundedActionDefinition {
 
 	@Override public @Nullable Object provideStateData(CfaData data) {
 		return new ActionTimerVars();
-	}
-	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-
-	}
-	@Override public void serverTick(CfaAuthoritativeData data) {
-
 	}
 	@Override public void travelHook(CfaTravelData data, GroundedActionHelper helper) {
 		data.retrieveStateData(ActionTimerVars.class).actionTimer++;
@@ -145,9 +127,8 @@ public class Skid implements GroundedActionDefinition {
 						BonkGround.BACKWARD_ID,
 						null,
 						null,
-						data -> {
-							data.setVelocity(data.getRecordedCollisions().getHorizontallyReflectedVelocity().multiply(1.25));
-						},
+						data ->
+								data.setVelocity(data.getRecordedCollisions().getHorizontallyReflectedVelocity().multiply(1.25)),
 						null
 				)
 		);

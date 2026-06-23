@@ -1,6 +1,5 @@
 package com.fqf.mario_qua_mario.actions.form;
 
-import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
@@ -85,7 +84,6 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 		tailWaggleTick(data);
 	}
-	@Override public void serverTick(CfaAuthoritativeData data) {}
 	@Override public void travelHook(CfaTravelData data, AirborneActionHelper helper) {
 		helper.applyComplexGravity(data, FALL_ACCEL, null, FALL_SPEED);
 		drift(data, helper);

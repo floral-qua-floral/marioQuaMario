@@ -8,8 +8,6 @@ import com.fqf.charaformact_api.definitions.states.actions.AquaticActionDefiniti
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
@@ -79,12 +77,6 @@ public class Submerged implements AquaticActionDefinition {
 				}
 		);
 	}
-	@Override public @Nullable CameraAnimationSet defineCameraAnimations(AnimationHelper helper) {
-		return null;
-	}
-	@Override public @NotNull SlidingStatus defineSlidingStatus() {
-		return SlidingStatus.NOT_SLIDING;
-	}
 
 	@Override public @NotNull SneakingRule defineSneakingRule() {
 		return SneakingRule.PROHIBIT;
@@ -95,9 +87,6 @@ public class Submerged implements AquaticActionDefinition {
 
 	@Override public @Nullable BappingRule defineBappingRule() {
 		return new BappingRule(3, 0);
-	}
-	@Override public @Nullable Identifier defineActiveCollisionAttack() {
-		return null;
 	}
 
 	public static final CfaStat FALL_ACCEL = new CfaStat(-0.035, AQUATIC_GRAVITY);
@@ -172,9 +161,7 @@ public class Submerged implements AquaticActionDefinition {
 							return (vars == null || vars.actionTimer > 7) && data.getInputs().JUMP.isHeld() && data.getForwardVel() > -0.1;
 						},
 						EvaluatorEnvironment.CLIENT_ONLY,
-						data -> {
-							data.setYVel(Math.max(Paddle.PADDLE_FALL_SPEED.get(data), data.getYVel()));
-						},
+						data -> data.setYVel(Math.max(Paddle.PADDLE_FALL_SPEED.get(data), data.getYVel())),
 						null
 				)
 		);

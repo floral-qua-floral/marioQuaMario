@@ -1,14 +1,10 @@
 package com.fqf.mario_qua_mario.actions.aquatic;
 
-import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
-import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AquaticActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
@@ -31,13 +27,6 @@ public class AquaticPoundDrop implements AquaticActionDefinition {
 		return GroundPoundDrop.ANIMATION;
 	}
 
-	@Override public @Nullable CameraAnimationSet defineCameraAnimations(AnimationHelper helper) {
-		return null;
-	}
-	@Override public @NotNull SlidingStatus defineSlidingStatus() {
-		return SlidingStatus.NOT_SLIDING;
-	}
-
 	@Override public @NotNull SneakingRule defineSneakingRule() {
 		return SneakingRule.PROHIBIT;
 	}
@@ -55,15 +44,10 @@ public class AquaticPoundDrop implements AquaticActionDefinition {
 	public static CfaStat AQUATIC_GROUND_POUND_DRAG = new CfaStat(0.19, WATER_DRAG);
 	public static CfaStat AQUATIC_GROUND_POUND_DRAG_MIN = new CfaStat(0.02, WATER_DRAG);
 
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return null;
-	}
 	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 		data.sustainSound(MarioSFX.AQUATIC_GROUND_POUND_DROP, data.getPlayer(), SoundCategory.PLAYERS);
 	}
-	@Override public void serverTick(CfaAuthoritativeData data) {
 
-	}
 	@Override public void travelHook(CfaTravelData data, AquaticActionHelper helper) {
 		int depthChargeLevel = AquaticGroundPound.getDepthChargeLevel(data.getPlayer().getEquippedStack(EquipmentSlot.LEGS), data);
 		CfaStat drag;

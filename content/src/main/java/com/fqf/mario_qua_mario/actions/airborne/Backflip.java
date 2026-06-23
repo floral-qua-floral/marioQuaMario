@@ -32,9 +32,8 @@ public class Backflip extends Jump implements AirborneActionDefinition {
 		return AnimationDefinition.of(
 				AnimationFlag.NO_SWING_LIMBS,
 				AnimationFlag.Execution.RANDOMLY_MIRROR,
-				(arrangement, data, animationTime, helper) -> {
-					arrangement.pitch += getAnimationProgress(animationTime, helper) * 180;
-				},
+				(arrangement, data, animationTime, helper) ->
+						arrangement.pitch += getAnimationProgress(animationTime, helper) * 180,
 				(posture, data, animationTime, helper) -> {
 					float progress = getAnimationProgress(animationTime, helper);
 

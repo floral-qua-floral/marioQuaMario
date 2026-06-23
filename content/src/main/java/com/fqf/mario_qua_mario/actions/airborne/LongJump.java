@@ -2,8 +2,14 @@ package com.fqf.mario_qua_mario.actions.airborne;
 
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.*;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
+import com.fqf.charaformact_api.definitions.states.actions.util.BappingRule;
+import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.Arrangement;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -73,9 +79,7 @@ public class LongJump extends Jump implements AirborneActionDefinition {
 		arrangement.y += helper.interpolateKeyframes(progress * BODY_ROTATION_SPEED, 2.24F, 0, 4.4F);
 		arrangement.z += helper.interpolateKeyframes(progress * BODY_ROTATION_SPEED, -1.2F, 0, -2);
 	}
-	@Override public @NotNull SneakingRule defineSneakingRule() {
-		return SneakingRule.PROHIBIT;
-	}
+
 	@Override public @NotNull SprintingRule defineSprintingRule() {
 		return SprintingRule.ALLOW;
 	}

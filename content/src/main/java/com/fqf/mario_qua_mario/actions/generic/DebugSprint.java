@@ -1,6 +1,5 @@
 package com.fqf.mario_qua_mario.actions.generic;
 
-import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
@@ -12,7 +11,6 @@ import com.fqf.mario_qua_mario.util.MarioSFX;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
@@ -49,9 +47,6 @@ public class DebugSprint extends Debug {
 	public void accumulateAttackInterceptions(ImmutableList.Builder<AttackInterceptionDefinition> builder, AnimationHelper helper) {
 		builder.add(
 				new AttackInterceptionDefinition() {
-					@Override public @Nullable Identifier defineActionTarget() {
-						return null;
-					}
 					@Override public Hand defineHandToSwing() {
 						return Hand.MAIN_HAND;
 					}
@@ -73,25 +68,12 @@ public class DebugSprint extends Debug {
 						return miningTicks < 20 ? MiningHandling.HOLD : MiningHandling.MINE;
 					}
 
-					@Override public void executeTravellers(
-							CfaTravelData data, ItemStack weapon, float attackCooldownProgress,
-							@Nullable BlockPos blockTarget, @Nullable Entity entityTarget
-					) {
-
-					}
 					@Override public void executeClients(
 							CfaClientData data, ItemStack weapon, float attackCooldownProgress,
 							@Nullable BlockPos blockTarget, @Nullable Entity entityTarget,
 							long seed
 					) {
 						data.playSound(MarioSFX.YOSHI, seed);
-					}
-
-					@Override public void executeServer(
-							CfaAuthoritativeData data, ItemStack weapon, float attackCooldownProgress,
-							ServerWorld world, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget
-					) {
-
 					}
 				}
 		);

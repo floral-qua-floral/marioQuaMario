@@ -2,7 +2,8 @@ package com.fqf.mario_qua_mario.actions.aquatic;
 
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AquaticActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
+import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;

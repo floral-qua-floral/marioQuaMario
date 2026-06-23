@@ -26,7 +26,9 @@ public interface AttackInterceptingStateDefinition extends CfaStateDefinition {
 		 * If null, performing the Attack Interception will have no effect whatsoever on the player's Action. Otherwise,
 		 * the player will be put in the Action defined here. Standard Action->Action transitions will not occur.
 		 */
-		@Nullable Identifier defineActionTarget();
+		default @Nullable Identifier defineActionTarget() {
+			return null;
+		}
 
 		@Nullable Hand defineHandToSwing();
 		boolean triggersAttackCooldown();
@@ -69,18 +71,24 @@ public interface AttackInterceptingStateDefinition extends CfaStateDefinition {
 		 * <code>executeClients</code>: Runs on all clients, including the one performing the transition.
 		 * <code>executeServer</code>: Runs on the server side only.
 		 */
-		void executeTravellers(
+		default void executeTravellers(
 				CfaTravelData data, ItemStack weapon, float attackCooldownProgress,
 				@Nullable BlockPos blockTarget, @Nullable Entity entityTarget
-		);
-		void executeClients(
+		) {
+
+		}
+		default void executeClients(
 				CfaClientData data, ItemStack weapon, float attackCooldownProgress,
 				@Nullable BlockPos blockTarget, @Nullable Entity entityTarget, long seed
-		);
-		void executeServer(
+		) {
+
+		}
+		default void executeServer(
 				CfaAuthoritativeData data, ItemStack weapon, float attackCooldownProgress,
 				ServerWorld world, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget
-		);
+		) {
+
+		}
 
 		/**
 		 * Use these to decide what happens when the player presses/holds Attack while targeting a block.

@@ -1,11 +1,12 @@
 package com.fqf.mario_qua_mario.actions.airborne;
 
-import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
-import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
+import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.charaformact_api.definitions.states.actions.util.SneakingRule;
+import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
@@ -80,12 +81,8 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 				null
 		);
 	}
-
 	@Override public @Nullable CameraAnimationSet defineCameraAnimations(AnimationHelper helper) {
 		return makeCameraAnimations(FLIP_DURATION + 2.5F);
-	}
-	@Override public @NotNull SlidingStatus defineSlidingStatus() {
-		return SlidingStatus.NOT_SLIDING;
 	}
 
 	@Override public @NotNull SneakingRule defineSneakingRule() {
@@ -93,13 +90,6 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 	}
 	@Override public @NotNull SprintingRule defineSprintingRule() {
 		return SprintingRule.PROHIBIT;
-	}
-
-	@Override public @Nullable BappingRule defineBappingRule() {
-		return null;
-	}
-	@Override public @Nullable Identifier defineActiveCollisionAttack() {
-		return null;
 	}
 
 	public static class FlipTimerVars extends ActionTimerVars {
@@ -114,12 +104,6 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 	@Override public @Nullable Object provideStateData(CfaData data) {
 		return new FlipTimerVars(data);
 	}
-	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-
-	}
-	@Override public void serverTick(CfaAuthoritativeData data) {
-
-	}
 	@Override public void travelHook(CfaTravelData data, AirborneActionHelper helper) {
 		data.retrieveStateData(FlipTimerVars.class).actionTimer++;
 		data.setYVel(0.15);
@@ -129,9 +113,7 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 			ID,
 			data -> data.getInputs().DUCK.isPressed(),
 			EvaluatorEnvironment.CLIENT_ONLY,
-			data -> {
-				data.setVelocity(Vec3d.ZERO);
-			},
+			data -> data.setVelocity(Vec3d.ZERO),
 			(data, isSelf, seed) -> data.playSound(MarioSFX.GROUND_POUND_FLIP, seed)
 	);
 

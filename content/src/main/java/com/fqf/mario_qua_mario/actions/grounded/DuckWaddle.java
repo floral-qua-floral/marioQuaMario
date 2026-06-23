@@ -1,15 +1,12 @@
 package com.fqf.mario_qua_mario.actions.grounded;
 
-import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
-import com.fqf.charaformact_api.cfadata.CfaClientData;
-import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
+import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -88,25 +85,8 @@ public class DuckWaddle implements GroundedActionDefinition {
 	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return makeAnimation(true, true);
 	}
-	@Override public @Nullable CameraAnimationSet defineCameraAnimations(AnimationHelper helper) {
-		return null;
-	}
-	@Override public @NotNull SlidingStatus defineSlidingStatus() {
-		return SlidingStatus.NOT_SLIDING;
-	}
-
-	@Override public @NotNull SneakingRule defineSneakingRule() {
-		return SneakingRule.ALLOW;
-	}
 	@Override public @NotNull SprintingRule defineSprintingRule() {
 		return SprintingRule.PROHIBIT;
-	}
-
-	@Override public @Nullable BappingRule defineBappingRule() {
-		return null;
-	}
-	@Override public @Nullable Identifier defineActiveCollisionAttack() {
-		return null;
 	}
 
 	public static final CfaStat WADDLE_ACCEL = new CfaStat(0.06, DUCKING, FORWARD, ACCELERATION);
@@ -120,15 +100,7 @@ public class DuckWaddle implements GroundedActionDefinition {
 
 	public static final CfaStat WADDLE_REDIRECTION = new CfaStat(0.0, DUCKING, REDIRECTION);
 
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return null;
-	}
-	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 
-	}
-	@Override public void serverTick(CfaAuthoritativeData data) {
-
-	}
 	@Override public void travelHook(CfaTravelData data, GroundedActionHelper helper) {
 		boolean waddlingForward = data.getInputs().getForwardInput() > 0;
 		helper.groundAccel(data,

@@ -1,8 +1,13 @@
 package com.fqf.mario_qua_mario.actions.airborne;
 
-import com.fqf.charaformact_api.cfadata.*;
+import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
+import com.fqf.charaformact_api.cfadata.CfaData;
+import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
+import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
+import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -154,9 +159,8 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 			BonkAir.ID,
 			data -> data.getRecordedCollisions().collidedHorizontally(),
 			EvaluatorEnvironment.CLIENT_ONLY,
-			data -> {
-				data.setVelocity(data.getRecordedCollisions().getHorizontallyReflectedVelocity().multiply(0.7));
-			},
+			data ->
+					data.setVelocity(data.getRecordedCollisions().getHorizontallyReflectedVelocity().multiply(0.7)),
 			(data, isSelf, seed) -> {
 				data.playSound(MarioSFX.BONK, seed);
 				data.voice(Voicelines.BONK, seed);
@@ -192,10 +196,6 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 
 	@Override public @Nullable Object provideStateData(CfaData data) {
 		return new BonkVars(data);
-	}
-	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-//		data.forceBodyAlignment(true);
-//		data.getPlayer().setBodyYaw(data.retrieveStateData(BonkVars.class).BONK_YAW);
 	}
 	@Override public void travelHook(CfaTravelData data, AirborneActionHelper helper) {
 		helper.applyComplexGravity(data, Fall.FALL_ACCEL, null, Fall.FALL_SPEED);

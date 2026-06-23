@@ -1,6 +1,9 @@
 package com.fqf.mario_qua_mario.actions.airborne;
 
-import com.fqf.charaformact_api.cfadata.*;
+import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
+import com.fqf.charaformact_api.cfadata.CfaClientData;
+import com.fqf.charaformact_api.cfadata.CfaData;
+import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;

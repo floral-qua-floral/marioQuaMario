@@ -3,7 +3,10 @@ package com.fqf.mario_qua_mario.actions.airborne;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
+import com.fqf.charaformact_api.definitions.states.actions.util.BappingRule;
+import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.util.CfaStat;
@@ -149,9 +152,7 @@ public class LavaBoost extends Fall implements AirborneActionDefinition {
 				data.setYVel(LavaBoost.BOOST_VEL.get(data));
 				data.setForwardStrafeVel(0, 0);
 			},
-			(data, isSelf, seed) -> {
-				data.voice(Voicelines.BURNT, seed);
-			}
+			(data, isSelf, seed) -> data.voice(Voicelines.BURNT, seed)
 	);
 
 	@Override
@@ -178,17 +179,4 @@ public class LavaBoost extends Fall implements AirborneActionDefinition {
 				ClimbTransitions.CLIMB_SOLID
 		);
 	}
-
-	// What is this???????????
-//	@Override public @NotNull Set<DeprecatedTransitionInjectionDefinition> getTransitionInjections() {
-//		return Set.of(
-//				new DeprecatedTransitionInjectionDefinition(
-//						TransitionInjectionDefinition.InjectionPlacement.BEFORE,
-//						Submerged.ID,
-//						(fromAction, fromCategory, existingTransitions) -> true,
-//						(nearbyTransition, castableHelper) -> LAVA_BOOST
-//				)
-//		);
-//	}
-
 }

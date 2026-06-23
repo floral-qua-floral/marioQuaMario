@@ -1,6 +1,5 @@
 package com.fqf.mario_qua_mario.actions.generic;
 
-import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
@@ -96,9 +95,6 @@ public class ClimbPole implements GenericActionDefinition {
 				null
 		);
 	}
-	@Override public @NotNull SlidingStatus defineSlidingStatus() {
-		return SlidingStatus.NOT_SLIDING;
-	}
 
 	@Override public @NotNull SneakingRule defineSneakingRule() {
 		return SneakingRule.PROHIBIT;
@@ -110,13 +106,6 @@ public class ClimbPole implements GenericActionDefinition {
 		return GenericActionType.UNSPECIFIED;
 	}
 
-	@Override public @Nullable BappingRule defineBappingRule() {
-		return null;
-	}
-	@Override public @Nullable Identifier defineActiveCollisionAttack() {
-		return null;
-	}
-
 	public static final CfaStat CLIMB_SPEED = new CfaStat(0.2, StatCategory.UP, StatCategory.SPEED, StatCategory.CLIMBING);
 
 	@Override public @Nullable Object provideStateData(CfaData data) {
@@ -124,9 +113,6 @@ public class ClimbPole implements GenericActionDefinition {
 	}
 	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 		data.forceBodyAlignment(true);
-	}
-	@Override public void serverTick(CfaAuthoritativeData data) {
-
 	}
 	@Override public boolean travelHook(CfaTravelData data) {
 		double forwardInput = data.getInputs().getForwardInput() * (data.getInputs().DUCK.isHeld() ? 0.3 : 1);
@@ -179,9 +165,8 @@ public class ClimbPole implements GenericActionDefinition {
 							releasePole(data);
 							data.setYVel(1);
 						},
-						(data, isSelf, seed) -> {
-							data.playJumpSound(seed);
-						}
+						(data, isSelf, seed) ->
+								data.playJumpSound(seed)
 				)
 		);
 	}

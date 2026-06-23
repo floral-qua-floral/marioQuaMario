@@ -5,7 +5,10 @@ import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
+import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.charaformact_api.definitions.states.actions.util.SneakingRule;
+import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimation;
@@ -42,9 +45,8 @@ public class TailSpinGround implements GroundedActionDefinition {
 								posture.TAIL.pitch = -MathHelper.clamp(data.getPlayer().getPitch() - 10, -60, 10) - posture.TORSO.pitch;
 						})
 				),
-				(arrangement, data, animationTime, helper) -> {
-					arrangement.yaw = data.retrieveStateData(TailSpinActionTimerVars.class).actionTimer / TICKS_PER_REVOLUTION * 360;
-				}
+				(arrangement, data, animationTime, helper) ->
+						arrangement.yaw = data.retrieveStateData(TailSpinActionTimerVars.class).actionTimer / TICKS_PER_REVOLUTION * 360
 		);
 	}
 
@@ -71,22 +73,12 @@ public class TailSpinGround implements GroundedActionDefinition {
 	@Override public @Nullable CameraAnimationSet defineCameraAnimations(AnimationHelper helper) {
 		return CAMERA_ANIMATIONS;
 	}
-	@Override public @NotNull SlidingStatus defineSlidingStatus() {
-		return SlidingStatus.NOT_SLIDING;
-	}
 
 	@Override public @NotNull SneakingRule defineSneakingRule() {
 		return SneakingRule.SLIP;
 	}
 	@Override public @NotNull SprintingRule defineSprintingRule() {
 		return SprintingRule.PROHIBIT;
-	}
-
-	@Override public @Nullable BappingRule defineBappingRule() {
-		return null;
-	}
-	@Override public @Nullable Identifier defineActiveCollisionAttack() {
-		return null;
 	}
 
 	public static void attemptTailStrike(CfaAuthoritativeData data) {
@@ -156,12 +148,8 @@ public class TailSpinGround implements GroundedActionDefinition {
 				DuckJump.makeDuckJumpTransition(helper).variate(
 						TailSpinAerial.JUMP_ID,
 						null, null,
-						data -> {
-							helper.performJump(data, TailSpinAerial.JUMP_VEL, null);
-						},
-						(data, isSelf, seed) -> {
-							data.playJumpSound(seed);
-						}
+						data -> helper.performJump(data, TailSpinAerial.JUMP_VEL, null),
+						(data, isSelf, seed) -> data.playJumpSound(seed)
 				)
 		);
 	}

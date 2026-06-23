@@ -1,10 +1,11 @@
 package com.fqf.mario_qua_mario.actions.grounded;
 
-import com.fqf.charaformact_api.cfadata.*;
+import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
+import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.*;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
+import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
@@ -14,32 +15,14 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class SubWalk implements GroundedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("sub_walk");
 
-	@Override public @Nullable CameraAnimationSet defineCameraAnimations(AnimationHelper helper) {
-		return null;
-	}
-	@Override public @NotNull SlidingStatus defineSlidingStatus() {
-		return SlidingStatus.NOT_SLIDING;
-	}
-
-	@Override public @NotNull SneakingRule defineSneakingRule() {
-		return SneakingRule.ALLOW;
-	}
 	@Override public @NotNull SprintingRule defineSprintingRule() {
 		return SprintingRule.PROHIBIT;
-	}
-
-	@Override public @Nullable BappingRule defineBappingRule() {
-		return null;
-	}
-	@Override public @Nullable Identifier defineActiveCollisionAttack() {
-		return null;
 	}
 
 	public static final CfaStat WALK_ACCEL = new CfaStat(0.045, WALKING, FORWARD, ACCELERATION);
@@ -61,15 +44,6 @@ public class SubWalk implements GroundedActionDefinition {
 	public static final CfaStat STRAFE_ACCEL = new CfaStat(0.065, WALKING, STRAFE, ACCELERATION);
 	public static final CfaStat STRAFE_SPEED = new CfaStat(0.275, WALKING, STRAFE, SPEED);
 
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return null;
-	}
-	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-
-	}
-	@Override public void serverTick(CfaAuthoritativeData data) {
-
-	}
 	@Override public void travelHook(CfaTravelData data, GroundedActionHelper helper) {
 		if(data.getInputs().getForwardInput() > 0) {
 			if(data.getForwardVel() > WALK_SPEED.getAsLimit(data)) {

@@ -2,27 +2,26 @@ package com.fqf.mario_qua_mario.actions.generic;
 
 import com.fqf.charaformact_api.cfadata.*;
 import com.fqf.charaformact_api.definitions.states.actions.GenericActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
+import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.charaformact_api.definitions.states.actions.util.GenericActionType;
+import com.fqf.charaformact_api.definitions.states.actions.util.SlidingStatus;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.Posture;
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario.Voicelines;
-import com.fqf.mario_qua_mario.actions.airborne.LavaBoost;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,9 +37,7 @@ public class Debug implements GenericActionDefinition {
 	public @Nullable AnimationDefinition defineAnimation() {
 		return AnimationDefinition.of(
 				AnimationFlag.NO_SWING_LIMBS,
-				(posture, data, animationTime, helper) -> {
-					tPose(posture);
-				}
+				(posture, data, animationTime, helper) -> tPose(posture)
 		);
 	}
 
@@ -82,11 +79,6 @@ public class Debug implements GenericActionDefinition {
 		builder.add(
 				new AttackInterceptionDefinition() {
 					@Override
-					public @Nullable Identifier defineActionTarget() {
-						return null;
-					}
-
-					@Override
 					public @Nullable Hand defineHandToSwing() {
 						return null;
 					}
@@ -105,34 +97,8 @@ public class Debug implements GenericActionDefinition {
 					public @NotNull MiningHandling shouldSuppressMining(CfaReadableMotionData data, ItemStack weapon, @NotNull BlockHitResult blockHitResult, int miningTicks) {
 						return MiningHandling.INTERCEPT;
 					}
-
-					@Override
-					public void executeTravellers(CfaTravelData data, ItemStack weapon, float attackCooldownProgress, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget) {
-
-
-
-//						data.getPlayer().setYaw(data.getPlayer().getYaw() + 90);
-//						data.getPlayer().bodyYaw = 20;
-//						data.getPlayer().prevHeadYaw = -30;
-//						data.getPlayer().prevBodyYaw = 20;
-//						data.getPlayer().prevYaw = 0;
-					}
-
-					@Override
-					public void executeClients(CfaClientData data, ItemStack weapon, float attackCooldownProgress, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget, long seed) {
-//						data.forceBodyAlignment(true);
-//						data.instantVisualRotate(90, true);
-					}
-
-					@Override
-					public void executeServer(CfaAuthoritativeData data, ItemStack weapon, float attackCooldownProgress, ServerWorld world, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget) {
-
-					}
 				},
 				new AttackInterceptionDefinition() {
-					@Override public @Nullable Identifier defineActionTarget() {
-						return null;
-					}
 					@Override public Hand defineHandToSwing() {
 						return Hand.OFF_HAND;
 					}
@@ -154,25 +120,12 @@ public class Debug implements GenericActionDefinition {
 						return miningTicks < 20 ? MiningHandling.INTERCEPT : MiningHandling.MINE;
 					}
 
-					@Override public void executeTravellers(
-							CfaTravelData data, ItemStack weapon, float attackCooldownProgress,
-							@Nullable BlockPos blockTarget, @Nullable Entity entityTarget
-					) {
-
-					}
 					@Override public void executeClients(
 							CfaClientData data, ItemStack weapon, float attackCooldownProgress,
 							@Nullable BlockPos blockTarget, @Nullable Entity entityTarget,
 							long seed
 					) {
 						data.playSound(MarioSFX.HEAVY, seed);
-					}
-
-					@Override public void executeServer(
-							CfaAuthoritativeData data, ItemStack weapon, float attackCooldownProgress,
-							ServerWorld world, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget
-					) {
-
 					}
 				}
 		);

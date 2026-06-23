@@ -2,7 +2,8 @@ package com.fqf.mario_qua_mario.actions.aquatic;
 
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AquaticActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
+import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.StatCategory;
@@ -22,9 +23,8 @@ public class UnderwaterWalk implements AquaticActionDefinition {
 
 	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return AnimationDefinition.of(
-			(arrangement, data, animationTime, helper) -> {
-				arrangement.y += LEG_HEIGHT_OFFSET;
-			},
+			(arrangement, data, animationTime, helper) ->
+					arrangement.y += LEG_HEIGHT_OFFSET,
 			(posture, data, animationTime, helper) -> {
 				posture.TORSO.pitch += 15;
 

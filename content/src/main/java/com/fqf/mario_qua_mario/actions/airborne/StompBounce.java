@@ -17,10 +17,6 @@ public class StompBounce extends Jump implements AirborneActionDefinition {
 		return DoubleJump.ANIMATION;
 	}
 
-	//	@Override public @Nullable PiecemealPlayermodelAnimation getOldAnimation(AnimationHelper helper) {
-//		return DoubleJump.ANIMATION;
-//	}
-
 	public static final CfaStat BOUNCE_VEL = new CfaStat(1.15, COLLISION_ATTACK, JUMP_VELOCITY);
 
 	@Override

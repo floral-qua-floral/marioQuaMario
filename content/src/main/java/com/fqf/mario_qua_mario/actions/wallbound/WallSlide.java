@@ -6,7 +6,6 @@ import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
@@ -169,9 +168,7 @@ public class WallSlide implements WallboundActionDefinition {
 				}
 		);
 	}
-	@Override public @Nullable CameraAnimationSet defineCameraAnimations(AnimationHelper helper) {
-		return null;
-	}
+
 	@Override public @NotNull SlidingStatus defineSlidingStatus() {
 		return SlidingStatus.WALL_SLIDING;
 	}
@@ -181,13 +178,6 @@ public class WallSlide implements WallboundActionDefinition {
 	}
 	@Override public @NotNull SprintingRule defineSprintingRule() {
 		return SprintingRule.PROHIBIT;
-	}
-
-	@Override public @Nullable BappingRule defineBappingRule() {
-		return null;
-	}
-	@Override public @Nullable Identifier defineActiveCollisionAttack() {
-		return null;
 	}
 
 	@Override public @NotNull WallBodyAlignment defineBodyAlignment() {
@@ -227,9 +217,6 @@ public class WallSlide implements WallboundActionDefinition {
 	}
 	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 		data.forceBodyAlignment(true);
-	}
-	@Override public void serverTick(CfaAuthoritativeData data) {
-
 	}
 	private static final int GRAVITY_RAMP_UP_TICKS = 5;
 	@Override public void travel(CfaTravelData data, WallInfo wall, WallboundActionHelper helper) {

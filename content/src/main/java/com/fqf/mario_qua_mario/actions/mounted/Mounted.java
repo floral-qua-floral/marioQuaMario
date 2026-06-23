@@ -2,9 +2,9 @@ package com.fqf.mario_qua_mario.actions.mounted;
 
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.MountedActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.*;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
+import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.charaformact_api.definitions.states.actions.util.SneakingRule;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Backflip;
 import com.fqf.mario_qua_mario.actions.grounded.SubWalk;
@@ -13,32 +13,15 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
 public class Mounted implements MountedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("mounted");
 
-	@Override public @Nullable CameraAnimationSet defineCameraAnimations(AnimationHelper helper) {
-		return null;
-	}
-	@Override public @NotNull SlidingStatus defineSlidingStatus() {
-		return SlidingStatus.NOT_SLIDING;
-	}
 
 	@Override public @NotNull SneakingRule defineSneakingRule() {
 		return SneakingRule.PROHIBIT;
-	}
-	@Override public @NotNull SprintingRule defineSprintingRule() {
-		return SprintingRule.ALLOW;
-	}
-
-	@Override public @Nullable BappingRule defineBappingRule() {
-		return null;
-	}
-	@Override public @Nullable Identifier defineActiveCollisionAttack() {
-		return null;
 	}
 
 	@Override public @NotNull MutableText defineDismountHint(

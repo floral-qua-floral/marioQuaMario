@@ -44,8 +44,6 @@ public class ClimbIntangibleDirectional extends ClimbWall implements WallboundAc
 				MathHelper.floor(alteredPos.z)
 		);
 		return ClimbTransitions.verifyIntangibleDirectionalClimbingLegality(data.getPlayer(), blockPos, Direction.fromRotation(wall.getWallYaw()), true);
-//		BlockState state = data.getPlayer().getWorld().getBlockState(blockPos);
-//		return wall.calculateWallYaw() == getYawOf(data.getPlayer(), blockPos, state);
 	}
 
 	public static boolean useAlternateOffset(CfaReadableMotionData data) {
@@ -73,9 +71,8 @@ public class ClimbIntangibleDirectional extends ClimbWall implements WallboundAc
 		return ClimbIntangibleSideHang.ID;
 	}
 
-	public static final ActionTransitionDetails.ClientsExecutor SIDE_HANG_CLIENTS_EXECUTOR = (data, isSelf, seed) -> {
-		ClimbTransitions.playGrabIntangibleSound(data, seed);
-	};
+	public static final ActionTransitionDetails.ClientsExecutor SIDE_HANG_CLIENTS_EXECUTOR = (data, isSelf, seed) ->
+			ClimbTransitions.playGrabIntangibleSound(data, seed);
 
 	@Override
 	protected ActionTransitionDetails.ClientsExecutor getSideHangTransitionClientsExecutor() {

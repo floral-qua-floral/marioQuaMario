@@ -4,7 +4,10 @@ package com.fqf.mario_qua_mario.actions.aquatic;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AquaticActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
+import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.charaformact_api.definitions.states.actions.util.SneakingRule;
+import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.util.CfaStat;
@@ -68,7 +71,7 @@ public class Paddle implements AquaticActionDefinition {
 
 	public static final CfaStat PADDLE_FALL_SPEED = Submerged.FALL_SPEED.variate(0.5);
 
-	private static final double INTENDED_IMMERSION_LEVEL = 0.75;
+	private static final double INTENDED_IMMERSION_LEVEL = 0.8;
 
 	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 		if(data.getPlayer().getWorld().getTime() % 3 == 0)
@@ -79,7 +82,7 @@ public class Paddle implements AquaticActionDefinition {
 		else {
 			// Attempt to swim at the right height to keep the player's eyes just above the water?
 			double immersionLevel = data.getImmersionLevel();
-			double deltaY = immersionLevel - 0.8 * data.getPlayer().getEyeHeight(EntityPose.STANDING);
+			double deltaY = immersionLevel - INTENDED_IMMERSION_LEVEL * data.getPlayer().getEyeHeight(EntityPose.STANDING);
 
 			data.setYVel(deltaY / 2);
 		}

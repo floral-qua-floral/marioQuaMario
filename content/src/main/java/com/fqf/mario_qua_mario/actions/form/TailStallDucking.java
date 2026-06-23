@@ -2,7 +2,10 @@ package com.fqf.mario_qua_mario.actions.form;
 
 import com.fqf.charaformact_api.definitions.TransitionInjectionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
+import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.charaformact_api.definitions.states.actions.util.SneakingRule;
+import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.mario_qua_mario.actions.airborne.DuckFall;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;

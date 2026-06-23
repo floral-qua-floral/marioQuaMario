@@ -18,7 +18,7 @@ public class SpecialFall extends Fall implements AirborneActionDefinition {
 				AnimationFlag.Execution.RANDOMLY_MIRROR,
 				(posture, data, animationTime, helper) -> {
 					helper.symmetricallyAnimate(posture, posture.RIGHT_ARM, arrangement -> {
-						arrangement.x += -1.345F;
+						arrangement.x -= 1.345F;
 						arrangement.roll += 70;
 					});
 

@@ -1,7 +1,10 @@
 package com.fqf.mario_qua_mario.actions.wallbound;
 
 import com.fqf.charaformact_api.HelperGetter;
-import com.fqf.charaformact_api.cfadata.*;
+import com.fqf.charaformact_api.cfadata.CfaClientData;
+import com.fqf.charaformact_api.cfadata.CfaData;
+import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
+import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
