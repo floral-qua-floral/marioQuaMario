@@ -202,6 +202,12 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 	}
 
 	@Override
+	public void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AirborneActionHelper helper) {
+		// No input transitions! This prevents Ground Pound and, due to Transition Injections, also prevents Tail
+		// Stalling.
+	}
+
+	@Override
 	public void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AirborneActionHelper helper) {
 		builder.add(
 				Submerged.SUBMERGE,

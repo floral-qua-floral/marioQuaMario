@@ -2,7 +2,6 @@ package com.fqf.charaformact.mixin.client;
 
 import com.fqf.charaformact.appearance.ParsedClientAppearance;
 import com.fqf.charaformact.cfadata.CfaAppearanceData;
-import com.fqf.charaformact.cfadata.CfaPlayerData;
 import com.fqf.charaformact_api.appearance.AppearanceModel;
 import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
 import net.minecraft.client.MinecraftClient;

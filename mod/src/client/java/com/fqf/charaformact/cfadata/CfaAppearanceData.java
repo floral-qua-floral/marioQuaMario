@@ -36,6 +36,7 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 import static net.minecraft.util.math.MathHelper.HALF_PI;
+import static net.minecraft.util.math.MathHelper.RADIANS_PER_DEGREE;
 
 public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingData & CfaClientDataImpl> {
 	public final AbstractClientPlayerEntity PLAYER;
@@ -56,7 +57,7 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 	private long prevArrangingTick;
 	private AdvancedArrangement prevFrameModelArrangement;
 	private AdvancedArrangement thisFrameModelArrangement;
-	private float originalHeadPitch, originalHeadYaw;
+	private float originalHeadPitch;
 
 	public boolean doingFirstPersonHand;
 
@@ -124,8 +125,6 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 		this.flickerRenderer = this.renderer;
 
 		@Nullable Pair<ParsedClientAppearance, AppearanceRenderer> newModelAndRenderer = null;
-
-		// FIXME: Head lerping causes head to turn left & right when strafing during an animation :(
 
 		if(this.DATA.isEnabled()) {
 			ParsedCharacter character = this.DATA.getCharacter();
@@ -251,7 +250,6 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 		// vanilla animations! Particularly aiming animations - bow, crossbow, spyglass. So we need to do this logic
 		// always!
 		this.originalHeadPitch = assigningPitch;
-		this.originalHeadYaw = head.yaw;
 
 		ActiveAnimation currentAnimation = this.getCurrentAnimation();
 		if(currentAnimation != null && currentAnimation.ANIMATION.FLAGS.contains(AnimationFlag.NO_HEAD_COUNTERROTATION))
@@ -268,6 +266,7 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 				return;
 			}
 
+//			model.head.yaw -= headYaw;
 
 //			model.head.pitch = this.counterRotatePitch(model.head.pitch);
 //			model.head.yaw = this.counterRotateYaw(model.head.yaw);
@@ -295,9 +294,13 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 			if(currentAnimation != null) {
 				if(currentAnimation instanceof ActiveAnimation.Interpolated) {
 					// If the current animation is interpolating, then it'll also re-process visual counter-rotation as
-					// a part of its interpolation logic.
+					// a part of its interpolation logic. Because it's calculating the Posture for the end of the tick,
+					// rather than the posture on the current frame, we also need to make sure that it calculates based
+					// on where the player's head will be turned then, rather than where it is right now. This doesn't
+					// matter much for pitch but it's important for yaw to prevent the player from getting whiplash when
+					// body yaw is changing.
 					thisFramePosture.HEAD.pitch = this.originalHeadPitch;
-					thisFramePosture.HEAD.yaw = this.originalHeadYaw;
+					thisFramePosture.HEAD.yaw = (this.PLAYER.headYaw - this.PLAYER.bodyYaw) * RADIANS_PER_DEGREE;
 				}
 				hasInterpolated = !currentAnimation.ANIMATION.FLAGS.contains(AnimationFlag.NOT_INTERPOLATED);
 				currentAnimation.mutatePosture(thisFramePosture, worldTime, tickDelta, isFirstOfTick, forceWrappedInterpolation);
@@ -316,6 +319,7 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 			if(leftArmBusy) handleBusyArm(thisFramePosture.LEFT_ARM, thisFramePosture.TORSO);
 
 			thisFramePosture.apply(model);
+//			model.head.yaw += headYaw;
 
 //			model.body.zScale = 3;
 

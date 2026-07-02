@@ -188,28 +188,6 @@ public class BlockBappingUtil {
 		}
 	}
 
-	private static void indirectBap(BumpingBlockInfo info, Direction direction, int propagations) {
-		BlockPos indirectPos = info.POS.offset(direction);
-		BlockState indirectState = info.WORLD.getBlockState(indirectPos);
-		if(indirectState.isAir()) return;
-
-		if(!indirectState.canPlaceAt(info.WORLD, indirectPos)) {
-			AbstractBapInfo newInfo;
-			boolean power = !indirectState.isIn(CfaTags.NOT_POWERED_WHEN_BAPPED);
-			if(indirectState.isIn(CfaTags.DESTROYED_BY_INDIRECT_BAP))
-				newInfo = new BapBreakingBlockInfo(info.WORLD, indirectPos,
-						power ? BapResult.BREAK : BapResult.BREAK_WITHOUT_POWERING, info.DISPLACEMENT_DIRECTION, info.BAPPER);
-			else if(indirectState.getHardness(info.WORLD, indirectPos) == 0)
-				newInfo = new BumpingBlockInfo(info.WORLD, indirectPos,
-						power ? BapResult.BUMP : BapResult.BUMP_WITHOUT_POWERING, info.DISPLACEMENT_DIRECTION, info.BAPPER);
-			else
-				newInfo = new BumpingEmbrittlingBlockInfo(info.WORLD, indirectPos,
-						power ? BapResult.BUMP_EMBRITTLE : BapResult.BUMP_EMBRITTLE_WITHOUT_POWERING, info.DISPLACEMENT_DIRECTION, info.BAPPER);
-
-//			storeBapInfo(newInfo, propagations + 1);
-		}
-	}
-
 	private static final int MAX_PROPAGATIONS = 10;
 
 	public static void storeBapInfo(AbstractBapInfo info, boolean canPropagate) {
