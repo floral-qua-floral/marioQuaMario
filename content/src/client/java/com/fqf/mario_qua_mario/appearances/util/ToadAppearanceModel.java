@@ -14,6 +14,11 @@ public class ToadAppearanceModel extends MqmAppearanceModel {
 	public final ModelPart leftPigtail;
 	private final List<ModelPart> pigtailHatParts;
 
+	@Override
+	protected ModelPart getEarsParent(ModelPart root) {
+		return this.head.getChild(SuperToadClientAppearance.CAP_BULB);
+	}
+
 	public ToadAppearanceModel(Identifier id, ModelPart root) {
 		super(id, root);
 
@@ -38,7 +43,7 @@ public class ToadAppearanceModel extends MqmAppearanceModel {
 		if(this.rightPigtail.visible || this.leftPigtail.visible) {
 			this.rightPigtail.pitch = -this.head.pitch + this.rightPigtail.getDefaultTransform().pitch;
 
-			// Animate the pigtails like a cape??
+			// Maybe animate the pigtails kinda like a cape, with motion??
 
 			this.leftPigtail.copyTransform(this.rightPigtail);
 			this.leftPigtail.pivotX *= -1;

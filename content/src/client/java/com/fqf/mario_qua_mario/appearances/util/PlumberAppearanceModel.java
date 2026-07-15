@@ -41,13 +41,9 @@ public class PlumberAppearanceModel extends MqmAppearanceModel {
 		this.capfulHead.visible = showCap;
 		this.caplessHead.visible = !showCap;
 
-		if(!showCap && this.rightEar != null && this.leftEar != null) {
+		if(this.rightEar != null && this.leftEar != null) {
 			this.caplessRightEar.copyTransform(this.rightEar);
-			this.caplessRightEar.pivotX += 1;
-			this.caplessRightEar.pivotY -= 1;
 			this.caplessLeftEar.copyTransform(this.leftEar);
-			this.caplessRightEar.pivotX -= 1;
-			this.caplessRightEar.pivotY -= 1;
 		}
 
 		super.preActionAnimation(player, data);

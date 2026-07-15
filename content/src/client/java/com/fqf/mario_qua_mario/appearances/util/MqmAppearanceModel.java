@@ -6,6 +6,7 @@ import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.util.Easing;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
@@ -18,6 +19,12 @@ public abstract class MqmAppearanceModel extends AppearanceModel {
 
 	@Override
 	public void preActionAnimation(AbstractClientPlayerEntity player, CfaAnimatingData data) {
+		if(this.rightEar != null && this.leftEar != null) {
+			int offset = player.getEquippedStack(EquipmentSlot.HEAD).isEmpty() ? 0 : 1;
+			this.adjustEar(this.rightEar, offset);
+			this.adjustEar(this.leftEar, -offset);
+		}
+
 		if(this.tail != null) {
 			float swing = this.leftLeg.pitch - this.rightLeg.pitch;
 			float lift;
@@ -35,5 +42,11 @@ public abstract class MqmAppearanceModel extends AppearanceModel {
 					swing * 0.312F * inverseLift
 			);
 		}
+	}
+
+	private void adjustEar(ModelPart ear, int factor) {
+		ear.setTransform(ear.getDefaultTransform());
+		ear.pivotX += factor;
+		ear.pivotY -= Math.abs(factor);
 	}
 }

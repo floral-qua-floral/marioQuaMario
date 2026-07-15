@@ -2,6 +2,7 @@ package com.fqf.mario_qua_mario.appearances.util;
 
 import com.fqf.charaformact_api.appearance.AppearanceGeometryHelper;
 import com.fqf.charaformact_api.appearance.AppearanceModel;
+import com.fqf.mario_qua_mario.MarioQuaMario;
 import net.minecraft.client.model.ModelPartData;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.RenderLayer;

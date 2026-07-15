@@ -28,14 +28,12 @@ public class RaccoonMarioClientAppearance extends SuperMarioClientAppearance {
 	protected ModelPartData makeCapStateHead(ModelPartData headPart, AppearanceGeometryHelper helper, boolean hasCap) {
 		ModelPartData capStateHead = super.makeCapStateHead(headPart, helper, hasCap);
 
-		Vector3f earPivot = new Vector3f(this.getHeadSize().x / 2F - 2.5F, -this.getHeadSize().y, 1);
-		if(!hasCap) earPivot.add(1, -1, 0);
-
 		RaccoonUtil.addEars(
 				capStateHead,
-				earPivot,
-				new Vector2i(16, 16), new Vector2i(16, 33), new Vector2i(38, 16),
-				helper);
+				new Vector3f(this.getHeadSize().x / 2F - 2.5F, -this.getHeadSize().y, 1), // pivot
+				new Vector2i(16, 16), new Vector2i(16, 33), new Vector2i(38, 16), // UVs
+				helper
+		);
 		return capStateHead;
 	}
 
