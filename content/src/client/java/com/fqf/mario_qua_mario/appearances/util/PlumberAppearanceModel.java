@@ -5,6 +5,7 @@ import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.model.EntityModelPartNames;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.util.Identifier;
 
 public class PlumberAppearanceModel extends MqmAppearanceModel {
 	public final ModelPart capfulHead;
@@ -12,8 +13,8 @@ public class PlumberAppearanceModel extends MqmAppearanceModel {
 	public final ModelPart caplessRightEar;
 	public final ModelPart caplessLeftEar;
 
-	public PlumberAppearanceModel(ModelPart root) {
-		super(root);
+	public PlumberAppearanceModel(Identifier id, ModelPart root) {
+		super(id, root);
 
 		this.capfulHead = this.head.getChild(PlumberClientAppearance.CAPFUL_HEAD);
 		this.caplessHead = this.head.getChild(PlumberClientAppearance.CAPLESS_HEAD);

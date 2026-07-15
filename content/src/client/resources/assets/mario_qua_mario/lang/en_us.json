@@ -53,7 +53,6 @@
   "death.attack.marioKick.item": "%s was given the boot by %s using %s",
 
   "death.attack.marioCeilingBonk": "%s was bonked from below by %s",
-  "death.attack.marioCeilingBonk.item": "%s was bonked from below by %s",
 
   "enchantment.mario_qua_mario.pulverizing": "Pulverizing",
   "enchantment.mario_qua_mario.pulverizing.desc": "Increased damage from Stomps or Ground Pounds",

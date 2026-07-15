@@ -3,7 +3,6 @@
   "package": "com.fqf.charaformact.mixin.client",
   "compatibilityLevel": "JAVA_21",
   "client": [
-    "AbstractClientPlayerEntityCfaDataMixin",
     "AbstractClientPlayerEntityMixin",
     "AppearanceModelMixin",
     "BipedEntityModelMixin",
@@ -21,6 +20,7 @@
     "InGameHudMixin",
     "LivingEntityRendererMixin",
     "MinecraftClientMixin",
+    "ModelPartChildrenAccessor",
     "OtherClientPlayerEntityCfaDataMixin",
     "PlayerEntityModelMixin",
     "PlayerEntityRendererMixin",
@@ -31,7 +31,8 @@
     "features.ElytraFeatureRendererMixin",
     "features.FeatureRendererContextMixin",
     "features.HeldItemFeatureRendererMixin",
-    "features.ShoulderParrotFeatureRendererMixin"
+    "features.ShoulderParrotFeatureRendererMixin",
+    "features.StuckObjectFeatureRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

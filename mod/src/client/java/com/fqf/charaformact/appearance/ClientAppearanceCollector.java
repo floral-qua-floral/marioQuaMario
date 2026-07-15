@@ -21,7 +21,6 @@ import net.minecraft.util.Pair;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
-import org.joml.Vector3i;
 
 import java.util.Map;
 
@@ -65,11 +64,8 @@ public class ClientAppearanceCollector extends AbstractAppearanceCollector<Clien
 			AppearanceHelperImpl.INSTANCE.makeInvisiblePart(modelRoot, "ear", new Vector3f(), false);
 
 		// Add cape with default geometry. Its positioning will be handled using the feature rendering system.
-		if(modelRoot.getChild("cloak") == null) AppearanceHelperImpl.INSTANCE.makePart(
-				modelRoot, AppearanceGeometryHelper.CAPE, false,
-				new Vector3f(), new Vector3f(-5, 0, -1),
-				0, new Vector3f(), new Vector3i(10, 16, 1), new Vector2i()
-		);
+		if(modelRoot.getChild("cloak") == null)
+			AppearanceHelperImpl.INSTANCE.makeInvisiblePart(modelRoot, AppearanceGeometryHelper.CAPE, new Vector3f(), false);
 
 		return TexturedModelData.of(modelData, textureSize.x, textureSize.y);
 	}

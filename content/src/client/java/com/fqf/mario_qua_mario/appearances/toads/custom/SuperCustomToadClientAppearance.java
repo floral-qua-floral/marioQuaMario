@@ -20,8 +20,8 @@ public class SuperCustomToadClientAppearance extends SuperToadClientAppearance {
 	}
 
 	@Override
-	public AppearanceModel createModel(ModelPart root) {
-		return new CustomizableToadAppearanceModel(root);
+	public AppearanceModel createModel(Identifier appearanceID, ModelPart root) {
+		return new CustomizableToadAppearanceModel(appearanceID, root);
 	}
 
 	@Override

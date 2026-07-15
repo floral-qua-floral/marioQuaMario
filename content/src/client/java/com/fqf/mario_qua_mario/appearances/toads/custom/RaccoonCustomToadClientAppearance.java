@@ -15,8 +15,8 @@ import net.minecraft.util.Identifier;
 public class RaccoonCustomToadClientAppearance extends RaccoonToadClientAppearance {
 
 	@Override
-	public AppearanceModel createModel(ModelPart root) {
-		return new CustomizableToadAppearanceModel(root);
+	public AppearanceModel createModel(Identifier appearanceID, ModelPart root) {
+		return new CustomizableToadAppearanceModel(appearanceID, root);
 	}
 
 	@Override

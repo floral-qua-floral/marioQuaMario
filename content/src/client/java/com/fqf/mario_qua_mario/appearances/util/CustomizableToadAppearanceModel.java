@@ -5,10 +5,11 @@ import com.fqf.mario_qua_mario.customization.CharacterCustomizationUtil;
 import com.fqf.mario_qua_mario.customization.CustomizablePlayerEntity;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.util.Identifier;
 
 public class CustomizableToadAppearanceModel extends ToadAppearanceModel {
-	public CustomizableToadAppearanceModel(ModelPart root) {
-		super(root);
+	public CustomizableToadAppearanceModel(Identifier id, ModelPart root) {
+		super(id, root);
 	}
 
 	@Override

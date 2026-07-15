@@ -6,7 +6,6 @@ import com.fqf.charaformact_api.appearance.AppearanceModel;
 import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.model.ModelTransform;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
@@ -15,16 +14,13 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PlayerEntityModel.class)
 public abstract class PlayerEntityModelMixin<T extends LivingEntity> extends BipedEntityModel<T> {
-	@Shadow @Final private ModelPart cloak;
-
-	@Unique private ModelTransform storedCloakTransform;
+	@Shadow @Final public ModelPart cloak;
 
 	public PlayerEntityModelMixin(ModelPart root) {
 		super(root);

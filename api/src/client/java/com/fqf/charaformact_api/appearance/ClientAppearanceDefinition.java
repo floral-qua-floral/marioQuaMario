@@ -169,8 +169,8 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 	// Please feel free to override this to return a custom class extending AppearanceModel, if you would like.
 	// This will give you lots of control over the player's rendering logic.
 	// If you do, I'd recommend still calling super on any methods you override, even when it seems unnecessary.
-	default AppearanceModel createModel(ModelPart root) {
-		return new AppearanceModel(root);
+	default AppearanceModel createModel(Identifier appearanceID, ModelPart root) {
+		return new AppearanceModel(appearanceID, root);
 	}
 
 	// Please feel free to override this to add any custom feature renderers you would like. For instance, you could use

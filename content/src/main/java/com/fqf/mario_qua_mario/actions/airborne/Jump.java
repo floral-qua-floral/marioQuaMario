@@ -90,7 +90,10 @@ public class Jump extends Fall implements AirborneActionDefinition {
 				Jump.ID,
 				data -> data.getInputs().JUMP.isPressed(),
 				EvaluatorEnvironment.CLIENT_ONLY,
-				data -> helper.performJump(data, JUMP_VEL, JUMP_ADDEND),
+				data -> {
+					helper.performJump(data, JUMP_VEL, JUMP_ADDEND);
+					if(data.isServer()) data.getPlayer().setStuckArrowCount(10);
+				},
 				(data, isSelf, seed) -> data.playJumpSound(seed)
 		);
 	}

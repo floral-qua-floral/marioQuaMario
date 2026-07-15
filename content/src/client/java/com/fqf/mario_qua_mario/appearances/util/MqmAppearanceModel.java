@@ -6,13 +6,14 @@ import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.util.Easing;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
 import static net.minecraft.util.math.MathHelper.HALF_PI;
 
 public abstract class MqmAppearanceModel extends AppearanceModel {
-	public MqmAppearanceModel(ModelPart root) {
-		super(root);
+	public MqmAppearanceModel(Identifier id, ModelPart root) {
+		super(id, root);
 	}
 
 	@Override

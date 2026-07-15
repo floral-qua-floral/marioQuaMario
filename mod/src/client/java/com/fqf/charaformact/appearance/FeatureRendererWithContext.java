@@ -26,6 +26,7 @@ public interface FeatureRendererWithContext {
 		if(
 				checkContains(name, "back", true, false)
 				|| checkContains(name, "elytra", false, false)
+				|| checkContains(name, "cape", false, false)
 				|| checkContains(name, "glove", false, false)
 				|| checkContains(name, "hat", true, true)
 		)

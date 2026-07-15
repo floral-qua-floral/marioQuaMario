@@ -33,8 +33,8 @@ public abstract class PlumberClientAppearance implements ClientAppearanceDefinit
 	}
 
 	@Override
-	public AppearanceModel createModel(ModelPart root) {
-		return new PlumberAppearanceModel(root);
+	public AppearanceModel createModel(Identifier appearanceID, ModelPart root) {
+		return new PlumberAppearanceModel(appearanceID, root);
 	}
 
 	protected Vector3i getNoseSize() {

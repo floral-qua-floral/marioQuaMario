@@ -4,6 +4,7 @@ import com.fqf.charaformact_api.appearance.*;
 import com.fqf.mario_qua_mario.appearances.util.ToadAppearanceModel;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.model.ModelPartData;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2i;
@@ -76,7 +77,6 @@ public class SuperToadClientAppearance extends SuperToadCommonAppearance impleme
 	}
 
 	public void makePigtail(ModelPartData bulb, boolean isLeft, AppearanceGeometryHelper helper) {
-		Vector3i bulbSize = this.getCapBulbSize();
 		Vector3i bottomSize = this.getPigtailBottomSize();
 		Vector3i topSize = new Vector3i(bottomSize).sub(1, 1, 1);
 		Vector2i topUV = this.getPigtailTopUV();
@@ -153,8 +153,8 @@ public class SuperToadClientAppearance extends SuperToadCommonAppearance impleme
 	}
 
 	@Override
-	public AppearanceModel createModel(ModelPart root) {
-		return new ToadAppearanceModel(root);
+	public AppearanceModel createModel(Identifier appearanceID, ModelPart root) {
+		return new ToadAppearanceModel(appearanceID, root);
 	}
 
 	@Override

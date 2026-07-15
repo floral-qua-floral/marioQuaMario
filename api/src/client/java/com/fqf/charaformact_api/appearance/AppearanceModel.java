@@ -1,24 +1,29 @@
 package com.fqf.charaformact_api.appearance;
 
 import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
-import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import net.minecraft.client.model.*;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.model.EntityModelPartNames;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.NoSuchElementException;
 
 public class AppearanceModel extends PlayerEntityModel<AbstractClientPlayerEntity> {
+	public final Identifier ID;
+
 	public final @Nullable ModelPart tail;
 	public final @Nullable ModelPart rightEar;
 	public final @Nullable ModelPart leftEar;
 	public final @Nullable ModelPart rightWing;
 	public final @Nullable ModelPart leftWing;
 
-	public AppearanceModel(ModelPart root) {
+	public AppearanceModel(Identifier id, ModelPart root) {
 		super(root, false);
+
+		this.ID = id;
 
 		this.tail = this.getOptionalModelPart(this.getTailParent(root), EntityModelPartNames.TAIL);
 
@@ -31,6 +36,11 @@ public class AppearanceModel extends PlayerEntityModel<AbstractClientPlayerEntit
 		this.leftWing = this.getOptionalModelPart(wingsParent, EntityModelPartNames.LEFT_WING);
 
 		this.head.xScale = 2;
+	}
+
+	@Override
+	public String toString() {
+		return this.getClass().getName() + "[" + this.ID + "]@" + Integer.toHexString(hashCode());
 	}
 
 	protected ModelPart getTailParent(ModelPart root) {
@@ -66,5 +76,9 @@ public class AppearanceModel extends PlayerEntityModel<AbstractClientPlayerEntit
 	public void postActionAnimation(AbstractClientPlayerEntity player, CfaAnimatingData data) {
 		// This method is called after CFA has applied Action animations. Use this to animate body parts that
 		// CharaFormAct won't animate via Actions, such as hair.
+	}
+
+	public void rotateFromRoot(ModelPart part, MatrixStack matrices) {
+		throw new IllegalStateException("This method is implemented elsewhere via self-mixin.");
 	}
 }

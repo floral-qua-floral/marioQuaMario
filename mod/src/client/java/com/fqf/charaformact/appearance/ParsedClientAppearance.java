@@ -53,7 +53,7 @@ public class ParsedClientAppearance extends ParsedCommonAppearance {
 		DEFINITION = definition;
 
 		this.LAYER = layer;
-		this.DEFAULT_TEXTURE_LOCATION = definition.defineDefaultTextureLocation(key.ID, key.CHARACTER, key.FORM);
+		this.DEFAULT_TEXTURE_LOCATION = definition.defineDefaultTextureLocation(this.ID, key.CHARACTER, key.FORM);
 		this.TEXTURE_FUNCTION = Objects.requireNonNullElseGet(definition.defineDynamicTextureFunction(), () ->
 				player -> this.DEFAULT_TEXTURE_LOCATION);
 		Vector2i textureSize = definition.defineTextureSize();
@@ -105,7 +105,7 @@ public class ParsedClientAppearance extends ParsedCommonAppearance {
 	}
 
 	public AppearanceModel makeAndGetModel(EntityRendererFactory.Context ctx) {
-		if(this.model == null) this.model = this.DEFINITION.createModel(ctx.getPart(this.LAYER));
+		if(this.model == null) this.model = this.DEFINITION.createModel(this.ID, ctx.getPart(this.LAYER));
 		return this.getModel();
 	}
 
@@ -123,7 +123,7 @@ public class ParsedClientAppearance extends ParsedCommonAppearance {
 			this.DEFINITION.accumulateCustomFeatureRenderers(this.DEFAULT_TEXTURE_LOCATION, builder, (FeatureRendererContext<AbstractClientPlayerEntity, AppearanceModel>) (Object) renderer, ctx);
 			this.customFeatures = (List<FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>>>) (Object) builder.build();
 			for(FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> customFeature : this.customFeatures) {
-				// oh my god we do NOT WANT TO TRANSFORM THESE!
+				// we DO NOT WANT TO TRANSFORM appearance-specific features!
 				((FeatureRendererWithContext) customFeature).cfa$setContext(TransformationContext.ORIGINAL);
 			}
 		}
