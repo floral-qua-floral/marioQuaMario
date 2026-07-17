@@ -1,5 +1,18 @@
 {
   "replace": false,
   "values": [
+    "#charaformact:slot_consolidation/face",
+    {
+      "id": "immersive_armors:bone_helmet",
+      "required": false
+    },
+    {
+      "id": "immersive_armors:wither_helmet",
+      "required": false
+    },
+    {
+      "id": "goated:barbaric_helmet",
+      "required": false
+    }
   ]
 }

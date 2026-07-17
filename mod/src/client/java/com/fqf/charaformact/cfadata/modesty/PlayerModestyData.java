@@ -91,7 +91,7 @@ public class PlayerModestyData {
 				if(item.getItem() instanceof BlockItem blockItem) {
 					yield blockItem.getBlock().getDefaultState().isSideSolidFullSquare(EmptyBlockView.INSTANCE, BlockPos.ORIGIN, Direction.SOUTH);
 				}
-				yield !item.isIn(COVERS_FACE_FROM_HEAD_SLOT);
+				yield item.isIn(COVERS_FACE_FROM_HEAD_SLOT);
 			}
 			case EARS -> {
 				if(item.getItem() instanceof BlockItem blockItem) {

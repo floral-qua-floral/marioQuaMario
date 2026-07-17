@@ -19,7 +19,8 @@ public class RenderedArmorInfo {
 		if(!this.STACK.isEmpty()) switch(slot) {
 			case HEAD -> this.tryCover(slot, HEADGEAR, SCALP, FACE, EARS);
 			case CHEST -> this.tryCover(slot, UPPER_CHEST, BELLY, BACK, SHOULDERS, HANDS);
-			case LEGS, FEET -> this.tryCover(slot, TOES);
+			case LEGS -> this.tryCover(slot, BUTT, TOES);
+			case FEET -> this.tryCover(slot, TOES);
 		}
 	}
 

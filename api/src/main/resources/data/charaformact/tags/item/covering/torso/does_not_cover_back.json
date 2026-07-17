@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "#charaformact:covering/covers_nothing"
+    "#charaformact:covering/covers_nothing",
+    "#charaformact:slot_consolidation/belt"
   ]
 }

@@ -16,6 +16,10 @@
     {
       "id": "#curios:ring",
       "required": false
+    },
+    {
+      "id": "#aether:accessories_rings",
+      "required": false
     }
   ]
 }

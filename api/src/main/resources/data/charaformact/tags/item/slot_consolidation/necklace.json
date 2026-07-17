@@ -12,6 +12,10 @@
     {
       "id": "#curios:necklace",
       "required": false
+    },
+    {
+      "id": "aether:accessories_pendants",
+      "required": false
     }
   ]
 }

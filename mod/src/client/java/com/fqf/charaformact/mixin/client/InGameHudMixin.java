@@ -111,7 +111,7 @@ public class InGameHudMixin {
 		renderDebugTextCol(pair, animationColor, animationString);
 		// Action
 		Optional<Boolean> matching = serverData.map(CfaPlayerData::getActionID).map(id -> id.equals(clientData.getActionID()));
-		if(matching.orElse(false)) mostRecentActionDisagreement = Optional.of(parseOut("C=",
+		if(!matching.orElse(true)) mostRecentActionDisagreement = Optional.of(parseOut("C=",
 				clientData.getActionID(), ", S=", serverData.map(CfaPlayerData::getActionID)));
 		if(serverPlayer.isPresent()) renderDebugTextCol(pair, mostRecentActionDisagreement.isPresent() ? Colors.WHITE : Colors.GRAY,
 				"Last disagreement:", mostRecentActionDisagreement.orElse("(No disagreements yet)"));

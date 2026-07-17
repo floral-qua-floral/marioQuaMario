@@ -2,17 +2,8 @@
   "replace": false,
   "values": [
     "#charaformact:covering/covers_nothing",
-    {
-      "id": "#accessories:cape",
-      "required": false
-    },
-    {
-      "id": "#accessories:back",
-      "required": false
-    },
-    {
-      "id": "#accessories:belt",
-      "required": false
-    }
+    "#charaformact:slot_consolidation/back",
+    "#charaformact:slot_consolidation/belt",
+    "#charaformact:slot_consolidation/cape"
   ]
 }

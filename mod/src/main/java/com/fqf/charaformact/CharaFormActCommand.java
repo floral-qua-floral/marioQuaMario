@@ -26,15 +26,20 @@ import net.minecraft.command.argument.RegistryEntryReferenceArgumentType;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import org.apache.commons.lang3.mutable.MutableInt;
 
 import java.util.Locale;
+import java.util.stream.Stream;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
@@ -135,9 +140,14 @@ public class CharaFormActCommand {
 					)
 				)
 				.then(literal("debug")
-					.then(literal("getEquipmentArmor")
+					.then(literal("equipment")
 						.then(argument("slot", EquipmentSlotArgumentType.equipmentSlot())
-							.executes(CharaFormActCommand::getHeldItemArmorAttributes)
+							.then(literal("getArmor")
+								.executes(CharaFormActCommand::getEquipmentAttributes)
+							)
+							.then(literal("getTags")
+								.executes(context -> CharaFormActCommand.getEquipmentTags(context, registryAccess.getWrapperOrThrow(RegistryKeys.ITEM).streamTagKeys()))
+							)
 						)
 					)
 				)
@@ -427,12 +437,28 @@ public class CharaFormActCommand {
 		}
 	}
 
-	private static int getHeldItemArmorAttributes(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+	private static int getEquipmentAttributes(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
 		ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
 		EquipmentSlot slot = EquipmentSlotArgumentType.getEquipmentSlot(context, "slot");
 		ItemStack equipment = player.getEquippedStack(slot);
 		FloatFloatPair result = ItemStackArmorReader.getArmorAndToughness(equipment, slot);
 		return sendFeedback(context, player.getName().getString() + "'s " + equipment.getItem().toString()
 				+ " seems to provide " + result.leftFloat() + " armor and " + result.rightFloat() + " toughness.", (int) result.leftFloat());
+	}
+	private static int getEquipmentTags(CommandContext<ServerCommandSource> context, Stream<TagKey<Item>> tagKeys) throws CommandSyntaxException {
+		ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
+		EquipmentSlot slot = EquipmentSlotArgumentType.getEquipmentSlot(context, "slot");
+		ItemStack equipment = player.getEquippedStack(slot);
+
+		MutableInt count = new MutableInt();
+		StringBuilder output = new StringBuilder();
+		tagKeys.filter(equipment::isIn).forEach(key -> {
+			if(count.getAndIncrement() == 0) output.append(":\n");
+			else output.append('\n');
+			output.append("- ").append(key.id());
+		});
+
+		return sendFeedback(context, equipment.getItem().toString() + " is in " + count.intValue() + " tags" + output,
+				count.intValue());
 	}
 }

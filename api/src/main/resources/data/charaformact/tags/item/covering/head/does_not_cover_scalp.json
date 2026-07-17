@@ -1,6 +1,19 @@
 {
   "replace": false,
   "values": [
-    "#charaformact:covering/covers_nothing"
+    "#charaformact:covering/covers_nothing",
+    "#charaformact:slot_consolidation/face",
+    {
+      "id": "immersive_armors:steampunk_helmet",
+      "required": false
+    },
+    {
+      "id": "villagerhats:armorer_hat",
+      "required": false
+    },
+    {
+      "id": "villagerhats:butcher_hat",
+      "required": false
+    }
   ]
 }
