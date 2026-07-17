@@ -64,6 +64,8 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 	private long flickerUntil;
 	private boolean flickering;
 
+	private boolean isFirstFrameOfTick;
+
 	public CfaAppearanceData(CfaDataType data) {
 		this.PLAYER = data.getPlayer();
 		this.DATA = data;
@@ -75,6 +77,8 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 	}
 
 	public void tick() {
+		this.isFirstFrameOfTick = true;
+
 		long time = this.PLAYER.getWorld().getTime();
 
 		if(this.forcedAnimation != null && time >= this.forcedAnimationEndTime) {
@@ -191,10 +195,6 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 		this.thisFrameModelArrangement.setAngles(0, 0, 0);
 
 		long worldTime = this.PLAYER.getWorld().getTime();
-		boolean isFirstOfTick = worldTime > this.prevArrangingTick;
-		if(isFirstOfTick) {
-			this.prevArrangingTick = worldTime;
-		}
 
 		this.thisFrameModelArrangement = new AdvancedArrangement();
 		boolean forceWrappedInterpolation = worldTime <= this.forceInterpolationTime;
@@ -203,7 +203,7 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 		ActiveAnimation currentAnimation = this.getCurrentAnimation();
 		if(currentAnimation != null) {
 			hasInterpolated = !currentAnimation.ANIMATION.FLAGS.contains(AnimationFlag.NOT_INTERPOLATED);
-			currentAnimation.mutateModelArrangement(this.thisFrameModelArrangement, worldTime, tickDelta, isFirstOfTick, forceWrappedInterpolation);
+			currentAnimation.mutateModelArrangement(this.thisFrameModelArrangement, worldTime, tickDelta, this.isFirstFrameOfTick, forceWrappedInterpolation);
 		}
 		else hasInterpolated = false;
 
@@ -282,10 +282,6 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 				this.prevFramePosture = thisFramePosture;
 
 			long worldTime = this.PLAYER.getWorld().getTime();
-			boolean isFirstOfTick = worldTime > this.prevPosturingTick;
-			if(isFirstOfTick) {
-				this.prevPosturingTick = worldTime;
-			}
 
 			// If we are transitioning into, out of, or between animations, then we MUST interpolate for 1 tick!
 			boolean forceWrappedInterpolation = worldTime <= this.forceInterpolationTime;
@@ -303,7 +299,7 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 					thisFramePosture.HEAD.yaw = (this.PLAYER.headYaw - this.PLAYER.bodyYaw) * RADIANS_PER_DEGREE;
 				}
 				hasInterpolated = !currentAnimation.ANIMATION.FLAGS.contains(AnimationFlag.NOT_INTERPOLATED);
-				currentAnimation.mutatePosture(thisFramePosture, worldTime, tickDelta, isFirstOfTick, forceWrappedInterpolation);
+				currentAnimation.mutatePosture(thisFramePosture, worldTime, tickDelta, this.isFirstFrameOfTick, forceWrappedInterpolation);
 			}
 			else hasInterpolated = false;
 
@@ -334,6 +330,8 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 			appearanceSection.add("Current action: ", this.DATA.getActionID());
 			throw new CrashException(report);
 		}
+
+		this.isFirstFrameOfTick = false;
 	}
 
 	private static void handleBusyArm(Arrangement arm, Arrangement torso) {

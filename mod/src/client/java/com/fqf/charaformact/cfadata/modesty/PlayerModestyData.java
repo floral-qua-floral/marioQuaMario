@@ -1,6 +1,5 @@
 package com.fqf.charaformact.cfadata.modesty;
 
-import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.cfadata.CfaClientDataImpl;
 import com.fqf.charaformact.util.DebugHudUtil;
 import com.fqf.charaformact_api.cfadata.util.EquipmentCoverSpot;
@@ -14,19 +13,18 @@ import net.minecraft.world.EmptyBlockView;
 import org.apache.commons.lang3.mutable.MutableByte;
 
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 import static com.fqf.charaformact_api.util.CfaTags.EquipmentCoveringTags.*;
 
 public class PlayerModestyData {
-	private static final EquipmentSlot[] PLAYER_ARMOR_SLOTS =
-			{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
 
 	private final AbstractClientPlayerEntity PLAYER;
 	private final EnumMap<EquipmentCoverSpot, MutableByte> MODESTY_MAP;
-	private final EnumMap<EquipmentSlot, RenderedArmorInfo> LAST_RENDERED_ARMOR;
+	private final Map<Object, RenderedEquipmentInfo> CACHED_RENDERED_ITEMS;
 
 	public PlayerModestyData(CfaClientDataImpl data) {
 		this.PLAYER = data.getPlayer();
@@ -35,30 +33,26 @@ public class PlayerModestyData {
 			this.MODESTY_MAP.put(spot, new MutableByte());
 		}
 
-		this.LAST_RENDERED_ARMOR = new EnumMap<>(EquipmentSlot.class);
-		for(EquipmentSlot slot : PLAYER_ARMOR_SLOTS) {
-			this.LAST_RENDERED_ARMOR.put(slot, new RenderedArmorInfo(ItemStack.EMPTY, null));
+		this.CACHED_RENDERED_ITEMS = new HashMap<>();
+	}
+
+	public <T> void updateRenderedEquipmentInfo(T slot, ItemStack rendering, BiFunction<ItemStack, T, RenderedEquipmentInfo> packer) {
+		RenderedEquipmentInfo oldInfo = this.CACHED_RENDERED_ITEMS.getOrDefault(slot, RenderedEquipmentInfo.EMPTY);
+		if(!ItemStack.areEqual(oldInfo.STACK, rendering)) {
+			// The equipped item has changed!
+			RenderedEquipmentInfo newInfo = packer.apply(rendering, slot);
+			this.CACHED_RENDERED_ITEMS.put(slot, newInfo);
+
+			if(!newInfo.COVER_SPOTS.equals(oldInfo.COVER_SPOTS)) {
+				this.influenceMap(oldInfo, MutableByte::decrement);
+				this.influenceMap(newInfo, MutableByte::increment);
+			}
 		}
 	}
 
-	public void updateRenderedArmor() {
-		for(EquipmentSlot slot : PLAYER_ARMOR_SLOTS) {
-			ItemStack equipped = this.PLAYER.getEquippedStack(slot);
-			RenderedArmorInfo prevRenderedArmor = this.LAST_RENDERED_ARMOR.get(slot);
-			if(!prevRenderedArmor.STACK.equals(equipped)) {
-				// Armor has been swapped!
-				CharaFormAct.LOGGER.info("Item in armor slot {} has changed from {}->{}", slot, prevRenderedArmor.STACK.getItem(), equipped.getItem());
-				RenderedArmorInfo renderingNow = new RenderedArmorInfo(equipped, slot);
-				this.LAST_RENDERED_ARMOR.put(slot, renderingNow);
-
-				BiConsumer<RenderedArmorInfo, Consumer<MutableByte>> updater = (info, consumer) ->
-						info.COVER_SPOTS.forEach(spot -> consumer.accept(this.MODESTY_MAP.get(spot)));
-
-				if(!renderingNow.COVER_SPOTS.equals(prevRenderedArmor.COVER_SPOTS)) {
-					updater.accept(prevRenderedArmor, MutableByte::decrement);
-					updater.accept(renderingNow, MutableByte::increment);
-				}
-			}
+	private void influenceMap(RenderedEquipmentInfo info, Consumer<MutableByte> updater) {
+		for(EquipmentCoverSpot influenceSpot : info.COVER_SPOTS) {
+			updater.accept(this.MODESTY_MAP.get(influenceSpot));
 		}
 	}
 

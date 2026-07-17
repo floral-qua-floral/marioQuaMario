@@ -1,10 +1,10 @@
 package com.fqf.mario_qua_mario.appearances.util;
 
 import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
+import com.fqf.charaformact_api.cfadata.util.EquipmentCoverSpot;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.model.EntityModelPartNames;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.util.Identifier;
 
 public class PlumberAppearanceModel extends MqmAppearanceModel {
@@ -37,9 +37,9 @@ public class PlumberAppearanceModel extends MqmAppearanceModel {
 
 	@Override
 	public void preActionAnimation(AbstractClientPlayerEntity player, CfaAnimatingData data) {
-		boolean showCap = player.getEquippedStack(EquipmentSlot.HEAD).isEmpty();
-		this.capfulHead.visible = showCap;
-		this.caplessHead.visible = !showCap;
+		boolean hideCap = data.isCovered(EquipmentCoverSpot.HEADGEAR);
+		this.capfulHead.visible = !hideCap;
+		this.caplessHead.visible = hideCap;
 
 		if(this.rightEar != null && this.leftEar != null) {
 			this.caplessRightEar.copyTransform(this.rightEar);

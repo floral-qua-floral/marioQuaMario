@@ -4,29 +4,36 @@ import com.fqf.charaformact_api.cfadata.util.EquipmentCoverSpot;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
 
-import java.util.EnumSet;
-import java.util.Set;
-
 import static com.fqf.charaformact_api.cfadata.util.EquipmentCoverSpot.*;
+import static com.fqf.charaformact_api.cfadata.util.EquipmentCoverSpot.TOES;
 
-public class RenderedArmorInfo {
-	public final ItemStack STACK;
-	public final Set<EquipmentCoverSpot> COVER_SPOTS;
+public class RenderedArmorInfo extends RenderedEquipmentInfo {
+	private static final EquipmentSlot[] PLAYER_ARMOR_SLOTS =
+			{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
+
+	public static void register() {
+		RenderedEquipmentInfo.UPDATE_EQUIPMENT_RENDERING.register(player -> {
+			for(EquipmentSlot slot : PLAYER_ARMOR_SLOTS) {
+				player.cfa$getCfaData2().getModestyData().updateRenderedEquipmentInfo(slot, player.getEquippedStack(slot), RenderedArmorInfo::new);
+			}
+		});
+	}
+
+	private final EquipmentSlot SLOT;
 
 	public RenderedArmorInfo(ItemStack stack, EquipmentSlot slot) {
-		this.STACK = stack;
-		this.COVER_SPOTS = EnumSet.noneOf(EquipmentCoverSpot.class);
-		if(!this.STACK.isEmpty()) switch(slot) {
-			case HEAD -> this.tryCover(slot, HEADGEAR, SCALP, FACE, EARS);
-			case CHEST -> this.tryCover(slot, UPPER_CHEST, BELLY, BACK, SHOULDERS, HANDS);
-			case LEGS -> this.tryCover(slot, BUTT, TOES);
-			case FEET -> this.tryCover(slot, TOES);
+		super(stack);
+		this.SLOT = slot;
+		if(!this.STACK.isEmpty()) switch(this.SLOT) {
+			case HEAD -> this.tryCover(HEADGEAR, SCALP, FACE, EARS);
+			case CHEST -> this.tryCover(UPPER_CHEST, BELLY, BACK, SHOULDERS, HANDS);
+			case LEGS -> this.tryCover(BUTT, TOES);
+			case FEET -> this.tryCover(TOES);
 		}
 	}
 
-	private void tryCover(EquipmentSlot slot, EquipmentCoverSpot... spots) {
-		for (EquipmentCoverSpot spot : spots)
-			if (PlayerModestyData.doesArmorSlotItemCoverSpot(this.STACK, slot, spot))
-				this.COVER_SPOTS.add(spot);
+	@Override
+	protected boolean canCoverSpot(ItemStack stack, EquipmentCoverSpot spot) {
+		return PlayerModestyData.doesArmorSlotItemCoverSpot(stack, this.SLOT, spot);
 	}
 }

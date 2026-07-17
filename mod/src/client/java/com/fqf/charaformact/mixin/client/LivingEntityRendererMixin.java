@@ -2,12 +2,13 @@ package com.fqf.charaformact.mixin.client;
 
 import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.appearance.ClientAppearanceCollector;
-import com.fqf.charaformact.appearance.RecategorizableFeatureRenderer;
 import com.fqf.charaformact.appearance.FeatureRendererWithMutableRenderer;
 import com.fqf.charaformact.appearance.ParsedClientAppearance;
+import com.fqf.charaformact.appearance.RecategorizableFeatureRenderer;
+import com.fqf.charaformact.cfadata.modesty.RenderedEquipmentInfo;
 import com.fqf.charaformact.util.ModelPartMover;
-import com.fqf.charaformact_api.appearance.equipment.EquipmentFeatureCategory;
 import com.fqf.charaformact_api.appearance.AppearanceModel;
+import com.fqf.charaformact_api.appearance.equipment.EquipmentFeatureCategory;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Share;
@@ -16,7 +17,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
-import net.minecraft.client.render.entity.feature.*;
+import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
@@ -41,7 +42,7 @@ public class LivingEntityRendererMixin<T extends LivingEntity, M extends EntityM
 			ParsedClientAppearance parsedModel = player.cfa$getAppearanceData().getAppearance();
 			if(parsedModel != null) {
 				applyRef.set(true);
-				player.cfa$getCfaData2().getModestyData().updateRenderedArmor();
+				RenderedEquipmentInfo.UPDATE_EQUIPMENT_RENDERING.invoker().onUpdateEquipment(player);
 				AppearanceModel entityModel = parsedModel.getModel();
 				ModelPartMover.instance = new ModelPartMover(parsedModel, entityModel);
 			}

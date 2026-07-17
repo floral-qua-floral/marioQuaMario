@@ -32,8 +32,8 @@ repositories {
 		url = "https://raw.githubusercontent.com/tom5454/maven/main"
 	}
 
-//	maven { url 'https://maven.wispforest.io/releases' } // Accessories
-//	maven { url 'https://maven.su5ed.dev/releases' } // Accessories
+	maven { url 'https://maven.wispforest.io/releases' } // Accessories
+	maven { url 'https://maven.su5ed.dev/releases' } // Accessories
 
 	exclusiveContent { // Sable Companion
 		forRepository {
@@ -96,6 +96,8 @@ dependencies {
 	modCompileOnly "maven.modrinth:flashback:${flashback_version}"
 
 	modCompileOnly "maven.modrinth:presence-footsteps:${presence_footsteps_version}"
+
+	modImplementation("io.wispforest:accessories-fabric:${project.accessories_version}")
 
 //	modCompileOnly("dev.ryanhcode.sable:sable-fabric-${project.minecraft_version}:${project.sable_version}")
 //	include(modApi("dev.ryanhcode.sable-companion:sable-companion-fabric-${project.minecraft_version}:${project.sable_companion_version}"))

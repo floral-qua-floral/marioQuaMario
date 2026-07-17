@@ -293,8 +293,6 @@ public class Raccoon implements FormDefinition {
 				if(mario.isOnGround())
 					airblastHitbox = airblastHitbox.withMinY(Math.min(airblastHitbox.minY, mario.getY()));
 
-				MarioQuaMario.LOGGER.info("Airblast!\n\tCenter: {}\n\tWidth: {}\n\tmin Y: {}", center, airblastHitbox.getLengthX(), airblastHitbox.minY);
-
 				List<Entity> reflectTargets = mario.getWorld().getEntitiesByClass(Entity.class, airblastHitbox,
 						entity -> !entity.isSpectator() && !entity.equals(mario));
 				for(Entity reflectTarget : reflectTargets) {

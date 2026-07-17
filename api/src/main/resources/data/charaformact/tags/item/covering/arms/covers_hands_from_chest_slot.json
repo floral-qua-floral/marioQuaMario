@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "#charaformact:gloves",
+    "#charaformact:slot_consolidation/gloves",
     {
       "id": "create:netherite_backtank",
       "required": false

@@ -1,6 +1,7 @@
 package com.fqf.charaformact;
 
 import com.fqf.charaformact.appearance.ClientAppearanceCollector;
+import com.fqf.charaformact.compat.EquipmentSlotModsCompatSafe;
 import com.fqf.charaformact.packets.CfaClientPacketHelper;
 import com.fqf.charaformact.registries.actions.parsed.ParsedMountedAction;
 import com.fqf.charaformact.util.CfaClientEventListeners;
@@ -25,6 +26,8 @@ public class CharaFormActClient implements ClientModInitializer {
 		ClientAppearanceCollector.INSTANCE.collect();
 
 		CharaFormAct.clientHelper = new ClientHelperImpl();
+
+		EquipmentSlotModsCompatSafe.register();
 	}
 
 	private static class ClientHelperImpl extends CharaFormAct.ClientHelper {
