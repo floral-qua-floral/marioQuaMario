@@ -1,0 +1,25 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "#accessories:hand",
+      "required": false
+    },
+    {
+      "id": "#trinkets:hand/glove",
+      "required": false
+    },
+    {
+      "id": "#trinkets:offhand/glove",
+      "required": false
+    },
+    {
+      "id": "#curios:hands",
+      "required": false
+    },
+    {
+      "id": "#aether:accessories_gloves",
+      "required": false
+    }
+  ]
+}

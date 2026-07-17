@@ -1,8 +1,6 @@
 package com.fqf.charaformact.mixin.client.features;
 
-import com.fqf.charaformact.appearance.FeatureRendererWithContext;
 import com.fqf.charaformact.appearance.ParsedClientAppearance;
-import com.fqf.charaformact.util.TransformationContext;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -16,19 +14,13 @@ import net.minecraft.client.render.entity.model.ParrotEntityModel;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
-import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(ShoulderParrotFeatureRenderer.class)
-public abstract class ShoulderParrotFeatureRendererMixin<T extends PlayerEntity> extends FeatureRenderer<T, PlayerEntityModel<T>> implements FeatureRendererWithContext {
-	public ShoulderParrotFeatureRendererMixin(FeatureRendererContext<T, PlayerEntityModel<T>> context) {
+public abstract class ShoulderParrotTransformationMixin<T extends PlayerEntity> extends FeatureRenderer<T, PlayerEntityModel<T>> {
+	public ShoulderParrotTransformationMixin(FeatureRendererContext<T, PlayerEntityModel<T>> context) {
 		super(context);
-	}
-
-	@Override
-	public @NotNull TransformationContext cfa$getContext() {
-		return TransformationContext.ORIGINAL;
 	}
 
 	// doing a mixin on a lambda is scary :(

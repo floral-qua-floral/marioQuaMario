@@ -1,7 +1,9 @@
 package com.fqf.charaformact.mixin.client;
 
 import com.fqf.charaformact.CharaFormAct;
+import com.fqf.charaformact.cfadata.CfaPlayerData;
 import com.fqf.charaformact.cfadata.CfaServerPlayerData;
+import com.fqf.charaformact.cfadata.injections.AdvCfaServerDataHolder;
 import com.fqf.charaformact.cfadata.util.ActiveAnimation;
 import com.fqf.charaformact_api.definitions.states.FormDefinition;
 import com.fqf.charaformact.cfadata.CfaMainClientData;
@@ -9,17 +11,15 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.Animat
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.client.util.Window;
 import net.minecraft.entity.Entity;
-import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Colors;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2d;
 import org.spongepowered.asm.mixin.Mixin;
@@ -28,7 +28,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.Objects;
+import java.util.Optional;
+
+import static com.fqf.charaformact.util.DebugHudUtil.*;
 
 @Mixin(InGameHud.class)
 public class InGameHudMixin {
@@ -63,6 +65,8 @@ public class InGameHudMixin {
 		return null;
 	}
 
+	@Unique private static Optional<String> mostRecentActionDisagreement = Optional.empty();
+
 	@Inject(method = "renderMainHud", at = @At("TAIL"))
 	public void renderSpeedometerWithServerData(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
 		if(!CharaFormAct.CONFIG.isSpecialHUDEnabled()) return;
@@ -73,62 +77,59 @@ public class InGameHudMixin {
 		CfaMainClientData clientData = mainPlayer.cfa$getCfaData();
 		if(!clientData.isEnabled()) return;
 
+		Optional<ServerPlayerEntity> serverPlayer = Optional.ofNullable(MinecraftClient.getInstance().getServer()).map(
+				integratedServer -> integratedServer.getPlayerManager().getPlayer(mainPlayer.getUuid()));
+		Optional<CfaServerPlayerData> serverData = serverPlayer.map(AdvCfaServerDataHolder::cfa$getCfaData);
+
 		double horizontalSpeed = Vector2d.distance(mainPlayer.getX(), mainPlayer.getZ(), mainPlayer.prevX, mainPlayer.prevZ);
 		double verticalSpeed = mainPlayer.getY() - mainPlayer.prevY;
 
-		renderText(context, 1, "C: ", horizontalSpeed, verticalSpeed);
+		Pair pair = new Pair(context);
 
-		IntegratedServer integratedServer = MinecraftClient.getInstance().getServer();
-		if(integratedServer == null) return;
-		Entity serverSidedMainPlayer = Objects.requireNonNull(integratedServer.getWorld(mainPlayer.getWorld().getRegistryKey())).getEntityById(mainPlayer.getId());
-		if(serverSidedMainPlayer == null) return;
-		CfaServerPlayerData serverData = ((ServerPlayerEntity) serverSidedMainPlayer).cfa$getCfaData();
+		// This is going upwards from the bottom!
 
-		renderText(context, 0, "S: ", serverSidedMainPlayer.getVelocity().horizontalLength(), serverSidedMainPlayer.getVelocity().y);
+		// Speedometer & Fall Distance
+		renderDebugText(pair, "S-Spd: H=", serverPlayer.map(Entity::getVelocity).map(Vec3d::horizontalLength),
+				"V=", serverPlayer.map(Entity::getVelocity).map(Vec3d::getY));
+		renderDebugText(pair, "C-Spd: H=", horizontalSpeed, "V=", verticalSpeed);
+		renderDebugText(pair, "FallDistance: C=", mainPlayer.fallDistance, "S=", serverPlayer.map(sp -> sp.fallDistance));
+		lineBreak(pair);
 
-		renderText(context, 3, mainPlayer.getPose() + " (" + mainPlayer.getHeight() + ") VS "
-				+ serverSidedMainPlayer.getPose() + " (" + serverSidedMainPlayer.getHeight() + ")");
-
-
-		renderText(context, 7, clientData.getActionID() + " VS " + serverData.getActionID(),
-				clientData.getActionID().equals(serverData.getActionID()) ? Colors.WHITE : Colors.LIGHT_RED);
+		// Pose
+		renderDebugText(pair, "Pose: C=", mainPlayer.getPose(), parenthesize(mainPlayer.getHeight()), "S=",
+				serverPlayer.map(Entity::getPose), parenthesize(serverPlayer.map(Entity::getHeight)));
+		// Animation
 		ActiveAnimation currentAnimation = mainPlayer.cfa$getAppearanceData().getCurrentAnimation();
-		String animationString;
-		if(currentAnimation == null) animationString = "None";
+		String animationString; int animationColor;
+		if(currentAnimation == null) { animationString = "(Not Animating)"; animationColor = Colors.LIGHT_GRAY; }
 		else {
-			if(currentAnimation.ANIMATION.ID == null) animationString = "Unidentified";
-			else animationString = currentAnimation.ANIMATION.ID.toString();
+			animationString = "Anim: ";
+			if(currentAnimation.ANIMATION.ID == null) { animationString += "Unidentified"; animationColor = Colors.WHITE; }
+			else { animationString += currentAnimation.ANIMATION.ID.toString(); animationColor = Colors.YELLOW; }
 			if(currentAnimation.EXECUTION_FLAGS.contains(AnimationFlag.Execution.MIRROR)) animationString += " (Mirrored)";
 		}
-		renderText(context, 6, "Animation: " + animationString);
-		renderText(context, 5, "FallDistance (C, S): ", mainPlayer.fallDistance, serverSidedMainPlayer.fallDistance);
+		renderDebugTextCol(pair, animationColor, animationString);
+		// Action
+		Optional<Boolean> matching = serverData.map(CfaPlayerData::getActionID).map(id -> id.equals(clientData.getActionID()));
+		if(matching.orElse(false)) mostRecentActionDisagreement = Optional.of(parseOut("C=",
+				clientData.getActionID(), ", S=", serverData.map(CfaPlayerData::getActionID)));
+		if(serverPlayer.isPresent()) renderDebugTextCol(pair, mostRecentActionDisagreement.isPresent() ? Colors.WHITE : Colors.GRAY,
+				"Last disagreement:", mostRecentActionDisagreement.orElse("(No disagreements yet)"));
+		else renderDebugTextCol(pair, Colors.GRAY, "(Cannot watch for disagreements)");
+		renderDebugTextCol(pair, matching.map(bool -> bool ? Colors.WHITE : Colors.LIGHT_RED).orElse(Colors.LIGHT_GRAY),
+				"Act: C=", clientData.getActionID(), "S=", serverData.map(CfaPlayerData::getActionID));
+		lineBreak(pair);
 
-		renderText(context, 9, "In unloaded chunk: " + clientData.isInUnloadedChunks());
-	}
+		// Chunk status
+		boolean inUnloadedChunks = clientData.isInUnloadedChunks();
+		renderDebugTextCol(pair, inUnloadedChunks ? Colors.LIGHT_RED : Colors.LIGHT_GRAY, "Chunk is", inUnloadedChunks
+				? "NOT LOADED!" : "loaded...");
+		lineBreak(pair);
 
-	@Unique
-	private void renderText(DrawContext context, int linesFromBottom, String label, double firstValue, double... extraValues) {
-		StringBuilder toDisplay = new StringBuilder(label + String.format("%.2f", firstValue));
-		for(double value : extraValues) {
-			toDisplay.append(", ").append(String.format("%.2f", value));
-		}
-		renderText(context, linesFromBottom, toDisplay.toString());
-	}
-
-	@Unique
-	private void renderText(DrawContext context, int linesFromBottom, String text) {
-		this.renderText(context, linesFromBottom, text, Colors.WHITE);
-	}
-
-	@Unique
-	private void renderText(DrawContext context, int linesFromBottom, String text, int color) {
-		Window window = MinecraftClient.getInstance().getWindow();
-		TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-
-		int length = textRenderer.getWidth(text);
-		int x = window.getScaledWidth() - length - 2;
-		int y = window.getScaledHeight() - (linesFromBottom + 1) * (textRenderer.fontHeight + 3);
-
-		context.drawTextWithShadow(textRenderer, text, x, y, color);
+		// KEEP THIS LAST: Modesty data
+		if(clientData.getModestyData().renderDebugHud(pair))
+			renderDebugText(pair, "Equipment items covering:");
+		else
+			renderDebugTextCol(pair, Colors.GRAY, "(Naked??)");
 	}
 }

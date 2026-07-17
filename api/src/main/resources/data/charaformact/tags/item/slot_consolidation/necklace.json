@@ -1,0 +1,17 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "#accessories:necklace",
+      "required": false
+    },
+    {
+      "id": "#trinkets:chest/necklace",
+      "required": false
+    },
+    {
+      "id": "#curios:necklace",
+      "required": false
+    }
+  ]
+}

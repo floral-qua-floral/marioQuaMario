@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "#charaformact:slot_consolidation/wildcard",
+    "#charaformact:slot_consolidation/necklace",
+    "#charaformact:slot_consolidation/anklet",
+    "#charaformact:slot_consolidation/ring",
+    "#charaformact:slot_consolidation/bracelet"
+  ]
+}

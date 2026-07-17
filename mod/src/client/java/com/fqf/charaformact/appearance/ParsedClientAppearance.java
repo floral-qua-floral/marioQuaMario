@@ -2,7 +2,7 @@ package com.fqf.charaformact.appearance;
 
 import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.registries.power_granting.AppearanceKey;
-import com.fqf.charaformact.util.TransformationContext;
+import com.fqf.charaformact_api.appearance.equipment.EquipmentFeatureCategory;
 import com.fqf.charaformact_api.appearance.*;
 import com.fqf.charaformact.util.VanillaPart;
 import com.google.common.collect.ImmutableList;
@@ -44,7 +44,7 @@ public class ParsedClientAppearance extends ParsedCommonAppearance {
 	public final float LIMB_SWING_MULTIPLIER;
 	public final float VIEW_BOB_MULTIPLIER;
 
-	public final Map<VanillaPart, Map<TransformationContext, TransformationInstructions>> FEATURE_TRANSFORMATION_INSTRUCTIONS;
+	public final Map<VanillaPart, Map<EquipmentFeatureCategory, TransformationInstructions>> FEATURE_TRANSFORMATION_INSTRUCTIONS;
 
 	private List<FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>>> customFeatures;
 
@@ -124,7 +124,7 @@ public class ParsedClientAppearance extends ParsedCommonAppearance {
 			this.customFeatures = (List<FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>>>) (Object) builder.build();
 			for(FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> customFeature : this.customFeatures) {
 				// we DO NOT WANT TO TRANSFORM appearance-specific features!
-				((FeatureRendererWithContext) customFeature).cfa$setContext(TransformationContext.ORIGINAL);
+				((RecategorizableFeatureRenderer) customFeature).cfa$recategorize(EquipmentFeatureCategory.NOT_EQUIPMENT);
 			}
 		}
 		CharaFormAct.LOGGER.info("Got custom features for {}!\n\t{}", this.ID, this.customFeatures);
@@ -136,12 +136,12 @@ public class ParsedClientAppearance extends ParsedCommonAppearance {
 			@NotNull TransformationInstructions outerArmor, @Nullable TransformationInstructions innerArmor,
 			@Nullable TransformationInstructions special, @NotNull TransformationInstructions unknown
 	) {
-		EnumMap<TransformationContext, TransformationInstructions> map = new EnumMap<>(TransformationContext.class);
+		EnumMap<EquipmentFeatureCategory, TransformationInstructions> map = new EnumMap<>(EquipmentFeatureCategory.class);
 		this.FEATURE_TRANSFORMATION_INSTRUCTIONS.put(part, map);
-		map.put(TransformationContext.ARMOR_OUTER, fixArmorInstructions(outerArmor, part, 1));
-		if(innerArmor != null) map.put(TransformationContext.ARMOR_INNER, fixArmorInstructions(innerArmor, part, 0.5F));
-		if(special != null) map.put(TransformationContext.SPECIAL, fixInstructions(special));
-		map.put(TransformationContext.UNKNOWN, fixInstructions(unknown));
+		map.put(EquipmentFeatureCategory.ARMOR_OUTER, fixArmorInstructions(outerArmor, part, 1));
+		if(innerArmor != null) map.put(EquipmentFeatureCategory.ARMOR_INNER, fixArmorInstructions(innerArmor, part, 0.5F));
+		if(special != null) map.put(EquipmentFeatureCategory.SPECIAL, fixInstructions(special));
+		map.put(EquipmentFeatureCategory.UNKNOWN, fixInstructions(unknown));
 	}
 
 	private static Vector3f getVanillaPartSize(VanillaPart part) {
@@ -175,7 +175,7 @@ public class ParsedClientAppearance extends ParsedCommonAppearance {
 	}
 
 	private void mirrorTransformationInstructions(VanillaPart right, VanillaPart left) {
-		EnumMap<TransformationContext, TransformationInstructions> leftInstructions = new EnumMap<>(TransformationContext.class);
+		EnumMap<EquipmentFeatureCategory, TransformationInstructions> leftInstructions = new EnumMap<>(EquipmentFeatureCategory.class);
 		this.FEATURE_TRANSFORMATION_INSTRUCTIONS.put(left, leftInstructions);
 		this.FEATURE_TRANSFORMATION_INSTRUCTIONS.get(right).forEach((context, instructions) -> {
 			if(instructions != null) leftInstructions.put(context, instructions

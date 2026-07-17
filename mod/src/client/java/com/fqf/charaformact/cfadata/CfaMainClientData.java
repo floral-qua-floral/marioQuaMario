@@ -3,6 +3,7 @@ package com.fqf.charaformact.cfadata;
 import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.appearance.ParsedCommonAppearance;
 import com.fqf.charaformact.bapping.BlockBappingUtil;
+import com.fqf.charaformact.cfadata.modesty.PlayerModestyData;
 import com.fqf.charaformact.cfadata.util.ActiveAnimation;
 import com.fqf.charaformact.cfadata.util.AdvancedArrangement;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
@@ -40,10 +41,12 @@ import java.util.*;
 public class CfaMainClientData extends CfaMoveableData implements CfaClientDataImpl {
 	private final ClientPlayerEntity PLAYER;
 	public final CfaAppearanceData<CfaMainClientData> APPEARANCE_DATA;
+	private final PlayerModestyData MODESTY;
 	public CfaMainClientData(ClientPlayerEntity player) {
 		super();
 		this.PLAYER = player;
 		this.APPEARANCE_DATA = new CfaAppearanceData<>(this);
+		this.MODESTY = new PlayerModestyData(this);
 	}
 	@Override public ClientPlayerEntity getPlayer() {
 		return PLAYER;
@@ -134,6 +137,10 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 	}
 	@Override public @Nullable ParsedCommonAppearance getAppearance() {
 		return this.APPEARANCE_DATA.getAppearance();
+	}
+
+	@Override public PlayerModestyData getModestyData() {
+		return this.MODESTY;
 	}
 
 	@Override public void tick() {

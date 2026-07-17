@@ -1,9 +1,11 @@
 package com.fqf.charaformact.cfadata;
 
 import com.fqf.charaformact.CharaFormAct;
+import com.fqf.charaformact.cfadata.modesty.PlayerModestyData;
 import com.fqf.charaformact.registries.power_granting.ParsedCharacter;
 import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
+import com.fqf.charaformact_api.cfadata.util.EquipmentCoverSpot;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.HandPreference;
 import com.fqf.charaformact.cfadata.util.*;
@@ -222,5 +224,28 @@ public interface CfaClientDataImpl extends CfaAnimatingData {
 	@Override
 	default float getRelativeHeadYawDegrees() {
 		return this.getRelativeHeadYawRadians() * MathHelper.DEGREES_PER_RADIAN;
+	}
+
+	PlayerModestyData getModestyData();
+
+	@Override
+	default boolean isCovered(EquipmentCoverSpot spot) {
+		return this.getModestyData().isSpotCovered(spot);
+	}
+
+	@Override
+	default boolean areAllCovered(EquipmentCoverSpot... spots) {
+		for(EquipmentCoverSpot spot : spots) {
+			if(!this.isCovered(spot)) return false;
+		}
+		return true;
+	}
+
+	@Override
+	default boolean areAnyCovered(EquipmentCoverSpot... spots) {
+		for(EquipmentCoverSpot spot : spots) {
+			if(this.isCovered(spot)) return true;
+		}
+		return false;
 	}
 }

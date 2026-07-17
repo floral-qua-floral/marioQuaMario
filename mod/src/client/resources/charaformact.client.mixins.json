@@ -3,7 +3,7 @@
   "package": "com.fqf.charaformact.mixin.client",
   "compatibilityLevel": "JAVA_21",
   "client": [
-    "AbstractClientPlayerEntityMixin",
+    "AbstractClientPlayerLimbSwingMixin",
     "AppearanceModelMixin",
     "BipedEntityModelMixin",
     "CameraMixin",
@@ -26,13 +26,12 @@
     "PlayerEntityRendererMixin",
     "compat.FlashbackSyncOnRecordingStartMixin",
     "compat.SodiumLevelSliceMixin",
-    "features.ArmorFeatureRendererMixin",
-    "features.CapeFeatureRendererMixin",
-    "features.ElytraFeatureRendererMixin",
-    "features.FeatureRendererContextMixin",
-    "features.HeldItemFeatureRendererMixin",
-    "features.ShoulderParrotFeatureRendererMixin",
-    "features.StuckObjectFeatureRendererMixin"
+    "features.ArmorBypassesFeatureCategorizationMixin",
+    "features.AttachElytraToTorsoMixin",
+    "features.FeatureRendererRecategorizabilityMixin",
+    "features.HeldItemRepositionMixin",
+    "features.ShoulderParrotTransformationMixin",
+    "features.StuckObjectNestedModelPartFixMixin"
   ],
   "injectors": {
     "defaultRequire": 1

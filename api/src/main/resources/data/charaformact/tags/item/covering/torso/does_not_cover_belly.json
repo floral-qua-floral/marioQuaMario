@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "#charaformact:covering/covers_nothing",
+    {
+      "id": "#accessories:cape",
+      "required": false
+    },
+    {
+      "id": "#accessories:back",
+      "required": false
+    }
+  ]
+}

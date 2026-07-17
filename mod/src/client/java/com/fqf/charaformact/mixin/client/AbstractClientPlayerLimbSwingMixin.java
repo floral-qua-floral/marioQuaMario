@@ -10,8 +10,8 @@ import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(AbstractClientPlayerEntity.class)
-public abstract class AbstractClientPlayerEntityMixin extends PlayerEntity implements AdvCfaAbstractClientDataHolder {
-	public AbstractClientPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile gameProfile) {
+public abstract class AbstractClientPlayerLimbSwingMixin extends PlayerEntity implements AdvCfaAbstractClientDataHolder {
+	public AbstractClientPlayerLimbSwingMixin(World world, BlockPos pos, float yaw, GameProfile gameProfile) {
 		super(world, pos, yaw, gameProfile);
 	}
 

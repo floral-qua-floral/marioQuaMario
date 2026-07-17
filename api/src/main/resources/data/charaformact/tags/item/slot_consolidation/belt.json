@@ -1,0 +1,17 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "#accessories:belt",
+      "required": false
+    },
+    {
+      "id": "#trinkets:legs/belt",
+      "required": false
+    },
+    {
+      "id": "#curios:belt",
+      "required": false
+    }
+  ]
+}

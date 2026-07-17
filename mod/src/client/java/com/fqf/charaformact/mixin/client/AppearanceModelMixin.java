@@ -1,6 +1,7 @@
 package com.fqf.charaformact.mixin.client;
 
 import com.fqf.charaformact.CharaFormAct;
+import com.fqf.charaformact.util.RotatorFromRootContainer;
 import com.fqf.charaformact_api.appearance.AppearanceModel;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -27,7 +28,7 @@ import java.util.function.Consumer;
  * meant to be an API class. None of this behavior is intended to be tampered with anyways.
  */
 @Mixin(value = AppearanceModel.class, remap = false)
-public abstract class AppearanceModelMixin extends PlayerEntityModel<AbstractClientPlayerEntity> {
+public abstract class AppearanceModelMixin extends PlayerEntityModel<AbstractClientPlayerEntity> implements RotatorFromRootContainer {
 	public AppearanceModelMixin(ModelPart root, boolean thinArms) {
 		super(root, thinArms);
 	}
@@ -74,22 +75,8 @@ public abstract class AppearanceModelMixin extends PlayerEntityModel<AbstractCli
 		return null;
 	}
 
-	/**
-	 * @author floralQuaFloral
-	 * @reason Keeping RotatorFromRoot processing out of API source
-	 */
-	@Overwrite
-	public void rotateFromRoot(ModelPart part, MatrixStack matrices) {
-		this.partRotatorsFromRoot.get(part).accept(matrices);
-	}
-
-//	@Overwrite(remap = false)
-//	public void rotateFromRoot(ModelPart part, MatrixStack matrices) {
-//
-//	}
-
 	@Override
-	public void renderCape(MatrixStack matrices, VertexConsumer vertices, int light, int overlay) {
-		// absolutely not. -_- NOPE!
+	public void cfa$rotateFromRoot(ModelPart part, MatrixStack matrices) {
+		this.partRotatorsFromRoot.get(part).accept(matrices);
 	}
 }

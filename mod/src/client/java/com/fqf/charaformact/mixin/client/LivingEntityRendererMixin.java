@@ -2,11 +2,11 @@ package com.fqf.charaformact.mixin.client;
 
 import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.appearance.ClientAppearanceCollector;
-import com.fqf.charaformact.appearance.FeatureRendererWithContext;
+import com.fqf.charaformact.appearance.RecategorizableFeatureRenderer;
 import com.fqf.charaformact.appearance.FeatureRendererWithMutableRenderer;
 import com.fqf.charaformact.appearance.ParsedClientAppearance;
 import com.fqf.charaformact.util.ModelPartMover;
-import com.fqf.charaformact.util.TransformationContext;
+import com.fqf.charaformact_api.appearance.equipment.EquipmentFeatureCategory;
 import com.fqf.charaformact_api.appearance.AppearanceModel;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -41,6 +41,7 @@ public class LivingEntityRendererMixin<T extends LivingEntity, M extends EntityM
 			ParsedClientAppearance parsedModel = player.cfa$getAppearanceData().getAppearance();
 			if(parsedModel != null) {
 				applyRef.set(true);
+				player.cfa$getCfaData2().getModestyData().updateRenderedArmor();
 				AppearanceModel entityModel = parsedModel.getModel();
 				ModelPartMover.instance = new ModelPartMover(parsedModel, entityModel);
 			}
@@ -69,7 +70,7 @@ public class LivingEntityRendererMixin<T extends LivingEntity, M extends EntityM
 			((FeatureRendererWithMutableRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>>) instance).cfa$replaceMutableContext((LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>>) (Object) this);
 		}
 		if(applyRef.get()) {
-			TransformationContext context = ((FeatureRendererWithContext) instance).cfa$getContext();
+			EquipmentFeatureCategory context = ((RecategorizableFeatureRenderer) instance).cfa$getMutableCategory();
 			ModelPartMover.instance.setTo(context);
 		}
 		original.call(instance, matrices, vertexConsumers, light, entity, limbAngle, limbDistance, tickDelta, animationProgress, headYaw, headPitch);

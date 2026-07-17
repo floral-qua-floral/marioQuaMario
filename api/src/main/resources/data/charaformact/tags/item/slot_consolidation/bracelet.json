@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "#accessories:wrist",
+      "required": false
+    },
+    {
+      "id": "#curios:bracelet",
+      "required": false
+    }
+  ]
+}

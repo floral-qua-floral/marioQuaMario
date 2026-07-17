@@ -1,0 +1,17 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "#accessories:cape",
+      "required": false
+    },
+    {
+      "id": "#trinkets:chest/cape",
+      "required": false
+    },
+    {
+      "id": "#aether:accessories_capes",
+      "required": false
+    }
+  ]
+}

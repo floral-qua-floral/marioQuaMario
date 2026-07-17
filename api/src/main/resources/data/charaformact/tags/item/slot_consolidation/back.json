@@ -1,0 +1,17 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "#accessories:back",
+      "required": false
+    },
+    {
+      "id": "#trinkets:chest/back",
+      "required": false
+    },
+    {
+      "id": "#curios:back",
+      "required": false
+    }
+  ]
+}

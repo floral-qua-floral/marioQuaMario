@@ -3,6 +3,8 @@
   "package": "com.fqf.charaformact_api.mixin.client",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "equipment.NonEquipmentCategorizationMixin",
+    "equipment.SpecialEquipmentCategorizationMixin"
   ],
   "injectors": {
     "defaultRequire": 1

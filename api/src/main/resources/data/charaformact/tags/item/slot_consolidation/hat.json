@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "#accessories:hat",
+      "required": false
+    },
+    {
+      "id": "#trinkets:head/hat",
+      "required": false
+    }
+  ]
+}

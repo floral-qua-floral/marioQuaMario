@@ -1,6 +1,7 @@
 package com.fqf.charaformact.cfadata;
 
 import com.fqf.charaformact.appearance.ParsedCommonAppearance;
+import com.fqf.charaformact.cfadata.modesty.PlayerModestyData;
 import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.HandPreference;
@@ -19,10 +20,12 @@ import java.util.Map;
 public class CfaOtherClientData extends CfaPlayerData implements CfaClientDataImpl {
 	private final OtherClientPlayerEntity PLAYER;
 	public final CfaAppearanceData<CfaOtherClientData> APPEARANCE_DATA;
+	private final PlayerModestyData MODESTY;
 	public CfaOtherClientData(OtherClientPlayerEntity player) {
 		super();
 		this.PLAYER = player;
 		this.APPEARANCE_DATA = new CfaAppearanceData<>(this);
+		this.MODESTY = new PlayerModestyData(this);
 	}
 	@Override public OtherClientPlayerEntity getPlayer() {
 		return this.PLAYER;
@@ -53,6 +56,10 @@ public class CfaOtherClientData extends CfaPlayerData implements CfaClientDataIm
 	}
 
 	private double prevX, prevY, prevZ, deltaX, deltaY, deltaZ;
+
+	@Override public PlayerModestyData getModestyData() {
+		return this.MODESTY;
+	}
 
 	@Override public void tick() {
 		super.tick();

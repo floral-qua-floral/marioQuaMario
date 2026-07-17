@@ -1,8 +1,6 @@
 package com.fqf.charaformact.mixin.client.features;
 
-import com.fqf.charaformact.appearance.FeatureRendererWithContext;
 import com.fqf.charaformact.appearance.ParsedClientAppearance;
-import com.fqf.charaformact.util.TransformationContext;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -17,21 +15,15 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ShieldItem;
-import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(HeldItemFeatureRenderer.class)
-public abstract class HeldItemFeatureRendererMixin<T extends LivingEntity, M extends EntityModel<T> & ModelWithArms> extends FeatureRenderer<T, M> implements FeatureRendererWithContext {
-	public HeldItemFeatureRendererMixin(FeatureRendererContext<T, M> context) {
+public abstract class HeldItemRepositionMixin<T extends LivingEntity, M extends EntityModel<T> & ModelWithArms> extends FeatureRenderer<T, M> {
+	public HeldItemRepositionMixin(FeatureRendererContext<T, M> context) {
 		super(context);
-	}
-
-	@Override
-	public @NotNull TransformationContext cfa$getContext() {
-		return TransformationContext.ORIGINAL;
 	}
 
 	@Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;push()V", shift = At.Shift.AFTER))

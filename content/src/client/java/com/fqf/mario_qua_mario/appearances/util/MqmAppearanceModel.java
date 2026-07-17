@@ -2,6 +2,7 @@ package com.fqf.mario_qua_mario.appearances.util;
 
 import com.fqf.charaformact_api.appearance.AppearanceModel;
 import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
+import com.fqf.charaformact_api.cfadata.util.EquipmentCoverSpot;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.util.Easing;
 import net.minecraft.client.model.ModelPart;
@@ -20,7 +21,7 @@ public abstract class MqmAppearanceModel extends AppearanceModel {
 	@Override
 	public void preActionAnimation(AbstractClientPlayerEntity player, CfaAnimatingData data) {
 		if(this.rightEar != null && this.leftEar != null) {
-			int offset = player.getEquippedStack(EquipmentSlot.HEAD).isEmpty() ? 0 : 1;
+			int offset = data.isCovered(EquipmentCoverSpot.SCALP) ? 1 : 0;
 			this.adjustEar(this.rightEar, offset);
 			this.adjustEar(this.leftEar, -offset);
 		}

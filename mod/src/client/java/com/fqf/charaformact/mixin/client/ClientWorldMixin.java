@@ -21,7 +21,6 @@ public class ClientWorldMixin {
 		// isLiquid is deprecated but what else do i use to check if a block is being removed???????
 		if(state.isAir() || state.isLiquid()) {
 			WorldBapsInfo baps = BlockBappingUtil.getBapsInfoNullable((World) (Object) this);
-			CharaFormAct.LOGGER.info("Removing block @ {}. Baps: {}", pos, baps);
 			if(
 					baps != null
 					&& baps.ALL_BAPS.get(pos) instanceof BapBreakingBlockInfo breakingInfo

@@ -1,0 +1,21 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "#accessories:charm",
+      "required": false
+    },
+    {
+      "id": "#curios:curio",
+      "required": false
+    },
+    {
+      "id": "#curios:charm",
+      "required": false
+    },
+    {
+      "id": "#aether:accessories_miscellaneous",
+      "required": false
+    }
+  ]
+}

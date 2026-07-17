@@ -3,6 +3,7 @@ package com.fqf.charaformact_api.appearance;
 import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
 import net.minecraft.client.model.*;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.entity.model.EntityModelPartNames;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
@@ -68,6 +69,11 @@ public class AppearanceModel extends PlayerEntityModel<AbstractClientPlayerEntit
 		super.setAngles(livingEntity, f, g, h, i, j);
 	}
 
+	@Override
+	public void renderCape(MatrixStack matrices, VertexConsumer vertices, int light, int overlay) {
+		// absolutely not. -_- NOPE!
+	}
+
 	public void preActionAnimation(AbstractClientPlayerEntity player, CfaAnimatingData data) {
 		// This method is called after vanilla has posed the model, but before CFA has applied Action animations.
 		// Use this to animate body parts that CharaFormAct might also want to animate, such as the arms, legs, or tail.
@@ -76,9 +82,5 @@ public class AppearanceModel extends PlayerEntityModel<AbstractClientPlayerEntit
 	public void postActionAnimation(AbstractClientPlayerEntity player, CfaAnimatingData data) {
 		// This method is called after CFA has applied Action animations. Use this to animate body parts that
 		// CharaFormAct won't animate via Actions, such as hair.
-	}
-
-	public void rotateFromRoot(ModelPart part, MatrixStack matrices) {
-		throw new IllegalStateException("This method is implemented elsewhere via self-mixin.");
 	}
 }

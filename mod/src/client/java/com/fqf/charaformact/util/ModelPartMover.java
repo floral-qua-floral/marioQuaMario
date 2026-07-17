@@ -3,6 +3,7 @@ package com.fqf.charaformact.util;
 import com.fqf.charaformact.appearance.ParsedClientAppearance;
 import com.fqf.charaformact_api.appearance.AppearanceModel;
 import com.fqf.charaformact_api.appearance.TransformationInstructions;
+import com.fqf.charaformact_api.appearance.equipment.EquipmentFeatureCategory;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.util.math.MathHelper;
 import org.joml.Vector3f;
@@ -115,9 +116,9 @@ public class ModelPartMover {
 		}
 	}
 
-	private final Map<VanillaPart, Map<TransformationContext, UsableTransformation>> TRANSFORMATIONS;
+	private final Map<VanillaPart, Map<EquipmentFeatureCategory, UsableTransformation>> TRANSFORMATIONS;
 	private final AppearanceModel MODEL;
-	private TransformationContext currentContext = TransformationContext.ORIGINAL;
+	private EquipmentFeatureCategory currentContext = EquipmentFeatureCategory.NOT_EQUIPMENT;
 
 	public ModelPartMover(ParsedClientAppearance appearance, AppearanceModel model) {
 		this.MODEL = model;
@@ -125,31 +126,31 @@ public class ModelPartMover {
 		for(VanillaPart vanillaPart : VanillaPart.values()) {
 			// First record the original position, orientation, and scale of every single model vanillaPart
 			ModelPart modelPart = vanillaPart.of(model);
-			Map<TransformationContext, UsableTransformation> transformations = new EnumMap<>(TransformationContext.class);
+			Map<EquipmentFeatureCategory, UsableTransformation> transformations = new EnumMap<>(EquipmentFeatureCategory.class);
 			this.TRANSFORMATIONS.put(vanillaPart, transformations);
 			UsableTransformation original = new UsableTransformation(modelPart);
-			transformations.put(TransformationContext.ORIGINAL, original);
+			transformations.put(EquipmentFeatureCategory.NOT_EQUIPMENT, original);
 
 			// Calculate the different transformations we'll be using for this part
-			Map<TransformationContext, TransformationInstructions> instructions = appearance.FEATURE_TRANSFORMATION_INSTRUCTIONS.get(vanillaPart);
-			this.populateTransformationsMap(TransformationContext.ARMOR_OUTER, transformations, modelPart, instructions);
+			Map<EquipmentFeatureCategory, TransformationInstructions> instructions = appearance.FEATURE_TRANSFORMATION_INSTRUCTIONS.get(vanillaPart);
+			this.populateTransformationsMap(EquipmentFeatureCategory.ARMOR_OUTER, transformations, modelPart, instructions);
 			if(vanillaPart.HAS_INNER_ARMOR)
-				this.populateTransformationsMap(TransformationContext.ARMOR_INNER, transformations, modelPart, instructions);
+				this.populateTransformationsMap(EquipmentFeatureCategory.ARMOR_INNER, transformations, modelPart, instructions);
 			if(vanillaPart.HAS_SPECIAL)
-				this.populateTransformationsMap(TransformationContext.SPECIAL, transformations, modelPart, instructions);
-			this.populateTransformationsMap(TransformationContext.UNKNOWN, transformations, modelPart, instructions);
+				this.populateTransformationsMap(EquipmentFeatureCategory.SPECIAL, transformations, modelPart, instructions);
+			this.populateTransformationsMap(EquipmentFeatureCategory.UNKNOWN, transformations, modelPart, instructions);
 		}
 	}
 
 	private void populateTransformationsMap(
-			TransformationContext context,
-			Map<TransformationContext, UsableTransformation> transformations, ModelPart part,
-			Map<TransformationContext, TransformationInstructions> instructions
+			EquipmentFeatureCategory context,
+			Map<EquipmentFeatureCategory, UsableTransformation> transformations, ModelPart part,
+			Map<EquipmentFeatureCategory, TransformationInstructions> instructions
 	) {
 		transformations.put(context, new UsableTransformation(part, instructions.get(context)));
 	}
 
-	public void setTo(TransformationContext context) {
+	public void setTo(EquipmentFeatureCategory context) {
 		// There's no need to reset everything again if we're already there! Take it easy!
 		if(context == this.currentContext) return;
 

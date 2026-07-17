@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "#accessories:face",
+      "required": false
+    },
+    {
+      "id": "#trinkets:head/face",
+      "required": false
+    }
+  ]
+}

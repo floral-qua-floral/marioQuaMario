@@ -1,0 +1,21 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "#accessories:ring",
+      "required": false
+    },
+    {
+      "id": "#trinkets:hand/ring",
+      "required": false
+    },
+    {
+      "id": "#trinkets:offhand/ring",
+      "required": false
+    },
+    {
+      "id": "#curios:ring",
+      "required": false
+    }
+  ]
+}

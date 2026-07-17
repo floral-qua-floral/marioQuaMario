@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "#charaformact:covering/covers_nothing",
+    "#charaformact:slot_consolidation/hat",
+    "#charaformact:slot_consolidation/face"
+  ]
+}
