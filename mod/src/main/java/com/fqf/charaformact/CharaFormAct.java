@@ -6,6 +6,7 @@ import com.fqf.charaformact.registries.RegistryManager;
 import com.fqf.charaformact.util.CfaGamerules;
 import com.fqf.charaformact.util.HelperGetterImplementation;
 import com.fqf.charaformact.util.CfaEventListeners;
+import it.unimi.dsi.fastutil.objects.ObjectIntPair;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
@@ -51,6 +52,7 @@ public class CharaFormAct implements ModInitializer {
 	}
 
 	public static abstract class ClientHelper {
+		public abstract ObjectIntPair<String> getAppearanceCoveringInformation();
 		public abstract void prepareKeybindTexts();
 	}
 }

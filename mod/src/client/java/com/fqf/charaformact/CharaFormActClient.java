@@ -6,10 +6,13 @@ import com.fqf.charaformact.packets.CfaClientPacketHelper;
 import com.fqf.charaformact.registries.actions.parsed.ParsedMountedAction;
 import com.fqf.charaformact.util.CfaClientEventListeners;
 import com.fqf.charaformact.util.CfaClientHelperManager;
+import it.unimi.dsi.fastutil.objects.ObjectIntPair;
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.text.Text;
+
+import java.util.Objects;
 
 public class CharaFormActClient implements ClientModInitializer {
 	@Override
@@ -31,6 +34,11 @@ public class CharaFormActClient implements ClientModInitializer {
 	}
 
 	private static class ClientHelperImpl extends CharaFormAct.ClientHelper {
+		@Override
+		public ObjectIntPair<String> getAppearanceCoveringInformation() {
+			return Objects.requireNonNull(MinecraftClient.getInstance().player).cfa$getCfaData2().getModestyData().getDebugString();
+		}
+
 		@Override
 		public void prepareKeybindTexts() {
 			GameOptions options = MinecraftClient.getInstance().options;

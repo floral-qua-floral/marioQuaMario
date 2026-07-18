@@ -16,6 +16,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import it.unimi.dsi.fastutil.floats.FloatFloatPair;
+import it.unimi.dsi.fastutil.objects.ObjectIntPair;
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.command.CommandRegistryAccess;
@@ -140,6 +141,9 @@ public class CharaFormActCommand {
 					)
 				)
 				.then(literal("debug")
+					.then(literal("getAppearanceCoveringCounts")
+						.executes(CharaFormActCommand::getAppearanceCoveringCounts)
+					)
 					.then(literal("equipment")
 						.then(argument("slot", EquipmentSlotArgumentType.equipmentSlot())
 							.then(literal("getArmor")
@@ -437,6 +441,14 @@ public class CharaFormActCommand {
 		}
 	}
 
+	private static int getAppearanceCoveringCounts(CommandContext<ServerCommandSource> context) {
+		CharaFormAct.ClientHelper helper = CharaFormAct.getClientHelper();
+		if(helper != null) {
+			ObjectIntPair<String> covering = helper.getAppearanceCoveringInformation();
+			return sendFeedback(context, "Found " + covering.rightInt() + " spots being covered" + covering.left(), covering.rightInt());
+		}
+		return sendFeedback(context, "Very sorry, this command is only available in Singleplayer :(", false);
+	}
 	private static int getEquipmentAttributes(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
 		ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
 		EquipmentSlot slot = EquipmentSlotArgumentType.getEquipmentSlot(context, "slot");

@@ -3,6 +3,8 @@ package com.fqf.charaformact.cfadata.modesty;
 import com.fqf.charaformact.cfadata.CfaClientDataImpl;
 import com.fqf.charaformact.util.DebugHudUtil;
 import com.fqf.charaformact_api.cfadata.util.EquipmentCoverSpot;
+import it.unimi.dsi.fastutil.objects.ObjectIntImmutablePair;
+import it.unimi.dsi.fastutil.objects.ObjectIntPair;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.BlockItem;
@@ -60,6 +62,19 @@ public class PlayerModestyData {
 		return this.MODESTY_MAP.get(spot).byteValue() > 0;
 	}
 
+	public ObjectIntPair<String> getDebugString() {
+		int total = 0;
+		StringBuilder builder = new StringBuilder();
+		for (Map.Entry<EquipmentCoverSpot, MutableByte> entry : this.MODESTY_MAP.entrySet()) {
+			byte count = entry.getValue().byteValue();
+			total += count;
+			if(count > 0) {
+				builder.append("\n").append(entry.getKey()).append(": Covered by ").append(count).append(" item");
+				if (count > 1) builder.append("s");
+			}
+		}
+		return new ObjectIntImmutablePair<>(builder.toString(), total);
+	}
 	public boolean renderDebugHud(DebugHudUtil.Pair pair) {
 		boolean success = false;
 		for (Map.Entry<EquipmentCoverSpot, MutableByte> entry : this.MODESTY_MAP.entrySet()) {
