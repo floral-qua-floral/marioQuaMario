@@ -54,8 +54,9 @@ public interface RecategorizableFeatureRenderer {
 
 
 
-		if(LOG_AUTO_CONTEXT_CHECKS && FEATURES_LOGGED.add(name)) CharaFormAct.LOGGER.info("Could not find a match that would put {} in the Special" +
-				" transformation context, so its context will be UNKNOWN.", name);
+		if(LOG_AUTO_CONTEXT_CHECKS && FEATURES_LOGGED.add(name))
+			CharaFormAct.LOGGER.info("Could not find a match that would put {} in a definitive transformation context," +
+					"so its context will be UNKNOWN.", name);
 		return UNKNOWN;
 	}
 	private static boolean checkContains(String name, String substring, boolean mustOpenWord, boolean mustTerminateWord) {

@@ -158,6 +158,7 @@ public class ModelPartMover {
 			UsableTransformation transformation = this.TRANSFORMATIONS.get(vanillaPart).get(context);
 			if(transformation != null) transformation.apply(vanillaPart.of(this.MODEL));
 		});
+		this.MODEL.hat.copyTransform(this.MODEL.head); // I SWEAR TO GOD I'LL KILL YOU!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		this.currentContext = context;
 	}
 }
