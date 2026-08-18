@@ -31,16 +31,22 @@ public interface RecategorizableFeatureRenderer {
 		String name = clazz.getSimpleName();
 		if(
 				checkContains(name, "back", true, false)
-				|| checkContains(name, "elytra", false, false)
+				|| checkContains(name, "elytr", false, false)
 				|| checkContains(name, "cape", false, false)
 				|| checkContains(name, "glove", false, false)
-				|| checkContains(name, "hat", true, true)
+				|| checkContains(name, "goggle", false, false)
+				|| checkContains(name, "eyeglass", false, false)
+				|| checkContains(name, "glasses", false, false)
+				|| checkContains(name, "monocle", false, false)
+				|| checkContains(name, "lens", true, false)
 		)
 			return SPECIAL;
 
-		// Belts are transformed the same way as chausses! Maybe remove this if inflation correction proves problematic.
+		// Belts are transformed the same way as faulds. The ARMOR_INNER category is also used for modded hats, which
+		// use the same transformation as helmets, but without inflation correction.
 		if(
 				checkContains(name, "belt", false, false)
+				|| checkContains(name, "hat", true, true)
 		)
 			return ARMOR_INNER;
 

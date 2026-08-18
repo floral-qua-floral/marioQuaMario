@@ -51,10 +51,8 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 
 	private long forceInterpolationTime;
 
-	private long prevPosturingTick;
 	private AdvancedPosture prevFramePosture;
 
-	private long prevArrangingTick;
 	private AdvancedArrangement prevFrameModelArrangement;
 	private AdvancedArrangement thisFrameModelArrangement;
 	private float originalHeadPitch;
@@ -65,6 +63,7 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 	private boolean flickering;
 
 	private boolean isFirstFrameOfTick;
+	public boolean needsCoveringUpdate;
 
 	public CfaAppearanceData(CfaDataType data) {
 		this.PLAYER = data.getPlayer();
@@ -78,6 +77,7 @@ public class CfaAppearanceData<CfaDataType extends CfaPlayerData & CfaAnimatingD
 
 	public void tick() {
 		this.isFirstFrameOfTick = true;
+		this.needsCoveringUpdate = true;
 
 		long time = this.PLAYER.getWorld().getTime();
 

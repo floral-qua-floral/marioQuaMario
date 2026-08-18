@@ -18,6 +18,7 @@ import java.util.function.Function;
 
 /**
  * An Appearance is essentially a playermodel that is associated with a single Character + Form intersection.
+ * FIXME: Default implementation for pauldrons, chausses, and gloves are super wrong :( Seems I broke the overhang feature...
  */
 public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 	@NotNull Vector2i defineTextureSize();
@@ -263,9 +264,9 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 				scale.x, scale.y, scale.z
 		);
 	}
-	default TransformationInstructions getHatTransformation(AppearanceFeatureHelper helper) {
-		// Not the 3D hat layerPostureMutator. This is for mods which add hats, such as the Villager Hats or Simple Hats mods.
-		return this.getHelmetTransformation(helper);
+	default TransformationInstructions getFacewearTransformation(AppearanceFeatureHelper helper) {
+		// Transformation to apply to features worn on the face, which would be primarily goggles.
+		return helper.getStretchingTransformation(this.getHeadSize(), new Vector3i(8, 8, 8)); // TODO: Adapt
 	}
 	default TransformationInstructions getUnknownHeadFeatureTransformation(AppearanceFeatureHelper helper) {
 		// Transformation to apply to features which attach to the head but are otherwise unknown.
@@ -323,7 +324,7 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 		// Applies to the shoulder piece of a chestplate.
 		Vector3i armSize = this.getArmSize();
 		TransformationInstructions base = helper.getArmorTransformation(
-				armSize, new Vector3i(4, 12, 4), 1, 0.25F);
+				armSize, new Vector3i(4, 12, 4), 1, 5);
 
 		return base.offset(0, Math.max(0, armSize.y / 6F - 2), 0);
 	}
@@ -336,12 +337,12 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 	}
 	default TransformationInstructions getBootsTransformation(AppearanceFeatureHelper helper) {
 		return helper.getArmorTransformation(
-				this.getLegSize(), new Vector3i(4, 12, 4), 1, 0.3F)
+				this.getLegSize(), new Vector3i(4, 12, 4), 1, 4)
 				.flip(this.getLegSize(), 12);
 	}
 	default TransformationInstructions getChaussesTransformation(AppearanceFeatureHelper helper) {
 		// Chausses are the part of the leggings that guards the legs.
-		return helper.getArmorTransformation(this.getLegSize(), new Vector3i(4, 12, 4), 1, 0.25F);
+		return helper.getArmorTransformation(this.getLegSize(), new Vector3i(4, 12, 4), 1,8);
 	}
 	default TransformationInstructions getUnknownLegsFeatureTransformation(AppearanceFeatureHelper helper) {
 		return helper.getStretchingTransformation(this.getLegSize(), new Vector3i(4, 12, 4));

@@ -1,14 +1,10 @@
 package com.fqf.charaformact.registries;
 
-import com.fqf.charaformact_api.CharaFormActAddon;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 

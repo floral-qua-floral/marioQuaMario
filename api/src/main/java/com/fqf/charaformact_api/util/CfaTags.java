@@ -29,8 +29,9 @@ public interface CfaTags {
 	interface EquipmentCoveringTags {
 		TagKey<Item> IS_NOT_HEADGEAR = getTag(ITEM, "covering/head/is_not_headgear");
 		TagKey<Item> DOES_NOT_COVER_SCALP = getTag(ITEM, "covering/head/does_not_cover_scalp");
-		TagKey<Item> COVERS_FACE_FROM_HEAD_SLOT = getTag(ITEM, "covering/head/covers_face_from_head_slot");
-		TagKey<Item> NEVER_COVERS_FACE = getTag(ITEM, "covering/head/never_covers_face");
+		TagKey<Item> COVERS_EYES_FROM_HEAD_SLOT = getTag(ITEM, "covering/head/covers_eyes_from_head_slot");
+		TagKey<Item> COVERS_NOSE_FROM_HEAD_SLOT = getTag(ITEM, "covering/head/covers_nose_from_head_slot");
+		TagKey<Item> NEVER_COVERS_EYES = getTag(ITEM, "covering/head/never_covers_eyes");
 		TagKey<Item> DOES_NOT_COVER_EARS = getTag(ITEM, "covering/head/does_not_cover_ears");
 
 		TagKey<Item> DOES_NOT_COVER_CHEST = getTag(ITEM, "covering/torso/does_not_cover_chest");

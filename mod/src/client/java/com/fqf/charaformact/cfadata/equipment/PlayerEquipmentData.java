@@ -1,4 +1,4 @@
-package com.fqf.charaformact.cfadata.modesty;
+package com.fqf.charaformact.cfadata.equipment;
 
 import com.fqf.charaformact.cfadata.CfaClientDataImpl;
 import com.fqf.charaformact.util.DebugHudUtil;
@@ -22,13 +22,13 @@ import java.util.function.Consumer;
 
 import static com.fqf.charaformact_api.util.CfaTags.EquipmentCoveringTags.*;
 
-public class PlayerModestyData {
+public class PlayerEquipmentData {
 
 	private final AbstractClientPlayerEntity PLAYER;
 	private final EnumMap<EquipmentCoverSpot, MutableByte> MODESTY_MAP;
 	private final Map<Object, RenderedEquipmentInfo> CACHED_RENDERED_ITEMS;
 
-	public PlayerModestyData(CfaClientDataImpl data) {
+	public PlayerEquipmentData(CfaClientDataImpl data) {
 		this.PLAYER = data.getPlayer();
 		this.MODESTY_MAP = new EnumMap<>(EquipmentCoverSpot.class);
 		for(EquipmentCoverSpot spot : EquipmentCoverSpot.values()) {
@@ -96,11 +96,17 @@ public class PlayerModestyData {
 				}
 				yield !item.isIn(DOES_NOT_COVER_SCALP);
 			}
-			case FACE -> {
+			case EYES -> {
 				if(item.getItem() instanceof BlockItem blockItem) {
 					yield blockItem.getBlock().getDefaultState().isSideSolidFullSquare(EmptyBlockView.INSTANCE, BlockPos.ORIGIN, Direction.SOUTH);
 				}
-				yield item.isIn(COVERS_FACE_FROM_HEAD_SLOT);
+				yield item.isIn(COVERS_EYES_FROM_HEAD_SLOT);
+			}
+			case NOSE -> {
+				if(item.getItem() instanceof BlockItem blockItem) {
+					yield blockItem.getBlock().getDefaultState().isSideSolidFullSquare(EmptyBlockView.INSTANCE, BlockPos.ORIGIN, Direction.SOUTH);
+				}
+				yield item.isIn(COVERS_NOSE_FROM_HEAD_SLOT);
 			}
 			case EARS -> {
 				if(item.getItem() instanceof BlockItem blockItem) {
@@ -115,17 +121,21 @@ public class PlayerModestyData {
 			case SHOULDERS -> !item.isIn(DOES_NOT_COVER_SHOULDERS);
 			case HANDS -> item.isIn(COVERS_HANDS_FROM_CHEST_SLOT);
 			case BUTT -> !item.isIn(DOES_NOT_COVER_BUTT);
-			case TOES -> slot == EquipmentSlot.FEET ? !item.isIn(DOES_NOT_COVER_TOES) : item.isIn(COVERS_TOES_FROM_LEGS_SLOT);
+			case TOES -> slot == EquipmentSlot.FEET
+					? !item.isIn(DOES_NOT_COVER_TOES)
+					: item.isIn(COVERS_TOES_FROM_LEGS_SLOT);
 		};
 	}
 
-	// TODO: Use events or mixins to make this function with mods like Accessories, Trinkets, maybe even The Aether if
-	//  i'm gonna be nuts :3
 	public static boolean doesModdedSlotItemCoverSpot(ItemStack item, EquipmentCoverSpot spot) {
+		if(spot == EquipmentCoverSpot.NOSE) // Special case: Nose is never covered except by explicit items
+			return item.isIn(COVERS_NOSE_FROM_HEAD_SLOT);
+
 		return !item.isIn(switch(spot) {
 			case HEADGEAR -> IS_NOT_HEADGEAR;
 			case SCALP -> DOES_NOT_COVER_SCALP;
-			case FACE -> NEVER_COVERS_FACE;
+			case EYES -> NEVER_COVERS_EYES;
+			case NOSE -> throw new AssertionError("This error should not be reachable!");
 			case EARS -> DOES_NOT_COVER_EARS;
 			case UPPER_CHEST -> DOES_NOT_COVER_CHEST;
 			case BELLY -> DOES_NOT_COVER_BELLY;

@@ -1,6 +1,5 @@
 package com.fqf.charaformact.appearance;
 
-import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact_api.appearance.AppearanceFeatureHelper;
 import com.fqf.charaformact_api.appearance.AppearanceGeometryHelper;
 import com.fqf.charaformact_api.appearance.TransformationInstructions;
@@ -91,9 +90,9 @@ public class AppearanceHelperImpl implements AppearanceGeometryHelper, Appearanc
 		return this.toRadians(degrees.x, degrees.y, degrees.z);
 	}
 
-	public TransformationInstructions getArmorTransformation(Vector3i cuboid, Vector3i vanillaCuboid, int allowance, float overhangPercentage) {
-		Vector3f scale = new Vector3f(cuboid).div(vanillaCuboid.x, vanillaCuboid.y, vanillaCuboid.z);
-		float vanillaCuboidHeight = vanillaCuboid.y * (overhangPercentage + 1);
+	public TransformationInstructions getArmorTransformation(Vector3i cuboid, Vector3i vanillaCuboid, int allowance, float overhangPixels) {
+		// TODO: Test the "overhangPixels" system out
+		Vector3f scale = new Vector3f(cuboid).div(vanillaCuboid.x, cuboid.y, vanillaCuboid.z); // <- bad yScale; overwritten later
 
 		// If part is just barely too small for vanilla armor, use vanilla armor size anyways
 		if(scale.x < 1 && scale.x >= 1 - (float) allowance / vanillaCuboid.x) {
@@ -102,7 +101,7 @@ public class AppearanceHelperImpl implements AppearanceGeometryHelper, Appearanc
 				scale.z = 1;
 			}
 		}
-		if(scale.y < 1 && scale.y >= 1 - (float) allowance / vanillaCuboidHeight)
+		if(scale.y < 1 && scale.y >= 1 - (float) allowance / (float) vanillaCuboid.y)
 			scale.y = 1;
 
 		// If part is just barely too small for maintained horizontal aspect ratio, maintain horizontal aspect ratio anyways
@@ -114,11 +113,13 @@ public class AppearanceHelperImpl implements AppearanceGeometryHelper, Appearanc
 		}
 
 		// If part is tall enough to support the Y scale matching a horizontal scale, then do that. Prefer matching X.
-		if(cuboid.y * (1 + overhangPercentage) >= scale.x * vanillaCuboid.y)
+		if(cuboid.y + overhangPixels >= scale.x * vanillaCuboid.y)
 			//noinspection SuspiciousNameCombination
 			scale.y = scale.x;
-		else if(cuboid.y * (1 + overhangPercentage) >= scale.z * vanillaCuboid.y)
+		else if(cuboid.y + overhangPixels >= scale.z * vanillaCuboid.y)
 			scale.y = scale.z;
+		else // It's not tall enough and needs to be flattened slightly. Flatten it as little as possible!
+			scale.y = cuboid.y + overhangPixels / (float) vanillaCuboid.y;
 
 		// Return the new transformation
 		return new TransformationInstructions(

@@ -5,9 +5,9 @@ import com.fqf.charaformact.appearance.ClientAppearanceCollector;
 import com.fqf.charaformact.appearance.FeatureRendererWithMutableRenderer;
 import com.fqf.charaformact.appearance.ParsedClientAppearance;
 import com.fqf.charaformact.appearance.RecategorizableFeatureRenderer;
-import com.fqf.charaformact.cfadata.modesty.RenderedEquipmentInfo;
+import com.fqf.charaformact.cfadata.CfaAppearanceData;
 import com.fqf.charaformact.util.ModelPartMover;
-import com.fqf.charaformact_api.appearance.AppearanceModel;
+import com.fqf.charaformact.cfadata.equipment.UpdateEquipmentRenderingCallback;
 import com.fqf.charaformact_api.appearance.equipment.EquipmentFeatureCategory;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -39,12 +39,17 @@ public class LivingEntityRendererMixin<T extends LivingEntity, M extends EntityM
 			CallbackInfo ci, @Share("mutatePosture") LocalBooleanRef applyRef
 			) {
 		if(livingEntity instanceof AbstractClientPlayerEntity player) {
-			ParsedClientAppearance parsedModel = player.cfa$getAppearanceData().getAppearance();
+			CfaAppearanceData<?> appearanceData = player.cfa$getAppearanceData();
+			ParsedClientAppearance parsedModel = appearanceData.getAppearance();
 			if(parsedModel != null) {
 				applyRef.set(true);
-				RenderedEquipmentInfo.UPDATE_EQUIPMENT_RENDERING.invoker().onUpdateEquipment(player);
-				AppearanceModel entityModel = parsedModel.getModel();
-				ModelPartMover.instance = new ModelPartMover(parsedModel, entityModel);
+				ModelPartMover.instance = new ModelPartMover(parsedModel);
+
+				// Update covering data once per tick. We do this here so that Cosmetic Armor mods will take effect.
+				if(appearanceData.needsCoveringUpdate) {
+					appearanceData.needsCoveringUpdate = false;
+					UpdateEquipmentRenderingCallback.EVENT.invoker().onUpdateEquipment(player);
+				}
 			}
 		}
 	}

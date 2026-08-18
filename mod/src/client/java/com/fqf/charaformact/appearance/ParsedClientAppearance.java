@@ -81,20 +81,27 @@ public class ParsedClientAppearance extends ParsedCommonAppearance {
 		AppearanceHelperImpl helper = AppearanceHelperImpl.INSTANCE;
 
 		this.FEATURE_TRANSFORMATION_INSTRUCTIONS = new EnumMap<>(VanillaPart.class);
-		this.populateTransformationInstructions(VanillaPart.HEAD,
-				definition.getHelmetTransformation(helper), null,
-				definition.getHatTransformation(helper), definition.getUnknownHeadFeatureTransformation(helper)
+
+		// Special handling: For the head, we put a non-inflation-corrected copy of the Helmet Transformation
+		// Instructions into the ARMOR_INNER slot, since it's a spare slot to use.
+		TransformationInstructions rawHelmetInstructions = definition.getHelmetTransformation(helper);
+		this.populateAdaptedTransformationInstructions(VanillaPart.HEAD,
+				fixArmorInstructions(rawHelmetInstructions, VanillaPart.HEAD, 1),
+				fixInstructions(rawHelmetInstructions),
+				fixInstructions(definition.getFacewearTransformation(helper)),
+				fixInstructions(definition.getUnknownHeadFeatureTransformation(helper))
 		);
-		this.populateTransformationInstructions(VanillaPart.TORSO,
+
+		this.adaptAndPopulateTransformationInstructions(VanillaPart.TORSO,
 				definition.getCuirassTransformation(helper), definition.getFauldTransformation(helper),
 				definition.getBackEquipmentTransformation(helper), definition.getUnknownChestFeatureTransformation(helper)
 		);
-		this.populateTransformationInstructions(VanillaPart.RIGHT_ARM,
+		this.adaptAndPopulateTransformationInstructions(VanillaPart.RIGHT_ARM,
 				definition.getPauldronTransformation(helper), null,
 				definition.getGlovesTransformation(helper), definition.getUnknownArmsFeatureTransformation(helper)
 		);
 		this.mirrorTransformationInstructions(VanillaPart.RIGHT_ARM, VanillaPart.LEFT_ARM);
-		this.populateTransformationInstructions(VanillaPart.RIGHT_LEG,
+		this.adaptAndPopulateTransformationInstructions(VanillaPart.RIGHT_LEG,
 				definition.getBootsTransformation(helper), definition.getChaussesTransformation(helper),
 				null, definition.getUnknownLegsFeatureTransformation(helper)
 		);
@@ -131,17 +138,29 @@ public class ParsedClientAppearance extends ParsedCommonAppearance {
 		return this.customFeatures;
 	}
 
-	private void populateTransformationInstructions(
+	private void adaptAndPopulateTransformationInstructions(
+			VanillaPart part,
+			@NotNull TransformationInstructions outerArmor, @Nullable TransformationInstructions innerArmor,
+			@Nullable TransformationInstructions special, @NotNull TransformationInstructions unknown
+	) {
+		this.populateAdaptedTransformationInstructions(part,
+				fixArmorInstructions(outerArmor, part, 1),
+				innerArmor == null ? null : fixArmorInstructions(innerArmor, part, 0.5F),
+				special == null ? null : fixInstructions(special),
+				fixInstructions(unknown)
+		);
+	}
+	private void populateAdaptedTransformationInstructions(
 			VanillaPart part,
 			@NotNull TransformationInstructions outerArmor, @Nullable TransformationInstructions innerArmor,
 			@Nullable TransformationInstructions special, @NotNull TransformationInstructions unknown
 	) {
 		EnumMap<EquipmentFeatureCategory, TransformationInstructions> map = new EnumMap<>(EquipmentFeatureCategory.class);
 		this.FEATURE_TRANSFORMATION_INSTRUCTIONS.put(part, map);
-		map.put(EquipmentFeatureCategory.ARMOR_OUTER, fixArmorInstructions(outerArmor, part, 1));
-		if(innerArmor != null) map.put(EquipmentFeatureCategory.ARMOR_INNER, fixArmorInstructions(innerArmor, part, 0.5F));
-		if(special != null) map.put(EquipmentFeatureCategory.SPECIAL, fixInstructions(special));
-		map.put(EquipmentFeatureCategory.UNKNOWN, fixInstructions(unknown));
+		map.put(EquipmentFeatureCategory.ARMOR_OUTER, outerArmor);
+		if(innerArmor != null) map.put(EquipmentFeatureCategory.ARMOR_INNER, innerArmor);
+		if(special != null) map.put(EquipmentFeatureCategory.SPECIAL, special);
+		map.put(EquipmentFeatureCategory.UNKNOWN, unknown);
 	}
 
 	private static Vector3f getVanillaPartSize(VanillaPart part) {

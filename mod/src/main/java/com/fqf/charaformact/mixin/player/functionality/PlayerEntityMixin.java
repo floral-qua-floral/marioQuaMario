@@ -160,7 +160,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDa
 	@Override
 	public void cfa$afterMounting(Entity mount) {
 		CfaPlayerData data = this.cfa$getCfaData();
-		data.setActionTransitionless(data.getCharacter().getMountedAction(data, mount));
+		if(data.isEnabled()) data.setActionTransitionless(data.getCharacter().getMountedAction(data, mount));
 	}
 
 	@Inject(method = "shouldDismount", at = @At("HEAD"), cancellable = true)

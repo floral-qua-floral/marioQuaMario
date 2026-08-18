@@ -1,7 +1,7 @@
 package com.fqf.charaformact.cfadata;
 
 import com.fqf.charaformact.CharaFormAct;
-import com.fqf.charaformact.cfadata.modesty.PlayerModestyData;
+import com.fqf.charaformact.cfadata.equipment.PlayerEquipmentData;
 import com.fqf.charaformact.registries.power_granting.ParsedCharacter;
 import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
@@ -226,7 +226,7 @@ public interface CfaClientDataImpl extends CfaAnimatingData {
 		return this.getRelativeHeadYawRadians() * MathHelper.DEGREES_PER_RADIAN;
 	}
 
-	PlayerModestyData getModestyData();
+	PlayerEquipmentData getModestyData();
 
 	@Override
 	default boolean isCovered(EquipmentCoverSpot spot) {

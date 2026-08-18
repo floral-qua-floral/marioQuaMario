@@ -4,11 +4,8 @@ import com.fqf.charaformact.registries.ImmutableCollectionHelper;
 import com.fqf.charaformact_api.definitions.states.StatAlteringStateDefinition;
 import com.fqf.charaformact.registries.ParsedCfaState;
 import com.fqf.charaformact_api.util.CfaStat;
-import com.fqf.charaformact_api.util.StatCategory;
 import net.minecraft.util.Identifier;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 public class ParsedPowerGrantingState extends ParsedCfaState {

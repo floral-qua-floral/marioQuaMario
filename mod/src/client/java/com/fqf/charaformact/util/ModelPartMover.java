@@ -120,12 +120,12 @@ public class ModelPartMover {
 	private final AppearanceModel MODEL;
 	private EquipmentFeatureCategory currentContext = EquipmentFeatureCategory.NOT_EQUIPMENT;
 
-	public ModelPartMover(ParsedClientAppearance appearance, AppearanceModel model) {
-		this.MODEL = model;
+	public ModelPartMover(ParsedClientAppearance appearance) {
+		this.MODEL = appearance.getModel();
 		this.TRANSFORMATIONS = new EnumMap<>(VanillaPart.class);
 		for(VanillaPart vanillaPart : VanillaPart.values()) {
 			// First record the original position, orientation, and scale of every single model vanillaPart
-			ModelPart modelPart = vanillaPart.of(model);
+			ModelPart modelPart = vanillaPart.of(this.MODEL);
 			Map<EquipmentFeatureCategory, UsableTransformation> transformations = new EnumMap<>(EquipmentFeatureCategory.class);
 			this.TRANSFORMATIONS.put(vanillaPart, transformations);
 			UsableTransformation original = new UsableTransformation(modelPart);
@@ -158,7 +158,7 @@ public class ModelPartMover {
 			UsableTransformation transformation = this.TRANSFORMATIONS.get(vanillaPart).get(context);
 			if(transformation != null) transformation.apply(vanillaPart.of(this.MODEL));
 		});
-		this.MODEL.hat.copyTransform(this.MODEL.head); // I SWEAR TO GOD I'LL KILL YOU!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		this.MODEL.hat.copyTransform(this.MODEL.head);
 		this.currentContext = context;
 	}
 }

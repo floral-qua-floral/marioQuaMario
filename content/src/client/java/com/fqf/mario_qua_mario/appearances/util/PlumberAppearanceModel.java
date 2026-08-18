@@ -10,6 +10,8 @@ import net.minecraft.util.Identifier;
 public class PlumberAppearanceModel extends MqmAppearanceModel {
 	public final ModelPart capfulHead;
 	public final ModelPart caplessHead;
+	public final ModelPart capfulNose;
+	public final ModelPart caplessNose;
 	public final ModelPart caplessRightEar;
 	public final ModelPart caplessLeftEar;
 
@@ -18,6 +20,8 @@ public class PlumberAppearanceModel extends MqmAppearanceModel {
 
 		this.capfulHead = this.head.getChild(PlumberClientAppearance.CAPFUL_HEAD);
 		this.caplessHead = this.head.getChild(PlumberClientAppearance.CAPLESS_HEAD);
+		this.capfulNose = this.capfulHead.getChild(EntityModelPartNames.NOSE);
+		this.caplessNose = this.caplessHead.getChild(EntityModelPartNames.NOSE);
 		this.caplessHead.visible = false;
 
 		if(this.rightEar != null && this.leftEar != null) {
@@ -40,6 +44,10 @@ public class PlumberAppearanceModel extends MqmAppearanceModel {
 		boolean hideCap = data.isCovered(EquipmentCoverSpot.HEADGEAR);
 		this.capfulHead.visible = !hideCap;
 		this.caplessHead.visible = hideCap;
+
+		this.capfulNose.zScale = data.isCovered(EquipmentCoverSpot.NOSE) ? 0.49F : 1;
+
+		this.caplessNose.copyTransform(this.capfulNose);
 
 		if(this.rightEar != null && this.leftEar != null) {
 			this.caplessRightEar.copyTransform(this.rightEar);
