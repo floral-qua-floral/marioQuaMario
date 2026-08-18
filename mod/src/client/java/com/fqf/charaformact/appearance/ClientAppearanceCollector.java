@@ -99,7 +99,8 @@ public class ClientAppearanceCollector extends AbstractAppearanceCollector<Clien
 	public <T extends LivingEntity, M extends EntityModel<T>> void captureFeature(FeatureRenderer<T, M> feature) {
 //		this.capturedFeatures.add((FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>>) feature);
 		for(Pair<ParsedClientAppearance, AppearanceRenderer> pair : this.map.values()) {
-			CharaFormAct.LOGGER.info("Distributing a feature to Appearance Renderer {}...", pair.getLeft().ID);
+			if(CharaFormAct.CONFIG.gameLaunchLogging())
+				CharaFormAct.LOGGER.info("Distributing the captured feature to Appearance Renderer {}...", pair.getLeft().ID);
 			//noinspection unchecked
 			pair.getRight().addCapturedFeature((FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>>) feature);
 		}
