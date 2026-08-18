@@ -2,9 +2,9 @@ package com.fqf.charaformact.mixin.client;
 
 import com.fqf.charaformact.cfadata.CfaMainClientData;
 import com.fqf.charaformact.packets.CfaClientPacketHelper;
+import com.fqf.charaformact.registries.ParsedAttackInterception;
 import com.fqf.charaformact_api.definitions.states.AttackInterceptingStateDefinition;
 import com.fqf.charaformact_api.definitions.states.AttackInterceptingStateDefinition.AttackInterceptionDefinition.MiningHandling;
-import com.fqf.charaformact.registries.ParsedAttackInterception;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.GameOptions;

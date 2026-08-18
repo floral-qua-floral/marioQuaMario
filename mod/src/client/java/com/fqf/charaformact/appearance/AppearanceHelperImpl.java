@@ -91,7 +91,6 @@ public class AppearanceHelperImpl implements AppearanceGeometryHelper, Appearanc
 	}
 
 	public TransformationInstructions getArmorTransformation(Vector3i cuboid, Vector3i vanillaCuboid, int allowance, float overhangPixels) {
-		// TODO: Test the "overhangPixels" system out
 		Vector3f scale = new Vector3f(cuboid).div(vanillaCuboid.x, cuboid.y, vanillaCuboid.z); // <- bad yScale; overwritten later
 
 		// If part is just barely too small for vanilla armor, use vanilla armor size anyways

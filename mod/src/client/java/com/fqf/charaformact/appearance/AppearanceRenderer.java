@@ -1,5 +1,6 @@
 package com.fqf.charaformact.appearance;
 
+import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.cfadata.CfaAppearanceData;
 import com.fqf.charaformact.cfadata.equipment.UpdateEquipmentRenderingCallback;
 import com.fqf.charaformact.util.LivingEntityRendererMixinInterface;
@@ -14,10 +15,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
 
+import java.util.Comparator;
 import java.util.function.Function;
 
 public class AppearanceRenderer extends PlayerEntityRenderer implements LivingEntityRendererMixinInterface {
 	public final Function<AbstractClientPlayerEntity, Identifier> TEXTURE_FUNCTION;
+	private boolean featuresNeedSorting = true;
 
 	public AppearanceRenderer(EntityRendererFactory.Context ctx, ParsedClientAppearance appearance) {
 		super(ctx, false);
@@ -34,6 +37,11 @@ public class AppearanceRenderer extends PlayerEntityRenderer implements LivingEn
 
 	public void addCapturedFeature(FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> feature) {
 		this.addFeature(feature);
+		if(!this.featuresNeedSorting) {
+			this.featuresNeedSorting = true;
+			CharaFormAct.LOGGER.warn("Added a new Feature Renderer after the Appearance has already started rendering?" +
+					" This is weird, why are you doing this?");
+		}
 	}
 
 	@Override
@@ -41,8 +49,19 @@ public class AppearanceRenderer extends PlayerEntityRenderer implements LivingEn
 		return super.getShadowRadius(livingEntity) * livingEntity.cfa$getCfaData().getHorizontalScale();
 	}
 
+	public void sortFeatures() {
+		this.features.sort(Comparator.comparingInt(feature ->
+				((RecategorizableFeatureRenderer) feature).cfa$getMutableCategory().ordinal()));
+		if(CharaFormAct.CONFIG.gameLaunchLogging()) CharaFormAct.LOGGER.info("Sorted features for {}!", this);
+	}
+
 	@Override
 	public void cfa$prepareModelPartMover(LivingEntity livingEntity) {
+		if(this.featuresNeedSorting) {
+			this.featuresNeedSorting = false;
+			this.sortFeatures();
+		}
+
 		AbstractClientPlayerEntity player = (AbstractClientPlayerEntity) livingEntity;
 
 		CfaAppearanceData<?> appearanceData = player.cfa$getAppearanceData();
