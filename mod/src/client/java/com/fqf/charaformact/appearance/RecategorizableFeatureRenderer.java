@@ -47,6 +47,7 @@ public interface RecategorizableFeatureRenderer {
 		if(
 				checkContains(name, "belt", false, false)
 				|| checkContains(name, "hat", true, true)
+				|| checkContains(name, "hats", true, true)
 		)
 			return ARMOR_INNER;
 

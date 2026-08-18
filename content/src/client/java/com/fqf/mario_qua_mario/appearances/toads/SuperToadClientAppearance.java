@@ -180,6 +180,11 @@ public class SuperToadClientAppearance extends SuperToadCommonAppearance impleme
 	}
 
 	@Override
+	public TransformationInstructions getFacewearTransformation(AppearanceFeatureHelper helper) {
+		return helper.getStretchingTransformation(new Vector3f(this.getHeadSize()).add(0, 5, 0), new Vector3i(8));
+	}
+
+	@Override
 	public TransformationInstructions getUnknownHeadFeatureTransformation(AppearanceFeatureHelper helper) {
 		Vector3i bulbSize = this.getCapBulbSize();
 

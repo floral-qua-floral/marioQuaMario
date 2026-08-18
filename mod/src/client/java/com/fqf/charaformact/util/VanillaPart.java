@@ -6,7 +6,7 @@ import net.minecraft.client.model.ModelPart;
 import java.util.function.Function;
 
 public enum VanillaPart {
-	HEAD(false, true, model -> model.head),
+	HEAD(true, true, model -> model.head),
 	TORSO(true, true, model -> model.body),
 	RIGHT_ARM(false, true, model -> model.rightArm),
 	LEFT_ARM(false, true, model -> model.leftArm),
