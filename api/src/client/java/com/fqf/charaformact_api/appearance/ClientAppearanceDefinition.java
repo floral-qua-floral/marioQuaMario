@@ -18,7 +18,6 @@ import java.util.function.Function;
 
 /**
  * An Appearance is essentially a playermodel that is associated with a single Character + Form intersection.
- * FIXME: Default implementation for pauldrons, chausses, and gloves are super wrong :( Seems I broke the overhang feature...
  */
 public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 	@NotNull Vector2i defineTextureSize();
@@ -323,10 +322,9 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 	default TransformationInstructions getPauldronTransformation(AppearanceFeatureHelper helper) {
 		// Applies to the shoulder piece of a chestplate.
 		Vector3i armSize = this.getArmSize();
-		TransformationInstructions base = helper.getArmorTransformation(
-				armSize, new Vector3i(4, 12, 4), 1, 5);
-
-		return base.offset(0, Math.max(0, armSize.y / 6F - 2), 0);
+		return helper.getArmorTransformation(
+				armSize, new Vector3i(4, 12, 4), 1, 5)
+				.offset(0, Math.min(0, armSize.y / 6F - 2), 0);
 	}
 	default TransformationInstructions getGlovesTransformation(AppearanceFeatureHelper helper) {
 		// Applies to gloves from mods, such as from The Aether.
@@ -342,7 +340,7 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 	}
 	default TransformationInstructions getChaussesTransformation(AppearanceFeatureHelper helper) {
 		// Chausses are the part of the leggings that guards the legs.
-		return helper.getArmorTransformation(this.getLegSize(), new Vector3i(4, 12, 4), 1,8);
+		return helper.getArmorTransformation(this.getLegSize(), new Vector3i(4, 12, 4), 1,1);
 	}
 	default TransformationInstructions getUnknownLegsFeatureTransformation(AppearanceFeatureHelper helper) {
 		return helper.getStretchingTransformation(this.getLegSize(), new Vector3i(4, 12, 4));

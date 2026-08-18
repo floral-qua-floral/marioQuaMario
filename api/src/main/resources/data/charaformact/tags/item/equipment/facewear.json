@@ -1,6 +1,10 @@
 {
   "replace": false,
   "values": [
-    "#charaformact:slot_consolidation/face"
+    "#charaformact:slot_consolidation/face",
+    {
+      "id": "immersive_armors:steampunk_helmet",
+      "required": false
+    }
   ]
 }

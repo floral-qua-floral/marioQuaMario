@@ -1,6 +1,7 @@
 package com.fqf.charaformact.compat;
 
 import com.fqf.charaformact.CharaFormAct;
+import com.fqf.charaformact.appearance.ParsedClientAppearance;
 import com.fqf.charaformact.cfadata.equipment.RenderedEquipmentInfo;
 import com.fqf.charaformact.cfadata.equipment.UpdateEquipmentRenderingCallback;
 import com.fqf.charaformact.cfadata.equipment.VisibleEquipmentSlot;
@@ -134,11 +135,21 @@ class AccessoriesCompatUnsafe {
 		@Override
 		public <M extends LivingEntity> void renderOnFirstPerson(Arm arm, ItemStack stack, SlotReference reference, MatrixStack matrices, EntityModel<M> model, VertexConsumerProvider multiBufferSource, int light) {
 			ClientPlayerEntity player = MinecraftClient.getInstance().player;
-			if(player == null) return;
+			if(player == null || !player.cfa$getCfaData().isEnabled()) {
+				this.ORIGINAL.renderOnFirstPerson(arm, stack, reference, matrices, model, multiBufferSource, light);
+				return;
+			}
+
+			ParsedClientAppearance appearance = player.cfa$getAppearanceData().getAppearance();
+			if(appearance == null) {
+				// Vanilla player models don't use feature transformations, obvi
+				this.ORIGINAL.renderOnFirstPerson(arm, stack, reference, matrices, model, multiBufferSource, light);
+				return;
+			}
 
 			boolean needsNewModelPartMover = ModelPartMover.instance == null;
 			if(needsNewModelPartMover) {
-				ModelPartMover.instance = new ModelPartMover(player.cfa$getAppearanceData().getAppearance());
+				ModelPartMover.instance = new ModelPartMover(appearance);
 			}
 			ModelPartMover.instance.setTo(from(reference).TRANSFORMATION_CATEGORY);
 			this.ORIGINAL.renderOnFirstPerson(arm, stack, reference, matrices, model, multiBufferSource, light);

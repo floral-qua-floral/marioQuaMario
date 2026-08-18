@@ -45,7 +45,7 @@ public class PlumberAppearanceModel extends MqmAppearanceModel {
 		this.capfulHead.visible = !hideCap;
 		this.caplessHead.visible = hideCap;
 
-		this.capfulNose.zScale = data.isCovered(EquipmentCoverSpot.NOSE) ? 0.49F : 1;
+		this.capfulNose.zScale = data.isCovered(EquipmentCoverSpot.NOSE) ? 0.43F : 1;
 
 		this.caplessNose.copyTransform(this.capfulNose);
 

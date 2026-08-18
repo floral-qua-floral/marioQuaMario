@@ -1,5 +1,6 @@
 package com.fqf.charaformact.cfadata.equipment;
 
+import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.cfadata.CfaClientDataImpl;
 import com.fqf.charaformact.util.DebugHudUtil;
 import com.fqf.charaformact_api.cfadata.util.EquipmentCoverSpot;
@@ -38,11 +39,30 @@ public class PlayerEquipmentData {
 		this.CACHED_RENDERED_ITEMS = new HashMap<>();
 	}
 
+	public void reset() {
+		for(MutableByte value : this.MODESTY_MAP.values()) {
+			value.setValue(0);
+		}
+		this.CACHED_RENDERED_ITEMS.clear();
+	}
+
 	public <T> void updateRenderedEquipmentInfo(T slot, ItemStack rendering, BiFunction<ItemStack, T, RenderedEquipmentInfo> packer) {
 		RenderedEquipmentInfo oldInfo = this.CACHED_RENDERED_ITEMS.getOrDefault(slot, RenderedEquipmentInfo.EMPTY);
-		if(!ItemStack.areEqual(oldInfo.STACK, rendering)) {
+		// Important: When you unequip armor, it doesn't always seem to change to a new empty ItemStack? Instead, it
+		// seems to just change the pre-existing ItemStack to become empty (presumably by decreasing its count to zero?).
+		// As a result an equality check between the cached rendered ItemStack and the current one will say they're
+		// identical, since it's still the same ItemStack that got cached, so they cannot possibly become different.
+		// There are two possible solutions to this: Obvious solution is to just cache a copy of the equipped stack.
+		// But doing this also means that our ItemStack.areEqual check is going to be constantly going and comparing all
+		// the components every tick, which is wasteful.
+		// Instead, it's better to just decide that the only valid way to represent an empty stack in the cache is with
+		// the EMPTY singleton; if we have an empty stack in any other cached info object, then we know that it's
+		// actually to be representing some real item. This has the same effect, but with much simpler logic.
+		if((rendering.isEmpty() && oldInfo != RenderedEquipmentInfo.EMPTY) || !ItemStack.areEqual(oldInfo.STACK, rendering)) {
+			CharaFormAct.LOGGER.info("Changed item in {}!\n\tFROM: {}\n\t  TO: {}", slot, oldInfo.STACK, rendering);
+
 			// The equipped item has changed!
-			RenderedEquipmentInfo newInfo = packer.apply(rendering, slot);
+			RenderedEquipmentInfo newInfo = rendering.isEmpty() ? RenderedEquipmentInfo.EMPTY : packer.apply(rendering, slot);
 			this.CACHED_RENDERED_ITEMS.put(slot, newInfo);
 
 			if(!newInfo.COVER_SPOTS.equals(oldInfo.COVER_SPOTS)) {

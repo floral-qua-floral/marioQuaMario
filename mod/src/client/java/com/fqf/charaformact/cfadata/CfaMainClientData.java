@@ -52,6 +52,12 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 		return PLAYER;
 	}
 
+	@Override
+	public void disableInternal() {
+		super.disableInternal();
+		this.MODESTY.reset();
+	}
+
 	@Override public boolean setForm(ParsedForm newForm, boolean isReversion, long seed) {
 		ParsedForm oldForm = this.getForm();
 		boolean formChanged = super.setForm(newForm, isReversion, seed);

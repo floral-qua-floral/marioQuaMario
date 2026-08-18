@@ -119,7 +119,7 @@ public class AppearanceHelperImpl implements AppearanceGeometryHelper, Appearanc
 		else if(cuboid.y + overhangPixels >= scale.z * vanillaCuboid.y)
 			scale.y = scale.z;
 		else // It's not tall enough and needs to be flattened slightly. Flatten it as little as possible!
-			scale.y = cuboid.y + overhangPixels / (float) vanillaCuboid.y;
+			scale.y = (cuboid.y + overhangPixels) / (float) vanillaCuboid.y;
 
 		// Return the new transformation
 		return new TransformationInstructions(
