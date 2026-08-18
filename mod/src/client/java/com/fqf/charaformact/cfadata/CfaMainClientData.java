@@ -41,12 +41,12 @@ import java.util.*;
 public class CfaMainClientData extends CfaMoveableData implements CfaClientDataImpl {
 	private final ClientPlayerEntity PLAYER;
 	public final CfaAppearanceData<CfaMainClientData> APPEARANCE_DATA;
-	private final PlayerEquipmentData MODESTY;
+	private final PlayerEquipmentData EQUIPMENT_DATA;
 	public CfaMainClientData(ClientPlayerEntity player) {
 		super();
 		this.PLAYER = player;
 		this.APPEARANCE_DATA = new CfaAppearanceData<>(this);
-		this.MODESTY = new PlayerEquipmentData(this);
+		this.EQUIPMENT_DATA = new PlayerEquipmentData(this);
 	}
 	@Override public ClientPlayerEntity getPlayer() {
 		return PLAYER;
@@ -55,7 +55,7 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 	@Override
 	public void disableInternal() {
 		super.disableInternal();
-		this.MODESTY.reset();
+		this.EQUIPMENT_DATA.reset();
 	}
 
 	@Override public boolean setForm(ParsedForm newForm, boolean isReversion, long seed) {
@@ -145,8 +145,8 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 		return this.APPEARANCE_DATA.getAppearance();
 	}
 
-	@Override public PlayerEquipmentData getModestyData() {
-		return this.MODESTY;
+	@Override public PlayerEquipmentData getEquipmentData() {
+		return this.EQUIPMENT_DATA;
 	}
 
 	@Override public void tick() {

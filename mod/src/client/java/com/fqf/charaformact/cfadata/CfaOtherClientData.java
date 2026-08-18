@@ -20,12 +20,12 @@ import java.util.Map;
 public class CfaOtherClientData extends CfaPlayerData implements CfaClientDataImpl {
 	private final OtherClientPlayerEntity PLAYER;
 	public final CfaAppearanceData<CfaOtherClientData> APPEARANCE_DATA;
-	private final PlayerEquipmentData MODESTY;
+	private final PlayerEquipmentData EQUIPMENT_DATA;
 	public CfaOtherClientData(OtherClientPlayerEntity player) {
 		super();
 		this.PLAYER = player;
 		this.APPEARANCE_DATA = new CfaAppearanceData<>(this);
-		this.MODESTY = new PlayerEquipmentData(this);
+		this.EQUIPMENT_DATA = new PlayerEquipmentData(this);
 	}
 	@Override public OtherClientPlayerEntity getPlayer() {
 		return this.PLAYER;
@@ -34,7 +34,7 @@ public class CfaOtherClientData extends CfaPlayerData implements CfaClientDataIm
 	@Override
 	public void disableInternal() {
 		super.disableInternal();
-		this.MODESTY.reset();
+		this.EQUIPMENT_DATA.reset();
 	}
 
 	@Override
@@ -63,8 +63,8 @@ public class CfaOtherClientData extends CfaPlayerData implements CfaClientDataIm
 
 	private double prevX, prevY, prevZ, deltaX, deltaY, deltaZ;
 
-	@Override public PlayerEquipmentData getModestyData() {
-		return this.MODESTY;
+	@Override public PlayerEquipmentData getEquipmentData() {
+		return this.EQUIPMENT_DATA;
 	}
 
 	@Override public void tick() {

@@ -26,21 +26,21 @@ import static com.fqf.charaformact_api.util.CfaTags.EquipmentCoveringTags.*;
 public class PlayerEquipmentData {
 
 	private final AbstractClientPlayerEntity PLAYER;
-	private final EnumMap<EquipmentCoverSpot, MutableByte> MODESTY_MAP;
+	private final EnumMap<EquipmentCoverSpot, MutableByte> ITEMS_COVERING_SPOTS;
 	private final Map<Object, RenderedEquipmentInfo> CACHED_RENDERED_ITEMS;
 
 	public PlayerEquipmentData(CfaClientDataImpl data) {
 		this.PLAYER = data.getPlayer();
-		this.MODESTY_MAP = new EnumMap<>(EquipmentCoverSpot.class);
+		this.ITEMS_COVERING_SPOTS = new EnumMap<>(EquipmentCoverSpot.class);
 		for(EquipmentCoverSpot spot : EquipmentCoverSpot.values()) {
-			this.MODESTY_MAP.put(spot, new MutableByte());
+			this.ITEMS_COVERING_SPOTS.put(spot, new MutableByte());
 		}
 
 		this.CACHED_RENDERED_ITEMS = new HashMap<>();
 	}
 
 	public void reset() {
-		for(MutableByte value : this.MODESTY_MAP.values()) {
+		for(MutableByte value : this.ITEMS_COVERING_SPOTS.values()) {
 			value.setValue(0);
 		}
 		this.CACHED_RENDERED_ITEMS.clear();
@@ -74,18 +74,18 @@ public class PlayerEquipmentData {
 
 	private void influenceMap(RenderedEquipmentInfo info, Consumer<MutableByte> updater) {
 		for(EquipmentCoverSpot influenceSpot : info.COVER_SPOTS) {
-			updater.accept(this.MODESTY_MAP.get(influenceSpot));
+			updater.accept(this.ITEMS_COVERING_SPOTS.get(influenceSpot));
 		}
 	}
 
 	public boolean isSpotCovered(EquipmentCoverSpot spot) {
-		return this.MODESTY_MAP.get(spot).byteValue() > 0;
+		return this.ITEMS_COVERING_SPOTS.get(spot).byteValue() > 0;
 	}
 
 	public ObjectIntPair<String> getDebugString() {
 		int total = 0;
 		StringBuilder builder = new StringBuilder();
-		for (Map.Entry<EquipmentCoverSpot, MutableByte> entry : this.MODESTY_MAP.entrySet()) {
+		for (Map.Entry<EquipmentCoverSpot, MutableByte> entry : this.ITEMS_COVERING_SPOTS.entrySet()) {
 			byte count = entry.getValue().byteValue();
 			total += count;
 			if(count > 0) {
@@ -97,7 +97,7 @@ public class PlayerEquipmentData {
 	}
 	public boolean renderDebugHud(DebugHudUtil.Pair pair) {
 		boolean success = false;
-		for (Map.Entry<EquipmentCoverSpot, MutableByte> entry : this.MODESTY_MAP.entrySet()) {
+		for (Map.Entry<EquipmentCoverSpot, MutableByte> entry : this.ITEMS_COVERING_SPOTS.entrySet()) {
 			byte count = entry.getValue().byteValue();
 			if (count > 0) {
 				DebugHudUtil.renderDebugText(pair, entry.getKey(), ":", count);

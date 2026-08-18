@@ -9,7 +9,7 @@ public class RenderedArmorInfo {
 	public static void register() {
 		UpdateEquipmentRenderingCallback.EVENT.register(player -> {
 			for(EquipmentSlot slot : PLAYER_ARMOR_SLOTS) {
-				player.cfa$getCfaData2().getModestyData().updateRenderedEquipmentInfo(
+				player.cfa$getCfaData2().getEquipmentData().updateRenderedEquipmentInfo(
 						from(slot),
 						player.getEquippedStack(slot),
 						RenderedEquipmentInfo::new

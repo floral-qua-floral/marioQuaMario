@@ -12,13 +12,12 @@ import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
 
 import java.util.Comparator;
 import java.util.function.Function;
 
-public class AppearanceRenderer extends PlayerEntityRenderer implements LivingEntityRendererMixinInterface {
+public class AppearanceRenderer extends PlayerEntityRenderer implements LivingEntityRendererMixinInterface<AbstractClientPlayerEntity> {
 	public final Function<AbstractClientPlayerEntity, Identifier> TEXTURE_FUNCTION;
 	private boolean featuresNeedSorting = true;
 
@@ -56,15 +55,13 @@ public class AppearanceRenderer extends PlayerEntityRenderer implements LivingEn
 	}
 
 	@Override
-	public void cfa$prepareModelPartMover(LivingEntity livingEntity) {
+	public void cfa$prepareModelPartMover(AbstractClientPlayerEntity livingEntity) {
 		if(this.featuresNeedSorting) {
 			this.featuresNeedSorting = false;
 			this.sortFeatures();
 		}
 
-		AbstractClientPlayerEntity player = (AbstractClientPlayerEntity) livingEntity;
-
-		CfaAppearanceData<?> appearanceData = player.cfa$getAppearanceData();
+		CfaAppearanceData<?> appearanceData = livingEntity.cfa$getAppearanceData();
 		ParsedClientAppearance parsedModel = appearanceData.getAppearance();
 		// ^ Never null; if it were, this rendering wouldn't be done by an AppearanceRenderer in the first place
 
@@ -73,7 +70,7 @@ public class AppearanceRenderer extends PlayerEntityRenderer implements LivingEn
 		// Update covering data once per tick. We do this here so that Cosmetic Armor mods will take effect.
 		if(appearanceData.needsCoveringUpdate) {
 			appearanceData.needsCoveringUpdate = false;
-			UpdateEquipmentRenderingCallback.EVENT.invoker().onUpdateEquipment(player);
+			UpdateEquipmentRenderingCallback.EVENT.invoker().onUpdateEquipment(livingEntity);
 		}
 	}
 

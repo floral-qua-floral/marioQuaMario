@@ -4,8 +4,8 @@ import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 
-public interface LivingEntityRendererMixinInterface {
-	default void cfa$prepareModelPartMover(LivingEntity livingEntity) {
+public interface LivingEntityRendererMixinInterface<T extends LivingEntity> {
+	default void cfa$prepareModelPartMover(T livingEntity) {
 
 	}
 

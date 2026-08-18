@@ -29,10 +29,12 @@ public abstract class PlayerEntityRendererMixin extends LivingEntityRendererMixi
 	private static PlayerEntityModel<AbstractClientPlayerEntity> associatedWithAppearanceModel(ModelPart root, boolean thinArms, Operation<PlayerEntityModel<AbstractClientPlayerEntity>> original, @Local(argsOnly = true) EntityRendererFactory.Context ctx) {
 		ParsedClientAppearance currentCustomModel = ClientAppearanceCollector.INSTANCE.getCurrentlyInitializingAppearance();
 		if (currentCustomModel == null) {
-			CharaFormAct.LOGGER.info("Instantiating a vanilla player renderer, with {} arms!", thinArms ? "thin" : "wide");
+			if(CharaFormAct.CONFIG.gameLaunchLogging())
+				CharaFormAct.LOGGER.info("Instantiating a vanilla player renderer, with {} arms!", thinArms ? "thin" : "wide");
 			return original.call(root, thinArms);
 		} else {
-			CharaFormAct.LOGGER.info("Instantiating an Appearance-based player renderer!");
+			if(CharaFormAct.CONFIG.gameLaunchLogging())
+				CharaFormAct.LOGGER.info("Instantiating an Appearance-based player renderer!");
 			return currentCustomModel.makeAndGetModel(ctx);
 		}
 	}
@@ -42,7 +44,8 @@ public abstract class PlayerEntityRendererMixin extends LivingEntityRendererMixi
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void prepareToCatchAddedFeatures(EntityRendererFactory.Context ctx, boolean slim, CallbackInfo ci) {
 		if(ClientAppearanceCollector.INSTANCE.getCurrentlyInitializingAppearance() == null && !slim) {
-			CharaFormAct.LOGGER.info("Vanilla's wide-armed player renderer will now start capturing any additional features...");
+			if(CharaFormAct.CONFIG.gameLaunchLogging())
+				CharaFormAct.LOGGER.info("Vanilla's wide-armed player renderer will now start capturing any additional features...");
 			this.capturingFeatures = true;
 		}
 	}

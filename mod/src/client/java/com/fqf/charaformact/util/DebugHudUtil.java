@@ -64,6 +64,7 @@ public class DebugHudUtil {
 		String prefix = startNextWithSpace ? " " : "";
 		return switch(text) {
 			case Optional<?> optional -> optional.map(object -> parseOutSingle(object, startNextWithSpace, prevWasNumber)).orElse("MISSING");
+			case Byte crunchyByte -> (prevWasNumber ? ", " : prefix) + crunchyByte;
 			case Number number -> (prevWasNumber ? ", " : prefix) + String.format("%.2f", number.doubleValue());
 			case Collection<?> collection -> parseOut(collection.toArray());
 			case Vec3d vec3d -> parseOut(parenthesize(vec3d.x, vec3d.y, vec3d.z));

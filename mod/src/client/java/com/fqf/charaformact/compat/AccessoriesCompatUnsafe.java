@@ -41,7 +41,7 @@ class AccessoriesCompatUnsafe {
 
 						if(!cosmetic.isEmpty() && Accessories.config().clientOptions.showCosmeticAccessories()) stack = cosmetic;
 
-						player.cfa$getCfaData2().getModestyData().updateRenderedEquipmentInfo(
+						player.cfa$getCfaData2().getEquipmentData().updateRenderedEquipmentInfo(
 								reference,
 								container.shouldRender(accessory.getFirst()) ? stack : ItemStack.EMPTY,
 								AccessoriesCompatUnsafe::fromAccessorySlot

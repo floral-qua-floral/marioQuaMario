@@ -226,11 +226,11 @@ public interface CfaClientDataImpl extends CfaAnimatingData {
 		return this.getRelativeHeadYawRadians() * MathHelper.DEGREES_PER_RADIAN;
 	}
 
-	PlayerEquipmentData getModestyData();
+	PlayerEquipmentData getEquipmentData();
 
 	@Override
 	default boolean isCovered(EquipmentCoverSpot spot) {
-		return this.getModestyData().isSpotCovered(spot);
+		return this.getEquipmentData().isSpotCovered(spot);
 	}
 
 	@Override

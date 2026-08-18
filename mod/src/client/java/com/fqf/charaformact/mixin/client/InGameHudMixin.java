@@ -126,10 +126,10 @@ public class InGameHudMixin {
 				? "NOT LOADED!" : "loaded...");
 		lineBreak(pair);
 
-		// KEEP THIS LAST: Modesty data
-		if(clientData.getModestyData().renderDebugHud(pair))
+		// KEEP THIS LAST: Equipment data
+		if(clientData.getEquipmentData().renderDebugHud(pair))
 			renderDebugText(pair, "Equipment items covering:");
 		else
-			renderDebugTextCol(pair, Colors.GRAY, "(Naked??)");
+			renderDebugTextCol(pair, Colors.GRAY, "(Nakey??)");
 	}
 }

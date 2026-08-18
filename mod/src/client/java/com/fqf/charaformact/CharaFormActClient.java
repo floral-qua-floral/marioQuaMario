@@ -36,7 +36,7 @@ public class CharaFormActClient implements ClientModInitializer {
 	private static class ClientHelperImpl extends CharaFormAct.ClientHelper {
 		@Override
 		public ObjectIntPair<String> getAppearanceCoveringInformation() {
-			return Objects.requireNonNull(MinecraftClient.getInstance().player).cfa$getCfaData2().getModestyData().getDebugString();
+			return Objects.requireNonNull(MinecraftClient.getInstance().player).cfa$getCfaData2().getEquipmentData().getDebugString();
 		}
 
 		@Override
