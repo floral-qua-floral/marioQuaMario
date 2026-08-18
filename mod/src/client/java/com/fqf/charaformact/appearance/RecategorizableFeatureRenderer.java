@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 import static com.fqf.charaformact_api.appearance.equipment.EquipmentFeatureCategory.*;
 
 public interface RecategorizableFeatureRenderer {
-	boolean LOG_AUTO_CONTEXT_CHECKS = CharaFormAct.CONFIG.logFeatureContexts();
+	boolean LOG_AUTO_CONTEXT_CHECKS = CharaFormAct.CONFIG.gameLaunchLogging();
 	Set<String> FEATURES_LOGGED = new HashSet<>();
 
 	@NotNull EquipmentFeatureCategory cfa$getMutableCategory();

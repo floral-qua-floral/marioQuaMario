@@ -39,9 +39,9 @@ public class MarioQuaMario implements ModInitializer {
 	}
 
 	public static Identifier makeID(String path) {
-		return Identifier.of("mario_qua_mario", path);
+		return Identifier.of(MOD_ID, path);
 	}
 	public static Identifier makeResID(String path) {
-		return Identifier.of("mario_qua_mario", path);
+		return makeID(path);
 	}
 }

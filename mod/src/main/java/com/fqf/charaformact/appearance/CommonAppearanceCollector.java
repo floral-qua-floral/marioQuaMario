@@ -77,15 +77,18 @@ public class CommonAppearanceCollector extends AbstractAppearanceCollector<Commo
 				throw new IllegalStateException("""
 					This crash was triggered deliberately by CharaFormAct, because another mod which uses it has failed\
 					 to properly register its Appearances (player models). Try looking at the namespaced IDs at the\
-					 start of the following lines to figure out which mod bungled it. If this is your own mod, you may\
+					 start of the following lines to figure out who bungled it. If this is your own mod, you may\
 					 have forgotten to register an Appearance on one side, or you may have failed to make the Client\
 					 and Common definitions match up where necessary. If you're a player, please report this crash to\
 					 the creator of the mod responsible. You can bypass this validation by disabling Appearance \
-					 Validation in CharaFormAct's config.
+					 Validation in CharaFormAct's config, which will prevent this crash from occurring, although it\
+					 will NOT resolve the client-vs-common Appearance discrepancies.
+					---DISCREPANCIES (These are responsible for the crash!)---
 					\t""" + discrepancies);
 			}
 			else {
-				CharaFormAct.LOGGER.error("Appearance validation failed, but was suppressed!");
+				CharaFormAct.LOGGER.error("Appearance validation failed, but was suppressed! Discrepancies:\n\t{}",
+						discrepancies);
 			}
 		}
 

@@ -26,6 +26,9 @@ public interface CfaTags {
 	TagKey<Block> USES_HALF_HARDNESS_WHEN_BAPPED = getTag(BLOCK, "uses_half_hardness_when_bapped");
 	TagKey<Block> DESTROYED_BY_INDIRECT_BAP = getTag(BLOCK, "destroyed_by_indirect_bap");
 
+	TagKey<Item> COVERS_ENTIRE_HEAD = getTag(ITEM, "equipment/covers_entire_head");
+	TagKey<Item> FACEWEAR = getTag(ITEM, "equipment/facewear");
+
 	interface EquipmentCoveringTags {
 		TagKey<Item> IS_NOT_HEADGEAR = getTag(ITEM, "covering/head/is_not_headgear");
 		TagKey<Item> DOES_NOT_COVER_SCALP = getTag(ITEM, "covering/head/does_not_cover_scalp");

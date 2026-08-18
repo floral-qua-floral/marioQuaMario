@@ -265,7 +265,7 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 	}
 	default TransformationInstructions getFacewearTransformation(AppearanceFeatureHelper helper) {
 		// Transformation to apply to features worn on the face, which would be primarily goggles.
-		return helper.getStretchingTransformation(this.getHeadSize(), new Vector3i(8, 8, 8)); // TODO: Adapt
+		return helper.getStretchingTransformation(this.getHeadSize(), new Vector3i(8, 8, 8));
 	}
 	default TransformationInstructions getUnknownHeadFeatureTransformation(AppearanceFeatureHelper helper) {
 		// Transformation to apply to features which attach to the head but are otherwise unknown.

@@ -2,13 +2,13 @@ package com.fqf.charaformact;
 
 import com.fqf.charaformact.bapping.BlockBappingUtil;
 import com.fqf.charaformact.cfadata.CfaServerPlayerData;
-import com.fqf.charaformact.registries.power_granting.ParsedForm;
-import com.fqf.charaformact.util.ItemStackArmorReader;
-import com.fqf.charaformact_api.interfaces.BapResult;
-import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact.packets.AttackInterceptionPackets;
 import com.fqf.charaformact.registries.RegistryManager;
 import com.fqf.charaformact.registries.actions.AbstractParsedAction;
+import com.fqf.charaformact.registries.power_granting.ParsedForm;
+import com.fqf.charaformact.util.ItemStackArmorReader;
+import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
+import com.fqf.charaformact_api.interfaces.BapResult;
 import com.fqf.charaformact_api.util.CfaTags;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -19,6 +19,7 @@ import it.unimi.dsi.fastutil.floats.FloatFloatPair;
 import it.unimi.dsi.fastutil.objects.ObjectIntPair;
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.BlockPosArgumentType;
 import net.minecraft.command.argument.EntityArgumentType;
@@ -27,10 +28,7 @@ import net.minecraft.command.argument.RegistryEntryReferenceArgumentType;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -38,9 +36,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import org.apache.commons.lang3.mutable.MutableInt;
-
-import java.util.Locale;
-import java.util.stream.Stream;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
@@ -53,7 +48,7 @@ public class CharaFormActCommand {
 				ConstantArgumentSerializer.of(EquipmentSlotArgumentType::equipmentSlot));
 
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-			LiteralCommandNode<ServerCommandSource> literalCommandNode = dispatcher.register(literal("charaformact")
+			LiteralArgumentBuilder<ServerCommandSource> builder = literal("charaformact")
 				.then(literal("disable")
 					.requires(source -> source.hasPermissionLevel(2))
 					.executes(context -> disable(context, false))
@@ -105,13 +100,29 @@ public class CharaFormActCommand {
 					.then(literal("bap")
 						.requires(source -> source.hasPermissionLevel(2))
 						.then(argument("position", BlockPosArgumentType.blockPos())
-							.executes(context -> executeBapFromStrength(context, false, Direction.UP, 4))
-							.then(makeBapDirectionFork(Direction.UP))
-							.then(makeBapDirectionFork(Direction.DOWN))
-							.then(makeBapDirectionFork(Direction.NORTH))
-							.then(makeBapDirectionFork(Direction.SOUTH))
-							.then(makeBapDirectionFork(Direction.EAST))
-							.then(makeBapDirectionFork(Direction.WEST))
+							.executes(context -> executeBapFromStrength(context, false, false, 4))
+							.then(argument("direction", DirectionArgumentType.direction())
+								.executes(context -> executeBapFromStrength(context, false, true, 4))
+								.then(literal("strength")
+									.then(argument("strength", IntegerArgumentType.integer())
+										.executes(context -> executeBapFromStrength(context, false, true, null))
+										.then(argument("player", EntityArgumentType.player())
+											.executes(context -> executeBapFromStrength(context, true, true, null))
+										)
+									)
+								)
+								.then(literal("result")
+									.then(makeBapResultFork("bump", BapResult.BUMP))
+									.then(makeBapResultFork("embrittle", BapResult.BUMP_EMBRITTLE))
+									.then(makeBapResultFork("break", BapResult.BREAK))
+								)
+							)
+//							.then(makeBapDirectionFork(Direction.UP))
+//							.then(makeBapDirectionFork(Direction.DOWN))
+//							.then(makeBapDirectionFork(Direction.NORTH))
+//							.then(makeBapDirectionFork(Direction.SOUTH))
+//							.then(makeBapDirectionFork(Direction.EAST))
+//							.then(makeBapDirectionFork(Direction.WEST))
 						)
 					)
 					.then(literal("actionTransition")
@@ -139,23 +150,26 @@ public class CharaFormActCommand {
 							.executes(context -> executeReversion(context, true))
 						)
 					)
+				);
+
+			// Only register this nasty garbage in a debug environment >:(
+			if(FabricLoader.getInstance().isDevelopmentEnvironment()) builder.then(literal("debug")
+				.then(literal("getAppearanceCoveringCounts")
+					.executes(CharaFormActCommand::getAppearanceCoveringCounts)
 				)
-				.then(literal("debug")
-					.then(literal("getAppearanceCoveringCounts")
-						.executes(CharaFormActCommand::getAppearanceCoveringCounts)
-					)
-					.then(literal("equipment")
-						.then(argument("slot", EquipmentSlotArgumentType.equipmentSlot())
-							.then(literal("getArmor")
-								.executes(CharaFormActCommand::getEquipmentAttributes)
-							)
-							.then(literal("getTags")
-								.executes(context -> CharaFormActCommand.getEquipmentTags(context, registryAccess.getWrapperOrThrow(RegistryKeys.ITEM).streamTagKeys()))
-							)
+				.then(literal("equipment")
+					.then(argument("slot", EquipmentSlotArgumentType.equipmentSlot())
+						.then(literal("getArmorContribution")
+							.executes(CharaFormActCommand::getEquipmentAttributes)
+						)
+						.then(literal("getTags")
+							.executes(CharaFormActCommand::getEquipmentTags)
 						)
 					)
 				)
 			);
+
+			LiteralCommandNode<ServerCommandSource> literalCommandNode = dispatcher.register(builder);
 			dispatcher.register(literal("cfa").redirect(literalCommandNode));
 		});
 	}
@@ -240,7 +254,7 @@ public class CharaFormActCommand {
 	}
 
 
-	private static int executeBapFromStrength(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven, Direction direction, Integer strength) throws CommandSyntaxException {
+	private static int executeBapFromStrength(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven, boolean directionArgumentGiven, Integer strength) throws CommandSyntaxException {
 		ServerPlayerEntity player = getPlayerFromCmd(context, playerArgumentGiven);
 		CfaServerPlayerData data = player.cfa$getCfaData();
 		String name = player.getName().getString();
@@ -255,6 +269,10 @@ public class CharaFormActCommand {
 
 		if(strength == null) strength = IntegerArgumentType.getInteger(context, "strength");
 
+		Direction direction = directionArgumentGiven
+				? DirectionArgumentType.getDirection(context, "direction")
+				: Direction.UP;
+
 		BapResult result = BlockBappingUtil.attemptBap(data, player.getWorld(), position, direction, strength, true);
 
 		if(result == BapResult.FAIL)
@@ -262,7 +280,7 @@ public class CharaFormActCommand {
 
 		return sendFeedback(context, "Made " + name + " bap block at position " + posString + ". Result: " + result, result.ordinal() + 1);
 	}
-	private static int executeBapFromResult(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven, Direction direction, BapResult result) throws CommandSyntaxException {
+	private static int executeBapFromResult(CommandContext<ServerCommandSource> context, boolean playerArgumentGiven, BapResult result) throws CommandSyntaxException {
 		ServerPlayerEntity player = getPlayerFromCmd(context, playerArgumentGiven);
 		CfaServerPlayerData data = player.cfa$getCfaData();
 		String name = player.getName().getString();
@@ -283,32 +301,23 @@ public class CharaFormActCommand {
 			default -> result;
 		};
 
-		BlockBappingUtil.networkAndStoreBapInfo(player.getWorld(), position, direction, -1, player, result, true);
+		BlockBappingUtil.networkAndStoreBapInfo(
+				player.getWorld(), position,
+				DirectionArgumentType.getDirection(context, "direction"), -1, player,
+				result, true
+		);
 
 		return sendFeedback(context, "Made " + name + " do " + result + " to block at " + posString, true);
 	}
-	private static LiteralArgumentBuilder<ServerCommandSource> makeBapDirectionFork(Direction direction) {
-		return literal(direction.name().toLowerCase(Locale.ROOT))
-			.executes(context -> executeBapFromStrength(context, false, direction, 4))
-			.then(literal("strength")
-				.then(argument("strength", IntegerArgumentType.integer())
-					.executes(context -> executeBapFromStrength(context, false, direction, null))
-					.then(argument("player", EntityArgumentType.player())
-						.executes(context -> executeBapFromStrength(context, true, direction, null))
-					)
-				)
-			)
-			.then(literal("result")
-				.then(makeBapResultFork(direction, "bump", BapResult.BUMP))
-				.then(makeBapResultFork(direction, "embrittle", BapResult.BUMP_EMBRITTLE))
-				.then(makeBapResultFork(direction, "break", BapResult.BREAK))
-			);
-	}
-	private static LiteralArgumentBuilder<ServerCommandSource> makeBapResultFork(Direction direction, String name, BapResult result) {
+//	private static LiteralArgumentBuilder<ServerCommandSource> makeBapDirectionFork(Direction direction) {
+//		return literal(direction.name().toLowerCase(Locale.ROOT))
+//
+//	}
+	private static LiteralArgumentBuilder<ServerCommandSource> makeBapResultFork(String name, BapResult result) {
 		return literal(name)
-			.executes(context -> executeBapFromResult(context, false, direction, result))
+			.executes(context -> executeBapFromResult(context, false, result))
 			.then(argument("player", EntityArgumentType.player())
-				.executes(context -> executeBapFromResult(context, true, direction, result))
+				.executes(context -> executeBapFromResult(context, true, result))
 			);
 	}
 
@@ -455,16 +464,17 @@ public class CharaFormActCommand {
 		ItemStack equipment = player.getEquippedStack(slot);
 		FloatFloatPair result = ItemStackArmorReader.getArmorAndToughness(equipment, slot);
 		return sendFeedback(context, player.getName().getString() + "'s " + equipment.getItem().toString()
-				+ " seems to provide " + result.leftFloat() + " armor and " + result.rightFloat() + " toughness.", (int) result.leftFloat());
+				+ " seems to provide " + result.leftFloat() + " armor and " + result.rightFloat() + " toughness.",
+				(int) result.leftFloat());
 	}
-	private static int getEquipmentTags(CommandContext<ServerCommandSource> context, Stream<TagKey<Item>> tagKeys) throws CommandSyntaxException {
+	private static int getEquipmentTags(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
 		ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
 		EquipmentSlot slot = EquipmentSlotArgumentType.getEquipmentSlot(context, "slot");
 		ItemStack equipment = player.getEquippedStack(slot);
 
 		MutableInt count = new MutableInt();
 		StringBuilder output = new StringBuilder();
-		tagKeys.filter(equipment::isIn).forEach(key -> {
+		equipment.streamTags().forEach(key -> {
 			if(count.getAndIncrement() == 0) output.append(":\n");
 			else output.append('\n');
 			output.append("- ").append(key.id());

@@ -2,6 +2,7 @@ package com.fqf.charaformact.mixin.client.features;
 
 import com.fqf.charaformact.util.ModelPartMover;
 import com.fqf.charaformact_api.appearance.equipment.EquipmentFeatureCategory;
+import com.fqf.charaformact_api.util.CfaTags;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -10,6 +11,7 @@ import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -30,7 +32,13 @@ public class ArmorBypassesFeatureCategorizationMixin<T extends LivingEntity, A e
 		if(ModelPartMover.instance != null) {
 			EquipmentFeatureCategory context = switch(armorSlot) {
 				case LEGS -> EquipmentFeatureCategory.ARMOR_INNER;
-				case FEET, CHEST, HEAD -> EquipmentFeatureCategory.ARMOR_OUTER;
+				case FEET, CHEST -> EquipmentFeatureCategory.ARMOR_OUTER;
+				case HEAD -> {
+					ItemStack stack = entity.getEquippedStack(EquipmentSlot.HEAD);
+					if(stack.isIn(CfaTags.COVERS_ENTIRE_HEAD)) yield EquipmentFeatureCategory.UNKNOWN;
+					if(stack.isIn(CfaTags.FACEWEAR)) yield EquipmentFeatureCategory.SPECIAL;
+					yield EquipmentFeatureCategory.ARMOR_OUTER;
+				}
 				default -> null;
 			};
 			if(context != null) ModelPartMover.instance.setTo(context);

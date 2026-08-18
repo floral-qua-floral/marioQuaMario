@@ -39,7 +39,7 @@ public abstract class AbstractParsedAction extends ParsedCfaState implements Par
 
 	private final List<ParsedAttackInterception> INTERCEPTIONS_INTERNAL, INTERCEPTIONS_VIEW;
 
-	private static final boolean LOG_TRANSITION_INJECTIONS = CharaFormAct.CONFIG.logActionTransitionInjections();
+	private static final boolean LOG_TRANSITION_INJECTIONS = CharaFormAct.CONFIG.gameLaunchLogging();
 
 	private static final BappingRule NULL_EQUIVALENT = new BappingRule(0, 0);
 
