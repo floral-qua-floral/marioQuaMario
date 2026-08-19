@@ -1,24 +1,29 @@
 package com.fqf.charaformact.mixin.client;
 
 import com.fqf.charaformact.CharaFormAct;
+import com.fqf.charaformact.cfadata.CfaMainClientData;
 import com.fqf.charaformact.cfadata.CfaPlayerData;
 import com.fqf.charaformact.cfadata.CfaServerPlayerData;
 import com.fqf.charaformact.cfadata.injections.AdvCfaServerDataHolder;
 import com.fqf.charaformact.cfadata.util.ActiveAnimation;
 import com.fqf.charaformact_api.definitions.states.FormDefinition;
-import com.fqf.charaformact.cfadata.CfaMainClientData;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Colors;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2d;
@@ -34,15 +39,62 @@ import static com.fqf.charaformact.util.DebugHudUtil.*;
 
 @Mixin(InGameHud.class)
 public class InGameHudMixin {
+	@WrapMethod(method = "renderHealthBar")
+	private void renderSingleHealthBar(
+			DrawContext context, PlayerEntity player,
+			int x, int y, int lines,
+			int regeneratingHeartIndex,
+			float maxHealth, int lastHealth, int health,
+			int absorption, boolean blinking,
+			Operation<Void> original
+	) {
+		CfaPlayerData data = player.cfa$getCfaData();
+		if(data.isEnabled() && CharaFormAct.CONFIG.shouldRenderSingleFormHealthBar()) {
+//			lines = MathHelper.ceil(lines / (float) data.getHealthBarCount());
+
+			int singleHealthBarSizeCeil = Math.round(data.getSingleHealthBarSize());
+			health = MathHelper.clamp(MathHelper.ceil(data.translateHealthToWithinFormHealth(health)), 0, singleHealthBarSizeCeil);
+			lastHealth = Math.min(MathHelper.ceil(data.translateHealthToWithinFormHealth(lastHealth)), singleHealthBarSizeCeil);
+			maxHealth = data.getSingleHealthBarSize();
+
+			// Recalculate the "lines" paramter (what on earth does this do???)
+			int setsOfTenHearts = MathHelper.ceil((maxHealth + absorption) / 2.0F / 10.0F);
+			lines = Math.max(10 - (setsOfTenHearts - 2), 3);
+		}
+		original.call(
+				context, player,
+				x, y, lines,
+				regeneratingHeartIndex,
+				maxHealth, lastHealth, health,
+				absorption, blinking
+		);
+	}
+
+	@ModifyExpressionValue(method = "renderHealthBar", at = @At(value = "CONSTANT", args = "intValue=4"))
+	private int changeShakeThresholdOnNonFinalHealthBars(int original, @Local(argsOnly = true) PlayerEntity player) {
+		CfaPlayerData data = player.cfa$getCfaData();
+		if(!data.isEnabled() || !CharaFormAct.CONFIG.shouldRenderSingleFormHealthBar()) return original;
+
+		return player.getHealth() + player.getAbsorptionAmount() <= 4 ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+	}
+
+//	@Definition(id = "lastHealth", local = @Local(type = int.class, ordinal = 4, argsOnly = true))
+//	@Definition(id = "absorption", local = @Local(type = int.class, ordinal = 6, argsOnly = true))
+//	@Expression("lastHealth + absorption <= 4")
+//	@ModifyExpressionValue(method = "renderHealthBar", at = @At("MIXINEXTRAS:EXPRESSION"))
+//	private boolean onlyShakeOnFinalHealthBar(boolean original, @Local(argsOnly = true) PlayerEntity player) {
+//		return original && player.cfa$getCfaData().getHealthBarCount() <= 1;
+//	}
+
 	@WrapOperation(method = "drawHeart", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud$HeartType;getTexture(ZZZ)Lnet/minecraft/util/Identifier;"))
 	public Identifier drawPowerHeart(InGameHud.HeartType heartType, boolean hardcore, boolean half, boolean blinking, Operation<Identifier> original) {
-		Identifier powerHeartID = getPowerHeart(heartType, hardcore, half, blinking);
+		Identifier powerHeartID = getFormHeartTexture(heartType, hardcore, half, blinking);
 
 		return powerHeartID == null ? original.call(heartType, hardcore, half, blinking) : powerHeartID;
 	}
 
 	@Unique
-	private static @Nullable Identifier getPowerHeart(InGameHud.HeartType heartType, boolean hardcore, boolean half, boolean blinking) {
+	private static @Nullable Identifier getFormHeartTexture(InGameHud.HeartType heartType, boolean hardcore, boolean half, boolean blinking) {
 		ClientPlayerEntity mainPlayer = MinecraftClient.getInstance().player;
 		if(mainPlayer == null || !mainPlayer.cfa$getCfaData().isEnabled()) {
 			return null;
@@ -65,6 +117,7 @@ public class InGameHudMixin {
 		return null;
 	}
 
+	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 	@Unique private static Optional<String> mostRecentActionDisagreement = Optional.empty();
 
 	@Inject(method = "renderMainHud", at = @At("TAIL"))

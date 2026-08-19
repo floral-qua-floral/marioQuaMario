@@ -9,12 +9,13 @@ import com.fqf.charaformact.cfadata.CfaPlayerData;
 import com.fqf.charaformact.cfadata.injections.AdvCfaDataHolder;
 import com.fqf.charaformact.registries.actions.parsed.ParsedWallboundAction;
 import com.fqf.charaformact.util.CfaGamerules;
+import com.fqf.charaformact.util.CfaNbtKeys;
 import com.fqf.charaformact.util.EntitiesMixinInterface;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.definitions.states.actions.util.SlidingStatus;
 import com.fqf.charaformact_api.definitions.states.actions.util.SneakingRule;
-import com.fqf.charaformact.util.CfaNbtKeys;
 import com.fqf.charaformact_api.definitions.states.actions.util.WallBodyAlignment;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -251,6 +252,20 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDa
 		}
 	}
 
+	@ModifyExpressionValue(method = "getLeashPos", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/Box;getLengthY()D"))
+	private double correctForLaterOffsetScaling(double original) {
+		// This is necessary because we subtract a constant value from the hitbox height. We need to make sure that
+		// subtraction stays scale-consistent. We correct for the vertical scale later anyways.
+		return original / this.cfa$getCfaData().getVerticalScale();
+	}
+
+	@WrapOperation(method = "getLeashPos", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/Vec3d;add(Lnet/minecraft/util/math/Vec3d;)Lnet/minecraft/util/math/Vec3d;"))
+	private Vec3d scaleLeashPosOffset(Vec3d instance, Vec3d vec, Operation<Vec3d> original) {
+		CfaPlayerData data = this.cfa$getCfaData();
+		double horizontalScale = data.getHorizontalScale();
+		return original.call(instance, vec.multiply(horizontalScale, data.getVerticalScale(), horizontalScale));
+	}
+
 	@Override
 	public float cfa$modifyBodyRotationForTurnHead(float bodyRotation) {
 		CfaPlayerData data = this.cfa$getCfaData();
@@ -287,5 +302,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDa
 	@Override
 	public void cfa$afterChangeLookDirection() {
 		this.cfa$getCfaData().onLookAround();
+	}
+
+	@ModifyExpressionValue(method = "applyDamage", at = @At(value = "INVOKE", target = "Ljava/lang/Math;max(FF)F"))
+	private float dampenRolloverDamage(float original) {
+		return this.cfa$modifyDamageRightBeforeApplication(original);
 	}
 }

@@ -3,6 +3,7 @@ package com.fqf.charaformact.util;
 import com.fqf.charaformact.packets.CfaPackets;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
+import net.fabricmc.fabric.api.gamerule.v1.rule.DoubleRule;
 import net.minecraft.world.GameRules;
 
 public class CfaGamerules {
@@ -53,13 +54,13 @@ public class CfaGamerules {
 			GameRuleRegistry.register("cfaDisableCharacterMovementCheck", GameRules.Category.PLAYER,
 					GameRuleFactory.createBooleanRule(false));
 
-//	public static final GameRules.Key<GameRules.BooleanRule> REQUIRE_PLAYERMODELS =
-//			GameRuleRegistry.register("cfaRequirePlayermodels", GameRules.Category.PLAYER,
-//					GameRuleFactory.createBooleanRule(true));
+	public static final GameRules.Key<DoubleRule> DAMAGE_PAST_REVERSION_MULTIPLIER =
+			GameRuleRegistry.register("cfaDamagePastReversionMultiplier", GameRules.Category.PLAYER,
+					GameRuleFactory.createDoubleRule(0.5, 0));
 
-	public static final GameRules.Key<GameRules.BooleanRule> REVERT_TO_SMALL =
-			GameRuleRegistry.register("cfaAlwaysRevertToWeakestForm", GameRules.Category.PLAYER,
-					GameRuleFactory.createBooleanRule(false));
+	public static final GameRules.Key<DoubleRule> MINIMUM_HEALTH_BAR_FROM_FORM_CHANGE =
+			GameRuleRegistry.register("cfaMinimumHealthBarAfterFormChange", GameRules.Category.PLAYER,
+					GameRuleFactory.createDoubleRule(0.1, 0, 1));
 
 	public static void register() {
 

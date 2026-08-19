@@ -16,7 +16,7 @@ public class EntityTrackerEntryMixin {
 		// THIS IS GROSS!!!!!!!!!!!!!!!
 		return passenger -> {
 			// Skip calling the original consumer if the entity being munched is a ServerPlayerEntity who is skipping dismount teleports.
-			if(!(passenger instanceof ServerPlayerEntity serverPlayerPassenger) || !serverPlayerPassenger.cfa$getCfaData().isSkippingDismountRepositioning()) {
+			if(!(passenger instanceof ServerPlayerEntity serverPlayerPassenger) || serverPlayerPassenger.cfa$getCfaData().doDismountRepositioning()) {
 				action.accept(passenger);
 			}
 		};

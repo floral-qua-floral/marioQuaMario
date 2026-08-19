@@ -2,25 +2,26 @@ package com.fqf.charaformact.cfadata;
 
 import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.appearance.ParsedCommonAppearance;
+import com.fqf.charaformact.registries.ParsedCfaState;
+import com.fqf.charaformact.registries.actions.AbstractParsedAction;
+import com.fqf.charaformact.registries.actions.ParsedActionHelper;
 import com.fqf.charaformact.registries.actions.parsed.ParsedWallboundAction;
+import com.fqf.charaformact.registries.power_granting.ParsedCharacter;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
+import com.fqf.charaformact.util.AdvancedWallInfo;
 import com.fqf.charaformact.util.CfaStatCalculationHelper;
 import com.fqf.charaformact.util.DirectionBasedWallInfo;
-import com.fqf.charaformact.util.AdvancedWallInfo;
+import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.charaformact_api.definitions.states.StatAlteringStateDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.definitions.states.actions.util.GenericActionType;
 import com.fqf.charaformact_api.definitions.states.actions.util.WallBodyAlignment;
-import com.fqf.charaformact.registries.ParsedCfaState;
-import com.fqf.charaformact.registries.actions.AbstractParsedAction;
-import com.fqf.charaformact.registries.actions.ParsedActionHelper;
-import com.fqf.charaformact.registries.power_granting.ParsedCharacter;
-import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.charaformact_api.util.CfaStat;
 import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
@@ -89,6 +90,25 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 		return this.isEnabled() ? this.getForm().VALUE : -1;
 	}
 
+	@Override
+	public int getHealthBarCount() {
+		return this.isEnabled() ? this.getForm().getHealthBarCount() : 1;
+	}
+
+	@Override
+	public float getSingleHealthBarSize() {
+		return this.getPlayer().getMaxHealth() / this.getHealthBarCount();
+	}
+
+	public float translateHealthToWithinFormHealth(float input) {
+		return input - (this.getSingleHealthBarSize() * (this.getHealthBarCount() - 1));
+	}
+
+	@Override
+	public float getHealthWithinForm() {
+		return this.translateHealthToWithinFormHealth(this.getPlayer().getHealth());
+	}
+
 	public boolean setForm(ParsedForm newForm, boolean isReversion, long seed) {
 		return this.setFormTransitionless(newForm);
 	}
@@ -132,6 +152,8 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 			this.customVars.remove(oldThingVarsClass); // If we didn't already just replace the vars, delete the old ones
 	}
 
+	private final static String GENERATED_MODIFIER_PREFIX = "generated_modifier_";
+
 	private final Set<String> POWERS = new HashSet<>();
 	private final List<StatAlteringStateDefinition.AttributeModifierInstruction> ATTRIBUTE_MODIFIERS = new ArrayList<>();
 	private float horizontalScale, verticalScale, eyeHeightScale, horizontalAnimationScale, verticalAnimationScale;
@@ -165,7 +187,7 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 				removingIndex++;
 			}
 			else {
-				attributeInstance.removeModifier(CharaFormAct.makeID("generated_modifier_" + removingIndex++));
+				attributeInstance.removeModifier(CharaFormAct.makeID(GENERATED_MODIFIER_PREFIX + removingIndex++));
 			}
 		}
 
@@ -187,6 +209,12 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 			this.POWERS.addAll(this.getForm().POWERS);
 
 			// Store new attribute modifier instructions
+			if(this.getForm().getHealthBarCount() > 1)
+				this.ATTRIBUTE_MODIFIERS.add(new StatAlteringStateDefinition.AttributeModifierInstruction(
+						EntityAttributes.GENERIC_MAX_HEALTH,
+						this.getForm().getHealthBarCount() - 1,
+						EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
+				));
 			this.ATTRIBUTE_MODIFIERS.addAll(this.getCharacter().ATTRIBUTE_MODIFIERS);
 			this.ATTRIBUTE_MODIFIERS.addAll(this.getForm().ATTRIBUTE_MODIFIERS);
 
@@ -203,7 +231,7 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 				}
 				else {
 					attributeInstance.addTemporaryModifier(new EntityAttributeModifier(
-							CharaFormAct.makeID("generated_modifier_" + addingIndex++),
+							CharaFormAct.makeID(GENERATED_MODIFIER_PREFIX + addingIndex++),
 							addModifier.d(),
 							addModifier.operation()
 					));

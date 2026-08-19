@@ -20,6 +20,10 @@ public interface CfaData {
 	int getFormPriority();
 	Identifier getCharacterID();
 
+	int getHealthBarCount();
+	float getSingleHealthBarSize();
+	float getHealthWithinForm();
+
 	boolean hasPower(String power);
 
 	double getStat(CfaStat stat);

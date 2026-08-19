@@ -2,9 +2,12 @@ package com.fqf.charaformact.util;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.entity.Entity;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 public interface EntitiesMixinInterface {
-	IllegalStateException EXCEPTION = new IllegalStateException("Method wasn't overridden!");
+	default void cfa$onStartedTrackingBy(ServerPlayerEntity player) {
+
+	}
 
 	default boolean cfa$doLivingEntityTravel() {
 		return true;
@@ -40,5 +43,9 @@ public interface EntitiesMixinInterface {
 
 	default void cfa$afterChangeLookDirection() {
 
+	}
+
+	default float cfa$modifyDamageRightBeforeApplication(float original) {
+		return original;
 	}
 }

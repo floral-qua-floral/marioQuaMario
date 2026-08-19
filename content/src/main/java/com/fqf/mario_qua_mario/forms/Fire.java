@@ -40,42 +40,12 @@ public class Fire implements FormDefinition {
 		return MarioSFX.EMPOWER;
 	}
 
-	@Override public float defineWidthFactor() {
-		return 1;
-	}
-	@Override public float defineHeightFactor() {
-		return 1;
-	}
-	@Override public float defineAnimationHorizontalScale() {
-		return 1;
-	}
-	@Override public float defineAnimationVerticalScale() {
-		return 1;
-	}
-
-	@Override public int defineBapStrengthModifier() {
-		return 0;
-	}
-
-	@Override public float defineVoicePitch() {
-		return 1;
-	}
-	@Override public float defineJumpPitch() {
-		return 1F;
-	}
-
 	@Override public @NotNull FormDefinition.FormHeart defineFormHeart(FormHeartHelper helper) {
 		return helper.auto();
 	}
 
 	@Override public @Nullable Object provideStateData(CfaData data) {
 		return new FireFlowerData();
-	}
-	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-
-	}
-	@Override public void serverTick(CfaAuthoritativeData data) {
-
 	}
 
 	private static boolean canFireballEntity(EntityHitResult entityHitResult) {
@@ -91,9 +61,6 @@ public class Fire implements FormDefinition {
 			this.HAND = hand;
 		}
 
-		@Override public @Nullable Identifier defineActionTarget() {
-			return null;
-		}
 		@Override public Hand defineHandToSwing() {
 			return this.HAND;
 		}
@@ -114,12 +81,6 @@ public class Fire implements FormDefinition {
 				@Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult
 		);
 
-		@Override public void executeTravellers(
-				CfaTravelData data, ItemStack weapon, float attackCooldownProgress,
-				@Nullable BlockPos blockTarget, @Nullable Entity entityTarget
-		) {
-
-		}
 		@Override public void executeClients(
 				CfaClientData data, ItemStack weapon, float attackCooldownProgress,
 				@Nullable BlockPos blockTarget, @Nullable Entity entityTarget,

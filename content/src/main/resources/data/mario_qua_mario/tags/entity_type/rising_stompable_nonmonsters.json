@@ -1,6 +1,10 @@
 {
     "replace": false,
     "values": [
-        "minecraft:armor_stand"
+        "minecraft:armor_stand",
+        {
+            "id": "dummmmmmy:target_dummy",
+            "required": false
+        }
     ]
 }

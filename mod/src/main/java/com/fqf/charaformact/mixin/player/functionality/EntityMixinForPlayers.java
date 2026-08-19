@@ -6,6 +6,7 @@ import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,6 +17,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Entity.class)
 public class EntityMixinForPlayers implements EntitiesMixinInterface {
+	@Inject(method = "onStartedTrackingBy", at = @At("HEAD"))
+	private void syncCfaDataToTracker(ServerPlayerEntity player, CallbackInfo ci) {
+		this.cfa$onStartedTrackingBy(player);
+	}
+
 	@WrapMethod(method = "stepOnBlock")
 	private boolean preventStepOnBlock(BlockPos pos, BlockState state, boolean playSound, boolean emitEvent, Vec3d movement, Operation<Boolean> original) {
 		if(this.cfa$shouldStepOnBlock()) return original.call(pos, state, playSound, emitEvent, movement);

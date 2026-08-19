@@ -1,13 +1,13 @@
 package com.fqf.charaformact.registries;
 
 import com.fqf.charaformact.CharaFormAct;
-import com.fqf.charaformact.registries.power_granting.ParsedForm;
-import com.fqf.charaformact_api.CharaFormActAddon;
-import com.fqf.charaformact_api.definitions.TransitionInjectionDefinition;
 import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import com.fqf.charaformact.registries.actions.ParsedActionHelper;
 import com.fqf.charaformact.registries.power_granting.ParsedCharacter;
+import com.fqf.charaformact.registries.power_granting.ParsedForm;
 import com.fqf.charaformact.util.CfaSounds;
+import com.fqf.charaformact_api.CharaFormActAddon;
+import com.fqf.charaformact_api.definitions.TransitionInjectionDefinition;
 import com.google.common.collect.ImmutableMap;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
@@ -19,7 +19,8 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
@@ -35,6 +36,7 @@ public class RegistryManager {
 		registerCollisionAttackTypes(addons);
 		registerActions(addons);
 		registerForms(addons);
+		FORMS.forEach(ParsedForm::getHealthBarCount); // Pre-calculate here so we notice any exceptions immediately
 		registerCharacters(addons);
 
 		registerVoicelines(addons);

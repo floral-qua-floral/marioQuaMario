@@ -6,7 +6,9 @@ import com.fqf.charaformact.cfadata.injections.AdvCfaServerDataHolder;
 import com.fqf.charaformact.packets.CfaDataPackets;
 import com.fqf.charaformact.registries.RegistryManager;
 import com.fqf.charaformact.registries.power_granting.ParsedCharacter;
+import com.fqf.charaformact.util.CfaGamerules;
 import com.fqf.charaformact.util.CfaNbtKeys;
+import com.fqf.charaformact.util.EntitiesMixinInterface;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.authlib.GameProfile;
@@ -16,6 +18,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -30,8 +33,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Objects;
 
 @Mixin(ServerPlayerEntity.class)
-public abstract class ServerPlayerEntityMixin extends PlayerEntity implements AdvCfaServerDataHolder {
+public abstract class ServerPlayerEntityMixin extends PlayerEntity implements AdvCfaServerDataHolder, EntitiesMixinInterface {
 	@Shadow public ServerPlayNetworkHandler networkHandler;
+	@Shadow public abstract ServerWorld getServerWorld();
 
 	public ServerPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile gameProfile) {
 		super(world, pos, yaw, gameProfile);
@@ -43,7 +47,6 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 	public void move(MovementType movementType, Vec3d movement) {
 		CfaServerPlayerData data = this.cfa$getCfaData();
 		Vec3d oldMovement = movement;
-		Vec3d oldPos = this.getPos();
 		// Only perform collision attack checks on movement that comes from a player packet (as opposed to server-side travel).
 		// Should this change??
 		long time = this.getWorld().getTime();
@@ -83,7 +86,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 					else {
 						if(!RegistryManager.FORMS.containsId(Identifier.of(storedFormID))) {
 							CharaFormAct.LOGGER.error("A player's NBT data contains an invalid Form ID: {}." +
-									"The player will instead be set to their character's default form state.", storedFormID);
+									" The player will instead be set to their character's default form state.", storedFormID);
 							storedFormID = storedCharacter.INITIAL_FORM.ID.toString();
 						}
 
@@ -98,6 +101,12 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 									storedCharacter,
 									RegistryManager.FORMS.get(Identifier.of(storedFormID))
 							);
+
+							// Barebones fix for MC-17876. Other mods fix it more robustly, but having at least this
+							// minimal fix is basically mandatory for CFA's "multiple health bars" functionality, so I
+							// put it here.
+							if(nbt.contains("Health", NbtElement.NUMBER_TYPE))
+								data.initialHealth = nbt.getFloat("Health");
 						}
 						else {
 							if(extraLogging) CharaFormAct.LOGGER.info("Syncing data from NBT...");
@@ -111,16 +120,29 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 		}
 	}
 
-	@Override
-	public void onStartedTrackingBy(ServerPlayerEntity player) {
-		super.onStartedTrackingBy(player);
-		CfaDataPackets.syncCfaDataToPlayerS2C((ServerPlayerEntity) (Object) this, player);
-	}
-
 	@WrapOperation(method="requestTeleportAndDismount", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;setPosition(DDD)V"))
 	private void preventSetPositionWhileDismounting(ServerPlayerEntity instance, double x, double y, double z, Operation<Void> original) {
 		CfaServerPlayerData data = this.cfa$getCfaData();
-		if(!data.isSkippingDismountRepositioning())
+		if(data.doDismountRepositioning())
 			original.call(instance, x, y, z);
+	}
+
+	@Override
+	public void cfa$onStartedTrackingBy(ServerPlayerEntity player) {
+		CfaDataPackets.syncCfaDataToPlayerS2C((ServerPlayerEntity) (Object) this, player);
+	}
+
+	@Override
+	public float cfa$modifyDamageRightBeforeApplication(float original) {
+		CfaServerPlayerData data = this.cfa$getCfaData();
+		if(data.getHealthBarCount() <= 1) return original;
+
+		float damageToRevert = data.getHealthWithinForm();
+		if(original <= damageToRevert) return original;
+
+		float overkillDamage = (original - damageToRevert)
+				* (float) this.getServerWorld().getGameRules().get(CfaGamerules.DAMAGE_PAST_REVERSION_MULTIPLIER).get();
+
+		return damageToRevert + overkillDamage;
 	}
 }

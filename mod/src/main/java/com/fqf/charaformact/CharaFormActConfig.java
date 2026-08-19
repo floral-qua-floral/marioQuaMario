@@ -16,6 +16,7 @@ public class CharaFormActConfig implements ConfigData {
 	private int bumpedBlockLingerFrames = 2;
 	private boolean suppressVoiceUnderwater = true;
 	private boolean validateAppearances = true;
+	private boolean renderEntireHealthPool = false;
 
 	public boolean logAllActionTransitions() {
 		return this.logAllActionTransitions;
@@ -46,5 +47,8 @@ public class CharaFormActConfig implements ConfigData {
 	}
 	public boolean doValidateAppearances() {
 		return this.validateAppearances;
+	}
+	public boolean shouldRenderSingleFormHealthBar() {
+		return !this.renderEntireHealthPool;
 	}
 }

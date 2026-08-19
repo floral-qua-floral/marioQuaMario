@@ -1,8 +1,8 @@
 package com.fqf.charaformact.registries.power_granting;
 
 import com.fqf.charaformact.registries.ImmutableCollectionHelper;
-import com.fqf.charaformact_api.definitions.states.StatAlteringStateDefinition;
 import com.fqf.charaformact.registries.ParsedCfaState;
+import com.fqf.charaformact_api.definitions.states.StatAlteringStateDefinition;
 import com.fqf.charaformact_api.util.CfaStat;
 import net.minecraft.util.Identifier;
 

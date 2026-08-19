@@ -1,25 +1,26 @@
 package com.fqf.charaformact.cfadata;
 
+import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.appearance.CommonAppearanceCollector;
 import com.fqf.charaformact.appearance.ParsedCommonAppearance;
 import com.fqf.charaformact.packets.CfaDataPackets;
-import com.fqf.charaformact.registries.power_granting.AppearanceKey;
-import com.fqf.charaformact.util.CfaGamerules;
-import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
-import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.registries.RegistryManager;
 import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import com.fqf.charaformact.registries.actions.ParsedActionHelper;
 import com.fqf.charaformact.registries.actions.ParsedTransition;
 import com.fqf.charaformact.registries.actions.TransitionPhase;
 import com.fqf.charaformact.registries.actions.parsed.ParsedWallboundAction;
+import com.fqf.charaformact.registries.power_granting.AppearanceKey;
 import com.fqf.charaformact.registries.power_granting.ParsedCharacter;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
+import com.fqf.charaformact.util.CfaGamerules;
+import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import net.minecraft.entity.MovementType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.RandomSeed;
 import org.jetbrains.annotations.NotNull;
@@ -38,6 +39,8 @@ public class CfaServerPlayerData extends CfaMoveableData implements CfaAuthorita
 	@Override public ServerPlayerEntity getPlayer() {
 		return this.PLAYER;
 	}
+
+	public float initialHealth;
 
 	private final Set<Pair<AbstractParsedAction, Long>> RECENT_ACTIONS = new HashSet<>();
 
@@ -145,7 +148,19 @@ public class CfaServerPlayerData extends CfaMoveableData implements CfaAuthorita
 	@Override
 	public boolean setFormTransitionless(ParsedForm form) {
 		if(!this.canEnterForm(form)) return false;
-		return super.setFormTransitionless(form);
+		ParsedForm oldForm = this.getForm();
+		boolean superResult = super.setFormTransitionless(form);
+
+		double minHealthBarFullness = form.getHealthBarCount() >= oldForm.getHealthBarCount()
+			? this.getPlayer().getWorld().getGameRules().get(CfaGamerules.MINIMUM_HEALTH_BAR_FROM_FORM_CHANGE).get()
+			: 0;
+		this.getPlayer().setHealth(MathHelper.clamp(
+				this.getPlayer().getHealth(),
+				this.getSingleHealthBarSize() * (this.getHealthBarCount() - 1 + (float) minHealthBarFullness),
+				this.getPlayer().getMaxHealth()
+		));
+
+		return superResult;
 	}
 
 	private ParsedCommonAppearance appearance;
@@ -249,8 +264,8 @@ public class CfaServerPlayerData extends CfaMoveableData implements CfaAuthorita
 	public void skipDismountRepositioning() {
 		this.skipDismountRepositioningTicks = 10;
 	}
-	public boolean isSkippingDismountRepositioning() {
-		return this.isEnabled() && this.skipDismountRepositioningTicks > 0;
+	public boolean doDismountRepositioning() {
+		return !this.isEnabled() || this.skipDismountRepositioningTicks <= 0;
 	}
 
 	// CUTOFF FOR CfaAuthoritativeData IMPLEMENTATION:---------------------------------------------------------------
@@ -311,35 +326,32 @@ public class CfaServerPlayerData extends CfaMoveableData implements CfaAuthorita
 	public ReversionResult executeReversion() {
 		if(!this.isEnabled()) return ReversionResult.NOT_ENABLED;
 
-		ServerPlayerEntity player = this.getPlayer();
-		Identifier reversionTarget = this.getForm().REVERSION_TARGET_ID;
+		ParsedForm reversionTarget = this.getForm().getReversionTarget();
 		if(reversionTarget == null) return ReversionResult.NO_WEAKER_FORM;
 
-		if(player.getWorld().getGameRules().getBoolean(CfaGamerules.REVERT_TO_SMALL)) {
-			while(Objects.requireNonNull(RegistryManager.FORMS.get(reversionTarget)).REVERSION_TARGET_ID != null) {
-				reversionTarget = Objects.requireNonNull(RegistryManager.FORMS.get(reversionTarget)).REVERSION_TARGET_ID;
-			}
-		}
+		ServerPlayerEntity player = this.getPlayer();
 		if(this.revertTo(reversionTarget) == FormChangeOperationResult.NO_VALID_APPEARANCE) {
 			CharaFormAct.LOGGER.warn(
 					"{}'s current form ({}) should revert to {}, however this is illegal for their character! ({})",
-					player.getName().getString(), this.getFormID(), reversionTarget, this.getCharacterID()
+					player.getName().getString(), this.getFormID(), reversionTarget.ID, this.getCharacterID()
 			);
 			return ReversionResult.NO_VALID_APPEARANCE;
 		}
-		player.setHealth(player.getMaxHealth());
+
+		player.setHealth(Math.min(player.getHealth(), player.getMaxHealth()));
 		return ReversionResult.SUCCESS;
 	}
 
-	@Override public FormChangeOperationResult revertTo(Identifier formID) {
+	public FormChangeOperationResult revertTo(ParsedForm newForm) {
 		if(!this.isEnabled()) return FormChangeOperationResult.NOT_ENABLED;
-		ParsedForm newForm = Objects.requireNonNull(RegistryManager.FORMS.get(formID),
-				"Target form (" + formID + ") doesn't exist!");
-
 		long seed = RandomSeed.getSeed();
 		if(!this.setForm(newForm, true, seed)) return FormChangeOperationResult.NO_VALID_APPEARANCE;
 		CfaDataPackets.empowerRevertS2C(this.getPlayer(), newForm, true, seed);
 		return FormChangeOperationResult.SUCCESS;
+	}
+	@Override public FormChangeOperationResult revertTo(Identifier formID) {
+		return this.revertTo(Objects.requireNonNull(RegistryManager.FORMS.get(formID),
+				"Target form (" + formID + ") doesn't exist!"));
 	}
 	@Override public FormChangeOperationResult revertTo(String formID) {
 		return this.revertTo(Identifier.of(formID));

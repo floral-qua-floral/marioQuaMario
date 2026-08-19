@@ -13,6 +13,7 @@
   "text.autoconfig.charaformact.option.bumpedBlockLingerFrames": "Extra frames for bumped block rendering",
   "text.autoconfig.charaformact.option.suppressVoiceUnderwater": "Silence character voices underwater",
   "text.autoconfig.charaformact.option.validateAppearances": "Appearance validation",
+  "text.autoconfig.charaformact.option.renderEntireHealthPool": "Always render entire health pool",
 
   "text.autoconfig.charaformact.option.spinputType": "Spin Input Type",
   "fabric.mods.charaformact.spin": "Spin",
@@ -24,6 +25,8 @@
   "gamerule.cfaFriendliesResistCollisionAttacks": "Collision attacks don't damage pets and teammates",
   "gamerule.cfaRejectInvalidActionTransitions": "Only allow legal action transitions",
   "gamerule.cfaDisableCharacterMovementCheck": "Disable movement checks when playing as any character",
+  "gamerule.cfaDamagePastReversionMultiplier": "Multiplier for additional damage, past that needed to Revert",
+  "gamerule.cfaMinimumHealthBarAfterFormChange": "Minimum health bar fullness after changing to a stronger form",
   "gamerule.cfaAlwaysRevertToWeakestForm": "Characters revert to weakest possible form at 0 health",
 
   "subtitles.charaformact.movement.bump": "Block bumped",
