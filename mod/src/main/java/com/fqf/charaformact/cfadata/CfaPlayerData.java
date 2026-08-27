@@ -17,18 +17,18 @@ import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.definitions.states.actions.util.GenericActionType;
 import com.fqf.charaformact_api.definitions.states.actions.util.WallBodyAlignment;
 import com.fqf.charaformact_api.util.CfaStat;
-import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
+import it.unimi.dsi.fastutil.objects.ObjectDoubleImmutablePair;
+import it.unimi.dsi.fastutil.objects.ObjectDoublePair;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
-import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -271,6 +271,7 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 	public void tick() {
 		this.tickAnimation = true;
 		this.onLookAround();
+		this.immersionInfo = null;
 	}
 
 	@Override public double getStat(CfaStat stat) {
@@ -307,45 +308,8 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 				&& (ignoreAction || this.actionPreventsVanillaTravel())
 				&& !this.getPlayer().getAbilities().flying // this means "currently flying", not "can fly"
 				&& !this.getPlayer().isFallFlying()
-				&& !this.getPlayer().isUsingRiptide() // do i want to keep this here?
+				&& !this.getPlayer().isUsingRiptide() // do I want to keep this here?
 				&& !this.getPlayer().isSleeping();
-	}
-
-	public Vec3d getFluidPushingVel() {
-		Box box = this.getPlayer().getBoundingBox().contract(0.001);
-		int boxMinX = MathHelper.floor(box.minX); int boxMaxX = MathHelper.ceil(box.maxX);
-		int boxMinY = MathHelper.floor(box.minY); int boxMaxY = MathHelper.ceil(box.maxY);
-		int boxMinZ = MathHelper.floor(box.minZ); int boxMaxZ = MathHelper.ceil(box.maxZ);
-
-		BlockPos.Mutable mutable = new BlockPos.Mutable();
-		double velX = 0; double velY = 0; double velZ = 0; int fluidsCount = 0;
-		World world = this.getPlayer().getWorld();
-		for (int checkX = boxMinX; checkX < boxMaxX; checkX++) {
-			for (int checkY = boxMinY; checkY < boxMaxY; checkY++) {
-				for (int checkZ = boxMinZ; checkZ < boxMaxZ; checkZ++) {
-					mutable.set(checkX, checkY, checkZ);
-					FluidState fluidState = world.getFluidState(mutable);
-					double e = (float) checkY + fluidState.getHeight(world, mutable);
-					if (e >= box.minY) {
-						Vec3d fluidVelocity = fluidState.getVelocity(world, mutable);
-						double factor = 1.8;
-						int tickRate = fluidState.getFluid().getTickRate(world);
-						if(tickRate == 0) continue;
-						fluidsCount++;
-						velX += fluidVelocity.x * factor / tickRate;
-						velY += fluidVelocity.y * factor / tickRate;
-						velZ += fluidVelocity.z * factor / tickRate;
-					}
-				}
-			}
-		}
-		if(fluidsCount > 0) {
-			velX /= fluidsCount;
-			velY /= fluidsCount;
-			velZ /= fluidsCount;
-		}
-
-		return new Vec3d(velX, Math.max(velY, -0.15), velZ);
 	}
 
 	public HeadRestrictionType headRestricted;
@@ -372,21 +336,62 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 		this.headRestricted = urgent ? HeadRestrictionType.URGENT : HeadRestrictionType.NORMAL;
 	}
 
-	private @Nullable Object2DoubleMap.Entry<TagKey<Fluid>> getHighestFluid() {
-		Object2DoubleMap.Entry<TagKey<Fluid>> highestFluid = null;
-		for(Object2DoubleMap.Entry<TagKey<Fluid>> entry : this.getPlayer().fluidHeight.object2DoubleEntrySet()) {
-			if(entry.getDoubleValue() == 0) continue;
+	private @Nullable ObjectDoublePair<Vec3d> immersionInfo;
+	private @NotNull ObjectDoublePair<Vec3d> ensureImmersionInfo() {
+		if(this.immersionInfo != null) return this.immersionInfo;
 
-			if(highestFluid == null || entry.getDoubleValue() > highestFluid.getDoubleValue())
-				highestFluid = entry;
+		Box box = this.getPlayer().getBoundingBox().contract(0.001);
+		int boxMinX = MathHelper.floor(box.minX); int boxMaxX = MathHelper.ceil(box.maxX);
+		int boxMinY = MathHelper.floor(box.minY); int boxMaxY = MathHelper.ceil(box.maxY);
+		int boxMinZ = MathHelper.floor(box.minZ); int boxMaxZ = MathHelper.ceil(box.maxZ);
+
+		double immersionHeight = 0;
+
+		BlockPos.Mutable mutable = new BlockPos.Mutable();
+		double velX = 0; double velY = 0; double velZ = 0; int fluidsCount = 0;
+		double yPos = this.getPlayer().getY();
+		World world = this.getPlayer().getWorld();
+		for(int checkX = boxMinX; checkX < boxMaxX; checkX++) {
+			for(int checkY = boxMinY; checkY < boxMaxY; checkY++) {
+				for(int checkZ = boxMinZ; checkZ < boxMaxZ; checkZ++) {
+					mutable.set(checkX, checkY, checkZ);
+					FluidState fluidState = world.getFluidState(mutable);
+					if(fluidState.isEmpty()) continue;
+
+					double fluidSurfaceY = (float) checkY + fluidState.getHeight(world, mutable);
+					if(fluidSurfaceY >= box.minY) {
+						Vec3d fluidVelocity = fluidState.getVelocity(world, mutable);
+						double factor = 1.8;
+						int tickRate = fluidState.getFluid().getTickRate(world);
+						if(tickRate == 0) continue;
+						fluidsCount++;
+						velX += fluidVelocity.x * factor / tickRate;
+						velY += fluidVelocity.y * factor / tickRate;
+						velZ += fluidVelocity.z * factor / tickRate;
+
+						immersionHeight = Math.max(immersionHeight, fluidSurfaceY - yPos);
+					}
+				}
+			}
 		}
-		return highestFluid;
+		if(fluidsCount > 0) {
+			velX /= fluidsCount;
+			velY /= fluidsCount;
+			velZ /= fluidsCount;
+		}
+
+		//noinspection SuspiciousNameCombination
+		this.immersionInfo = new ObjectDoubleImmutablePair<>(new Vec3d(velX, Math.max(velY, -0.15), velZ), immersionHeight);
+		return this.immersionInfo;
+	}
+
+	public Vec3d getFluidPushingVel() {
+		return this.ensureImmersionInfo().left();
 	}
 
 	@Override
 	public double getImmersionLevel() {
-		Object2DoubleMap.Entry<TagKey<Fluid>> highestFluid = this.getHighestFluid();
-		return highestFluid == null ? 0 : highestFluid.getDoubleValue();
+		return this.ensureImmersionInfo().rightDouble();
 	}
 
 	@Override
