@@ -1,6 +1,5 @@
 package com.fqf.charaformact.cfadata.equipment;
 
-import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.cfadata.CfaClientDataImpl;
 import com.fqf.charaformact.util.DebugHudUtil;
 import com.fqf.charaformact_api.cfadata.util.EquipmentCoverSpot;
@@ -59,8 +58,6 @@ public class PlayerEquipmentData {
 		// the EMPTY singleton; if we have an empty stack in any other cached info object, then we know that it's
 		// actually to be representing some real item. This has the same effect, but with much simpler logic.
 		if((rendering.isEmpty() && oldInfo != RenderedEquipmentInfo.EMPTY) || !ItemStack.areEqual(oldInfo.STACK, rendering)) {
-			CharaFormAct.LOGGER.info("Changed item in {}!\n\tFROM: {}\n\t  TO: {}", slot, oldInfo.STACK, rendering);
-
 			// The equipped item has changed!
 			RenderedEquipmentInfo newInfo = rendering.isEmpty() ? RenderedEquipmentInfo.EMPTY : packer.apply(rendering, slot);
 			this.CACHED_RENDERED_ITEMS.put(slot, newInfo);

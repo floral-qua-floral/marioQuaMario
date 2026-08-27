@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "#charaformact:slot_consolidation/back",
+    "#charaformact:slot_consolidation/cape",
+    {
+      "id": "nomansland:tortoise_shell",
+      "required": false
+    }
+  ]
+}

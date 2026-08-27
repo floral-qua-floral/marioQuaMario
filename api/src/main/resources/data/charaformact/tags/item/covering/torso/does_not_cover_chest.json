@@ -13,6 +13,10 @@
     {
       "id": "#accessories:belt",
       "required": false
+    },
+    {
+      "id": "nomansland:tortoise_shell",
+      "required": false
     }
   ]
 }

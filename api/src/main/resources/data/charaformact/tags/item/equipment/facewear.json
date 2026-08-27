@@ -5,6 +5,10 @@
     {
       "id": "immersive_armors:steampunk_helmet",
       "required": false
+    },
+    {
+      "id": "nomansland:ancient_bronze_mask",
+      "required": false
     }
   ]
 }

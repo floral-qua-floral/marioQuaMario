@@ -2,7 +2,6 @@
   "replace": false,
   "values": [
     "#charaformact:covering/covers_nothing",
-    "#charaformact:slot_consolidation/back",
-    "#charaformact:slot_consolidation/cape"
+    "#charaformact:equipment/backwear"
   ]
 }
