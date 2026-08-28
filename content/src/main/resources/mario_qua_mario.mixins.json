@@ -12,6 +12,7 @@
     "tail_reflecting.EntityReflectabilityMixin",
     "tail_reflecting.PersistentProjectileMixin",
     "tail_reflecting.ProjectileReflectabilityMixin",
+    "tail_reflecting.LivingEntityReflectabilityMixin",
     "tail_reflecting.ShulkerBulletReflectabilityMixin",
     "tail_reflecting.TridentEntityMixin",
     "tail_reflecting.VexReflectabilityMixin",

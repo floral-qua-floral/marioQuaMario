@@ -12,6 +12,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,11 +27,21 @@ public class FluidBlockDynamicCollisionHeightMixin {
 	);
 
 	@Inject(method = "getCollisionShape", at = @At("HEAD"))
-	private void decideWhichCollisionShapeToUse(BlockState state, BlockView world, BlockPos pos, ShapeContext context, CallbackInfoReturnable<VoxelShape> cir, @Share("useTallerShape") LocalBooleanRef useTaller) {
+	private void decideWhichCollisionShapeToUse(
+			BlockState state, BlockView world, BlockPos pos, ShapeContext context,
+			CallbackInfoReturnable<VoxelShape> cir, @Share("useTallerShape") LocalBooleanRef useTaller
+	) {
 		useTaller.set(context instanceof EntityShapeContextAccessor accessor && accessor.mqm$getEntity() instanceof PlayerEntity player && player.cfa$getCfaData().hasPower(Powers.TALLER_SOLID_WATER_HITBOX));
 	}
 
-	@ModifyExpressionValue(method = "getCollisionShape", at = @At(value = "FIELD", target = "Lnet/minecraft/block/FluidBlock;COLLISION_SHAPE:Lnet/minecraft/util/shape/VoxelShape;"))
+	@ModifyExpressionValue(
+			method = "getCollisionShape",
+			at = @At(
+					value = "FIELD",
+					target = "Lnet/minecraft/block/FluidBlock;COLLISION_SHAPE:Lnet/minecraft/util/shape/VoxelShape;",
+					opcode = Opcodes.GETSTATIC
+			)
+	)
 	private VoxelShape useAlternateCollisionShape(VoxelShape original, @Share("useTallerShape") LocalBooleanRef useTaller) {
 		return useTaller.get() ? TALLER : original;
 	}
