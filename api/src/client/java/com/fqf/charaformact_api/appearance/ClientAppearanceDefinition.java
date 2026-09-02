@@ -264,7 +264,8 @@ public interface ClientAppearanceDefinition extends CommonAppearanceDefinition {
 		);
 	}
 	default TransformationInstructions getFacewearTransformation(AppearanceFeatureHelper helper) {
-		// Transformation to apply to features worn on the face, which would be primarily goggles.
+		// Transformation to apply to features worn on the face, such as goggles or masks. This is not exclusive to
+		// eyewear!
 		return helper.getStretchingTransformation(this.getHeadSize(), new Vector3i(8, 8, 8));
 	}
 	default TransformationInstructions getUnknownHeadFeatureTransformation(AppearanceFeatureHelper helper) {

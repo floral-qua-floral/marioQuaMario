@@ -35,8 +35,8 @@ public class ArmorBypassesFeatureCategorizationMixin<T extends LivingEntity, A e
 				case FEET, CHEST -> EquipmentFeatureCategory.ARMOR_OUTER;
 				case HEAD -> {
 					ItemStack stack = entity.getEquippedStack(EquipmentSlot.HEAD);
-					if(stack.isIn(CfaTags.COVERS_ENTIRE_HEAD)) yield EquipmentFeatureCategory.UNKNOWN;
 					if(stack.isIn(CfaTags.FACEWEAR)) yield EquipmentFeatureCategory.SPECIAL;
+					if(stack.isIn(CfaTags.COVERS_ENTIRE_HEAD)) yield EquipmentFeatureCategory.UNKNOWN;
 					yield EquipmentFeatureCategory.ARMOR_OUTER;
 				}
 				default -> null;

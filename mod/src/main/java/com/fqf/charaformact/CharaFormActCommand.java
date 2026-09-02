@@ -152,7 +152,7 @@ public class CharaFormActCommand {
 					)
 				);
 
-			// Only register this nasty garbage in a debug environment >:(
+			// Only register these in a development environment
 			if(FabricLoader.getInstance().isDevelopmentEnvironment()) builder.then(literal("debug")
 				.then(literal("getAppearanceCoveringCounts")
 					.executes(CharaFormActCommand::getAppearanceCoveringCounts)

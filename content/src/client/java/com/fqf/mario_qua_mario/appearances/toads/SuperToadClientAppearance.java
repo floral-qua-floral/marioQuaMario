@@ -181,7 +181,9 @@ public class SuperToadClientAppearance extends SuperToadCommonAppearance impleme
 
 	@Override
 	public TransformationInstructions getFacewearTransformation(AppearanceFeatureHelper helper) {
-		return helper.getStretchingTransformation(new Vector3f(this.getHeadSize()).add(0, 5, 0), new Vector3i(8));
+		Vector3i skullSize = this.getHeadSize();
+		Vector3i equalizedSkullSize = new Vector3i(skullSize.x, skullSize.z, skullSize.z);
+		return helper.getStretchingTransformation(equalizedSkullSize, new Vector3i(8, 8, 8));
 	}
 
 	@Override

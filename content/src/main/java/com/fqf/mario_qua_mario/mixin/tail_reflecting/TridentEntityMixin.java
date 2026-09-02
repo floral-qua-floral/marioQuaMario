@@ -17,7 +17,6 @@ public abstract class TridentEntityMixin extends PersistentProjectileMixin {
 
 	@Override
 	public void mqm$dislodge() {
-		// we really needed a whole mixin just to let Tridents do damage when reflected off a block... -_-
 		super.mqm$dislodge();
 		this.inGroundTime = 0;
 		this.dealtDamage = false;

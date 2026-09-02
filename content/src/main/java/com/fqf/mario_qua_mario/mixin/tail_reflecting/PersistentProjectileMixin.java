@@ -10,6 +10,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -20,7 +21,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(PersistentProjectileEntity.class)
 public abstract class PersistentProjectileMixin extends ProjectileEntity implements PersistentReflectable {
 	@Shadow protected boolean inGround;
-	@Shadow private int life;
 
 	@Shadow protected abstract void fall();
 
@@ -34,7 +34,14 @@ public abstract class PersistentProjectileMixin extends ProjectileEntity impleme
 		super(entityType, world);
 	}
 
-	@Inject(method = "onBlockHit", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/projectile/PersistentProjectileEntity;inGround:Z"))
+	@Inject(
+			method = "onBlockHit",
+			at = @At(
+					value = "FIELD",
+					target = "Lnet/minecraft/entity/projectile/PersistentProjectileEntity;inGround:Z",
+					opcode = Opcodes.PUTFIELD
+			)
+	)
 	private void storeNormalVector(BlockHitResult blockHitResult, CallbackInfo ci) {
 		this.stickDirection = blockHitResult.getSide();
 		this.groundNormal = Vec3d.of(this.stickDirection.getVector());

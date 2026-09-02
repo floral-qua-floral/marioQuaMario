@@ -20,6 +20,10 @@
     {
       "id": "goated:barbaric_helmet",
       "required": false
+    },
+    {
+      "id": "chasms_and_caverns:cowl",
+      "required": false
     }
   ]
 }

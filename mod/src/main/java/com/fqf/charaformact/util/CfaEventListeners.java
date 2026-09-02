@@ -40,8 +40,9 @@ public class CfaEventListeners {
 
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 			CfaPackets.syncGamerulesS2C(handler.player);
-			handler.player.cfa$getCfaData().initialApply();
-			handler.player.setHealth(handler.player.cfa$getCfaData().initialHealth);
+			CfaServerPlayerData data = handler.player.cfa$getCfaData();
+			data.initialApply();
+			if(data.isEnabled()) handler.player.setHealth(data.initialHealth);
 		});
 
 		ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register(((player, origin, destination) -> {
