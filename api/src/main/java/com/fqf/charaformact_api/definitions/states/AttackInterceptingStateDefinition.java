@@ -122,9 +122,6 @@ public interface AttackInterceptingStateDefinition extends CfaStateDefinition {
 	 * can conditionally prevent attacks and/or mining.
 	 */
 	abstract class PreventAttack implements AttackInterceptionDefinition {
-		@Override public @Nullable Identifier defineActionTarget() {
-			return null;
-		}
 		@Override public Hand defineHandToSwing() {
 			return null;
 		}
@@ -139,26 +136,6 @@ public interface AttackInterceptingStateDefinition extends CfaStateDefinition {
 			return this.shouldInterceptAttack(data, weapon, 1F, null, blockHitResult)
 					? MiningHandling.INTERCEPT
 					: MiningHandling.MINE;
-		}
-
-		@Override public void executeTravellers(
-				CfaTravelData data, ItemStack weapon, float attackCooldownProgress,
-				@Nullable BlockPos blockTarget, @Nullable Entity entityTarget
-		) {
-
-		}
-		@Override public void executeClients(
-				CfaClientData data, ItemStack weapon, float attackCooldownProgress,
-				@Nullable BlockPos blockTarget, @Nullable Entity entityTarget,
-				long seed
-		) {
-
-		}
-		@Override public void executeServer(
-				CfaAuthoritativeData data, ItemStack weapon, float attackCooldownProgress,
-				ServerWorld world, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget
-		) {
-
 		}
 	}
 }

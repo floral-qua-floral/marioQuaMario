@@ -50,14 +50,12 @@ public class InGameHudMixin {
 	) {
 		CfaPlayerData data = player.cfa$getCfaData();
 		if(data.isEnabled() && CharaFormAct.CONFIG.shouldRenderSingleFormHealthBar()) {
-//			lines = MathHelper.ceil(lines / (float) data.getHealthBarCount());
-
 			int singleHealthBarSizeCeil = Math.round(data.getSingleHealthBarSize());
 			health = MathHelper.clamp(MathHelper.ceil(data.translateHealthToWithinFormHealth(health)), 0, singleHealthBarSizeCeil);
 			lastHealth = Math.min(MathHelper.ceil(data.translateHealthToWithinFormHealth(lastHealth)), singleHealthBarSizeCeil);
 			maxHealth = data.getSingleHealthBarSize();
 
-			// Recalculate the "lines" paramter (what on earth does this do???)
+			// Recalculate the "lines" parameter (what on earth does this do???)
 			int setsOfTenHearts = MathHelper.ceil((maxHealth + absorption) / 2.0F / 10.0F);
 			lines = Math.max(10 - (setsOfTenHearts - 2), 3);
 		}

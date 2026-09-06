@@ -1,171 +1,40 @@
 package com.fqf.mario_qua_mario.forms;
 
-import com.fqf.charaformact_api.definitions.states.FormDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.cfadata.*;
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.entity.custom.MarioFireballProjectileEntity;
 import com.fqf.mario_qua_mario.util.MQMTags;
 import com.fqf.mario_qua_mario.util.MarioSFX;
-import com.google.common.collect.ImmutableList;
-import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class Fire implements FormDefinition {
+public class Fire extends AbstractProjectileThrowingForm<MarioFireballProjectileEntity> {
 	public static final Identifier ID = MarioQuaMario.makeID("fire");
 
-	@Override public @Nullable Identifier defineReversionTarget() {
-		return Super.ID;
-	}
-	@Override public int defineValue() {
-		return 2;
-	}
-
-	@Override public @Nullable SoundEvent defineReversionSound() {
-		return MarioSFX.REVERT;
-	}
-	@Override public @Nullable SoundEvent defineAcquisitionSound() {
-		return MarioSFX.EMPOWER;
-	}
-
-	@Override public @NotNull FormDefinition.FormHeart defineFormHeart(FormHeartHelper helper) {
-		return helper.auto();
-	}
-
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return new FireFlowerData();
-	}
-
-	private static boolean canFireballEntity(EntityHitResult entityHitResult) {
-		return entityHitResult == null || !(
-				entityHitResult.getEntity().isFireImmune()
-				|| entityHitResult.getEntity().getType().isIn(MQMTags.FIRE_MARIO_PUNCH_TARGETS)
+	@Override
+	protected boolean canDirectHitEntity(@Nullable EntityHitResult result) {
+		return result == null || !(
+				result.getEntity().isFireImmune()
+				|| result.getEntity().getType().isIn(MQMTags.FIRE_MARIO_PUNCH_TARGETS)
 		);
-	}
-
-	private abstract static class FireballDefinition implements AttackInterceptionDefinition {
-		private final Hand HAND;
-		private FireballDefinition(Hand hand) {
-			this.HAND = hand;
-		}
-
-		@Override public Hand defineHandToSwing() {
-			return this.HAND;
-		}
-		@Override public boolean triggersAttackCooldown() {
-			return this.HAND == Hand.MAIN_HAND;
-		}
-
-		@Override public boolean shouldInterceptAttack(
-				CfaReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
-				@Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult
-		) {
-			return canFireballEntity(entityHitResult)
-					&& this.canThrowFireball(data, weapon, attackCooldownProgress, entityHitResult, blockHitResult);
-		}
-
-		protected abstract boolean canThrowFireball(
-				CfaReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
-				@Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult
-		);
-
-		@Override public void executeClients(
-				CfaClientData data, ItemStack weapon, float attackCooldownProgress,
-				@Nullable BlockPos blockTarget, @Nullable Entity entityTarget,
-				long seed
-		) {
-			data.playSound(MarioSFX.FIREBALL, seed);
-			data.voice(Voicelines.FIREBALL, seed);
-			if(data.getPlayer().isMainPlayer()) {
-				long time = data.getPlayer().getWorld().getTime();
-				if(this.HAND == Hand.MAIN_HAND) {
-					data.retrieveStateData(FireFlowerData.class).noMainFireballsUntil = time + 12;
-					data.retrieveStateData(FireFlowerData.class).noSecondaryFireballsUntil = time + 3;
-				}
-				else {
-					data.retrieveStateData(FireFlowerData.class).noMainFireballsUntil = time + 12;
-					data.retrieveStateData(FireFlowerData.class).noSecondaryFireballsUntil = time + 12;
-				}
-			}
-		}
-
-		@Override public void executeServer(
-				CfaAuthoritativeData data, ItemStack weapon, float attackCooldownProgress,
-				ServerWorld world, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget
-		) {
-			ServerPlayerEntity mario = data.getPlayer();
-			if(entityTarget != null) {
-				// Directly apply damage as if from a fireball, so that the Fire Flower can't outright prevent an
-				// attack from hitting due to projectile awkwardness
-				MarioFireballProjectileEntity.hitEntity(entityTarget, mario, mario, entityTarget);
-			}
-			else if(blockTarget != null && world.getBlockState(blockTarget).isIn(MQMTags.DESTROYED_BY_FIREBALL)) {
-				world.removeBlock(blockTarget, false);
-				world.playSound(null, blockTarget, MarioSFX.BURN_OBJECT, SoundCategory.BLOCKS, 1, 1);
-			}
-			else {
-				MarioFireballProjectileEntity fireball = new MarioFireballProjectileEntity(world, mario);
-				world.spawnEntity(fireball);
-			}
-		}
 	}
 
 	@Override
-	public void accumulateAttackInterceptions(ImmutableList.Builder<AttackInterceptionDefinition> builder, AnimationHelper helper) {
-		builder.add(
-				new FireballDefinition(Hand.MAIN_HAND) {
-					@Override
-					public boolean canThrowFireball(CfaReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
-						return weapon.isEmpty() && data.getPlayer().getWorld().getTime() > data.retrieveStateData(FireFlowerData.class).noMainFireballsUntil
-								&& attackCooldownProgress >= 1;
-					}
-
-					@Override
-					public @NotNull MiningHandling shouldSuppressMining(CfaReadableMotionData data, ItemStack weapon, @NotNull BlockHitResult blockHitResult, int miningTicks) {
-						return miningTicks <= 3 ? MiningHandling.INTERCEPT : MiningHandling.MINE;
-					}
-				},
-				new FireballDefinition(Hand.OFF_HAND) {
-					@Override
-					public boolean canThrowFireball(CfaReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
-						long time = data.getPlayer().getWorld().getTime();
-						return time > data.retrieveStateData(FireFlowerData.class).noSecondaryFireballsUntil
-								// Only after throwing a first fireball, or any time if holding an item
-								&& (time < data.retrieveStateData(FireFlowerData.class).noMainFireballsUntil || !weapon.isEmpty())
-								&& data.getPlayer().getOffHandStack().isEmpty()
-								&& attackCooldownProgress < 1;
-					}
-
-					@Override
-					public @NotNull MiningHandling shouldSuppressMining(CfaReadableMotionData data, ItemStack weapon, @NotNull BlockHitResult blockHitResult, int miningTicks) {
-						return miningTicks <= 3 ? MiningHandling.INTERCEPT : MiningHandling.MINE;
-					}
-				},
-				new PreventAttack() {
-					@Override
-					public boolean shouldInterceptAttack(CfaReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
-						long time = data.getPlayer().getWorld().getTime();
-						return attackCooldownProgress < 1 && weapon.isEmpty() && canFireballEntity(entityHitResult)
-								&& (time < data.retrieveStateData(FireFlowerData.class).noSecondaryFireballsUntil || time > data.retrieveStateData(FireFlowerData.class).noMainFireballsUntil);
-					}
-				}
-		);
+	protected SoundEvent getThrowSound() {
+		return MarioSFX.FIREBALL;
 	}
 
-	private static class FireFlowerData {
-		private long noMainFireballsUntil;
-		private long noSecondaryFireballsUntil;
+	@Override
+	protected int getTotalCooldown() {
+		return 12;
+	}
+
+	@Override
+	protected @NotNull MarioFireballProjectileEntity instantiateProjectile(ServerWorld world, ServerPlayerEntity player) {
+		return new MarioFireballProjectileEntity(world, player);
 	}
 }
