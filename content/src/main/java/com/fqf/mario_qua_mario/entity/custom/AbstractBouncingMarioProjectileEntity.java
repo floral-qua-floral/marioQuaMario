@@ -1,6 +1,5 @@
 package com.fqf.mario_qua_mario.entity.custom;
 
-import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.entity.MQMEntities;
 import com.fqf.mario_qua_mario.util.MQMTags;
 import net.minecraft.entity.EntityType;
@@ -56,7 +55,6 @@ public abstract class AbstractBouncingMarioProjectileEntity extends AbstractMari
 		) {
 			this.discard();
 		}
-		if(!this.getWorld().isClient) MarioQuaMario.LOGGER.info("Tick {}\t\tMotion: {}", this.getWorld().getTime(), this.getVelocity());
 		this.hitOrDeflect(ProjectileUtil.getCollision(this, this::canHit));
 
 		this.updateRotation();
