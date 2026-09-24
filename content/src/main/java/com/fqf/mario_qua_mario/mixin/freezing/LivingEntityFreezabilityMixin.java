@@ -39,14 +39,14 @@ public abstract class LivingEntityFreezabilityMixin extends EntityFreezabilityMi
 
 	@Shadow public abstract EntityDimensions getDimensions(EntityPose pose);
 
-	@Shadow public abstract void remove(Entity.RemovalReason reason);
-
 	@Shadow public abstract void onDeath(DamageSource damageSource);
 
 	@Shadow public int hurtTime;
 	@Shadow public int deathTime;
 
 	@Shadow public abstract void setHealth(float health);
+
+	@Shadow protected abstract void updatePostDeath();
 
 	@Unique private float encasedTime;
 	@Unique private boolean hasRumbled;
@@ -148,9 +148,9 @@ public abstract class LivingEntityFreezabilityMixin extends EntityFreezabilityMi
 	public boolean mqm$thaw() {
 		if(super.mqm$thaw()) {
 			if(this.isFatallyFrozen()) {
-				this.getWorld().sendEntityStatus((Entity) (Object) this, EntityStatuses.ADD_DEATH_PARTICLES);
-				this.setHealth(0); // <- This is here because it makes Slimes split. Why's it programmed like this...
-				this.remove(Entity.RemovalReason.KILLED);
+				this.setHealth(0);
+				this.deathTime = 8000;
+				this.updatePostDeath();
 			}
 			return true;
 		}
