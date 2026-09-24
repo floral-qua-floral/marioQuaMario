@@ -87,6 +87,11 @@ public abstract class LivingEntityFreezabilityMixin extends EntityFreezabilityMi
 		if(floatingUp && this.verticalCollision)
 			this.mqm$thaw();
 
+		if(this.getWorld().isClient && this.isDead()) {
+			this.deathTime = 0;
+			this.setHealth(0.01F);
+		}
+
 		return false;
 	}
 
@@ -136,7 +141,7 @@ public abstract class LivingEntityFreezabilityMixin extends EntityFreezabilityMi
 		if(this.mqm$isEncased() || this.canPermaFreezeEarly) {
 			if(!this.isFatallyFrozen()) {
 				this.playSound(this.getDeathSound());
-				this.onDeath(source);
+				this.onDeath(source == null ? this.getDamageSources().genericKill() : source);
 			}
 			this.encasedTime = Float.POSITIVE_INFINITY;
 			return true;

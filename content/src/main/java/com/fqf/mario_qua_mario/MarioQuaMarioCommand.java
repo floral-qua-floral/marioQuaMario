@@ -45,27 +45,28 @@ public class MarioQuaMarioCommand {
 		});
 	}
 
+	@FunctionalInterface
+	private interface FreezerFunction {
+		boolean tryFreeze(IceFlowerFreezable freezable);
+	}
+
 	private static int executeFreezeCommand(CommandContext<ServerCommandSource> context, boolean isFatal) throws CommandSyntaxException {
 		Collection<? extends Entity> targets = EntityArgumentType.getEntities(context, "target");
 
 		int successCount = 0;
-		Object2BooleanFunction<Entity> freezer = isFatal
-				? entity -> {
-					DamageSource source = ((Entity) entity).getDamageSources().genericKill();
-					IceFlowerFreezable freezable = (IceFlowerFreezable) entity;
-					return freezable.mqm$encase() && freezable.mqm$attemptFatalFreeze(source);
-				}
-				: entity -> ((IceFlowerFreezable) entity).mqm$encase();
+		FreezerFunction freezer = isFatal
+				? freezable -> freezable.mqm$encase() && freezable.mqm$attemptFatalFreeze(null)
+				: IceFlowerFreezable::mqm$encase;
 
 		for(Entity target : targets)
-			if(freezer.apply(target))
+			if(freezer.tryFreeze((IceFlowerFreezable) target))
 				successCount++;
 
 		if(successCount == 0) {
-			SimpleCommandExceptionType exceptionType = isFatal
+			throw (isFatal
 					? PERMA_FREEZE_FAILED_EXCEPTION
-					: FREEZE_FAILED_EXCEPTION;
-			throw exceptionType.create();
+					: FREEZE_FAILED_EXCEPTION
+			).create();
 		}
 
 		if(successCount == 1) {

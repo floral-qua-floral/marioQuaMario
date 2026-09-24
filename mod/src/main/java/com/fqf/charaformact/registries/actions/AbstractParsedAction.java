@@ -22,6 +22,8 @@ public abstract class AbstractParsedAction extends ParsedCfaState implements Par
 	protected final IncompleteActionDefinition ACTION_DEFINITION;
 	public final ActionCategory CATEGORY;
 
+//	public final float HORIZONTAL_SCALE;
+
 	public final @Nullable ParsedAnimation ANIMATION;
 	public final @Nullable CameraAnimationSet CAMERA_ANIMATIONS;
 	public final SlidingStatus SLIDING_STATUS;

@@ -11,6 +11,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageSources;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -105,6 +106,8 @@ public abstract class EntityFreezabilityMixin implements IceFlowerFreezable {
 	@Shadow public boolean noClip;
 
 	@Shadow public abstract EntityPose getPose();
+
+	@Shadow public abstract DamageSources getDamageSources();
 
 	@WrapOperation(
 			method = "<init>",
