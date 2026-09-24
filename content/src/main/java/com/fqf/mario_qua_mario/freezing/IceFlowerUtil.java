@@ -16,10 +16,15 @@ import java.util.function.BiConsumer;
 public class IceFlowerUtil {
 	public static final RegistryKey<DamageType> ICEBALL_DAMAGE_TYPE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, MarioQuaMario.makeResID("iceball"));
 	public static final RegistryKey<DamageType> SHATTER_DAMAGE_TYPE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, MarioQuaMario.makeResID("shatter"));
+	public static final RegistryKey<DamageType> DIRECT_SHATTER_DAMAGE_TYPE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, MarioQuaMario.makeResID("shatter_direct"));
 
 	public static DamageSource makeShatterSource(World world, Entity source, Entity attacker) {
 		return new DamageSource(
-				world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(IceFlowerUtil.SHATTER_DAMAGE_TYPE),
+				world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(
+						attacker == null
+								? SHATTER_DAMAGE_TYPE
+								: DIRECT_SHATTER_DAMAGE_TYPE
+				),
 				source, attacker
 		);
 	}

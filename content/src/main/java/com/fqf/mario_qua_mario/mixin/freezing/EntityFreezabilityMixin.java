@@ -75,6 +75,7 @@ public abstract class EntityFreezabilityMixin implements IceFlowerFreezable {
 
 	@Shadow public abstract void playSound(SoundEvent sound, float volume, float pitch);
 	@Shadow public abstract void extinguishWithSound();
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	@Shadow public abstract boolean isInvulnerableTo(DamageSource damageSource);
 	@Shadow public abstract boolean damage(DamageSource source, float amount);
 	@Shadow public abstract void removeAllPassengers();
@@ -186,10 +187,6 @@ public abstract class EntityFreezabilityMixin implements IceFlowerFreezable {
 	@Unique private static final int AIR_HANG_TICKS = 70;
 	@Unique private static final int AIR_HANG_RUMBLE_TICKS = 60;
 
-	@Unique protected void doEncasedPhysics() {
-
-	}
-
 	@Unique protected void rumble() {
 		this.getWorld().playSound(
 				null,
@@ -259,7 +256,7 @@ public abstract class EntityFreezabilityMixin implements IceFlowerFreezable {
 	public boolean mqm$shatter(DamageSource source, float amount) {
 		if(
 				!this.mqm$isEncased()
-				|| source.isOf(IceFlowerUtil.SHATTER_DAMAGE_TYPE)
+				|| source.isIn(MQMTags.IS_SHATTER)
 		) return false;
 
 		float damage = this.calculateShatterDamage(source, amount);

@@ -57,6 +57,7 @@ public class Jump extends Fall implements AirborneActionDefinition {
 							posture.RIGHT_ARM.yaw * scalingFactor,
 							posture.RIGHT_ARM.roll * scalingFactor
 					);
+					posture.RIGHT_ARM.y += Easing.QUINT_IN.ease(progress, -1.7F, 0);
 
 					posture.LEFT_ARM.pitch = 15 + 1.2F * posture.LEFT_ARM.pitch;
 

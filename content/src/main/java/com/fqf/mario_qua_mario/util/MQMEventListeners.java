@@ -15,7 +15,7 @@ import net.minecraft.util.math.Vec3d;
 public class MQMEventListeners {
 	public static void register() {
 		ServerLivingEntityEvents.ALLOW_DEATH.register((entity, damageSource, damageAmount) -> {
-			if(damageSource.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY) || damageSource.isOf(IceFlowerUtil.SHATTER_DAMAGE_TYPE))
+			if(damageSource.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY) || damageSource.isIn(MQMTags.IS_SHATTER))
 				return true;
 
 			IceFlowerFreezable freezable = (IceFlowerFreezable) entity;

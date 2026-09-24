@@ -9,11 +9,11 @@ import org.spongepowered.asm.mixin.Shadow;
 public abstract class GhastEntityFreezabilityMixin extends MobEntityFreezabilityMixin {
 	@Override
 	protected float getIceHorizontalInflation() {
-		return 1;
+		return 2;
 	}
 
 	@Override
 	protected float getIceVerticalInflation() {
-		return 1;
+		return 0.5F;
 	}
 }

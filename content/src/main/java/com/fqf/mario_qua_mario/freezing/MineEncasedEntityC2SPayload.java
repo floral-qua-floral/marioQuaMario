@@ -29,7 +29,7 @@ public record MineEncasedEntityC2SPayload(int entity, byte interaction) implemen
 	}
 
 	private static <T extends Entity & BreakableEntity> void receive(T target, byte interaction, ServerPlayNetworking.Context context) {
-		if (!target.mqm$canMine()) return;
+		if(target == null || !target.mqm$canMine()) return;
 
 		switch (interaction) {
 			case START_MINING -> target.mqm$addMiner(context.player());

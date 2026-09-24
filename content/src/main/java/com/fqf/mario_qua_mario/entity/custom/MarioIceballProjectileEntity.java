@@ -76,7 +76,8 @@ public class MarioIceballProjectileEntity extends AbstractBouncingMarioProjectil
 		BlockState state = world.getBlockState(target);
 		if(state.isIn(MQMTags.EXTINGUISHED_BY_ICEBALL)) {
 			if(state.contains(Properties.LIT)) {
-				if(!world.isClient && state.get(Properties.LIT)) {
+				if(!state.get(Properties.LIT)) return false; // Never extinguish!
+				if(!world.isClient) {
 					world.setBlockState(target, state.with(Properties.LIT, false), Block.NOTIFY_ALL_AND_REDRAW);
 					world.emitGameEvent(this.getOwner(), GameEvent.BLOCK_CHANGE, target);
 				}

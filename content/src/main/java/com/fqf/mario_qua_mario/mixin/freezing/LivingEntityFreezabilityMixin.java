@@ -8,7 +8,6 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.tag.EntityTypeTags;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
@@ -43,6 +42,11 @@ public abstract class LivingEntityFreezabilityMixin extends EntityFreezabilityMi
 	@Shadow public abstract void remove(Entity.RemovalReason reason);
 
 	@Shadow public abstract void onDeath(DamageSource damageSource);
+
+	@Shadow public int hurtTime;
+	@Shadow public int deathTime;
+
+	@Shadow public abstract void setHealth(float health);
 
 	@Unique private float encasedTime;
 	@Unique private boolean hasRumbled;
@@ -145,6 +149,7 @@ public abstract class LivingEntityFreezabilityMixin extends EntityFreezabilityMi
 		if(super.mqm$thaw()) {
 			if(this.isFatallyFrozen()) {
 				this.getWorld().sendEntityStatus((Entity) (Object) this, EntityStatuses.ADD_DEATH_PARTICLES);
+				this.setHealth(0); // <- This is here because it makes Slimes split. Why's it programmed like this...
 				this.remove(Entity.RemovalReason.KILLED);
 			}
 			return true;
@@ -185,7 +190,11 @@ public abstract class LivingEntityFreezabilityMixin extends EntityFreezabilityMi
 	@Override
 	protected void onEncased() {
 		super.onEncased();
-		if(this.getWorld().isClient) this.encasedTime = this.getFreezeDuration(this.getHealth());
+		if(this.getWorld().isClient) {
+			this.encasedTime = this.getFreezeDuration(this.getHealth());
+			this.hurtTime = 0;
+			this.deathTime = 0;
+		}
 	}
 
 	@Inject(method = "applyDamage", at = @At("HEAD"))

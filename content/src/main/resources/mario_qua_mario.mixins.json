@@ -18,6 +18,7 @@
     "freezing.MobEntityFreezabilityMixin",
     "freezing.PlayerEntityFreezabilityMixin",
     "freezing.SkeletonFreezabilityMixin",
+    "freezing.StriderEntityFreezabilityMixin",
     "freezing.SuppressFrozenEntityTickingMixin",
     "lightning.EntityStruckByLightningMixin",
     "lightning.PlayerInventoryStruckByLightningMixin",

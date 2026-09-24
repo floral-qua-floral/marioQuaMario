@@ -54,10 +54,12 @@
   "death.attack.marioFireball": "%s was fireballed by %s",
   "death.attack.marioFireball.item": "%s was fireballed by %s",
 
-  "death.attack.marioIceball": "%s was snuffed out",
-  "death.attack.marioIceball.player": "%s was snuffed out by %s",
+  "death.attack.marioIceball": "%s was snuffed out by %s",
+
   "death.attack.marioShatter": "%s shattered like glass",
-  "death.attack.marioShatter.player": "%s was shattered by %s",
+  "death.attack.marioShatter.player": "%s was doomed to shatter by %s",
+  "death.attack.marioShatterDirect": "%s was shattered by %s",
+  "death.attack.marioShatterDirect.item": "%s was shattered by %s using %s",
 
   "death.attack.marioCeilingBonk": "%s was bonked from below by %s",
 

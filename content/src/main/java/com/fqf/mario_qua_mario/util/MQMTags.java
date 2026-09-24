@@ -18,6 +18,7 @@ public interface MQMTags {
 	TagKey<DamageType> ENCASED_ENTITIES_IGNORE = getTag(DAMAGE_TYPE, "encased_entities_ignore");
 	TagKey<DamageType> DOES_NOT_SHATTER_ICE = getTag(DAMAGE_TYPE, "does_not_shatter_ice");
 	TagKey<DamageType> MULTIPLIES_SHATTER_DAMAGE = getTag(DAMAGE_TYPE, "multiplies_shatter_damage");
+	TagKey<DamageType> IS_SHATTER = getTag(DAMAGE_TYPE, "is_shatter");
 
 	TagKey<EntityType<?>> RISING_STOMPABLE_NONMONSTERS = getTag(ENTITY_TYPE, "rising_stompable_nonmonsters");
 	TagKey<EntityType<?>> DODGES_MARIO_FIREBALL = getTag(ENTITY_TYPE, "dodges_mario_fireball");

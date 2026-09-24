@@ -90,7 +90,6 @@ public class GroundPound implements CollisionAttackTypeDefinition {
 	public void executeClients(CfaClientData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, boolean affectAttacker, long seed) {
 		Stomp.visuallySquashOnClient(target, result);
 		if(result == CollisionAttackResult.ExecutableResult.RESISTED || result == CollisionAttackResult.ExecutableResult.PAINFUL) return;
-		MarioQuaMario.LOGGER.info("Result: {}", result);
 		data.playSound(MarioSFX.KICK, seed);
 	}
 }
