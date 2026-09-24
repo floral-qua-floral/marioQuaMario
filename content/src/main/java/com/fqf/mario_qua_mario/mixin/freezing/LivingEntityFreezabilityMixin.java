@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario.mixin.freezing;
 
+import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.freezing.IceFlowerUtil;
 import com.fqf.mario_qua_mario.util.MQMTags;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
@@ -47,6 +48,8 @@ public abstract class LivingEntityFreezabilityMixin extends EntityFreezabilityMi
 	@Shadow public abstract void setHealth(float health);
 
 	@Shadow protected abstract void updatePostDeath();
+
+	@Shadow public abstract void remove(Entity.RemovalReason reason);
 
 	@Unique private float encasedTime;
 	@Unique private boolean hasRumbled;
@@ -149,13 +152,21 @@ public abstract class LivingEntityFreezabilityMixin extends EntityFreezabilityMi
 		return false;
 	}
 
+	@Unique private static final int INSTANTANEOUS_UPDATES_UPON_FATAL_THAW = 2000;
+
 	@Override
 	public boolean mqm$thaw() {
 		if(super.mqm$thaw()) {
 			if(this.isFatallyFrozen()) {
 				this.setHealth(0);
-				this.deathTime = 8000;
-				this.updatePostDeath();
+				this.deathTime = 0;
+				for(int sprintedTicks = 0; sprintedTicks < INSTANTANEOUS_UPDATES_UPON_FATAL_THAW; sprintedTicks++) {
+					this.updatePostDeath();
+					if(this.isRemoved()) return true;
+				}
+				MarioQuaMario.LOGGER.warn("Entity {} was not removed even after simulating being dead for {} ticks?!",
+						this, INSTANTANEOUS_UPDATES_UPON_FATAL_THAW);
+				this.remove(Entity.RemovalReason.KILLED);
 			}
 			return true;
 		}

@@ -109,6 +109,8 @@ public abstract class EntityFreezabilityMixin implements IceFlowerFreezable {
 
 	@Shadow public abstract DamageSources getDamageSources();
 
+	@Shadow public abstract boolean isRemoved();
+
 	@WrapOperation(
 			method = "<init>",
 			at = @At(
