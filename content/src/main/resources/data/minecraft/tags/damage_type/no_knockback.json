@@ -1,6 +1,8 @@
 {
   "replace": false,
   "values": [
-    "mario_qua_mario:stomp"
+    "mario_qua_mario:stomp",
+    "mario_qua_mario:iceball",
+    "mario_qua_mario:shatter"
   ]
 }

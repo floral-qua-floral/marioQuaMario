@@ -51,7 +51,7 @@ public abstract class AbstractProjectileThrowingForm<Projectile extends Abstract
 		return new ProjectileCooldowns();
 	}
 
-	protected abstract boolean canDirectHitEntity(@Nullable EntityHitResult result);
+	protected abstract boolean canDirectHitEntity(@NotNull EntityHitResult result);
 	protected abstract SoundEvent getThrowSound();
 	protected int getTicksBetweenDifferentHandThrows() {
 		return 3;
@@ -77,7 +77,7 @@ public abstract class AbstractProjectileThrowingForm<Projectile extends Abstract
 				CfaReadableMotionData data, ItemStack weapon, float attackCooldownProgress,
 				@Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult
 		) {
-			return AbstractProjectileThrowingForm.this.canDirectHitEntity(entityHitResult)
+			return (entityHitResult == null || AbstractProjectileThrowingForm.this.canDirectHitEntity(entityHitResult))
 					&& this.canThrowProjectile(data, weapon, attackCooldownProgress);
 		}
 
@@ -170,7 +170,8 @@ public abstract class AbstractProjectileThrowingForm<Projectile extends Abstract
 					public boolean shouldInterceptAttack(CfaReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
 						long time = data.getPlayer().getWorld().getTime();
 						ProjectileCooldowns cooldowns = data.retrieveStateData(ProjectileCooldowns.class);
-						return attackCooldownProgress < 1 && weapon.isEmpty() && canDirectHitEntity(entityHitResult)
+						return attackCooldownProgress < 1 && weapon.isEmpty()
+								&& (entityHitResult == null || canDirectHitEntity(entityHitResult))
 								&& (time < cooldowns.noOffhandUntil || time > cooldowns.noMainHandUntil);
 					}
 				}

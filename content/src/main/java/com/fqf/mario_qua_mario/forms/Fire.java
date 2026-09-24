@@ -10,17 +10,13 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.EntityHitResult;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class Fire extends AbstractProjectileThrowingForm<MarioFireballProjectileEntity> {
 	public static final Identifier ID = MarioQuaMario.makeID("fire");
 
 	@Override
-	protected boolean canDirectHitEntity(@Nullable EntityHitResult result) {
-		return result == null || !(
-				result.getEntity().isFireImmune()
-				|| result.getEntity().getType().isIn(MQMTags.FIRE_MARIO_PUNCH_TARGETS)
-		);
+	protected boolean canDirectHitEntity(@NotNull EntityHitResult result) {
+		return !result.getEntity().isFireImmune() && !result.getEntity().getType().isIn(MQMTags.FIRE_MARIO_PUNCH_TARGETS);
 	}
 
 	@Override

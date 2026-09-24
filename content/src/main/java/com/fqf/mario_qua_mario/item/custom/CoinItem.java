@@ -1,6 +1,5 @@
 package com.fqf.mario_qua_mario.item.custom;
 
-import com.fqf.mario_qua_mario.item.MQMItems;
 import com.fqf.mario_qua_mario.item.MQMLootTables;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import net.minecraft.entity.player.PlayerEntity;
@@ -13,7 +12,6 @@ import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Pair;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
@@ -23,12 +21,6 @@ public class CoinItem extends Item {
 	public CoinItem(Settings settings) {
 		super(settings);
 	}
-
-	public static final List<Pair<Item, Integer>> COIN_REWARDS = List.of(
-			new Pair<>(MQMItems.SUPER_MUSHROOM, 3),
-			new Pair<>(MQMItems.FIRE_FLOWER, 1),
-			new Pair<>(MQMItems.SUPER_LEAF, 1)
-	);
 
 	@Override
 	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {

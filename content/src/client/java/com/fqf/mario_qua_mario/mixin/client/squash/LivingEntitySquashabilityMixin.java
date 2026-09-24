@@ -1,4 +1,4 @@
-package com.fqf.mario_qua_mario.mixin.client;
+package com.fqf.mario_qua_mario.mixin.client.squash;
 
 import com.fqf.mario_qua_mario.util.Squashable;
 import net.minecraft.entity.Entity;
@@ -13,10 +13,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LivingEntity.class)
-public abstract class LivingEntityMixin extends Entity implements Squashable {
+public abstract class LivingEntitySquashabilityMixin extends Entity implements Squashable {
 	@Shadow public abstract boolean isDead();
 
-	public LivingEntityMixin(EntityType<?> type, World world) {
+	public LivingEntitySquashabilityMixin(EntityType<?> type, World world) {
 		super(type, world);
 	}
 
@@ -26,7 +26,8 @@ public abstract class LivingEntityMixin extends Entity implements Squashable {
 
 	@Inject(method = "tick", at = @At("HEAD"))
 	private void resetSquashed(CallbackInfo ci) {
-		if(!this.isDead() && this.getWorld().getTime() >= squashEndTime) this.squashed = false;
+		if(this.squashed && !this.isDead() && this.getWorld().getTime() >= squashEndTime)
+			this.squashed = false;
 	}
 
 	@Override

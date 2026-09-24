@@ -55,30 +55,6 @@ public class Raccoon implements FormDefinition {
 		return MarioSFX.TAIL_EMPOWER;
 	}
 
-	@Override public float defineWidthFactor() {
-		return 1;
-	}
-	@Override public float defineHeightFactor() {
-		return 1;
-	}
-	@Override public float defineAnimationHorizontalScale() {
-		return 1;
-	}
-	@Override public float defineAnimationVerticalScale() {
-		return 1;
-	}
-
-	@Override public int defineBapStrengthModifier() {
-		return 0;
-	}
-
-	@Override public float defineVoicePitch() {
-		return 1;
-	}
-	@Override public float defineJumpPitch() {
-		return 1F;
-	}
-
 	@Override public void accumulatePowers(ImmutableSet.Builder<String> builder) {
 		builder.add(
 				Powers.SMB3_IDLE,
@@ -296,7 +272,6 @@ public class Raccoon implements FormDefinition {
 				List<Entity> reflectTargets = mario.getWorld().getEntitiesByClass(Entity.class, airblastHitbox,
 						entity -> !entity.isSpectator() && !entity.equals(mario));
 				for(Entity reflectTarget : reflectTargets) {
-					MarioQuaMario.LOGGER.info("Trying to reflect {}", reflectTarget);
 					tryReflect(reflectTarget, mario, true);
 				}
 			}

@@ -45,12 +45,18 @@
 
   "death.attack.marioStomp": "%s was stomped by %s",
   "death.attack.marioStomp.item": "%s was stomped by %s using %s",
-  "death.attack.marioFireball": "%s was cannonballed by %s",
-  "death.attack.marioFireball.item": "%s was cannonballed by %s",
   "death.attack.marioHipDrop": "%s was flattened against the poop deck by %s",
   "death.attack.marioHipDrop.item": "%s was flattened against the poop deck by %s using %s",
   "death.attack.marioKick": "%s was given the Captain's boot by %s",
   "death.attack.marioKick.item": "%s was given the Captain's boot by %s using %s",
+
+  "death.attack.marioFireball": "%s was cannonballed by %s",
+  "death.attack.marioFireball.item": "%s was cannonballed by %s",
+
+  "death.attack.marioIceball": "%s was reduced to frozen flotsam",
+  "death.attack.marioIceball.player": "%s was reduced to frozen flotsam by %s",
+  "death.attack.marioShatter": "%s was dashed to smithereens",
+  "death.attack.marioShatter.player": "%s was dashed to smithereens by %s",
 
   "death.attack.marioCeilingBonk": "%s was scuttled by %s from underfoot",
 
@@ -83,17 +89,28 @@
 
   "subtitles.mario_qua_mario.form.burn_object": "Cannonball wrecks",
   "subtitles.mario_qua_mario.form.coin": "Doubloon plundered",
+  "subtitles.mario_qua_mario.form.coin_use": "Booty squandered",
+
   "subtitles.mario_qua_mario.form.fireball": "Cannonball heaved",
   "subtitles.mario_qua_mario.form.fireball_enemy": "Cannonball strikes",
   "subtitles.mario_qua_mario.form.fireball_wall": "Cannonball slams",
+
+  "subtitles.mario_qua_mario.form.iceball": "Iceball thrown",
+  "subtitles.mario_qua_mario.form.iceball_enemy": "Iceball freezes",
+  "subtitles.mario_qua_mario.form.iceball_extinguish": "Iceball quenches",
+  "subtitles.mario_qua_mario.form.iceball_wall": "Iceball impact",
+  "subtitles.mario_qua_mario.form.ice_escape": "Frozen creature thaws",
+  "subtitles.mario_qua_mario.form.ice_rumble": "Frozen creature shakes",
+
+  "subtitles.mario_qua_mario.form.tail_whip": "Tail swashbuckles",
+  "subtitles.mario_qua_mario.form.tail_fly": "Tail swings port and starboard",
+
   "subtitles.mario_qua_mario.form.empower": "Gatherin' might",
   "subtitles.mario_qua_mario.form.tail_empower": "Gatherin' beastly might",
   "subtitles.mario_qua_mario.form.mini_empower": "Gatherin' might...?",
+
   "subtitles.mario_qua_mario.form.revert": "Weapons sunk",
-  "subtitles.mario_qua_mario.form.tail_whip": "Tail swashbuckles",
-  "subtitles.mario_qua_mario.form.tail_fly": "Tail swings port and starboard",
   "subtitles.mario_qua_mario.form.mini_revert": "Cursed by the Storm's Wrath",
-  "subtitles.mario_qua_mario.form.coin_use": "Riches squandered",
 
   "subtitles.mario_qua_mario.collision_attack.kick": "Something gets run through",
   "subtitles.mario_qua_mario.collision_attack.stomp": "Something gets squashed",

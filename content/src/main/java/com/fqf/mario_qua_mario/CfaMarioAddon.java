@@ -42,6 +42,7 @@ public class CfaMarioAddon implements CharaFormActAddon {
 		builder.put(Small.ID, new Small());
 		builder.put(Super.ID, new Super());
 		builder.put(Fire.ID, new Fire());
+		builder.put(Ice.ID, new Ice());
 		builder.put(Raccoon.ID, new Raccoon());
 		builder.put(Mini.ID, new Mini());
 	}
@@ -174,24 +175,28 @@ public class CfaMarioAddon implements CharaFormActAddon {
 		builder.putMatching(Mario.ID, Small.ID, new SmallMarioCommonAppearance());
 		builder.putMatching(Mario.ID, Super.ID, new SuperMarioCommonAppearance());
 		builder.putMatching(Mario.ID, Fire.ID, new SuperMarioCommonAppearance());
+		builder.putMatching(Mario.ID, Ice.ID, new SuperMarioCommonAppearance());
 		builder.putMatching(Mario.ID, Raccoon.ID, new SuperMarioCommonAppearance());
 		builder.putMatching(Mario.ID, Mini.ID, new MiniMarioCommonAppearance());
 
 		builder.putMatching(Luigi.ID, Small.ID, new SmallLuigiCommonAppearance());
 		builder.putMatching(Luigi.ID, Super.ID, new SuperLuigiCommonAppearance());
 		builder.putMatching(Luigi.ID, Fire.ID, new SuperLuigiCommonAppearance());
+		builder.putMatching(Luigi.ID, Ice.ID, new SuperLuigiCommonAppearance());
 		builder.putMatching(Luigi.ID, Raccoon.ID, new SuperLuigiCommonAppearance());
 		builder.putMatching(Luigi.ID, Mini.ID, new MiniMarioCommonAppearance());
 
 		builder.putMatching(Toadette.ID, Small.ID, new SmallToadCommonAppearance());
 		builder.putMatching(Toadette.ID, Super.ID, new SuperToadCommonAppearance());
 		builder.putMatching(Toadette.ID, Fire.ID, new SuperToadCommonAppearance());
+		builder.putMatching(Toadette.ID, Ice.ID, new SuperToadCommonAppearance());
 		builder.putMatching(Toadette.ID, Raccoon.ID, new SuperToadCommonAppearance());
 		builder.putMatching(Toadette.ID, Mini.ID, new MiniToadCommonAppearance());
 
 		builder.putMatching(CustomToad.ID, Small.ID, new SmallToadCommonAppearance());
 		builder.putMatching(CustomToad.ID, Super.ID, new SuperToadCommonAppearance());
 		builder.putMatching(CustomToad.ID, Fire.ID, new SuperToadCommonAppearance());
+		builder.putMatching(CustomToad.ID, Ice.ID, new SuperToadCommonAppearance());
 		builder.putMatching(CustomToad.ID, Raccoon.ID, new SuperToadCommonAppearance());
 		builder.putMatching(CustomToad.ID, Mini.ID, new MiniToadCommonAppearance());
 	}

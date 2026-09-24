@@ -1,4 +1,4 @@
-package com.fqf.mario_qua_mario.mixin.client;
+package com.fqf.mario_qua_mario.mixin.client.targetting;
 
 import com.fqf.mario_qua_mario.forms.Raccoon;
 import com.fqf.mario_qua_mario.util.Powers;
@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(GameRenderer.class)
-public class GameRendererMixin {
+public class CrosshairCanTargetProjectilesMixin {
 	@Unique private static boolean canTargetProjectiles(PlayerEntity player) {
 		return player != null && player.getWeaponStack().isEmpty() && player.cfa$getCfaData().hasPower(Powers.CAN_HIT_PROJECTILES);
 	}

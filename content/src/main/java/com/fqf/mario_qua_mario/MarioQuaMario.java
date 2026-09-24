@@ -1,7 +1,7 @@
 package com.fqf.mario_qua_mario;
 
-import com.fqf.mario_qua_mario.customization.CharacterCustomizationCommand;
 import com.fqf.mario_qua_mario.entity.MQMEntities;
+import com.fqf.mario_qua_mario.freezing.MineEncasedEntityC2SPayload;
 import com.fqf.mario_qua_mario.item.MQMItems;
 import com.fqf.mario_qua_mario.item.MQMLootTables;
 import com.fqf.mario_qua_mario.util.MQMEventListeners;
@@ -35,7 +35,9 @@ public class MarioQuaMario implements ModInitializer {
 		MQMEventListeners.register();
 		MQMLootTables.staticInitialize();
 
-		CharacterCustomizationCommand.registerCommand();
+		MarioQuaMarioCommand.registerCommand();
+
+		MineEncasedEntityC2SPayload.register();
 	}
 
 	public static Identifier makeID(String path) {

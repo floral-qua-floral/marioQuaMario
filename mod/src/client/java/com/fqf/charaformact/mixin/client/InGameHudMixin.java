@@ -19,7 +19,10 @@ import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Colors;
 import net.minecraft.util.Identifier;
@@ -39,7 +42,49 @@ import static com.fqf.charaformact.util.DebugHudUtil.*;
 
 @Mixin(InGameHud.class)
 public class InGameHudMixin {
-	@WrapMethod(method = "renderHealthBar")
+	@WrapOperation(
+			method = "renderStatusBars",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/entity/player/PlayerEntity;getHealth()F"
+			)
+	)
+	private float getSingleFormHealth(PlayerEntity instance, Operation<Float> original) {
+		float originalValue = original.call(instance);
+		return CharaFormAct.CONFIG.shouldRenderSingleFormHealthBar()
+				? instance.cfa$getCfaData().translateHealthToWithinFormHealth(originalValue)
+				: originalValue;
+	}
+
+	@WrapOperation(
+			method = "renderStatusBars",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/entity/player/PlayerEntity;getAttributeValue(Lnet/minecraft/registry/entry/RegistryEntry;)D"
+			)
+	)
+	private double getSingleFormMaxHealth(
+			PlayerEntity instance, RegistryEntry<EntityAttribute> registryEntry, Operation<Double> original
+	) {
+		int divisor = CharaFormAct.CONFIG.shouldRenderSingleFormHealthBar()
+				? instance.cfa$getCfaData().getHealthBarCount()
+				: 1;
+
+		return original.call(instance, registryEntry) / divisor;
+	}
+
+	@WrapOperation(method = "getHeartCount", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;getMaxHealth()F"))
+	private float showFewerHeartRows(LivingEntity entity, Operation<Float> original) {
+		int divisor;
+		if(CharaFormAct.CONFIG.shouldRenderSingleFormHealthBar() && entity instanceof PlayerEntity player)
+			divisor = player.cfa$getCfaData().getHealthBarCount();
+		else
+			divisor = 1;
+
+		return original.call(entity) / divisor;
+	}
+
+//	@WrapMethod(method = "renderHealthBar")
 	private void renderSingleHealthBar(
 			DrawContext context, PlayerEntity player,
 			int x, int y, int lines,

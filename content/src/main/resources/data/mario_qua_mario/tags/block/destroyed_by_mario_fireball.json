@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
+    "minecraft:powder_snow",
     "minecraft:cobweb",
     {
       "id": "#chipped:cobweb",

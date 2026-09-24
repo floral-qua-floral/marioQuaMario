@@ -1,4 +1,4 @@
-package com.fqf.mario_qua_mario.mixin.client;
+package com.fqf.mario_qua_mario.mixin.client.coin;
 
 import com.fqf.mario_qua_mario.MarioQuaMarioClient;
 import com.fqf.mario_qua_mario.item.MQMItems;

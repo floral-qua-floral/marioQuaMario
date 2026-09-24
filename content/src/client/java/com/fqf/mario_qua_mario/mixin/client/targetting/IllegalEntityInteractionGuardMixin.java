@@ -1,4 +1,4 @@
-package com.fqf.mario_qua_mario.mixin.client;
+package com.fqf.mario_qua_mario.mixin.client.targetting;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import net.fabricmc.loader.api.FabricLoader;
@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPlayerInteractionManager.class)
-public class ClientPlayerInteractionManagerMixin {
+public class IllegalEntityInteractionGuardMixin {
 	@Inject(method = "attackEntity", at = @At("HEAD"), cancellable = true)
 	private void doNotNetworkAttacksOnInvalidTargets(PlayerEntity player, Entity target, CallbackInfo ci) {
 		if(!target.canHit()) {

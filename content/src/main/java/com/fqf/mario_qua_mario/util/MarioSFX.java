@@ -34,6 +34,12 @@ public class MarioSFX {
 	public static final SoundEvent FIREBALL = makeFormSound("fireball");
 	public static final SoundEvent FIREBALL_ENEMY = makeFormSound("fireball_enemy");
 	public static final SoundEvent FIREBALL_WALL = makeFormSound("fireball_wall");
+	public static final SoundEvent ICEBALL = makeFormSound("iceball");
+	public static final SoundEvent ICEBALL_ENEMY = makeFormSound("iceball_enemy");
+	public static final SoundEvent ICEBALL_EXTINGUISH = makeFormSound("iceball_extinguish");
+	public static final SoundEvent ICEBALL_WALL = makeFormSound("iceball_wall");
+	public static final SoundEvent ICE_ESCAPE = makeFormSound("ice_escape");
+	public static final SoundEvent ICE_RUMBLE = makeFormSound("ice_rumble");
 	public static final SoundEvent MINI_EMPOWER = makeFormSound("mini_empower");
 	public static final SoundEvent MINI_REVERT = makeFormSound("mini_revert");
 	public static final SoundEvent REVERT = makeFormSound("revert");

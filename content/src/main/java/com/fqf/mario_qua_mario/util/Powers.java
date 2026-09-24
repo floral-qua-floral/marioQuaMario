@@ -35,4 +35,7 @@ public class Powers {
 	public static final String SPRINT_ON_WATER = "Can sprint on water";
 	public static final double SPRINT_ON_WATER_THRESHOLD = 0.14;
 	public static final String TALLER_SOLID_WATER_HITBOX = "Use taller hitbox for solid fluids";
+
+	// Powers associated with Mini and Penguin forms
+	public static final String SNOW_SHOES = "Never sink into snow";
 }

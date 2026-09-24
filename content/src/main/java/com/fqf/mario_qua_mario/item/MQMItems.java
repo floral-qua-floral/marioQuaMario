@@ -1,12 +1,9 @@
 package com.fqf.mario_qua_mario.item;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario.forms.Mini;
+import com.fqf.mario_qua_mario.forms.*;
 import com.fqf.mario_qua_mario.item.custom.CoinItem;
 import com.fqf.mario_qua_mario.item.custom.PowerUpItem;
-import com.fqf.mario_qua_mario.forms.Fire;
-import com.fqf.mario_qua_mario.forms.Raccoon;
-import com.fqf.mario_qua_mario.forms.Super;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.FoodComponent;
@@ -26,6 +23,7 @@ import java.util.List;
 
 public class MQMItems {
 	public static final Item FIRE_FLOWER = registerPowerItem("fire_flower", Fire.ID, 5, 0.3F);
+	public static final Item ICE_FLOWER = registerPowerItem("ice_flower", Ice.ID, 5, 0.3F);
 	public static final Item SUPER_LEAF = registerPowerItem("super_leaf", Raccoon.ID, 4, 0.4F);
 	public static final Item SUPER_MUSHROOM = registerItem("super_mushroom", new PowerUpItem(new Item.Settings().maxCount(4).food(
 			new FoodComponent.Builder().nutrition(6).saturationModifier(0.7F).alwaysEdible().snack().build()
@@ -58,6 +56,7 @@ public class MQMItems {
 		ItemGroupEvents.modifyEntriesEvent(ItemGroups.FOOD_AND_DRINK).register(fabricItemGroupEntries -> {
 			fabricItemGroupEntries.add(SUPER_MUSHROOM);
 			fabricItemGroupEntries.add(FIRE_FLOWER);
+			fabricItemGroupEntries.add(ICE_FLOWER);
 			fabricItemGroupEntries.add(SUPER_LEAF);
 			fabricItemGroupEntries.add(MINI_MUSHROOM);
 		});

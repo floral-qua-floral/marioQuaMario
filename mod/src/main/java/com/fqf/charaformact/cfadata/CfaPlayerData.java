@@ -101,7 +101,9 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 	}
 
 	public float translateHealthToWithinFormHealth(float input) {
-		return input - (this.getSingleHealthBarSize() * (this.getHealthBarCount() - 1));
+		return this.isEnabled()
+				? input - (this.getSingleHealthBarSize() * (this.getHealthBarCount() - 1))
+				: input;
 	}
 
 	@Override

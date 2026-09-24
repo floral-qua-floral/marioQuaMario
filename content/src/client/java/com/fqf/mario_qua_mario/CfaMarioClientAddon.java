@@ -25,24 +25,28 @@ public class CfaMarioClientAddon implements CharaFormActClientAddon {
 		builder.putMatching(Mario.ID, Small.ID, new SmallMarioClientAppearance());
 		builder.putMatching(Mario.ID, Super.ID, new SuperMarioClientAppearance());
 		builder.putMatching(Mario.ID, Fire.ID, new SuperMarioClientAppearance());
+		builder.putMatching(Mario.ID, Ice.ID, new SuperMarioClientAppearance());
 		builder.putMatching(Mario.ID, Raccoon.ID, new RaccoonMarioClientAppearance());
 		builder.putMatching(Mario.ID, Mini.ID, new MiniMarioClientAppearance());
 
 		builder.putMatching(Luigi.ID, Small.ID, new SmallLuigiClientAppearance());
 		builder.putMatching(Luigi.ID, Super.ID, new SuperLuigiClientAppearance());
 		builder.putMatching(Luigi.ID, Fire.ID, new SuperLuigiClientAppearance());
+		builder.putMatching(Luigi.ID, Ice.ID, new SuperLuigiClientAppearance());
 		builder.putMatching(Luigi.ID, Raccoon.ID, new FoxLuigiClientAppearance());
 		builder.putMatching(Luigi.ID, Mini.ID, new MiniMarioClientAppearance());
 
 		builder.putMatching(Toadette.ID, Small.ID, new SmallToadClientAppearance());
 		builder.putMatching(Toadette.ID, Super.ID, new SuperToadClientAppearance());
 		builder.putMatching(Toadette.ID, Fire.ID, new SuperToadClientAppearance());
+		builder.putMatching(Toadette.ID, Ice.ID, new SuperToadClientAppearance());
 		builder.putMatching(Toadette.ID, Raccoon.ID, new RaccoonToadClientAppearance());
 		builder.putMatching(Toadette.ID, Mini.ID, new MiniToadClientAppearance());
 
 		builder.putMatching(CustomToad.ID, Small.ID, new SmallCustomToadClientAppearance());
 		builder.putMatching(CustomToad.ID, Super.ID, new SuperCustomToadClientAppearance(CustomizableTextureLayerFeature.SpotsMode.DEFAULT));
 		builder.putMatching(CustomToad.ID, Fire.ID, new SuperCustomToadClientAppearance(CustomizableTextureLayerFeature.SpotsMode.HARDCODED));
+		builder.putMatching(CustomToad.ID, Ice.ID, new SuperCustomToadClientAppearance(CustomizableTextureLayerFeature.SpotsMode.HARDCODED));
 		builder.putMatching(CustomToad.ID, Raccoon.ID, new RaccoonCustomToadClientAppearance());
 		builder.putMatching(CustomToad.ID, Mini.ID, new MiniCustomToadClientAppearance());
 	}

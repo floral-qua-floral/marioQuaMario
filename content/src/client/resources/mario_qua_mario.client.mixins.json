@@ -3,14 +3,18 @@
   "package": "com.fqf.mario_qua_mario.mixin.client",
   "compatibilityLevel": "JAVA_21",
   "client": [
-    "ChangeDroppedCoinModelMixin",
-    "ClientPlayerInteractionManagerMixin",
-    "ClientPlayNetworkHandlerMixin",
-    "GameRendererMixin",
-    "LivingEntityMixin",
-    "LivingEntityRendererMixin",
     "PlayerCeilingClippingMixin",
-    "TintFirstPersonHandMixin"
+    "TintFirstPersonHandMixin",
+    "coin.ChangeDroppedCoinModelMixin",
+    "coin.CoinPickupSoundMixin",
+    "freezing.ClientBreakEncasedEntityMixin",
+    "freezing.ClientSuppressFrozenEntityTickingMixin",
+    "freezing.EncasedEntitiesRenderIceMixin",
+    "squash.LivingEntityRenderSquashedMixin",
+    "squash.LivingEntitySquashabilityMixin",
+    "squash.TriggerSquashOnNetworkedSquashingDamageMixin",
+    "targetting.CrosshairCanTargetProjectilesMixin",
+    "targetting.IllegalEntityInteractionGuardMixin"
   ],
   "injectors": {
     "defaultRequire": 1

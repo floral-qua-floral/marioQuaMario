@@ -1,17 +1,11 @@
-package com.fqf.mario_qua_mario.mixin.client;
+package com.fqf.mario_qua_mario.mixin.client.coin;
 
 import com.fqf.mario_qua_mario.item.MQMItems;
-import com.fqf.mario_qua_mario.util.MQMTags;
 import com.fqf.mario_qua_mario.util.MarioSFX;
-import com.fqf.mario_qua_mario.util.Squashable;
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.network.packet.s2c.play.ItemPickupAnimationS2CPacket;
 import net.minecraft.sound.SoundCategory;
 import org.spongepowered.asm.mixin.Mixin;
@@ -21,15 +15,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPlayNetworkHandler.class)
-public class ClientPlayNetworkHandlerMixin {
+public class CoinPickupSoundMixin {
 	@Shadow private ClientWorld world;
-
-	@WrapOperation(method = "onEntityDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;onDamaged(Lnet/minecraft/entity/damage/DamageSource;)V"))
-	private void squashFromSquashingDamage(Entity instance, DamageSource damageSource, Operation<Void> original) {
-		if(instance instanceof LivingEntity livingInstance && damageSource.isIn(MQMTags.FLATTENS_ENTITIES))
-			((Squashable) livingInstance).cfa$squash();
-		original.call(instance, damageSource);
-	}
 
 	@Inject(method = "onItemPickupAnimation", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/world/ClientWorld;playSound(DDDLnet/minecraft/sound/SoundEvent;Lnet/minecraft/sound/SoundCategory;FFZ)V"))
 	private void alternatePickupSoundForCoin(ItemPickupAnimationS2CPacket packet, CallbackInfo ci) {

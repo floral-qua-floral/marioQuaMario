@@ -1,6 +1,5 @@
 package com.fqf.mario_qua_mario.entity.custom;
 
-import com.fqf.mario_qua_mario.entity.MQMEntities;
 import com.fqf.mario_qua_mario.util.MQMTags;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MovementType;
@@ -23,8 +22,8 @@ public abstract class AbstractBouncingMarioProjectileEntity extends AbstractMari
 		this.bounces = this.getTotalBounces();
 	}
 
-	public AbstractBouncingMarioProjectileEntity(World world, ServerPlayerEntity mario) {
-		this(MQMEntities.MARIO_FIREBALL, world);
+	public AbstractBouncingMarioProjectileEntity(EntityType<? extends ProjectileEntity> type, World world, ServerPlayerEntity mario) {
+		this(type, world);
 		this.setOwner(mario);
 		this.setPosition(
 				mario.getX() - (mario.getWidth() + 1) * 0.5 * Math.sin(mario.getYaw() * (Math.PI / 180.0)),
@@ -41,6 +40,7 @@ public abstract class AbstractBouncingMarioProjectileEntity extends AbstractMari
 
 	protected abstract int getTotalBounces();
 	protected abstract float getHorizontalSpeed();
+	protected abstract double getBounceVel();
 
 	protected abstract SoundEvent getWallSound();
 
@@ -83,7 +83,7 @@ public abstract class AbstractBouncingMarioProjectileEntity extends AbstractMari
 	private void bounce() {
 		this.bounces--;
 		Vec3d velocity = this.getVelocity();
-		this.setVelocity(velocity.withAxis(Direction.Axis.Y, -0.475 * Math.signum(velocity.y)));
+		this.setVelocity(velocity.withAxis(Direction.Axis.Y, this.getBounceVel() * -Math.signum(velocity.y)));
 		if(!this.getWorld().isClient) this.playSound(this.getWallSound(), 0.233F, 0.75F);
 	}
 
@@ -99,7 +99,7 @@ public abstract class AbstractBouncingMarioProjectileEntity extends AbstractMari
 		}
 		else {
 			Vec3d velocity = this.getVelocity();
-			Vec3d checkAtOffset = new Vec3d(velocity.x * 0, STEP_HEIGHT, velocity.z * 0);
+			Vec3d checkAtOffset = new Vec3d(velocity.x * 1, STEP_HEIGHT, velocity.z * 1);
 			if(canBounce && this.getWorld().isSpaceEmpty(this, this.getBoundingBox().offset(checkAtOffset))) {
 				// Teleport upwards as far as we can possibly step, to the space we just checked is empty
 				this.setPosition(this.getPos().add(checkAtOffset));
@@ -117,7 +117,7 @@ public abstract class AbstractBouncingMarioProjectileEntity extends AbstractMari
 			else {
 				// Hit a wall and the space above us is occupied :(
 				this.playSound(this.getWallSound(), 0.45F, 1);
-				this.discard();
+				if(!this.getWorld().isClient) this.discard();
 			}
 		}
 	}

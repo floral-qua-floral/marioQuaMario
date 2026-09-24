@@ -1,6 +1,7 @@
 package com.fqf.mario_qua_mario.entity.custom;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.entity.MQMEntities;
 import com.fqf.mario_qua_mario.util.MQMTags;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import net.minecraft.entity.Entity;
@@ -28,7 +29,7 @@ public class MarioFireballProjectileEntity extends AbstractBouncingMarioProjecti
 	}
 
 	public MarioFireballProjectileEntity(World world, ServerPlayerEntity mario) {
-		super(world, mario);
+		super(MQMEntities.MARIO_FIREBALL, world, mario);
 	}
 
 	@Override
@@ -39,6 +40,11 @@ public class MarioFireballProjectileEntity extends AbstractBouncingMarioProjecti
 	@Override
 	protected float getHorizontalSpeed() {
 		return 0.7F;
+	}
+
+	@Override
+	protected double getBounceVel() {
+		return 0.475;
 	}
 
 	@Override

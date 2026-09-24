@@ -15,16 +15,22 @@ public interface MQMTags {
 	TagKey<DamageType> FLATTENS_ENTITIES = getTag(DAMAGE_TYPE, "flattens_entities");
 	TagKey<DamageType> BYPASSES_STOMP_GUARD = getTag(DAMAGE_TYPE, "bypasses_stomp_guard");
 	TagKey<DamageType> TRIGGERS_LAVA_BOOST = getTag(DAMAGE_TYPE, "triggers_lava_boost");
+	TagKey<DamageType> ENCASED_ENTITIES_IGNORE = getTag(DAMAGE_TYPE, "encased_entities_ignore");
+	TagKey<DamageType> DOES_NOT_SHATTER_ICE = getTag(DAMAGE_TYPE, "does_not_shatter_ice");
+	TagKey<DamageType> MULTIPLIES_SHATTER_DAMAGE = getTag(DAMAGE_TYPE, "multiplies_shatter_damage");
 
 	TagKey<EntityType<?>> RISING_STOMPABLE_NONMONSTERS = getTag(ENTITY_TYPE, "rising_stompable_nonmonsters");
 	TagKey<EntityType<?>> DODGES_MARIO_FIREBALL = getTag(ENTITY_TYPE, "dodges_mario_fireball");
 	TagKey<EntityType<?>> FIRE_MARIO_PUNCH_TARGETS = getTag(ENTITY_TYPE, "fire_mario_punch_targets");
+	TagKey<EntityType<?>> ICE_MARIO_PUNCH_TARGETS = getTag(ENTITY_TYPE, "ice_mario_punch_targets");
 	TagKey<EntityType<?>> TAIL_ATTACK_REFLECTABLE = getTag(ENTITY_TYPE, "tail_attack_reflectable");
+	TagKey<EntityType<?>> CANNOT_ENCASE_IN_ICE = getTag(ENTITY_TYPE, "cannot_encase_in_ice");
 
 	TagKey<Block> CLIMBABLE = getTag(BLOCK, "mario_climbable");
 	TagKey<Block> SOMETIMES_CLIMBABLE_PANES = getTag(BLOCK, "mario_sometimes_climbable_panes");
 	TagKey<Block> UNSLIDEABLE_WALLS = getTag(BLOCK, "mario_unslideable_walls");
 	TagKey<Block> DESTROYED_BY_FIREBALL = getTag(BLOCK, "destroyed_by_mario_fireball");
+	TagKey<Block> EXTINGUISHED_BY_ICEBALL = getTag(BLOCK, "extinguished_by_mario_iceball");
 
 	TagKey<Fluid> PROHIBITS_LAVA_BOOST_EJECTION = getTag(FLUID, "prohibits_lava_boost_ejection");
 

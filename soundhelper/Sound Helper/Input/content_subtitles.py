@@ -39,15 +39,26 @@ sfx_movement = {
 sfx_form = {
   "coin": "Coin collected",
   "coin_use": "Coins spent",
+
   "fireball": "Fireball thrown",
   "fireball_enemy": "Fireball strikes",
   "fireball_wall": "Fireball impact",
   "burn_object": "Fireball incinerates",
+
   "tail_fly": "Tail waggles",
   "tail_whip": "Tail whips",
+
+  "iceball": "Iceball thrown",
+  "iceball_enemy": "Iceball freezes",
+  "iceball_wall": "Iceball impact",
+  "iceball_extinguish": "Iceball quenches",
+  "ice_rumble": "Frozen creature shakes",
+  "ice_escape": "Frozen creature thaws",
+
   "empower": "Powering up",
   "tail_empower": "Powering up",
   "mini_empower": "Powering up...?",
+
   "revert": "Powering down",
   "mini_revert": "Shrinking"
 }

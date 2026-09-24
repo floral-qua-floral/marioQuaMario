@@ -1,6 +1,5 @@
-package com.fqf.mario_qua_mario.mixin.water_walking;
+package com.fqf.mario_qua_mario.mixin.block_collisions;
 
-import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.injections.CfaDataHolder;
 import com.fqf.mario_qua_mario.util.Powers;
 import net.minecraft.entity.EntityType;

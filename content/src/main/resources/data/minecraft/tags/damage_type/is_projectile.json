@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "mario_qua_mario:mario_fireball"
+    "mario_qua_mario:mario_fireball",
+    "mario_qua_mario:iceball"
   ]
 }

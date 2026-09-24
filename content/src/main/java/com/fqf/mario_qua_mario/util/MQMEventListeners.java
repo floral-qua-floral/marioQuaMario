@@ -1,25 +1,31 @@
 package com.fqf.mario_qua_mario.util;
 
 import com.fqf.charaformact_api.cfadata.CfaData;
-import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario.characters.Mario;
 import com.fqf.mario_qua_mario.collision_attacks.Stomp;
+import com.fqf.mario_qua_mario.freezing.IceFlowerFreezable;
+import com.fqf.mario_qua_mario.freezing.IceFlowerUtil;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.command.EntityDataObject;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
+import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.stat.Stats;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.math.Vec3d;
 
 public class MQMEventListeners {
 	public static void register() {
+		ServerLivingEntityEvents.ALLOW_DEATH.register((entity, damageSource, damageAmount) -> {
+			if(damageSource.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY) || damageSource.isOf(IceFlowerUtil.SHATTER_DAMAGE_TYPE))
+				return true;
 
+			IceFlowerFreezable freezable = (IceFlowerFreezable) entity;
+			if(freezable.mqm$attemptFatalFreeze(damageSource)) {
+				entity.setHealth(0.01F);
+				return false;
+			}
+
+			return true;
+		});
 
 		ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
 			if(entity instanceof ServerPlayerEntity mario) {
@@ -33,15 +39,16 @@ public class MQMEventListeners {
 						else
 							marioY = mario.getY();
 
-						//noinspection RedundantIfStatement
-						if(Stomp.collidingFromTop(attacker, mario, marioY, new Vec3d(0, -1, 0), false)
-								|| (attacker instanceof EnderDragonEntity && mario.getY() > attacker.getY() + attacker.getHeight() / 2)) {
+						if(
+								Stomp.collidingFromTop(attacker, mario, marioY, new Vec3d(0, -1, 0), false)
+								|| (attacker instanceof EnderDragonEntity && mario.getY() > attacker.getY() + attacker.getHeight() / 2)
+						)
 							return false;
-						}
 					}
 				}
 			}
-			return true;
+
+			return !((IceFlowerFreezable) entity).mqm$shatter(source, amount);
 		});
 	}
 

@@ -44,7 +44,7 @@ public class CharaFormAct implements ModInitializer {
 	}
 
 	public static Identifier makeID(String path) {
-		return Identifier.of("charaformact", path);
+		return Identifier.of(MOD_ID, path);
 	}
 
 	public static ClientHelper getClientHelper() {

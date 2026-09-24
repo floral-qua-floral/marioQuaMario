@@ -1,4 +1,4 @@
-package com.fqf.mario_qua_mario.mixin.water_walking;
+package com.fqf.mario_qua_mario.mixin.block_collisions;
 
 import com.fqf.mario_qua_mario.util.Powers;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;

@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:is_player_attack",
+    "minecraft:mob_attack",
+    "minecraft:in_wall",
+    "minecraft:thorns",
+    "minecraft:freeze",
+    "minecraft:drown"
+  ],
+  "fabric:remove": [
+    "#charaformact:collision_attacks"
+  ]
+}

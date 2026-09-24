@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:bypasses_invulnerability",
+    "#minecraft:no_knockback",
+    "minecraft:magic",
+    "minecraft:wither"
+  ],
+  "fabric:remove": [
+    "#mario_qua_mario:multiplies_shatter_damage"
+  ]
+}

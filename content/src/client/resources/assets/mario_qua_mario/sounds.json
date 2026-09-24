@@ -149,6 +149,42 @@
 			"mario_qua_mario:sfx/form/fireball_wall"
 		]
 	},
+	"sfx.form.iceball": {
+		"subtitle": "subtitles.mario_qua_mario.form.iceball",
+		"sounds": [
+			"mario_qua_mario:sfx/form/iceball"
+		]
+	},
+	"sfx.form.iceball_enemy": {
+		"subtitle": "subtitles.mario_qua_mario.form.iceball_enemy",
+		"sounds": [
+			"mario_qua_mario:sfx/form/iceball_enemy"
+		]
+	},
+	"sfx.form.iceball_extinguish": {
+		"subtitle": "subtitles.mario_qua_mario.form.iceball_extinguish",
+		"sounds": [
+			"mario_qua_mario:sfx/form/iceball_extinguish"
+		]
+	},
+	"sfx.form.iceball_wall": {
+		"subtitle": "subtitles.mario_qua_mario.form.iceball_wall",
+		"sounds": [
+			"mario_qua_mario:sfx/form/iceball_wall"
+		]
+	},
+	"sfx.form.ice_escape": {
+		"subtitle": "subtitles.mario_qua_mario.form.ice_escape",
+		"sounds": [
+			"mario_qua_mario:sfx/form/ice_escape"
+		]
+	},
+	"sfx.form.ice_rumble": {
+		"subtitle": "subtitles.mario_qua_mario.form.ice_rumble",
+		"sounds": [
+			"mario_qua_mario:sfx/form/ice_rumble"
+		]
+	},
 	"sfx.form.mini_empower": {
 		"subtitle": "subtitles.mario_qua_mario.form.mini_empower",
 		"sounds": [
