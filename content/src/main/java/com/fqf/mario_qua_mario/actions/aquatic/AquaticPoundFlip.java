@@ -48,7 +48,7 @@ public class AquaticPoundFlip implements AquaticActionDefinition {
 			AquaticPoundFlip.ID,
 			null,
 			null,
-			null,
+			null, null,
 			(data, isSelf, seed) -> data.playSound(MarioSFX.AQUATIC_GROUND_POUND_FLIP, seed)
 	);
 

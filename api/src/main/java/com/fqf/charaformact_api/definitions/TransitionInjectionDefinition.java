@@ -15,13 +15,13 @@ public interface TransitionInjectionDefinition {
 			ActionCategory toCategory, Identifier toID
 	);
 
-	@NotNull ActionTransitionDetails makeTransition(ActionTransitionDetails nearbyTransition, GenericActionDefinition.CastableHelper helper);
+	@NotNull ActionTransitionDetails makeTransition(ActionTransitionDetails nearbyTransition, GenericActionDefinition.TransitionHelper helper);
 
 	record Simple(
 			@NotNull InjectionPlacement relativePosition,
 			Identifier injectNearTransitionsTo,
 			@Nullable ActionCategory onlyFromCategory,
-			BiFunction<ActionTransitionDetails, GenericActionDefinition.CastableHelper, ActionTransitionDetails> transitionCreator
+			BiFunction<ActionTransitionDetails, GenericActionDefinition.TransitionHelper, ActionTransitionDetails> transitionCreator
 	) implements TransitionInjectionDefinition {
 		@Override
 		public @Nullable InjectionPlacement getPlacementRelativeTo(ActionCategory fromCategory, Identifier fromID, ActionCategory toCategory, Identifier toID) {
@@ -32,7 +32,7 @@ public interface TransitionInjectionDefinition {
 		}
 
 		@Override
-		public @NotNull ActionTransitionDetails makeTransition(ActionTransitionDetails nearbyTransition, GenericActionDefinition.CastableHelper helper) {
+		public @NotNull ActionTransitionDetails makeTransition(ActionTransitionDetails nearbyTransition, GenericActionDefinition.TransitionHelper helper) {
 			return this.transitionCreator.apply(nearbyTransition, helper);
 		}
 	}

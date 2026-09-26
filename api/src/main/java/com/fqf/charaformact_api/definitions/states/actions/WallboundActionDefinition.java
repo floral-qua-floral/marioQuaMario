@@ -73,7 +73,7 @@ public interface WallboundActionDefinition extends IncompleteActionDefinition {
 	/**
 	 * Contains a number of methods intended to help with the creation of Wallbound Actions.
 	 */
-	interface WallboundActionHelper {
+	interface WallboundActionHelper extends GenericActionDefinition.TransitionHelper {
 		WallInfo getWallInfo(CfaReadableMotionData data);
 
 		float getAngleDifference(float alfa, float bravo);

@@ -115,8 +115,8 @@ public class WalkRun extends SubWalk implements GroundedActionDefinition {
 			ActionCategory.GROUNDED,
 			(nearbyTransition, castableHelper) -> nearbyTransition.variate(
 					WalkRun.ID,
-					data -> meetsWalkRunRequirement(data) && nearbyTransition.evaluator().shouldTransition(data),
-					EvaluatorEnvironment.CLIENT_ONLY, null, null
+					data -> meetsWalkRunRequirement(data) && nearbyTransition.evaluator().test(data),
+					EvaluatorEnvironment.CLIENT_ONLY, null, null, null
 			)
 	);
 	public static final TransitionInjectionDefinition AIRBORNE_INJECTION = new TransitionInjectionDefinition.Simple(
@@ -124,8 +124,8 @@ public class WalkRun extends SubWalk implements GroundedActionDefinition {
 			ActionCategory.AIRBORNE,
 			(nearbyTransition, castableHelper) -> nearbyTransition.variate(
 					WalkRun.ID,
-					data -> (data.isServer() || meetsWalkRunRequirement(data)) && nearbyTransition.evaluator().shouldTransition(data),
-					EvaluatorEnvironment.CLIENT_CHECKED, null, null
+					data -> (data.isServer() || meetsWalkRunRequirement(data)) && nearbyTransition.evaluator().test(data),
+					EvaluatorEnvironment.CLIENT_CHECKED, null, null, null
 			)
 	);
 }

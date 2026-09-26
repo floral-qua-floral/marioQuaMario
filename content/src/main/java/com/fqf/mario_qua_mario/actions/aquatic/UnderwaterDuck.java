@@ -3,6 +3,7 @@ package com.fqf.mario_qua_mario.actions.aquatic;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AquaticActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
+import com.fqf.charaformact_api.definitions.states.actions.util.SizeChangeBehavior;
 import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -15,6 +16,10 @@ import org.jetbrains.annotations.Nullable;
 
 public class UnderwaterDuck implements AquaticActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("underwater_duck");
+
+	@Override public float defineHitboxHeight() {
+		return DuckWaddle.DUCK_HEIGHT;
+	}
 
 	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return DuckWaddle.makeAnimation(true, false);
@@ -38,7 +43,7 @@ public class UnderwaterDuck implements AquaticActionDefinition {
 	@Override
 	public void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AquaticActionHelper helper) {
 		builder.add(
-				Swim.SWIM.variate(null, null, null, data -> {
+				Swim.SWIM.variate(null, null, null, null, data -> {
 					assert Swim.SWIM.travelExecutor() != null;
 					Swim.SWIM.travelExecutor().execute(data);
 					data.getInputs().DUCK.isPressed(); // Force unbuffer DUCK

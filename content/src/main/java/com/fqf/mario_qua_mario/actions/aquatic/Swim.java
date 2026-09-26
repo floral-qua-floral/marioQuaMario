@@ -2,6 +2,7 @@ package com.fqf.mario_qua_mario.actions.aquatic;
 
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.charaformact_api.definitions.states.actions.util.SizeChangeBehavior;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
@@ -27,6 +28,7 @@ public class Swim extends Submerged {
 				return (vars == null || vars.actionTimer > 2) && data.getInputs().JUMP.isPressed();
 			},
 			EvaluatorEnvironment.CLIENT_ONLY,
+			SizeChangeBehavior.AUTOMATIC,
 			data -> {
 				data.setYVel(Math.min(SWIM_MAX_ASCENSION_SPEED.get(data), data.getYVel() + SWIM_ACCEL.get(data)));
 				data.getPlayer().limbAnimator.setSpeed(1.5F); // Kick the legs a little (like when damaged)

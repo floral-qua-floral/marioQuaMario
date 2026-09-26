@@ -54,7 +54,7 @@ public interface MountedActionDefinition extends IncompleteActionDefinition {
 	 * Contains a number of methods intended to help with the creation of Mounted Actions. Can be cast to any of the
 	 * other ActionHelpers, if for whatever reason you need them.
 	 */
-	interface MountedActionHelper {
+	interface MountedActionHelper extends GenericActionDefinition.TransitionHelper {
 		Entity getMount(CfaReadableMotionData data);
 
 		void dismount(CfaTravelData data, boolean reposition);

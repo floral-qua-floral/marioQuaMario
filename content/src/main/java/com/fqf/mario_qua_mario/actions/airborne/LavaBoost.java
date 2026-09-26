@@ -3,10 +3,7 @@ package com.fqf.mario_qua_mario.actions.airborne;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
-import com.fqf.charaformact_api.definitions.states.actions.util.BappingRule;
-import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
+import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.util.CfaStat;
@@ -141,6 +138,7 @@ public class LavaBoost extends Fall implements AirborneActionDefinition {
 			LavaBoost.ID,
 			data -> false,
 			EvaluatorEnvironment.SERVER_ONLY,
+			SizeChangeBehavior.AUTOMATIC,
 			data -> {
 				Vec3d lavaBoostEjectionPos = LavaBoost.findLavaBoostEjectionSpot(data);
 				if(lavaBoostEjectionPos == null)
@@ -164,15 +162,15 @@ public class LavaBoost extends Fall implements AirborneActionDefinition {
 						data ->
 								data.getYVel() <= 0
 										&& data.retrieveStateData(LavaBoostVars.class).bounceVel > 0.06
-										&& Fall.LANDING.evaluator().shouldTransition(data),
+										&& Fall.LANDING.evaluator().test(data),
 						null,
-						data -> {
+						null, data -> {
 							data.setYVel(data.retrieveStateData(LavaBoostVars.class).bounceVel);
 							data.setForwardStrafeVel(data.getForwardVel() * 0.5, data.getStrafeVel() * 0.5);
 						},
 						(data, isSelf, seed) -> {}
 				),
-				Fall.LANDING.variate(null, data -> data.getYVel() <= 0 && Fall.LANDING.evaluator().shouldTransition(data)),
+				Fall.LANDING.variate(null, data -> data.getYVel() <= 0 && Fall.LANDING.evaluator().test(data)),
 				// Mario can start climbing from a Lava Boost, but can't wall-jump
 				ClimbTransitions.CLIMB_NON_SOLID_DIRECTIONAL,
 				ClimbTransitions.CLIMB_NON_SOLID_NON_DIRECTIONAL,

@@ -4,13 +4,14 @@ import com.fqf.charaformact_api.cfadata.*;
 import com.fqf.charaformact_api.definitions.states.actions.GenericActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.charaformact_api.definitions.states.actions.util.GenericActionType;
 import com.fqf.charaformact_api.definitions.states.actions.util.SlidingStatus;
+import com.fqf.charaformact_api.definitions.states.actions.util.SizeChangeBehavior;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.Posture;
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import com.google.common.collect.ImmutableList;
@@ -49,7 +50,7 @@ public class Debug implements GenericActionDefinition {
 		return new ActionTimerVars();
 	}
 	@Override public void serverTick(CfaAuthoritativeData data) {
-		data.getPlayer().setHealth(20);
+		data.getPlayer().setHealth(data.getPlayer().getMaxHealth());
 	}
 	@Override public void travelHook(CfaTravelData data) {
 		ActionTimerVars.get(data).actionTimer++;
@@ -58,13 +59,25 @@ public class Debug implements GenericActionDefinition {
 	}
 
 	@Override
-	public void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, CastableHelper helper) {
+	public void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, TransitionHelper helper) {
 		builder.add(
 				new ActionTransitionDetails(
 						DebugSprint.ID,
 						data -> data.getPlayer().isSprinting(), EvaluatorEnvironment.COMMON,
+						SizeChangeBehavior.AUTOMATIC,
 						null,
 						(data, isSelf, seed) -> data.playSound(MarioSFX.FIREBALL, seed)
+				)
+		);
+	}
+
+	@Override
+	public void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, TransitionHelper helper) {
+		builder.add(
+				new ActionTransitionDetails(
+						DebugCrawl.ID,
+						data -> false,
+						EvaluatorEnvironment.COMMON
 				)
 		);
 	}

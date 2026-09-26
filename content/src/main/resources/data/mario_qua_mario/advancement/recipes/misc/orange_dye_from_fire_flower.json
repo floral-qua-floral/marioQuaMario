@@ -1,0 +1,32 @@
+{
+  "parent": "mario_qua_mario:recipes/root",
+  "criteria": {
+    "has_fire_flower": {
+      "conditions": {
+        "items": [
+          {
+            "items": "mario_qua_mario:fire_flower"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "mario_qua_mario:orange_dye_from_fire_flower"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_fire_flower"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "mario_qua_mario:orange_dye_from_fire_flower"
+    ]
+  }
+}

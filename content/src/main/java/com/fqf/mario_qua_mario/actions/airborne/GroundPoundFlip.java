@@ -3,10 +3,7 @@ package com.fqf.mario_qua_mario.actions.airborne;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
-import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.charaformact_api.definitions.states.actions.util.SneakingRule;
-import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
+import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
@@ -113,6 +110,7 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 			ID,
 			data -> data.getInputs().DUCK.isPressed(),
 			EvaluatorEnvironment.CLIENT_ONLY,
+			SizeChangeBehavior.AUTOMATIC,
 			data -> data.setVelocity(Vec3d.ZERO),
 			(data, isSelf, seed) -> data.playSound(MarioSFX.GROUND_POUND_FLIP, seed)
 	);
@@ -122,6 +120,7 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 				targetAction,
 				data -> data.retrieveStateData(FlipTimerVars.class).actionTimer >= flipDuration,
 				EvaluatorEnvironment.COMMON,
+				SizeChangeBehavior.AUTOMATIC,
 				data -> {
 					data.setYVel(GroundPoundDrop.GROUND_POUND_VEL.get(data));
 					data.getInputs().JUMP.isPressed(); // Unbuffer jump to make Ground Pound stalling harder

@@ -103,6 +103,7 @@ public class Skid implements GroundedActionDefinition {
 						Sideflip.ID,
 						data -> data.getForwardVel() < Sideflip.SIDEFLIP_THRESHOLD.get(data) && data.getInputs().JUMP.isPressed(),
 						EvaluatorEnvironment.CLIENT_ONLY,
+						SizeChangeBehavior.AUTOMATIC,
 						data -> {
 							helper.performJump(data, Sideflip.SIDEFLIP_VEL, null);
 							data.setForwardStrafeVel(Sideflip.SIDEFLIP_BACKWARDS_SPEED.get(data), 0);
@@ -127,7 +128,7 @@ public class Skid implements GroundedActionDefinition {
 						BonkGround.BACKWARD_ID,
 						null,
 						null,
-						data ->
+						null, data ->
 								data.setVelocity(data.getRecordedCollisions().getHorizontallyReflectedVelocity().multiply(1.25)),
 						null
 				)

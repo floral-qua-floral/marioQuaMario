@@ -77,21 +77,12 @@ public class AquaticPoundDrop implements AquaticActionDefinition {
 				Fall.LANDING.variate(
 						AquaticPoundLand.ID,
 						null, null,
-						data -> data.setForwardStrafeVel(0, 0),
+						null, data -> data.setForwardStrafeVel(0, 0),
 						(data, isSelf, seed) -> {
-							data.stopStoredSound(MarioSFX.AQUATIC_GROUND_POUND_DROP);
 							data.playSound(MarioSFX.AQUATIC_GROUND_POUND_LAND, seed);
 						}
 				),
-				Submerged.EXIT_WATER.variate(
-						GroundPoundDrop.ID,
-						null, null,
-						null,
-						(data, isSelf, seed) -> {
-							data.stopStoredSound(MarioSFX.AQUATIC_GROUND_POUND_DROP);
-							data.storeSound(data.playSound(MarioSFX.GROUND_POUND_DROP, seed));
-						}
-				)
+				Submerged.EXIT_WATER.variate(GroundPoundDrop.ID, null)
 		);
 	}
 }

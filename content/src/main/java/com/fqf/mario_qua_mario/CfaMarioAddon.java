@@ -53,9 +53,8 @@ public class CfaMarioAddon implements CharaFormActAddon {
 	public void accumulateActionDefinitions(ImmutableMap.Builder<Identifier, IncompleteActionDefinition> builder) {
 		// Debug Actions
 		if(INCLUDE_DEBUG_ACTIONS) {
-			// FIXME: This is currently required!!! Because Debug contains the Lava Boost transition that's used in
-			//  AbstractMarioSeriesCharacter.
 			builder.put(Debug.ID, new Debug());
+			builder.put(DebugCrawl.ID, new DebugCrawl());
 			builder.put(DebugSprint.ID, new DebugSprint());
 			builder.put(DebugSpinPitch.ID, new DebugSpinPitch());
 			builder.put(DebugSpinYaw.ID, new DebugSpinYaw());

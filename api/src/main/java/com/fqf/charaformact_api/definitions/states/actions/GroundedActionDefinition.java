@@ -25,7 +25,7 @@ public interface GroundedActionDefinition extends IncompleteActionDefinition {
 	 * Contains a number of methods intended to help with the creation of Grounded Actions. Can be cast to any of the
 	 * other ActionHelpers, if for whatever reason you need them.
 	 */
-	interface GroundedActionHelper {
+	interface GroundedActionHelper extends GenericActionDefinition.TransitionHelper {
 		/**
 		 * Accelerates the player using a custom formula. This detaches her ability to gain or lose speed from her
 		 * ability to redirect the angle of existing speed. Unlike a regular entity, a character's acceleration and

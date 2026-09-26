@@ -9,6 +9,7 @@ import com.fqf.charaformact_api.definitions.states.actions.GenericActionDefiniti
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.charaformact_api.definitions.states.actions.util.SizeChangeBehavior;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.util.CfaStat;
@@ -124,6 +125,7 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 							&& data.getInputs().JUMP.isHeld()
 					)),
 			EvaluatorEnvironment.CLIENT_CHECKED,
+			SizeChangeBehavior.AUTOMATIC,
 			data -> {
 				Raccoon.RaccoonVars vars = data.retrieveStateData(Raccoon.RaccoonVars.class);
 
@@ -162,7 +164,7 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 		}
 
 		@Override
-		public @NotNull ActionTransitionDetails makeTransition(ActionTransitionDetails nearbyTransition, GenericActionDefinition.CastableHelper helper) {
+		public @NotNull ActionTransitionDetails makeTransition(ActionTransitionDetails nearbyTransition, GenericActionDefinition.TransitionHelper helper) {
 			return this.INJECT_TRANSITION;
 		}
 	}

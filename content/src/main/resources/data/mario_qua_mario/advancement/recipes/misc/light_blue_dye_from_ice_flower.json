@@ -1,0 +1,32 @@
+{
+  "parent": "mario_qua_mario:recipes/root",
+  "criteria": {
+    "has_ice_flower": {
+      "conditions": {
+        "items": [
+          {
+            "items": "mario_qua_mario:ice_flower"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "mario_qua_mario:light_blue_dye_from_ice_flower"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_ice_flower"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "mario_qua_mario:light_blue_dye_from_ice_flower"
+    ]
+  }
+}

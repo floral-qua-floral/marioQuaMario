@@ -7,6 +7,7 @@ import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinit
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.BappingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.charaformact_api.definitions.states.actions.util.SizeChangeBehavior;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.util.CfaStat;
@@ -91,6 +92,7 @@ public class Jump extends Fall implements AirborneActionDefinition {
 				Jump.ID,
 				data -> data.getInputs().JUMP.isPressed(),
 				EvaluatorEnvironment.CLIENT_ONLY,
+				SizeChangeBehavior.AUTOMATIC,
 				data -> helper.performJump(data, JUMP_VEL, JUMP_ADDEND),
 				(data, isSelf, seed) -> data.playJumpSound(seed)
 		);
@@ -98,7 +100,7 @@ public class Jump extends Fall implements AirborneActionDefinition {
 
 	public static final ActionTransitionDetails DOUBLE_JUMPABLE_LANDING = Fall.LANDING.variate(
 			null, null, null,
-			data -> MarioVars.get(data).canDoubleJumpTicks = 3,
+			null, data -> MarioVars.get(data).canDoubleJumpTicks = 3,
 			null
 	);
 

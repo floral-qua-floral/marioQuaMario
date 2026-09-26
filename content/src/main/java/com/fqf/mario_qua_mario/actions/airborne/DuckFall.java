@@ -15,6 +15,10 @@ import org.jetbrains.annotations.Nullable;
 public class DuckFall extends Fall implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("duck_fall");
 
+	@Override public float defineHitboxHeight() {
+		return DuckWaddle.DUCK_HEIGHT;
+	}
+
 	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return DuckWaddle.makeAnimation(false, false);
 	}

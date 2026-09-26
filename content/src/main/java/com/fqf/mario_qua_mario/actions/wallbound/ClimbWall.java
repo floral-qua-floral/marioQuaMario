@@ -190,6 +190,7 @@ public class ClimbWall implements WallboundActionDefinition {
 				this.getSideHangActionID(),
 				data -> Math.abs(helper.getWallInfo(data).getYawDeviation()) > MIN_DEVIATION_TO_SIDE_HANG,
 				EvaluatorEnvironment.CLIENT_ONLY,
+				SizeChangeBehavior.AUTOMATIC,
 				data -> {
 					data.setForwardStrafeVel(0, 0);
 					data.setYVel(Math.min(0, data.getYVel()));
@@ -207,6 +208,7 @@ public class ClimbWall implements WallboundActionDefinition {
 								&& Objects.requireNonNull(helper.getWallInfo(data)).getTowardsWallInput() < -0.45
 								&& data.getInputs().JUMP.isPressed(),
 						EvaluatorEnvironment.CLIENT_ONLY,
+						SizeChangeBehavior.AUTOMATIC,
 						data -> {
 							data.setYVel(WallJump.WALL_JUMP_VEL.get(data));
 							double speed = WallJump.WALL_JUMP_SPEED.get(data);
@@ -222,6 +224,7 @@ public class ClimbWall implements WallboundActionDefinition {
 						Fall.ID,
 						data -> data.getInputs().DUCK.isHeld() && data.getInputs().JUMP.isPressed(),
 						EvaluatorEnvironment.CLIENT_ONLY,
+						SizeChangeBehavior.AUTOMATIC,
 						data -> {
 							helper.setTowardsWallVel(data, 0);
 							data.getInputs().DUCK.isPressed(); // Unbuffer Duck
@@ -232,6 +235,7 @@ public class ClimbWall implements WallboundActionDefinition {
 						Jump.ID,
 						data -> data.getInputs().JUMP.isPressed(),
 						EvaluatorEnvironment.CLIENT_ONLY,
+						SizeChangeBehavior.AUTOMATIC,
 						data -> {
 							helper.setTowardsWallVel(data, 0);
 							data.setYVel(Jump.JUMP_VEL.get(data));
@@ -248,6 +252,7 @@ public class ClimbWall implements WallboundActionDefinition {
 						SpecialFall.ID,
 						data -> !helper.getWallInfo(data).isLegal(),
 						EvaluatorEnvironment.COMMON,
+						SizeChangeBehavior.AUTOMATIC,
 						data -> helper.setTowardsWallVel(data, 0),
 						null
 				),

@@ -5,6 +5,7 @@ import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinit
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.charaformact_api.definitions.states.actions.util.SizeChangeBehavior;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.StatCategory;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -24,8 +25,9 @@ public class WaterExitJump extends Jump implements AirborneActionDefinition {
 			ActionCategory.AQUATIC,
 			(nearbyTransition, castableHelper) -> new ActionTransitionDetails(
 					ID,
-					data -> (data.isServer() || data.getYVel() > 0) && nearbyTransition.evaluator().shouldTransition(data),
+					data -> (data.isServer() || data.getYVel() > 0) && nearbyTransition.evaluator().test(data),
 					EvaluatorEnvironment.CLIENT_CHECKED,
+					SizeChangeBehavior.AUTOMATIC,
 					data -> {
 						double waterJumpVel = WATER_EXIT_JUMP_VEL.get(data);
 						if(data.getYVel() < waterJumpVel)

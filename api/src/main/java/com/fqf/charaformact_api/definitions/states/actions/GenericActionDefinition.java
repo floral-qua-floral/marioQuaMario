@@ -14,21 +14,26 @@ public interface GenericActionDefinition extends IncompleteActionDefinition {
 
 	void travelHook(CfaTravelData data);
 
-	default void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, CastableHelper helper) {
+	default void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, TransitionHelper helper) {
 
 	}
-	default void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, CastableHelper helper) {
+	default void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, TransitionHelper helper) {
 
 	}
-	default void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, CastableHelper helper) {
+	default void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, TransitionHelper helper) {
 
 	}
 
-	interface CastableHelper {
+	interface TransitionHelper {
 		GroundedActionDefinition.GroundedActionHelper asGrounded();
 		AirborneActionDefinition.AirborneActionHelper asAirborne();
 		AquaticActionDefinition.AquaticActionHelper asAquatic();
 		WallboundActionDefinition.WallboundActionHelper asWallbound();
 		MountedActionDefinition.MountedActionHelper asMounted();
+
+		ActionTransitionDetails attachSufficientSpaceRequirement(ActionTransitionDetails original);
+
+		ActionTransitionDetails makeAutomaticInSmallSpaces(ActionTransitionDetails original);
+
 	}
 }

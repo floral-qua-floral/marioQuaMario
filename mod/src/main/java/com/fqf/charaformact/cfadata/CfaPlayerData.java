@@ -20,6 +20,8 @@ import com.fqf.charaformact_api.util.CfaStat;
 import it.unimi.dsi.fastutil.objects.ObjectDoubleImmutablePair;
 import it.unimi.dsi.fastutil.objects.ObjectDoublePair;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityDimensions;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -195,6 +197,39 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 
 		// Clear attribute modifier instructions
 		this.ATTRIBUTE_MODIFIERS.clear();
+	}
+
+	public static boolean getRawDimensions;
+	public EntityDimensions getDimensionsIn(AbstractParsedAction action) {
+		try {
+			getRawDimensions = true;
+			return this.adjustDimensions(this.getPlayer().getDimensions(EntityPose.STANDING), action);
+		}
+		finally {
+			getRawDimensions = false;
+		}
+	}
+
+	public EntityDimensions adjustDimensions(EntityDimensions rawDimensions) {
+		return this.adjustDimensions(rawDimensions, this.getAction());
+	}
+	private EntityDimensions adjustDimensions(EntityDimensions rawDimensions, AbstractParsedAction action) {
+		return rawDimensions
+				.scaled(this.getHorizontalScale(), this.getVerticalScale())
+				.scaled(action.WIDTH_FACTOR, action.HEIGHT_FACTOR)
+				.withEyeHeight(
+						rawDimensions.eyeHeight()
+								* this.getEyeHeightScale()
+								* action.EYE_HEIGHT_FACTOR
+				);
+	}
+
+	public boolean canFitInAction(AbstractParsedAction action) {
+		Box box;
+		if(action == this.getAction()) box = this.getPlayer().getBoundingBox();
+		else box = this.getDimensionsIn(action).getBoxAt(this.getPlayer().getPos());
+
+		return this.getPlayer().getWorld().isSpaceEmpty(this.getPlayer(), box.contract(1.0E-7));
 	}
 
 	public void updateCharacterFormCombo() {

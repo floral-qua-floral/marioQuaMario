@@ -7,49 +7,71 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Function;
+import java.util.function.Predicate;
+
 /**
- * @param targetID The ID of the action that this transition leads to.
- * @param evaluator The Evaluator that determines if this transition should fire.
- * @param travelExecutor The effect the transition has on the character's motion.
- * @param clientsExecutor Client-side effects of this transition firing.
+ * @param targetID           The ID of the action that this transition leads to.
+ * @param evaluator          The Evaluator that determines if this transition should fire.
+ * @param sizeChangeBehavior
+ * @param travelExecutor     The effect the transition has on the character's motion.
+ * @param clientsExecutor    Client-side effects of this transition firing.
  */
 public record ActionTransitionDetails(
 		@NotNull Identifier targetID,
-		@NotNull Evaluator evaluator, @NotNull EvaluatorEnvironment environment,
+		@NotNull Predicate<CfaReadableMotionData> evaluator, @NotNull EvaluatorEnvironment environment,
+		SizeChangeBehavior sizeChangeBehavior,
 		@Nullable TravelExecutor travelExecutor,
 		@Nullable ClientsExecutor clientsExecutor
 ) {
 	/**
-	 * Alternate constructor provided for convenience
+	 * Alternate constructors provided for convenience
 	 */
-	public ActionTransitionDetails(@NotNull Identifier targetID, @NotNull Evaluator evaluator, @NotNull EvaluatorEnvironment environment) {
-		this(targetID, evaluator, environment, null, null);
+	public ActionTransitionDetails(
+			@NotNull Identifier targetID,
+			@NotNull Predicate<CfaReadableMotionData> evaluator, @NotNull EvaluatorEnvironment environment,
+			@Nullable TravelExecutor travelExecutor,
+			@Nullable ClientsExecutor clientsExecutor
+	) {
+		this(targetID, evaluator, environment, SizeChangeBehavior.AUTOMATIC, travelExecutor, clientsExecutor);
+	}
+	public ActionTransitionDetails(
+			@NotNull Identifier targetID,
+			@NotNull Predicate<CfaReadableMotionData> evaluator, @NotNull EvaluatorEnvironment environment,
+			@NotNull SizeChangeBehavior sizeChangeBehavior
+	) {
+		this(targetID, evaluator, environment, sizeChangeBehavior, null, null);
+	}
+	public ActionTransitionDetails(
+			@NotNull Identifier targetID,
+			@NotNull Predicate<CfaReadableMotionData> evaluator, @NotNull EvaluatorEnvironment environment
+	) {
+		this(targetID, evaluator, environment, SizeChangeBehavior.AUTOMATIC, null, null);
 	}
 
+	/**
+	 * Call on an existing ActionTransitionDetails to make a copy with certain components modified.
+	 */
 	public ActionTransitionDetails variate(
 			@Nullable Identifier targetID,
-			@Nullable Evaluator evaluator,
-			@Nullable EvaluatorEnvironment environment,
+			@Nullable Predicate<CfaReadableMotionData> evaluator, @Nullable EvaluatorEnvironment environment,
+			@Nullable SizeChangeBehavior sizeChangeBehavior,
 			@Nullable TravelExecutor travelExecutor,
 			@Nullable ClientsExecutor clientsExecutor
 	) {
 		return new ActionTransitionDetails(
 				targetID == null ? this.targetID : targetID,
-				evaluator == null ? this.evaluator : evaluator,
-				environment == null ? this.environment : environment,
+				evaluator == null ? this.evaluator : evaluator, environment == null ? this.environment : environment,
+				sizeChangeBehavior == null ? this.sizeChangeBehavior : sizeChangeBehavior,
 				travelExecutor == null ? this.travelExecutor : travelExecutor,
 				clientsExecutor == null ? this.clientsExecutor : clientsExecutor
 		);
 	}
-	public ActionTransitionDetails variate(@Nullable Identifier targetID, @Nullable Evaluator evaluator) {
-		return this.variate(targetID, evaluator, null, null, null);
+	public ActionTransitionDetails variate(@Nullable Identifier targetID, @Nullable Predicate<CfaReadableMotionData> evaluator) {
+		return this.variate(targetID, evaluator, null, null, null, null);
 	}
-
-	/**
-	 * Runs on the client-side to test if the associated transition should occur.
-	 */
-	@FunctionalInterface public interface Evaluator {
-		boolean shouldTransition(CfaReadableMotionData data);
+	public ActionTransitionDetails applyVariator(Function<ActionTransitionDetails, ActionTransitionDetails> variator) {
+		return variator.apply(this);
 	}
 
 	/**

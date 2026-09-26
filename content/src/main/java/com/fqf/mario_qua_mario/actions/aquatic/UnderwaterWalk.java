@@ -90,7 +90,7 @@ public class UnderwaterWalk implements AquaticActionDefinition {
 		builder.add(DuckWaddle.DUCK.variate(
 				UnderwaterDuck.ID,
 				null, null,
-				null,
+				null, null,
 				(data, isSelf, seed) -> data.playSound(MarioSFX.DUCK, 1, 0.25F, seed)
 		));
 	}
@@ -105,7 +105,7 @@ public class UnderwaterWalk implements AquaticActionDefinition {
 		builder.add(
 				EXIT_WATER,
 				Fall.FALL.variate(Submerged.ID,
-						data -> Fall.FALL.evaluator().shouldTransition(data) && SUBMERGE.evaluator().shouldTransition(data))
+						data -> Fall.FALL.evaluator().test(data) && SUBMERGE.evaluator().test(data))
 		);
 	}
 }

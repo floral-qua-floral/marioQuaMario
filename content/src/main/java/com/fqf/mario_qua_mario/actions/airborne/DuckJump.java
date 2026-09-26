@@ -2,10 +2,7 @@ package com.fqf.mario_qua_mario.actions.airborne;
 
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
-import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.charaformact_api.definitions.states.actions.util.SneakingRule;
-import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
+import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
@@ -18,9 +15,11 @@ import org.jetbrains.annotations.Nullable;
 public class DuckJump extends Jump implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("duck_jump");
 
+	@Override public float defineHitboxHeight() {
+		return DuckWaddle.DUCK_HEIGHT;
+	}
 
-	@Override
-	public @Nullable AnimationDefinition defineAnimation() {
+	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return DuckWaddle.makeAnimation(false, false);
 	}
 
@@ -36,6 +35,7 @@ public class DuckJump extends Jump implements AirborneActionDefinition {
 				DuckJump.ID,
 				data -> data.getInputs().JUMP.isPressed(),
 				EvaluatorEnvironment.CLIENT_ONLY,
+				SizeChangeBehavior.AUTOMATIC,
 				data -> {
 					helper.performJump(data, JUMP_VEL, JUMP_ADDEND);
 					data.getInputs().DUCK.isPressed(); // Unbuffer DUCK

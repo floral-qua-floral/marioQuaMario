@@ -96,9 +96,9 @@ public class BonkGround implements GroundedActionDefinition {
 		builder.add(
 				Fall.FALL.variate(
 						BonkAir.ID,
-						data -> Fall.FALL.evaluator().shouldTransition(data) && data.retrieveStateData(ActionTimerVars.class).actionTimer == 0,
+						data -> Fall.FALL.evaluator().test(data) && data.retrieveStateData(ActionTimerVars.class).actionTimer == 0,
 						EvaluatorEnvironment.CLIENT_ONLY,
-						null,
+						null, null,
 						null
 				),
 				Fall.FALL,

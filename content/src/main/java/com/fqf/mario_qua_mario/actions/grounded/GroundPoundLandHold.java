@@ -5,6 +5,7 @@ import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinit
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.charaformact_api.definitions.states.actions.util.SizeChangeBehavior;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.google.common.collect.ImmutableList;
@@ -37,8 +38,9 @@ public class GroundPoundLandHold extends GroundPoundLand implements GroundedActi
 			ActionCategory.AIRBORNE,
 			(nearbyTransition, castableHelper) -> new ActionTransitionDetails(
 					GroundPoundLandHold.ID,
-					data -> (data.isServer() || data.getInputs().DUCK.isHeld()) && nearbyTransition.evaluator().shouldTransition(data),
+					data -> (data.isServer() || data.getInputs().DUCK.isHeld()) && nearbyTransition.evaluator().test(data),
 					EvaluatorEnvironment.CLIENT_CHECKED,
+					SizeChangeBehavior.AUTOMATIC,
 					nearbyTransition.travelExecutor(),
 					nearbyTransition.clientsExecutor()
 			)

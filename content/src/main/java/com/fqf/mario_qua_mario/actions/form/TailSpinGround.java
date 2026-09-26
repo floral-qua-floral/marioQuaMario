@@ -35,6 +35,10 @@ import org.jetbrains.annotations.Nullable;
 public class TailSpinGround implements GroundedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("tail_spin_grounded");
 
+	@Override public float defineHitboxHeight() {
+		return DuckWaddle.DUCK_HEIGHT;
+	}
+
 	private static final float TICKS_PER_REVOLUTION = 6;
 	public static AnimationDefinition makeAnimation(boolean isGrounded) {
 		return AnimationDefinition.layerModelArranger(
@@ -148,7 +152,7 @@ public class TailSpinGround implements GroundedActionDefinition {
 				DuckJump.makeDuckJumpTransition(helper).variate(
 						TailSpinAerial.JUMP_ID,
 						null, null,
-						data -> helper.performJump(data, TailSpinAerial.JUMP_VEL, null),
+						null, data -> helper.performJump(data, TailSpinAerial.JUMP_VEL, null),
 						(data, isSelf, seed) -> data.playJumpSound(seed)
 				)
 		);

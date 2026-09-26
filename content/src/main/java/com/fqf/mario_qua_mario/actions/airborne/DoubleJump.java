@@ -55,7 +55,7 @@ public class DoubleJump extends Jump implements AirborneActionDefinition {
 
 	public static final ActionTransitionDetails TRIPLE_JUMPABLE_LANDING = Fall.LANDING.variate(
 			null, null, null,
-			data -> MarioVars.get(data).canTripleJumpTicks = 3,
+			null, data -> MarioVars.get(data).canTripleJumpTicks = 3,
 			null
 	);
 
@@ -78,15 +78,15 @@ public class DoubleJump extends Jump implements AirborneActionDefinition {
 			}
 
 			@Override
-			public @NotNull ActionTransitionDetails makeTransition(ActionTransitionDetails nearbyTransition, GenericActionDefinition.CastableHelper helper) {
+			public @NotNull ActionTransitionDetails makeTransition(ActionTransitionDetails nearbyTransition, GenericActionDefinition.TransitionHelper helper) {
 				return nearbyTransition.variate(
 						transitionTo,
 						data ->
 								tickChecker.applyAsInt(MarioVars.get(data)) > 0
 								&& data.getForwardVel() >= requiredForwardSpeed.getAsLimit(data)
-								&& nearbyTransition.evaluator().shouldTransition(data),
+								&& nearbyTransition.evaluator().test(data),
 						null,
-						data -> helper.asGrounded().performJump(data, jumpVel, addend),
+						null, data -> helper.asGrounded().performJump(data, jumpVel, addend),
 						(data, isSelf, seed) -> {
 							data.playJumpSound(seed);
 							data.voice(voiceline, seed);

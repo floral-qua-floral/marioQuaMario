@@ -17,6 +17,7 @@ import com.fqf.charaformact_api.definitions.states.actions.util.SneakingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.WallBodyAlignment;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.entity.*;
@@ -84,6 +85,13 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDa
 		return !this.skippingThroughLivingEntityTravel;
 	}
 
+	@WrapMethod(method = "updatePose")
+	private void updatePoseHook(Operation<Void> original) {
+		if(this.cfa$getCfaData() instanceof CfaMoveableData moveableData && moveableData.isEnabled())
+			moveableData.customUpdatePose();
+		else
+			original.call();
+	}
 
 	@Override
 	public boolean cfa$shouldStepOnBlock() {
@@ -107,34 +115,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDa
 			cir.setReturnValue(false);
 	}
 
-	@Inject(method = "getBaseDimensions", at = @At("RETURN"), cancellable = true)
-	private void alterCharacterHitbox(EntityPose pose, CallbackInfoReturnable<EntityDimensions> cir) {
-		CfaPlayerData data = cfa$getCfaData();
-		if(data.isEnabled()) {
-			// Return the standing hitbox if we're trying to evaluate the player's sneaking hitbox while she can't sneak
-			if(pose == EntityPose.CROUCHING && data.getAction().SNEAKING_RULE == SneakingRule.PROHIBIT)
-				cir.setReturnValue(getBaseDimensions(EntityPose.STANDING));
-			else if(pose == EntityPose.STANDING && data.getAction().SNEAKING_RULE == SneakingRule.FORCE)
-				cir.setReturnValue(getBaseDimensions(EntityPose.CROUCHING));
-			else {
-				float widthFactor = data.getHorizontalScale();
-				float heightFactor = data.getVerticalScale();
-				float eyeHeightFactor = data.getEyeHeightScale();
-				if(pose == EntityPose.CROUCHING) {
-					heightFactor *= 0.6F;
-					eyeHeightFactor *= 0.6F;
-				}
-
-				EntityDimensions normalDimensions = cir.getReturnValue();
-
-				cir.setReturnValue(new EntityDimensions(
-						normalDimensions.width() * widthFactor,
-						normalDimensions.height() * heightFactor,
-						normalDimensions.eyeHeight() * eyeHeightFactor,
-						normalDimensions.attachments().scale(widthFactor, heightFactor, widthFactor), normalDimensions.fixed()
-				));
-			}
-		}
+	@WrapMethod(method = "getBaseDimensions")
+	private EntityDimensions alterCharacterHitbox(EntityPose pose, Operation<EntityDimensions> original) {
+		CfaPlayerData data = this.cfa$getCfaData();
+		return !data.isEnabled() || CfaPlayerData.getRawDimensions
+				? original.call(pose)
+				: data.adjustDimensions(original.call(EntityPose.STANDING));
 	}
 
 	@Inject(method = "clipAtLedge", at = @At("HEAD"), cancellable = true)

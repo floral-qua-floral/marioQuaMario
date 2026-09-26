@@ -31,8 +31,11 @@ public class TailSpinAerial implements AirborneActionDefinition {
 	public static final Identifier FALL_ID = MarioQuaMario.makeID("tail_spin_fall");
 	public static final Identifier JUMP_ID = MarioQuaMario.makeID("tail_spin_jump");
 
-	@Override
-	public @Nullable AnimationDefinition defineAnimation() {
+	@Override public float defineHitboxHeight() {
+		return DuckWaddle.DUCK_HEIGHT;
+	}
+
+	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return TailSpinGround.makeAnimation(false);
 	}
 
@@ -91,7 +94,7 @@ public class TailSpinAerial implements AirborneActionDefinition {
 		builder.add(
 				Submerged.SUBMERGE,
 				Fall.LANDING.variate(TailSpinGround.ID,
-						data -> !TailSpinGround.doneSpinning(data) && Fall.LANDING.evaluator().shouldTransition(data)),
+						data -> !TailSpinGround.doneSpinning(data) && Fall.LANDING.evaluator().test(data)),
 				Fall.LANDING.variate(DuckWaddle.ID, null)
 		);
 	}

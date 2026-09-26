@@ -124,13 +124,14 @@ public class ClimbPole implements GenericActionDefinition {
 	}
 
 	@Override
-	public void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, CastableHelper helper) {
+	public void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, TransitionHelper helper) {
 		builder.add(
 				new ActionTransitionDetails(
 						WallJump.ID,
 						data -> (data.getInputs().getForwardInput() < -0.25 || Math.abs(data.getInputs().getStrafeInput()) > 0.25)
 								&& data.getInputs().JUMP.isPressed(),
 						EvaluatorEnvironment.CLIENT_ONLY,
+						SizeChangeBehavior.AUTOMATIC,
 						data -> {
 							releasePole(data);
 							data.setYVel(WallJump.WALL_JUMP_VEL.get(data));
@@ -147,6 +148,7 @@ public class ClimbPole implements GenericActionDefinition {
 						Fall.ID,
 						data -> data.getInputs().DUCK.isHeld() && data.getInputs().JUMP.isPressed(),
 						EvaluatorEnvironment.CLIENT_ONLY,
+						SizeChangeBehavior.AUTOMATIC,
 						data -> {
 							releasePole(data);
 							data.getInputs().DUCK.isPressed(); // Unbuffer Duck
@@ -157,6 +159,7 @@ public class ClimbPole implements GenericActionDefinition {
 						Jump.ID,
 						data -> data.getInputs().JUMP.isPressed(),
 						EvaluatorEnvironment.CLIENT_ONLY,
+						SizeChangeBehavior.AUTOMATIC,
 						data -> {
 							releasePole(data);
 							data.setYVel(1);
@@ -168,12 +171,13 @@ public class ClimbPole implements GenericActionDefinition {
 	}
 
 	@Override
-	public void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, CastableHelper helper) {
+	public void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, TransitionHelper helper) {
 		builder.add(
 				new ActionTransitionDetails(
 						SpecialFall.ID,
 						data -> !ClimbTransitions.inNonSolidClimbable(data, false),
 						EvaluatorEnvironment.COMMON,
+						SizeChangeBehavior.AUTOMATIC,
 						ClimbPole::releasePole,
 						null
 				),
@@ -181,6 +185,7 @@ public class ClimbPole implements GenericActionDefinition {
 						SubWalk.ID,
 						data -> data.getPlayer().isOnGround(),
 						EvaluatorEnvironment.CLIENT_ONLY,
+						SizeChangeBehavior.AUTOMATIC,
 						ClimbPole::releasePole,
 						null
 				)

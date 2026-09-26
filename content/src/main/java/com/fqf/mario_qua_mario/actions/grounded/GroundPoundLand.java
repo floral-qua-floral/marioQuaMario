@@ -59,7 +59,7 @@ public class GroundPoundLand implements GroundedActionDefinition {
 		builder.add(
 				Fall.FALL.variate(
 						GroundPoundDrop.ID,
-						data -> data.getInputs().DUCK.isHeld() && Fall.FALL.evaluator().shouldTransition(data)
+						data -> data.getInputs().DUCK.isHeld() && Fall.FALL.evaluator().test(data)
 				),
 				Fall.FALL,
 				UnderwaterWalk.SUBMERGE.variate(AquaticPoundLand.ID, null)

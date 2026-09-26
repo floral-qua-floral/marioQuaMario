@@ -9,9 +9,6 @@ import net.minecraft.util.Identifier;
 import java.util.Set;
 
 public class ParsedPowerGrantingState extends ParsedCfaState {
-	public final float WIDTH_FACTOR;
-	public final float HEIGHT_FACTOR;
-	public final float EYE_HEIGHT_FACTOR;
 	public final float ANIMATION_HORIZONTAL_SCALE;
 	public final float ANIMATION_VERTICAL_SCALE;
 
@@ -22,11 +19,8 @@ public class ParsedPowerGrantingState extends ParsedCfaState {
 	private final Set<StatAlteringStateDefinition.StatModifier> STAT_MODIFIERS;
 
 	public ParsedPowerGrantingState(Identifier id, StatAlteringStateDefinition definition) {
-		super(id, definition);
+		super(id, definition, definition.defineWidthFactor(), definition.defineHeightFactor(), definition.defineEyeHeightFactor());
 
-		this.WIDTH_FACTOR = definition.defineWidthFactor();
-		this.HEIGHT_FACTOR = definition.defineHeightFactor();
-		this.EYE_HEIGHT_FACTOR = definition.defineEyeHeightFactor();
 		this.ANIMATION_HORIZONTAL_SCALE = definition.defineAnimationHorizontalScale();
 		this.ANIMATION_VERTICAL_SCALE = definition.defineAnimationVerticalScale();
 

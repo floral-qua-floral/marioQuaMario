@@ -1,7 +1,6 @@
 package com.fqf.charaformact.registries.actions.parsed;
 
 import com.fqf.charaformact.cfadata.CfaMoveableData;
-import com.fqf.charaformact.registries.actions.UniversalActionTransitionHelper;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
@@ -32,17 +31,17 @@ public class ParsedAirborneAction extends AbstractParsedAction {
 	}
 
 	@Override
-	protected void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, UniversalActionTransitionHelper helper) {
-		this.AIRBORNE_DEFINITION.accumulateBasicTransitions(builder, helper);
+	protected void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder) {
+		this.AIRBORNE_DEFINITION.accumulateBasicTransitions(builder, UniversalActionDefinitionHelper.INSTANCE);
 	}
 
 	@Override
-	protected void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, UniversalActionTransitionHelper helper) {
-		this.AIRBORNE_DEFINITION.accumulateInputTransitions(builder, helper);
+	protected void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder) {
+		this.AIRBORNE_DEFINITION.accumulateInputTransitions(builder, UniversalActionDefinitionHelper.INSTANCE);
 	}
 
 	@Override
-	protected void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, UniversalActionTransitionHelper helper) {
-		this.AIRBORNE_DEFINITION.accumulateCollisionTransitions(builder, helper);
+	protected void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder) {
+		this.AIRBORNE_DEFINITION.accumulateCollisionTransitions(builder, UniversalActionDefinitionHelper.INSTANCE);
 	}
 }

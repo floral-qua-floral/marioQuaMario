@@ -25,8 +25,11 @@ import static com.fqf.charaformact_api.util.StatCategory.*;
 public class DuckSlide implements GroundedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("duck_slide");
 
-	@Override
-	public @Nullable AnimationDefinition defineAnimation() {
+	@Override public float defineHitboxHeight() {
+		return DuckWaddle.DUCK_HEIGHT;
+	}
+
+	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return DuckWaddle.makeAnimation(true, false);
 	}
 
@@ -84,6 +87,7 @@ public class DuckSlide implements GroundedActionDefinition {
 										&& data.getForwardVel() > LongJump.LONG_JUMP_THRESHOLD.get(data)
 										&& data.getInputs().JUMP.isPressed(),
 						EvaluatorEnvironment.CLIENT_ONLY,
+						SizeChangeBehavior.AUTOMATIC,
 						data -> {
 							helper.performJump(data, LongJump.LONG_JUMP_VEL, null);
 							data.setForwardVel(data.getForwardVel() * 0.92 + 0.098);
@@ -114,9 +118,10 @@ public class DuckSlide implements GroundedActionDefinition {
 					data -> {
 						double threshold = SLIDE_THRESHOLD.get(data);
 						return data.getHorizVelSquared() > threshold * threshold
-								&& nearbyTransition.evaluator().shouldTransition(data);
+								&& nearbyTransition.evaluator().test(data);
 					},
 					EvaluatorEnvironment.CLIENT_ONLY,
+					null,
 					null, null
 			)
 	);
@@ -128,10 +133,10 @@ public class DuckSlide implements GroundedActionDefinition {
 					data -> {
 						double threshold = SLIDE_THRESHOLD.get(data);
 						return (data.isServer() || (data.getHorizVelSquared() > threshold * threshold))
-								&& nearbyTransition.evaluator().shouldTransition(data);
+								&& nearbyTransition.evaluator().test(data);
 					},
 					EvaluatorEnvironment.CLIENT_CHECKED,
-					null, null
+					null, null, null
 			)
 	);
 

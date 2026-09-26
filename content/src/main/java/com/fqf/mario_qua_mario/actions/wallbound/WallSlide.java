@@ -247,6 +247,7 @@ public class WallSlide implements WallboundActionDefinition {
 			WallSlide.ID,
 			MarioVars::checkWallSlide,
 			EvaluatorEnvironment.CLIENT_ONLY,
+			SizeChangeBehavior.AUTOMATIC,
 			data -> {
 				if(!data.getPlayer().isTouchingWaterOrRain()) {
 					data.getPlayer().fallDistance = 0;
@@ -267,6 +268,7 @@ public class WallSlide implements WallboundActionDefinition {
 						WallJump.ID,
 						data -> data.getInputs().JUMP.isPressed(),
 						EvaluatorEnvironment.CLIENT_ONLY,
+						SizeChangeBehavior.AUTOMATIC,
 						data -> {
 							data.setYVel(WallJump.WALL_JUMP_VEL.get(data));
 							helper.setTowardsWallVel(data, -WallJump.WALL_JUMP_SPEED.get(data));
@@ -281,6 +283,7 @@ public class WallSlide implements WallboundActionDefinition {
 						Fall.ID,
 						data -> data.getInputs().DUCK.isPressed() || data.retrieveStateData(WallSlideVars.class).holdAwayFromWallTicks > 6,
 						EvaluatorEnvironment.CLIENT_ONLY,
+						SizeChangeBehavior.AUTOMATIC,
 						data -> helper.setTowardsWallVel(data, 0),
 						null
 				)
@@ -292,7 +295,7 @@ public class WallSlide implements WallboundActionDefinition {
 		builder.add(
 				ClimbTransitions.CLIMB_SOLID.variate(
 						null,
-						data -> helper.getWallInfo(data).getTowardsWallInput() > 0.3 && ClimbTransitions.CLIMB_SOLID.evaluator().shouldTransition(data)
+						data -> helper.getWallInfo(data).getTowardsWallInput() > 0.3 && ClimbTransitions.CLIMB_SOLID.evaluator().test(data)
 				),
 				new ActionTransitionDetails(
 						SpecialFall.ID,

@@ -124,7 +124,7 @@ public class CfaServerPlayerData extends CfaMoveableData implements CfaAuthorita
 			}
 
 			@Nullable ParsedTransition transition = fromAction.TRANSITIONS_FROM_TARGETS.get(toAction);
-			if(transition != null && transition.serverChecked() && !transition.evaluator().shouldTransition(this)) {
+			if(transition != null && transition.serverValidated() && !transition.evaluator().test(this)) {
 				CharaFormAct.LOGGER.warn("""
 						TRANSITION REJECTED: Transition is server-checked and evaluator failed.
 						Attempted {} -> {}""", fromAction.ID, toAction.ID);
@@ -137,6 +137,15 @@ public class CfaServerPlayerData extends CfaMoveableData implements CfaAuthorita
 
 	public boolean recentlyInAction(AbstractParsedAction checkAction) {
 		return this.getAction() == checkAction || this.RECENT_ACTIONS.stream().anyMatch(pair -> pair.getLeft().ID.equals(checkAction.ID));
+	}
+
+	public boolean alreadyExecutedTransitionOnCommonSide(AbstractParsedAction fromAction, AbstractParsedAction toAction) {
+		@Nullable ParsedTransition transition = fromAction.TRANSITIONS_FROM_TARGETS.get(toAction);
+		return
+				transition != null // transition exists
+				&& transition.networkedC2S() && !transition.networkedS2C() // transition is COMMON_CLIENT_TRIGGERABLE
+				&& this.getAction() == toAction // already in target action - client is trying to move into it so we must respect that?
+				&& this.RECENT_ACTIONS.stream().anyMatch(pair -> pair.getLeft().ID.equals(fromAction.ID)); // recently in fromAction
 	}
 
 	@Override

@@ -373,7 +373,7 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 			this.RIGHT.update(inputs.pressingRight);
 
 			this.JUMP_CLIENT.update(inputs.jumping);
-			this.DUCK_CLIENT.update(inputs.sneaking || player.isInSneakingPose(), inputs.sneaking);
+			this.DUCK_CLIENT.update(inputs.sneaking);
 			this.SPIN_CLIENT.update(LEFT.isHeld && RIGHT.isHeld,
 					LEFT.isPressedNoUnbuffer() && RIGHT.isPressedNoUnbuffer());
 		}

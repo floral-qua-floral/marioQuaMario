@@ -8,6 +8,7 @@ import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinit
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
+import com.fqf.charaformact_api.definitions.states.actions.util.SizeChangeBehavior;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -159,6 +160,7 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 			BonkAir.ID,
 			data -> data.getRecordedCollisions().collidedHorizontally(),
 			EvaluatorEnvironment.CLIENT_ONLY,
+			SizeChangeBehavior.AUTOMATIC,
 			data ->
 					data.setVelocity(data.getRecordedCollisions().getHorizontallyReflectedVelocity().multiply(0.7)),
 			(data, isSelf, seed) -> {
@@ -213,10 +215,10 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 				Submerged.SUBMERGE,
 				Fall.LANDING.variate(
 						BonkGround.BACKWARD_ID,
-						data -> Fall.LANDING.evaluator().shouldTransition(data)
+						data -> Fall.LANDING.evaluator().test(data)
 								&& Math.abs(MathHelper.subtractAngles(data.getPlayer().bodyYaw, data.retrieveStateData(BonkVars.class).bonkYaw)) < 90,
 						EvaluatorEnvironment.CLIENT_ONLY,
-						null,
+						null, null,
 						null
 				),
 				Fall.LANDING.variate(BonkGround.FORWARD_ID, null)

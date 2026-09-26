@@ -139,6 +139,7 @@ public class Submerged implements AquaticActionDefinition {
 			ID,
 			data -> data.getImmersionPercent() > 0.5 && (data.getActionID() != LavaBoost.ID || data.getYVel() < 0),
 			EvaluatorEnvironment.COMMON,
+			SizeChangeBehavior.AUTOMATIC,
 			data -> data.setYVel(data.getYVel() * 0.225),
 			null
 	);
@@ -161,6 +162,7 @@ public class Submerged implements AquaticActionDefinition {
 							return (vars == null || vars.actionTimer > 7) && data.getInputs().JUMP.isHeld() && data.getForwardVel() > -0.1;
 						},
 						EvaluatorEnvironment.CLIENT_ONLY,
+						SizeChangeBehavior.AUTOMATIC,
 						data -> data.setYVel(Math.max(Paddle.PADDLE_FALL_SPEED.get(data), data.getYVel())),
 						null
 				)

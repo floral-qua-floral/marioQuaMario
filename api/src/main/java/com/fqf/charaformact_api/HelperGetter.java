@@ -4,7 +4,7 @@ import com.fqf.charaformact_api.definitions.states.actions.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 
 public abstract class HelperGetter {
-	public static GenericActionDefinition.CastableHelper getCastableActionHelper() {
+	public static GenericActionDefinition.TransitionHelper getCastableActionHelper() {
 		return instance.getInstanceCastableActionHelper();
 	}
 
@@ -29,6 +29,6 @@ public abstract class HelperGetter {
 	}
 
 	protected static HelperGetter instance;
-	protected abstract GenericActionDefinition.CastableHelper getInstanceCastableActionHelper();
+	protected abstract GenericActionDefinition.TransitionHelper getInstanceCastableActionHelper();
 	protected abstract AnimationHelper getInstanceAnimationHelper();
 }

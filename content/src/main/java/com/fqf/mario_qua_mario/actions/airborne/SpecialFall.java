@@ -35,6 +35,6 @@ public class SpecialFall extends Fall implements AirborneActionDefinition {
 			Fall.ID,
 			ActionCategory.GROUNDED,
 			(nearbyTransition, castableHelper) -> nearbyTransition.variate(SpecialFall.ID, data ->
-					data.getYVel() > 0 && nearbyTransition.evaluator().shouldTransition(data))
+					data.getYVel() > 0 && nearbyTransition.evaluator().test(data))
 	);
 }

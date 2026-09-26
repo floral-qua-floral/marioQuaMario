@@ -24,7 +24,7 @@ public interface AirborneActionDefinition extends IncompleteActionDefinition {
 	/**
 	 * Contains a number of methods intended to help with the creation of Airborne Actions.
 	 */
-	interface AirborneActionHelper {
+	interface AirborneActionHelper extends GenericActionDefinition.TransitionHelper {
 		void applyComplexGravity(
 				CfaTravelData data,
 				CfaStat gravity, @Nullable CfaStat jumpingGravity,

@@ -5,6 +5,7 @@ import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinit
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
+import com.fqf.charaformact_api.definitions.states.actions.util.SizeChangeBehavior;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.util.CfaStat;
@@ -28,6 +29,12 @@ import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class DuckWaddle implements GroundedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("duck_waddle");
+
+	public static final float DUCK_HEIGHT = 0.9F;
+
+	@Override public float defineHitboxHeight() {
+		return DUCK_HEIGHT;
+	}
 
 	public static final Identifier ANIMATION_ID = MarioQuaMario.makeID("grounded_ducking");
 	public static final Identifier AIRBORNE_ANIMATION_ID = MarioQuaMario.makeID("airborne_ducking");
@@ -116,6 +123,7 @@ public class DuckWaddle implements GroundedActionDefinition {
 			DuckWaddle.ID,
 			data -> data.getInputs().DUCK.isHeld(),
 			EvaluatorEnvironment.CLIENT_ONLY,
+			SizeChangeBehavior.AUTOMATIC,
 			null,
 			(data, isSelf, seed) -> {
 				data.playSound(MarioSFX.DUCK, 1, 0.25F, seed);
@@ -127,6 +135,7 @@ public class DuckWaddle implements GroundedActionDefinition {
 			SubWalk.ID,
 			data -> !data.getInputs().DUCK.isHeld(),
 			EvaluatorEnvironment.CLIENT_ONLY,
+			SizeChangeBehavior.AUTOMATIC,
 			null,
 			(data, isSelf, seed) -> data.playSound(MarioSFX.UNDUCK, 1, 0.25F, seed)
 	);

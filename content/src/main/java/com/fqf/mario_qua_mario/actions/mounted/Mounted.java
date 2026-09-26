@@ -5,6 +5,7 @@ import com.fqf.charaformact_api.definitions.states.actions.MountedActionDefiniti
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.charaformact_api.definitions.states.actions.util.SneakingRule;
+import com.fqf.charaformact_api.definitions.states.actions.util.SizeChangeBehavior;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Backflip;
 import com.fqf.mario_qua_mario.actions.grounded.SubWalk;
@@ -37,6 +38,7 @@ public class Mounted implements MountedActionDefinition {
 				SubWalk.ID,
 				data -> helper.getMount(data) == null || helper.getMount(data).isRemoved(),
 				EvaluatorEnvironment.COMMON,
+				SizeChangeBehavior.AUTOMATIC,
 				data -> {
 					MarioQuaMario.LOGGER.warn("Transitioned to SubWalk because mount was missing?!");
 				},
@@ -52,7 +54,7 @@ public class Mounted implements MountedActionDefinition {
 						null,
 						data -> data.getInputs().DUCK.isHeld() && data.getInputs().JUMP.isPressed(),
 						null,
-						data -> {
+						null, data -> {
 							helper.dismount(data, false);
 							Objects.requireNonNull(backflip.travelExecutor()).execute(data);
 						},

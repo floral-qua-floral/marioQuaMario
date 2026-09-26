@@ -39,6 +39,9 @@ public abstract class AbstractParsedAction extends ParsedCfaState implements Par
 	public final EnumMap<TransitionPhase, List<ParsedTransition>> CLIENT_TRANSITIONS;
 	public final EnumMap<TransitionPhase, List<ParsedTransition>> SERVER_TRANSITIONS;
 
+	private final List<ParsedTransition> COMPRESSION_TRANSITIONS_INTERNAL;
+	public final List<ParsedTransition> COMPRESSION_TRANSITIONS_VIEW;
+
 	private final List<ParsedAttackInterception> INTERCEPTIONS_INTERNAL, INTERCEPTIONS_VIEW;
 
 	private static final boolean LOG_TRANSITION_INJECTIONS = CharaFormAct.CONFIG.gameLaunchLogging();
@@ -46,7 +49,12 @@ public abstract class AbstractParsedAction extends ParsedCfaState implements Par
 	private static final BappingRule NULL_EQUIVALENT = new BappingRule(0, 0);
 
 	public AbstractParsedAction(Identifier id, IncompleteActionDefinition definition) {
-		super(id, definition);
+		super(
+				id, definition,
+				definition.defineHitboxWidth() / 0.6F,
+				definition.defineHitboxHeight() / 1.8F,
+				definition.defineHitboxEyeHeight() / 1.62F
+		);
 
 		CharaFormAct.LOGGER.info("Parsing action {}...", this.ID);
 
@@ -81,31 +89,43 @@ public abstract class AbstractParsedAction extends ParsedCfaState implements Par
 		this.CLIENT_TRANSITIONS = new EnumMap<>(TransitionPhase.class);
 		this.SERVER_TRANSITIONS = new EnumMap<>(TransitionPhase.class);
 
+		this.COMPRESSION_TRANSITIONS_INTERNAL = new ArrayList<>();
+		this.COMPRESSION_TRANSITIONS_VIEW = Collections.unmodifiableList(this.COMPRESSION_TRANSITIONS_INTERNAL);
+
 		this.INTERCEPTIONS_INTERNAL = new ArrayList<>();
 		this.INTERCEPTIONS_VIEW = Collections.unmodifiableList(this.INTERCEPTIONS_INTERNAL);
 	}
 
-	protected abstract void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, UniversalActionTransitionHelper helper);
-	protected abstract void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, UniversalActionTransitionHelper helper);
-	protected abstract void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, UniversalActionTransitionHelper helper);
+	protected abstract void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder);
+	protected abstract void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder);
+	protected abstract void accumulateCollisionTransitions(ImmutableList.Builder<ActionTransitionDetails> builder);
 
 	public void parseTransitions(List<TransitionInjectionDefinition> injections) {
-		UniversalActionTransitionHelper helper = new UniversalActionTransitionHelper(this);
+		UniversalActionDefinitionHelper.resetForTransitionCreation(this);
+
 		this.parseTransitions(
 				TransitionPhase.BASIC,
-				ImmutableCollectionHelper.accumulateList(builder -> accumulateBasicTransitions(builder, helper)),
+				ImmutableCollectionHelper.accumulateList(this::accumulateBasicTransitions),
 				injections
 		);
 		this.parseTransitions(
 				TransitionPhase.INPUT,
-				ImmutableCollectionHelper.accumulateList(builder -> accumulateInputTransitions(builder, helper)),
+				ImmutableCollectionHelper.accumulateList(this::accumulateInputTransitions),
 				injections
 		);
 		this.parseTransitions(
 				TransitionPhase.WORLD_COLLISION,
-				ImmutableCollectionHelper.accumulateList(builder -> accumulateCollisionTransitions(builder, helper)),
+				ImmutableCollectionHelper.accumulateList(this::accumulateCollisionTransitions),
 				injections
 		);
+
+		this.TRANSITIONS_FROM_TARGETS.forEach((action, transition) -> {
+			if(transition.canBeForcedBySmallSpace())
+				this.COMPRESSION_TRANSITIONS_INTERNAL.add(transition);
+		});
+		if(!this.COMPRESSION_TRANSITIONS_VIEW.isEmpty()) CharaFormAct.LOGGER.info("{} has compression transitions!", this.ID);
+
+		UniversalActionDefinitionHelper.resetForTransitionCreation(null);
 
 		List<AttackInterceptingStateDefinition.AttackInterceptionDefinition> interceptionDefinitions;
 		interceptionDefinitions = ImmutableCollectionHelper.accumulateList(builder -> this.ACTION_DEFINITION.accumulateAttackInterceptions(builder, AnimationHelperImpl.INSTANCE));
@@ -135,7 +155,7 @@ public abstract class AbstractParsedAction extends ParsedCfaState implements Par
 				TransitionInjectionDefinition.InjectionPlacement placement = injection.getPlacementRelativeTo(this.getCategory(), this.ID, transitioningTo.CATEGORY, transitioningTo.ID);
 				if(placement == null) continue;
 
-				ActionTransitionDetails injectionDetails = injection.makeTransition(details, new UniversalActionTransitionHelper(this));
+				ActionTransitionDetails injectionDetails = injection.makeTransition(details, UniversalActionDefinitionHelper.INSTANCE);
 				if(placement == TransitionInjectionDefinition.InjectionPlacement.BEFORE)
 					this.injectTransitionToBuilders(clientBuilder, serverBuilder, injectionDetails,
 							TransitionInjectionDefinition.InjectionPlacement.BEFORE, transitioningTo.ID);
@@ -169,13 +189,13 @@ public abstract class AbstractParsedAction extends ParsedCfaState implements Par
 			ActionTransitionDetails definition
 	) {
 		RegistryManager.incrementTransitionCount();
-		ParsedTransition transition = new ParsedTransition(definition);
+		ParsedTransition transition = ParsedTransition.of(this, definition);
 		if(this.TRANSITIONS_FROM_TARGETS.containsKey(transition.targetAction()))
 			CharaFormAct.LOGGER.warn("Action {} has multiple transitionDefinitions into {}! This is likely to cause issues!",
 					this.ID, transition.targetAction().ID);
 		else this.TRANSITIONS_FROM_TARGETS.put(transition.targetAction(), transition);
-		if(definition.environment().CHECK_ON_CLIENT) client.add(transition);
-		if(definition.environment().CHECK_ON_SERVER) server.add(transition);
+		if(definition.environment().EVALUATE_ON_CLIENT) client.add(transition);
+		if(definition.environment().EVALUATE_ON_SERVER) server.add(transition);
 	}
 
 	public int getIntID() {

@@ -15,7 +15,7 @@ public class HelperGetterImplementation extends HelperGetter {
 	}
 
 	@Override
-	protected GenericActionDefinition.CastableHelper getInstanceCastableActionHelper() {
+	protected GenericActionDefinition.TransitionHelper getInstanceCastableActionHelper() {
 		return UniversalActionDefinitionHelper.INSTANCE;
 	}
 

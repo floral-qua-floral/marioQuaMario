@@ -5,10 +5,7 @@ import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.TransitionInjectionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.GenericActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.WallboundActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
-import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
-import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.charaformact_api.definitions.states.actions.util.WallBodyAlignment;
+import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -91,6 +88,7 @@ public class ClimbWallSideHang extends ClimbWall implements WallboundActionDefin
 						this.getClimbingActionID(),
 						data -> Math.abs(helper.getWallInfo(data).getYawDeviation()) < 80,
 						EvaluatorEnvironment.CLIENT_ONLY,
+						SizeChangeBehavior.AUTOMATIC,
 						data -> data.setVelocity(Vec3d.ZERO),
 						this.getSideHangTransitionClientsExecutor()
 				)
@@ -112,11 +110,11 @@ public class ClimbWallSideHang extends ClimbWall implements WallboundActionDefin
 		}
 
 		@Override
-		public @NotNull ActionTransitionDetails makeTransition(ActionTransitionDetails nearbyTransition, GenericActionDefinition.CastableHelper helper) {
+		public @NotNull ActionTransitionDetails makeTransition(ActionTransitionDetails nearbyTransition, GenericActionDefinition.TransitionHelper helper) {
 			return nearbyTransition.variate(
 					this.SIDE_HANG_ID,
 					data -> (data.isServer() || MathHelper.angleBetween(data.getPlayer().getYaw(), this.calculateWallYaw(data)) > MIN_DEVIATION_TO_SIDE_HANG)
-							&& nearbyTransition.evaluator().shouldTransition(data)
+							&& nearbyTransition.evaluator().test(data)
 			);
 		}
 

@@ -126,9 +126,9 @@ public class LongJump extends Jump implements AirborneActionDefinition {
 				Submerged.SUBMERGE,
 				BonkAir.BONK.variate(
 						WallJump.ID,
-						data -> BonkAir.BONK.evaluator().shouldTransition(data) && data.getInputs().JUMP.isPressed(),
+						data -> BonkAir.BONK.evaluator().test(data) && data.getInputs().JUMP.isPressed(),
 						null,
-						data -> {
+						null, data -> {
 							Vec3d wallJumpHorizVel = data.getRecordedCollisions().getHorizontallyReflectedVelocity();
 							double wallJumpSpeed = WallJump.WALL_JUMP_SPEED.get(data);
 //							MarioQuaMario.LOGGER.info("Horiz Vel: {}\tThreshold: {}", wallJumpHorizVel.horizontalLengthSquared(), wallJumpSpeed * wallJumpSpeed);
@@ -151,8 +151,8 @@ public class LongJump extends Jump implements AirborneActionDefinition {
 				),
 				BonkAir.BONK,
 				Jump.DOUBLE_JUMPABLE_LANDING.variate(PRun.ID, data ->
-								Fall.LANDING.evaluator().shouldTransition(data) && (data.isServer() || PRun.meetsPRunRequirements(data)),
-						EvaluatorEnvironment.CLIENT_CHECKED, null, null),
+								Fall.LANDING.evaluator().test(data) && (data.isServer() || PRun.meetsPRunRequirements(data)),
+						EvaluatorEnvironment.CLIENT_CHECKED, null, null, null),
 				Jump.DOUBLE_JUMPABLE_LANDING,
 				// Mario can start climbing non-solids (vines), but can't climb solids or start wall-sliding (because he'd bonk)
 				ClimbTransitions.CLIMB_NON_SOLID_DIRECTIONAL,

@@ -9,13 +9,24 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ParsedCfaState extends ParsedCfaThing {
+	public final float WIDTH_FACTOR;
+	public final float HEIGHT_FACTOR;
+	public final float EYE_HEIGHT_FACTOR;
+
 	private final @NotNull CfaStateDefinition STATE_DEFINITION;
 
 	private @Nullable Class<?> lastCustomVarsClass;
 
-	public ParsedCfaState(Identifier id, @NotNull CfaStateDefinition definition) {
+	public ParsedCfaState(
+			Identifier id, @NotNull CfaStateDefinition definition,
+			float widthFactor, float heightFactor, float eyeHeightFactor
+	) {
 		super(id);
 		this.STATE_DEFINITION = definition;
+
+		this.WIDTH_FACTOR = widthFactor;
+		this.HEIGHT_FACTOR = heightFactor;
+		this.EYE_HEIGHT_FACTOR = eyeHeightFactor;
 	}
 
 	public void serverTick(CfaServerPlayerData data) {

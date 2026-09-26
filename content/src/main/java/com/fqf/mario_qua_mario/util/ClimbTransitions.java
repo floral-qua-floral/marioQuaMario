@@ -4,6 +4,7 @@ import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.charaformact_api.definitions.states.actions.util.SizeChangeBehavior;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.StatCategory;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -146,6 +147,7 @@ public class ClimbTransitions {
 				targetActionID,
 				data -> inNonSolidClimbable(data, directionality) && (data.isServer() || tryingToStartClimbingIntangible(data)),
 				EvaluatorEnvironment.CLIENT_CHECKED,
+				SizeChangeBehavior.AUTOMATIC,
 				data -> {
 					data.centerLaterally();
 					data.setForwardStrafeVel(0, 0);
@@ -170,6 +172,7 @@ public class ClimbTransitions {
 					data.getRecordedCollisions().getAnyMatch((collision, block) ->
 					collision.direction().getAxis().isHorizontal() && canClimbBlock(block, collision.direction())) != null,
 			EvaluatorEnvironment.CLIENT_ONLY,
+			SizeChangeBehavior.AUTOMATIC,
 			data -> {
 				data.setForwardStrafeVel(0, 0);
 			},

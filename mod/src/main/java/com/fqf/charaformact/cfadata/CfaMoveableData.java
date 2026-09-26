@@ -1,11 +1,14 @@
 package com.fqf.charaformact.cfadata;
 
+import com.fqf.charaformact.registries.actions.ParsedActionHelper;
+import com.fqf.charaformact.registries.actions.ParsedTransition;
 import com.fqf.charaformact.registries.actions.UniversalActionDefinitionHelper;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact.util.CfaPositionSettable;
 import com.fqf.charaformact_api.cfadata.util.CollisionMatcher;
 import com.fqf.charaformact_api.cfadata.util.RecordedCollision;
 import com.fqf.charaformact_api.cfadata.util.RecordedCollisionSet;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -293,6 +296,13 @@ public abstract class CfaMoveableData extends CfaPlayerData implements CfaTravel
 //	public boolean didCustomTravel() {
 //		return super.didCustomTravel() && ;
 //	}
+
+	public void customUpdatePose() {
+		switch(this.getPlayer().getPose()) {
+			case CROUCHING, SWIMMING -> this.getPlayer().setPose(EntityPose.STANDING);
+		}
+		ParsedActionHelper.attemptCompressionTransitions(this);
+	}
 
 	public abstract void customTravel(boolean cancelVanillaTravel, double forwardInput, double strafeInput);
 

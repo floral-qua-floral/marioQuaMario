@@ -128,20 +128,24 @@ public class CfaDataPackets {
 //			CharaFormAct.LOGGER.info("Received setActionC2S: {}->{}", collisionAttackID.ID, toAction.ID);
 			boolean rejectInvalid = context.player().getWorld().getGameRules().getBoolean(CfaGamerules.REJECT_INVALID_ACTION_TRANSITIONS)
 					&& !(CharaFormAct.CONFIG.shouldAllowIllegalTransitionsInSingleplayer() && Objects.requireNonNull(context.player().getServer()).isHost(context.player().getGameProfile()));
-			if(context.player().cfa$getCfaData().setAction(fromAction, toAction, payload.seed, !rejectInvalid, false)) {
-				CfaPackets.sendToTrackers(context.player(), new ActionTransitionS2CPayload(
-						context.player().getId(),
-						payload.fromAction,
-						payload.toAction,
-						payload.seed
-				), false);
+
+			if(!context.player().cfa$getCfaData().alreadyExecutedTransitionOnCommonSide(fromAction, toAction)) {
+				if(context.player().cfa$getCfaData().setAction(fromAction, toAction, payload.seed, !rejectInvalid, false)) {
+					CfaPackets.sendToTrackers(context.player(), new ActionTransitionS2CPayload(
+							context.player().getId(),
+							payload.fromAction,
+							payload.toAction,
+							payload.seed
+					), false);
+				}
+				else {
+					// Reject the transition and instead tell the player to go back to the action we think she's in
+					ServerPlayNetworking.send(context.player(), new AssignActionS2CPayload(
+							context.player().getId(), context.player().cfa$getCfaData().getAction().getIntID()
+					));
+				}
 			}
-			else {
-				// Reject the transition and instead tell the player to go back to the action we think she's in
-				ServerPlayNetworking.send(context.player(), new AssignActionS2CPayload(
-						context.player().getId(), context.player().cfa$getCfaData().getAction().getIntID()
-				));
-			}
+			else CharaFormAct.LOGGER.info("Skipping COMMON_CLIENT_TRIGGERABLE networked from client because we already did it: {}->{}", fromAction.ID, toAction.ID);
 		}
 
 		@Override public Id<? extends CustomPayload> getId() {

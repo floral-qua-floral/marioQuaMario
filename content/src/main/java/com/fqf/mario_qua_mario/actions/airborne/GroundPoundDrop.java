@@ -62,8 +62,9 @@ public class GroundPoundDrop implements AirborneActionDefinition {
 				SpecialFall.ID,
 				data -> data.getYVel() > 0 || data.getInputs().JUMP.isPressed(),
 				EvaluatorEnvironment.CLIENT_ONLY,
+				SizeChangeBehavior.AUTOMATIC,
 				data -> data.getInputs().DUCK.isPressed(), // Unbuffer duck to make Ground Pound stalling less trivial
-				(data, isSelf, seed) -> data.stopStoredSound(MarioSFX.GROUND_POUND_DROP)
+				null
 		));
 	}
 
@@ -73,20 +74,16 @@ public class GroundPoundDrop implements AirborneActionDefinition {
 				Fall.LANDING.variate(
 						GroundPoundLand.ID,
 						null, EvaluatorEnvironment.COMMON,
-						data -> data.setForwardStrafeVel(0, 0),
+						null, data -> data.setForwardStrafeVel(0, 0),
 						(data, isSelf, seed) -> {
-							data.stopStoredSound(MarioSFX.GROUND_POUND_DROP);
 							data.playSound(MarioSFX.GROUND_POUND_LAND, seed);
 						}
 				),
 				Submerged.SUBMERGE.variate(
 						AquaticPoundDrop.ID,
 						null, null,
-						data -> data.setYVel(data.getYVel() * 0.6),
-						(data, isSelf, seed) -> {
-							data.stopStoredSound(MarioSFX.GROUND_POUND_DROP);
-							data.storeSound(data.playSound(MarioSFX.AQUATIC_GROUND_POUND_DROP, seed));
-						}
+						null, data -> data.setYVel(data.getYVel() * 0.6),
+						null
 				)
 		);
 	}

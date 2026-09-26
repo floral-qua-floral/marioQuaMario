@@ -5,6 +5,7 @@ import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinit
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.charaformact_api.definitions.states.actions.util.SizeChangeBehavior;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
@@ -146,6 +147,7 @@ public class Backflip extends Jump implements AirborneActionDefinition {
 				data ->
 						data.getForwardVel() < 0.0 && data.getInputs().getForwardInput() < -0.65 && data.getInputs().JUMP.isPressed(),
 				EvaluatorEnvironment.CLIENT_ONLY,
+				SizeChangeBehavior.AUTOMATIC,
 				data -> {
 					double backflipBackwardsVel = Backflip.BACKFLIP_BACKWARDS_SPEED.get(data);
 					if(data.getForwardVel() > backflipBackwardsVel)

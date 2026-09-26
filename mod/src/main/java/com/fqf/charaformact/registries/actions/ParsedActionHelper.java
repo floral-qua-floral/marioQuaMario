@@ -33,12 +33,12 @@ public class ParsedActionHelper {
 		TransitionPhase usePhase = phase == TransitionPhase.WORLD_COLLISION_EARLY ? TransitionPhase.WORLD_COLLISION : phase;
 		for(ParsedTransition transition : data.isClient() ? data.getAction().CLIENT_TRANSITIONS.get(usePhase) : data.getAction().SERVER_TRANSITIONS.get(usePhase)) {
 //			if(Objects.equals(data.getActionID(), CharaFormAct.makeID("jump")))
-//				CharaFormAct.LOGGER.info("Testing transition from {}->{}:\n{}", data.getActionID(), transition.targetAction().ID, transition.evaluator().shouldTransition(data));
-			if(transition.evaluator().shouldTransition(data)) {
+//				CharaFormAct.LOGGER.info("Testing transition from {}->{}:\n{}", data.getActionID(), transition.targetAction().ID, transition.evaluator().test(data));
+			if(transition.evaluator().test(data)) {
 				long seed = data.getPlayer().getRandom().nextLong();
 
 				if(data.isServer()) {
-					CfaDataPackets.transitionToActionS2C((ServerPlayerEntity) data.getPlayer(), transition.fullyNetworked(),
+					CfaDataPackets.transitionToActionS2C((ServerPlayerEntity) data.getPlayer(), transition.networkedS2C(),
 							data.getAction(), transition.targetAction(), seed);
 				}
 				else {
@@ -57,7 +57,7 @@ public class ParsedActionHelper {
 					}
 
 					CfaClientHelperManager.packetSender.conditionallySaveTransitionToReplayMod(data.getAction(), transition.targetAction(), seed);
-					if (transition.fullyNetworked()) {
+					if(transition.networkedC2S()) {
 						CfaClientHelperManager.packetSender.setActionC2S(data.getAction(), transition.targetAction(), seed, phase);
 					}
 				}
@@ -68,6 +68,30 @@ public class ParsedActionHelper {
 			}
 			else
 				data.handleInputUnbuffering(false);
+		}
+	}
+
+	public static void attemptCompressionTransitions(CfaMoveableData data) {
+		if(!data.canFitInAction(data.getAction())) {
+			for(ParsedTransition transition : data.getAction().COMPRESSION_TRANSITIONS_VIEW) {
+				// We check if we're being squeezed into this action, instead of checking its evaluator.
+				if(data.canFitInAction(transition.targetAction())) {
+					long seed = data.getPlayer().getRandom().nextLong();
+
+					if(data.isServer()) {
+						// Never network to transitioner, because transitions forced through tight spaces are always treated
+						// as though they're common-sided!
+						CfaDataPackets.transitionToActionS2C((ServerPlayerEntity) data.getPlayer(), false,
+								data.getAction(), transition.targetAction(), seed);
+					}
+					else {
+						CfaClientHelperManager.packetSender.conditionallySaveTransitionToReplayMod(data.getAction(), transition.targetAction(), seed);
+					}
+
+					executeTransition(data, transition, seed);
+					return;
+				}
+			}
 		}
 	}
 

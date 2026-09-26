@@ -22,7 +22,7 @@ public interface AquaticActionDefinition extends IncompleteActionDefinition {
 	/**
 	 * Contains a number of methods intended to help with the creation of Aquatic Actions.
 	 */
-	interface AquaticActionHelper {
+	interface AquaticActionHelper extends GenericActionDefinition.TransitionHelper {
 		void applyGravity(CfaTravelData data, CfaStat gravity, CfaStat terminalVelocity);
 
 		void applyWaterDrag(CfaTravelData data, CfaStat drag, CfaStat dragMin);
