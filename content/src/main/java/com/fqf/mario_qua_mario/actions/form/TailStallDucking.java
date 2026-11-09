@@ -20,6 +20,11 @@ import org.jetbrains.annotations.Nullable;
 public class TailStallDucking extends TailStall implements AirborneActionDefinition {
 	public static final Identifier ID = DUCK_STALL_ID; // prevents warnings from trying to access subclass field in TailStall transitions
 
+	@Override
+	public float defineHitboxHeight() {
+		return DuckWaddle.DUCK_HEIGHT;
+	}
+
 	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return AnimationDefinition.layerPostureMutator(DuckWaddle.makeAnimation(false, false), TailStall.POSTURE_MUTATOR);
 	}
@@ -58,11 +63,13 @@ public class TailStallDucking extends TailStall implements AirborneActionDefinit
 					DUCK_STALL_ID,
 					data ->
 							data.hasPower(Powers.TAIL_STALL)
-									&& data.getPlayer().isInSneakingPose()
-									&& (data.isServer() || (
-									data.getYVel() < STALL_THRESHOLD.get(data)
+							&& (
+									data.isServer()
+									|| (
+											data.getYVel() < STALL_THRESHOLD.get(data)
 											&& data.getInputs().JUMP.isHeld()
-							))
+									)
+							)
 			)
 	);
 }

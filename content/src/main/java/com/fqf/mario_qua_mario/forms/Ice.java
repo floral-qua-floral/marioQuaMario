@@ -3,6 +3,7 @@ package com.fqf.mario_qua_mario.forms;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.entity.custom.MarioIceballProjectileEntity;
 import com.fqf.mario_qua_mario.freezing.IceFlowerFreezable;
+import com.fqf.mario_qua_mario.freezing.IceFlowerUtil;
 import com.fqf.mario_qua_mario.util.MQMTags;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -18,7 +19,7 @@ public class Ice extends AbstractProjectileThrowingForm<MarioIceballProjectileEn
 	@Override
 	protected boolean canDirectHitEntity(@NotNull EntityHitResult result) {
 		return !result.getEntity().getType().isIn(MQMTags.ICE_MARIO_PUNCH_TARGETS)
-				&& ((IceFlowerFreezable) result.getEntity()).mqm$canBeEncased();
+				&& IceFlowerUtil.canEncase(result.getEntity());
 	}
 
 	@Override

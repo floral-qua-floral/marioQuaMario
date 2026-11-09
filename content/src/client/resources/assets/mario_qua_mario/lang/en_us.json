@@ -90,7 +90,7 @@
   "commands.mario_qua_mario.freeze.success.single": "Encased %s in ice",
   "commands.mario_qua_mario.freeze.success.multiple": "Encased %s targets in ice",
 
-  "commands.mario_qua_mario.freeze.snowgrave.failed": "Target cannot be fatally encased in ice (Unfreezable, non-living, or immune to perma-freeze)",
+  "commands.mario_qua_mario.freeze.snowgrave.failed": "Target cannot be fatally encased in ice (Unfreezable or immune to perma-freeze)",
   "commands.mario_qua_mario.freeze.snowgrave.success.single": "Fatally encased %s in ice",
   "commands.mario_qua_mario.freeze.snowgrave.success.multiple": "Fatally encased %s targets in ice",
 

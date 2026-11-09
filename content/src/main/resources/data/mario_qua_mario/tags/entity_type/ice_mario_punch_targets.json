@@ -2,6 +2,6 @@
     "replace": false,
     "values": [
         "#mario_qua_mario:dodges_mario_fireball",
-        "#mario_qua_mario:cannot_encase_in_ice"
+        "#mario_qua_mario:cannot_be_encased"
     ]
 }

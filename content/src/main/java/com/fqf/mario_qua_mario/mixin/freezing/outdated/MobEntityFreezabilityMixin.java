@@ -1,4 +1,4 @@
-package com.fqf.mario_qua_mario.mixin.freezing;
+package com.fqf.mario_qua_mario.mixin.freezing.outdated;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.entity.mob.MobEntity;

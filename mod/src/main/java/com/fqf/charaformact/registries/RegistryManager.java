@@ -40,6 +40,13 @@ public class RegistryManager {
 		registerCharacters(addons);
 
 		registerVoicelines(addons);
+
+		CharaFormAct.LOGGER.info("Finished registering:");
+		CharaFormAct.LOGGER.info("\t* {} Actions", ACTIONS.size());
+		CharaFormAct.LOGGER.info("\t* {} Forms", FORMS.size());
+		CharaFormAct.LOGGER.info("\t* {} Characters", CHARACTERS.size());
+		CharaFormAct.LOGGER.info("\t* {} Voicelines", VOICE_LINES.size());
+		CharaFormAct.LOGGER.info("\t* {} Collision Attacks", COLLISION_ATTACKS.size());
 	}
 
 	public static List<CharaFormActAddon> getAndClearAddons() {

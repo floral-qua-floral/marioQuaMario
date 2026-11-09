@@ -1,16 +1,15 @@
 package com.fqf.mario_qua_mario;
 
 import com.fqf.mario_qua_mario.customization.CharacterCustomizationCommand;
-import com.fqf.mario_qua_mario.freezing.IceFlowerFreezable;
+import com.fqf.mario_qua_mario.entity.custom.IceEncasementEntity;
+import com.fqf.mario_qua_mario.freezing.IceFlowerUtil;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 
@@ -47,7 +46,7 @@ public class MarioQuaMarioCommand {
 
 	@FunctionalInterface
 	private interface FreezerFunction {
-		boolean tryFreeze(IceFlowerFreezable freezable);
+		boolean tryFreeze(Entity freezable);
 	}
 
 	private static int executeFreezeCommand(CommandContext<ServerCommandSource> context, boolean isFatal) throws CommandSyntaxException {
@@ -55,11 +54,14 @@ public class MarioQuaMarioCommand {
 
 		int successCount = 0;
 		FreezerFunction freezer = isFatal
-				? freezable -> freezable.mqm$encase() && freezable.mqm$attemptFatalFreeze(null)
-				: IceFlowerFreezable::mqm$encase;
+				? freezable -> {
+					IceEncasementEntity encasement = IceFlowerUtil.encase(freezable);
+					return encasement != null && encasement.makeFatal(encasement.getDamageSources().genericKill(), true);
+				}
+				: freezable -> IceFlowerUtil.encase(freezable) != null;
 
 		for(Entity target : targets)
-			if(freezer.tryFreeze((IceFlowerFreezable) target))
+			if(freezer.tryFreeze(target))
 				successCount++;
 
 		if(successCount == 0) {

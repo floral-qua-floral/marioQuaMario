@@ -1,4 +1,4 @@
-package com.fqf.mario_qua_mario.mixin.freezing;
+package com.fqf.mario_qua_mario.mixin.freezing.outdated;
 
 import net.minecraft.entity.passive.StriderEntity;
 import org.spongepowered.asm.mixin.Mixin;

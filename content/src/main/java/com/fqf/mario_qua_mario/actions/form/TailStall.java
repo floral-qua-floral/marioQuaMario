@@ -125,7 +125,7 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 							&& data.getInputs().JUMP.isHeld()
 					)),
 			EvaluatorEnvironment.CLIENT_CHECKED,
-			SizeChangeBehavior.AUTOMATIC,
+			SizeChangeBehavior.NO_CHECKING,
 			data -> {
 				Raccoon.RaccoonVars vars = data.retrieveStateData(Raccoon.RaccoonVars.class);
 
@@ -143,7 +143,7 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 	);
 
 	protected static final Identifier DUCK_STALL_ID = MarioQuaMario.makeID("tail_stall_duck");
-	private static final Set<Identifier> NO_STALL_FROM = Set.of(ID, DUCK_STALL_ID);
+	private static final Set<Identifier> NO_STALL_FROM = Set.of(ID, DUCK_STALL_ID, TailSpinAerial.FALL_ID, TailSpinAerial.JUMP_ID);
 
 	protected static class StallInjection implements TransitionInjectionDefinition {
 		private final Predicate<Identifier> TARGET_ACTION_PREDICATE;

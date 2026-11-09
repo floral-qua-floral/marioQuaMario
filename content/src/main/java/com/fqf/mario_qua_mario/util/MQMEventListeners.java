@@ -2,30 +2,43 @@ package com.fqf.mario_qua_mario.util;
 
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.mario_qua_mario.collision_attacks.Stomp;
-import com.fqf.mario_qua_mario.freezing.IceFlowerFreezable;
+import com.fqf.mario_qua_mario.entity.custom.FatalityReceiver;
+import com.fqf.mario_qua_mario.entity.custom.IceEncasementEntity;
 import com.fqf.mario_qua_mario.freezing.IceFlowerUtil;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.minecraft.command.EntityDataObject;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
-import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.Vec3d;
 
 public class MQMEventListeners {
 	public static void register() {
+		ServerLivingEntityEvents.ALLOW_DAMAGE.register(((entity, source, amount) -> {
+			IceEncasementEntity encasement = ((IceEncasementEntity.EncasementOwner) entity).mqm$getEncasement();
+			return encasement == null || !encasement.interceptDamageToOwner(source, amount);
+		}));
+
 		ServerLivingEntityEvents.ALLOW_DEATH.register((entity, damageSource, damageAmount) -> {
-			if(damageSource.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY) || damageSource.isIn(MQMTags.IS_SHATTER))
-				return true;
-
-			IceFlowerFreezable freezable = (IceFlowerFreezable) entity;
-			if(freezable.mqm$attemptFatalFreeze(damageSource)) {
-				entity.setHealth(0.01F);
-				return false;
+			FatalityReceiver receiver = IceFlowerUtil.getFatalityReceiver(entity);
+			if(receiver != null) {
+				return !receiver.makeFatal(damageSource, false);
 			}
-
 			return true;
 		});
+
+//		ServerLivingEntityEvents.ALLOW_DEATH.register((entity, damageSource, damageAmount) -> {
+//			if(damageSource.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY) || damageSource.isIn(MQMTags.IS_SHATTER))
+//				return true;
+//
+//			IceFlowerFreezable freezable = (IceFlowerFreezable) entity;
+//			if(freezable.mqm$attemptFatalFreeze(damageSource)) {
+//				entity.setHealth(0.01F);
+//				return false;
+//			}
+//
+//			return true;
+//		});
 
 		ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
 			if(entity instanceof ServerPlayerEntity mario) {
@@ -48,7 +61,7 @@ public class MQMEventListeners {
 				}
 			}
 
-			return !((IceFlowerFreezable) entity).mqm$shatter(source, amount);
+			return true;
 		});
 	}
 

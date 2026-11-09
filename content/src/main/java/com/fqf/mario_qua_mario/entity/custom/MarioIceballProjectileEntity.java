@@ -1,7 +1,7 @@
 package com.fqf.mario_qua_mario.entity.custom;
 
 import com.fqf.mario_qua_mario.entity.MQMEntities;
-import com.fqf.mario_qua_mario.freezing.IceFlowerFreezable;
+import com.fqf.mario_qua_mario.freezing.IceFlowerUtil;
 import com.fqf.mario_qua_mario.util.MQMTags;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import net.minecraft.block.Block;
@@ -60,15 +60,17 @@ public class MarioIceballProjectileEntity extends AbstractBouncingMarioProjectil
 
 	@Override
 	protected boolean canHit(Entity entity) {
-		return super.canHit(entity) || (!this.isConnectedThroughVehicle(entity) && ((IceFlowerFreezable) entity).mqm$canBeEncased());
+		return super.canHit(entity) || (!this.isConnectedThroughVehicle(entity) && !entity.getType().isIn(MQMTags.ENCASEABLE_NON_LIVING));
 	}
 
 	@Override
 	public boolean hitEntity(Entity target, Entity source, Entity attacker, Entity soundOrigin) {
-		IceFlowerFreezable freezable = (IceFlowerFreezable) target;
-		boolean success = freezable.mqm$iceFlowerHit(source, attacker);
-		if(!success) this.playSound(MarioSFX.ICEBALL_WALL, 1, 1);
-		return success;
+		ProjectileStrikeResult result = IceFlowerUtil.iceballHit(target, source, attacker);
+
+		if(!source.getWorld().isClient())
+			soundOrigin.playSound(result.targetDamaged() ? MarioSFX.ICEBALL_ENEMY : MarioSFX.ICEBALL_WALL, 1, 1);
+
+		return result.targetDamaged();
 	}
 
 	@Override

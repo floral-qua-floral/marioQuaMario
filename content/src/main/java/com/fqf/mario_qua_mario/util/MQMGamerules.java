@@ -16,6 +16,10 @@ public class MQMGamerules {
 			GameRuleRegistry.register("mqmIncomingDamageMultiplier", GameRules.Category.PLAYER,
 					GameRuleFactory.createDoubleRule(2.5));
 
+	public static final GameRules.Key<DoubleRule> MOVING_ICE_THRESHOLD =
+			GameRuleRegistry.register("mqmMovingIceThreshold", GameRules.Category.PLAYER,
+					GameRuleFactory.createDoubleRule(0.425));
+
 //	public static final GameRules.Key<GameRules.IntRule> COINS_FOR_POWER_UP =
 //			GameRuleRegistry.register("mqmCoinsForPowerUp", GameRules.Category.PLAYER,
 //					GameRuleFactory.createIntRule(8, 0, 64, (server, intRule) -> {

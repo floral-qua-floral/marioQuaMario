@@ -67,23 +67,23 @@ public class MarioFireballProjectileEntity extends AbstractBouncingMarioProjecti
 	private static final RegistryKey<DamageType> DAMAGE_TYPE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, MarioQuaMario.makeResID("mario_fireball"));
 
 	@Override public boolean hitEntity(Entity target, Entity source, Entity attacker, Entity soundPlayer) {
-		boolean damaged = target.damage(new DamageSource(
+		ProjectileStrikeResult result = ProjectileStrikeResult.get(target, () -> target.damage(new DamageSource(
 				source.getWorld().getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(DAMAGE_TYPE),
 				source, attacker
-		), 5);
+		), 5));
 
-		if(damaged && target.getType().isIn(MQMTags.DODGES_MARIO_FIREBALL))
+		if(!result.targetStruck())
 			return false;
 
 		if(!source.getWorld().isClient()) {
 			SoundEvent event;
-			if(!damaged) event = MarioSFX.FIREBALL_WALL;
+			if(!result.targetDamaged()) event = MarioSFX.FIREBALL_WALL;
 			else if(target.isAlive()) event = MarioSFX.FIREBALL_ENEMY;
 			else event = MarioSFX.KICK;
 			soundPlayer.playSound(event, 1, 1);
 		}
 
-		return damaged;
+		return result.targetDamaged();
 	}
 
 	@Override

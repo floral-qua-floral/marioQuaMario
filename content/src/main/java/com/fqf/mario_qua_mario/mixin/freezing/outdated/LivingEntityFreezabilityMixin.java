@@ -1,4 +1,4 @@
-package com.fqf.mario_qua_mario.mixin.freezing;
+package com.fqf.mario_qua_mario.mixin.freezing.outdated;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.freezing.IceFlowerUtil;
@@ -57,7 +57,7 @@ public abstract class LivingEntityFreezabilityMixin extends EntityFreezabilityMi
 
 	@Override
 	public boolean mqm$canBeEncased() {
-		if(!this.mqm$isEncased() && !this.isDead() && !this.getType().isIn(MQMTags.CANNOT_ENCASE_IN_ICE)) {
+		if(!this.mqm$isEncased() && !this.isDead() && !this.getType().isIn(MQMTags.CANNOT_BE_ENCASED)) {
 			EntityDimensions dimensionsIfFrozen = this.getDimensions(this.getPose());
 			return dimensionsIfFrozen.width() < 6 && dimensionsIfFrozen.height() < 8;
 		}

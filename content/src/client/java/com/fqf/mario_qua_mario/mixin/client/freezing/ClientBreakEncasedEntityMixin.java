@@ -1,5 +1,6 @@
 package com.fqf.mario_qua_mario.mixin.client.freezing;
 
+import com.fqf.mario_qua_mario.entity.custom.IceEncasementEntity;
 import com.fqf.mario_qua_mario.freezing.BreakableEntity;
 import com.fqf.mario_qua_mario.freezing.EncasementMiningHandler;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
@@ -28,7 +29,7 @@ public class ClientBreakEncasedEntityMixin {
 
 	@Inject(method = "handleBlockBreaking", at = @At("HEAD"))
 	private void handleEncasedEntityBreaking(boolean breaking, CallbackInfo ci) {
-		this.ENCASEMENT_MINING_HANDLER.handleEncasedEntityBreaking(this.player, breaking, this.crosshairTarget);
+//		this.ENCASEMENT_MINING_HANDLER.handleEncasedEntityBreaking(this.player, breaking, this.crosshairTarget);
 		// We don't really need any extra logic right here - vanilla will already cancel block mining 'cause we're not
 		// targeting a block.
 	}
@@ -41,6 +42,6 @@ public class ClientBreakEncasedEntityMixin {
 			)
 	)
 	private boolean cancelAttackAgainstBreakableEntity(ClientPlayerInteractionManager instance, PlayerEntity player, Entity target) {
-		return !((BreakableEntity) target).mqm$canMine();
+		return !(target instanceof IceEncasementEntity);
 	}
 }

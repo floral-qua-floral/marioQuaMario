@@ -19,6 +19,6 @@ public abstract class SuppressFrozenEntityTickingMixin {
 			cancellable = true
 	)
 	private void suppressTicking(Entity entity, CallbackInfo ci) {
-		IceFlowerUtil.doEntityTickInjection(entity, ci, this::tickPassenger);
+		IceFlowerUtil.doEntityTickInjection(entity, ci);
 	}
 }

@@ -1,8 +1,10 @@
 {
     "replace": false,
     "values": [
+        "minecraft:player",
         "#minecraft:freeze_immune_entity_types",
         "minecraft:ender_dragon",
-        "minecraft:armor_stand"
+        "minecraft:armor_stand",
+        "mario_qua_mario:ice_encasement"
     ]
 }
