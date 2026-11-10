@@ -13,7 +13,6 @@ import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.model.ModelLoader;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Colors;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.EntityHitResult;
@@ -80,9 +79,9 @@ public class IceEncasementEntityRenderer extends EntityRenderer<IceEncasementEnt
 				Colors.WHITE
 		);
 
-		float miningProgress = entity.getVisibleMiningProgress();
+		float miningProgress = entity.getMiningProgressPercentage();
 		if(miningProgress != 0) {
-			int texture = MathHelper.clamp(MathHelper.ceil(miningProgress * 9), 1, 9);
+			int texture = MathHelper.clamp(MathHelper.floor(miningProgress * 10), 0, 9);
 			cuboid.renderCuboid(
 					matrices.peek(),
 					vertexConsumers.getBuffer(ModelLoader.BLOCK_DESTRUCTION_RENDER_LAYERS.get(texture)),

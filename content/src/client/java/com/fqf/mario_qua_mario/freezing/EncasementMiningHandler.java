@@ -1,11 +1,10 @@
 package com.fqf.mario_qua_mario.freezing;
 
-import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.entity.custom.IceEncasementEntity;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.particle.BlockDustParticle;
-import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.BlockSoundGroup;
@@ -22,33 +21,33 @@ import org.jetbrains.annotations.Nullable;
 
 public class EncasementMiningHandler {
 	private byte breakSoundCooldown;
-	private @Nullable Entity target;
+	private @Nullable IceEncasementEntity target;
 
-	public void handleEncasedEntityBreaking(PlayerEntity player, boolean breaking, HitResult crosshairTarget) {
+	public void handleEncasementBreaking(PlayerEntity player, boolean breaking, HitResult crosshairTarget) {
 		assert player != null;
 		if(
 				breaking
 				&& crosshairTarget instanceof EntityHitResult crosshairEntity
-				&& ((BreakableEntity) crosshairEntity.getEntity()).mqm$canMine()
+				&& crosshairEntity.getEntity() instanceof IceEncasementEntity encasement
 		)
-			this.handleEncasedEntityBreaking(player, (Entity & BreakableEntity) crosshairEntity.getEntity(), crosshairEntity.getPos());
+			this.handleEncasementBreaking(player, encasement, crosshairEntity.getPos());
 		else
 			this.cancelBreakingEncasedEntity();
 	}
 
-	private <T extends Entity & BreakableEntity> void handleEncasedEntityBreaking(PlayerEntity player, T target, Vec3d hitPos) {
-		if(this.target == null || !this.target.equals(target)) {
-			this.target = target;
+	private void handleEncasementBreaking(PlayerEntity player, IceEncasementEntity encasement, Vec3d hitPos) {
+		if(this.target == null || !this.target.equals(encasement)) {
+			this.target = encasement;
 
-			ClientPlayNetworking.send(new MineEncasedEntityC2SPayload(target.getId(), MineEncasedEntityC2SPayload.START_MINING));
+			ClientPlayNetworking.send(new MineEncasementC2SPayload(encasement.getId(), MineEncasementC2SPayload.START_MINING));
 		}
 
 		if(this.breakSoundCooldown++ >= 4) {
 			this.breakSoundCooldown = 0;
 
 			BlockSoundGroup iceSounds = Blocks.ICE.getDefaultState().getSoundGroup();
-			target.getWorld().playSound(
-					player, target.getX(), target.getY() + target.getHeight() / 2, target.getZ(),
+			encasement.getWorld().playSound(
+					player, encasement.getX(), encasement.getY() + encasement.getHeight() / 2, encasement.getZ(),
 					iceSounds.getHitSound(), SoundCategory.BLOCKS,
 					(iceSounds.getVolume() + 1.0F) / 8.0F, iceSounds.getPitch() * 0.5F
 			);
@@ -56,8 +55,8 @@ public class EncasementMiningHandler {
 
 		player.swingHand(Hand.MAIN_HAND);
 
-		Direction hittingSide = Direction.getFacing(hitPos.subtract(target.getPos().add(0, target.getHeight() / 2, 0)));
-		Box box = target.getBoundingBox();
+		Direction hittingSide = Direction.getFacing(hitPos.subtract(encasement.getPos().add(0, encasement.getHeight() / 2, 0)));
+		Box box = encasement.getBoundingBox();
 
 		double area = switch(hittingSide.getAxis()) {
 			case X -> box.getLengthY() * box.getLengthZ();
@@ -68,11 +67,11 @@ public class EncasementMiningHandler {
 		double particleCount = MathHelper.clamp(area, 1, 5);
 
 		while(particleCount-- > 1)
-			this.spawnParticle(target, hittingSide);
+			this.spawnParticle(encasement, hittingSide);
 
 		// Decimal portion of the particle count is treated as a percent chance of one extra particle.
-		if(particleCount > 0 && target.getRandom().nextDouble() < particleCount)
-			this.spawnParticle(target, hittingSide);
+		if(particleCount > 0 && encasement.getRandom().nextDouble() < particleCount)
+			this.spawnParticle(encasement, hittingSide);
 	}
 
 	private void spawnParticle(Entity target, Direction side) {
@@ -97,8 +96,8 @@ public class EncasementMiningHandler {
 	}
 
 	private void cancelBreakingEncasedEntity() {
-		if(target != null) {
-			ClientPlayNetworking.send(new MineEncasedEntityC2SPayload(target.getId(), MineEncasedEntityC2SPayload.STOP_MINING));
+		if(this.target != null) {
+			ClientPlayNetworking.send(new MineEncasementC2SPayload(target.getId(), MineEncasementC2SPayload.STOP_MINING));
 
 			this.target = null;
 		}

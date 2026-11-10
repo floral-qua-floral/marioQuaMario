@@ -1,11 +1,8 @@
 package com.fqf.mario_qua_mario.mixin.client.freezing;
 
 import com.fqf.mario_qua_mario.entity.custom.IceEncasementEntity;
-import com.fqf.mario_qua_mario.freezing.BreakableEntity;
 import com.fqf.mario_qua_mario.freezing.EncasementMiningHandler;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
@@ -28,8 +25,8 @@ public class ClientBreakEncasedEntityMixin {
 	@Unique private final EncasementMiningHandler ENCASEMENT_MINING_HANDLER = new EncasementMiningHandler();
 
 	@Inject(method = "handleBlockBreaking", at = @At("HEAD"))
-	private void handleEncasedEntityBreaking(boolean breaking, CallbackInfo ci) {
-//		this.ENCASEMENT_MINING_HANDLER.handleEncasedEntityBreaking(this.player, breaking, this.crosshairTarget);
+	private void handleEncasementMining(boolean breaking, CallbackInfo ci) {
+		this.ENCASEMENT_MINING_HANDLER.handleEncasementBreaking(this.player, breaking, this.crosshairTarget);
 		// We don't really need any extra logic right here - vanilla will already cancel block mining 'cause we're not
 		// targeting a block.
 	}
@@ -41,7 +38,7 @@ public class ClientBreakEncasedEntityMixin {
 					target = "Lnet/minecraft/client/network/ClientPlayerInteractionManager;attackEntity(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/entity/Entity;)V"
 			)
 	)
-	private boolean cancelAttackAgainstBreakableEntity(ClientPlayerInteractionManager instance, PlayerEntity player, Entity target) {
+	private boolean cancelAttackAgainstEncasements(ClientPlayerInteractionManager instance, PlayerEntity player, Entity target) {
 		return !(target instanceof IceEncasementEntity);
 	}
 }

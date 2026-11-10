@@ -25,7 +25,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PlayerEntityRenderer.class)
 public abstract class PlayerEntityRendererMixin extends LivingEntityRendererMixin<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
-	@WrapOperation(method = "<init>", at = @At(value = "NEW", target = "(Lnet/minecraft/client/model/ModelPart;Z)Lnet/minecraft/client/render/entity/model/PlayerEntityModel;"))
+	@WrapOperation(
+			method = "<init>",
+			at = @At(
+					value = "NEW",
+					target = "(Lnet/minecraft/client/model/ModelPart;Z)Lnet/minecraft/client/render/entity/model/PlayerEntityModel;"
+			)
+	)
 	private static PlayerEntityModel<AbstractClientPlayerEntity> associatedWithAppearanceModel(ModelPart root, boolean thinArms, Operation<PlayerEntityModel<AbstractClientPlayerEntity>> original, @Local(argsOnly = true) EntityRendererFactory.Context ctx) {
 		ParsedClientAppearance currentCustomModel = ClientAppearanceCollector.INSTANCE.getCurrentlyInitializingAppearance();
 		if (currentCustomModel == null) {
@@ -50,7 +56,10 @@ public abstract class PlayerEntityRendererMixin extends LivingEntityRendererMixi
 		}
 	}
 
-	@Inject(method = "setupTransforms(Lnet/minecraft/client/network/AbstractClientPlayerEntity;Lnet/minecraft/client/util/math/MatrixStack;FFFF)V", at = @At("TAIL"))
+	@Inject(
+			method = "setupTransforms(Lnet/minecraft/client/network/AbstractClientPlayerEntity;Lnet/minecraft/client/util/math/MatrixStack;FFFF)V",
+			at = @At("TAIL")
+	)
 	private void applyEverythingMutator(AbstractClientPlayerEntity abstractClientPlayerEntity, MatrixStack matrixStack, float animationProgress, float bodyYaw, float tickDelta, float scale, CallbackInfo ci) {
 		if(abstractClientPlayerEntity.cfa$getCfaData().isEnabled()) {
 			abstractClientPlayerEntity.cfa$getAppearanceData().arrangeModel(matrixStack, tickDelta);
@@ -58,12 +67,24 @@ public abstract class PlayerEntityRendererMixin extends LivingEntityRendererMixi
 //		abstractClientPlayerEntity.cfa$getAnimationData().rotateTotalPlayermodel(MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(true), abstractClientPlayerEntity, matrixStack);
 	}
 
-	@WrapOperation(method = "getPositionOffset(Lnet/minecraft/client/network/AbstractClientPlayerEntity;F)Lnet/minecraft/util/math/Vec3d;", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/AbstractClientPlayerEntity;isInSneakingPose()Z"))
+	@WrapOperation(
+			method = "getPositionOffset(Lnet/minecraft/client/network/AbstractClientPlayerEntity;F)Lnet/minecraft/util/math/Vec3d;",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/network/AbstractClientPlayerEntity;isInSneakingPose()Z"
+			)
+	)
 	private boolean preventSneakingOffset(AbstractClientPlayerEntity instance, Operation<Boolean> original) {
 		return original.call(instance) && !instance.cfa$getCfaData().isEnabled();
 	}
 
-	@WrapOperation(method = "renderArm", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/PlayerEntityModel;setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V"))
+	@WrapOperation(
+			method = "renderArm",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/render/entity/model/PlayerEntityModel;setAngles(Lnet/minecraft/entity/LivingEntity;FFFFF)V"
+			)
+	)
 	private <T extends LivingEntity> void preventCfaAnimations(
 			PlayerEntityModel<?> instance, T entity,
 			float limbAngle, float limbDistance, float animationProgress,
@@ -79,7 +100,13 @@ public abstract class PlayerEntityRendererMixin extends LivingEntityRendererMixi
 		if(data != null) data.doingFirstPersonHand = false;
 	}
 
-	@WrapOperation(method = "renderArm", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/SkinTextures;texture()Lnet/minecraft/util/Identifier;"))
+	@WrapOperation(
+			method = "renderArm",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/util/SkinTextures;texture()Lnet/minecraft/util/Identifier;"
+			)
+	)
 	private Identifier getActualTexturePls(SkinTextures instance, Operation<Identifier> original, @Local(argsOnly = true) AbstractClientPlayerEntity player) {
 		if((Object) this instanceof AppearanceRenderer appearanceRenderer)
 			return appearanceRenderer.TEXTURE_FUNCTION.apply(player);

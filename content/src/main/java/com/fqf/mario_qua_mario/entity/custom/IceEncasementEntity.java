@@ -2,6 +2,7 @@ package com.fqf.mario_qua_mario.entity.custom;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.entity.MQMEntities;
+import com.fqf.mario_qua_mario.freezing.IceFlowerUtil;
 import com.fqf.mario_qua_mario.mixin.freezing.DeathSoundAccessor;
 import com.fqf.mario_qua_mario.util.MQMGamerules;
 import com.fqf.mario_qua_mario.util.MQMTags;
@@ -24,6 +25,7 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.server.network.EntityTrackerEntry;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.math.MathHelper;
@@ -38,8 +40,11 @@ public class IceEncasementEntity extends AbstractSolidMovingEntity implements Ow
 			DataTracker.registerData(IceEncasementEntity.class, TrackedDataHandlerRegistry.BYTE);
 	private static final TrackedData<Boolean> IS_SHAKING =
 			DataTracker.registerData(IceEncasementEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+	public static int BYTE_RANGE = Byte.MAX_VALUE - Byte.MIN_VALUE;
 	public static final TrackedData<Byte> MINING_PROGRESS =
 			DataTracker.registerData(IceEncasementEntity.class, TrackedDataHandlerRegistry.BYTE);
+
+	private final Set<ServerPlayerEntity> MINERS;
 
 	public @Nullable Object cuboidForClientRendering;
 	private @Nullable Entity owner;
@@ -48,10 +53,12 @@ public class IceEncasementEntity extends AbstractSolidMovingEntity implements Ow
 	private byte airTicks;
 	private float timeUntilEscape;
 	private boolean isFatal;
-	private final Set<Entity> noClippingEntities = Collections.newSetFromMap(new WeakHashMap<>());
+	private boolean removedForThawing;
 
 	public IceEncasementEntity(EntityType<? extends IceEncasementEntity> type, World world) {
 		super(type, world);
+
+		this.MINERS = new HashSet<>();
 
 		this.intersectionChecked = true;
 		this.lookingForOwner = 0;
@@ -108,6 +115,25 @@ public class IceEncasementEntity extends AbstractSolidMovingEntity implements Ow
 		this.attemptFindOwner();
 	}
 
+	public void addMiner(ServerPlayerEntity miner) {
+		this.MINERS.add(miner);
+	}
+
+	public void removeMiner(ServerPlayerEntity miner) {
+		this.MINERS.remove(miner);
+	}
+
+	private float getHardness() {
+		if(this.getOwner() instanceof LivingEntity livingOwner) {
+			return Blocks.ICE.getHardness() * Math.max(1, livingOwner.getMaxHealth() / 8);
+		}
+		else return Blocks.ICE.getHardness();
+	}
+
+	public float getMiningProgressPercentage() {
+		return ((float) this.getDataTracker().get(MINING_PROGRESS) - Byte.MIN_VALUE) / BYTE_RANGE;
+	}
+
 	@Override
 	public void tick() {
 		Entity owner = this.getOwner();
@@ -125,8 +151,48 @@ public class IceEncasementEntity extends AbstractSolidMovingEntity implements Ow
 
 		super.tick();
 
-		if(this.timeUntilEscape <= 0) {
-			this.thaw();
+		if(!this.getWorld().isClient()) {
+			float miningProgress = this.getMiningProgressPercentage();
+			boolean shouldReset = true;
+
+			if(!this.MINERS.isEmpty()) for(Iterator<ServerPlayerEntity> iterator = this.MINERS.iterator(); iterator.hasNext();) {
+				ServerPlayerEntity miner = iterator.next();
+
+				if(!miner.isAlive() || miner.isSpectator() || !miner.canInteractWithEntity(this, 2)) {
+					iterator.remove();
+					continue;
+				}
+
+				shouldReset = false;
+				float hardness = this.getHardness();
+
+				int divisor;
+				// We use STONE instead of ICE here to make non-pickaxes slower
+				if(miner.canHarvest(Blocks.STONE.getDefaultState()))
+					divisor = 30;
+				else
+					divisor = 100;
+
+				miningProgress += miner.getBlockBreakingSpeed(Blocks.ICE.getDefaultState()) / hardness / divisor;
+			}
+
+			if(shouldReset) miningProgress = 0;
+			byte miningProgressByte = (byte) MathHelper.clamp(((int) Byte.MIN_VALUE + (miningProgress * BYTE_RANGE)),
+					Byte.MIN_VALUE, Byte.MAX_VALUE);
+			this.getDataTracker().set(MINING_PROGRESS, miningProgressByte);
+
+			if(miningProgress >= 1) {
+				Entity creditReceivingMiner = this.MINERS.stream().findFirst().orElseThrow();
+				this.shatter(
+						IceFlowerUtil.makeShatterSource(this.getWorld(), creditReceivingMiner, creditReceivingMiner),
+						this.getOwner() instanceof LivingEntity livingOwner
+								? livingOwner.getMaxHealth() * 0.6F
+								: 8
+				);
+			}
+			else if(this.timeUntilEscape <= 0) {
+				this.thaw();
+			}
 		}
 	}
 
@@ -203,8 +269,8 @@ public class IceEncasementEntity extends AbstractSolidMovingEntity implements Ow
 		return force || !source.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY);
 	}
 
-	private static final int INSTANTANEOUS_UPDATES_UPON_FATAL_THAW = 2000;
 	public boolean thaw() {
+		this.removedForThawing = true;
 		this.discard();
 
 		this.getWorld().playSound(null, this.getX(), this.getY(), this.getZ(), MarioSFX.ICE_ESCAPE, SoundCategory.BLOCKS, 1, 1);
@@ -228,36 +294,71 @@ public class IceEncasementEntity extends AbstractSolidMovingEntity implements Ow
 			owner.fallDistance = this.fallDistance;
 
 			if(this.isFatal()) {
-				if(owner instanceof LivingEntity livingOwner) {
-					livingOwner.setHealth(0);
-					livingOwner.deathTime = 0;
-					for(int sprintedTicks = 0; sprintedTicks < INSTANTANEOUS_UPDATES_UPON_FATAL_THAW; sprintedTicks++) {
-						((DeathSoundAccessor) livingOwner).invokeUpdatePostDeath();
-					}
-					if(!owner.isRemoved()) {
-						MarioQuaMario.LOGGER.warn("Entity {} was not removed even after simulating {} post-death ticks." +
-								" Removing manually...", owner, INSTANTANEOUS_UPDATES_UPON_FATAL_THAW);
-						owner.remove(RemovalReason.KILLED);
-					}
-				}
-				else {
-					owner.remove(RemovalReason.KILLED);
-				}
+				this.doAcceleratedOwnerDeath();
 			}
 		}
 
 		return false;
 	}
 
-	public boolean shatter(@Nullable DamageSource originalSource, float amount) {
-		return this.thaw();
+	private static final int ACCELERATED_DEATH_ANIMATION_TICKS = 2000;
+	public void doAcceleratedOwnerDeath() {
+		Entity owner = this.getOwner();
+		if(owner instanceof LivingEntity livingOwner) {
+			livingOwner.setHealth(0);
+			livingOwner.deathTime = 0;
+			for(int sprintedTicks = 0; sprintedTicks < ACCELERATED_DEATH_ANIMATION_TICKS; sprintedTicks++) {
+				((DeathSoundAccessor) livingOwner).invokeUpdatePostDeath();
+				if(owner.isRemoved()) break;
+			}
+			if(!owner.isRemoved()) {
+				MarioQuaMario.LOGGER.warn("Entity {} was not removed even after simulating {} post-death ticks." +
+						" Removing manually...", owner, ACCELERATED_DEATH_ANIMATION_TICKS);
+				owner.remove(RemovalReason.KILLED);
+			}
+		}
+		else if(owner != null) owner.kill();
+	}
+
+	public boolean shatter(DamageSource originalSource, float amount) {
+		if(this.thaw()) {
+			if(this.getOwner() != null && !this.isFatal()) {
+				DamageSource shatterSource;
+				float shatterAmount;
+
+				if(originalSource.isIn(MQMTags.IS_SHATTER)) {
+					shatterSource = originalSource;
+					shatterAmount = amount;
+				}
+				else {
+					shatterSource = IceFlowerUtil.makeShatterSource(this.getWorld(), originalSource.getSource(), originalSource.getAttacker());
+					if(originalSource.isIn(MQMTags.MULTIPLIES_SHATTER_DAMAGE))
+						shatterAmount = Math.max(amount * 2.5F, 10);
+					else
+						shatterAmount = amount * 1.5F;
+				}
+
+				MarioQuaMario.LOGGER.info("Shattering {} for {} damage", this.getOwner(), shatterAmount);
+				this.getOwner().damage(shatterSource, shatterAmount);
+			}
+
+			this.getWorld().playSound(
+					null, this.getX(), this.getY(), this.getZ(),
+					Blocks.ICE.getDefaultState().getSoundGroup().getBreakSound(), SoundCategory.BLOCKS,
+					1, 0.8F
+			);
+
+			return true;
+		}
+		return false;
 	}
 
 	@Override
 	public void remove(RemovalReason reason) {
 		super.remove(reason);
-		if(reason.shouldDestroy() && this.isFatal())
+		if(reason.shouldDestroy() && this.isFatal() && !this.removedForThawing) {
 			Objects.requireNonNull(this.getOwner()).remove(reason);
+		}
 	}
 
 	private void setShaking(boolean isShaking) {
@@ -270,10 +371,6 @@ public class IceEncasementEntity extends AbstractSolidMovingEntity implements Ow
 
 	public boolean isShaking() {
 		return this.getDataTracker().get(IS_SHAKING);
-	}
-
-	public float getVisibleMiningProgress() {
-		return ((float) this.getDataTracker().get(MINING_PROGRESS) - Byte.MIN_VALUE) / (((float) Byte.MAX_VALUE) - Byte.MIN_VALUE);
 	}
 
 	@Override
@@ -346,8 +443,9 @@ public class IceEncasementEntity extends AbstractSolidMovingEntity implements Ow
 	@Override
 	public void onTrackedDataSet(TrackedData<?> data) {
 		super.onTrackedDataSet(data);
-		if(PHYSICS.equals(data))
-			this.physics = EncasementPhysicsType.values()[this.getDataTracker().get(PHYSICS)];
+		if(PHYSICS.equals(data)) {
+			this.physics = EncasementPhysicsType.values()[MathHelper.clamp(this.getDataTracker().get(PHYSICS), 0, 2)];
+		}
 	}
 
 	@Override
