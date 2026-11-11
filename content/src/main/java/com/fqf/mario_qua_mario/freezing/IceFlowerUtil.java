@@ -43,7 +43,7 @@ public class IceFlowerUtil {
 
 		endIllegalEncasedInteractions(target);
 
-		MarioQuaMario.LOGGER.info("Spawned encasement: {}", encasement);
+//		MarioQuaMario.LOGGER.info("Spawned encasement: {}", encasement);
 		return encasement;
 	}
 
@@ -89,19 +89,6 @@ public class IceFlowerUtil {
 		}
 	}
 
-	private static AbstractMarioProjectileEntity.ProjectileStrikeResult inflictIceballDamageWithTemporaryFatalityReceiver(Entity target, Entity source, Entity attacker) {
-		try {
-			temporaryFatalityReceiver = new IceEncasementEntity.HypotheticalIceEncasement();
-			return AbstractMarioProjectileEntity.ProjectileStrikeResult.get(target, () -> target.damage(new DamageSource(
-					target.getWorld().getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(IceFlowerUtil.ICEBALL_DAMAGE_TYPE),
-					source, attacker
-			), 2));
-		}
-		finally {
-			temporaryFatalityReceiver = null;
-		}
-	}
-
 	public static @Nullable FatalityReceiver getFatalityReceiver(Entity target) {
 		IceEncasementEntity encasement = ((IceEncasementEntity.EncasementOwner) target).mqm$getEncasement();
 		return encasement == null ? temporaryFatalityReceiver : encasement;
@@ -125,6 +112,8 @@ public class IceFlowerUtil {
 			if(entity.age == 0) entity.age = 1;
 			if(entity instanceof LivingEntity livingEntity) {
 				livingEntity.deathTime = 0;
+				if(livingEntity.timeUntilRegen > 0)
+					livingEntity.timeUntilRegen--;
 				if(livingEntity.hurtTime > 0)
 					livingEntity.hurtTime--;
 			}

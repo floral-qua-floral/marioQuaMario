@@ -80,27 +80,20 @@ public class IceEncasementEntity extends AbstractSolidMovingEntity implements Ow
 		if(fatalDamageSource != null)
 			this.makeFatal(fatalDamageSource, false);
 
-		boolean suspend = !owner.isOnGround();
-
-		double threshold = world.getGameRules().get(MQMGamerules.MOVING_ICE_THRESHOLD).get();
-		if(threshold > 0) {
-			double thresholdSquared = threshold * threshold;
-
-			// Would it ever make sense to use lengthSquared instead of horizontalLengthSquared? Definitely not
-			// under most circumstances - otherwise the measured speed of sprint-jumping would fluctuate over time -
-			// but what about for entities whose motion is primarily vertical? Maybe not; feels odd for a
-			// fast-falling mob to skip the air suspend state.
-			if(owner.getVelocity().horizontalLengthSquared() > thresholdSquared) {
-				suspend = false;
-				this.setVelocity(owner.getVelocity());
-			}
-		}
-
-		this.setPhysics(suspend ? EncasementPhysicsType.TEMPORARILY_SUSPENDED : EncasementPhysicsType.GRAVITY_PHYSICS);
-
-		if(owner instanceof LivingEntity livingOwner) {
+		if(owner instanceof LivingEntity livingOwner && !this.isFatal()) {
 			this.timeUntilEscape =  Math.max(3, 225 - livingOwner.getHealth() * 10) + livingOwner.getFrozenTicks();
 		}
+
+		boolean suspend;
+
+		double threshold = world.getGameRules().get(MQMGamerules.MOVING_ICE_THRESHOLD).get();
+		if(threshold > 0 && owner.getVelocity().horizontalLengthSquared() > threshold * threshold) {
+			suspend = false;
+			this.setVelocity(owner.getVelocity());
+		}
+		else suspend = !owner.isOnGround();
+
+		this.setPhysics(suspend ? EncasementPhysicsType.TEMPORARILY_SUSPENDED : EncasementPhysicsType.GRAVITY_PHYSICS);
 	}
 
 	@Override
@@ -215,7 +208,7 @@ public class IceEncasementEntity extends AbstractSolidMovingEntity implements Ow
 		if(prospectiveOwner != null && prospectiveOwner != this) {
 			this.lookingForOwner = 0;
 			this.setOwner(prospectiveOwner);
-			MarioQuaMario.LOGGER.info("Identified ice encasement owner: {}", prospectiveOwner);
+//			MarioQuaMario.LOGGER.info("Identified ice encasement owner: {}", prospectiveOwner);
 		}
 	}
 
@@ -298,11 +291,12 @@ public class IceEncasementEntity extends AbstractSolidMovingEntity implements Ow
 			}
 		}
 
-		return false;
+		return true;
 	}
 
 	private static final int ACCELERATED_DEATH_ANIMATION_TICKS = 2000;
 	public void doAcceleratedOwnerDeath() {
+		this.getDataTracker().set(PHYSICS, (byte) -1);
 		Entity owner = this.getOwner();
 		if(owner instanceof LivingEntity livingOwner) {
 			livingOwner.setHealth(0);
@@ -338,7 +332,6 @@ public class IceEncasementEntity extends AbstractSolidMovingEntity implements Ow
 						shatterAmount = amount * 1.5F;
 				}
 
-				MarioQuaMario.LOGGER.info("Shattering {} for {} damage", this.getOwner(), shatterAmount);
 				this.getOwner().damage(shatterSource, shatterAmount);
 			}
 
@@ -444,7 +437,12 @@ public class IceEncasementEntity extends AbstractSolidMovingEntity implements Ow
 	public void onTrackedDataSet(TrackedData<?> data) {
 		super.onTrackedDataSet(data);
 		if(PHYSICS.equals(data)) {
-			this.physics = EncasementPhysicsType.values()[MathHelper.clamp(this.getDataTracker().get(PHYSICS), 0, 2)];
+			byte physicsIndex = this.getDataTracker().get(PHYSICS);
+			if(physicsIndex == -1)
+				// TODO: This doesn't work; client never gets the update :(
+				this.doAcceleratedOwnerDeath();
+			else
+				this.physics = EncasementPhysicsType.values()[MathHelper.clamp(physicsIndex, 0, 2)];
 		}
 	}
 

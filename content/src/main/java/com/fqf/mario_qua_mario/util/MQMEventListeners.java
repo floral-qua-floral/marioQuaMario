@@ -14,32 +14,23 @@ import net.minecraft.util.math.Vec3d;
 
 public class MQMEventListeners {
 	public static void register() {
+		// Encasements shield against damage
 		ServerLivingEntityEvents.ALLOW_DAMAGE.register(((entity, source, amount) -> {
 			IceEncasementEntity encasement = ((IceEncasementEntity.EncasementOwner) entity).mqm$getEncasement();
 			return encasement == null || !encasement.interceptDamageToOwner(source, amount);
 		}));
 
+		// Fatal freezing
 		ServerLivingEntityEvents.ALLOW_DEATH.register((entity, damageSource, damageAmount) -> {
 			FatalityReceiver receiver = IceFlowerUtil.getFatalityReceiver(entity);
-			if(receiver != null) {
-				return !receiver.makeFatal(damageSource, false);
+			if(receiver != null && receiver.makeFatal(damageSource, false)) {
+				entity.setHealth(0.01F);
+				return true;
 			}
 			return true;
 		});
 
-//		ServerLivingEntityEvents.ALLOW_DEATH.register((entity, damageSource, damageAmount) -> {
-//			if(damageSource.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY) || damageSource.isIn(MQMTags.IS_SHATTER))
-//				return true;
-//
-//			IceFlowerFreezable freezable = (IceFlowerFreezable) entity;
-//			if(freezable.mqm$attemptFatalFreeze(damageSource)) {
-//				entity.setHealth(0.01F);
-//				return false;
-//			}
-//
-//			return true;
-//		});
-
+		// Stomp Guard
 		ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
 			if(entity instanceof ServerPlayerEntity mario) {
 				CfaData data = mario.cfa$getCfaData();
@@ -52,11 +43,8 @@ public class MQMEventListeners {
 						else
 							marioY = mario.getY();
 
-						if(
-								Stomp.collidingFromTop(attacker, mario, marioY, new Vec3d(0, -1, 0), false)
-								|| (attacker instanceof EnderDragonEntity && mario.getY() > attacker.getY() + attacker.getHeight() / 2)
-						)
-							return false;
+						return !Stomp.collidingFromTop(attacker, mario, marioY, new Vec3d(0, -1, 0), false)
+								&& (!(attacker instanceof EnderDragonEntity) || !(mario.getY() > attacker.getY() + attacker.getHeight() / 2));
 					}
 				}
 			}
