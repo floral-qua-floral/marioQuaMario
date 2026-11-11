@@ -4,13 +4,10 @@ import com.fqf.mario_qua_mario.entity.IceEncasementEntityRenderer;
 import com.fqf.mario_qua_mario.entity.MQMEntities;
 import com.fqf.mario_qua_mario.entity.MarioFireballModel;
 import com.fqf.mario_qua_mario.entity.MarioFireballRenderer;
-import com.fqf.mario_qua_mario.freezing.EncasementRenderUtil;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
-import net.minecraft.client.render.entity.EmptyEntityRenderer;
 import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.util.Identifier;
@@ -30,11 +27,6 @@ public class MarioQuaMarioClient implements ClientModInitializer {
 
 		ModelLoadingPlugin.register(context -> {
 			context.addModels(COIN_GROUND_ID);
-		});
-
-		ClientTickEvents.END_WORLD_TICK.register(world -> {
-//			if(world.getTime() % 1200 == 0) // Once every minute, assuming normal tickrate.
-				EncasementRenderUtil.clearCachedCuboids();
 		});
 	}
 }

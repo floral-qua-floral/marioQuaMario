@@ -7,12 +7,14 @@ import com.fqf.mario_qua_mario.entity.custom.IceEncasementEntity;
 import com.fqf.mario_qua_mario.util.MQMTags;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MovementType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.EntityTypeTags;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -42,6 +44,8 @@ public class IceFlowerUtil {
 			encasement.makeFatal(temporaryFatalityReceiver.fatalDamageSource, false);
 
 		endIllegalEncasedInteractions(target);
+
+		IceEncasingEvents.POST_ENCASEMENT.invoker().postEncasement(target, encasement);
 
 //		MarioQuaMario.LOGGER.info("Spawned encasement: {}", encasement);
 		return encasement;
@@ -108,6 +112,7 @@ public class IceFlowerUtil {
 	public static void doEntityTickInjection(Entity entity, CallbackInfo ci) {
 		if(((IceEncasementEntity.EncasementOwner) entity).mqm$getEncasement() != null) {
 			ci.cancel();
+			entity.move(MovementType.SELF, Vec3d.ZERO);
 //			entity.baseTick();
 			if(entity.age == 0) entity.age = 1;
 			if(entity instanceof LivingEntity livingEntity) {

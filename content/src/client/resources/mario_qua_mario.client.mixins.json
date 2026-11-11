@@ -9,7 +9,7 @@
     "coin.CoinPickupSoundMixin",
     "freezing.ClientBreakEncasedEntityMixin",
     "freezing.ClientSuppressFrozenEntityTickingMixin",
-    "freezing.EncasedEntitiesRenderIceMixin",
+    "freezing.DoNotDirectlyRenderEncasedEntitiesMixin",
     "squash.LivingEntityRenderSquashedMixin",
     "squash.LivingEntitySquashabilityMixin",
     "squash.TriggerSquashOnNetworkedSquashingDamageMixin",

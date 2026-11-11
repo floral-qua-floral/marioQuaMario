@@ -2,6 +2,7 @@ package com.fqf.mario_qua_mario.entity.custom;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.entity.MQMEntities;
+import com.fqf.mario_qua_mario.freezing.IceEncasingEvents;
 import com.fqf.mario_qua_mario.freezing.IceFlowerUtil;
 import com.fqf.mario_qua_mario.mixin.freezing.DeathSoundAccessor;
 import com.fqf.mario_qua_mario.util.MQMGamerules;
@@ -184,7 +185,7 @@ public class IceEncasementEntity extends AbstractSolidMovingEntity implements Ow
 				);
 			}
 			else if(this.timeUntilEscape <= 0) {
-				this.thaw();
+				this.thaw(false);
 			}
 		}
 	}
@@ -262,7 +263,7 @@ public class IceEncasementEntity extends AbstractSolidMovingEntity implements Ow
 		return force || !source.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY);
 	}
 
-	public boolean thaw() {
+	public boolean thaw(boolean isShatter) {
 		this.removedForThawing = true;
 		this.discard();
 
@@ -281,42 +282,16 @@ public class IceEncasementEntity extends AbstractSolidMovingEntity implements Ow
 			);
 		}
 
-		Entity owner = this.getOwner();
-		if(owner != null) {
-			owner.setVelocity(this.getVelocity());
-			owner.fallDistance = this.fallDistance;
+		if(!isShatter) this.affectEntityEscapingFromIce();
 
-			if(this.isFatal()) {
-				this.doAcceleratedOwnerDeath();
-			}
-		}
-
+		IceEncasingEvents.POST_THAW.invoker().postThaw(owner, this, isShatter);
 		return true;
 	}
 
-	private static final int ACCELERATED_DEATH_ANIMATION_TICKS = 2000;
-	public void doAcceleratedOwnerDeath() {
-		this.getDataTracker().set(PHYSICS, (byte) -1);
-		Entity owner = this.getOwner();
-		if(owner instanceof LivingEntity livingOwner) {
-			livingOwner.setHealth(0);
-			livingOwner.deathTime = 0;
-			for(int sprintedTicks = 0; sprintedTicks < ACCELERATED_DEATH_ANIMATION_TICKS; sprintedTicks++) {
-				((DeathSoundAccessor) livingOwner).invokeUpdatePostDeath();
-				if(owner.isRemoved()) break;
-			}
-			if(!owner.isRemoved()) {
-				MarioQuaMario.LOGGER.warn("Entity {} was not removed even after simulating {} post-death ticks." +
-						" Removing manually...", owner, ACCELERATED_DEATH_ANIMATION_TICKS);
-				owner.remove(RemovalReason.KILLED);
-			}
-		}
-		else if(owner != null) owner.kill();
-	}
-
 	public boolean shatter(DamageSource originalSource, float amount) {
-		if(this.thaw()) {
-			if(this.getOwner() != null && !this.isFatal()) {
+		if(this.thaw(true)) {
+			Entity owner = this.affectEntityEscapingFromIce();
+			if(owner != null && !this.isFatal()) {
 				DamageSource shatterSource;
 				float shatterAmount;
 
@@ -332,7 +307,7 @@ public class IceEncasementEntity extends AbstractSolidMovingEntity implements Ow
 						shatterAmount = amount * 1.5F;
 				}
 
-				this.getOwner().damage(shatterSource, shatterAmount);
+				owner.damage(shatterSource, shatterAmount);
 			}
 
 			this.getWorld().playSound(
@@ -341,9 +316,42 @@ public class IceEncasementEntity extends AbstractSolidMovingEntity implements Ow
 					1, 0.8F
 			);
 
+			IceEncasingEvents.POST_SHATTER.invoker().postShatter(this.getOwner(), this, originalSource, amount);
+
 			return true;
 		}
 		return false;
+	}
+
+	private static final int ACCELERATED_DEATH_MAXIMUM_TICKS = 2000;
+	private @Nullable Entity affectEntityEscapingFromIce() {
+		Entity originalOwner = this.getOwner();
+		if(originalOwner == null) return null;
+
+		Entity convertedOwner = IceEncasingEvents.THAW_CONVERSION.invoker().getConversion(originalOwner, this);
+		assert convertedOwner != null;
+
+		convertedOwner.setVelocity(this.getVelocity());
+		convertedOwner.fallDistance = this.fallDistance;
+
+		if(this.isFatal()) {
+			if(convertedOwner instanceof LivingEntity convertedLivingOwner) {
+				convertedLivingOwner.setHealth(0);
+				convertedLivingOwner.deathTime = 0;
+				for(int sprintedTicks = 0; sprintedTicks < ACCELERATED_DEATH_MAXIMUM_TICKS; sprintedTicks++) {
+					((DeathSoundAccessor) convertedLivingOwner).invokeUpdatePostDeath();
+					if(convertedLivingOwner.isRemoved()) break;
+				}
+				if(!convertedLivingOwner.isRemoved()) {
+					MarioQuaMario.LOGGER.warn("Entity {} was not removed even after maximum number ({}) of post-death" +
+							"updates. Removing manually...", convertedLivingOwner, ACCELERATED_DEATH_MAXIMUM_TICKS);
+					convertedLivingOwner.remove(RemovalReason.KILLED);
+				}
+			}
+			else convertedOwner.kill();
+		}
+
+		return convertedOwner;
 	}
 
 	@Override
@@ -437,12 +445,7 @@ public class IceEncasementEntity extends AbstractSolidMovingEntity implements Ow
 	public void onTrackedDataSet(TrackedData<?> data) {
 		super.onTrackedDataSet(data);
 		if(PHYSICS.equals(data)) {
-			byte physicsIndex = this.getDataTracker().get(PHYSICS);
-			if(physicsIndex == -1)
-				// TODO: This doesn't work; client never gets the update :(
-				this.doAcceleratedOwnerDeath();
-			else
-				this.physics = EncasementPhysicsType.values()[MathHelper.clamp(physicsIndex, 0, 2)];
+			this.physics = EncasementPhysicsType.values()[MathHelper.clamp(this.getDataTracker().get(PHYSICS), 0, 2)];
 		}
 	}
 

@@ -2,6 +2,7 @@ package com.fqf.mario_qua_mario.entity.custom;
 
 import com.fqf.mario_qua_mario.entity.MQMEntities;
 import com.fqf.mario_qua_mario.freezing.IceFlowerUtil;
+import com.fqf.mario_qua_mario.mixin.ProjectileLeftOwnerAccessor;
 import com.fqf.mario_qua_mario.util.MQMTags;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import net.minecraft.block.Block;
@@ -60,7 +61,18 @@ public class MarioIceballProjectileEntity extends AbstractBouncingMarioProjectil
 
 	@Override
 	protected boolean canHit(Entity entity) {
-		return super.canHit(entity) || (!this.isConnectedThroughVehicle(entity) && !entity.getType().isIn(MQMTags.ENCASEABLE_NON_LIVING));
+		// Unfortunately can't rely on super for this :(
+		if (!entity.canBeHitByProjectile() && !entity.getType().isIn(MQMTags.ENCASEABLE_NON_LIVING))
+			return false;
+
+		Entity owner = this.getOwner();
+		if(entity.equals(owner))
+			return false;
+
+		return
+				owner == null
+				|| ((ProjectileLeftOwnerAccessor) this).getLeftOwner()
+				|| !owner.isConnectedThroughVehicle(entity);
 	}
 
 	@Override

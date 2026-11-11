@@ -5,6 +5,7 @@
   "mixins": [
     "CustomizableToadDataTrackingMixin",
     "LenientCollisionCheckMixin",
+    "ProjectileLeftOwnerAccessor",
     "block_collisions.EntityShapeContextAccessor",
     "block_collisions.FluidBlockDynamicCollisionHeightMixin",
     "block_collisions.LivingEntityWaterWalkMixin",
@@ -14,6 +15,7 @@
     "coin.CoinSpinMixin",
     "coin.DropCoinWithExperienceMixin",
     "freezing.DeathSoundAccessor",
+    "freezing.EncasedEntitiesNotPartOfGameMixin",
     "freezing.EntityEncasementMixin",
     "freezing.IgnoreCollisionsWithEncasedEntitiesMixin",
     "freezing.SuppressFrozenEntityTickingMixin",

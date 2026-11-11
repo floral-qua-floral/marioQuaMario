@@ -13,9 +13,11 @@ import com.fqf.charaformact_api.cfadata.CfaClientData;
 import it.unimi.dsi.fastutil.floats.FloatFloatPair;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.item.ItemStack;
+import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -67,7 +69,11 @@ public class ParsedCollisionAttack extends ParsedCfaThing {
 	public Vec3d moveHook(CfaServerPlayerData data, Vec3d movement) {
 		ServerPlayerEntity player = data.getPlayer();
 
-		List<Entity> possibleTargets = player.getWorld().getOtherEntities(player, this.DEFINITION.mutatePlayerBoundingBox(data, player.getBoundingBox()).stretch(movement));
+		List<Entity> possibleTargets = player.getWorld().getOtherEntities(
+				player,
+				this.DEFINITION.mutatePlayerBoundingBox(data, player.getBoundingBox()).stretch(movement),
+				entity -> !(entity instanceof LivingEntity livingEntity && !livingEntity.isPartOfGame())
+		);
 		possibleTargets.removeIf(entity -> !entity.isAlive());
 		this.DEFINITION.filterPotentialTargets(possibleTargets, player, movement);
 
