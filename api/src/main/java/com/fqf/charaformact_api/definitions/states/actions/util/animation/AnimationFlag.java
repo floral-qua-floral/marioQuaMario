@@ -12,7 +12,7 @@ public enum AnimationFlag {
 	NO_RIGHT_LEG_SWING,
 	NO_LEFT_LEG_SWING,
 
-	USE_RADIANS, // technically more performant i guess but god almighty i don't WANNA
+	USE_RADIANS, // Makes math more efficient, but I find it annoying to use this
 
 	CAN_RESET_ON_SELF, // animation will reset its progress when transitioning into itself, unless given DO_NOT_RESET_PROGRESS execution flag
 

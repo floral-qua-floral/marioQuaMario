@@ -2,13 +2,9 @@ package com.fqf.mario_qua_mario.util;
 
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
-import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.wallbound.WallSlide;
 import com.fqf.mario_qua_mario.characters.AbstractMarioSeriesCharacter;
-import net.minecraft.entity.attribute.EntityAttributeInstance;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Direction;
 
 import java.util.Objects;
@@ -30,18 +26,19 @@ public class MarioVars {
 	public MarioVars(CfaData data) {
 		// this is annoying. but it's necessary to prevent a crash when changing dimensions, since the attribute
 		// modifiers get copied over, but the CfaData is created fresh.
-		this.hasUnarmedModifier = Objects.requireNonNull(data.getPlayer().getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE)).hasModifier(AbstractMarioSeriesCharacter.UNARMED_DAMAGE_BONUS.id());
+		this.hasUnarmedModifier = Objects.requireNonNull(data.getPlayer().getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE))
+				.hasModifier(AbstractMarioSeriesCharacter.UNARMED_DAMAGE_BONUS.id());
 	}
 
 	public static MarioVars get(CfaData data) {
-		return data.retrieveStateData(MarioVars.class);
+		return data.get(AbstractMarioSeriesCharacter.MARIO_DATA);
 	}
 
 	public static boolean checkWallSlide(CfaReadableMotionData data) {
 		if(data.getYVel() > 0 || data.isNearGround(0.5) || data.getInputs().DUCK.isHeld()) return false;
 
 		long worldTime = data.getPlayer().getWorld().getTime();
-		MarioVars vars = data.retrieveStateData(MarioVars.class);
+		MarioVars vars = data.get(AbstractMarioSeriesCharacter.MARIO_DATA);
 
 		processing: {
 			if(vars.lastWallSlideTick == worldTime) {

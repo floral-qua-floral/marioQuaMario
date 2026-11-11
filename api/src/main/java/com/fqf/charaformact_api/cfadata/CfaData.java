@@ -1,5 +1,6 @@
 package com.fqf.charaformact_api.cfadata;
 
+import com.fqf.charaformact_api.definitions.states.attachments.StateAttachmentKey;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.util.CfaStat;
 import net.minecraft.entity.player.PlayerEntity;
@@ -39,7 +40,9 @@ public interface CfaData {
 	 *              class will not find the data.
 	 * @return The state data of the requested class.
 	 */
-	<T> T retrieveStateData(Class<T> clazz);
+	@Deprecated <T> T retrieveStateData(Class<T> clazz);
+
+	<T> T get(StateAttachmentKey<T> key);
 
 	void forceBodyAlignment(boolean urgent);
 

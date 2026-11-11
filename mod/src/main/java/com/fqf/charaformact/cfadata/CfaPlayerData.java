@@ -3,6 +3,7 @@ package com.fqf.charaformact.cfadata;
 import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.appearance.ParsedCommonAppearance;
 import com.fqf.charaformact.registries.ParsedCfaState;
+import com.fqf.charaformact.registries.RegistryManager;
 import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import com.fqf.charaformact.registries.actions.ParsedActionHelper;
 import com.fqf.charaformact.registries.actions.parsed.ParsedWallboundAction;
@@ -12,6 +13,8 @@ import com.fqf.charaformact.util.AdvancedWallInfo;
 import com.fqf.charaformact.util.CfaStatCalculationHelper;
 import com.fqf.charaformact.util.DirectionBasedWallInfo;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
+import com.fqf.charaformact_api.definitions.states.attachments.AttachmentCategory;
+import com.fqf.charaformact_api.definitions.states.attachments.StateAttachmentKey;
 import com.fqf.charaformact_api.definitions.states.StatAlteringStateDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.definitions.states.actions.util.GenericActionType;
@@ -36,8 +39,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public abstract class CfaPlayerData implements CfaReadableMotionData {
+	private final Map<AttachmentCategory, Object[]> STATE_ATTACHMENTS;
 	protected CfaPlayerData() {
-		CharaFormAct.LOGGER.info("Created new CFA Player Data: {}", this);
+//		CharaFormAct.LOGGER.debug("Created new CFA Player Data: {}", this);
+		this.STATE_ATTACHMENTS = new EnumMap<>(AttachmentCategory.class);
+		for(AttachmentCategory category : AttachmentCategory.values())
+			this.wipeAttachments(category);
 	}
 	@Override public boolean isEnabled() {
 		return this.character != null;
@@ -71,6 +78,7 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 		return transitionedNaturally || forced;
 	}
 	public void setActionTransitionless(AbstractParsedAction action) {
+		if(this.action != action) this.wipeAttachments(AttachmentCategory.ACTION);
 		this.setupCustomVars(this.action, action);
 		this.action.onExit(this);
 		this.action = action;
@@ -117,6 +125,7 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 		return this.setFormTransitionless(newForm);
 	}
 	public boolean setFormTransitionless(ParsedForm newForm) {
+		if(this.form != newForm) this.wipeAttachments(AttachmentCategory.FORM);
 		this.setupCustomVars(this.form, newForm);
 		this.form.onExit(this);
 		this.form = newForm;
@@ -134,6 +143,9 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 	}
 
 	public void setCharacter(ParsedCharacter character) {
+		this.wipeAttachments(AttachmentCategory.CHARACTER);
+		this.wipeAttachments(AttachmentCategory.FORM);
+		this.wipeAttachments(AttachmentCategory.ACTION);
 		this.setupCustomVars(this.character, character);
 		if(this.character != null) this.character.onExit(this);
 		this.character = character;
@@ -154,6 +166,10 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 
 		if(oldThingVarsClass != null && !oldThingVarsClass.equals(newThingVarsClass))
 			this.customVars.remove(oldThingVarsClass); // If we didn't already just replace the vars, delete the old ones
+	}
+
+	private void wipeAttachments(AttachmentCategory category) {
+		this.STATE_ATTACHMENTS.put(category, new Object[RegistryManager.ATTACHMENT_COUNT_MAP_VIEW.get(category)]);
 	}
 
 	private final static String GENERATED_MODIFIER_PREFIX = "generated_modifier_";
@@ -333,6 +349,29 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 	@Override public <T> T retrieveStateData(Class<T> clazz) {
 		Object customData = this.customVars.get(clazz);
 		return clazz.cast(customData);
+	}
+
+	@Override
+	public <T> T get(StateAttachmentKey<T> key) {
+		Object[] array = this.STATE_ATTACHMENTS.get(key.CATEGORY);
+		T valueInSlot;
+		try {
+			//noinspection unchecked
+			valueInSlot = (T) array[key.INDEX];
+		}
+		catch(ClassCastException classCastException) {
+			throw new IllegalStateException("We've stored something in the wrong index!?! "
+					+ classCastException.getMessage(), classCastException);
+		}
+		catch(ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {
+			throw new IllegalStateException("We didn't prepare the array at the correct size?!? "
+					+ arrayIndexOutOfBoundsException.getMessage(), arrayIndexOutOfBoundsException);
+		}
+		if(valueInSlot == null) {
+			valueInSlot = key.DEFAULT_ASSIGNER.apply(this);
+			if(this.isEnabled()) array[key.INDEX] = valueInSlot;
+		}
+		return valueInSlot;
 	}
 
 	public boolean actionPreventsVanillaTravel() {

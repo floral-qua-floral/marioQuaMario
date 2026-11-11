@@ -8,6 +8,8 @@ import com.fqf.charaformact.registries.power_granting.ParsedForm;
 import com.fqf.charaformact.util.CfaSounds;
 import com.fqf.charaformact_api.CharaFormActAddon;
 import com.fqf.charaformact_api.definitions.TransitionInjectionDefinition;
+import com.fqf.charaformact_api.definitions.states.attachments.AttachmentCategory;
+import com.fqf.charaformact_api.definitions.states.attachments.StateAttachmentKey;
 import com.google.common.collect.ImmutableMap;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
@@ -19,16 +21,22 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
+import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 public class RegistryManager {
+	private static boolean registered = false;
 	private static List<CharaFormActAddon> addons;
 
 	public static void registerAll() {
 		CfaSounds.staticInitialize();
+
+		if(registered) throw new IllegalStateException("Must only register once!!");
+		registered = true;
 
 		addons = getEntrypoints("charaformact-common", CharaFormActAddon.class);
 		CharaFormAct.LOGGER.info("Common addons: {}", addons);
@@ -41,10 +49,14 @@ public class RegistryManager {
 
 		registerVoicelines(addons);
 
+		StateAttachmentKey.freeze();
+		for(AttachmentCategory category : AttachmentCategory.values())
+			ATTACHMENT_COUNT_MAP.put(category, StateAttachmentKey.countInitializedAttachments(category));
+
 		CharaFormAct.LOGGER.info("Finished registering:");
-		CharaFormAct.LOGGER.info("\t* {} Actions", ACTIONS.size());
-		CharaFormAct.LOGGER.info("\t* {} Forms", FORMS.size());
-		CharaFormAct.LOGGER.info("\t* {} Characters", CHARACTERS.size());
+		CharaFormAct.LOGGER.info("\t* {} Actions (with {} attachments)", ACTIONS.size(), ATTACHMENT_COUNT_MAP_VIEW.get(AttachmentCategory.ACTION));
+		CharaFormAct.LOGGER.info("\t* {} Forms (with {} attachments)", FORMS.size(), ATTACHMENT_COUNT_MAP_VIEW.get(AttachmentCategory.FORM));
+		CharaFormAct.LOGGER.info("\t* {} Characters (with {} attachments)", CHARACTERS.size(), ATTACHMENT_COUNT_MAP_VIEW.get(AttachmentCategory.CHARACTER));
 		CharaFormAct.LOGGER.info("\t* {} Voicelines", VOICE_LINES.size());
 		CharaFormAct.LOGGER.info("\t* {} Collision Attacks", COLLISION_ATTACKS.size());
 	}
@@ -85,6 +97,8 @@ public class RegistryManager {
 			.attribute(RegistryAttribute.SYNCED)
 			.buildAndRegister();
 
+	private static final Map<AttachmentCategory, Integer> ATTACHMENT_COUNT_MAP = new EnumMap<>(AttachmentCategory.class);
+	public static final Map<AttachmentCategory, Integer> ATTACHMENT_COUNT_MAP_VIEW = Collections.unmodifiableMap(ATTACHMENT_COUNT_MAP);
 
 	public static <Definition> List<Definition> getEntrypoints(String key, Class<Definition> clazz) {
 		return FabricLoader.getInstance().getEntrypointContainers(key, clazz).stream().map(EntrypointContainer::getEntrypoint).toList();

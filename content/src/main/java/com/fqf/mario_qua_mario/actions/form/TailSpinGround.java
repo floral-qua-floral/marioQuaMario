@@ -114,14 +114,14 @@ public class TailSpinGround implements GroundedActionDefinition {
 	@Override public @Nullable Object provideStateData(CfaData data) {
 		return new TailSpinActionTimerVars(data);
 	}
-	public static void commonTick(CfaData data) {
+	public static void commonTickUwu(CfaData data) {
 		data.retrieveStateData(TailSpinActionTimerVars.class).actionTimer++;
 	}
 	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-		commonTick(data);
+		commonTickUwu(data);
 	}
 	@Override public void serverTick(CfaAuthoritativeData data) {
-		commonTick(data);
+		commonTickUwu(data);
 		attemptTailStrike(data);
 	}
 	@Override public void travelHook(CfaTravelData data, GroundedActionHelper helper) {

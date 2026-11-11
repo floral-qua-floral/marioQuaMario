@@ -61,10 +61,10 @@ public class TailSpinAerial implements AirborneActionDefinition {
 		return new TailSpinActionTimerVars(data);
 	}
 	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-		TailSpinGround.commonTick(data);
+		TailSpinGround.commonTickUwu(data);
 	}
 	@Override public void serverTick(CfaAuthoritativeData data) {
-		TailSpinGround.commonTick(data);
+		TailSpinGround.commonTickUwu(data);
 		TailSpinGround.attemptTailStrike(data);
 	}
 	@Override public void travelHook(CfaTravelData data, AirborneActionHelper helper) {

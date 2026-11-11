@@ -30,17 +30,19 @@ public class ParsedCfaState extends ParsedCfaThing {
 	}
 
 	public void serverTick(CfaServerPlayerData data) {
+		this.STATE_DEFINITION.commonTick(data);
 		this.STATE_DEFINITION.serverTick(data);
 	}
 	public void clientTick(CfaClientData data, boolean isSelf) {
+		this.STATE_DEFINITION.commonTick(data);
 		this.STATE_DEFINITION.clientTick(data, isSelf);
 	}
-	public Object makeCustomThing(CfaPlayerData data) {
+	@Deprecated public Object makeCustomThing(CfaPlayerData data) {
 		Object vars = this.STATE_DEFINITION.provideStateData(data);
 		if(vars != null) this.lastCustomVarsClass = vars.getClass();
 		return vars;
 	}
-	public @Nullable Class<?> getLastCustomVarsClass() {
+	@Deprecated public @Nullable Class<?> getLastCustomVarsClass() {
 		return this.lastCustomVarsClass;
 	}
 

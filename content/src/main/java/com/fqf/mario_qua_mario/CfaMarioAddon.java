@@ -7,6 +7,7 @@ import com.fqf.charaformact_api.definitions.TransitionInjectionDefinition;
 import com.fqf.charaformact_api.definitions.states.CharacterDefinition;
 import com.fqf.charaformact_api.definitions.states.FormDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.IncompleteActionDefinition;
+import com.fqf.charaformact_api.definitions.states.attachments.StateAttachmentKey;
 import com.fqf.charaformact_api.util.AppearanceMapBuilder;
 import com.fqf.mario_qua_mario.appearances.mario.*;
 import com.fqf.mario_qua_mario.appearances.luigi.*;
@@ -27,8 +28,12 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.util.Identifier;
+import org.apache.commons.lang3.mutable.MutableInt;
 
 public class CfaMarioAddon implements CharaFormActAddon {
+	public static final StateAttachmentKey<MutableInt> ACTION_TIMER = StateAttachmentKey.action(() -> new MutableInt());
+	public static final StateAttachmentKey<MutableInt> SECONDARY_ACTION_TIMER = StateAttachmentKey.action(() -> new MutableInt());
+
 	@Override
 	public void accumulateCharacters(ImmutableMap.Builder<Identifier, CharacterDefinition> builder) {
 		builder.put(Mario.ID, new Mario());

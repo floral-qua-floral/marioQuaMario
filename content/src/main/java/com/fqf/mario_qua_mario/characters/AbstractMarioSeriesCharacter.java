@@ -1,13 +1,12 @@
 package com.fqf.mario_qua_mario.characters;
 
-import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.definitions.states.CharacterDefinition;
 import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
+import com.fqf.charaformact_api.definitions.states.attachments.StateAttachmentKey;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.airborne.LavaBoost;
-import com.fqf.mario_qua_mario.actions.generic.Debug;
 import com.fqf.mario_qua_mario.actions.mounted.Mounted;
 import com.fqf.mario_qua_mario.forms.Super;
 import com.fqf.mario_qua_mario.util.MQMGamerules;
@@ -25,12 +24,11 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
-import java.util.Set;
 
 public abstract class AbstractMarioSeriesCharacter implements CharacterDefinition {
+
 	@Override public @NotNull Identifier defineInitialAction() {
 		return Fall.ID;
 	}
@@ -78,13 +76,15 @@ public abstract class AbstractMarioSeriesCharacter implements CharacterDefinitio
 		);
 	}
 
+	public static final StateAttachmentKey<MarioVars> MARIO_DATA =
+			StateAttachmentKey.character(MarioVars::new);
+
 	public static final EntityAttributeModifier UNARMED_DAMAGE_BONUS =
 			new EntityAttributeModifier(MarioQuaMario.makeID("unarmed_damage_boost"), 1, EntityAttributeModifier.Operation.ADD_VALUE);
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return new MarioVars(data);
-	}
-	private static void commonTick(CfaData data) {
-		MarioVars vars = data.retrieveStateData(MarioVars.class);
+
+	@Override
+	public void commonTick(CfaData data) {
+		MarioVars vars = data.get(MARIO_DATA);
 		vars.canDoubleJumpTicks--;
 		vars.canTripleJumpTicks--;
 		switch(data.getActionCategory()) {
@@ -95,8 +95,8 @@ public abstract class AbstractMarioSeriesCharacter implements CharacterDefinitio
 			case AQUATIC ->
 					vars.pSpeed -= 0.225; // P-Speed decays faster while waterborne
 			default ->
-					// P-Speed is wiped while grounded, mounted, on a wall, or in a Generic action
-					// Individual actions can change this by assigning a value to P-Speed themselves!
+				// P-Speed is wiped while grounded, mounted, on a wall, or in a Generic action
+				// Individual actions can change this by assigning a value to P-Speed themselves!
 					vars.pSpeed = 0;
 		}
 
@@ -115,12 +115,9 @@ public abstract class AbstractMarioSeriesCharacter implements CharacterDefinitio
 		if(mainHandEmpty) attribute.addTemporaryModifier(UNARMED_DAMAGE_BONUS);
 		else attribute.removeModifier(UNARMED_DAMAGE_BONUS);
 	}
-	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-		commonTick(data);
-	}
+
 	@Override public void serverTick(CfaAuthoritativeData data) {
-		commonTick(data);
-		data.retrieveStateData(MarioVars.class).stompGuardRemainingTicks--;
+		data.get(MARIO_DATA).stompGuardRemainingTicks--;
 	}
 
 	@Override public void onExit(CfaData data) {

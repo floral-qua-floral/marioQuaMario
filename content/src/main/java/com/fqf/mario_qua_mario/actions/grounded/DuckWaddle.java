@@ -107,7 +107,6 @@ public class DuckWaddle implements GroundedActionDefinition {
 
 	public static final CfaStat WADDLE_REDIRECTION = new CfaStat(0.0, DUCKING, REDIRECTION);
 
-
 	@Override public void travelHook(CfaTravelData data, GroundedActionHelper helper) {
 		boolean waddlingForward = data.getInputs().getForwardInput() > 0;
 		helper.groundAccel(data,

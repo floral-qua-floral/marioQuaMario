@@ -6,8 +6,12 @@ import com.fqf.charaformact_api.cfadata.CfaData;
 import org.jetbrains.annotations.Nullable;
 
 public interface CfaStateDefinition {
-	default @Nullable Object provideStateData(CfaData data) {
+	@Deprecated default @Nullable Object provideStateData(CfaData data) {
 		return null;
+	}
+
+	default void commonTick(CfaData data) {
+
 	}
 	default void clientTick(CfaClientData data, boolean isSelf) {
 
