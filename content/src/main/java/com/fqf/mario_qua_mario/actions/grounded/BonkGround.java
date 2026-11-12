@@ -1,17 +1,16 @@
 package com.fqf.mario_qua_mario.actions.grounded;
 
-import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.Easing;
+import com.fqf.mario_qua_mario.CfaMarioAddon;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.BonkAir;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.aquatic.UnderwaterWalk;
-import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.StandUpWithKneeAnimation;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
@@ -29,7 +28,7 @@ public class BonkGround implements GroundedActionDefinition {
 
 	public static final float STANDUP_TICKS = 8;
 	protected static final StandUpWithKneeAnimation.ProgressCalculator PROGRESS_CALCULATOR = (data, animationTime) ->
-			2 * Easing.SINE_IN_OUT.ease(Math.min(1, data.retrieveStateData(ActionTimerVars.class).actionTimer / STANDUP_TICKS));
+			2 * Easing.SINE_IN_OUT.ease(Math.min(1, data.get(CfaMarioAddon.ACTION_TIMER).intValue() / STANDUP_TICKS));
 
 	public BonkGround(boolean isBackward) {
 		this.IS_BACKWARD = isBackward;
@@ -69,12 +68,9 @@ public class BonkGround implements GroundedActionDefinition {
 	public static final CfaStat BONK_DRAG = new CfaStat(0.185, RUNNING, DRAG);
 	public static final CfaStat BONK_DRAG_MIN = new CfaStat(0.045, RUNNING, DRAG);
 
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return new ActionTimerVars();
-	}
 	@Override public void travelHook(CfaTravelData data, GroundedActionHelper helper) {
-		if(data.getHorizVelSquared() == 0) data.retrieveStateData(ActionTimerVars.class).actionTimer++;
-		else data.retrieveStateData(ActionTimerVars.class).actionTimer = 0;
+		if(data.getHorizVelSquared() == 0) data.get(CfaMarioAddon.ACTION_TIMER).increment();
+		else data.get(CfaMarioAddon.ACTION_TIMER).setValue(0);
 		helper.applyDrag(
 				data, BONK_DRAG, BONK_DRAG_MIN,
 				-data.getInputs().getForwardInput(), data.getInputs().getStrafeInput(),
@@ -86,7 +82,7 @@ public class BonkGround implements GroundedActionDefinition {
 	public void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, GroundedActionHelper helper) {
 		builder.add(new ActionTransitionDetails(
 				SubWalk.ID,
-				data -> data.retrieveStateData(ActionTimerVars.class).actionTimer > STANDUP_TICKS,
+				data -> data.get(CfaMarioAddon.ACTION_TIMER).intValue() > STANDUP_TICKS,
 				EvaluatorEnvironment.CLIENT_ONLY
 		));
 	}
@@ -96,7 +92,7 @@ public class BonkGround implements GroundedActionDefinition {
 		builder.add(
 				Fall.FALL.variate(
 						BonkAir.ID,
-						data -> Fall.FALL.evaluator().test(data) && data.retrieveStateData(ActionTimerVars.class).actionTimer == 0,
+						data -> Fall.FALL.evaluator().test(data) && data.get(CfaMarioAddon.ACTION_TIMER).intValue() == 0,
 						EvaluatorEnvironment.CLIENT_ONLY,
 						null, null,
 						null

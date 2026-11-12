@@ -6,6 +6,7 @@ import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.mario_qua_mario.CfaMarioAddon;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
@@ -20,6 +21,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -209,31 +211,27 @@ public class WallSlide implements WallboundActionDefinition {
 		return false;
 	}
 
-	private static class WallSlideVars extends ActionTimerVars {
-		private int holdAwayFromWallTicks;
-	}
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return new WallSlideVars();
-	}
 	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 		data.forceBodyAlignment(true);
 	}
 	private static final int GRAVITY_RAMP_UP_TICKS = 5;
 	@Override public void travel(CfaTravelData data, WallInfo wall, WallboundActionHelper helper) {
-		WallSlideVars vars = data.retrieveStateData(WallSlideVars.class);
+		MutableInt actionTimer = data.get(CfaMarioAddon.ACTION_TIMER);
+		MutableInt holdAwayFromWallTicks = data.get(CfaMarioAddon.SECONDARY_ACTION_TIMER);
+
 		if(data.isClient()) {
 			if(wall.getTowardsWallInput() < -0.05)
-				vars.holdAwayFromWallTicks += 3;
+				holdAwayFromWallTicks.add(3);
 			else if(wall.getTowardsWallInput() < 0.05)
-				vars.holdAwayFromWallTicks++;
+				holdAwayFromWallTicks.increment();
 			else
-				vars.holdAwayFromWallTicks = 0;
+				holdAwayFromWallTicks.setValue(0);
 		}
 
 		double gravityFactor;
 		if(data.getPlayer().isTouchingWaterOrRain()) gravityFactor = 1.5;
-		else if(++vars.actionTimer >= GRAVITY_RAMP_UP_TICKS) gravityFactor = 1;
-		else gravityFactor = vars.actionTimer * (1.0 / GRAVITY_RAMP_UP_TICKS);
+		else if(actionTimer.incrementAndGet() >= GRAVITY_RAMP_UP_TICKS) gravityFactor = 1;
+		else gravityFactor = actionTimer.intValue() * (1.0 / GRAVITY_RAMP_UP_TICKS);
 
 		data.setYVel(Math.max(data.getYVel() - (0.02 * gravityFactor), -0.265));
 		if(Math.abs(wall.getSidleVel()) > 0.065)
@@ -281,7 +279,7 @@ public class WallSlide implements WallboundActionDefinition {
 				),
 				new ActionTransitionDetails(
 						Fall.ID,
-						data -> data.getInputs().DUCK.isPressed() || data.retrieveStateData(WallSlideVars.class).holdAwayFromWallTicks > 6,
+						data -> data.getInputs().DUCK.isPressed() || data.get(CfaMarioAddon.SECONDARY_ACTION_TIMER).intValue() > 6,
 						EvaluatorEnvironment.CLIENT_ONLY,
 						SizeChangeBehavior.AUTOMATIC,
 						data -> helper.setTowardsWallVel(data, 0),

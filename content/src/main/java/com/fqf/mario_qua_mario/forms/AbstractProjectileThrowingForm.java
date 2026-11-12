@@ -6,6 +6,7 @@ import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.charaformact_api.definitions.states.FormDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
+import com.fqf.charaformact_api.definitions.states.attachments.StateAttachmentKey;
 import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.entity.custom.AbstractMarioProjectileEntity;
 import com.fqf.mario_qua_mario.util.MarioSFX;
@@ -24,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class AbstractProjectileThrowingForm<Projectile extends AbstractMarioProjectileEntity> implements FormDefinition {
+	private static final StateAttachmentKey<ProjectileCooldowns> COOLDOWNS = StateAttachmentKey.form(ProjectileCooldowns::new);
 	private static class ProjectileCooldowns {
 		private long noMainHandUntil;
 		private long noOffhandUntil;
@@ -45,10 +47,6 @@ public abstract class AbstractProjectileThrowingForm<Projectile extends Abstract
 
 	@Override public @NotNull FormDefinition.FormHeart defineFormHeart(FormHeartHelper helper) {
 		return helper.auto();
-	}
-
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return new ProjectileCooldowns();
 	}
 
 	protected abstract boolean canDirectHitEntity(@NotNull EntityHitResult result);
@@ -90,7 +88,7 @@ public abstract class AbstractProjectileThrowingForm<Projectile extends Abstract
 
 		private void triggerCooldowns(CfaData data) {
 			long time = data.getPlayer().getWorld().getTime();
-			ProjectileCooldowns cooldowns = data.retrieveStateData(ProjectileCooldowns.class);
+			ProjectileCooldowns cooldowns = data.get(COOLDOWNS);
 			int totalCooldown = AbstractProjectileThrowingForm.this.getTotalCooldown();
 			if(this.HAND == Hand.MAIN_HAND) {
 				cooldowns.noMainHandUntil = time + totalCooldown;
@@ -147,7 +145,7 @@ public abstract class AbstractProjectileThrowingForm<Projectile extends Abstract
 					@Override
 					protected boolean canThrowProjectile(CfaData data, ItemStack weapon, float attackCooldownProgress) {
 						return weapon.isEmpty()
-								&& data.getPlayer().getWorld().getTime() > data.retrieveStateData(ProjectileCooldowns.class).noMainHandUntil
+								&& data.getPlayer().getWorld().getTime() > data.get(COOLDOWNS).noMainHandUntil
 								&& attackCooldownProgress >= 1;
 					}
 				},
@@ -156,7 +154,7 @@ public abstract class AbstractProjectileThrowingForm<Projectile extends Abstract
 					@Override
 					protected boolean canThrowProjectile(CfaData data, ItemStack weapon, float attackCooldownProgress) {
 						long time = data.getPlayer().getWorld().getTime();
-						ProjectileCooldowns cooldowns = data.retrieveStateData(ProjectileCooldowns.class);
+						ProjectileCooldowns cooldowns = data.get(COOLDOWNS);
 						return time > cooldowns.noOffhandUntil
 								// Only after throwing a first fireball, or any time if holding an item
 								&& (time < cooldowns.noMainHandUntil || !weapon.isEmpty())
@@ -169,7 +167,7 @@ public abstract class AbstractProjectileThrowingForm<Projectile extends Abstract
 					@Override
 					public boolean shouldInterceptAttack(CfaReadableMotionData data, ItemStack weapon, float attackCooldownProgress, @Nullable EntityHitResult entityHitResult, @Nullable BlockHitResult blockHitResult) {
 						long time = data.getPlayer().getWorld().getTime();
-						ProjectileCooldowns cooldowns = data.retrieveStateData(ProjectileCooldowns.class);
+						ProjectileCooldowns cooldowns = data.get(COOLDOWNS);
 						return attackCooldownProgress < 1 && weapon.isEmpty()
 								&& (entityHitResult == null || canDirectHitEntity(entityHitResult))
 								&& (time < cooldowns.noOffhandUntil || time > cooldowns.noMainHandUntil);

@@ -1,7 +1,6 @@
 package com.fqf.mario_qua_mario.actions.form;
 
 import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
-import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
@@ -14,6 +13,7 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.Animat
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
+import com.fqf.charaformact_api.definitions.states.attachments.StateAttachmentKey;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -22,13 +22,13 @@ import com.fqf.mario_qua_mario.actions.grounded.DuckSlide;
 import com.fqf.mario_qua_mario.actions.grounded.DuckWaddle;
 import com.fqf.mario_qua_mario.forms.Raccoon;
 import com.fqf.mario_qua_mario.util.Powers;
-import com.fqf.mario_qua_mario.util.TailSpinActionTimerVars;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,7 +50,7 @@ public class TailSpinGround implements GroundedActionDefinition {
 						})
 				),
 				(arrangement, data, animationTime, helper) ->
-						arrangement.yaw = data.retrieveStateData(TailSpinActionTimerVars.class).actionTimer / TICKS_PER_REVOLUTION * 360
+						arrangement.yaw = data.get(TAIL_SPIN_TIMER).intValue() / TICKS_PER_REVOLUTION * 360
 		);
 	}
 
@@ -60,10 +60,8 @@ public class TailSpinGround implements GroundedActionDefinition {
 
 	private static CameraAnimation makeTailSpinCameraAnimation(float factor, Easing easing) {
 		return new CameraAnimation(
-				new CameraProgressHandler(2, (data, ticksPassed) -> {
-					if(data.retrieveStateData(TailSpinActionTimerVars.class) == null) return 4;
-					return (ticksPassed / (TICKS_PER_REVOLUTION - 0.5F) * factor) % 1;
-				}),
+				new CameraProgressHandler(2, (data, ticksPassed) ->
+						(ticksPassed / (TICKS_PER_REVOLUTION - 0.5F) * factor)),
 				(data, arrangement, progress) -> arrangement.yaw += easing.ease(progress % 1) * -360
 		);
 	}
@@ -86,7 +84,7 @@ public class TailSpinGround implements GroundedActionDefinition {
 	}
 
 	public static void attemptTailStrike(CfaAuthoritativeData data) {
-		if(data.retrieveStateData(TailSpinActionTimerVars.class).actionTimer % 3 == 0) {
+		if(data.get(TAIL_SPIN_TIMER).intValue() % 3 == 0) {
 			ServerPlayerEntity mario = data.getPlayer();
 			ImmutableList.Builder<Entity> strikeTargets = ImmutableList.builder();
 
@@ -111,17 +109,18 @@ public class TailSpinGround implements GroundedActionDefinition {
 		}
 	}
 
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return new TailSpinActionTimerVars(data);
+	public static final StateAttachmentKey<MutableInt> TAIL_SPIN_TIMER = StateAttachmentKey.action(() -> new MutableInt());
+
+	public static void incrementTailSpinTimer(CfaData data) {
+		data.get(TAIL_SPIN_TIMER).increment();
 	}
-	public static void commonTickUwu(CfaData data) {
-		data.retrieveStateData(TailSpinActionTimerVars.class).actionTimer++;
+
+	@Override
+	public void commonTick(CfaData data) {
+		incrementTailSpinTimer(data);
 	}
-	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-		commonTickUwu(data);
-	}
+
 	@Override public void serverTick(CfaAuthoritativeData data) {
-		commonTickUwu(data);
 		attemptTailStrike(data);
 	}
 	@Override public void travelHook(CfaTravelData data, GroundedActionHelper helper) {
@@ -130,7 +129,7 @@ public class TailSpinGround implements GroundedActionDefinition {
 	}
 
 	public static boolean doneSpinning(CfaData data) {
-		return data.retrieveStateData(TailSpinActionTimerVars.class).actionTimer >= 2 * TICKS_PER_REVOLUTION;
+		return data.get(TAIL_SPIN_TIMER).intValue() >= 2 * TICKS_PER_REVOLUTION;
 	}
 
 	@Override

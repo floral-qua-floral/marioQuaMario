@@ -21,7 +21,7 @@ public class ClimbIntangibleDirectional extends ClimbWall implements WallboundAc
 
 	@Override
 	protected float getEntireBodyZOffset(CfaReadableMotionData data) {
-		return data.retrieveStateData(ClimbOmniDirectionalVars.class).ALTERNATE_OFFSET ? -1.75F : 0;
+		return data.get(PLANAR_CLIMB_DATA).useAlternateOffset ? -1.75F : 0;
 	}
 
 	private static float getYawOf(PlayerEntity mario, BlockPos pos, BlockState state) {

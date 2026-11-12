@@ -1,7 +1,6 @@
 package com.fqf.mario_qua_mario.actions.form;
 
 import com.fqf.charaformact_api.cfadata.CfaClientData;
-import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.TransitionInjectionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
@@ -13,12 +12,12 @@ import com.fqf.charaformact_api.definitions.states.actions.util.SizeChangeBehavi
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.util.CfaStat;
+import com.fqf.mario_qua_mario.CfaMarioAddon;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.airborne.GroundPoundFlip;
 import com.fqf.mario_qua_mario.actions.airborne.SpecialFall;
 import com.fqf.mario_qua_mario.forms.Raccoon;
-import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import com.fqf.mario_qua_mario.util.Powers;
 import com.google.common.collect.ImmutableList;
@@ -75,13 +74,10 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 	public static final CfaStat FALL_SPEED = new CfaStat(-0.445, TERMINAL_VELOCITY, FORM);
 
 	public static void tailWaggleTick(CfaClientData data) {
-		if(data.retrieveStateData(ActionTimerVars.class).actionTimer++ % 4 == 0)
+		if(data.get(CfaMarioAddon.ACTION_TIMER).getAndIncrement() % 4 == 0)
 			data.playSound(MarioSFX.TAIL_FLY, 1F, 0.1F, data.getPlayer().getRandom().nextLong());
 	}
 
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return new ActionTimerVars();
-	}
 	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 		tailWaggleTick(data);
 	}
@@ -127,7 +123,7 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 			EvaluatorEnvironment.CLIENT_CHECKED,
 			SizeChangeBehavior.NO_CHECKING,
 			data -> {
-				Raccoon.RaccoonVars vars = data.retrieveStateData(Raccoon.RaccoonVars.class);
+				Raccoon.RaccoonVars vars = data.get(Raccoon.RACCOON_DATA);
 
 				// If Mario hasn't initiated tail-stalling yet, then set it to its initial value
 				if(vars.stallStartVel == null)

@@ -1,9 +1,6 @@
 package com.fqf.mario_qua_mario.forms;
 
-import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
-import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.definitions.states.FormDefinition;
-import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.util.StatCategory;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.util.MarioSFX;
@@ -17,7 +14,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Set;
 
 import static net.minecraft.entity.attribute.EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL;
-import static net.minecraft.entity.attribute.EntityAttributes.*;
+import static net.minecraft.entity.attribute.EntityAttributes.GENERIC_SAFE_FALL_DISTANCE;
+import static net.minecraft.entity.attribute.EntityAttributes.GENERIC_STEP_HEIGHT;
 
 public class Mini implements FormDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("mini");
@@ -98,16 +96,4 @@ public class Mini implements FormDefinition {
 				MarioQuaMario.makeResID("hud/form_hearts/mini/container_blinking")
 		);
 	}
-
-
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return null;
-	}
-	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-
-	}
-	@Override public void serverTick(CfaAuthoritativeData data) {
-
-	}
-
 }

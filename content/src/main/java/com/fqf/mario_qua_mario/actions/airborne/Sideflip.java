@@ -11,12 +11,15 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.Arrang
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
+import com.fqf.charaformact_api.definitions.states.attachments.StateAttachmentKey;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.Easing;
+import com.fqf.mario_qua_mario.CfaMarioAddon;
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario.util.ActionTimerVars;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
+import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
@@ -32,8 +35,8 @@ public class Sideflip extends Backflip implements AirborneActionDefinition {
 	}
 
 	private static void conditionallyFlip(CfaAnimatingData data, Arrangement arrangement) {
-		SideflipVars vars = data.retrieveStateData(SideflipVars.class);
-		if(vars != null && !vars.hasRotated) arrangement.yaw += 180;
+		if(data.get(HAS_ROTATED).booleanValue())
+			arrangement.yaw += 180;
 	}
 
 	@Override public @Nullable AnimationDefinition defineAnimation() {
@@ -128,19 +131,18 @@ public class Sideflip extends Backflip implements AirborneActionDefinition {
 	public static CfaStat SIDEFLIP_BACKWARDS_SPEED = new CfaStat(-0.375, DRIFTING, BACKWARD, SPEED);
 	public static CfaStat SIDEFLIP_THRESHOLD = new CfaStat(0.2, WALKING, FRICTION, THRESHOLD);
 
-	private static class SideflipVars extends ActionTimerVars {
-		public boolean hasRotated;
+	private static final StateAttachmentKey<MutableBoolean> HAS_ROTATED =
+			StateAttachmentKey.action(() -> new MutableBoolean());
+
+	@Override
+	public void onEnter(CfaData data, ImmutableSet.Builder<StateAttachmentKey<?>> attachmentsToKeep) {
+		attachmentsToKeep.add(HAS_ROTATED);
 	}
 
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		SideflipVars vars = data.retrieveStateData(SideflipVars.class);
-		if(vars == null) vars = new SideflipVars();
-		return vars;
-	}
 	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-		SideflipVars sideflipVars = data.retrieveStateData(SideflipVars.class);
-		if(!sideflipVars.hasRotated && sideflipVars.actionTimer++ >= 3) {
-			sideflipVars.hasRotated = true;
+		MutableBoolean hasRotated = data.get(HAS_ROTATED);
+		if(!hasRotated.booleanValue() && data.get(CfaMarioAddon.ACTION_TIMER).getAndIncrement() >= 3) {
+			hasRotated.setTrue();
 			data.instantVisualRotate(180, false);
 		}
 	}

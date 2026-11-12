@@ -1,13 +1,9 @@
 package com.fqf.mario_qua_mario.forms;
 
-import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact_api.definitions.states.FormDefinition;
-import com.fqf.charaformact_api.cfadata.CfaClientData;
-import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class Small implements FormDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("small");
@@ -52,15 +48,4 @@ public class Small implements FormDefinition {
 				MarioQuaMario.makeResID("hud/form_hearts/small/container_blinking")
 		);
 	}
-
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return null;
-	}
-	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-
-	}
-	@Override public void serverTick(CfaAuthoritativeData data) {
-
-	}
-
 }

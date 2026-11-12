@@ -1,18 +1,20 @@
 package com.fqf.mario_qua_mario.actions.generic;
 
-import com.fqf.charaformact_api.cfadata.*;
+import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
+import com.fqf.charaformact_api.cfadata.CfaClientData;
+import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
+import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.GenericActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.charaformact_api.definitions.states.actions.util.SlidingStatus;
 import com.fqf.charaformact_api.definitions.states.actions.util.SizeChangeBehavior;
+import com.fqf.charaformact_api.definitions.states.actions.util.SlidingStatus;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.Posture;
+import com.fqf.mario_qua_mario.CfaMarioAddon;
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario.Voicelines;
-import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.Entity;
@@ -46,16 +48,17 @@ public class Debug implements GenericActionDefinition {
 		return SlidingStatus.SLIDING_SILENT;
 	}
 
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return new ActionTimerVars();
-	}
 	@Override public void serverTick(CfaAuthoritativeData data) {
 		data.getPlayer().setHealth(data.getPlayer().getMaxHealth());
 	}
 	@Override public void travelHook(CfaTravelData data) {
-		ActionTimerVars.get(data).actionTimer++;
+		data.get(CfaMarioAddon.ACTION_TIMER).increment();
 		data.setForwardStrafeVel(data.getInputs().getForwardInput() * 0.5, data.getInputs().getStrafeInput() * 0.5);
-		data.setYVel(data.getInputs().JUMP.isHeld() ? 0.4 : (data.getInputs().DUCK.isHeld() ? -0.4 : (0.03 * Math.sin(ActionTimerVars.get(data).actionTimer++ / 16.0))));
+		data.setYVel(
+				data.getInputs().JUMP.isHeld() ? 0.4
+				: (data.getInputs().DUCK.isHeld() ? -0.4
+				: (0.03 * Math.sin(data.get(CfaMarioAddon.ACTION_TIMER).intValue() / 16.0)))
+		);
 	}
 
 	@Override

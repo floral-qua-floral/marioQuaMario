@@ -7,6 +7,7 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
 import com.fqf.charaformact_api.cfadata.*;
+import com.fqf.charaformact_api.definitions.states.attachments.StateAttachmentKey;
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
@@ -70,16 +71,15 @@ public class Raccoon implements FormDefinition {
 		return helper.auto();
 	}
 
+	public static final StateAttachmentKey<RaccoonVars> RACCOON_DATA = StateAttachmentKey.form(RaccoonVars::new);
+
 	public static class RaccoonVars {
 		public int flightTicks;
 		public @Nullable Double stallStartVel;
 	}
 
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return new RaccoonVars();
-	}
 	private void tick(CfaData data) {
-		RaccoonVars vars = data.retrieveStateData(RaccoonVars.class);
+		RaccoonVars vars = data.get(RACCOON_DATA);
 		if(data.getActionCategory() != ActionCategory.AIRBORNE && data.getActionCategory() != ActionCategory.WALLBOUND) {
 			vars.stallStartVel = null;
 			vars.flightTicks = 75;
@@ -143,6 +143,7 @@ public class Raccoon implements FormDefinition {
 					persistentProjectileTarget.setCritical(true);
 					PersistentProjectileEntity.PickupPermission pickup = persistentProjectileTarget.pickupType;
 					projectileTarget.setOwner(mario);
+					// Need to restore former pickupType, as otherwise reflecting Skeleton arrows makes them collectable
 					persistentProjectileTarget.pickupType = pickup;
 				}
 				else {
@@ -155,8 +156,8 @@ public class Raccoon implements FormDefinition {
 				// this is wonky but i really don't wanna do the math god almighty
 				reflectTarget.lookAt(EntityAnchorArgumentType.EntityAnchor.FEET, reflectTarget.getPos().add(aimVector));
 
-				// Is there any other logic I'd want to do here...?? I could check Ownable to transfer ownership of things
-				// like Vexes on reflect, which is a hilarious idea, but it doesn't make enough sense for me.
+				// Is there any other logic I'd want to do here...?? I could check Ownable to transfer ownership of
+				// things like Vexes on reflect, which is a hilarious idea, but maybe a little too silly for me.
 			}
 			reflectTarget.playSound(MarioSFX.KICK, 0.4F, 1);
 			reflectTarget.setVelocity(newVelocity);
@@ -201,11 +202,6 @@ public class Raccoon implements FormDefinition {
 		@Override
 		public @NotNull MiningHandling shouldSuppressMining(CfaReadableMotionData data, ItemStack weapon, @NotNull BlockHitResult blockHitResult, int miningTicks) {
 			return miningTicks <= 3 ? MiningHandling.HOLD : MiningHandling.MINE;
-		}
-
-		@Override
-		public void executeTravellers(CfaTravelData data, ItemStack weapon, float attackCooldownProgress, @Nullable BlockPos blockTarget, @Nullable Entity entityTarget) {
-
 		}
 
 		@Override

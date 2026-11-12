@@ -1,7 +1,5 @@
 package com.fqf.mario_qua_mario.actions.aquatic;
 
-import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
-import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AquaticActionDefinition;
@@ -9,11 +7,11 @@ import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.util.CfaStat;
+import com.fqf.mario_qua_mario.CfaMarioAddon;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.airborne.LavaBoost;
 import com.fqf.mario_qua_mario.actions.airborne.SpecialFall;
-import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -121,15 +119,11 @@ public class Submerged implements AquaticActionDefinition {
 		);
 	}
 
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return new ActionTimerVars();
+	@Override
+	public void commonTick(CfaData data) {
+		data.get(CfaMarioAddon.ACTION_TIMER).increment();
 	}
-	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-		data.retrieveStateData(ActionTimerVars.class).actionTimer++;
-	}
-	@Override public void serverTick(CfaAuthoritativeData data) {
-		data.retrieveStateData(ActionTimerVars.class).actionTimer++;
-	}
+
 	@Override public void travelHook(CfaTravelData data, AquaticActionHelper helper) {
 		waterMove(data, helper);
 		drift(data, helper);
@@ -157,10 +151,8 @@ public class Submerged implements AquaticActionDefinition {
 				AquaticPoundFlip.AQUATIC_GROUND_POUND,
 				new ActionTransitionDetails(
 						Paddle.ID,
-						data -> {
-							ActionTimerVars vars = data.retrieveStateData(ActionTimerVars.class);
-							return (vars == null || vars.actionTimer > 7) && data.getInputs().JUMP.isHeld() && data.getForwardVel() > -0.1;
-						},
+						data -> data.get(CfaMarioAddon.ACTION_TIMER).intValue() > 7
+								&& data.getInputs().JUMP.isHeld() && data.getForwardVel() > -0.1,
 						EvaluatorEnvironment.CLIENT_ONLY,
 						SizeChangeBehavior.AUTOMATIC,
 						data -> data.setYVel(Math.max(Paddle.PADDLE_FALL_SPEED.get(data), data.getYVel())),

@@ -1,7 +1,6 @@
 package com.fqf.mario_qua_mario.actions.grounded;
 
 import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
-import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.TransitionInjectionDefinition;
@@ -13,11 +12,12 @@ import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.Easing;
+import com.fqf.mario_qua_mario.CfaMarioAddon;
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,15 +58,12 @@ public class WalkRun extends SubWalk implements GroundedActionDefinition {
 				data.getHorizVelSquared() > WALK_SPEED.getAsSquaredThreshold(data);
 	}
 
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return new ActionTimerVars();
-	}
 	@Override public void travelHook(CfaTravelData data, GroundedActionHelper helper) {
 		if(data.getPlayer().isSprinting()) {
-			ActionTimerVars vars = ActionTimerVars.get(data);
+			MutableInt actionTimer = data.get(CfaMarioAddon.ACTION_TIMER);
 
 			if(data.getForwardVel() > RUN_SPEED.getAsLimit(data)) {
-				if(Math.abs(data.getStrafeVel()) < 0.175) vars.actionTimer = 50;
+				if(Math.abs(data.getStrafeVel()) < 0.175) actionTimer.setValue(50);
 				// Overrun
 				helper.groundAccel(data,
 						OVERRUN_ACCEL, RUN_SPEED,
@@ -77,8 +74,8 @@ public class WalkRun extends SubWalk implements GroundedActionDefinition {
 			}
 			else {
 				if(data.getForwardVel() > RUN_SPEED.getAsThreshold(data) && Math.abs(data.getStrafeVel()) < 0.175)
-					vars.actionTimer++;
-				else if(vars.actionTimer > 0) vars.actionTimer = 0;
+					actionTimer.increment();
+				else if(actionTimer.intValue() > 0) actionTimer.setValue(0);
 
 				// Run Accel
 				helper.groundAccel(data,
@@ -104,7 +101,7 @@ public class WalkRun extends SubWalk implements GroundedActionDefinition {
 				),
 				new ActionTransitionDetails(
 						PRun.ID,
-						data -> PRun.meetsPRunRequirements(data) && ActionTimerVars.get(data).actionTimer > 20,
+						data -> PRun.meetsPRunRequirements(data) && data.get(CfaMarioAddon.ACTION_TIMER).intValue() > 20,
 						EvaluatorEnvironment.CLIENT_ONLY
 				)
 		);

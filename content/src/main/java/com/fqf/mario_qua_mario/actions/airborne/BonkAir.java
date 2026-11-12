@@ -11,12 +11,14 @@ import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.SizeChangeBehavior;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
+import com.fqf.charaformact_api.definitions.states.attachments.StateAttachmentKey;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario.actions.grounded.BonkGround;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -27,7 +29,7 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("bonk_air");
 
 	public static float getDeviation(CfaAnimatingData data) {
-		return MathHelper.subtractAngles(data.getPlayer().bodyYaw, data.retrieveStateData(BonkAir.BonkVars.class).recalculateBonkYaw(data)) / 180 * 2;
+		return MathHelper.subtractAngles(data.getPlayer().bodyYaw, data.get(BONK_DATA).recalculateBonkYaw(data)) / 180 * 2;
 	}
 
 	@Override public @Nullable AnimationDefinition defineAnimation() {
@@ -166,6 +168,7 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 			(data, isSelf, seed) -> {
 				data.playSound(MarioSFX.BONK, seed);
 				data.voice(Voicelines.BONK, seed);
+				data.voice(Voicelines.BONK, seed);
 			}
 	);
 
@@ -173,19 +176,19 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 		return 90 + ((float) Math.atan2(vector.z, vector.x)) * MathHelper.DEGREES_PER_RADIAN;
 	}
 
-	protected static class BonkVars {
+	public static final StateAttachmentKey<BonkVars> BONK_DATA =
+			StateAttachmentKey.action(BonkVars::new);
+
+	public static class BonkVars {
 		public float bonkYaw;
 		public int noInputTicks;
 
 		public BonkVars(CfaData data) {
 			this.noInputTicks = 2;
-			BonkVars oldVars = data.retrieveStateData(BonkVars.class);
-			if(oldVars != null)
-				this.bonkYaw = oldVars.bonkYaw;
-			else if(data instanceof CfaReadableMotionData motionData)
+			if(data instanceof CfaReadableMotionData motionData)
 				this.recalculateBonkYaw(motionData);
 			else
-				this.bonkYaw = data.getPlayer().bodyYaw;
+				this.bonkYaw = data.getPlayer().bodyYaw; // never occurs
 		}
 
 		public float recalculateBonkYaw(CfaReadableMotionData data) {
@@ -196,9 +199,11 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 		}
 	}
 
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return new BonkVars(data);
+	@Override
+	public void onEnter(CfaData data, ImmutableSet.Builder<StateAttachmentKey<?>> attachmentsToKeep) {
+		attachmentsToKeep.add(BONK_DATA);
 	}
+
 	@Override public void travelHook(CfaTravelData data, AirborneActionHelper helper) {
 		helper.applyComplexGravity(data, Fall.FALL_ACCEL, null, Fall.FALL_SPEED);
 	}
@@ -216,7 +221,7 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 				Fall.LANDING.variate(
 						BonkGround.BACKWARD_ID,
 						data -> Fall.LANDING.evaluator().test(data)
-								&& Math.abs(MathHelper.subtractAngles(data.getPlayer().bodyYaw, data.retrieveStateData(BonkVars.class).bonkYaw)) < 90,
+								&& Math.abs(MathHelper.subtractAngles(data.getPlayer().bodyYaw, data.get(BONK_DATA).bonkYaw)) < 90,
 						EvaluatorEnvironment.CLIENT_ONLY,
 						null, null,
 						null

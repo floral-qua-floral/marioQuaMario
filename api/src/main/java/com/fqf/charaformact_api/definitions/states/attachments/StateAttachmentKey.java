@@ -31,7 +31,7 @@ import java.util.function.Supplier;
 ///
 /// Note that changing Character will also always reset the player's Form and Action, and so clears out every single
 /// Attachment regardless of its category.
-public class StateAttachmentKey<T> {
+public final class StateAttachmentKey<T> {
 	public static <T2> StateAttachmentKey<T2> of(
 			AttachmentCategory category,
 			Function<CfaData, T2> defaultAssigner,

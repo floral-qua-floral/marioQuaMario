@@ -6,6 +6,7 @@ import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinit
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
+import com.fqf.charaformact_api.definitions.states.attachments.StateAttachmentKey;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
@@ -18,6 +19,7 @@ import net.minecraft.fluid.FluidState;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.mutable.MutableDouble;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -68,15 +70,12 @@ public class LavaBoost extends Fall implements AirborneActionDefinition {
 
 	public static CfaStat BOOST_REDIRECTION = new CfaStat(3, DRIFTING, REDIRECTION);
 
-	private static class LavaBoostVars {
-		private double bounceVel;
-	}
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return new LavaBoostVars();
-	}
+	public static final StateAttachmentKey<MutableDouble> BOUNCE_VEL =
+			StateAttachmentKey.action(() -> new MutableDouble());
+
 	@Override public void travelHook(CfaTravelData data, AirborneActionHelper helper) {
 		helper.applyComplexGravity(data, FALL_ACCEL, null, FALL_SPEED);
-		data.retrieveStateData(LavaBoostVars.class).bounceVel = data.getYVel() * -0.6;
+		data.get(BOUNCE_VEL).setValue(data.getYVel() * -0.6);
 		if(data.getYVel() < 0) Fall.drift(data, helper);
 		else helper.airborneAccel(
 				data,
@@ -159,13 +158,12 @@ public class LavaBoost extends Fall implements AirborneActionDefinition {
 				Submerged.SUBMERGE,
 				Fall.LANDING.variate(
 						LavaBoost.ID,
-						data ->
-								data.getYVel() <= 0
-										&& data.retrieveStateData(LavaBoostVars.class).bounceVel > 0.06
-										&& Fall.LANDING.evaluator().test(data),
+						data -> data.getYVel() <= 0
+								&& data.get(BOUNCE_VEL).doubleValue() > 0.06
+								&& Fall.LANDING.evaluator().test(data),
 						null,
 						null, data -> {
-							data.setYVel(data.retrieveStateData(LavaBoostVars.class).bounceVel);
+							data.setYVel(data.get(BOUNCE_VEL).doubleValue());
 							data.setForwardStrafeVel(data.getForwardVel() * 0.5, data.getStrafeVel() * 0.5);
 						},
 						(data, isSelf, seed) -> {}

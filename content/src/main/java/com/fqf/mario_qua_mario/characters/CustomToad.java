@@ -2,6 +2,7 @@ package com.fqf.mario_qua_mario.characters;
 
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.definitions.states.CharacterDefinition;
+import com.fqf.charaformact_api.definitions.states.attachments.StateAttachmentKey;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import com.fqf.mario_qua_mario.util.Powers;
@@ -46,8 +47,8 @@ public class CustomToad extends AbstractToad implements CharacterDefinition {
 	}
 
 	@Override
-	public void onEnter(CfaData data) {
-		super.onEnter(data);
+	public void onEnter(CfaData data, ImmutableSet.Builder<StateAttachmentKey<?>> attachmentsToKeep) {
+		super.onEnter(data, attachmentsToKeep);
 		if(data.isClient() && data.getPlayer().isMainPlayer()) {
 			data.getPlayer().sendMessage(Text.translatable("messages.mario_qua_mario.customtoad"));
 		}

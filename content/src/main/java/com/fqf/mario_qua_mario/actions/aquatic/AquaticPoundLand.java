@@ -1,6 +1,5 @@
 package com.fqf.mario_qua_mario.actions.aquatic;
 
-import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AquaticActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
@@ -8,10 +7,9 @@ import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnviron
 import com.fqf.charaformact_api.definitions.states.actions.util.SneakingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
+import com.fqf.mario_qua_mario.CfaMarioAddon;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
-import com.fqf.mario_qua_mario.util.ActionTimerVars;
-import com.fqf.mario_qua_mario.util.MarioSFX;
 import com.fqf.mario_qua_mario.util.StandUpWithKneeAnimation;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
@@ -44,20 +42,17 @@ public class AquaticPoundLand implements AquaticActionDefinition {
 		return SprintingRule.PROHIBIT;
 	}
 
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return new ActionTimerVars();
-	}
 	@Override public void travelHook(CfaTravelData data, AquaticActionHelper helper) {
 		Submerged.waterMove(data, helper);
 		data.setForwardStrafeVel(0, 0);
-		data.retrieveStateData(ActionTimerVars.class).actionTimer++;
+		data.get(CfaMarioAddon.ACTION_TIMER).increment();
 	}
 
 	@Override
 	public void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AquaticActionHelper helper) {
 		builder.add(new ActionTransitionDetails(
 				UnderwaterWalk.ID,
-				data -> data.retrieveStateData(ActionTimerVars.class).actionTimer > AQUATIC_STANDUP_TICKS,
+				data -> data.get(CfaMarioAddon.ACTION_TIMER).intValue() > AQUATIC_STANDUP_TICKS,
 				EvaluatorEnvironment.COMMON
 		));
 	}

@@ -3,10 +3,16 @@ package com.fqf.charaformact_api.definitions.states.actions.util;
 public enum ActionFlag {
 	USES_VANILLA_MOVEMENT,
 
+	IS_CLIMBING,
+
+	IS_DIVING,
+
+	PROHIBIT_FLIGHT,
+
 	CANNOT_SPRINT,
 	CANNOT_START_SPRINTING,
 
-	IS_SNEAKING_POSE,
+	COUNTS_AS_CROUCHING,
 	SNEAK_OFF_LEDGES,
-	IS_NEVER_SNEAKY
+	CAN_BE_SNEAKY
 }

@@ -9,6 +9,7 @@ import com.fqf.charaformact_api.definitions.states.actions.WallboundActionDefini
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
+import com.fqf.charaformact_api.definitions.states.attachments.StateAttachmentKey;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
@@ -20,6 +21,7 @@ import com.fqf.mario_qua_mario.actions.grounded.SubWalk;
 import com.fqf.mario_qua_mario.util.ClimbTransitions;
 import com.fqf.mario_qua_mario.util.ClimbVars;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -43,7 +45,7 @@ public class ClimbWall implements WallboundActionDefinition {
 				AnimationFlag.NO_SWING_LIMBS,
 				(arrangement, data, animationTime, helper) -> arrangement.z += this.getEntireBodyZOffset(data),
 				(posture, data, animationTime, helper) -> {
-					ClimbOmniDirectionalVars vars = data.retrieveStateData(ClimbOmniDirectionalVars.class);
+					ClimbOmniDirectionalVars vars = data.get(PLANAR_CLIMB_DATA);
 					WallInfo wall = helper.getWallInfo(data);
 					assert wall != null;
 
@@ -58,7 +60,7 @@ public class ClimbWall implements WallboundActionDefinition {
 						vars.yComponent = (float) climbInput / denominator;
 					}
 
-					float progress = MathHelper.sin(data.retrieveStateData(ClimbOmniDirectionalVars.class).progress);
+					float progress = MathHelper.sin(data.get(PLANAR_CLIMB_DATA).progress);
 
 					posture.TORSO.yaw += progress * 15;
 
@@ -127,14 +129,13 @@ public class ClimbWall implements WallboundActionDefinition {
 		return false;
 	}
 
+	protected static final StateAttachmentKey<ClimbOmniDirectionalVars> PLANAR_CLIMB_DATA =
+			StateAttachmentKey.action(ClimbOmniDirectionalVars::new);
+
 	protected static class ClimbOmniDirectionalVars extends ClimbVars {
 		private float xComponent = 0.75F;
 		private float yComponent = 0.45F;
-		public final boolean ALTERNATE_OFFSET;
-
-		private ClimbOmniDirectionalVars(boolean alternateOffset) {
-			this.ALTERNATE_OFFSET = alternateOffset;
-		}
+		public boolean useAlternateOffset;
 	}
 
 	protected double getConstantTowardsWallVel() {
@@ -146,11 +147,13 @@ public class ClimbWall implements WallboundActionDefinition {
 		return false;
 	}
 
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return new ClimbOmniDirectionalVars(this.useAlternateOffset(data));
+	@Override
+	public void onEnter(CfaData data, ImmutableSet.Builder<StateAttachmentKey<?>> attachmentsToKeep) {
+		data.get(PLANAR_CLIMB_DATA).useAlternateOffset = this.useAlternateOffset(data);
 	}
+
 	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-		data.retrieveStateData(ClimbOmniDirectionalVars.class).clientTick(data);
+		data.get(PLANAR_CLIMB_DATA).clientTick(data);
 	}
 
 	@Override public void travel(CfaTravelData data, WallInfo wall, WallboundActionHelper helper) {

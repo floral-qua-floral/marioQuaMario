@@ -127,7 +127,8 @@ public class BlockBappingUtil {
 		((Bappable) blockState.getBlock()).cfa$onBapped(
 				bapper instanceof PlayerEntity player ? player.cfa$getCfaData() : null,
 				world, pos, blockState, direction, strength,
-				result);
+				result
+		);
 		switch(result) {
 			case BUMP, BUMP_WITHOUT_POWERING, BUMP_EMBRITTLE, BUMP_EMBRITTLE_WITHOUT_POWERING, BREAK,
 				 BREAK_WITHOUT_POWERING -> {

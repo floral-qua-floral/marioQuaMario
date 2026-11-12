@@ -2,6 +2,7 @@ package com.fqf.mario_qua_mario.util;
 
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.mario_qua_mario.MarioQuaMario;
+import com.fqf.mario_qua_mario.characters.AbstractMarioSeriesCharacter;
 import com.fqf.mario_qua_mario.collision_attacks.Stomp;
 import com.fqf.mario_qua_mario.entity.custom.FatalityReceiver;
 import com.fqf.mario_qua_mario.entity.custom.IceEncasementEntity;
@@ -48,8 +49,9 @@ public class MQMEventListeners {
 					Entity attacker = source.getAttacker();
 					if(attacker != null) {
 						double marioY;
-						if(data.retrieveStateData(MarioVars.class).stompGuardRemainingTicks > 0)
-							marioY = Math.max(mario.getY(), data.retrieveStateData(MarioVars.class).stompGuardMinHeight);
+						MarioVars vars = data.get(AbstractMarioSeriesCharacter.MARIO_DATA);
+						if(vars.stompGuardRemainingTicks > 0)
+							marioY = Math.max(mario.getY(), vars.stompGuardMinHeight);
 						else
 							marioY = mario.getY();
 

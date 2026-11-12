@@ -2,11 +2,13 @@ package com.fqf.charaformact.registries;
 
 import com.fqf.charaformact.cfadata.CfaPlayerData;
 import com.fqf.charaformact.cfadata.CfaServerPlayerData;
-import com.fqf.charaformact_api.definitions.states.CfaStateDefinition;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
+import com.fqf.charaformact_api.definitions.states.CfaStateDefinition;
+import com.fqf.charaformact_api.definitions.states.attachments.StateAttachmentKey;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.Set;
 
 public class ParsedCfaState extends ParsedCfaThing {
 	public final float WIDTH_FACTOR;
@@ -14,8 +16,6 @@ public class ParsedCfaState extends ParsedCfaThing {
 	public final float EYE_HEIGHT_FACTOR;
 
 	private final @NotNull CfaStateDefinition STATE_DEFINITION;
-
-	private @Nullable Class<?> lastCustomVarsClass;
 
 	public ParsedCfaState(
 			Identifier id, @NotNull CfaStateDefinition definition,
@@ -37,17 +37,11 @@ public class ParsedCfaState extends ParsedCfaThing {
 		this.STATE_DEFINITION.commonTick(data);
 		this.STATE_DEFINITION.clientTick(data, isSelf);
 	}
-	@Deprecated public Object makeCustomThing(CfaPlayerData data) {
-		Object vars = this.STATE_DEFINITION.provideStateData(data);
-		if(vars != null) this.lastCustomVarsClass = vars.getClass();
-		return vars;
-	}
-	@Deprecated public @Nullable Class<?> getLastCustomVarsClass() {
-		return this.lastCustomVarsClass;
-	}
 
-	public void onEnter(CfaPlayerData data) {
-		this.STATE_DEFINITION.onEnter(data);
+	public Set<StateAttachmentKey<?>> onEnter(CfaPlayerData data) {
+		return ImmutableCollectionHelper.accumulateSet(
+				builder -> this.STATE_DEFINITION.onEnter(data, builder)
+		);
 	}
 	public void onExit(CfaPlayerData data) {
 		this.STATE_DEFINITION.onExit(data);

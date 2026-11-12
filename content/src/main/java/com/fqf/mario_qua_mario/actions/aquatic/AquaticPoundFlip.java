@@ -9,13 +9,18 @@ import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
+import com.fqf.charaformact_api.definitions.states.attachments.StateAttachmentKey;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.GroundPoundFlip;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.fqf.mario_qua_mario.actions.airborne.GroundPoundFlip.FLIP_TIMER;
+import static com.fqf.mario_qua_mario.actions.airborne.GroundPoundFlip.STORED_FALL_DISTANCE;
 
 public class AquaticPoundFlip implements AquaticActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("aquatic_ground_pound_flip");
@@ -36,11 +41,14 @@ public class AquaticPoundFlip implements AquaticActionDefinition {
 		return SprintingRule.PROHIBIT;
 	}
 
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return new GroundPoundFlip.FlipTimerVars(data);
+	@Override
+	public void onEnter(CfaData data, ImmutableSet.Builder<StateAttachmentKey<?>> attachmentsToKeep) {
+		attachmentsToKeep.add(FLIP_TIMER, STORED_FALL_DISTANCE);
+		data.get(STORED_FALL_DISTANCE); // Ensure it's stored
 	}
+
 	@Override public void travelHook(CfaTravelData data, AquaticActionHelper helper) {
-		data.retrieveStateData(GroundPoundFlip.FlipTimerVars.class).actionTimer++;
+		data.get(FLIP_TIMER).increment();
 		data.setYVel(0.075);
 	}
 

@@ -14,6 +14,7 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.StatCategory;
+import com.fqf.mario_qua_mario.CfaMarioAddon;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
@@ -51,7 +52,7 @@ public class ClimbPole implements GenericActionDefinition {
 					arrangement.z += (float) offset.horizontalLength();
 				},
 				(posture, data, animationTime, helper) -> {
-					ClimbVars vars = data.retrieveStateData(ClimbVars.class);
+					ClimbVars vars = data.get(CfaMarioAddon.CLIMB_DATA);
 					double factorForInput = 1 / ClimbPole.CLIMB_SPEED.get(data);
 					vars.progress += (float) (data.getYVel() * factorForInput) / 2;
 					float climbProgress = MathHelper.sin(vars.progress);
@@ -105,9 +106,6 @@ public class ClimbPole implements GenericActionDefinition {
 
 	public static final CfaStat CLIMB_SPEED = new CfaStat(0.2, StatCategory.UP, StatCategory.SPEED, StatCategory.CLIMBING);
 
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return new ClimbVars();
-	}
 	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 		data.forceBodyAlignment(true);
 	}

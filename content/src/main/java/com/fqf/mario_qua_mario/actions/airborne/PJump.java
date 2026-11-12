@@ -48,12 +48,11 @@ public class PJump extends Jump implements AirborneActionDefinition {
 	public void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AirborneActionHelper helper) {
 		builder.add(new ActionTransitionDetails(
 				TailFly.ID,
-				data ->
-						data.hasPower(Powers.TAIL_FLY)
-								&& data.retrieveStateData(Raccoon.RaccoonVars.class).flightTicks > 0
-								&& (data.isServer() || (
+				data -> data.hasPower(Powers.TAIL_FLY)
+						&& data.get(Raccoon.RACCOON_DATA).flightTicks > 0
+						&& (data.isServer() || (
 								data.getYVel() < TailStall.STALL_THRESHOLD.get(data)
-										&& data.getInputs().JUMP.isHeld()
+								&& data.getInputs().JUMP.isHeld()
 						)),
 				EvaluatorEnvironment.CLIENT_CHECKED
 		));

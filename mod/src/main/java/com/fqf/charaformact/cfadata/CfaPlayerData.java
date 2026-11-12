@@ -43,9 +43,9 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 	protected CfaPlayerData() {
 //		CharaFormAct.LOGGER.debug("Created new CFA Player Data: {}", this);
 		this.STATE_ATTACHMENTS = new EnumMap<>(AttachmentCategory.class);
-		for(AttachmentCategory category : AttachmentCategory.values())
-			this.wipeAttachments(category);
+		this.wipeAllAttachments();
 	}
+
 	@Override public boolean isEnabled() {
 		return this.character != null;
 	}
@@ -60,7 +60,6 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 	}
 
 	private AbstractParsedAction action;
-	public boolean tickAnimation = true;
 	public AbstractParsedAction getAction() {
 		return this.action;
 	}
@@ -78,12 +77,7 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 		return transitionedNaturally || forced;
 	}
 	public void setActionTransitionless(AbstractParsedAction action) {
-		if(this.action != action) this.wipeAttachments(AttachmentCategory.ACTION);
-		this.setupCustomVars(this.action, action);
-		this.action.onExit(this);
-		this.action = action;
-		this.action.onEnter(this);
-		this.getPlayer().calculateDimensions();
+		this.swapState(AttachmentCategory.ACTION, this.action, action, () -> this.action = action);
 //		if(action.CATEGORY != ActionCategory.MOUNTED) this.getPlayer().dismountVehicle();
 	}
 
@@ -125,11 +119,7 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 		return this.setFormTransitionless(newForm);
 	}
 	public boolean setFormTransitionless(ParsedForm newForm) {
-		if(this.form != newForm) this.wipeAttachments(AttachmentCategory.FORM);
-		this.setupCustomVars(this.form, newForm);
-		this.form.onExit(this);
-		this.form = newForm;
-		this.form.onEnter(this);
+		this.swapState(AttachmentCategory.FORM, this.form, newForm, () -> this.form = newForm);
 		updateCharacterFormCombo();
 		return true;
 	}
@@ -143,33 +133,43 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 	}
 
 	public void setCharacter(ParsedCharacter character) {
-		this.wipeAttachments(AttachmentCategory.CHARACTER);
-		this.wipeAttachments(AttachmentCategory.FORM);
-		this.wipeAttachments(AttachmentCategory.ACTION);
-		this.setupCustomVars(this.character, character);
+//		this.setupCustomVars(this.character, character);
 		if(this.character != null) this.character.onExit(this);
 		this.character = character;
-		this.character.onEnter(this);
 		this.form = character.INITIAL_FORM;
 		this.action = character.getInitialAction(this);
+		this.wipeAllAttachments();
+		this.character.onEnter(this);
 		this.setActionTransitionless(this.action);
 		this.setFormTransitionless(character.INITIAL_FORM); // <- This updates CharaForm combo already!
 	}
 
-	public void setupCustomVars(ParsedCfaState oldThing, ParsedCfaState newThing) {
-		Object newThingVars = newThing.makeCustomThing(this);
-		Class<?> newThingVarsClass = newThingVars == null ? null : newThingVars.getClass();
-		Class<?> oldThingVarsClass = oldThing == null ? null : oldThing.getLastCustomVarsClass();
-
-		if(newThingVarsClass != null)
-			this.customVars.put(newThingVarsClass, newThingVars);
-
-		if(oldThingVarsClass != null && !oldThingVarsClass.equals(newThingVarsClass))
-			this.customVars.remove(oldThingVarsClass); // If we didn't already just replace the vars, delete the old ones
+	private void wipeAllAttachments() {
+		for(AttachmentCategory category : AttachmentCategory.values())
+			this.STATE_ATTACHMENTS.put(category, new Object[RegistryManager.ATTACHMENT_COUNT_MAP_VIEW.get(category)]);
 	}
 
-	private void wipeAttachments(AttachmentCategory category) {
-		this.STATE_ATTACHMENTS.put(category, new Object[RegistryManager.ATTACHMENT_COUNT_MAP_VIEW.get(category)]);
+	private <T extends ParsedCfaState> void swapState(AttachmentCategory category, T from, T to, Runnable swapper) {
+		boolean wipeAttachments = category == AttachmentCategory.ACTION && from != to;
+
+//		this.setupCustomVars(from, to);
+
+		from.onExit(this);
+
+		swapper.run();
+
+		if(wipeAttachments) {
+			Object[] newArray = new Object[RegistryManager.ATTACHMENT_COUNT_MAP_VIEW.get(category)];
+			Object[] oldArray = this.STATE_ATTACHMENTS.put(category, newArray);
+			assert oldArray != null;
+			Set<StateAttachmentKey<?>> keepAttachments = to.onEnter(this);
+			if(!keepAttachments.isEmpty())
+				for(StateAttachmentKey<?> copyAttachment : keepAttachments)
+					newArray[copyAttachment.INDEX] = oldArray[copyAttachment.INDEX];
+		}
+		else to.onEnter(this);
+
+		this.getPlayer().calculateDimensions();
 	}
 
 	private final static String GENERATED_MODIFIER_PREFIX = "generated_modifier_";
@@ -322,7 +322,6 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 	}
 
 	public void tick() {
-		this.tickAnimation = true;
 		this.onLookAround();
 		this.immersionInfo = null;
 	}
@@ -343,12 +342,6 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 		};
 		if(actionBapStrength <= 1) return Math.max(0, actionBapStrength);
 		return Math.max(1, actionBapStrength + this.getCharacter().BUMP_STRENGTH_MODIFIER + this.getForm().BUMP_STRENGTH_MODIFIER);
-	}
-
-	private final Map<Class<?>, Object> customVars = new HashMap<>();
-	@Override public <T> T retrieveStateData(Class<T> clazz) {
-		Object customData = this.customVars.get(clazz);
-		return clazz.cast(customData);
 	}
 
 	@Override
@@ -372,6 +365,16 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 			if(this.isEnabled()) array[key.INDEX] = valueInSlot;
 		}
 		return valueInSlot;
+	}
+
+	@Override
+	public boolean has(StateAttachmentKey<?> key) {
+		return this.STATE_ATTACHMENTS.get(key.CATEGORY)[key.INDEX] != null;
+	}
+
+	@Override
+	public <T> void put(StateAttachmentKey<T> key, T value) {
+		this.STATE_ATTACHMENTS.get(key.CATEGORY)[key.INDEX] = value;
 	}
 
 	public boolean actionPreventsVanillaTravel() {

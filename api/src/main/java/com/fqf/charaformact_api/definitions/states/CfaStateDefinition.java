@@ -3,13 +3,10 @@ package com.fqf.charaformact_api.definitions.states;
 import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
-import org.jetbrains.annotations.Nullable;
+import com.fqf.charaformact_api.definitions.states.attachments.StateAttachmentKey;
+import com.google.common.collect.ImmutableSet;
 
 public interface CfaStateDefinition {
-	@Deprecated default @Nullable Object provideStateData(CfaData data) {
-		return null;
-	}
-
 	default void commonTick(CfaData data) {
 
 	}
@@ -20,7 +17,7 @@ public interface CfaStateDefinition {
 
 	}
 
-	default void onEnter(CfaData data) {
+	default void onEnter(CfaData data, ImmutableSet.Builder<StateAttachmentKey<?>> attachmentsToKeep) {
 
 	}
 	default void onExit(CfaData data) {

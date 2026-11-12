@@ -1,12 +1,12 @@
 package com.fqf.mario_qua_mario.actions.grounded;
 
-import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.TransitionInjectionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.util.CfaStat;
+import com.fqf.mario_qua_mario.CfaMarioAddon;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.actions.airborne.Backflip;
@@ -14,7 +14,6 @@ import com.fqf.mario_qua_mario.actions.airborne.DuckFall;
 import com.fqf.mario_qua_mario.actions.airborne.DuckJump;
 import com.fqf.mario_qua_mario.actions.airborne.LongJump;
 import com.fqf.mario_qua_mario.actions.aquatic.UnderwaterDuck;
-import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -51,11 +50,8 @@ public class DuckSlide implements GroundedActionDefinition {
 	public static final CfaStat SLIDE_DRAG_MIN = new CfaStat(0.01, DUCKING, DRAG);
 	public static final CfaStat SLIDE_REDIRECTION = new CfaStat(4.0, DUCKING, REDIRECTION);
 
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return new ActionTimerVars();
-	}
 	@Override public void travelHook(CfaTravelData data, GroundedActionHelper helper) {
-		data.retrieveStateData(ActionTimerVars.class).actionTimer++;
+		data.get(CfaMarioAddon.ACTION_TIMER).increment();
 		helper.applyDrag(
 				data, SLIDE_DRAG, SLIDE_DRAG_MIN,
 				data.getInputs().getForwardInput(), data.getInputs().getStrafeInput(),
@@ -83,7 +79,7 @@ public class DuckSlide implements GroundedActionDefinition {
 						LongJump.ID,
 						data ->
 								data.getInputs().getForwardInput() > 0.4
-										&& data.retrieveStateData(ActionTimerVars.class).actionTimer < 5
+										&& data.get(CfaMarioAddon.ACTION_TIMER).intValue() < 5
 										&& data.getForwardVel() > LongJump.LONG_JUMP_THRESHOLD.get(data)
 										&& data.getInputs().JUMP.isPressed(),
 						EvaluatorEnvironment.CLIENT_ONLY,

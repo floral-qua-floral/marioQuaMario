@@ -15,7 +15,7 @@ public class ClimbIntangibleSideHang extends ClimbWallSideHang implements Wallbo
 
 	@Override
 	protected float getEntireBodyXOffset(CfaReadableMotionData data) {
-		return data.retrieveStateData(ClimbOmniDirectionalVars.class).ALTERNATE_OFFSET ? 2.75F : 1;
+		return data.get(PLANAR_CLIMB_DATA).useAlternateOffset ? 2.75F : 1;
 	}
 
 	@Override

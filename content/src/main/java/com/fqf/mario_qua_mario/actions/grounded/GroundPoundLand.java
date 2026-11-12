@@ -1,16 +1,15 @@
 package com.fqf.mario_qua_mario.actions.grounded;
 
-import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
+import com.fqf.mario_qua_mario.CfaMarioAddon;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.airborne.GroundPoundDrop;
 import com.fqf.mario_qua_mario.actions.aquatic.AquaticPoundLand;
 import com.fqf.mario_qua_mario.actions.aquatic.UnderwaterWalk;
-import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.StandUpWithKneeAnimation;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
@@ -37,19 +36,16 @@ public class GroundPoundLand implements GroundedActionDefinition {
 		return SprintingRule.PROHIBIT;
 	}
 
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return new ActionTimerVars();
-	}
 	@Override public void travelHook(CfaTravelData data, GroundedActionHelper helper) {
 		data.setForwardStrafeVel(0, 0);
-		data.retrieveStateData(ActionTimerVars.class).actionTimer++;
+		data.get(CfaMarioAddon.ACTION_TIMER).increment();
 	}
 
 	@Override
 	public void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, GroundedActionHelper helper) {
 		builder.add(new ActionTransitionDetails(
 				SubWalk.ID,
-				data -> ActionTimerVars.get(data).actionTimer > STANDUP_TICKS,
+				data -> data.get(CfaMarioAddon.ACTION_TIMER).intValue() > STANDUP_TICKS,
 				EvaluatorEnvironment.CLIENT_ONLY
 		));
 	}

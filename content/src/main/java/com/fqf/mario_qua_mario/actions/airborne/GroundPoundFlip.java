@@ -10,17 +10,19 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.Animat
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimation;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
+import com.fqf.charaformact_api.definitions.states.attachments.StateAttachmentKey;
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.aquatic.AquaticPoundFlip;
 import com.fqf.mario_qua_mario.actions.aquatic.Submerged;
-import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import it.unimi.dsi.fastutil.floats.Float2FloatFunction;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -89,20 +91,19 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 		return SprintingRule.PROHIBIT;
 	}
 
-	public static class FlipTimerVars extends ActionTimerVars {
-		private final float STORED_FALL_DISTANCE;
-		public FlipTimerVars(CfaData data) {
-			this.STORED_FALL_DISTANCE = data.getPlayer().fallDistance;
+	public static final StateAttachmentKey<MutableInt> FLIP_TIMER =
+			StateAttachmentKey.action(() -> new MutableInt());
+	public static final StateAttachmentKey<Float> STORED_FALL_DISTANCE =
+			StateAttachmentKey.action(data -> data.getPlayer().fallDistance);
 
-			FlipTimerVars existingVars = data.retrieveStateData(FlipTimerVars.class);
-			if(existingVars != null) this.actionTimer = existingVars.actionTimer;
-		}
+	@Override
+	public void onEnter(CfaData data, ImmutableSet.Builder<StateAttachmentKey<?>> attachmentsToKeep) {
+		attachmentsToKeep.add(FLIP_TIMER, STORED_FALL_DISTANCE);
+		data.get(STORED_FALL_DISTANCE); // Ensure it's stored
 	}
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return new FlipTimerVars(data);
-	}
+
 	@Override public void travelHook(CfaTravelData data, AirborneActionHelper helper) {
-		data.retrieveStateData(FlipTimerVars.class).actionTimer++;
+		data.get(FLIP_TIMER).increment();
 		data.setYVel(0.15);
 	}
 
@@ -118,17 +119,17 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 	public static ActionTransitionDetails makeDropTransition(Identifier targetAction, float flipDuration) {
 		return new ActionTransitionDetails(
 				targetAction,
-				data -> data.retrieveStateData(FlipTimerVars.class).actionTimer >= flipDuration,
+				data -> data.get(FLIP_TIMER).intValue() >= flipDuration,
 				EvaluatorEnvironment.COMMON,
 				SizeChangeBehavior.AUTOMATIC,
 				data -> {
 					data.setYVel(GroundPoundDrop.GROUND_POUND_VEL.get(data));
 					data.getInputs().JUMP.isPressed(); // Unbuffer jump to make Ground Pound stalling harder
-					data.getPlayer().fallDistance = data.retrieveStateData(FlipTimerVars.class).STORED_FALL_DISTANCE * 0.6F;
+					data.getPlayer().fallDistance = data.get(STORED_FALL_DISTANCE) * 0.6F;
 				},
 				(data, isSelf, seed) -> {
 					// Sound is not played here, it's in the tick method of the target action!
-					data.getPlayer().fallDistance = data.retrieveStateData(FlipTimerVars.class).STORED_FALL_DISTANCE * 0.6F;
+					data.getPlayer().fallDistance = data.get(STORED_FALL_DISTANCE) * 0.6F;
 				}
 		);
 	}

@@ -1,7 +1,6 @@
 package com.fqf.mario_qua_mario.actions.airborne;
 
 import com.fqf.charaformact_api.cfadata.CfaClientData;
-import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
@@ -143,11 +142,6 @@ public class WallJump extends Jump implements AirborneActionDefinition {
 	@Override
 	public void travelHook(CfaTravelData data, AirborneActionHelper helper) {
 		helper.applyComplexGravity(data, Fall.FALL_ACCEL, JUMP_GRAVITY, Fall.FALL_SPEED);
-		BonkAir.BonkVars vars = data.retrieveStateData(BonkAir.BonkVars.class);
-		if(vars.noInputTicks-- <= 0) Fall.drift(data, helper);
-	}
-
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return new BonkAir.BonkVars(data);
+		if(data.get(BonkAir.BONK_DATA).noInputTicks-- <= 0) Fall.drift(data, helper);
 	}
 }

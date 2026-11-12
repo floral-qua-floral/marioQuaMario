@@ -1,12 +1,12 @@
 package com.fqf.mario_qua_mario.actions.grounded;
 
-import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.util.CfaStat;
+import com.fqf.mario_qua_mario.CfaMarioAddon;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.actions.airborne.BonkAir;
@@ -14,7 +14,6 @@ import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.airborne.Jump;
 import com.fqf.mario_qua_mario.actions.airborne.Sideflip;
 import com.fqf.mario_qua_mario.actions.aquatic.UnderwaterWalk;
-import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -69,11 +68,8 @@ public class Skid implements GroundedActionDefinition {
 	public static final CfaStat SKID_DRAG_MIN = new CfaStat(0.045, RUNNING, DRAG);
 	public static final CfaStat SKID_REDIRECTION = new CfaStat(4.5, RUNNING, REDIRECTION);
 
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return new ActionTimerVars();
-	}
 	@Override public void travelHook(CfaTravelData data, GroundedActionHelper helper) {
-		data.retrieveStateData(ActionTimerVars.class).actionTimer++;
+		data.get(CfaMarioAddon.ACTION_TIMER).increment();
 		helper.applyDrag(
 				data, SKID_DRAG, SKID_DRAG_MIN,
 				-data.getInputs().getForwardInput(), data.getInputs().getStrafeInput(),

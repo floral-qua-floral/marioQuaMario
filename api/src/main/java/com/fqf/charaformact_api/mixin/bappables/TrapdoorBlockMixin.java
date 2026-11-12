@@ -39,7 +39,7 @@ public abstract class TrapdoorBlockMixin extends HorizontalFacingBlock implement
 		switch(result) {
 			case BUMP, BUMP_WITHOUT_POWERING, BUMP_EMBRITTLE, BUMP_EMBRITTLE_WITHOUT_POWERING, BREAK,
 				 BREAK_WITHOUT_POWERING -> {
-				if(canBeFlippedTowards(blockState, direction))
+				if(this.canBeFlippedTowards(blockState, direction))
 					this.flip(blockState, world, pos, data == null ? null : data.getPlayer());
 			}
 		}

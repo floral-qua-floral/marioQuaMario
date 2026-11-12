@@ -1,16 +1,17 @@
 package com.fqf.mario_qua_mario.collision_attacks;
 
-import com.fqf.charaformact_api.cfadata.CfaTravelData;
-import com.fqf.charaformact_api.definitions.CollisionAttackTypeDefinition;
-import com.fqf.charaformact_api.interfaces.CollisionAttackResult;
 import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
+import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.fqf.charaformact_api.definitions.CollisionAttackTypeDefinition;
+import com.fqf.charaformact_api.interfaces.CollisionAttackResult;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.CfaTags;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.BonkAir;
 import com.fqf.mario_qua_mario.actions.airborne.StompBounce;
+import com.fqf.mario_qua_mario.characters.AbstractMarioSeriesCharacter;
 import com.fqf.mario_qua_mario.util.*;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
@@ -34,17 +35,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 
-import static com.fqf.charaformact_api.util.StatCategory.DAMAGE;
 import static com.fqf.charaformact_api.util.StatCategory.COLLISION_ATTACK;
+import static com.fqf.charaformact_api.util.StatCategory.DAMAGE;
 
 public class Stomp implements CollisionAttackTypeDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("stomp");
 
 	@Override public boolean attemptsMounting() {
 		return true;
-	}
-	@Override public @NotNull CollisionAttackTypeDefinition.PainfulCollisionResponse definePainfulCollisionResponse() {
-		return PainfulCollisionResponse.INJURY;
 	}
 	@Override public @Nullable EquipmentSlot defineEquipmentSlot() {
 		return EquipmentSlot.FEET;
@@ -64,6 +62,7 @@ public class Stomp implements CollisionAttackTypeDefinition {
 		return box.stretch(0, -0.05, 0);
 	}
 
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	public static boolean collidingFromTop(Entity entity, ServerPlayerEntity mario, double marioY, Vec3d motion, boolean allowRisingStomp) {
 		double entityHeadY = entity.getY() + entity.getHeight() - 0.026;
 		double marioDestinationY = marioY + motion.y;
@@ -101,8 +100,6 @@ public class Stomp implements CollisionAttackTypeDefinition {
 		});
 	}
 
-	public static final CfaStat BASE_DAMAGE = new CfaStat(4.5, COLLISION_ATTACK, DAMAGE);
-
 	public static final Identifier PULVERIZING_ID = MarioQuaMario.makeResID("pulverizing");
 	public static final Identifier BOUNDING_ID = MarioQuaMario.makeResID("bounding");
 
@@ -132,14 +129,14 @@ public class Stomp implements CollisionAttackTypeDefinition {
 	@Override
 	public void executeServer(CfaAuthoritativeData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, boolean affectAttacker) {
 		if(affectAttacker && data.hasPower(Powers.STOMP_GUARD)) {
-			data.retrieveStateData(MarioVars.class).stompGuardMinHeight = target.getY() + target.getHeight() + 0.15;
-			data.retrieveStateData(MarioVars.class).stompGuardRemainingTicks = 4;
+			MarioVars vars = data.get(AbstractMarioSeriesCharacter.MARIO_DATA);
+			vars.stompGuardMinHeight = target.getY() + target.getHeight() + 0.15;
+			vars.stompGuardRemainingTicks = 4;
 		}
 	}
 
 	public static Vec3d bounceMarioAndGetTargetPos(CfaTravelData data, ItemStack equipment, Entity target, CollisionAttackResult.ExecutableResult result, Vec3d movingToPos, boolean affectMario) {
 		return switch(result) {
-			case PAINFUL -> null;
 			case NORMAL, GLANCING, RESISTED -> {
 				if(affectMario) {
 					data.refreshJumpCapping();
@@ -170,6 +167,6 @@ public class Stomp implements CollisionAttackTypeDefinition {
 			case RESISTED -> MarioSFX.HARMLESS;
 		};
 		if(stompSound == null) return;
-		data.playSound(stompSound, seed);
+		if(affectAttacker) data.playSound(stompSound, seed);
 	}
 }

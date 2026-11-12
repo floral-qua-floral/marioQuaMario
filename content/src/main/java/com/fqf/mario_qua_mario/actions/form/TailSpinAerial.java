@@ -2,7 +2,6 @@ package com.fqf.mario_qua_mario.actions.form;
 
 import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
-import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
@@ -19,7 +18,6 @@ import com.fqf.mario_qua_mario.actions.airborne.Jump;
 import com.fqf.mario_qua_mario.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario.actions.grounded.DuckWaddle;
 import com.fqf.mario_qua_mario.util.Powers;
-import com.fqf.mario_qua_mario.util.TailSpinActionTimerVars;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -57,14 +55,11 @@ public class TailSpinAerial implements AirborneActionDefinition {
 
 	public static CfaStat REDUCED_REDIRECTION = Fall.DRIFT_REDIRECTION.variate(0.66);
 
-	@Override public @Nullable Object provideStateData(CfaData data) {
-		return new TailSpinActionTimerVars(data);
-	}
 	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-		TailSpinGround.commonTickUwu(data);
+		TailSpinGround.incrementTailSpinTimer(data);
 	}
 	@Override public void serverTick(CfaAuthoritativeData data) {
-		TailSpinGround.commonTickUwu(data);
+		TailSpinGround.incrementTailSpinTimer(data);
 		TailSpinGround.attemptTailStrike(data);
 	}
 	@Override public void travelHook(CfaTravelData data, AirborneActionHelper helper) {

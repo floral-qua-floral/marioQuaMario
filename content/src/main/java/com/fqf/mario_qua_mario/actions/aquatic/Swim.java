@@ -4,8 +4,8 @@ import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransition
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.charaformact_api.definitions.states.actions.util.SizeChangeBehavior;
 import com.fqf.charaformact_api.util.CfaStat;
+import com.fqf.mario_qua_mario.CfaMarioAddon;
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario.util.ActionTimerVars;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import net.minecraft.util.Identifier;
 
@@ -23,10 +23,8 @@ public class Swim extends Submerged {
 
 	public static final ActionTransitionDetails SWIM = new ActionTransitionDetails(
 			ID,
-			data -> {
-				ActionTimerVars vars = data.retrieveStateData(ActionTimerVars.class);
-				return (vars == null || vars.actionTimer > 2) && data.getInputs().JUMP.isPressed();
-			},
+			data -> (!data.has(CfaMarioAddon.ACTION_TIMER) || data.get(CfaMarioAddon.ACTION_TIMER).intValue() > 2)
+					&& data.getInputs().JUMP.isPressed(),
 			EvaluatorEnvironment.CLIENT_ONLY,
 			SizeChangeBehavior.AUTOMATIC,
 			data -> {
