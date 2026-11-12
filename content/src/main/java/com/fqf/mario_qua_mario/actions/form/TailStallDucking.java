@@ -59,17 +59,6 @@ public class TailStallDucking extends TailStall implements AirborneActionDefinit
 
 	public static final TransitionInjectionDefinition INJECTION = new StallInjection(
 			id -> id.equals(Jump.ID) || id.equals(Fall.ID),
-			STALL_TRANSITION.variate(
-					DUCK_STALL_ID,
-					data ->
-							data.hasPower(Powers.TAIL_STALL)
-							&& (
-									data.isServer()
-									|| (
-											data.getYVel() < STALL_THRESHOLD.get(data)
-											&& data.getInputs().JUMP.isHeld()
-									)
-							)
-			)
+			STALL_TRANSITION.variate(DUCK_STALL_ID, null)
 	);
 }

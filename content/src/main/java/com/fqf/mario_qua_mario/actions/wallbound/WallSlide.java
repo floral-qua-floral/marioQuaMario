@@ -229,7 +229,7 @@ public class WallSlide implements WallboundActionDefinition {
 		}
 
 		double gravityFactor;
-		if(data.getPlayer().isTouchingWaterOrRain()) gravityFactor = 1.5;
+		if(data.getPlayer().isWet()) gravityFactor = 1.5;
 		else if(actionTimer.incrementAndGet() >= GRAVITY_RAMP_UP_TICKS) gravityFactor = 1;
 		else gravityFactor = actionTimer.intValue() * (1.0 / GRAVITY_RAMP_UP_TICKS);
 
@@ -247,14 +247,14 @@ public class WallSlide implements WallboundActionDefinition {
 			EvaluatorEnvironment.CLIENT_ONLY,
 			SizeChangeBehavior.AUTOMATIC,
 			data -> {
-				if(!data.getPlayer().isTouchingWaterOrRain()) {
+				if(!data.getPlayer().isWet()) {
 					data.getPlayer().fallDistance = 0;
 					data.setYVel(0);
 				}
 				if(data.isServer()) data.setForwardStrafeVel(0, 0);
 			},
 			(data, isSelf, seed) -> {
-				if(!data.getPlayer().isTouchingWaterOrRain())
+				if(!data.getPlayer().isWet())
 					data.getPlayer().fallDistance = 0;
 			}
 	);

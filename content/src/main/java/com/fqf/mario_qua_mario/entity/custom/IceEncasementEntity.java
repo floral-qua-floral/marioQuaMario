@@ -538,7 +538,7 @@ public class IceEncasementEntity extends AbstractSolidMovingEntity implements Ow
 						encasement.airTicks-- <= 0
 						|| encasement.isOnGround()
 						|| encasement.getVelocity().lengthSquared() > 0
-						|| encasement.isTouchingWater();
+						|| encasement.isInsideWaterOrBubbleColumn();
 
 				encasement.setShaking(encasement.airTicks < 10 && !isFinished);
 				return isFinished ? GRAVITY_PHYSICS : TEMPORARILY_SUSPENDED;

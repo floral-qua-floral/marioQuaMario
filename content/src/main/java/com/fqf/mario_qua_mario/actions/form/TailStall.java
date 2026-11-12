@@ -21,6 +21,7 @@ import com.fqf.mario_qua_mario.forms.Raccoon;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import com.fqf.mario_qua_mario.util.Powers;
 import com.google.common.collect.ImmutableList;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
@@ -113,12 +114,17 @@ public class TailStall extends Fall implements AirborneActionDefinition {
 	public static final CfaStat STALL_THRESHOLD = new CfaStat(-0.31, THRESHOLD, FORM);
 	protected static final ActionTransitionDetails STALL_TRANSITION = new ActionTransitionDetails(
 			TailStall.ID,
-			data ->
-					data.hasPower(Powers.TAIL_STALL)
-					&& !data.getPlayer().isInSneakingPose()
+			data -> data.hasPower(Powers.TAIL_STALL)
 					&& (data.isServer() || (
 							data.getYVel() < STALL_THRESHOLD.get(data)
 							&& data.getInputs().JUMP.isHeld()
+							&& (
+									// Prevent if the player is near the ground, to ensure that Tail Stalling doesn't
+									// interfere with buffering double & triple jumps, UNLESS they're at risk of taking
+									// fall damage, in which case we make it easier to cancel that instead.
+									!data.isNearGround(1)
+									|| data.getPlayer().fallDistance > data.getPlayer().getAttributeValue(EntityAttributes.GENERIC_SAFE_FALL_DISTANCE)
+							)
 					)),
 			EvaluatorEnvironment.CLIENT_CHECKED,
 			SizeChangeBehavior.NO_CHECKING,

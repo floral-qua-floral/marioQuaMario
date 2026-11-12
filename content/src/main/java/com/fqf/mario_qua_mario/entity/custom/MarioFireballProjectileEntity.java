@@ -64,6 +64,16 @@ public class MarioFireballProjectileEntity extends AbstractBouncingMarioProjecti
 		this.angle += 28F;
 	}
 
+	@Override
+	public boolean isOnFire() {
+		return !this.isWet();
+	}
+
+	@Override
+	public boolean doesRenderOnFire() {
+		return false;
+	}
+
 	private static final RegistryKey<DamageType> DAMAGE_TYPE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, MarioQuaMario.makeResID("mario_fireball"));
 
 	@Override public boolean hitEntity(Entity target, Entity source, Entity attacker, Entity soundPlayer) {
