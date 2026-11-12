@@ -35,7 +35,7 @@ public class Sideflip extends Backflip implements AirborneActionDefinition {
 	}
 
 	private static void conditionallyFlip(CfaAnimatingData data, Arrangement arrangement) {
-		if(data.get(HAS_ROTATED).booleanValue())
+		if(!data.get(HAS_ROTATED).booleanValue())
 			arrangement.yaw += 180;
 	}
 
@@ -132,7 +132,7 @@ public class Sideflip extends Backflip implements AirborneActionDefinition {
 	public static CfaStat SIDEFLIP_THRESHOLD = new CfaStat(0.2, WALKING, FRICTION, THRESHOLD);
 
 	private static final StateAttachmentKey<MutableBoolean> HAS_ROTATED =
-			StateAttachmentKey.action(() -> new MutableBoolean());
+			StateAttachmentKey.action(() -> new MutableBoolean(false));
 
 	@Override
 	public void onEnter(CfaData data, ImmutableSet.Builder<StateAttachmentKey<?>> attachmentsToKeep) {

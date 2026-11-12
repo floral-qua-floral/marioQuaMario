@@ -129,6 +129,8 @@ public class IceFlowerUtil {
 
 	public static void endIllegalEncasedInteractions(Entity entity) {
 		entity.extinguishWithSound();
+		entity.setFireTicks(0);
+		entity.wasOnFire = false;
 		entity.removeAllPassengers();
 		entity.dismountVehicle();
 	}

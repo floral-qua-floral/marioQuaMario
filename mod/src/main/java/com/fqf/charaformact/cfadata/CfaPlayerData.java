@@ -47,7 +47,7 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 	}
 
 	@Override public boolean isEnabled() {
-		return this.character != null;
+		return this.character != null && !this.getPlayer().isSpectator();
 	}
 	public void disableInternal() {
 		if(this.action != null) this.action.onExit(this);

@@ -381,7 +381,10 @@ public class IceEncasementEntity extends AbstractSolidMovingEntity implements Ow
 
 	@Override
 	public boolean isInvulnerableTo(DamageSource damageSource) {
-		return super.isInvulnerableTo(damageSource) || damageSource.isIn(MQMTags.ENCASED_ENTITIES_IGNORE);
+		return super.isInvulnerableTo(damageSource) || (
+				!damageSource.isIn(MQMTags.MULTIPLIES_SHATTER_DAMAGE)
+				&& damageSource.isIn(MQMTags.ENCASED_ENTITIES_IGNORE)
+		);
 	}
 
 	public boolean interceptDamageToOwner(DamageSource source, float amount) {
