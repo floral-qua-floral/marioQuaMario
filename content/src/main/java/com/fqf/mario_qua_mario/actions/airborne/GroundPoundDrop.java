@@ -73,9 +73,7 @@ public class GroundPoundDrop implements AirborneActionDefinition {
 						GroundPoundLand.ID,
 						null, EvaluatorEnvironment.COMMON,
 						null, data -> data.setForwardStrafeVel(0, 0),
-						(data, isSelf, seed) -> {
-							data.playSound(MarioSFX.GROUND_POUND_LAND, seed);
-						}
+						(data, isSelf, seed) -> data.playSound(MarioSFX.GROUND_POUND_LAND, seed)
 				),
 				Submerged.SUBMERGE.variate(
 						AquaticPoundDrop.ID,

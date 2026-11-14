@@ -1,8 +1,8 @@
 package com.fqf.charaformact.mixin.player.data;
 
 import com.fqf.charaformact.cfadata.CfaServerPlayerData;
-import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact.cfadata.injections.AdvCfaServerDataHolder;
+import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact_api.cfadata.injections.CfaAuthoritativeDataHolder;
 import com.fqf.charaformact_api.cfadata.injections.CfaTravelDataHolder;
 import net.minecraft.server.network.ServerPlayerEntity;

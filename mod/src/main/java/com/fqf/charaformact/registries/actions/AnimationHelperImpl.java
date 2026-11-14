@@ -1,10 +1,10 @@
 package com.fqf.charaformact.registries.actions;
 
 import com.fqf.charaformact.util.CfaClientHelperManager;
+import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.charaformact_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
-import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.Arrangement;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.Posture;
 import com.fqf.charaformact_api.util.Easing;

@@ -1,7 +1,7 @@
 package com.fqf.charaformact_api.mixin.client.equipment;
 
-import com.fqf.charaformact_api.appearance.equipment.EquipmentFeatureCategory;
 import com.fqf.charaformact_api.appearance.equipment.EquipmentCategoryProvider;
+import com.fqf.charaformact_api.appearance.equipment.EquipmentFeatureCategory;
 import net.minecraft.client.render.entity.feature.HeldItemFeatureRenderer;
 import net.minecraft.client.render.entity.feature.ShoulderParrotFeatureRenderer;
 import net.minecraft.client.render.entity.feature.StuckObjectsFeatureRenderer;

@@ -34,7 +34,10 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Objects;
+import java.util.Set;
 
 public class IceEncasementEntity extends AbstractSolidMovingEntity implements Ownable, FatalityReceiver {
 	private static final TrackedData<Byte> PHYSICS =

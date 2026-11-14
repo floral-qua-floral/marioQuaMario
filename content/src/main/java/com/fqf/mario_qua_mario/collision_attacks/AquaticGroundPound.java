@@ -15,8 +15,8 @@ import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.fqf.charaformact_api.util.StatCategory.DAMAGE;
 import static com.fqf.charaformact_api.util.StatCategory.COLLISION_ATTACK;
+import static com.fqf.charaformact_api.util.StatCategory.DAMAGE;
 
 public class AquaticGroundPound extends Stomp implements CollisionAttackTypeDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("aquatic_ground_pound");

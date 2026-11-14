@@ -3,8 +3,6 @@ package com.fqf.mario_qua_mario;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.util.Identifier;
 
-import java.util.Set;
-
 import static com.fqf.mario_qua_mario.MarioQuaMario.makeID;
 
 public interface Voicelines {

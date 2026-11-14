@@ -1,15 +1,12 @@
 package com.fqf.charaformact.registries.actions;
 
-import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.cfadata.CfaMoveableData;
+import com.fqf.charaformact.cfadata.CfaPlayerData;
 import com.fqf.charaformact.cfadata.CfaServerPlayerData;
-import com.fqf.charaformact.registries.RegistryManager;
+import com.fqf.charaformact.util.AdvancedWallInfo;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
-import com.fqf.charaformact.cfadata.CfaPlayerData;
-import com.fqf.charaformact.util.AdvancedWallInfo;
 import com.fqf.charaformact_api.definitions.states.actions.*;
-import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.charaformact_api.definitions.states.actions.util.SizeChangeBehavior;
@@ -25,7 +22,6 @@ import org.joml.Vector2d;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 public class UniversalActionDefinitionHelper implements
 		GroundedActionDefinition.GroundedActionHelper,
@@ -348,67 +344,5 @@ public class UniversalActionDefinitionHelper implements
 	// trapdoor or fence gate first.
 	// If false, then they won't be able to stand up at all while clipped into such a block.
 	private static final boolean ASSUME_SUFFICIENT_SPACE_IF_ALREADY_CLIPPED = false;
-
-	@Override
-	public ActionTransitionDetails attachSufficientSpaceRequirement(ActionTransitionDetails original) {
-		AbstractParsedAction target = RegistryManager.ACTIONS.get(original.targetID());
-		// ^ If this is null, then just tolerate it for now; it'll throw a better exception later when parsing transitions
-		if(target == null) return original;
-
-		Predicate<CfaReadableMotionData> fittingPredicate;
-		if(ASSUME_SUFFICIENT_SPACE_IF_ALREADY_CLIPPED) fittingPredicate = data -> {
-			CfaPlayerData pData = (CfaPlayerData) data;
-			return pData.canFitInAction(target) || !pData.canFitInAction(pData.getAction());
-		};
-		else fittingPredicate = data -> ((CfaPlayerData) data).canFitInAction(target);
-
-		boolean originallyClientOnly = original.environment() == EvaluatorEnvironment.CLIENT_ONLY;
-		return original.variate(
-				null,
-				originallyClientOnly
-						? data -> fittingPredicate.test(data) && (data.isServer() || original.evaluator().test(data))
-						: fittingPredicate.and(original.evaluator()),
-				originallyClientOnly
-						? EvaluatorEnvironment.CLIENT_CHECKED
-						: null,
-				null, null,
-				null
-		);
-	}
-
-	@Override
-	public ActionTransitionDetails makeAutomaticInSmallSpaces(ActionTransitionDetails original) {
-		if(transitionsToMakeAutomatic == null)
-			throw new UnsupportedOperationException("You shouldn't be creating Action Transitions right now!! >:(");
-
-		AbstractParsedAction target = RegistryManager.ACTIONS.get(original.targetID());
-		if(target != null && target.CATEGORY == ActionCategory.WALLBOUND) {
-			CharaFormAct.LOGGER.warn("Attempting to make a transition into a Wallbound action trigger automatically" +
-					"in small spaces: {}->{}", defaultJumpCapTarget == null ? "[???]" : defaultJumpCapTarget.ID, target.ID);
-			CharaFormAct.LOGGER.warn("Due to framework limitations, this is very janky and won't work as well as" +
-					" other action categories. ;-;");
-
-			Predicate<CfaReadableMotionData> fittingPredicate = data -> {
-				CfaPlayerData pData = (CfaPlayerData) data;
-				return !pData.canFitInAction(pData.getAction()) && pData.canFitInAction(target);
-			};
-
-			boolean originallyClientOnly = original.environment() == EvaluatorEnvironment.CLIENT_ONLY;
-			return original.variate(
-					null,
-					originallyClientOnly
-							? data -> fittingPredicate.test(data) && (data.isServer() || original.evaluator().test(data))
-							: fittingPredicate.and(original.evaluator()),
-					originallyClientOnly
-							? EvaluatorEnvironment.CLIENT_CHECKED
-							: null,
-					null, null,
-					null
-			);
-		}
-
-		transitionsToMakeAutomatic.add(original);
-		return original;
-	}
 
 }

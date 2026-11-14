@@ -2,10 +2,9 @@ package com.fqf.charaformact.cfadata;
 
 import com.fqf.charaformact.registries.ParsedCfaState;
 import com.fqf.charaformact.registries.actions.ParsedActionHelper;
-import com.fqf.charaformact.registries.actions.ParsedTransition;
 import com.fqf.charaformact.registries.actions.UniversalActionDefinitionHelper;
-import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact.util.CfaPositionSettable;
+import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.cfadata.util.CollisionMatcher;
 import com.fqf.charaformact_api.cfadata.util.RecordedCollision;
 import com.fqf.charaformact_api.cfadata.util.RecordedCollisionSet;

@@ -1,10 +1,11 @@
 package com.fqf.mario_qua_mario.collision_attacks;
 
-import com.fqf.charaformact_api.definitions.CollisionAttackTypeDefinition;
-import com.fqf.charaformact_api.interfaces.CollisionAttackResult;
-import com.fqf.charaformact_api.cfadata.*;
+import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
+import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.fqf.charaformact_api.definitions.CollisionAttackTypeDefinition;
+import com.fqf.charaformact_api.interfaces.CollisionAttackResult;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.BonkAir;
@@ -21,8 +22,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.fqf.charaformact_api.util.StatCategory.DAMAGE;
 import static com.fqf.charaformact_api.util.StatCategory.COLLISION_ATTACK;
+import static com.fqf.charaformact_api.util.StatCategory.DAMAGE;
 
 public class GroundPound implements CollisionAttackTypeDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("ground_pound");

@@ -19,10 +19,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class ServerPlayNetworkHandlerMixin implements CfaPositionSettable {
 	@Shadow public ServerPlayerEntity player;
 
-	@Shadow private double lastTickX, lastTickY, lastTickZ;
-
-	@Shadow private double updatedX, updatedY, updatedZ;
-
 	@WrapOperation(
 			method = "onPlayerMove",
 			at = @At(

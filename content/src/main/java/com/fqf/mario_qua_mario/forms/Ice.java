@@ -2,7 +2,6 @@ package com.fqf.mario_qua_mario.forms;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.entity.custom.MarioIceballProjectileEntity;
-import com.fqf.mario_qua_mario.freezing.IceFlowerFreezable;
 import com.fqf.mario_qua_mario.freezing.IceFlowerUtil;
 import com.fqf.mario_qua_mario.util.MQMTags;
 import com.fqf.mario_qua_mario.util.MarioSFX;

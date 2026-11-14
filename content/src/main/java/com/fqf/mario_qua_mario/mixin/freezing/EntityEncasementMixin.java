@@ -1,12 +1,10 @@
 package com.fqf.mario_qua_mario.mixin.freezing;
 
-import com.fqf.mario_qua_mario.entity.custom.FatalityReceiver;
 import com.fqf.mario_qua_mario.entity.custom.IceEncasementEntity;
 import com.fqf.mario_qua_mario.freezing.IceFlowerUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;

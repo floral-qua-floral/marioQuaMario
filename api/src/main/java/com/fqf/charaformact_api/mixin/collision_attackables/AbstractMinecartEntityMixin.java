@@ -1,8 +1,8 @@
 package com.fqf.charaformact_api.mixin.collision_attackables;
 
+import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact_api.interfaces.CollisionAttackResult;
 import com.fqf.charaformact_api.interfaces.CollisionAttackable;
-import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.vehicle.AbstractMinecartEntity;

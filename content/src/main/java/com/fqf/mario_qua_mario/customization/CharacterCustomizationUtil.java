@@ -7,7 +7,6 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.OptionalInt;
-import java.util.UUID;
 
 public class CharacterCustomizationUtil {
 	public static final TrackedData<Boolean> ALWAYS_USE_SKIN_COLOR = DataTracker.registerData(PlayerEntity.class, TrackedDataHandlerRegistry.BOOLEAN);

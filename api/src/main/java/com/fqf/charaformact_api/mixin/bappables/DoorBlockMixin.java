@@ -1,8 +1,8 @@
 package com.fqf.charaformact_api.mixin.bappables;
 
+import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.interfaces.BapResult;
 import com.fqf.charaformact_api.interfaces.Bappable;
-import com.fqf.charaformact_api.cfadata.CfaData;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.DoorBlock;

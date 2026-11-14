@@ -1,7 +1,6 @@
 package com.fqf.charaformact.mixin.player.functionality;
 
 import com.fqf.charaformact.util.EntitiesMixinInterface;
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;

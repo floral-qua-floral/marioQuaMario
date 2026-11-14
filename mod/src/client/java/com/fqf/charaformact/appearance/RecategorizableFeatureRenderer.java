@@ -1,8 +1,8 @@
 package com.fqf.charaformact.appearance;
 
 import com.fqf.charaformact.CharaFormAct;
-import com.fqf.charaformact_api.appearance.equipment.EquipmentFeatureCategory;
 import com.fqf.charaformact_api.appearance.equipment.EquipmentCategoryProvider;
+import com.fqf.charaformact_api.appearance.equipment.EquipmentFeatureCategory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;

@@ -1,7 +1,6 @@
 package com.fqf.mario_qua_mario.entity;
 
 import com.fqf.mario_qua_mario.MarioQuaMario;
-import com.fqf.mario_qua_mario.entity.custom.BoatLikeTestEntity;
 import com.fqf.mario_qua_mario.entity.custom.IceEncasementEntity;
 import com.fqf.mario_qua_mario.entity.custom.MarioFireballProjectileEntity;
 import com.fqf.mario_qua_mario.entity.custom.MarioIceballProjectileEntity;

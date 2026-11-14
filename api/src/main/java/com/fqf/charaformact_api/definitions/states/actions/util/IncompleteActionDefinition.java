@@ -1,8 +1,8 @@
 package com.fqf.charaformact_api.definitions.states.actions.util;
 
 import com.fqf.charaformact_api.definitions.states.AttackInterceptingStateDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.util.Identifier;

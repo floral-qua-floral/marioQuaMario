@@ -9,7 +9,8 @@ import com.google.common.collect.ImmutableSet;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
 
 public class CommonAppearanceCollector extends AbstractAppearanceCollector<CommonAppearanceDefinition, ParsedCommonAppearance> {
 	public static final CommonAppearanceCollector INSTANCE = new CommonAppearanceCollector();

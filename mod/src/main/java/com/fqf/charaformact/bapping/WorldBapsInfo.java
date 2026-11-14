@@ -1,9 +1,6 @@
 package com.fqf.charaformact.bapping;
 
-import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
-import org.apache.commons.lang3.mutable.MutableInt;
-import org.apache.commons.lang3.mutable.MutableShort;
 
 import java.util.HashMap;
 import java.util.HashSet;

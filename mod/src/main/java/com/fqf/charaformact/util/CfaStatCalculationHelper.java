@@ -14,7 +14,6 @@ import net.minecraft.util.math.MathHelper;
 import java.util.EnumSet;
 
 import static com.fqf.charaformact_api.util.StatCategory.*;
-import static java.util.EnumSet.of;
 import static net.minecraft.entity.attribute.EntityAttributes.*;
 
 public class CfaStatCalculationHelper {

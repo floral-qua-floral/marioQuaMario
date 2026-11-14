@@ -1,15 +1,10 @@
 package com.fqf.charaformact.cfadata.util;
 
-import com.fqf.charaformact.CharaFormAct;
-import com.fqf.charaformact.cfadata.CfaClientDataImpl;
-import com.replaymod.replay.camera.CameraEntity;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.Camera;
 import net.minecraft.client.sound.MovingSoundInstance;
 import net.minecraft.entity.Entity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.math.Vec3d;
 
 public class EntityAttachedSoundInstance extends MovingSoundInstance {
 	protected final Entity ENTITY;

@@ -1,11 +1,11 @@
 package com.fqf.charaformact.registries.actions.parsed;
 
 import com.fqf.charaformact.cfadata.CfaMoveableData;
+import com.fqf.charaformact.registries.actions.AbstractParsedAction;
+import com.fqf.charaformact.registries.actions.UniversalActionDefinitionHelper;
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
-import com.fqf.charaformact.registries.actions.AbstractParsedAction;
-import com.fqf.charaformact.registries.actions.UniversalActionDefinitionHelper;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.StatCategory;
 import com.google.common.collect.ImmutableList;

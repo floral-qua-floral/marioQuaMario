@@ -1,16 +1,11 @@
 package com.fqf.charaformact_api.definitions.states.actions;
 
-import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
-import com.fqf.charaformact_api.definitions.states.actions.util.GenericActionType;
-import com.fqf.charaformact_api.definitions.states.actions.util.IncompleteActionDefinition;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
+import com.fqf.charaformact_api.definitions.states.actions.util.IncompleteActionDefinition;
 import com.google.common.collect.ImmutableList;
-import org.jetbrains.annotations.NotNull;
 
 public interface GenericActionDefinition extends IncompleteActionDefinition {
-	default @NotNull GenericActionType getGenericActionType() {
-		return GenericActionType.UNSPECIFIED;
-	}
 
 	void travelHook(CfaTravelData data);
 
@@ -30,10 +25,5 @@ public interface GenericActionDefinition extends IncompleteActionDefinition {
 		AquaticActionDefinition.AquaticActionHelper asAquatic();
 		WallboundActionDefinition.WallboundActionHelper asWallbound();
 		MountedActionDefinition.MountedActionHelper asMounted();
-
-		ActionTransitionDetails attachSufficientSpaceRequirement(ActionTransitionDetails original);
-
-		ActionTransitionDetails makeAutomaticInSmallSpaces(ActionTransitionDetails original);
-
 	}
 }

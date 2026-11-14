@@ -2,9 +2,11 @@ package com.fqf.charaformact.appearance;
 
 import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.registries.power_granting.AppearanceKey;
-import com.fqf.charaformact_api.appearance.equipment.EquipmentFeatureCategory;
-import com.fqf.charaformact_api.appearance.*;
 import com.fqf.charaformact.util.VanillaPart;
+import com.fqf.charaformact_api.appearance.AppearanceModel;
+import com.fqf.charaformact_api.appearance.ClientAppearanceDefinition;
+import com.fqf.charaformact_api.appearance.TransformationInstructions;
+import com.fqf.charaformact_api.appearance.equipment.EquipmentFeatureCategory;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.EntityRendererFactory;

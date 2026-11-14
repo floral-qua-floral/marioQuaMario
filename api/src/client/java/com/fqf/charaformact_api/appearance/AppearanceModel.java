@@ -1,7 +1,7 @@
 package com.fqf.charaformact_api.appearance;
 
 import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
-import net.minecraft.client.model.*;
+import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.entity.model.EntityModelPartNames;

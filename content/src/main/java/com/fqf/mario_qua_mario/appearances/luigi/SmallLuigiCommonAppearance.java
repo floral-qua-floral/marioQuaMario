@@ -1,8 +1,6 @@
 package com.fqf.mario_qua_mario.appearances.luigi;
 
 import com.fqf.charaformact_api.appearance.CommonAppearanceDefinition;
-import com.fqf.mario_qua_mario.MarioQuaMario;
-import net.minecraft.util.Identifier;
 import org.joml.Vector3i;
 
 public class SmallLuigiCommonAppearance implements CommonAppearanceDefinition {

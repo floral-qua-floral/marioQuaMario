@@ -1,9 +1,8 @@
 package com.fqf.charaformact.cfadata.injections;
 
-import com.fqf.charaformact.cfadata.CfaClientDataImpl;
 import com.fqf.charaformact.cfadata.CfaAppearanceData;
+import com.fqf.charaformact.cfadata.CfaClientDataImpl;
 import com.fqf.charaformact.cfadata.CfaPlayerData;
-import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import org.jetbrains.annotations.NotNull;
 

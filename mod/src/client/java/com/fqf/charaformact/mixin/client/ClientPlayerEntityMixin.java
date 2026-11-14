@@ -35,8 +35,6 @@ import java.util.List;
 
 @Mixin(ClientPlayerEntity.class)
 public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity implements AdvCfaMainClientDataHolder, CfaPositionSettable {
-	@Shadow private double lastX, lastBaseY, lastZ;
-
 	@Shadow @Final protected MinecraftClient client;
 
 	@Shadow public Input input;

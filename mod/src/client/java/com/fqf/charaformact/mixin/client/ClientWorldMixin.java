@@ -1,6 +1,5 @@
 package com.fqf.charaformact.mixin.client;
 
-import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.bapping.BapBreakingBlockInfo;
 import com.fqf.charaformact.bapping.BlockBappingUtil;
 import com.fqf.charaformact.bapping.WorldBapsInfo;
@@ -11,8 +10,6 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 
 @Mixin(ClientWorld.class)
 public class ClientWorldMixin {

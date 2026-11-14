@@ -2,12 +2,12 @@ package com.fqf.charaformact.registries.actions.parsed;
 
 import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.cfadata.CfaMoveableData;
+import com.fqf.charaformact.registries.actions.AbstractParsedAction;
+import com.fqf.charaformact.registries.actions.UniversalActionDefinitionHelper;
 import com.fqf.charaformact.util.CfaClientHelperManager;
 import com.fqf.charaformact_api.definitions.states.actions.MountedActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
-import com.fqf.charaformact.registries.actions.AbstractParsedAction;
-import com.fqf.charaformact.registries.actions.UniversalActionDefinitionHelper;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;

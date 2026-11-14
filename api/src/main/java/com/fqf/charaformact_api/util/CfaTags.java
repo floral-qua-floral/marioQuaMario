@@ -9,10 +9,7 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 
-import static net.minecraft.registry.RegistryKeys.ENTITY_TYPE;
-import static net.minecraft.registry.RegistryKeys.DAMAGE_TYPE;
-import static net.minecraft.registry.RegistryKeys.BLOCK;
-import static net.minecraft.registry.RegistryKeys.ITEM;
+import static net.minecraft.registry.RegistryKeys.*;
 
 public interface CfaTags {
 	TagKey<EntityType<?>> NOT_HIT_BY_COLLISION_ATTACKS = getTag(ENTITY_TYPE, "not_hurt_by_collision_attacks");

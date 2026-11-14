@@ -33,9 +33,7 @@ public class Mounted implements MountedActionDefinition {
 				data -> helper.getMount(data) == null || helper.getMount(data).isRemoved(),
 				EvaluatorEnvironment.COMMON,
 				SizeChangeBehavior.AUTOMATIC,
-				data -> {
-					MarioQuaMario.LOGGER.warn("Transitioned to SubWalk because mount was missing?!");
-				},
+				data -> MarioQuaMario.LOGGER.warn("Transitioned to SubWalk because mount was missing?!"),
 				(data, isSelf, seed) -> {}
 		));
 	}

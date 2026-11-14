@@ -1,6 +1,5 @@
 package com.fqf.mario_qua_mario.actions.grounded;
 
-import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionFlag;
@@ -14,7 +13,6 @@ import com.fqf.mario_qua_mario.actions.aquatic.UnderwaterWalk;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
 
 import static com.fqf.charaformact_api.util.StatCategory.*;
 
@@ -111,14 +109,6 @@ public class SubWalk implements GroundedActionDefinition {
 					0.0, 0.0, CfaStat.ZERO
 			);
 		}
-	}
-
-	public static boolean isIdle(CfaReadableMotionData data) {
-		return MathHelper.approximatelyEquals(data.getForwardVel(), 0)
-				&& MathHelper.approximatelyEquals(data.getStrafeVel(), 0)
-				&& MathHelper.approximatelyEquals(data.getInputs().getForwardInput(), 0)
-				&& MathHelper.approximatelyEquals(data.getInputs().getStrafeInput(), 0)
-				&& !data.getInputs().DUCK.isHeld();
 	}
 
 	@Override

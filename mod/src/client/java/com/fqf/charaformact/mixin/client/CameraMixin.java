@@ -2,12 +2,10 @@ package com.fqf.charaformact.mixin.client;
 
 import com.fqf.charaformact.bapping.BlockBappingClientUtil;
 import com.fqf.charaformact.cfadata.util.AdvancedArrangement;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.Arrangement;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.Camera;
 import net.minecraft.entity.Entity;
-import net.minecraft.item.Items;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.BlockView;

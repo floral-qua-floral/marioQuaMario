@@ -1,7 +1,7 @@
 package com.fqf.charaformact.mixin.client;
 
-import com.fqf.charaformact.cfadata.injections.AdvCfaAbstractClientDataHolder;
 import com.fqf.charaformact.appearance.ParsedClientAppearance;
+import com.fqf.charaformact.cfadata.injections.AdvCfaAbstractClientDataHolder;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;

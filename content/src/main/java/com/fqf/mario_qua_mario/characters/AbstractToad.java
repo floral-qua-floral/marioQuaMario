@@ -7,10 +7,6 @@ import com.google.common.collect.ImmutableSet;
 import net.minecraft.sound.SoundEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Set;
-
-import static com.fqf.charaformact_api.util.StatCategory.*;
-
 public abstract class AbstractToad extends AbstractMarioSeriesCharacter implements CharacterDefinition {
 	@Override
 	public float defineHeightFactor() {

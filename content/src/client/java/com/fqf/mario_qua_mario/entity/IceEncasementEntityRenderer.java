@@ -1,6 +1,5 @@
 package com.fqf.mario_qua_mario.entity;
 
-import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.entity.custom.IceEncasementEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.ModelPart;

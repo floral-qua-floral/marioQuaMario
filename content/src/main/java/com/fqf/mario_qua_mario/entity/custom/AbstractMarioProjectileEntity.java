@@ -1,7 +1,5 @@
 package com.fqf.mario_qua_mario.entity.custom;
 
-import it.unimi.dsi.fastutil.booleans.BooleanBooleanImmutablePair;
-import it.unimi.dsi.fastutil.booleans.BooleanBooleanPair;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;

@@ -1,7 +1,8 @@
 package com.fqf.mario_qua_mario.util;
 
 import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
-import com.fqf.charaformact_api.definitions.states.actions.util.animation.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.util.Easing;
 
 public class StandUpWithKneeAnimation {

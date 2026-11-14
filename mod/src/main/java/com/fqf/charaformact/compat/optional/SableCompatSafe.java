@@ -6,7 +6,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
-import org.joml.*;
+import org.joml.Quaternionf;
+import org.joml.Vector3d;
+import org.joml.Vector3dc;
 
 public class SableCompatSafe {
 	public static final boolean SABLE_PRESENT = FabricLoader.getInstance().isModLoaded("sable");

@@ -11,8 +11,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 
 import static com.fqf.charaformact_api.util.StatCategory.*;
-import static net.minecraft.entity.attribute.EntityAttributeModifier.Operation.*;
-import static net.minecraft.entity.attribute.EntityAttributes.*;
+import static net.minecraft.entity.attribute.EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL;
+import static net.minecraft.entity.attribute.EntityAttributeModifier.Operation.ADD_VALUE;
+import static net.minecraft.entity.attribute.EntityAttributes.GENERIC_ATTACK_DAMAGE;
+import static net.minecraft.entity.attribute.EntityAttributes.GENERIC_ATTACK_SPEED;
 
 public class Wario extends AbstractMarioSeriesCharacter {
 	public static final Identifier ID = MarioQuaMario.makeID("wario");

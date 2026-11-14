@@ -1,9 +1,9 @@
 package com.fqf.charaformact.mixin.client;
 
-import com.fqf.charaformact.cfadata.CfaMainClientData;
 import com.fqf.charaformact.cfadata.CfaAppearanceData;
-import com.fqf.charaformact_api.cfadata.CfaClientData;
+import com.fqf.charaformact.cfadata.CfaMainClientData;
 import com.fqf.charaformact.cfadata.injections.AdvCfaMainClientDataHolder;
+import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.injections.CfaClientDataHolder;
 import com.fqf.charaformact_api.cfadata.injections.CfaTravelDataHolder;
 import net.minecraft.client.MinecraftClient;

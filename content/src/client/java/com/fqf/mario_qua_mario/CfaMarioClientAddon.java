@@ -6,7 +6,10 @@ import com.fqf.charaformact_api.util.AppearanceMapBuilder;
 import com.fqf.mario_qua_mario.appearances.luigi.FoxLuigiClientAppearance;
 import com.fqf.mario_qua_mario.appearances.luigi.SmallLuigiClientAppearance;
 import com.fqf.mario_qua_mario.appearances.luigi.SuperLuigiClientAppearance;
-import com.fqf.mario_qua_mario.appearances.mario.*;
+import com.fqf.mario_qua_mario.appearances.mario.MiniMarioClientAppearance;
+import com.fqf.mario_qua_mario.appearances.mario.RaccoonMarioClientAppearance;
+import com.fqf.mario_qua_mario.appearances.mario.SmallMarioClientAppearance;
+import com.fqf.mario_qua_mario.appearances.mario.SuperMarioClientAppearance;
 import com.fqf.mario_qua_mario.appearances.toads.MiniToadClientAppearance;
 import com.fqf.mario_qua_mario.appearances.toads.RaccoonToadClientAppearance;
 import com.fqf.mario_qua_mario.appearances.toads.SmallToadClientAppearance;
@@ -16,7 +19,10 @@ import com.fqf.mario_qua_mario.appearances.toads.custom.RaccoonCustomToadClientA
 import com.fqf.mario_qua_mario.appearances.toads.custom.SmallCustomToadClientAppearance;
 import com.fqf.mario_qua_mario.appearances.toads.custom.SuperCustomToadClientAppearance;
 import com.fqf.mario_qua_mario.appearances.util.CustomizableTextureLayerFeature;
-import com.fqf.mario_qua_mario.characters.*;
+import com.fqf.mario_qua_mario.characters.CustomToad;
+import com.fqf.mario_qua_mario.characters.Luigi;
+import com.fqf.mario_qua_mario.characters.Mario;
+import com.fqf.mario_qua_mario.characters.Toadette;
 import com.fqf.mario_qua_mario.forms.*;
 
 public class CfaMarioClientAddon implements CharaFormActClientAddon {

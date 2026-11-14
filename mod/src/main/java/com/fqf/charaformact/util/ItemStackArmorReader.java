@@ -1,6 +1,5 @@
 package com.fqf.charaformact.util;
 
-import it.unimi.dsi.fastutil.floats.FloatFloatImmutablePair;
 import it.unimi.dsi.fastutil.floats.FloatFloatMutablePair;
 import it.unimi.dsi.fastutil.floats.FloatFloatPair;
 import net.minecraft.entity.EquipmentSlot;

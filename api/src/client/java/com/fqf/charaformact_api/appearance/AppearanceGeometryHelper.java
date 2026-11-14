@@ -1,7 +1,6 @@
 package com.fqf.charaformact_api.appearance;
 
-import net.minecraft.client.model.*;
-import net.minecraft.client.render.entity.model.EntityModelPartNames;
+import net.minecraft.client.model.ModelPartData;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector3i;

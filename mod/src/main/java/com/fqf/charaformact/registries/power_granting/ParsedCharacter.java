@@ -1,11 +1,11 @@
 package com.fqf.charaformact.registries.power_granting;
 
 import com.fqf.charaformact.cfadata.CfaPlayerData;
-import com.fqf.charaformact_api.cfadata.CfaData;
-import com.fqf.charaformact_api.definitions.states.CharacterDefinition;
-import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact.registries.RegistryManager;
 import com.fqf.charaformact.registries.actions.AbstractParsedAction;
+import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
+import com.fqf.charaformact_api.cfadata.CfaData;
+import com.fqf.charaformact_api.definitions.states.CharacterDefinition;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.sound.SoundEvent;

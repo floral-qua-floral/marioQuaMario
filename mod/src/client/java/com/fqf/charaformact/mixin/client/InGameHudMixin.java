@@ -9,7 +9,6 @@ import com.fqf.charaformact.cfadata.util.ActiveAnimation;
 import com.fqf.charaformact_api.definitions.states.FormDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -85,33 +84,33 @@ public class InGameHudMixin {
 	}
 
 //	@WrapMethod(method = "renderHealthBar")
-	private void renderSingleHealthBar(
-			DrawContext context, PlayerEntity player,
-			int x, int y, int lines,
-			int regeneratingHeartIndex,
-			float maxHealth, int lastHealth, int health,
-			int absorption, boolean blinking,
-			Operation<Void> original
-	) {
-		CfaPlayerData data = player.cfa$getCfaData();
-		if(data.isEnabled() && CharaFormAct.CONFIG.shouldRenderSingleFormHealthBar()) {
-			int singleHealthBarSizeCeil = Math.round(data.getSingleHealthBarSize());
-			health = MathHelper.clamp(MathHelper.ceil(data.translateHealthToWithinFormHealth(health)), 0, singleHealthBarSizeCeil);
-			lastHealth = Math.min(MathHelper.ceil(data.translateHealthToWithinFormHealth(lastHealth)), singleHealthBarSizeCeil);
-			maxHealth = data.getSingleHealthBarSize();
-
-			// Recalculate the "lines" parameter (what on earth does this do???)
-			int setsOfTenHearts = MathHelper.ceil((maxHealth + absorption) / 2.0F / 10.0F);
-			lines = Math.max(10 - (setsOfTenHearts - 2), 3);
-		}
-		original.call(
-				context, player,
-				x, y, lines,
-				regeneratingHeartIndex,
-				maxHealth, lastHealth, health,
-				absorption, blinking
-		);
-	}
+//	private void renderSingleHealthBar(
+//			DrawContext context, PlayerEntity player,
+//			int x, int y, int lines,
+//			int regeneratingHeartIndex,
+//			float maxHealth, int lastHealth, int health,
+//			int absorption, boolean blinking,
+//			Operation<Void> original
+//	) {
+//		CfaPlayerData data = player.cfa$getCfaData();
+//		if(data.isEnabled() && CharaFormAct.CONFIG.shouldRenderSingleFormHealthBar()) {
+//			int singleHealthBarSizeCeil = Math.round(data.getSingleHealthBarSize());
+//			health = MathHelper.clamp(MathHelper.ceil(data.translateHealthToWithinFormHealth(health)), 0, singleHealthBarSizeCeil);
+//			lastHealth = Math.min(MathHelper.ceil(data.translateHealthToWithinFormHealth(lastHealth)), singleHealthBarSizeCeil);
+//			maxHealth = data.getSingleHealthBarSize();
+//
+//			// Recalculate the "lines" parameter (what on earth does this do???)
+//			int setsOfTenHearts = MathHelper.ceil((maxHealth + absorption) / 2.0F / 10.0F);
+//			lines = Math.max(10 - (setsOfTenHearts - 2), 3);
+//		}
+//		original.call(
+//				context, player,
+//				x, y, lines,
+//				regeneratingHeartIndex,
+//				maxHealth, lastHealth, health,
+//				absorption, blinking
+//		);
+//	}
 
 	@ModifyExpressionValue(method = "renderHealthBar", at = @At(value = "CONSTANT", args = "intValue=4"))
 	private int changeShakeThresholdOnNonFinalHealthBars(int original, @Local(argsOnly = true) PlayerEntity player) {

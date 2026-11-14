@@ -1,6 +1,5 @@
 package com.fqf.mario_qua_mario.entity.custom;
 
-import com.fqf.mario_qua_mario.MarioQuaMario;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MovementType;

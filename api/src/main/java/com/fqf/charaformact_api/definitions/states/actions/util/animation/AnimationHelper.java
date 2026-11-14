@@ -1,7 +1,7 @@
 package com.fqf.charaformact_api.definitions.states.actions.util.animation;
 
-import com.fqf.charaformact_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
+import com.fqf.charaformact_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.charaformact_api.util.Easing;
 import it.unimi.dsi.fastutil.floats.FloatObjectImmutablePair;
 import org.jetbrains.annotations.Nullable;

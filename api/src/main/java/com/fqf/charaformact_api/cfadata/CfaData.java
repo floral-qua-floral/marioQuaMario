@@ -1,7 +1,7 @@
 package com.fqf.charaformact_api.cfadata;
 
-import com.fqf.charaformact_api.definitions.states.attachments.StateAttachmentKey;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
+import com.fqf.charaformact_api.definitions.states.attachments.StateAttachmentKey;
 import com.fqf.charaformact_api.util.CfaStat;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;

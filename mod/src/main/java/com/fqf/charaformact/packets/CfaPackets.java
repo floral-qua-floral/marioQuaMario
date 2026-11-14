@@ -2,9 +2,9 @@ package com.fqf.charaformact.packets;
 
 import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.registries.ParsedCollisionAttack;
+import com.fqf.charaformact.registries.RegistryManager;
 import com.fqf.charaformact.util.CfaGamerules;
 import com.fqf.charaformact_api.interfaces.CollisionAttackResult;
-import com.fqf.charaformact.registries.RegistryManager;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;

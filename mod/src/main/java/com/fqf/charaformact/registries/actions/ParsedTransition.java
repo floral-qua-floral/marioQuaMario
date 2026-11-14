@@ -2,12 +2,12 @@ package com.fqf.charaformact.registries.actions;
 
 import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.cfadata.CfaPlayerData;
+import com.fqf.charaformact.registries.RegistryManager;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.charaformact.registries.RegistryManager;
 import com.fqf.charaformact_api.definitions.states.actions.util.SizeChangeBehavior;
 import net.minecraft.util.crash.CrashException;
 import net.minecraft.util.crash.CrashReport;

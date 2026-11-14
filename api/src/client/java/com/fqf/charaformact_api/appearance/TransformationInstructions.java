@@ -1,6 +1,5 @@
 package com.fqf.charaformact_api.appearance;
 
-import org.joml.Vector3f;
 import org.joml.Vector3i;
 
 public record TransformationInstructions(
