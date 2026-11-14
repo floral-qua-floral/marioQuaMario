@@ -103,20 +103,19 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 		heldPackets.clear();
 	}
 
-	@WrapOperation(
-			method = "tickMovement",
-			at = @At(
-					value = "FIELD",
-					target = "Lnet/minecraft/entity/player/PlayerAbilities;allowFlying:Z",
-					opcode = Opcodes.GETFIELD
-			)
-	)
-	private boolean preventFlying(PlayerAbilities instance, Operation<Boolean> original) {
-		boolean originalValue = original.call(instance);
+	@WrapMethod(method = "tickMovement")
+	private void preventFlyingSinytraCompatible(Operation<Void> original) {
+		PlayerAbilities abilities = this.getAbilities();
 		assert this.client.interactionManager != null;
-		if(!originalValue || instance.flying || this.client.interactionManager.isFlyingLocked()) return originalValue;
-		CfaMainClientData data = this.cfa$getCfaData();
-		return !data.isEnabled() || !data.getAction().FLAGS.contains(ActionFlag.PROHIBIT_FLIGHT);
+		if(this.client.interactionManager.isFlyingLocked() || abilities.flying || !this.cfa$getCfaData().isEnabled()
+				|| !this.cfa$getCfaData().getAction().FLAGS.contains(ActionFlag.PROHIBIT_FLIGHT))
+			original.call();
+		else {
+			boolean allowFlying = abilities.allowFlying;
+			abilities.allowFlying = false;
+			original.call();
+			abilities.allowFlying = allowFlying;
+		}
 	}
 
 	@WrapOperation(
@@ -135,17 +134,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/client/input/Input;hasForwardMovement()Z"
-			),
-			slice = @Slice(
-					from = @At(
-							value = "INVOKE",
-							target = "Lnet/minecraft/client/network/ClientPlayerEntity;isSprinting()Z"
-					),
-					to = @At(
-							value = "FIELD",
-							opcode = Opcodes.GETFIELD,
-							target = "Lnet/minecraft/entity/player/PlayerAbilities;allowFlying:Z"
-					)
 			)
 	)
 	private boolean sometimesAllowAnyDirectionalInput(Input instance, Operation<Boolean> original) {
@@ -173,17 +161,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 					value = "FIELD",
 					opcode = Opcodes.GETFIELD,
 					target = "Lnet/minecraft/client/network/ClientPlayerEntity;collidedSoftly:Z"
-			),
-			slice = @Slice(
-					from = @At(
-							value = "INVOKE",
-							target = "Lnet/minecraft/client/network/ClientPlayerEntity;isSprinting()Z"
-					),
-					to = @At(
-							value = "FIELD",
-							opcode = Opcodes.GETFIELD,
-							target = "Lnet/minecraft/entity/player/PlayerAbilities;allowFlying:Z"
-					)
 			)
 	)
 	private boolean allowSprintAgainstCollisions(ClientPlayerEntity instance, Operation<Boolean> original) {

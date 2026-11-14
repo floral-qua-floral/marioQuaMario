@@ -140,7 +140,7 @@ public abstract class ActiveAnimation {
 				else this.fromPosture = this.toPosture;
 
 				this.toPosture = AdvancedPosture.from(mutate);
-				if(!this.ANIMATION.FLAGS.contains(AnimationFlag.NO_HEAD_COUNTERROTATION)) {
+				if(!this.ANIMATION.FLAGS.contains(AnimationFlag.NO_HEAD_COUNTERROTATION) && this.toModelArrangement != null) {
 					this.toPosture.HEAD.pitch = CfaAppearanceData.counterRotatePitch(this.toPosture.HEAD.pitch, this.toModelArrangement);
 					this.toPosture.HEAD.yaw = CfaAppearanceData.counterRotateYaw(this.toPosture.HEAD.yaw, this.toModelArrangement);
 				}
