@@ -22,6 +22,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,6 +53,10 @@ public class DuckSlide implements GroundedActionDefinition {
 				1.0F + Math.min(0.15F, 0.5F * slidingSpeed),
 				Math.min(1.0F, ((float) data.get(DuckSlide.SKID_SOUND_TIMER).getAndIncrement()) / 3.0F) * Math.min(1.0F, 0.7F * slidingSpeed) * 0.4F
 		);
+
+		Vec3d deltaPos = Skid.getDeltaPos(data, true);
+		double speed = deltaPos.horizontalLength();
+		Skid.spawnParticles(data, Math.min(speed * 4, 3), deltaPos, 1.5, 0.5);
 	}
 
 	@Override

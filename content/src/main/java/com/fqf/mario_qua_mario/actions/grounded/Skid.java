@@ -1,12 +1,14 @@
 package com.fqf.mario_qua_mario.actions.grounded;
 
 import com.fqf.charaformact_api.cfadata.CfaClientData;
+import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
+import com.fqf.charaformact_api.definitions.states.attachments.StateAttachmentKey;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.CfaMarioAddon;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -19,8 +21,14 @@ import com.fqf.mario_qua_mario.actions.aquatic.UnderwaterWalk;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import net.minecraft.block.BlockRenderType;
+import net.minecraft.block.BlockState;
+import net.minecraft.particle.BlockStateParticleEffect;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.random.Random;
 import org.jetbrains.annotations.Nullable;
 
 import static com.fqf.charaformact_api.util.StatCategory.*;
@@ -64,6 +72,9 @@ public class Skid implements GroundedActionDefinition {
 		return new BappingRule(0, 0, 3, new CfaStat(0, THRESHOLD));
 	}
 
+	public static final StateAttachmentKey<Vec3d> PREV_POS = StateAttachmentKey.action(data -> data.getPlayer().getPos());
+	public static final StateAttachmentKey<Vec3d> PREV_MOTION = StateAttachmentKey.action(data -> Vec3d.ZERO);
+
 	@Override
 	public void clientTick(CfaClientData data, boolean isSelf) {
 		float slidingSpeed = (float) ((CfaReadableMotionData) data).getHorizVelSquared();
@@ -71,6 +82,46 @@ public class Skid implements GroundedActionDefinition {
 				1.0F + Math.min(0.15F, 0.5F * slidingSpeed),
 				Math.min(1.0F, ((float) data.get(DuckSlide.SKID_SOUND_TIMER).getAndIncrement()) / 3.0F) * Math.min(1.0F, 0.4F + 0.7F * slidingSpeed) * 0.4F
 		);
+
+		Vec3d deltaPos = getDeltaPos(data, true);
+		spawnParticles(data, 2, deltaPos, 1, 1 / Math.max(deltaPos.horizontalLength() * 20, 0.01));
+	}
+
+	public static Vec3d getDeltaPos(CfaData data, boolean forceNonZero) {
+		Vec3d deltaPos = data.getPlayer().getPos().subtract(data.get(PREV_POS)).multiply(1, 0, 1);
+		data.put(PREV_POS, data.getPlayer().getPos());
+		if(forceNonZero) {
+			if(deltaPos.horizontalLengthSquared() == 0) deltaPos = data.get(PREV_MOTION);
+			else data.put(PREV_MOTION, deltaPos);
+		}
+		return deltaPos;
+	}
+
+	public static void spawnParticles(CfaData data, double count, Vec3d deltaPos, double horizontalVel, double yVel) {
+		BlockState floorBlock = data.getPlayer().getWorld().getBlockState(data.getPlayer().getSteppingPos());
+		if(count > 0 && floorBlock.getRenderType() != BlockRenderType.INVISIBLE && deltaPos.horizontalLengthSquared() != 0) {
+			Vec3d generalMotion = deltaPos.normalize();
+			Random random = data.getPlayer().getRandom();
+
+			if(count % 1 > random.nextDouble())
+				count++;
+
+			for(int incrementeroo = 0; incrementeroo < count; incrementeroo++) {
+				float rotation = (float) random.nextTriangular(0, Math.PI / 8);
+				Vec3d motion = generalMotion.rotateY(rotation).multiply(horizontalVel);
+				Vec3d offset = generalMotion.rotateY(rotation * 2.25F).multiply(random.nextTriangular(0.5, 0.2));
+				data.getPlayer().getWorld().addParticle(
+						new BlockStateParticleEffect(
+								ParticleTypes.BLOCK,
+								floorBlock
+						),
+						data.getPlayer().getX() + offset.x,
+						data.getPlayer().getY() + 0.15,
+						data.getPlayer().getZ() + offset.z,
+						motion.x, yVel, motion.z
+				);
+			}
+		}
 	}
 
 	public static final CfaStat SKID_THRESHOLD = new CfaStat(0.285, RUNNING, THRESHOLD);

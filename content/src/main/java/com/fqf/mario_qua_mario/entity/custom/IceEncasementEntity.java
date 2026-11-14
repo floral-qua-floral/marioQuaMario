@@ -134,7 +134,7 @@ public class IceEncasementEntity extends AbstractSolidMovingEntity implements Ow
 	@Override
 	public void tick() {
 		Entity owner = this.getOwner();
-		if(owner == null) {
+		if(owner == null && !this.getWorld().isClient()) {
 			this.attemptFindOwner();
 			owner = this.getOwner();
 		}

@@ -1,6 +1,5 @@
 package com.fqf.mario_qua_mario.actions.wallbound;
 
-import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.charaformact_api.definitions.TransitionInjectionDefinition;
@@ -15,7 +14,7 @@ public class ClimbIntangibleSideHang extends ClimbWallSideHang implements Wallbo
 
 	@Override
 	protected float getEntireBodyXOffset(CfaReadableMotionData data) {
-		return data.get(PLANAR_CLIMB_DATA).useAlternateOffset ? 2.75F : 1;
+		return data.get(USE_ALTERNATE_ATTACHMENT) ? 2.75F : 1;
 	}
 
 	@Override
@@ -29,8 +28,8 @@ public class ClimbIntangibleSideHang extends ClimbWallSideHang implements Wallbo
 	}
 
 	@Override
-	public void clientTick(CfaClientData data, boolean isSelf) {
-
+	protected boolean isIntangible() {
+		return true;
 	}
 
 	@Override

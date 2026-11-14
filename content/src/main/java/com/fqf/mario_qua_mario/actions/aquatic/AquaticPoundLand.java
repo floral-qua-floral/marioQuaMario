@@ -18,6 +18,11 @@ import org.jetbrains.annotations.Nullable;
 public class AquaticPoundLand implements AquaticActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("aquatic_ground_pound_land");
 
+	@Override
+	public float defineHitboxEyeHeight() {
+		return Math.min(AquaticActionDefinition.super.defineHitboxEyeHeight(), this.defineHitboxHeight() / 2 + 0.2F);
+	}
+
 	private static final float AQUATIC_STANDUP_TICKS = 15;
 
 	@Override public @Nullable AnimationDefinition defineAnimation() {

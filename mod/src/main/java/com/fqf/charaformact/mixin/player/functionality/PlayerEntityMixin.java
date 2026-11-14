@@ -190,7 +190,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDa
 
 	@Override
 	public boolean cfa$isInSneakingPose(boolean vanillaResult) {
-		return this.cfa$getCfaData().getAction().FLAGS.contains(ActionFlag.CROUCHING);
+		return this.cfa$getCfaData().isEnabled() && this.cfa$getCfaData().getAction().FLAGS.contains(ActionFlag.CROUCHING);
 	}
 
 	@Override

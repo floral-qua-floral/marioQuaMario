@@ -18,6 +18,7 @@ import com.fqf.mario_qua_mario.util.StandUpWithKneeAnimation;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
 import static com.fqf.charaformact_api.util.StatCategory.DRAG;
@@ -26,6 +27,11 @@ import static com.fqf.charaformact_api.util.StatCategory.RUNNING;
 public class BonkGround implements GroundedActionDefinition {
 	public static final Identifier BACKWARD_ID = MarioQuaMario.makeID("bonk_ground_backward");
 	public static final Identifier FORWARD_ID = MarioQuaMario.makeID("bonk_ground_forward");
+
+	@Override
+	public float defineHitboxEyeHeight() {
+		return Math.min(GroundedActionDefinition.super.defineHitboxEyeHeight(), this.defineHitboxHeight() / 2 + 0.2F);
+	}
 
 	private final boolean IS_BACKWARD;
 
@@ -65,6 +71,9 @@ public class BonkGround implements GroundedActionDefinition {
 	@Override
 	public void clientTick(CfaClientData data, boolean isSelf) {
 		DuckSlide.slideSound(data);
+		Vec3d deltaPos = Skid.getDeltaPos(data, false);
+		if(deltaPos.horizontalLengthSquared() != 0)
+			Skid.spawnParticles(data, 1, deltaPos, deltaPos.horizontalLength(), 0.1);
 	}
 
 	public static final CfaStat BONK_DRAG = new CfaStat(0.185, RUNNING, DRAG);

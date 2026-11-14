@@ -1,7 +1,9 @@
 package com.fqf.mario_qua_mario.util;
 
+import com.fqf.charaformact_api.HelperGetter;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
+import com.fqf.charaformact_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.charaformact_api.definitions.states.actions.util.SizeChangeBehavior;
@@ -18,6 +20,7 @@ import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -55,7 +58,7 @@ public class ClimbTransitions {
 				() -> MultifaceGrowthBlock.hasDirection(adjacentState, inDirection.getOpposite()));
 
 	}
-	private static Direction[] getDirections(PlayerEntity mario) {
+	private static Direction[] getDirections() {
 		return new Direction[]{
 				Direction.SOUTH,
 				Direction.EAST,
@@ -64,7 +67,7 @@ public class ClimbTransitions {
 		};
 	}
 	public static @Nullable Direction getIntangibleClimbableDirectionality(PlayerEntity mario, BlockPos pos, BlockState state) {
-		Direction[] directions = getDirections(mario);
+		Direction[] directions = getDirections();
 
 		if(isIntangibleClimbable(mario, pos, state)) {
 			Optional<Direction> facing = state.getOrEmpty(HorizontalFacingBlock.FACING);
@@ -131,15 +134,31 @@ public class ClimbTransitions {
 		if(isIntangibleClimbable(mario, pos, mario.getBlockStateAtPos()))
 			return pos;
 
-		Direction[] directions = getDirections(mario);
+		Direction[] directions = getDirections();
 		if(testBackFaceClimbability(mario, pos, directions[0])) return pos.offset(directions[0]);
 		if(testBackFaceClimbability(mario, pos, directions[1])) return pos.offset(directions[1]);
 		if(testBackFaceClimbability(mario, pos, directions[2])) return pos.offset(directions[2]);
 		return pos.offset(directions[3]); // whatever!!
 	}
-	public static void playGrabIntangibleSound(CfaClientData data, long seed) {
-		BlockSoundGroup group = data.getPlayer().getWorld().getBlockState(getClimbingBlockPos(data)).getSoundGroup();
-		data.playSound(group.getStepSound(), group.getPitch(), 1, seed);
+
+	public static void playStepSound(CfaClientData data, long seed, BlockState state) {
+		BlockSoundGroup group = state.getSoundGroup();
+		data.playSound(group.getStepSound(), group.getPitch(), group.getVolume() * 0.15F, seed);
+	}
+	public static void playIntangibleWallStepSound(CfaClientData data, long seed) {
+		playStepSound(data, seed, data.getPlayer().getBlockStateAtPos());
+	}
+	public static void playSolidWallStepSound(CfaClientData data, long seed) {
+		if(data.getPlayer().isSneaky()) return;
+		WallboundActionDefinition.WallInfo wall = HelperGetter.getWallboundActionHelper().getWallInfo((CfaReadableMotionData) data);
+		World world = data.getPlayer().getWorld();
+		for(BlockPos block : wall.getWallBlocks(1)) {
+			BlockState blockState = world.getBlockState(block);
+			if(ClimbTransitions.canClimbBlock(blockState, Direction.fromRotation(wall.getWallYaw()))) {
+				playStepSound(data, seed, blockState);
+				return;
+			}
+		}
 	}
 
 	private static ActionTransitionDetails makeNonSolidClimbingTransition(Identifier targetActionID, boolean directionality) {
@@ -154,12 +173,12 @@ public class ClimbTransitions {
 				},
 				(data, isSelf, seed) -> {
 					data.voice(Voicelines.DUCK_JUMP, seed);
-					playGrabIntangibleSound(data, seed);
+					playIntangibleWallStepSound(data, seed);
 				}
 		);
 	}
 
-	public static final CfaStat CLIMB_JUMP_UP_VEL = new CfaStat(1, StatCategory.JUMP_VELOCITY);
+	public static final CfaStat CLIMB_JUMP_UP_VEL = new CfaStat(0.858, StatCategory.JUMP_VELOCITY);
 
 	public static final CfaStat CLIMB_JUMP_OFF_VEL = new CfaStat(0.8, StatCategory.JUMP_VELOCITY);
 	public static final CfaStat CLIMB_JUMP_OFF_HORIZ_VEL = new CfaStat(0.8, StatCategory.BACKWARD);
@@ -173,12 +192,8 @@ public class ClimbTransitions {
 					collision.direction().getAxis().isHorizontal() && canClimbBlock(block, collision.direction())) != null,
 			EvaluatorEnvironment.CLIENT_ONLY,
 			SizeChangeBehavior.AUTOMATIC,
-			data -> {
-				data.setForwardStrafeVel(0, 0);
-			},
-			(data, isSelf, seed) -> {
-				data.voice(Voicelines.DUCK_JUMP, seed);
-			}
+			data -> data.setForwardStrafeVel(0, 0),
+			(data, isSelf, seed) -> data.voice(Voicelines.DUCK_JUMP, seed)
 	);
 
 	public static float yawOf(@Nullable Direction direction) {

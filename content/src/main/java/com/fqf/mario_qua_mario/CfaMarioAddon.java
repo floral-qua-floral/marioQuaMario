@@ -32,7 +32,6 @@ import com.fqf.mario_qua_mario.collision_attacks.AquaticGroundPound;
 import com.fqf.mario_qua_mario.collision_attacks.GroundPound;
 import com.fqf.mario_qua_mario.collision_attacks.Stomp;
 import com.fqf.mario_qua_mario.forms.*;
-import com.fqf.mario_qua_mario.util.ClimbVars;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -42,8 +41,6 @@ import org.apache.commons.lang3.mutable.MutableInt;
 public class CfaMarioAddon implements CharaFormActAddon {
 	public static final StateAttachmentKey<MutableInt> ACTION_TIMER = StateAttachmentKey.action(() -> new MutableInt());
 	public static final StateAttachmentKey<MutableInt> SECONDARY_ACTION_TIMER = StateAttachmentKey.action(() -> new MutableInt());
-
-	public static final StateAttachmentKey<ClimbVars> CLIMB_DATA = StateAttachmentKey.action(ClimbVars::new);
 
 	@Override
 	public void accumulateCharacters(ImmutableMap.Builder<Identifier, CharacterDefinition> builder) {

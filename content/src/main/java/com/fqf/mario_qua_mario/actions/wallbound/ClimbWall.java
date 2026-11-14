@@ -19,7 +19,6 @@ import com.fqf.mario_qua_mario.actions.airborne.WallJump;
 import com.fqf.mario_qua_mario.actions.generic.ClimbPole;
 import com.fqf.mario_qua_mario.actions.grounded.SubWalk;
 import com.fqf.mario_qua_mario.util.ClimbTransitions;
-import com.fqf.mario_qua_mario.util.ClimbVars;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.util.Identifier;
@@ -28,9 +27,9 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraft.world.event.GameEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector2d;
 
 import java.util.Objects;
 
@@ -45,30 +44,19 @@ public class ClimbWall implements WallboundActionDefinition {
 				AnimationFlag.NO_SWING_LIMBS,
 				(arrangement, data, animationTime, helper) -> arrangement.z += this.getEntireBodyZOffset(data),
 				(posture, data, animationTime, helper) -> {
-					ClimbOmniDirectionalVars vars = data.get(PLANAR_CLIMB_DATA);
+					CommonClimbProgress vars = data.get(COMMON_CLIMB_PROGRESS);
 					WallInfo wall = helper.getWallInfo(data);
 					assert wall != null;
 
-					if(data.getYVel() != 0 || wall.getSidleVel() != 0) {
-						ClimbPole.ClimbStatSet stats = ClimbPole.ClimbStatSet.choose(data);
-						double climbInput = data.getYVel() * (1 / stats.getVertical(data.getYVel()).get(data));
-						double sidleInput = wall.getSidleVel() * (1 / stats.sidle().get(data));
-
-						vars.progress += Math.min(1, (float) Vector2d.length(climbInput, sidleInput)) / 2;
-						float denominator = (float) Math.max(Math.abs(climbInput), Math.abs(sidleInput));
-						vars.xComponent = (float) sidleInput / denominator;
-						vars.yComponent = (float) climbInput / denominator;
-					}
-
-					float progress = MathHelper.sin(data.get(PLANAR_CLIMB_DATA).progress);
+					float progress = MathHelper.sin(vars.progress);
 
 					posture.TORSO.yaw += progress * 15;
 
 					helper.asymmetricallyAnimate(posture.RIGHT_ARM, posture.LEFT_ARM, (arrangement, isLeft, sideFactor) -> {
-						arrangement.y -= progress * 1.9F * sideFactor * vars.yComponent;
+						arrangement.y -= progress * 1.9F * sideFactor * vars.verticalIntensity;
 						arrangement.addAngles(
-								-110 + (-30 * Math.abs(vars.yComponent) * (1 - Math.abs(vars.xComponent))) + (progress * -20 * sideFactor * vars.yComponent),
-								sideFactor * (24 * Math.abs(vars.xComponent) + 20 * progress * vars.xComponent),
+								-110 + (-30 * Math.abs(vars.verticalIntensity) * (1 - Math.abs(vars.horizontalIntensity))) + (progress * -20 * sideFactor * vars.verticalIntensity),
+								sideFactor * (24 * Math.abs(vars.horizontalIntensity) + 20 * progress * vars.horizontalIntensity),
 								0
 						);
 					});
@@ -76,12 +64,12 @@ public class ClimbWall implements WallboundActionDefinition {
 					helper.asymmetricallyAnimate(posture.RIGHT_LEG, posture.LEFT_LEG, (arrangement, isLeft, sideFactor) -> {
 						arrangement.addPos(
 								0,
-								-3 + progress * -3 * sideFactor * vars.yComponent,
+								-3 + progress * -3 * sideFactor * vars.verticalIntensity,
 								-3.7F
 						);
-						float yawRollAdjustment = sideFactor * (3 * Math.abs(vars.xComponent) + 16 * progress * vars.xComponent);
+						float yawRollAdjustment = sideFactor * (3 * Math.abs(vars.horizontalIntensity) + 16 * progress * vars.horizontalIntensity);
 						arrangement.addAngles(
-								-10 + progress * -20 * sideFactor * vars.yComponent,
+								-10 + progress * -20 * sideFactor * vars.verticalIntensity,
 								yawRollAdjustment,
 								yawRollAdjustment
 						);
@@ -97,7 +85,7 @@ public class ClimbWall implements WallboundActionDefinition {
 	}
 	@Override public void defineActionFlags(ImmutableSet.Builder<ActionFlag> builder) {
 		builder.addAll(ActionFlag.FULL_CLIMBING);
-		builder.add(ActionFlag.PROHIBIT_FLIGHT, ActionFlag.ALLOW_STEALTH);
+		builder.add(ActionFlag.PROHIBIT_FLIGHT, ActionFlag.ALLOW_STEALTH, ActionFlag.NO_STEP, ActionFlag.NO_VIEW_BOB);
 	}
 
 	@Override public @NotNull WallBodyAlignment defineBodyAlignment() {
@@ -127,13 +115,24 @@ public class ClimbWall implements WallboundActionDefinition {
 		return false;
 	}
 
-	protected static final StateAttachmentKey<ClimbOmniDirectionalVars> PLANAR_CLIMB_DATA =
-			StateAttachmentKey.action(ClimbOmniDirectionalVars::new);
+	public static final StateAttachmentKey<CommonClimbProgress> COMMON_CLIMB_PROGRESS =
+			StateAttachmentKey.action(CommonClimbProgress::new);
+	public static final StateAttachmentKey<Boolean> USE_ALTERNATE_ATTACHMENT =
+			StateAttachmentKey.action(() -> Boolean.FALSE);
 
-	protected static class ClimbOmniDirectionalVars extends ClimbVars {
-		private float xComponent = 0.75F;
-		private float yComponent = 0.45F;
-		public boolean useAlternateOffset;
+
+	public static class CommonClimbProgress {
+		public float progress;
+		public float nextStepSound = MathHelper.PI;
+
+		public float horizontalIntensity = 0.75F;
+		public float verticalIntensity = 0.45F;
+
+		public Vec3d prevPos;
+
+		public CommonClimbProgress(CfaData data) {
+			this.prevPos = data.getPlayer().getPos();
+		}
 	}
 
 	protected double getConstantTowardsWallVel() {
@@ -147,17 +146,53 @@ public class ClimbWall implements WallboundActionDefinition {
 
 	@Override
 	public void onEnter(CfaData data, ImmutableSet.Builder<StateAttachmentKey<?>> attachmentsToKeep) {
-		data.get(PLANAR_CLIMB_DATA).useAlternateOffset = this.useAlternateOffset(data);
+		data.put(USE_ALTERNATE_ATTACHMENT, this.useAlternateOffset(data));
 	}
 
-	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-		data.get(PLANAR_CLIMB_DATA).clientTick(data);
+	@Override
+	public void commonTick(CfaData data) {
+		CommonClimbProgress climb = data.get(COMMON_CLIMB_PROGRESS);
+		Vec3d delta = data.getPlayer().getPos().subtract(climb.prevPos);
+
+		double deltaY = delta.y;
+		double absDeltaY = Math.abs(deltaY);
+		double absDeltaX = delta.horizontalLength();
+		double deltaX = absDeltaX * -1 * Math.signum(delta.x + delta.z);
+
+		if(absDeltaX != 0 || absDeltaY != 0) {
+			climb.progress += (float) (5 * Math.max(absDeltaX, absDeltaY));
+			double denominator = Math.max(absDeltaX, absDeltaY);
+			climb.horizontalIntensity = (float) (deltaX / denominator);
+			climb.verticalIntensity = (float) (deltaY / denominator);
+		}
+
+		if(climb.progress > climb.nextStepSound) {
+			do climb.nextStepSound += MathHelper.PI; while(climb.progress > climb.nextStepSound);
+
+			if(!data.getPlayer().isSneaky()) {
+				if(data.isClient() && data instanceof CfaClientData clientData) {
+					long seed = data.getPlayer().getRandom().nextLong();
+					if(this.isIntangible())
+						ClimbTransitions.playSolidWallStepSound(clientData, seed);
+					else
+						ClimbTransitions.playIntangibleWallStepSound(clientData, seed);
+				}
+				else
+					data.getPlayer().emitGameEvent(GameEvent.STEP);
+			}
+		}
+
+		climb.prevPos = data.getPlayer().getPos();
+	}
+
+	protected boolean isIntangible() {
+		return false;
 	}
 
 	@Override public void travel(CfaTravelData data, WallInfo wall, WallboundActionHelper helper) {
 		helper.setTowardsWallVel(data, TOWARDS_WALL_VEL);
 		data.getPlayer().fallDistance = 0;
-		double climbInput = wall.getTowardsWallInput() * (data.getInputs().DUCK.isHeld() ? 0.3 : 1);
+		double climbInput = wall.getTowardsWallInput();
 		double sidleInput = wall.getSidleInput();
 		if(sidleInput != 0 && !wall.wouldBeLegalWithOffset(0, Math.signum(sidleInput) * 0.8)) {
 			sidleInput = 0;

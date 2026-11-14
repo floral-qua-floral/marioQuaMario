@@ -21,7 +21,7 @@ public class ClimbIntangibleDirectional extends ClimbWall implements WallboundAc
 
 	@Override
 	protected float getEntireBodyZOffset(CfaReadableMotionData data) {
-		return data.get(PLANAR_CLIMB_DATA).useAlternateOffset ? -1.75F : 0;
+		return data.get(USE_ALTERNATE_ATTACHMENT) ? -1.75F : 0;
 	}
 
 	private static float getYawOf(PlayerEntity mario, BlockPos pos, BlockState state) {
@@ -62,8 +62,8 @@ public class ClimbIntangibleDirectional extends ClimbWall implements WallboundAc
 	}
 
 	@Override
-	public void clientTick(CfaClientData data, boolean isSelf) {
-
+	protected boolean isIntangible() {
+		return true;
 	}
 
 	@Override
@@ -72,7 +72,7 @@ public class ClimbIntangibleDirectional extends ClimbWall implements WallboundAc
 	}
 
 	public static final ActionTransitionDetails.ClientsExecutor SIDE_HANG_CLIENTS_EXECUTOR = (data, isSelf, seed) ->
-			ClimbTransitions.playGrabIntangibleSound(data, seed);
+			ClimbTransitions.playIntangibleWallStepSound(data, seed);
 
 	@Override
 	protected ActionTransitionDetails.ClientsExecutor getSideHangTransitionClientsExecutor() {

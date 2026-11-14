@@ -1,6 +1,5 @@
 package com.fqf.mario_qua_mario.actions.generic;
 
-import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
@@ -16,9 +15,9 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationOption;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraProgressHandler;
+import com.fqf.charaformact_api.definitions.states.attachments.StateAttachmentKey;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.StatCategory;
-import com.fqf.mario_qua_mario.CfaMarioAddon;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.Voicelines;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
@@ -27,7 +26,6 @@ import com.fqf.mario_qua_mario.actions.airborne.SpecialFall;
 import com.fqf.mario_qua_mario.actions.airborne.WallJump;
 import com.fqf.mario_qua_mario.actions.grounded.SubWalk;
 import com.fqf.mario_qua_mario.util.ClimbTransitions;
-import com.fqf.mario_qua_mario.util.ClimbVars;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.Entity;
@@ -35,6 +33,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.event.GameEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -56,17 +55,15 @@ public class ClimbPole implements GenericActionDefinition {
 					arrangement.z += (float) offset.horizontalLength();
 				},
 				(posture, data, animationTime, helper) -> {
-					ClimbVars vars = data.get(CfaMarioAddon.CLIMB_DATA);
-					double factorForInput = 1 / ClimbStatSet.choose(data).getVertical(data.getYVel()).get(data);
-					vars.progress += (float) (data.getYVel() * factorForInput) / 2;
-					float climbProgress = MathHelper.sin(vars.progress);
+					LinearClimbData vars = data.get(LINEAR_CLIMB_DATA);
+					float progress = MathHelper.sin(vars.progress);
 
-					posture.TORSO.yaw += climbProgress * -15;
+					posture.TORSO.yaw += progress * -15;
 
 					helper.asymmetricallyAnimate(posture.RIGHT_ARM, posture.LEFT_ARM, (arrangement, isLeft, sideFactor) -> {
-						arrangement.y += climbProgress * 1.9F * sideFactor;
+						arrangement.y += progress * 1.9F * sideFactor;
 						arrangement.addAngles(
-								-140 + 20 * climbProgress * sideFactor,
+								-140 + 20 * progress * sideFactor,
 								-20 * sideFactor,
 								0
 						);
@@ -75,16 +72,16 @@ public class ClimbPole implements GenericActionDefinition {
 					helper.asymmetricallyAnimate(posture.RIGHT_LEG, posture.LEFT_LEG, (arrangement, isLeft, sideFactor) -> {
 						arrangement.addPos(
 								0,
-								-3 + climbProgress * -3 * sideFactor,
+								-3 + progress * -3 * sideFactor,
 								-3.7F
 						);
-						arrangement.pitch -= 10 + climbProgress * 20 * sideFactor;
+						arrangement.pitch -= 10 + progress * 20 * sideFactor;
 					});
 
 					if(posture.TAIL != null) {
 						posture.TAIL.pitch = 60;
 						if(data.getVelocity().lengthSquared() > 0.1)
-							posture.TAIL.roll += climbProgress * 30;
+							posture.TAIL.roll += progress * 30;
 					}
 				}
 		);
@@ -103,28 +100,59 @@ public class ClimbPole implements GenericActionDefinition {
 
 	@Override public void defineActionFlags(ImmutableSet.Builder<ActionFlag> builder) {
 		builder.addAll(ActionFlag.FULL_CLIMBING);
-		builder.add(ActionFlag.PROHIBIT_FLIGHT, ActionFlag.ALLOW_STEALTH);
+		builder.add(ActionFlag.PROHIBIT_FLIGHT, ActionFlag.ALLOW_STEALTH, ActionFlag.NO_STEP);
+	}
+
+	private static class LinearClimbData {
+		private float progress;
+		private float nextStepSoundUnder = MathHelper.PI;
+		private float nextStepSoundOver = MathHelper.PI;
+
+		private double prevY;
+
+		private LinearClimbData(CfaData data) {
+			this.prevY = data.getPlayer().getY();
+		}
+	}
+
+	private static final StateAttachmentKey<LinearClimbData> LINEAR_CLIMB_DATA =
+			StateAttachmentKey.action(LinearClimbData::new);
+
+	@Override
+	public void commonTick(CfaData data) {
+		data.forceBodyAlignment(true);
+		LinearClimbData climb = data.get(LINEAR_CLIMB_DATA);
+
+		climb.progress += (float) (5 * (data.getPlayer().getY() - climb.prevY));
+		if(climb.progress > climb.nextStepSoundOver || climb.progress < climb.nextStepSoundUnder) {
+			float closestInterval = Math.round(climb.progress / MathHelper.PI) * MathHelper.PI;
+			climb.nextStepSoundUnder = closestInterval - MathHelper.PI;
+			climb.nextStepSoundOver = closestInterval + MathHelper.PI;
+
+			if(!data.getPlayer().isSneaky()) {
+				if(data.isClient() && data instanceof CfaClientData clientData)
+					ClimbTransitions.playStepSound(clientData, data.getPlayer().getRandom().nextLong(), data.getPlayer().getBlockStateAtPos());
+				else
+					data.getPlayer().emitGameEvent(GameEvent.STEP);
+			}
+		}
+
+		climb.prevY = data.getPlayer().getY();
 	}
 
 	public record ClimbStatSet(CfaStat ascend, CfaStat descend, CfaStat sidle) {
-		public static final ClimbStatSet REGULAR = new ClimbStatSet(0.2, 0.2, 0.2);
-		public static final ClimbStatSet SPRINT = new ClimbStatSet(0.25, 0.3, 0.26);
-		public static final ClimbStatSet SNEAK = new ClimbStatSet(0.12, 0.12, 0.16);
+		public static final ClimbStatSet REGULAR = new ClimbStatSet(0.15, 0.2, 0.175);
+		public static final ClimbStatSet SPRINT = new ClimbStatSet(0.26, 0.36, 0.285);
+		public static final ClimbStatSet SNEAK = new ClimbStatSet(0.075, 0.12, 0.11);
 
 		public static ClimbStatSet choose(CfaTravelData data) {
-			return choose(data, data.getInputs().DUCK.isHeld());
-		}
-		public static ClimbStatSet choose(CfaAnimatingData data) {
-			return choose(data, data.getPlayer().isSneaking());
-		}
-		public CfaStat getVertical(double input) {
-			return (input >= 0 ? this.ascend() : this.descend());
+			if(data.getInputs().DUCK.isHeld()) return SNEAK;
+			else if(data.getPlayer().isSprinting()) return SPRINT;
+			else return REGULAR;
 		}
 
-		private static ClimbStatSet choose(CfaData data, boolean sneaking) {
-			if(data.getPlayer().isSprinting()) return SPRINT;
-			else if(sneaking) return SNEAK;
-			else return REGULAR;
+		public CfaStat getVertical(double input) {
+			return (input >= 0 ? this.ascend() : this.descend());
 		}
 
 		private ClimbStatSet(double ascend, double descend, double sidle) {
@@ -135,9 +163,6 @@ public class ClimbPole implements GenericActionDefinition {
 		}
 	}
 
-	@Override public void clientTick(CfaClientData data, boolean isSelf) {
-		data.forceBodyAlignment(true);
-	}
 	@Override public void travelHook(CfaTravelData data) {
 		double forwardInput = data.getInputs().getForwardInput();
 		data.setYVel(forwardInput * ClimbStatSet.choose(data).getVertical(forwardInput).get(data));
@@ -189,7 +214,7 @@ public class ClimbPole implements GenericActionDefinition {
 						SizeChangeBehavior.AUTOMATIC,
 						data -> {
 							releasePole(data);
-							data.setYVel(1);
+							data.setYVel(ClimbTransitions.CLIMB_JUMP_UP_VEL.get(data));
 						},
 						(data, isSelf, seed) ->
 								data.playJumpSound(seed)
