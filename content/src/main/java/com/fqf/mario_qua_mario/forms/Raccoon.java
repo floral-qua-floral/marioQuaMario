@@ -80,21 +80,21 @@ public class Raccoon implements FormDefinition {
 
 	private void tick(CfaData data) {
 		RaccoonVars vars = data.get(RACCOON_DATA);
-		if(data.getActionCategory() != ActionCategory.AIRBORNE && data.getActionCategory() != ActionCategory.WALLBOUND) {
-			vars.stallStartVel = null;
-			vars.flightTicks = 75;
-		}
-		else {
-			if(vars.stallStartVel != null)
-				vars.stallStartVel = Math.max(vars.stallStartVel + TailStall.FALL_ACCEL.get(data), TailStall.FALL_SPEED.get(data));
-			vars.flightTicks--;
-		}
+		if(vars.stallStartVel != null)
+			vars.stallStartVel = Math.max(vars.stallStartVel + TailStall.FALL_ACCEL.get(data), TailStall.FALL_SPEED.get(data));
+		vars.flightTicks--;
 	}
 	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 		tick(data);
 	}
 	@Override public void serverTick(CfaAuthoritativeData data) {
 		tick(data);
+	}
+
+	@Override public void restoreGroundedResources(CfaData data) {
+		RaccoonVars vars = data.get(RACCOON_DATA);
+		vars.stallStartVel = null;
+		vars.flightTicks = 75;
 	}
 
 	public static boolean canBeReflected(Entity reflectTarget) {

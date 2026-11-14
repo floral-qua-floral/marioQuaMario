@@ -19,6 +19,7 @@ import static net.minecraft.entity.attribute.EntityAttributes.*;
 
 public class CfaStatCalculationHelper {
 	public static double calculate(CfaPlayerData data, CfaStat stat) {
+		if(stat.CATEGORIES.isEmpty()) return stat.BASE_VALUE;
 		double asCharacter;
 		if(CfaGamerules.useCharacterStats) asCharacter = data.getCharacter().adjustStat(stat, adjustBaseValue(data, stat));
 		else asCharacter = adjustBaseValue(data, stat);

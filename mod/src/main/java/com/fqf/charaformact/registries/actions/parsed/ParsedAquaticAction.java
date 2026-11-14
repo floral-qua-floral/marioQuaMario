@@ -19,7 +19,6 @@ public class ParsedAquaticAction extends AbstractParsedAction {
 
 	@Override
 	public boolean travelHook(CfaMoveableData data) {
-		data.jumpCapped = false;
 		this.AQUATIC_DEFINITION.travelHook(data, UniversalActionDefinitionHelper.INSTANCE);
 		return true;
 	}
@@ -27,6 +26,11 @@ public class ParsedAquaticAction extends AbstractParsedAction {
 	@Override
 	protected ActionCategory getCategory() {
 		return ActionCategory.AQUATIC;
+	}
+
+	@Override
+	protected boolean allowCompressionTransitionsTo(ActionCategory category) {
+		return category == ActionCategory.AQUATIC;
 	}
 
 	@Override

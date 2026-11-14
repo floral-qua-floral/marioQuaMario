@@ -2,9 +2,9 @@ package com.fqf.mario_qua_mario.actions.grounded;
 
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.SizeChangeBehavior;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
@@ -18,9 +18,9 @@ import com.fqf.mario_qua_mario.actions.airborne.DuckJump;
 import com.fqf.mario_qua_mario.actions.aquatic.UnderwaterDuck;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
@@ -92,8 +92,9 @@ public class DuckWaddle implements GroundedActionDefinition {
 	@Override public @Nullable AnimationDefinition defineAnimation() {
 		return makeAnimation(true, true);
 	}
-	@Override public @NotNull SprintingRule defineSprintingRule() {
-		return SprintingRule.PROHIBIT;
+
+	@Override public void defineActionFlags(ImmutableSet.Builder<ActionFlag> builder) {
+		builder.addAll(ActionFlag.SNEAKING);
 	}
 
 	public static final CfaStat WADDLE_ACCEL = new CfaStat(0.06, DUCKING, FORWARD, ACCELERATION);

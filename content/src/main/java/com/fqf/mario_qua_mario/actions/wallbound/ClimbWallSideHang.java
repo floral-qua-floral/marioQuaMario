@@ -11,6 +11,7 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.Animat
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.util.ClimbTransitions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -58,6 +59,11 @@ public class ClimbWallSideHang extends ClimbWall implements WallboundActionDefin
 					});
 				}
 		);
+	}
+
+	@Override public void defineActionFlags(ImmutableSet.Builder<ActionFlag> builder) {
+		super.defineActionFlags(builder);
+		builder.add(ActionFlag.PROHIBIT_SPRINT);
 	}
 
 	@Override

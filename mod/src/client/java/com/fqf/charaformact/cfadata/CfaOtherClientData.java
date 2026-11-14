@@ -2,6 +2,7 @@ package com.fqf.charaformact.cfadata;
 
 import com.fqf.charaformact.appearance.ParsedCommonAppearance;
 import com.fqf.charaformact.cfadata.equipment.PlayerEquipmentData;
+import com.fqf.charaformact.registries.ParsedCfaState;
 import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.HandPreference;
@@ -72,6 +73,8 @@ public class CfaOtherClientData extends CfaPlayerData implements CfaClientDataIm
 		this.getAction().clientTick(this, false);
 		this.getForm().clientTick(this, false);
 		this.getCharacter().clientTick(this, false);
+
+		ParsedCfaState.conditionallyRestoreGroundedResources(this);
 
 		Vec3d pos = PLAYER.getPos();
 		this.deltaX = pos.x - prevX;

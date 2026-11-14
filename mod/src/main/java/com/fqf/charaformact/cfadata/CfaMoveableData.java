@@ -1,5 +1,6 @@
 package com.fqf.charaformact.cfadata;
 
+import com.fqf.charaformact.registries.ParsedCfaState;
 import com.fqf.charaformact.registries.actions.ParsedActionHelper;
 import com.fqf.charaformact.registries.actions.ParsedTransition;
 import com.fqf.charaformact.registries.actions.UniversalActionDefinitionHelper;
@@ -22,6 +23,7 @@ import org.joml.Vector2d;
 import java.util.HashSet;
 
 public abstract class CfaMoveableData extends CfaPlayerData implements CfaTravelData {
+	// TODO: Make jump capping Mario-specific?
 	public boolean jumpCapped;
 
 	public CfaMoveableData() {
@@ -130,7 +132,7 @@ public abstract class CfaMoveableData extends CfaPlayerData implements CfaTravel
 	public void goTo(Vec3d pos) {
 		if(this.getPlayer() instanceof CfaPositionSettable mainClientPlayer) mainClientPlayer.cfa$setPos(pos);
 		else if(this.getPlayer() instanceof ServerPlayerEntity serverPlayer) ((CfaPositionSettable) serverPlayer.networkHandler).cfa$setPos(pos);
-		this.getPlayer().setPos(pos.x, pos.y, pos.z);
+//		this.getPlayer().setPos(pos.x, pos.y, pos.z);
 	}
 
 	@Override
@@ -271,8 +273,8 @@ public abstract class CfaMoveableData extends CfaPlayerData implements CfaTravel
 	}
 
 	@Override
-	public void refreshJumpCapping() {
-		this.jumpCapped = false;
+	public void restoreGroundedResources() {
+		ParsedCfaState.restoreAllGroundedResources(this);
 	}
 
 	protected Vec3d getMovementWithFluidPushingAndNudgeVel() {

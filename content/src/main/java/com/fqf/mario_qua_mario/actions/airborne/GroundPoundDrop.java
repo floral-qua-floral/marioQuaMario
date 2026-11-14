@@ -13,9 +13,9 @@ import com.fqf.mario_qua_mario.actions.grounded.GroundPoundLand;
 import com.fqf.mario_qua_mario.collision_attacks.GroundPound;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.fqf.charaformact_api.util.StatCategory.*;
@@ -29,18 +29,16 @@ public class GroundPoundDrop implements AirborneActionDefinition {
 		return ANIMATION;
 	}
 
-	@Override public @NotNull SneakingRule defineSneakingRule() {
-		return SneakingRule.PROHIBIT;
-	}
-	@Override public @NotNull SprintingRule defineSprintingRule() {
-		return SprintingRule.PROHIBIT;
+	@Override public void defineActionFlags(ImmutableSet.Builder<ActionFlag> builder) {
+		builder.add(ActionFlag.PROHIBIT_SPRINT);
 	}
 
 	@Override public @Nullable BappingRule defineBappingRule() {
 		return BappingRule.GROUND_POUND;
 	}
-	@Override public @Nullable Identifier defineActiveCollisionAttack() {
-		return GroundPound.ID;
+
+	@Override public void accumulateCollisionAttacks(ImmutableSet.Builder<Identifier> builder) {
+		builder.add(GroundPound.ID);
 	}
 
 	public static final CfaStat GROUND_POUND_VEL = new CfaStat(-1.5, TERMINAL_VELOCITY, COLLISION_ATTACK);

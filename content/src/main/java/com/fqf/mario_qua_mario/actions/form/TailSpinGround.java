@@ -4,10 +4,9 @@ import com.fqf.charaformact_api.cfadata.CfaAuthoritativeData;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.charaformact_api.definitions.states.actions.util.SneakingRule;
-import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimation;
@@ -23,13 +22,13 @@ import com.fqf.mario_qua_mario.actions.grounded.DuckWaddle;
 import com.fqf.mario_qua_mario.forms.Raccoon;
 import com.fqf.mario_qua_mario.util.Powers;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.apache.commons.lang3.mutable.MutableInt;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class TailSpinGround implements GroundedActionDefinition {
@@ -76,11 +75,11 @@ public class TailSpinGround implements GroundedActionDefinition {
 		return CAMERA_ANIMATIONS;
 	}
 
-	@Override public @NotNull SneakingRule defineSneakingRule() {
-		return SneakingRule.SLIP;
-	}
-	@Override public @NotNull SprintingRule defineSprintingRule() {
-		return SprintingRule.PROHIBIT;
+	@Override
+	public void defineActionFlags(ImmutableSet.Builder<ActionFlag> builder) {
+		builder.addAll(ActionFlag.SLIDING);
+		builder.addAll(ActionFlag.SNEAKING);
+		builder.add(ActionFlag.NO_LEDGE_CLIP);
 	}
 
 	public static void attemptTailStrike(CfaAuthoritativeData data) {

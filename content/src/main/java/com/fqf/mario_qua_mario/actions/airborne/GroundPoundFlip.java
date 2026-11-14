@@ -3,7 +3,10 @@ package com.fqf.mario_qua_mario.actions.airborne;
 import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionFlag;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
+import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
+import com.fqf.charaformact_api.definitions.states.actions.util.SizeChangeBehavior;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
@@ -23,7 +26,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.apache.commons.lang3.mutable.MutableInt;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class GroundPoundFlip implements AirborneActionDefinition {
@@ -84,11 +86,8 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 		return makeCameraAnimations(FLIP_DURATION + 2.5F);
 	}
 
-	@Override public @NotNull SneakingRule defineSneakingRule() {
-		return SneakingRule.PROHIBIT;
-	}
-	@Override public @NotNull SprintingRule defineSprintingRule() {
-		return SprintingRule.PROHIBIT;
+	@Override public void defineActionFlags(ImmutableSet.Builder<ActionFlag> builder) {
+		builder.add(ActionFlag.PROHIBIT_SPRINT);
 	}
 
 	public static final StateAttachmentKey<MutableInt> FLIP_TIMER =

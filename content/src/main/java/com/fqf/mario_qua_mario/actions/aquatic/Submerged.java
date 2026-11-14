@@ -6,6 +6,7 @@ import com.fqf.charaformact_api.definitions.states.actions.AquaticActionDefiniti
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
+import com.fqf.charaformact_api.definitions.states.attachments.StateAttachmentKey;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.CfaMarioAddon;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -13,8 +14,8 @@ import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.airborne.LavaBoost;
 import com.fqf.mario_qua_mario.actions.airborne.SpecialFall;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
@@ -76,11 +77,8 @@ public class Submerged implements AquaticActionDefinition {
 		);
 	}
 
-	@Override public @NotNull SneakingRule defineSneakingRule() {
-		return SneakingRule.PROHIBIT;
-	}
-	@Override public @NotNull SprintingRule defineSprintingRule() {
-		return SprintingRule.PROHIBIT;
+	@Override public void defineActionFlags(ImmutableSet.Builder<ActionFlag> builder) {
+		builder.add(ActionFlag.PROHIBIT_SPRINT, ActionFlag.PROHIBIT_FLIGHT);
 	}
 
 	@Override public @Nullable BappingRule defineBappingRule() {
@@ -143,6 +141,11 @@ public class Submerged implements AquaticActionDefinition {
 			data -> data.getImmersionPercent() <= 0.3,
 			EvaluatorEnvironment.COMMON
 	);
+
+	@Override
+	public void onEnter(CfaData data, ImmutableSet.Builder<StateAttachmentKey<?>> attachmentsToKeep) {
+		data.reset(CfaMarioAddon.ACTION_TIMER);
+	}
 
 	@Override
 	public void accumulateInputTransitions(ImmutableList.Builder<ActionTransitionDetails> builder, AquaticActionHelper helper) {

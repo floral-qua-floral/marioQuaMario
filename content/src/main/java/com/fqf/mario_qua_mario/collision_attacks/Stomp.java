@@ -139,7 +139,7 @@ public class Stomp implements CollisionAttackTypeDefinition {
 		return switch(result) {
 			case NORMAL, GLANCING, RESISTED -> {
 				if(affectMario) {
-					data.refreshJumpCapping();
+					data.restoreGroundedResources();
 					data.setYVel(StompBounce.BOUNCE_VEL.get(data) + 0.2F * getEnchantmentLevel(equipment, data.getPlayer().getWorld(), BOUNDING_ID));
 				}
 				yield movingToPos.withAxis(Direction.Axis.Y, target.getY() + target.getHeight());

@@ -4,6 +4,7 @@ import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.appearance.CommonAppearanceCollector;
 import com.fqf.charaformact.appearance.ParsedCommonAppearance;
 import com.fqf.charaformact.packets.CfaDataPackets;
+import com.fqf.charaformact.registries.ParsedCfaState;
 import com.fqf.charaformact.registries.RegistryManager;
 import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import com.fqf.charaformact.registries.actions.ParsedActionHelper;
@@ -218,6 +219,8 @@ public class CfaServerPlayerData extends CfaMoveableData implements CfaAuthorita
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.BASIC);
 		// Check for Elytra and Creative Flight
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION_EARLY);
+
+		ParsedCfaState.conditionallyRestoreGroundedResources(this);
 
 		this.getAction().travelHook(this);
 

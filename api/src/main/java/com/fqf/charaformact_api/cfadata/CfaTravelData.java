@@ -23,5 +23,5 @@ public interface CfaTravelData extends CfaReadableMotionData {
 			double forwardAngleContribution, double strafeAngleContribution, double redirectDelta
 	);
 
-	void refreshJumpCapping();
+	void restoreGroundedResources();
 }

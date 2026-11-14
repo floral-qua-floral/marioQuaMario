@@ -68,6 +68,13 @@ public record ParsedTransition(
 				// Hitbox is bigger on at least 1 axis
 				effectiveSizeChangeBehavior = SizeChangeBehavior.REQUIRE_SUFFICIENT_SPACE;
 
+			// If we're not allowed to make compression transitions between these categories, then ensure we aren't.
+			if(!from.allowCompressionTransitionsTo(to.CATEGORY)) effectiveSizeChangeBehavior = switch(effectiveSizeChangeBehavior) {
+				case FORCE_IN_TIGHT_SPACES -> SizeChangeBehavior.NO_CHECKING;
+				case COMPLEX -> SizeChangeBehavior.REQUIRE_SUFFICIENT_SPACE;
+				default -> effectiveSizeChangeBehavior;
+			};
+
 			if(effectiveSizeChangeBehavior != SizeChangeBehavior.NO_CHECKING && CharaFormAct.CONFIG.gameLaunchLogging())
 				CharaFormAct.LOGGER.info("Transition {}->{} involves a change of hitbox, and has automagically" +
 						" been assigned Size Change Behavior {}.", from.ID, definition.targetID(), effectiveSizeChangeBehavior);

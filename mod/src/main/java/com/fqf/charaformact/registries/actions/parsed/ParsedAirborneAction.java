@@ -31,6 +31,11 @@ public class ParsedAirborneAction extends AbstractParsedAction {
 	}
 
 	@Override
+	protected boolean allowCompressionTransitionsTo(ActionCategory category) {
+		return category == ActionCategory.AIRBORNE;
+	}
+
+	@Override
 	protected void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder) {
 		this.AIRBORNE_DEFINITION.accumulateBasicTransitions(builder, UniversalActionDefinitionHelper.INSTANCE);
 	}

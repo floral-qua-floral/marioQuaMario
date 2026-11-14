@@ -6,6 +6,7 @@ import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -56,5 +57,20 @@ public class EntityMixinForPlayers implements EntitiesMixinInterface {
 	@Inject(method = "changeLookDirection", at = @At("RETURN"))
 	private void afterChangeLookDirectionMixin(double cursorDeltaX, double cursorDeltaY, CallbackInfo ci) {
 		this.cfa$afterChangeLookDirection();
+	}
+
+	@ModifyReturnValue(method = "isSneaky", at = @At("RETURN"))
+	private boolean modifySneakiness(boolean original) {
+		return original && this.cfa$canBeSneaky();
+	}
+
+	@WrapMethod(method = "setPose")
+	private void allowOverridingSetPose(EntityPose pose, Operation<Void> original) {
+		original.call(this.cfa$replaceCurrentPose(pose));
+	}
+
+	@ModifyReturnValue(method = "getPose", at = @At("RETURN"))
+	private EntityPose allowGetAlternatePose(EntityPose original) {
+		return this.cfa$replaceCurrentPose(original);
 	}
 }

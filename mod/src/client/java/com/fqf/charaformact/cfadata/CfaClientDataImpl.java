@@ -124,7 +124,7 @@ public interface CfaClientDataImpl extends CfaAnimatingData {
 	}
 
 	default SoundEvent getFloorSlidingSound() {
-		return CfaSounds.SKID;
+		return null;
 	}
 
 	@Override

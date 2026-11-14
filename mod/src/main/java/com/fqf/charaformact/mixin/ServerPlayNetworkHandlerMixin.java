@@ -4,6 +4,7 @@ import com.fqf.charaformact.util.CfaGamerules;
 import com.fqf.charaformact.util.CfaPositionSettable;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import net.minecraft.entity.MovementType;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.Vec3d;
@@ -63,11 +64,12 @@ public class ServerPlayNetworkHandlerMixin implements CfaPositionSettable {
 	@Override
 	public void cfa$setPos(Vec3d pos) {
 		// for the love of god please
-		this.lastTickX = pos.x;
-		this.lastTickY = pos.y;
-		this.lastTickZ = pos.z;
-		this.updatedX = pos.x;
-		this.updatedY = pos.y;
-		this.updatedZ = pos.z;
+		this.player.move(MovementType.SELF, pos.subtract(this.player.getPos()));
+//		this.lastTickX = pos.x;
+//		this.lastTickY = pos.y;
+//		this.lastTickZ = pos.z;
+//		this.updatedX = pos.x;
+//		this.updatedY = pos.y;
+//		this.updatedZ = pos.z;
 	}
 }

@@ -1,8 +1,11 @@
 package com.fqf.mario_qua_mario.actions.grounded;
 
+import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionFlag;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
+import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.Easing;
@@ -13,8 +16,8 @@ import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.aquatic.UnderwaterWalk;
 import com.fqf.mario_qua_mario.util.StandUpWithKneeAnimation;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.fqf.charaformact_api.util.StatCategory.DRAG;
@@ -54,15 +57,14 @@ public class BonkGround implements GroundedActionDefinition {
 		);
 	}
 
-	@Override public @NotNull SlidingStatus defineSlidingStatus() {
-		return SlidingStatus.SLIDING;
+	@Override public void defineActionFlags(ImmutableSet.Builder<ActionFlag> builder) {
+		builder.addAll(ActionFlag.SLIDING);
+		builder.add(ActionFlag.PROHIBIT_SPRINT, ActionFlag.CROUCHING, ActionFlag.NO_LEDGE_CLIP);
 	}
 
-	@Override public @NotNull SneakingRule defineSneakingRule() {
-		return SneakingRule.PROHIBIT;
-	}
-	@Override public @NotNull SprintingRule defineSprintingRule() {
-		return SprintingRule.PROHIBIT;
+	@Override
+	public void clientTick(CfaClientData data, boolean isSelf) {
+		DuckSlide.slideSound(data);
 	}
 
 	public static final CfaStat BONK_DRAG = new CfaStat(0.185, RUNNING, DRAG);

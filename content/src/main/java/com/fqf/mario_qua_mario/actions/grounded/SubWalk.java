@@ -3,26 +3,26 @@ package com.fqf.mario_qua_mario.actions.grounded;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.airborne.Jump;
 import com.fqf.mario_qua_mario.actions.aquatic.UnderwaterWalk;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
-import org.jetbrains.annotations.NotNull;
 
 import static com.fqf.charaformact_api.util.StatCategory.*;
 
 public class SubWalk implements GroundedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("sub_walk");
 
-	@Override public @NotNull SprintingRule defineSprintingRule() {
-		return SprintingRule.PROHIBIT;
+	@Override public void defineActionFlags(ImmutableSet.Builder<ActionFlag> builder) {
+		builder.add(ActionFlag.PROHIBIT_SPRINT);
 	}
 
 	public static final CfaStat WALK_ACCEL = new CfaStat(0.045, WALKING, FORWARD, ACCELERATION);

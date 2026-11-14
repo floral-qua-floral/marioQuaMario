@@ -1,9 +1,9 @@
 package com.fqf.mario_qua_mario.actions.airborne;
 
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -16,6 +16,7 @@ import com.fqf.mario_qua_mario.forms.Raccoon;
 import com.fqf.mario_qua_mario.util.ClimbTransitions;
 import com.fqf.mario_qua_mario.util.Powers;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,8 +36,8 @@ public class PJump extends Jump implements AirborneActionDefinition {
 		);
 	}
 
-	@Override public @NotNull SprintingRule defineSprintingRule() {
-		return SprintingRule.ALLOW;
+	@Override public void defineActionFlags(ImmutableSet.Builder<ActionFlag> builder) {
+		// Allow sprinting
 	}
 
 	@Override

@@ -29,6 +29,11 @@ public class ParsedGenericAction extends AbstractParsedAction {
 		return ActionCategory.GENERIC;
 	}
 
+	@Override
+	protected boolean allowCompressionTransitionsTo(ActionCategory category) {
+		return false;
+	}
+
 	@Override protected void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder) {
 		this.GENERIC_DEFINITION.accumulateBasicTransitions(builder, UniversalActionDefinitionHelper.INSTANCE);
 	}

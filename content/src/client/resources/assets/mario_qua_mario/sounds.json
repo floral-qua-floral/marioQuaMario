@@ -257,6 +257,36 @@
 			"mario_qua_mario:sfx/movement/jump"
 		]
 	},
+	"sfx.movement.skid": {
+		"subtitle": "subtitles.mario_qua_mario.movement.skid",
+		"sounds": [
+			"mario_qua_mario:sfx/movement/skid"
+		]
+	},
+	"sfx.movement.skid_ice": {
+		"subtitle": "subtitles.mario_qua_mario.movement.skid_ice",
+		"sounds": [
+			"mario_qua_mario:sfx/movement/skid_ice"
+		]
+	},
+	"sfx.movement.skid_sand": {
+		"subtitle": "subtitles.mario_qua_mario.movement.skid_sand",
+		"sounds": [
+			"mario_qua_mario:sfx/movement/skid_sand"
+		]
+	},
+	"sfx.movement.skid_snow": {
+		"subtitle": "subtitles.mario_qua_mario.movement.skid_snow",
+		"sounds": [
+			"mario_qua_mario:sfx/movement/skid_snow"
+		]
+	},
+	"sfx.movement.skid_wall": {
+		"subtitle": "subtitles.mario_qua_mario.movement.skid_wall",
+		"sounds": [
+			"mario_qua_mario:sfx/movement/skid_wall"
+		]
+	},
 	"sfx.movement.wall_jump": {
 		"subtitle": "subtitles.mario_qua_mario.movement.wall_jump",
 		"sounds": [

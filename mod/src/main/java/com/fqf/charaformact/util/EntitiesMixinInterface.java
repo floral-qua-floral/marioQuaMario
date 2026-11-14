@@ -2,6 +2,7 @@ package com.fqf.charaformact.util;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 public interface EntitiesMixinInterface {
@@ -46,6 +47,22 @@ public interface EntitiesMixinInterface {
 	}
 
 	default float cfa$modifyDamageRightBeforeApplication(float original) {
+		return original;
+	}
+
+	default boolean cfa$canBeSneaky() {
+		return true;
+	}
+
+	default EntityPose cfa$replaceCurrentPose(EntityPose original) {
+		return original;
+	}
+
+	default boolean cfa$allowSwimmingPoseLean() {
+		return true;
+	}
+
+	default boolean cfa$isClimbing(boolean original) {
 		return original;
 	}
 }

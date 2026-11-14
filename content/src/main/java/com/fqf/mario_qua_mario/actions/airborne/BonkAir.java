@@ -5,9 +5,9 @@ import com.fqf.charaformact_api.cfadata.CfaData;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.SizeChangeBehavior;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
@@ -22,7 +22,6 @@ import com.google.common.collect.ImmutableSet;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class BonkAir extends Fall implements AirborneActionDefinition {
@@ -150,12 +149,13 @@ public class BonkAir extends Fall implements AirborneActionDefinition {
 		);
 	}
 
-	@Override public @NotNull SprintingRule defineSprintingRule() {
-		return SprintingRule.PROHIBIT;
+	@Override public void defineActionFlags(ImmutableSet.Builder<ActionFlag> builder) {
+		builder.add(ActionFlag.PROHIBIT_SPRINT);
 	}
 
-	@Override public @Nullable Identifier defineActiveCollisionAttack() {
-		return null;
+	@Override
+	public void accumulateCollisionAttacks(ImmutableSet.Builder<Identifier> builder) {
+
 	}
 
 	public static final ActionTransitionDetails BONK = new ActionTransitionDetails(

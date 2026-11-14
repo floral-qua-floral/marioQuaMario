@@ -2,7 +2,10 @@ package com.fqf.mario_qua_mario.actions.airborne;
 
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionFlag;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
+import com.fqf.charaformact_api.definitions.states.actions.util.BappingRule;
+import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.aquatic.Submerged;
@@ -11,8 +14,8 @@ import com.fqf.mario_qua_mario.actions.wallbound.WallSlide;
 import com.fqf.mario_qua_mario.collision_attacks.Stomp;
 import com.fqf.mario_qua_mario.util.ClimbTransitions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.fqf.charaformact_api.util.StatCategory.*;
@@ -20,18 +23,15 @@ import static com.fqf.charaformact_api.util.StatCategory.*;
 public class Fall implements AirborneActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("fall");
 
-	@Override public @NotNull SneakingRule defineSneakingRule() {
-		return SneakingRule.PROHIBIT;
-	}
-	@Override public @NotNull SprintingRule defineSprintingRule() {
-		return SprintingRule.IF_ALREADY_SPRINTING;
+	@Override public void defineActionFlags(ImmutableSet.Builder<ActionFlag> builder) {
+		builder.add(ActionFlag.RESTRICT_SPRINT);
 	}
 
 	@Override public @Nullable BappingRule defineBappingRule() {
 		return BappingRule.FALLING;
 	}
-	@Override public @Nullable Identifier defineActiveCollisionAttack() {
-		return Stomp.ID;
+	@Override public void accumulateCollisionAttacks(ImmutableSet.Builder<Identifier> builder) {
+		builder.add(Stomp.ID);
 	}
 
 	public static final CfaStat FALL_ACCEL = new CfaStat(-0.115, NORMAL_GRAVITY);

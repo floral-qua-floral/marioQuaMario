@@ -50,9 +50,9 @@ public class ClimbWall implements WallboundActionDefinition {
 					assert wall != null;
 
 					if(data.getYVel() != 0 || wall.getSidleVel() != 0) {
-						double factorForInput = 1 / ClimbPole.CLIMB_SPEED.get(data);
-						double climbInput = data.getYVel() * factorForInput;
-						double sidleInput = wall.getSidleVel() * factorForInput;
+						ClimbPole.ClimbStatSet stats = ClimbPole.ClimbStatSet.choose(data);
+						double climbInput = data.getYVel() * (1 / stats.getVertical(data.getYVel()).get(data));
+						double sidleInput = wall.getSidleVel() * (1 / stats.sidle().get(data));
 
 						vars.progress += Math.min(1, (float) Vector2d.length(climbInput, sidleInput)) / 2;
 						float denominator = (float) Math.max(Math.abs(climbInput), Math.abs(sidleInput));
@@ -95,11 +95,9 @@ public class ClimbWall implements WallboundActionDefinition {
 				}
 		);
 	}
-	@Override public @NotNull SneakingRule defineSneakingRule() {
-		return SneakingRule.PROHIBIT;
-	}
-	@Override public @NotNull SprintingRule defineSprintingRule() {
-		return SprintingRule.PROHIBIT;
+	@Override public void defineActionFlags(ImmutableSet.Builder<ActionFlag> builder) {
+		builder.addAll(ActionFlag.FULL_CLIMBING);
+		builder.add(ActionFlag.PROHIBIT_FLIGHT, ActionFlag.ALLOW_STEALTH);
 	}
 
 	@Override public @NotNull WallBodyAlignment defineBodyAlignment() {
@@ -170,9 +168,9 @@ public class ClimbWall implements WallboundActionDefinition {
 				data.goTo(data.getPlayer().getPos().withAxis(axis, targetCoord));
 		}
 
-		double climbSpeed = ClimbPole.CLIMB_SPEED.get(data);
-		double yVel = climbInput * climbSpeed;
-		double sidleVel = sidleInput * climbSpeed;
+		ClimbPole.ClimbStatSet stats = ClimbPole.ClimbStatSet.choose(data);
+		double yVel = climbInput * stats.getVertical(climbInput).get(data);
+		double sidleVel = sidleInput * stats.sidle().get(data);
 		data.setYVel(yVel);
 		helper.setSidleVel(data, sidleVel);
 	}

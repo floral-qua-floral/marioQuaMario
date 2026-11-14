@@ -1,15 +1,14 @@
 package com.fqf.mario_qua_mario.actions.airborne;
 
 import com.fqf.charaformact_api.definitions.states.actions.AirborneActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
-import com.fqf.charaformact_api.definitions.states.actions.util.SneakingRule;
-import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.grounded.DuckWaddle;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DuckFall extends Fall implements AirborneActionDefinition {
@@ -23,12 +22,9 @@ public class DuckFall extends Fall implements AirborneActionDefinition {
 		return DuckWaddle.makeAnimation(false, false);
 	}
 
-	@Override public @NotNull SneakingRule defineSneakingRule() {
-		return SneakingRule.ALLOW;
-	}
-
-	@Override public @NotNull SprintingRule defineSprintingRule() {
-		return SprintingRule.PROHIBIT;
+	@Override public void defineActionFlags(ImmutableSet.Builder<ActionFlag> builder) {
+		super.defineActionFlags(builder);
+		builder.addAll(ActionFlag.SNEAKING);
 	}
 
 	public static final ActionTransitionDetails DUCK_FALL = Fall.FALL.variate(DuckFall.ID, null);

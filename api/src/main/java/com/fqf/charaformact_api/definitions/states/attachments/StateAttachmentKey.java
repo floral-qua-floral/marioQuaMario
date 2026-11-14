@@ -25,9 +25,18 @@ import java.util.function.Supplier;
 /// 		MyMod.LOGGER.info("Beep!");
 /// }
 /// ```
-///
 /// However, there's nothing stopping you from accessing Attachments from a State that doesn't match their Category.
-/// An example use case could be if you wanted
+///
+/// Registering, modifying, and retrieving State Attachments is expected to have no meaningful performance cost.
+/// However, registration (that is, initialization of State Attachment Key objects) MUST always occur before CFA addon
+/// initialization is complete; after every addon has been successfully processed during mod loading, trying to create
+/// any new State Attachment Keys will cause a crash.
+///
+/// Internally, State Attachments are just indices on an Array inside an EnumMap. When attachments are wiped during
+/// state changes, this is done by simply creating a new empty Array, copying over any Attachments that are to be kept,
+/// and then allowing the Garbage Collector to destroy the former Attachments. At no point does CharaFormAct ever have
+/// to iterate over the full array of Attachments. As such, you could theoretically register hundreds of them and it
+/// would have very little performance impact.
 ///
 /// Note that changing Character will also always reset the player's Form and Action, and so clears out every single
 /// Attachment regardless of its category.

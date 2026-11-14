@@ -29,10 +29,5 @@
   "gamerule.cfaMinimumHealthBarAfterFormChange": "Minimum health bar fullness after changing to a stronger form",
   "gamerule.cfaAlwaysRevertToWeakestForm": "Characters revert to weakest possible form at 0 health",
 
-  "subtitles.charaformact.movement.bump": "Block bumped",
-  "subtitles.charaformact.movement.skid": "Skidding",
-  "subtitles.charaformact.movement.skid_ice": "Slipping",
-  "subtitles.charaformact.movement.skid_sand": "Skidding",
-  "subtitles.charaformact.movement.skid_snow": "Skidding",
-  "subtitles.charaformact.movement.skid_wall": "Sliding"
+  "subtitles.charaformact.movement.bump": "Block bumped"
 }

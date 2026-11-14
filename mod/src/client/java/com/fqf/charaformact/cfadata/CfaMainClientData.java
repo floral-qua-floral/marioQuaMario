@@ -6,12 +6,13 @@ import com.fqf.charaformact.bapping.BlockBappingUtil;
 import com.fqf.charaformact.cfadata.equipment.PlayerEquipmentData;
 import com.fqf.charaformact.cfadata.util.ActiveAnimation;
 import com.fqf.charaformact.cfadata.util.AdvancedArrangement;
+import com.fqf.charaformact.registries.ParsedCfaState;
 import com.fqf.charaformact.registries.power_granting.ParsedForm;
 import com.fqf.charaformact.util.BlockCollisionFinder;
 import com.fqf.charaformact.util.DirectionBasedWallInfo;
 import com.fqf.charaformact.util.AdvancedWallInfo;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
-import com.fqf.charaformact_api.definitions.states.actions.util.SlidingStatus;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.HandPreference;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimation;
@@ -216,6 +217,8 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 		// Check for Elytra and Creative Flight
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.WORLD_COLLISION_EARLY);
 
+		ParsedCfaState.conditionallyRestoreGroundedResources(this);
+
 		this.getAction().travelHook(this);
 
 		ParsedActionHelper.attemptTransitions(this, TransitionPhase.INPUT);
@@ -237,7 +240,7 @@ public class CfaMainClientData extends CfaMoveableData implements CfaClientDataI
 		this.applyModifiedVelocity();
 
 		if(this.getActionCategory() == ActionCategory.GROUNDED && this.getPlayer().isOnGround() && this.getYVel() == 0.0)
-			if(this.getAction().SLIDING_STATUS == SlidingStatus.NOT_SLIDING || this.getAction().SLIDING_STATUS == SlidingStatus.NOT_SLIDING_SMOOTH)
+			if(!this.getAction().FLAGS.contains(ActionFlag.NO_STEP))
 				this.getPlayer().setVelocity(this.getPlayer().getVelocity().withAxis(Direction.Axis.Y, -0.1));
 		// ^ Needed for Presence Footsteps compatibility
 

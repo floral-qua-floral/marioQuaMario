@@ -96,6 +96,11 @@
 
   "subtitles.mario_qua_mario.movement.flip": "Aerial flip",
   "subtitles.mario_qua_mario.movement.jump": "Jumping",
+  "subtitles.mario_qua_mario.movement.skid": "Skidding",
+  "subtitles.mario_qua_mario.movement.skid_ice": "Slipping",
+  "subtitles.mario_qua_mario.movement.skid_sand": "Skidding",
+  "subtitles.mario_qua_mario.movement.skid_snow": "Skidding",
+  "subtitles.mario_qua_mario.movement.skid_wall": "Sliding",
   "subtitles.mario_qua_mario.movement.wall_jump": "Wall jumping",
 
   "subtitles.mario_qua_mario.form.burn_object": "Fireball incinerates",

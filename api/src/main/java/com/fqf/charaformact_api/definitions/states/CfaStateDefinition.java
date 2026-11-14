@@ -23,4 +23,8 @@ public interface CfaStateDefinition {
 	default void onExit(CfaData data) {
 
 	}
+
+	default void restoreGroundedResources(CfaData data) {
+
+	}
 }

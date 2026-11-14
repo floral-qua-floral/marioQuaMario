@@ -53,6 +53,11 @@ public class MarioSFX {
 	public static final SoundEvent TOAD_JUMP = makeMovementSound("toad_jump");
 	public static final SoundEvent TOADETTE_JUMP = makeMovementSound("toadette_jump");
 	public static final SoundEvent WARIO_JUMP = makeMovementSound("wario_jump");
+	public static final SoundEvent SKID = makeMovementSound("skid");
+	public static final SoundEvent SKID_ICE = makeMovementSound("skid_ice");
+	public static final SoundEvent SKID_SAND = makeMovementSound("skid_sand");
+	public static final SoundEvent SKID_SNOW = makeMovementSound("skid_snow");
+	public static final SoundEvent SKID_WALL = makeMovementSound("skid_wall");
 	public static final SoundEvent WALL_JUMP = makeMovementSound("wall_jump");
 
 	private static SoundEvent makeMovementSound(String name) {

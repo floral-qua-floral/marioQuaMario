@@ -46,6 +46,11 @@ public class ParsedMountedAction extends AbstractParsedAction {
 	}
 
 	@Override
+	protected boolean allowCompressionTransitionsTo(ActionCategory category) {
+		return false;
+	}
+
+	@Override
 	protected void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder) {
 		this.MOUNTED_DEFINITION.accumulateBasicTransitions(builder, UniversalActionDefinitionHelper.INSTANCE);
 	}

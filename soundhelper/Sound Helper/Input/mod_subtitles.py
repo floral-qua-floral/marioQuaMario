@@ -1,9 +1,5 @@
 sfx_movement = {
-  "skid": "Skidding",
-  "skid_ice": "Slipping",
-  "skid_sand": "Skidding",
-  "skid_snow": "Skidding",
-  "skid_wall": "Sliding",
+
   "bump": "Block bumped",
 }
 

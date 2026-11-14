@@ -8,11 +8,6 @@ import net.minecraft.util.Identifier;
 
 public class CfaSounds {
 	public static final SoundEvent BUMP = makeMovementSound("bump");
-	public static final SoundEvent SKID = makeMovementSound("skid");
-	public static final SoundEvent SKID_ICE = makeMovementSound("skid_ice");
-	public static final SoundEvent SKID_SAND = makeMovementSound("skid_sand");
-	public static final SoundEvent SKID_SNOW = makeMovementSound("skid_snow");
-	public static final SoundEvent SKID_WALL = makeMovementSound("skid_wall");
 
 	private static SoundEvent makeMovementSound(String name) {
 		return makeAndRegisterSound("sfx.movement." + name);

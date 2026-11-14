@@ -22,8 +22,10 @@ public enum StatCategory {
 	FORWARD,
 	BACKWARD,
 	STRAFE,
-	UP,
-	DOWN,
+
+	ASCEND, // Used for swimming and climbing.
+	DESCEND, // Used for climbing and Ground Pounding.
+	SIDLE, // Used for climbing side to side against a wall.
 
 	DRAG,
 	FRICTION, // Mostly for Luigi?

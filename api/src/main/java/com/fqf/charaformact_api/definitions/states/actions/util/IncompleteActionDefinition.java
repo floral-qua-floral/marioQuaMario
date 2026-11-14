@@ -6,7 +6,6 @@ import com.fqf.charaformact_api.definitions.states.actions.util.animation.Animat
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface IncompleteActionDefinition extends AttackInterceptingStateDefinition {
@@ -14,7 +13,7 @@ public interface IncompleteActionDefinition extends AttackInterceptingStateDefin
 		return 0.6F;
 	}
 	default float defineHitboxHeight() {
-		return 1.8F;
+		return 1.8F; // Vanilla sneaking: 1.5
 	}
 	default float defineHitboxEyeHeight() {
 		return Math.max(this.defineHitboxHeight() / 2, this.defineHitboxHeight() - 0.18F);
@@ -27,20 +26,14 @@ public interface IncompleteActionDefinition extends AttackInterceptingStateDefin
 		return null;
 	}
 
-	default @NotNull SlidingStatus defineSlidingStatus() {
-		return SlidingStatus.NOT_SLIDING;
+	default void defineActionFlags(ImmutableSet.Builder<ActionFlag> builder) {
+
 	}
-	default @NotNull SneakingRule defineSneakingRule() {
-		return SneakingRule.ALLOW;
-	}
-	default @NotNull SprintingRule defineSprintingRule() {
-		return SprintingRule.ALLOW;
-	}
-	
+
 	default @Nullable BappingRule defineBappingRule() {
 		return null;
 	}
-	default @Nullable Identifier defineActiveCollisionAttack() {
-		return null;
+	default void accumulateCollisionAttacks(ImmutableSet.Builder<Identifier> builder) {
+
 	}
 }

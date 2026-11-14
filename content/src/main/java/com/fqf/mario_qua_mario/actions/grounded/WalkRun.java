@@ -6,19 +6,19 @@ import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.TransitionInjectionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.charaformact_api.definitions.states.actions.util.SprintingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.charaformact_api.util.Easing;
 import com.fqf.mario_qua_mario.CfaMarioAddon;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.apache.commons.lang3.mutable.MutableInt;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.fqf.charaformact_api.util.StatCategory.*;
@@ -43,8 +43,8 @@ public class WalkRun extends SubWalk implements GroundedActionDefinition {
 		);
 	}
 
-	@Override public @NotNull SprintingRule defineSprintingRule() {
-		return SprintingRule.ALLOW;
+	@Override public void defineActionFlags(ImmutableSet.Builder<ActionFlag> builder) {
+		// Allow sprinting
 	}
 
 	public static final CfaStat RUN_ACCEL = new CfaStat(0.0175, RUNNING, FORWARD, ACCELERATION);

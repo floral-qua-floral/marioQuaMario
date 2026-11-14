@@ -13,11 +13,11 @@ import com.fqf.charaformact.util.AdvancedWallInfo;
 import com.fqf.charaformact.util.CfaStatCalculationHelper;
 import com.fqf.charaformact.util.DirectionBasedWallInfo;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionFlag;
 import com.fqf.charaformact_api.definitions.states.attachments.AttachmentCategory;
 import com.fqf.charaformact_api.definitions.states.attachments.StateAttachmentKey;
 import com.fqf.charaformact_api.definitions.states.StatAlteringStateDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
-import com.fqf.charaformact_api.definitions.states.actions.util.GenericActionType;
 import com.fqf.charaformact_api.definitions.states.actions.util.WallBodyAlignment;
 import com.fqf.charaformact_api.util.CfaStat;
 import it.unimi.dsi.fastutil.objects.ObjectDoubleImmutablePair;
@@ -378,7 +378,7 @@ public abstract class CfaPlayerData implements CfaReadableMotionData {
 	}
 
 	public boolean actionPreventsVanillaTravel() {
-		return this.getAction().GENERIC_ACTION_TYPE == GenericActionType.UNSPECIFIED;
+		return !this.getAction().FLAGS.contains(ActionFlag.DO_VANILLA_TRAVEL);
 	}
 
 	public boolean doCustomTravel(boolean ignoreAction) {

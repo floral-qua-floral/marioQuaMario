@@ -40,6 +40,11 @@ public class ParsedGroundedAction extends AbstractParsedAction {
 	}
 
 	@Override
+	protected boolean allowCompressionTransitionsTo(ActionCategory category) {
+		return category == ActionCategory.GROUNDED;
+	}
+
+	@Override
 	protected void accumulateBasicTransitions(ImmutableList.Builder<ActionTransitionDetails> builder) {
 		this.GROUNDED_DEFINITION.accumulateBasicTransitions(builder, UniversalActionDefinitionHelper.INSTANCE);
 	}

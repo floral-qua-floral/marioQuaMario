@@ -7,14 +7,12 @@ import com.fqf.charaformact.bapping.WorldBapsInfo;
 import com.fqf.charaformact.cfadata.CfaMoveableData;
 import com.fqf.charaformact.cfadata.CfaPlayerData;
 import com.fqf.charaformact.cfadata.injections.AdvCfaDataHolder;
+import com.fqf.charaformact.registries.actions.AbstractParsedAction;
 import com.fqf.charaformact.registries.actions.parsed.ParsedWallboundAction;
 import com.fqf.charaformact.util.CfaGamerules;
 import com.fqf.charaformact.util.CfaNbtKeys;
 import com.fqf.charaformact.util.EntitiesMixinInterface;
-import com.fqf.charaformact_api.definitions.states.actions.util.ActionCategory;
-import com.fqf.charaformact_api.definitions.states.actions.util.SlidingStatus;
-import com.fqf.charaformact_api.definitions.states.actions.util.SneakingRule;
-import com.fqf.charaformact_api.definitions.states.actions.util.WallBodyAlignment;
+import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
@@ -38,6 +36,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.Set;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDataHolder, EntitiesMixinInterface {
@@ -97,10 +97,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDa
 	public boolean cfa$shouldStepOnBlock() {
 		CfaPlayerData data = this.cfa$getCfaData();
 		if(!data.isEnabled()) return true;
-		return switch(data.getAction().SLIDING_STATUS) {
-			case SLIDING, SLIDING_SILENT, SKIDDING -> false;
-			default -> true;
-		};
+		return !data.getAction().FLAGS.contains(ActionFlag.NO_STEP);
 	}
 
 	@Inject(method = "shouldSwimInFluids", at = @At("HEAD"), cancellable = true)
@@ -126,14 +123,14 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDa
 	@Inject(method = "clipAtLedge", at = @At("HEAD"), cancellable = true)
 	private void slideOffLedges(CallbackInfoReturnable<Boolean> cir) {
 		CfaPlayerData data = cfa$getCfaData();
-		if(data.doCustomTravel(false) && data.getAction().SNEAKING_RULE == SneakingRule.SLIP)
+		if(data.doCustomTravel(true) && data.getAction().FLAGS.contains(ActionFlag.NO_LEDGE_CLIP))
 			cir.setReturnValue(false);
 	}
 
 	@Inject(method = "tickMovement", at = @At("TAIL"))
 	private void preventViewBobbing(CallbackInfo ci) {
 		CfaPlayerData data = this.cfa$getCfaData();
-		if(data.isClient() && data.isEnabled() && data.getAction().SLIDING_STATUS != SlidingStatus.NOT_SLIDING)
+		if(data.isClient() && data.isEnabled() && data.getAction().FLAGS.contains(ActionFlag.NO_VIEW_BOB))
 			strideDistance = prevStrideDistance * 0.6F;
 	}
 
@@ -192,11 +189,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDa
 
 	@Override
 	public boolean cfa$isInSneakingPose(boolean vanillaResult) {
-		return switch(cfa$getCfaData().isEnabled() ? cfa$getCfaData().getAction().SNEAKING_RULE : SneakingRule.ALLOW) {
-			case ALLOW, SLIP -> vanillaResult;
-			case PROHIBIT -> false;
-			case FORCE -> true;
-		};
+		return this.cfa$getCfaData().getAction().FLAGS.contains(ActionFlag.CROUCHING);
 	}
 
 	@Override
@@ -290,8 +283,42 @@ public abstract class PlayerEntityMixin extends LivingEntity implements AdvCfaDa
 		this.cfa$getCfaData().onLookAround();
 	}
 
+	@Override
+	public boolean cfa$canBeSneaky() {
+		return !this.cfa$getCfaData().isEnabled() || this.cfa$getCfaData().getAction().FLAGS.contains(ActionFlag.ALLOW_STEALTH);
+	}
+
 	@ModifyExpressionValue(method = "applyDamage", at = @At(value = "INVOKE", target = "Ljava/lang/Math;max(FF)F"))
 	private float dampenRolloverDamage(float original) {
 		return this.cfa$modifyDamageRightBeforeApplication(original);
+	}
+
+	@WrapMethod(method = "isSwimming")
+	private boolean isSwimming(Operation<Boolean> original) {
+		return this.cfa$getCfaData().isEnabled() ? this.cfa$getCfaData().getAction().FLAGS.contains(ActionFlag.DIVING) : original.call();
+	}
+
+	@Override
+	public EntityPose cfa$replaceCurrentPose(EntityPose original) {
+		CfaPlayerData data = this.cfa$getCfaData();
+		if(!data.isEnabled() || switch(original) {
+			case STANDING, SWIMMING, CROUCHING -> false; // Only allow replacing these specific Poses
+			default -> true;
+		}) return original;
+		Set<ActionFlag> flags = data.getAction().FLAGS;
+		if(flags.contains(ActionFlag.DIVING)) return EntityPose.SWIMMING;
+		if(flags.contains(ActionFlag.CROUCHING)) return EntityPose.CROUCHING;
+		return EntityPose.STANDING;
+	}
+
+	@Override
+	public boolean cfa$allowSwimmingPoseLean() {
+		return !this.cfa$getCfaData().isEnabled();
+	}
+
+	@Override
+	public boolean cfa$isClimbing(boolean original) {
+		CfaPlayerData data = this.cfa$getCfaData();
+		return data.isEnabled() ? data.getAction().FLAGS.contains(ActionFlag.CLIMBING) : original;
 	}
 }

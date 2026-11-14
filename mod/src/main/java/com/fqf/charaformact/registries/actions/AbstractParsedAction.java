@@ -5,18 +5,17 @@ import com.fqf.charaformact.cfadata.CfaMoveableData;
 import com.fqf.charaformact.registries.*;
 import com.fqf.charaformact_api.definitions.TransitionInjectionDefinition;
 import com.fqf.charaformact_api.definitions.states.AttackInterceptingStateDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.GenericActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.MountedActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.camera.CameraAnimationSet;
-import com.fqf.charaformact.registries.ImmutableCollectionHelper;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class AbstractParsedAction extends ParsedCfaState implements ParsedAttackInterceptingState {
 	protected final IncompleteActionDefinition ACTION_DEFINITION;
@@ -26,14 +25,13 @@ public abstract class AbstractParsedAction extends ParsedCfaState implements Par
 
 	public final @Nullable ParsedAnimation ANIMATION;
 	public final @Nullable CameraAnimationSet CAMERA_ANIMATIONS;
+
+	public final Set<ActionFlag> FLAGS;
+
 	public final SlidingStatus SLIDING_STATUS;
 
-	public final SneakingRule SNEAKING_RULE;
-	public final SprintingRule SPRINTING_RULE;
-	public final @NotNull GenericActionType GENERIC_ACTION_TYPE;
-
 	public final @NotNull BappingRule BAPPING_RULE;
-	public final @Nullable ParsedCollisionAttack COLLISION_ATTACK_TYPE;
+	public final Set<ParsedCollisionAttack> COLLISION_ATTACKS;
 
 	public final Map<AbstractParsedAction, ParsedTransition> TRANSITIONS_FROM_TARGETS;
 	public final EnumMap<TransitionPhase, List<ParsedTransition>> CLIENT_TRANSITIONS;
@@ -65,25 +63,18 @@ public abstract class AbstractParsedAction extends ParsedCfaState implements Par
 		if(animation == null) this.ANIMATION = null;
 		else this.ANIMATION = new ParsedAnimation(animation);
 		this.CAMERA_ANIMATIONS = definition.defineCameraAnimations(AnimationHelperImpl.INSTANCE);
-		this.SLIDING_STATUS = definition.defineSlidingStatus();
+		this.SLIDING_STATUS = SlidingStatus.NOT_SLIDING;
 
-		this.SNEAKING_RULE = definition.defineSneakingRule();
-		this.SPRINTING_RULE = definition.defineSprintingRule();
-		this.GENERIC_ACTION_TYPE = switch (definition) {
-			case GenericActionDefinition genericDefinition -> genericDefinition.getGenericActionType();
-			case MountedActionDefinition ignored -> GenericActionType.VANILLA_TRAVEL;
-			default -> GenericActionType.UNSPECIFIED;
-		};
+		ImmutableSet<ActionFlag> flags = ImmutableCollectionHelper.accumulateSet(definition::defineActionFlags);
+		this.FLAGS = Collections.unmodifiableSet(flags.isEmpty() ? EnumSet.noneOf(ActionFlag.class) : EnumSet.copyOf(flags));
 
 		BappingRule bappingRule = definition.defineBappingRule();
 		this.BAPPING_RULE = bappingRule == null ? NULL_EQUIVALENT : bappingRule;
 
-		Identifier collisionAttackID = definition.defineActiveCollisionAttack();
-		if(collisionAttackID == null)
-			this.COLLISION_ATTACK_TYPE = null;
-		else
-			this.COLLISION_ATTACK_TYPE = Objects.requireNonNull(RegistryManager.COLLISION_ATTACKS.get(collisionAttackID),
-					"Action " + this.ID + " tries to use unregistered Collision Attack " + collisionAttackID + "!");
+		this.COLLISION_ATTACKS = ImmutableCollectionHelper.accumulateSet(definition::accumulateCollisionAttacks)
+				.stream().map(collisionAttackId -> Objects.requireNonNull(RegistryManager.COLLISION_ATTACKS.get(collisionAttackId),
+				"Action " + this.ID + " tries to use unregistered Collision Attack " + collisionAttackId + "!"))
+				.collect(Collectors.toUnmodifiableSet());
 
 		this.TRANSITIONS_FROM_TARGETS = new HashMap<>();
 		this.CLIENT_TRANSITIONS = new EnumMap<>(TransitionPhase.class);
@@ -137,11 +128,6 @@ public abstract class AbstractParsedAction extends ParsedCfaState implements Par
 	) {
 		ImmutableList.Builder<ParsedTransition> clientBuilder = new ImmutableList.Builder<>();
 		ImmutableList.Builder<ParsedTransition> serverBuilder = new ImmutableList.Builder<>();
-
-//		this.CLIENT_TRANSITIONS.putIfAbsent(phase, new ArrayList<>());
-//		this.SERVER_TRANSITIONS.putIfAbsent(phase, new ArrayList<>());
-//		List<ParsedTransition> buildingClientList = this.CLIENT_TRANSITIONS.get(phase);
-//		List<ParsedTransition> buildingServerList = this.SERVER_TRANSITIONS.get(phase);
 
 		for(ActionTransitionDetails details : transitionDefinitions) {
 			ImmutableList.Builder<ActionTransitionDetails> afterInjections = ImmutableList.builder();
@@ -205,6 +191,8 @@ public abstract class AbstractParsedAction extends ParsedCfaState implements Par
 	abstract public boolean travelHook(CfaMoveableData data);
 
 	abstract protected ActionCategory getCategory();
+
+	abstract protected boolean allowCompressionTransitionsTo(ActionCategory category);
 
 	@Override
 	public List<ParsedAttackInterception> getInterceptions() {

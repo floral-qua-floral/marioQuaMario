@@ -1,5 +1,7 @@
 package com.fqf.mario_qua_mario.actions.grounded;
 
+import com.fqf.charaformact_api.cfadata.CfaClientData;
+import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
@@ -14,9 +16,11 @@ import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.airborne.Jump;
 import com.fqf.mario_qua_mario.actions.airborne.Sideflip;
 import com.fqf.mario_qua_mario.actions.aquatic.UnderwaterWalk;
+import com.fqf.mario_qua_mario.util.MarioSFX;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.fqf.charaformact_api.util.StatCategory.*;
@@ -50,16 +54,23 @@ public class Skid implements GroundedActionDefinition {
 		);
 	}
 
-	@Override public @NotNull SlidingStatus defineSlidingStatus() {
-		return SlidingStatus.SKIDDING;
-	}
-
-	@Override public @NotNull SprintingRule defineSprintingRule() {
-		return SprintingRule.PROHIBIT;
+	@Override
+	public void defineActionFlags(ImmutableSet.Builder<ActionFlag> builder) {
+		builder.addAll(ActionFlag.SLIDING);
+		builder.add(ActionFlag.PROHIBIT_SPRINT);
 	}
 
 	@Override public @Nullable BappingRule defineBappingRule() {
 		return new BappingRule(0, 0, 3, new CfaStat(0, THRESHOLD));
+	}
+
+	@Override
+	public void clientTick(CfaClientData data, boolean isSelf) {
+		float slidingSpeed = (float) ((CfaReadableMotionData) data).getHorizVelSquared();
+		data.sustainSound(MarioSFX.SKID, data.getPlayer(), SoundCategory.PLAYERS,
+				1.0F + Math.min(0.15F, 0.5F * slidingSpeed),
+				Math.min(1.0F, ((float) data.get(DuckSlide.SKID_SOUND_TIMER).getAndIncrement()) / 3.0F) * Math.min(1.0F, 0.4F + 0.7F * slidingSpeed) * 0.4F
+		);
 	}
 
 	public static final CfaStat SKID_THRESHOLD = new CfaStat(0.285, RUNNING, THRESHOLD);

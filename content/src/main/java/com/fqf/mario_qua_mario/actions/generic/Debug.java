@@ -5,10 +5,10 @@ import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.GenericActionDefinition;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.charaformact_api.definitions.states.actions.util.SizeChangeBehavior;
-import com.fqf.charaformact_api.definitions.states.actions.util.SlidingStatus;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationFlag;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationHelper;
@@ -17,6 +17,7 @@ import com.fqf.mario_qua_mario.CfaMarioAddon;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -44,8 +45,10 @@ public class Debug implements GenericActionDefinition {
 		);
 	}
 
-	@Override public @NotNull SlidingStatus defineSlidingStatus() {
-		return SlidingStatus.SLIDING_SILENT;
+	@Override
+	public void defineActionFlags(ImmutableSet.Builder<ActionFlag> builder) {
+		builder.addAll(ActionFlag.SLIDING);
+		builder.add(ActionFlag.FLYING, ActionFlag.RESTORES_GROUNDED_RESOURCES, ActionFlag.OMNI_DIRECTIONAL_SPRINT, ActionFlag.ALLOW_SPRINT_AGAINST_WALL);
 	}
 
 	@Override public void serverTick(CfaAuthoritativeData data) {

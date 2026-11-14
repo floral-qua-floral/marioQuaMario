@@ -3,7 +3,10 @@ package com.fqf.mario_qua_mario.actions.aquatic;
 import com.fqf.charaformact_api.cfadata.CfaClientData;
 import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.AquaticActionDefinition;
-import com.fqf.charaformact_api.definitions.states.actions.util.*;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionFlag;
+import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
+import com.fqf.charaformact_api.definitions.states.actions.util.BappingRule;
+import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
 import com.fqf.charaformact_api.util.CfaStat;
 import com.fqf.mario_qua_mario.MarioQuaMario;
@@ -12,10 +15,12 @@ import com.fqf.mario_qua_mario.actions.airborne.GroundPoundDrop;
 import com.fqf.mario_qua_mario.collision_attacks.AquaticGroundPound;
 import com.fqf.mario_qua_mario.util.MarioSFX;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
 import static com.fqf.charaformact_api.util.StatCategory.WATER_DRAG;
@@ -27,18 +32,17 @@ public class AquaticPoundDrop implements AquaticActionDefinition {
 		return GroundPoundDrop.ANIMATION;
 	}
 
-	@Override public @NotNull SneakingRule defineSneakingRule() {
-		return SneakingRule.PROHIBIT;
-	}
-	@Override public @NotNull SprintingRule defineSprintingRule() {
-		return SprintingRule.PROHIBIT;
+	@Override
+	public void defineActionFlags(ImmutableSet.Builder<ActionFlag> builder) {
+		builder.add(ActionFlag.PROHIBIT_SPRINT);
+		builder.add(ActionFlag.DIVING);
 	}
 
 	@Override public @Nullable BappingRule defineBappingRule() {
 		return new BappingRule(0, 3);
 	}
-	@Override public @Nullable Identifier defineActiveCollisionAttack() {
-		return AquaticGroundPound.ID;
+	@Override public void accumulateCollisionAttacks(ImmutableSet.Builder<Identifier> builder) {
+		builder.add(AquaticGroundPound.ID);
 	}
 
 	public static CfaStat AQUATIC_GROUND_POUND_DRAG = new CfaStat(0.19, WATER_DRAG);
@@ -46,6 +50,18 @@ public class AquaticPoundDrop implements AquaticActionDefinition {
 
 	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 		data.sustainSound(MarioSFX.AQUATIC_GROUND_POUND_DROP, data.getPlayer(), SoundCategory.PLAYERS);
+		for(int incrementeroo = 0; incrementeroo < 4; incrementeroo++) {
+			Vec3d motion = new Vec3d(
+					data.getPlayer().getRandom().nextTriangular(0, 1),
+					0,
+					data.getPlayer().getRandom().nextTriangular(0, 1)
+			).normalize();
+			data.getPlayer().getWorld().addParticle(
+					ParticleTypes.BUBBLE,
+					data.getPlayer().getX(), data.getPlayer().getY(), data.getPlayer().getZ(),
+					motion.x, 0, motion.z
+			);
+		}
 	}
 
 	@Override public void travelHook(CfaTravelData data, AquaticActionHelper helper) {

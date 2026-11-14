@@ -14,13 +14,13 @@ import com.fqf.mario_qua_mario.actions.aquatic.Submerged;
 import com.fqf.mario_qua_mario.util.ClimbTransitions;
 import com.fqf.mario_qua_mario.util.MQMTags;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.mutable.MutableDouble;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.fqf.charaformact_api.util.StatCategory.*;
@@ -48,15 +48,15 @@ public class LavaBoost extends Fall implements AirborneActionDefinition {
 		);
 	}
 
-	@Override public @NotNull SprintingRule defineSprintingRule() {
-		return SprintingRule.PROHIBIT;
+	@Override public void defineActionFlags(ImmutableSet.Builder<ActionFlag> builder) {
+		builder.add(ActionFlag.PROHIBIT_SPRINT);
 	}
 
 	@Override public @Nullable BappingRule defineBappingRule() {
 		return null;
 	}
-	@Override public @Nullable Identifier defineActiveCollisionAttack() {
-		return null;
+	@Override public void accumulateCollisionAttacks(ImmutableSet.Builder<Identifier> builder) {
+
 	}
 
 	public static CfaStat BOOST_VEL = new CfaStat(1.4, JUMP_VELOCITY);

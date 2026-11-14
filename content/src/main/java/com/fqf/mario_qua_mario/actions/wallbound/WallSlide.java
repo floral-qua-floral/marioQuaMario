@@ -1,6 +1,9 @@
 package com.fqf.mario_qua_mario.actions.wallbound;
 
-import com.fqf.charaformact_api.cfadata.*;
+import com.fqf.charaformact_api.cfadata.CfaAnimatingData;
+import com.fqf.charaformact_api.cfadata.CfaClientData;
+import com.fqf.charaformact_api.cfadata.CfaReadableMotionData;
+import com.fqf.charaformact_api.cfadata.CfaTravelData;
 import com.fqf.charaformact_api.definitions.states.actions.WallboundActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.*;
 import com.fqf.charaformact_api.definitions.states.actions.util.animation.AnimationDefinition;
@@ -13,9 +16,14 @@ import com.fqf.mario_qua_mario.actions.airborne.Fall;
 import com.fqf.mario_qua_mario.actions.airborne.SpecialFall;
 import com.fqf.mario_qua_mario.actions.airborne.WallJump;
 import com.fqf.mario_qua_mario.actions.grounded.SubWalk;
-import com.fqf.mario_qua_mario.util.*;
+import com.fqf.mario_qua_mario.util.ClimbTransitions;
+import com.fqf.mario_qua_mario.util.MQMTags;
+import com.fqf.mario_qua_mario.util.MarioSFX;
+import com.fqf.mario_qua_mario.util.MarioVars;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.block.BlockState;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -171,15 +179,8 @@ public class WallSlide implements WallboundActionDefinition {
 		);
 	}
 
-	@Override public @NotNull SlidingStatus defineSlidingStatus() {
-		return SlidingStatus.WALL_SLIDING;
-	}
-
-	@Override public @NotNull SneakingRule defineSneakingRule() {
-		return SneakingRule.PROHIBIT;
-	}
-	@Override public @NotNull SprintingRule defineSprintingRule() {
-		return SprintingRule.PROHIBIT;
+	@Override public void defineActionFlags(ImmutableSet.Builder<ActionFlag> builder) {
+		builder.add(ActionFlag.PROHIBIT_SPRINT);
 	}
 
 	@Override public @NotNull WallBodyAlignment defineBodyAlignment() {
@@ -213,6 +214,10 @@ public class WallSlide implements WallboundActionDefinition {
 
 	@Override public void clientTick(CfaClientData data, boolean isSelf) {
 		data.forceBodyAlignment(true);
+		data.sustainSound(MarioSFX.SKID, data.getPlayer(), SoundCategory.PLAYERS,
+				0.2F,
+				MathHelper.clamp((float) Math.abs(((CfaReadableMotionData) data).getYVel()), 0.4F, 1.0F) * 0.4F
+		);
 	}
 	private static final int GRAVITY_RAMP_UP_TICKS = 5;
 	@Override public void travel(CfaTravelData data, WallInfo wall, WallboundActionHelper helper) {

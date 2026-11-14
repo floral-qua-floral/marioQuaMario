@@ -4,6 +4,7 @@ import com.fqf.charaformact.CharaFormAct;
 import com.fqf.charaformact.cfadata.CfaServerPlayerData;
 import com.fqf.charaformact.cfadata.injections.AdvCfaServerDataHolder;
 import com.fqf.charaformact.packets.CfaDataPackets;
+import com.fqf.charaformact.registries.ParsedCollisionAttack;
 import com.fqf.charaformact.registries.RegistryManager;
 import com.fqf.charaformact.registries.power_granting.ParsedCharacter;
 import com.fqf.charaformact.util.CfaGamerules;
@@ -47,13 +48,14 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ad
 	public void move(MovementType movementType, Vec3d movement) {
 		CfaServerPlayerData data = this.cfa$getCfaData();
 		Vec3d oldMovement = movement;
-		// Only perform collision attack checks on movement that comes from a player packet (as opposed to server-side travel).
-		// Should this change??
 		long time = this.getWorld().getTime();
-		if(data.isEnabled() && data.doCustomTravel(false) && data.getAction().COLLISION_ATTACK_TYPE != null
+		if(
+				data.isEnabled() && data.doCustomTravel(false) && !data.getAction().COLLISION_ATTACKS.isEmpty()
 				&& (movementType == MovementType.PLAYER || movementType == MovementType.SELF)
-				&& time != this.ticksAfterCollisionAttack && time != this.ticksAfterCollisionAttack - 1)
-			movement = data.getAction().COLLISION_ATTACK_TYPE.moveHook(data, movement);
+				&& time != this.ticksAfterCollisionAttack && time != this.ticksAfterCollisionAttack - 1
+		)
+			for (ParsedCollisionAttack collisionAttack : data.getAction().COLLISION_ATTACKS)
+				movement = collisionAttack.moveHook(data, movement);
 
 		super.move(movementType, movement);
 		if(!oldMovement.equals(movement)) this.ticksAfterCollisionAttack = time + 1;

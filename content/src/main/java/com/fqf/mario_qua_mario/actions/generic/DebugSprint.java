@@ -24,7 +24,7 @@ public class DebugSprint extends Debug {
 	public static final Identifier ID = MarioQuaMario.makeID("debug_test");
 
 	@Override public void travelHook(CfaTravelData data) {
-		data.setStrafeVel(data.getInputs().getStrafeInput() * 0.5);
+		data.setStrafeVel(data.getInputs().getStrafeInput());
 
 		double pitchRadians = Math.toRadians(data.getPlayer().getPitch());
 		data.setForwardVel(data.getInputs().getForwardInput() * Math.cos(pitchRadians));

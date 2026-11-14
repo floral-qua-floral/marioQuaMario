@@ -4,7 +4,6 @@ import com.fqf.charaformact_api.definitions.states.actions.GroundedActionDefinit
 import com.fqf.charaformact_api.definitions.states.actions.MountedActionDefinition;
 import com.fqf.charaformact_api.definitions.states.actions.util.ActionTransitionDetails;
 import com.fqf.charaformact_api.definitions.states.actions.util.EvaluatorEnvironment;
-import com.fqf.charaformact_api.definitions.states.actions.util.SneakingRule;
 import com.fqf.charaformact_api.definitions.states.actions.util.SizeChangeBehavior;
 import com.fqf.mario_qua_mario.MarioQuaMario;
 import com.fqf.mario_qua_mario.actions.airborne.Backflip;
@@ -19,11 +18,6 @@ import java.util.Objects;
 
 public class Mounted implements MountedActionDefinition {
 	public static final Identifier ID = MarioQuaMario.makeID("mounted");
-
-
-	@Override public @NotNull SneakingRule defineSneakingRule() {
-		return SneakingRule.PROHIBIT;
-	}
 
 	@Override public @NotNull MutableText defineDismountHint(
 			MutableText vanillaHint, Text sneakKeybind, Text jumpKeybind,

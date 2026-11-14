@@ -18,8 +18,8 @@ public class Swim extends Submerged {
 		return Math.min(animationTime / 2, 3);
 	}
 
-	public static final CfaStat SWIM_ACCEL = new CfaStat(0.4, SWIMMING, UP, ACCELERATION);
-	public static final CfaStat SWIM_MAX_ASCENSION_SPEED = new CfaStat(0.45, SWIMMING, UP, SPEED);
+	public static final CfaStat SWIM_ACCEL = new CfaStat(0.4, SWIMMING, ASCEND, ACCELERATION);
+	public static final CfaStat SWIM_MAX_ASCENSION_SPEED = new CfaStat(0.45, SWIMMING, ASCEND, SPEED);
 
 	public static final ActionTransitionDetails SWIM = new ActionTransitionDetails(
 			ID,

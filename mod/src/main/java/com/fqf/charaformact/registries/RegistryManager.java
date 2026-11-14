@@ -54,9 +54,9 @@ public class RegistryManager {
 			ATTACHMENT_COUNT_MAP.put(category, StateAttachmentKey.countInitializedAttachments(category));
 
 		CharaFormAct.LOGGER.info("Finished registering:");
-		CharaFormAct.LOGGER.info("\t* {} Actions (with {} attachments)", ACTIONS.size(), ATTACHMENT_COUNT_MAP_VIEW.get(AttachmentCategory.ACTION));
-		CharaFormAct.LOGGER.info("\t* {} Forms (with {} attachments)", FORMS.size(), ATTACHMENT_COUNT_MAP_VIEW.get(AttachmentCategory.FORM));
-		CharaFormAct.LOGGER.info("\t* {} Characters (with {} attachments)", CHARACTERS.size(), ATTACHMENT_COUNT_MAP_VIEW.get(AttachmentCategory.CHARACTER));
+		CharaFormAct.LOGGER.info("\t* {} Actions ({} transitions, {} attachments)", ACTIONS.size(), totalActionTransitions, ATTACHMENT_COUNT_MAP_VIEW.get(AttachmentCategory.ACTION));
+		CharaFormAct.LOGGER.info("\t* {} Forms ({} attachments)", FORMS.size(), ATTACHMENT_COUNT_MAP_VIEW.get(AttachmentCategory.FORM));
+		CharaFormAct.LOGGER.info("\t* {} Characters ({} attachments)", CHARACTERS.size(), ATTACHMENT_COUNT_MAP_VIEW.get(AttachmentCategory.CHARACTER));
 		CharaFormAct.LOGGER.info("\t* {} Voicelines", VOICE_LINES.size());
 		CharaFormAct.LOGGER.info("\t* {} Collision Attacks", COLLISION_ATTACKS.size());
 	}
@@ -132,7 +132,6 @@ public class RegistryManager {
 
 		// Parse and register actions from every addon
 		parseAndRegisterThings(ACTIONS, addons, CharaFormActAddon::accumulateActionDefinitions, ParsedActionHelper::parseAction);
-		CharaFormAct.LOGGER.info("Registered {} actions...", ACTIONS.size());
 
 		// Get all the transition injections provided by every addon
 		List<TransitionInjectionDefinition> injections =
@@ -140,15 +139,12 @@ public class RegistryManager {
 		CharaFormAct.LOGGER.info("Found {} total transition injection definitions...", injections.size());
 
 		// Now all actions are registered and we have the transitions, so we can parse their transitions
-		for(AbstractParsedAction action : ACTIONS) {
+		for(AbstractParsedAction action : ACTIONS)
 			action.parseTransitions(injections);
-		}
-		CharaFormAct.LOGGER.info("Parsed {} Action Transitions...", totalActionTransitions);
 
 		// We can also register all Collision Attack Types' actions now. There's no reason to do this sooner since it uses a map; can't be final anyways
-		for(ParsedCollisionAttack collisionAttackType : COLLISION_ATTACKS) {
+		for(ParsedCollisionAttack collisionAttackType : COLLISION_ATTACKS)
 			collisionAttackType.populatePostCollisionActions();
-		}
 	}
 
 	private static void registerForms(List<CharaFormActAddon> addons) {
