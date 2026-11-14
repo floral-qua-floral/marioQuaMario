@@ -53,15 +53,15 @@ public class DuckSlide implements GroundedActionDefinition {
 				1.0F + Math.min(0.15F, 0.5F * slidingSpeed),
 				Math.min(1.0F, ((float) data.get(DuckSlide.SKID_SOUND_TIMER).getAndIncrement()) / 3.0F) * Math.min(1.0F, 0.7F * slidingSpeed) * 0.4F
 		);
-
-		Vec3d deltaPos = Skid.getDeltaPos(data, true);
-		double speed = deltaPos.horizontalLength();
-		Skid.spawnParticles(data, Math.min(speed * 4, 3), deltaPos, 1.5, 0.5);
 	}
 
 	@Override
 	public void clientTick(CfaClientData data, boolean isSelf) {
 		slideSound(data);
+		Vec3d deltaPos = Skid.getDeltaPos(data, true);
+		double speed = deltaPos.horizontalLength();
+		if(speed > 0.01)
+			Skid.spawnParticles(data, Math.min(speed * speed, 3), deltaPos, 1.5, 0.5);
 	}
 
 	public static final CfaStat SLIDE_THRESHOLD = new CfaStat(0.25, DUCKING, THRESHOLD);

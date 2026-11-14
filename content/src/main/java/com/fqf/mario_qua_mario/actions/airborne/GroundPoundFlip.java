@@ -97,8 +97,12 @@ public class GroundPoundFlip implements AirborneActionDefinition {
 
 	@Override
 	public void onEnter(CfaData data, ImmutableSet.Builder<StateAttachmentKey<?>> attachmentsToKeep) {
-		attachmentsToKeep.add(FLIP_TIMER, STORED_FALL_DISTANCE);
-		data.get(STORED_FALL_DISTANCE); // Ensure it's stored
+		data.put(STORED_FALL_DISTANCE, data.getPlayer().fallDistance);
+	}
+
+	@Override
+	public void onExit(CfaData data) {
+		data.getPlayer().fallDistance = data.get(STORED_FALL_DISTANCE) * 0.6F;
 	}
 
 	@Override public void travelHook(CfaTravelData data, AirborneActionHelper helper) {
